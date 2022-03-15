@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
@@ -35,8 +34,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR,
-                        colors = emptyList()
+                        markerColors = emptyList()
                     ))
                 .build())
 
@@ -55,38 +53,6 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
     }
 
     @Test
-    fun whenFillColorProvided_ShouldUseItForTooltip() {
-        addMappedData(variable().value("sedan").mapping(AES_WIDTH))
-
-        createTooltipSpecs(geomTargetBuilder.withPathHitShape()
-                .withFill(Color.RED)
-                .build())
-
-        assertFill(Color.RED)
-    }
-
-    @Test
-    fun withLayoutHint_ShouldUseHintColor() {
-        val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
-
-        val hintFill = Color.DARK_GREEN
-        createTooltipSpecs(geomTargetBuilder.withPathHitShape()
-                .withLayoutHint(
-                    AES_WIDTH, TipLayoutHint.verticalTooltip(
-                        TARGET_HIT_COORD,
-                        OBJECT_RADIUS,
-                        hintFill,
-                        colors = emptyList()
-                    )
-                )
-                .withFill(Color.RED)
-                .build())
-
-        assertLines(0, widthMapping.shortTooltipText())
-        assertFill(hintFill)
-    }
-
-    @Test
     fun checkIfTooltipIsOutlier() {
         val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
         createTooltipSpecs(
@@ -95,8 +61,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR,
-                        colors = emptyList()
+                        markerColors = emptyList()
                     )
                 )
                 .build()
@@ -118,8 +83,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                     AES_WIDTH, TipLayoutHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        FILL_COLOR,
-                        colors = emptyList()
+                        markerColors = emptyList()
                     )
                 )
                 .build(),

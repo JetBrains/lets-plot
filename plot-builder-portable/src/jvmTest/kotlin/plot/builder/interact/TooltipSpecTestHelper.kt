@@ -135,6 +135,5 @@ open class TooltipSpecTestHelper {
         internal const val OBJECT_RADIUS = 6.0
         internal const val DEFAULT_OBJECT_RADIUS = 0.0
         internal val AES_WIDTH = Aes.WIDTH
-        internal val FILL_COLOR = Color.RED
     }
 }

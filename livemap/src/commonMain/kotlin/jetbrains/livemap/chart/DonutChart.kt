@@ -102,8 +102,7 @@ object DonutChart {
                         if (isCoordinateInPieSector(coord, origin, radius, startAngle, endAngle)) {
                             return SearchResult(
                                 layerIndex = target.get<IndexComponent>().layerIndex,
-                                index = index,
-                                color = color
+                                index = index
                             )
                         }
                     }
@@ -113,7 +112,6 @@ object DonutChart {
         }
 
         override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity) = throw NotImplementedError()
-        override fun getColor(target: EcsEntity) = throw NotImplementedError()
 
         private fun isCoordinateInPieSector(coord: Vec<Client>, origin: Vec<Client>, radius: Double, startAngle: Double, endAngle: Double): Boolean {
             if (LocatorUtil.distance(coord, origin) > radius) {

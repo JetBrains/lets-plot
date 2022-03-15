@@ -11,6 +11,10 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory.HintConfig
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.horizontalTooltip
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.rotatedTooltip
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.verticalTooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 
 
@@ -59,14 +63,10 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         }
 
         return when (hintConfig.kind) {
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(coord, objectRadius, mainColor = color, colors = emptyList())
-
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(coord, objectRadius, mainColor = color, colors = emptyList())
-
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(coord, mainColor = color, colors = emptyList())
-
-            Kind.ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(coord, objectRadius, color)
-
+            Kind.VERTICAL_TOOLTIP -> verticalTooltip(coord, objectRadius, markerColors = emptyList())
+            Kind.HORIZONTAL_TOOLTIP -> horizontalTooltip(coord, objectRadius, markerColors = emptyList())
+            Kind.CURSOR_TOOLTIP -> cursorTooltip(coord, markerColors = emptyList())
+            Kind.ROTATED_TOOLTIP -> rotatedTooltip(coord, objectRadius, color)
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.kind)
         }
     }

@@ -6,7 +6,6 @@
 package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.SymbolComponent
@@ -15,10 +14,6 @@ import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.LocatorUtil.distance
 
 class PointLocatorHelper : LocatorHelper {
-
-    override fun getColor(target: EcsEntity): Color? {
-        return target.get<ChartElementComponent>().run { fillColor ?: strokeColor }
-    }
 
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
         if (REQUIRED_COMPONENTS !in target) {

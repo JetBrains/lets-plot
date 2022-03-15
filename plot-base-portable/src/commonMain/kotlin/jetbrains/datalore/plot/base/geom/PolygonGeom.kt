@@ -32,11 +32,7 @@ open class PolygonGeom : GeomBase() {
                 dataPoints,
                 linesHelper,
                 myClosePath = true,
-                HintColorUtil.fromMappedAndVisibleColors(
-                    ctx,
-                    fillFactory = HintColorUtil::fromFill,
-                    strokeFactory = DataPointAesthetics::color
-                ),
+                HintColorUtil.createColorMarkerMapper(GeomKind.POLYGON, ctx),
                 ctx.flipped
             )
         appendNodes(

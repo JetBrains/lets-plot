@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color.Companion.WHITE
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
@@ -43,7 +44,6 @@ class TooltipSpecFactory(
         private fun hitIndex() = myGeomTarget.hitIndex
         private fun tipLayoutHint() = myGeomTarget.tipLayoutHint
         private fun outlierHints() = myGeomTarget.aesTipLayoutHints
-        private fun hintColors() = myGeomTarget.aesTipLayoutHints.map { it.key to it.value.mainColor }.toMap()
 
         private fun outlierTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
@@ -57,11 +57,11 @@ class TooltipSpecFactory(
                     tooltipSpecs.add(
                         TooltipSpec(
                             layoutHint = hint,
-                            lines = linesForAes,
                             title = null,
-                            fill = hint.mainColor ?: tipLayoutHint().mainColor!!,
-                            isOutlier = true,
-                            markerColors = emptyList()
+                            lines = linesForAes,
+                            fill = hint.fillColor ?: tipLayoutHint().fillColor ?: hint.markerColors.firstOrNull() ?: WHITE,
+                            markerColors = emptyList(),
+                            isOutlier = true
                         )
                     )
                 }
@@ -82,11 +82,11 @@ class TooltipSpecFactory(
                     tooltipSpecs.add(
                         TooltipSpec(
                             layoutHint = layoutHint,
-                            lines = lines,
                             title = null,
-                            fill = layoutHint.mainColor!!,
-                            isOutlier = true,
-                            markerColors = emptyList()
+                            lines = lines,
+                            fill = layoutHint.fillColor!!,
+                            markerColors = emptyList(),
+                            isOutlier = true
                         )
                     )
                 }
@@ -97,22 +97,19 @@ class TooltipSpecFactory(
         private fun generalTooltipSpec(): List<TooltipSpec> {
             val generalDataPoints = generalDataPoints()
             val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
-            val aesHintColors = hintColors()
-                .filterKeys { aes -> aes in generalDataPoints.map(DataPoint::aes) }
-            val colorFromHints = aesHintColors[Aes.Y] ?: aesHintColors.mapNotNull { it.value }.lastOrNull()
-            val fill = colorFromHints ?: tipLayoutHint().mainColor!!
+
             return if (generalLines.isNotEmpty()) {
                 listOf(
                     TooltipSpec(
                         tipLayoutHint(),
-                        lines = generalLines,
                         title = myTooltipTitle,
-                        fill = fill,
+                        lines = generalLines,
+                        fill = null,
+                        markerColors = tipLayoutHint().markerColors,
                         isOutlier = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,
-                        isCrosshairEnabled = myIsCrosshairEnabled,
-                        markerColors = tipLayoutHint().colors
+                        isCrosshairEnabled = myIsCrosshairEnabled
                     )
                 )
             } else {
@@ -148,15 +145,15 @@ class TooltipSpecFactory(
                 Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
                         coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
-                        color = xAxisTheme.tooltipFill(),
-                        axisRadius = AXIS_RADIUS
+                        axisRadius = AXIS_RADIUS,
+                        fillColor = xAxisTheme.tooltipFill()
                     )
                 }
                 Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
-                        color = yAxisTheme.tooltipFill(),
-                        axisRadius = AXIS_RADIUS
+                        axisRadius = AXIS_RADIUS,
+                        fillColor = yAxisTheme.tooltipFill()
                     )
                 }
                 else -> error("Not an axis aes: $axis")

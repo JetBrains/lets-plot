@@ -6,15 +6,12 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.decorate
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -40,6 +37,8 @@ class SegmentGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
 
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SEGMENT, ctx)
+
         for (p in aesthetics.dataPoints()) {
             if (SeriesUtil.allFinite(p.x(), p.y(), p.xend(), p.yend())) {
                 val start = DoubleVector(p.x()!!, p.y()!!)
@@ -50,9 +49,9 @@ class SegmentGeom : GeomBase() {
                 targetCollector.addPath(
                     listOf(coord.toClient(start), coord.toClient(end)),
                     { p.index() },
-                    GeomTargetCollector.TooltipParams.params()
-                        .setMainColor(HintColorUtil.fromColor(p))
-                        .setColors(listOf(p.color()!!))
+                    tooltip {
+                        markerColors = colorsByDataPoint(p)
+                    }
                 )
 
                 if (arrowSpec != null) {

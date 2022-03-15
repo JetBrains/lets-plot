@@ -11,14 +11,14 @@ import jetbrains.datalore.plot.base.interact.TooltipAnchor
 
 class TooltipSpec(
     val layoutHint: TipLayoutHint,
+    val title: String?,
     val lines: List<Line>,
-    val fill: Color,
+    val fill: Color?,
+    val markerColors: List<Color>,
     val isOutlier: Boolean,
     val anchor: TooltipAnchor? = null,
     val minWidth: Double? = null,
-    val isCrosshairEnabled: Boolean = false,
-    val markerColors: List<Color>,
-    val title: String?
+    val isCrosshairEnabled: Boolean = false
 ) {
     override fun toString(): String {
         return "TooltipSpec($layoutHint, lines=${lines.map(Line::toString)})"

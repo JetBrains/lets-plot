@@ -5,6 +5,4 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.datalore.base.values.Color
-
-data class SearchResult(val layerIndex: Int, val index: Int, val color: Color?)
+data class SearchResult(val layerIndex: Int, val index: Int)

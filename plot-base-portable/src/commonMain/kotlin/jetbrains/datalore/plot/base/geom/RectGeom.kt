@@ -24,14 +24,8 @@ class RectGeom : GeomBase() {
         RectTargetCollectorHelper(
             rectanglesHelper = helper,
             rectangleByDataPoint = Companion::rectangleByDataPoint,
-            fillByDataPoint = HintColorUtil::fromFill,
             tooltipKind = CURSOR_TOOLTIP,
-            colorsByDataPoint= HintColorUtil.fromMappedAndVisibleColors(
-                ctx,
-                fillFactory = HintColorUtil::fromFill,
-                strokeFactory = DataPointAesthetics::color
-
-            )
+            colorsByDataPoint= HintColorUtil.createColorMarkerMapper(GeomKind.RECT, ctx)
         ).collectTo(ctx.targetCollector)
     }
 

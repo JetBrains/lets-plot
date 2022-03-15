@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -152,13 +152,15 @@ class ViolinGeom : GeomBase() {
             MultiPointDataConstructor.reducer(0.999, false)
         )
         val targetCollector = getGeomTargetCollector(ctx)
+        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.VIOLIN, ctx)
+
         for (multiPointData in multiPointDataList) {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                TooltipParams.params().setColors(
-                    listOfNotNull(HintColorUtil.fromFill(multiPointData.aes).takeIf { ctx.isMappedAes(Aes.FILL) })
-                ),
+                tooltip {
+                    markerColors = colorMarkerMapper(multiPointData.aes)
+                },
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {

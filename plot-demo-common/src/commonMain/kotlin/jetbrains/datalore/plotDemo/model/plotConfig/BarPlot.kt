@@ -11,9 +11,9 @@ open class BarPlot {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            fancy(),
-            fancyWithWidth(0.5),
-            fancyWithWidth(5.0),
+            //fancy(),
+            //fancyWithWidth(0.5),
+            //fancyWithWidth(5.0),
         )
     }
 
@@ -30,11 +30,14 @@ open class BarPlot {
                     "   'data': " + OUR_DATA +
                     "           ," +
                     "   'mapping': {" +
-                    "             'x': 'time'" +
+                    "             'x': 'time'," +
+                    "             'color': 'time'," +
+                    "             'fill': 'time'" +
                     "           }," +
                     "   'layers': [" +
                     "               {" +
-                    "                  'geom': 'bar'" +
+                    "                  'geom': 'bar'," +
+                    "                  'alpha': '0.5'" +
                     "               }" +
                     "           ]" +
                     "}"

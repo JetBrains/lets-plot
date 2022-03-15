@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -106,18 +106,14 @@ class YDotplotGeom : DotplotGeom() {
                 DoubleVector(height, width)
             )
         }
-        val colorTransform = HintColorUtil.fromMappedAndVisibleColors(
-            ctx,
-            fillFactory = HintColorUtil::fromFill,
-            strokeFactory = DataPointAesthetics::color
-        )
+        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.Y_DOT_PLOT, ctx)
 
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
-            GeomTargetCollector.TooltipParams.params()
-                .setMainColor(HintColorUtil.fromFill(p))
-                .setColors(colorTransform(p)),
+            tooltip {
+                markerColors = colorMarkerMapper(p)
+            },
             TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }

@@ -87,8 +87,7 @@ object BarChart {
                     if(column.rect.contains(coord - it)) {
                         return SearchResult(
                             target.get<IndexComponent>().layerIndex,
-                            index = column.index,
-                            color = column.color
+                            index = column.index
                         )
                     }
                 }
@@ -98,7 +97,6 @@ object BarChart {
         }
 
         override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity) = throw NotImplementedError()
-        override fun getColor(target: EcsEntity) = throw NotImplementedError()
 
         companion object {
             val LOCATABLE_COMPONENTS = listOf(SymbolComponent::class, ScreenLoopComponent::class)

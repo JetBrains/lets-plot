@@ -37,7 +37,7 @@ class CrossBarGeom : GeomBase() {
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx, true),
-            { HintColorUtil.fromColor(it) }
+            { HintColorUtil.colorWithAlpha(it) }
         )
     }
 

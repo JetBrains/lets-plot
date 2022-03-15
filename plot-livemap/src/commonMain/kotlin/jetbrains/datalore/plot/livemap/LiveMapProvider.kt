@@ -9,9 +9,12 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection.*
 import jetbrains.datalore.plot.base.scale.Mappers.IDENTITY
@@ -30,7 +33,6 @@ import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.ATTRIBUTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MAX_ZOOM
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MIN_ZOOM
-import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.tileprotocol.TileService
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.LiveMapBuilder
@@ -103,10 +105,11 @@ object LiveMapProvider {
                 maxZoom = myLiveMapOptions.getInt(TILES, MAX_ZOOM) ?: maxZoom
                 zoom = myLiveMapOptions.getInt(Option.Geom.LiveMap.ZOOM)
                 showCoordPickTools = myLiveMapOptions.getBool(Option.Geom.LiveMap.SHOW_COORD_PICK_TOOLS) ?: false
-                geocodingService = createGeocodingService(
-                    myLiveMapOptions.getMap(Option.Geom.LiveMap.GEOCODING)
-                        ?: error("Geocoding service must be configured")
-                )
+                geocodingService = myLiveMapOptions.getMap(Option.Geom.LiveMap.GEOCODING)
+                    ?.getString("url")
+                    ?.let { liveMapGeocoding { url = it } }
+                    ?: Services.bogusGeocodingService()
+
                 tileSystemProvider = createTileSystemProvider(
                     myLiveMapOptions.getMap(TILES) ?: error("Tiles must be condigured"),
                     devParams.isSet(DevParams.DEBUG_TILES),
@@ -121,7 +124,11 @@ object LiveMapProvider {
             }
 
             val targetSource = HashMap<Pair<Int, Int>, ContextualMapping>()
+            val colorMap = HashMap<Int, (Int) -> List<Color>>()
             plotLayers.onEachIndexed { layerIndex, layer ->
+                val colorBarProvider = HintColorUtil.createColorMarkerMapper(layer.geomKind, FILL in layer.mappedAes, COLOR in layer.mappedAes)
+                colorMap[layerIndex] = { i -> colorBarProvider(layer.aesthetics.dataPointAt(i))}
+
                 layer.aesthetics.dataPoints().forEach { dataPoint ->
                     targetSource[layerIndex to dataPoint.index()] = layer.contextualMapping
                 }
@@ -141,16 +148,10 @@ object LiveMapProvider {
                                 )
                             )
                         },
-                        LiveMapTargetLocator(liveMapAsync, targetSource)
+                        LiveMapTargetLocator(liveMapAsync, targetSource, colorMap)
                     )
                 }
         }
-    }
-
-    private fun createGeocodingService(options: Map<*, *>): GeocodingService {
-        return options["url"]
-            ?.let { liveMapGeocoding { url = it as String } }
-            ?: Services.bogusGeocodingService()
     }
 
     private fun createTileSystemProvider(

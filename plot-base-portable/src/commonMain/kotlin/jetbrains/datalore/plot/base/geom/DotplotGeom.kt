@@ -10,11 +10,12 @@ import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.GeomKind.DOT_PLOT
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -115,19 +116,14 @@ open class DotplotGeom : GeomBase() {
             DoubleRectangle(center.add(shiftToOrigin.flip()), dimension.flip())
         else
             DoubleRectangle(center.add(shiftToOrigin), dimension)
+        val colorMarkerMapper = createColorMarkerMapper(DOT_PLOT, ctx)
 
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
-            GeomTargetCollector.TooltipParams.params()
-                .setMainColor(HintColorUtil.fromFill(p))
-                .setColors(
-                    HintColorUtil.fromMappedAndVisibleColors(
-                        ctx,
-                        fillFactory = HintColorUtil::fromFill,
-                        strokeFactory = DataPointAesthetics::color
-                    ).invoke(p)
-                ),
+            tooltip {
+                markerColors = colorMarkerMapper(p)
+            },
             tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             } else {

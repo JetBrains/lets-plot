@@ -5,21 +5,10 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.base.function.Functions.identity
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 //import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 //import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
-import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
-import org.assertj.core.api.Condition
-import org.mockito.Mockito.mock
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 object TestUtil {
 //    private const val VARIABLE_NAME = "A"

@@ -5,15 +5,11 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.PositionAdjustment
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -38,9 +34,7 @@ class TextGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val sizeUnitRatio = getSizeUnitRatio(ctx)
-        val colorsByDataPoint = { p: DataPointAesthetics ->
-            listOfNotNull(HintColorUtil.fromColor(p).takeIf { p.alpha()!! > 0 })
-        }
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
@@ -59,9 +53,9 @@ class TextGeom : GeomBase() {
                     p.index(),
                     loc,
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
-                    GeomTargetCollector.TooltipParams.params()
-                        .setMainColor(HintColorUtil.fromColor(p))
-                        .setColors(colorsByDataPoint(p)),
+                    tooltip {
+                        markerColors = colorsByDataPoint(p)
+                    },
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

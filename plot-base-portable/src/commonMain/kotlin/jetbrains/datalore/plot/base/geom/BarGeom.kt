@@ -36,7 +36,7 @@ open class BarGeom : GeomBase() {
             emptyList(),
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx, isHintRect = true),
-            { HintColorUtil.fromFill(it) }
+            HintColorUtil::fillWithAlpha
         )
     }
 

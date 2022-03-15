@@ -12,7 +12,10 @@ import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Color.Companion.BLACK
+import jetbrains.datalore.base.values.Color.Companion.WHITE
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.base.values.Colors.mimicTransparency
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
@@ -93,15 +96,15 @@ internal class TooltipRenderer(
                 val fillColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
-                    spec.isOutlier -> Colors.mimicTransparency(spec.fill, spec.fill.alpha / 255.0, Color.WHITE)
-                    else -> Color.WHITE
+                    spec.isOutlier -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
+                    else -> WHITE
                 }
 
                 val textColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipTextColor()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipTextColor()
                     spec.isOutlier -> LIGHT_TEXT_COLOR.takeIf { fillColor.isReadableOnWhite() } ?: DARK_TEXT_COLOR
-                    else -> Color.BLACK
+                    else -> BLACK
                 }
 
                 val borderColor = when {

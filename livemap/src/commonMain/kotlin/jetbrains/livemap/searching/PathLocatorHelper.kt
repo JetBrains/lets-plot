@@ -9,7 +9,6 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.typedGeometry.minus
-import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -17,10 +16,6 @@ import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
 class PathLocatorHelper : LocatorHelper {
-    override fun getColor(target: EcsEntity): Color? {
-        return target.get<ChartElementComponent>().strokeColor
-    }
-
     override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
         if (!target.contains(LOCATABLE_COMPONENTS)) {
             return false

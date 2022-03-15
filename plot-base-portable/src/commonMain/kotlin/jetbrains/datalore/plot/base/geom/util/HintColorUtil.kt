@@ -7,45 +7,96 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.GeomKind.*
+import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.render.point.NamedShape
+import jetbrains.datalore.plot.base.render.point.TinyPointShape
 
 object HintColorUtil {
-    fun fromColor(p: DataPointAesthetics): Color {
-        return fromColorValue(
+    fun colorWithAlpha(p: DataPointAesthetics): Color {
+        return applyAlpha(
             p.color()!!,
             p.alpha()!!
         )
     }
 
-    fun fromFill(p: DataPointAesthetics): Color {
-        return fromColorValue(
+    fun fillWithAlpha(p: DataPointAesthetics): Color {
+        return applyAlpha(
             p.fill()!!,
             p.alpha()!!
         )
     }
 
-    fun fromColorValue(color: Color, alpha: Double): Color {
+    fun applyAlpha(color: Color, alpha: Double): Color {
         val intAlpha = (255 * alpha).toInt()
         return if (solid(color)) {
             color.changeAlpha(intAlpha)
         } else color
     }
 
-    fun fromMappedAndVisibleColors(
+    fun createColorMarkerMapper(
+        geomKind: GeomKind?,
         ctx: GeomContext,
-        fillFactory: (DataPointAesthetics) -> Color?,
-        strokeFactory: (DataPointAesthetics) -> Color?
     ): (DataPointAesthetics) -> List<Color> {
-        val isMappedFill = ctx.isMappedAes(Aes.FILL)
-        val isMappedColor = ctx.isMappedAes(Aes.COLOR)
-        return { p: DataPointAesthetics ->
-            listOfNotNull(
-                // should be mapped and visible
-                fillFactory(p).takeIf { isMappedFill && p.alpha()!! > 0 },
-                strokeFactory(p).takeIf { isMappedColor && p.size()!! > 0 },
-            )
+        return createColorMarkerMapper(
+            geomKind,
+            ctx.isMappedAes(Aes.FILL),
+            ctx.isMappedAes(Aes.COLOR),
+        )
+    }
+
+    private fun pointFillMapper(p:DataPointAesthetics): Color =
+        when (val shape = p.shape()) {
+            is NamedShape -> AestheticsUtil.fill(shape.isFilled, shape.isSolid, p)
+            TinyPointShape -> p.color()!!
+            else -> Color.TRANSPARENT
         }
+
+    fun createColorMarkerMapper(
+        geomKind: GeomKind?,
+        isMappedFill: Boolean,
+        isMappedColor: Boolean
+    ): (DataPointAesthetics) -> List<Color> {
+        val fillColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
+            POINT -> this::pointFillMapper
+            else -> this::fillWithAlpha
+        }.let { fillSelector -> { p: DataPointAesthetics ->
+            fillSelector(p).takeIf { it.alpha > 0 } }
+        }
+
+        val strokeColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
+            ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT, POINT_RANGE, TEXT, TILE -> HintColorUtil::colorWithAlpha
+            else -> DataPointAesthetics::color // border always ignores alpha
+        }.let { colorSelector -> { p: DataPointAesthetics ->
+            colorSelector(p)?.takeIf { it.alpha > 0 && p.size() != 0.0 } }
+        }
+
+        val colorBars: List<(DataPointAesthetics) -> Color?> = when (geomKind) {
+            null ->
+                listOfNotNull(
+                    fillColorGetter.takeIf { isMappedFill },
+                    strokeColorGetter.takeIf { isMappedColor },
+                )
+
+            PATH, CONTOUR, DENSITY2D, FREQPOLY, LINE, STEP ->
+                listOf(strokeColorGetter) // show even without mapping (usecase - layers with const color)
+
+            DENSITY -> when {
+                !isMappedFill -> listOf(strokeColorGetter)
+                else -> listOfNotNull(
+                    fillColorGetter.takeIf { isMappedFill },
+                    strokeColorGetter.takeIf { isMappedColor },
+                )
+            }
+
+            else ->
+                listOfNotNull(
+                    fillColorGetter.takeIf { isMappedFill && Aes.FILL in GeomMeta.renders(geomKind) },
+                    strokeColorGetter.takeIf { isMappedColor && Aes.COLOR in GeomMeta.renders(geomKind) },
+                )
+        }
+
+        return { p: DataPointAesthetics -> colorBars.mapNotNull { it(p) } }
     }
 }

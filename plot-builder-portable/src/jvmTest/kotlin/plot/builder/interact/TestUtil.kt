@@ -11,7 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
@@ -284,12 +284,12 @@ object TestUtil {
 
     internal fun rectTarget(key: Any, rect: DoubleRectangle): TargetPrototype {
         val rectShape = HitShape.rect(rect)
-        return TargetPrototype(rectShape, { key as Int }, params(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(rectShape, { key as Int }, tooltip(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     internal fun pointTarget(key: Any, p: DoubleVector): TargetPrototype {
         val pointShape = HitShape.point(p, 0.0)
-        return TargetPrototype(pointShape, { key as Int }, params(), TipLayoutHint.Kind.VERTICAL_TOOLTIP)
+        return TargetPrototype(pointShape, { key as Int }, tooltip(), TipLayoutHint.Kind.VERTICAL_TOOLTIP)
     }
 
     internal fun pathTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
@@ -299,12 +299,12 @@ object TestUtil {
                 key,
                 hitIndex
             )
-        }, params(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        }, tooltip(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     internal fun pathTarget(points: List<DoubleVector>): TargetPrototype {
         val pathShape = HitShape.path(points)
-        return TargetPrototype(pathShape, identity(), params(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(pathShape, identity(), tooltip(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     private fun encodeIndex(key: Int, integer: Int?): Int {
@@ -321,12 +321,12 @@ object TestUtil {
 
     internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): TargetPrototype {
         val pathShape = HitShape.path(points)
-        return TargetPrototype(pathShape, indexMapper, params(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(pathShape, indexMapper, tooltip(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     internal fun polygonTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
         val polygonShape = HitShape.polygon(points)
-        return TargetPrototype(polygonShape, { key }, params(), TipLayoutHint.Kind.CURSOR_TOOLTIP)
+        return TargetPrototype(polygonShape, { key }, tooltip(), TipLayoutHint.Kind.CURSOR_TOOLTIP)
     }
 
     fun point(x: Double, y: Double): DoubleVector {

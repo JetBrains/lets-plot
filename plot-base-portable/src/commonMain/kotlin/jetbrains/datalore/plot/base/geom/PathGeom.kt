@@ -41,7 +41,7 @@ open class PathGeom : GeomBase() {
             dataPoints,
             linesHelper,
             myClosePath = false,
-            { p -> listOf(HintColorUtil.fromColor(p)) },
+            HintColorUtil.createColorMarkerMapper(GeomKind.PATH, ctx),
             ctx.flipped
         )
 

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -202,7 +202,7 @@ class TooltipSkippedAesTest {
             return factory.create(
                 GeomTarget(
                     hitIndex = 0,
-                    tipLayoutHint = TipLayoutHint.cursorTooltip(DoubleVector.ZERO, Color.BLACK, colors = emptyList()),
+                    tipLayoutHint = cursorTooltip(DoubleVector.ZERO),
                     aesTipLayoutHints = emptyMap()
                 )
             )

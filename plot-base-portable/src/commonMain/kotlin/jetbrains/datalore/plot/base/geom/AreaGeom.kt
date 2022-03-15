@@ -8,16 +8,11 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil.fromFill
-import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
+import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.params
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -68,16 +63,10 @@ open class AreaGeom : GeomBase() {
     }
 
     protected open fun setupTooltipParams(aes: DataPointAesthetics, ctx: GeomContext): TooltipParams {
-        return params()
-            .setMainColor(fromFill(aes))
-            .setColors(
-                HintColorUtil.fromMappedAndVisibleColors(
-                    ctx,
-                    fillFactory = HintColorUtil::fromFill,
-                    strokeFactory = DataPointAesthetics::color
-                ).invoke(aes)
-            )
-      }
+        return tooltip {
+            markerColors = HintColorUtil.createColorMarkerMapper(GeomKind.AREA, ctx).invoke(aes)
+        }
+    }
 
     private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics): DoubleVector? {
         val coord = GeomUtil.TO_LOCATION_X_Y(p)

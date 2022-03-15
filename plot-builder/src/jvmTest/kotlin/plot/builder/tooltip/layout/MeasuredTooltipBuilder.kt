@@ -19,7 +19,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
     private var mySize: DoubleVector? = null
     private var myObjectRadius: Double? = null
     private var myText: String? = null
-    private var myFill: Color? = null
+    private var myFillColor: Color? = null
     private var myAnchor: TooltipAnchor? = null
 
     fun size(v: DoubleVector): MeasuredTooltipBuilder {
@@ -41,8 +41,8 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
         return this
     }
 
-    private fun fill(v: Color): MeasuredTooltipBuilder {
-        myFill = v
+    private fun fillColor(v: Color): MeasuredTooltipBuilder {
+        myFillColor = v
         return this
     }
 
@@ -56,28 +56,23 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
         return MeasuredTooltip(
             TooltipSpec(
                 layoutHint = hint,
-                lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
                 title = null,
-                fill = myFill!!,
+                lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
+                fill = myFillColor!!,
+                markerColors = emptyList(),
                 isOutlier = true,
-                anchor = myAnchor,
-                markerColors = emptyList()
+                anchor = myAnchor
             ),
             mySize!!, TooltipBox())
     }
 
     private fun createHint(): TipLayoutHint {
         return when (myLayoutHint) {
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!, myFill, colors = emptyList())
-
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!, myFill, colors = emptyList())
-
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord, myFill, colors = emptyList())
-
-            Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, myFill)
-
-            Kind.Y_AXIS_TOOLTIP -> TipLayoutHint.yAxisTooltip(myCoord, myFill)
-
+            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!)
+            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!)
+            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord)
+            Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, fillColor = myFillColor)
+            Kind.Y_AXIS_TOOLTIP -> TipLayoutHint.yAxisTooltip(myCoord, fillColor = myFillColor)
             else -> throw IllegalStateException("Unknown layout hint")
         }
     }
@@ -140,7 +135,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
                 builder.size(myDefaultTooltipSize!!)
             }
 
-            builder.fill(myDefaultFill)
+            builder.fillColor(myDefaultFill)
             return builder
         }
     }
