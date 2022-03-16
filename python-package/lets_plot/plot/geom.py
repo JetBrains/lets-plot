@@ -2899,6 +2899,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
             geom_violin(aes(violinwidth='vw', fill='x'), stat='identity')
 
     |
+
     .. jupyter-execute::
         :linenos:
         :emphasize-lines: 10-11

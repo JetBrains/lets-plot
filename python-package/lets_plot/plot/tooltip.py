@@ -102,7 +102,7 @@ class layer_tooltips(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 7
+            :emphasize-lines: 6
 
             from lets_plot import *
             LetsPlot.setup_html()
@@ -389,35 +389,6 @@ class layer_tooltips(FeatureSpec):
     def color(self, value):
         """
         Function `color(value)` is deprecated.
-
-        The color for the general tooltip.
-
-        Parameters
-        ----------
-        value : str
-            Color of the tooltip.
-
-        Returns
-        -------
-        `layer_tooltips`
-            Layer tooltips specification.
-
-        Examples
-        --------
-        .. jupyter-execute::
-            :linenos:
-            :emphasize-lines: 10
-
-            import numpy as np
-            from lets_plot import *
-            LetsPlot.setup_html()
-            n = 100
-            np.random.seed(42)
-            x = np.random.normal(size=n)
-            y = np.random.normal(size=n)
-            ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
-                geom_point(tooltips=layer_tooltips().line('(^x, ^y)')\\
-                                                    .color('magenta'))
 
         """
         print("WARN: The function color() is deprecated and is no longer supported.")
