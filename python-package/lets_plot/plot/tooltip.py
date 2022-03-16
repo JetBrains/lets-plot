@@ -433,7 +433,7 @@ class layer_tooltips(FeatureSpec):
         Parameters
         ----------
         value : str
-            Enriched string which becomes one title line of the tooltip.
+            Enriched string which becomes the title of the tooltip.
 
         Returns
         -------
