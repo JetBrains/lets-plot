@@ -109,7 +109,6 @@ class layer_tooltips(FeatureSpec):
             layer_tooltips().format('@x', '.2f')\\
                             .line('@x @y')\\
                             .line('^fill')\\
-                            .color('black')\\
                             .as_dict()
 
         """

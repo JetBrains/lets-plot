@@ -186,8 +186,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
             geom_livemap(geodesic=False, projection='epsg4326', \\
                          symbol='point', color='white', \\
                          tiles=maptiles_lets_plot(theme='dark'), \\
-                         tooltips=layer_tooltips().line('@city')\\
-                                                  .color('black')) + \\
+                         tooltips=layer_tooltips().line('@city')) + \\
             geom_path(color='white') + \\
             ggtitle('SQ23 - the longest scheduled airline flight '
                     'by great circle distance since 2020')
