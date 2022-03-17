@@ -96,13 +96,13 @@ Also read:
   - Automatic word wrap makes long text values look better
   - Tooltip title 
   
-    You can use new method `title()` in the [Tooltip castomization API](https://lets-plot.org/pages/tooltips.html) to add a title in the tooltip.
+    You can use new method `title()` in the [Tooltip castomization API](https://lets-plot.org/pages/tooltips.html) to add a title to tooltip.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/tooltip_title.ipynb).
                                          
 - ### Maps
 
-  Our interactive map widget now supports an automatic size adjustment for markers on map (i.e. the radius of points and the width of lines).
+  Our interactive map widget now supports automatic size adjustment for markers on map (i.e. the radius of points and the width of lines) when zooming.
   You can control this behavior using new parameters `data_size_zoomin, const_size_zoomin` in `geom_livemap()`.
 
   Also note new "reset" tool-button.                        
@@ -112,7 +112,7 @@ Also read:
 
 - ### Facets
 
-  "Free" scales are now supported. 
+  "Free" scales are now supported on faceted plots. 
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/facets_free_scales.ipynb).
 
