@@ -27,7 +27,7 @@
              
 - New in `geom_livemap()`:
   - The `Reset` button: returns the map widget to its initial zoom/location state.
-  - Parameters `data_size_zoomin, const_size_zoomin`: allow to configure how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map.
+  - Parameters `data_size_zoomin, const_size_zoomin`: allow configuring how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map.
   - Parameter `ontop` that controls z-index of the `geom_livemap` layer.
   - Parameter `show_coord_pick_tools` to show "copy location" and "draw geometry" buttons.
 
