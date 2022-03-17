@@ -29,27 +29,13 @@ class Issue_OOM_105 {
                 'layers':   [
                                 {
                                     'geom': 'smooth'
+                                },
+                                {
+                                    'geom': 'point'
                                 }
                             ]
             }
         """.trimIndent()
-//        val spec = """
-//            {
-//                'kind': 'plot',
-//                'mapping':  {
-//                                'x': 'Task interval coefficient of variation',
-//                                'y': 'Average processing time'
-//                            },
-//                'layers':   [
-//                                {
-//                                    'geom': 'smooth'
-//                                },
-//                                {
-//                                    'geom': 'point'
-//                                }
-//                            ]
-//            }
-//        """.trimIndent()
 
         val plotSpec = HashMap(parsePlotSpec(spec))
 
