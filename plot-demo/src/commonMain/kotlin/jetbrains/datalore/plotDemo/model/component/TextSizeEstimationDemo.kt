@@ -14,74 +14,20 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
+import jetbrains.datalore.plotDemo.model.component.CharCategory.Companion.getCharRatio
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgUtils
 
 class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
 
-    // todo experimental rule for text width calculating
-    enum class CharCategory(val value: Double) {
-        EXTRA_NARROW(0.5),
-        NARROW(0.6),
-        NORMAL(1.0),
-        WIDE(1.3),
-        EXTRA_WIDE(1.5);
+    fun width(text: String, font: Font, fontRatio: Double): Double {
 
-        val nameWithRatio = "$name ($value)"
+        //   val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 1.0
+        //   val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
 
-        companion object {
-            private val EXTRA_NARROW_CHARS = listOf('I', 'i', 'j', 'l', '.', ',', '\'', '|', '!', ':', ';', ' ')
-            private val NARROW_CHARS =
-                listOf('f', 'r', 't', '(', ')', '[', ']', '{', '}', '\\', '/', '*', '-', '"', '`')
-            private val EXTRA_WIDE_CHARS = listOf('m', 'M', 'W', '%', '@')
-            private val CAPITALS_OF_NORMAL_WIDTH = listOf('E', 'F', 'J', 'L', 'X', 'Z')
-            private val WIDE_CHARS =
-                listOf('w', '+', '&') + ('A'..'Z') - EXTRA_NARROW_CHARS - CAPITALS_OF_NORMAL_WIDTH - EXTRA_WIDE_CHARS
-            private val NORMAL_CHARS = (32..126).map(Int::toChar) -
-                    EXTRA_NARROW_CHARS - NARROW_CHARS - EXTRA_WIDE_CHARS - WIDE_CHARS
-
-            private fun getCharCategory(ch: Char): CharCategory {
-                return when (ch) {
-                    in EXTRA_NARROW_CHARS -> EXTRA_NARROW
-                    in NARROW_CHARS -> NARROW
-                    in EXTRA_WIDE_CHARS -> EXTRA_WIDE
-                    in WIDE_CHARS -> WIDE
-                    else -> NORMAL
-                }
-            }
-
-            private fun getCharListByCategory(category: CharCategory): List<Char> {
-                return when (category) {
-                    EXTRA_NARROW -> EXTRA_NARROW_CHARS
-                    NARROW -> NARROW_CHARS
-                    NORMAL -> NORMAL_CHARS
-                    WIDE -> WIDE_CHARS
-                    EXTRA_WIDE -> EXTRA_WIDE_CHARS
-                }
-            }
-
-            fun getCharRatio(ch: Char) = getCharCategory(ch).value
-
-            fun getCharCategoryNames() = values().map(CharCategory::name)
-            fun getCharCategoryNamesWithRatios() = values().map(CharCategory::nameWithRatio)
-
-            fun getCharsForCategory(catName: String?): List<Char> {
-                val category = values().find { it.name == catName || it.nameWithRatio == catName }
-                return category?.let { getCharListByCategory(it) } ?: emptyList()
-            }
-        }
-    }
-
-    fun width(text: String, font: Font, isMonospaced: Boolean, widthRatio: Double): Double {
-        val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 1.0
-        val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
-        
-        val ratioFunc: (Char) -> Double = when {
-            isMonospaced -> { { FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED } }
-            else -> CharCategory::getCharRatio
-        }
-        val width = text.map(ratioFunc).sum() * font.size * widthRatio
+        val options = getOptionsForFont(font.family.toString())
+        val width = text.map { getCharRatio(it, options) }.sum() * font.size * fontRatio
         return if (font.isBold) {
             width //* FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
         } else {
@@ -94,17 +40,20 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             return DoubleVector.ZERO
         }
         return DoubleVector(
-            width(spec.text, spec.font, spec.isMonospaced, widthRatio),
+            width(spec.text, spec.font, widthRatio),
             spec.font.size.toDouble()
         )
     }
 
-    fun createModel(lines: List<String>, font: Font, isMonospaced: Boolean, fontWidthRatio: Double): GroupComponent {
+    fun createModel(lines: List<String>, font: Font, fontWidthRatio: Double): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
         var y = 20.0
+        val lineInterval = 10.0
+        val rowsCount = (demoInnerSize.y / (font.size + lineInterval)).toInt() - 1
+
         lines
-            .map { line -> LabelSpec(line, font, isMonospaced) }
+            .map { line -> LabelSpec(line, font) }
             .forEachIndexed { index, spec ->
                 val textLabel = createTextLabel(spec)
 
@@ -117,9 +66,9 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
 
                 groupComponent.add(svgRect(rectNew, Color.MAGENTA, strokeWidth = 1.5))
 
-                y += titleSize.y + 10.0
+                y += titleSize.y + lineInterval
 
-                if ((index + 1) % 30 == 0) {
+                if ((index + 1) % rowsCount == 0) {
                     x += titleSize.x + 150.0
                     y = 20.0
                 }
@@ -140,13 +89,12 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         private class LabelSpec(
             val text: String,
             val font: Font,
-            val isMonospaced: Boolean
         )
 
         private fun createTextLabel(spec: LabelSpec): TextLabel {
             val label = TextLabel(spec.text)
 
-            label.setFontFamily(spec.font.family.toString())
+            label.setFontFamily("\"${spec.font.family}\"")
             if (spec.font.isItalic) {
                 label.setFontStyle("italic")
             }
@@ -169,8 +117,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
-            isMonospaced: Boolean,
-            fontwidthRatio: Double
+            fontWidthRatio: Double
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
@@ -183,8 +130,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                                 isBold,
                                 isItalic
                             ),
-                            isMonospaced,
-                            fontwidthRatio
+                            fontWidthRatio
                         )
                     )
                 ).firstOrNull()

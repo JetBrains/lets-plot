@@ -11,13 +11,12 @@ import java.awt.GridLayout
 import javax.swing.*
 
 data class TextSettings(
-   val lines: List<String>,
-   val fontName: String,
-   val fontSize: Int,
-   val isBold: Boolean,
-   val isItalic: Boolean,
-   val isMonospaced: Boolean,
-   val fontWidthRatio: Double
+    val lines: List<String>,
+    val fontName: String,
+    val fontSize: Int,
+    val isBold: Boolean,
+    val isItalic: Boolean,
+    val fontWidthRatio: Double
 )
 
 class TextSizeDemoWindow(
@@ -25,21 +24,27 @@ class TextSizeDemoWindow(
     windowSize: Dimension,
     private val svgComponentFactory: (Dimension, TextSettings) -> JComponent?,
     categoryNames: List<String>,
-    private val categoryToChars: (String) -> List<Char>
+    private val categoryToChars: (String, String) -> List<Char>,
+    private val defaultFontRatio: (String) -> Double,
 ) : JFrame(title) {
 
-    private val myTextArea = JTextArea()
+    private val myTextArea = JTextArea(60, 1)
+    private val myScrollPane = JScrollPane(
+        myTextArea,
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+    )
 
     private val myCharCategories = JComboBox(categoryNames.toTypedArray())
 
     private val myCharCount = JSpinner()
-    private val myFontWidthRatio = JSpinner(SpinnerNumberModel(0.67, 0.1, 2.0, 0.01))
     private val myFontList = JComboBox(
         arrayOf(
-            "Lucida Grande", "Helvetica", "Arial", "Verdana", "Geneva",
-            "Times", "Times New Roman", "Georgia",
-            "Courier", "Courier New"
+            "Lucida Grande", "Helvetica", "Verdana", "Geneva", "Times New Roman", "Georgia", "Courier"
         )
+    )
+    private val myFontWidthRatio = JSpinner(
+        SpinnerNumberModel(defaultFontRatio(getSelectedFontName()), 0.1, 2.0, 0.01)
     )
 
     private val myFontSize = JSpinner()
@@ -51,23 +56,14 @@ class TextSizeDemoWindow(
     private val mySplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myInputPanel, myOutputPanel)
 
     private fun rebuild() {
-        val font = myFontList.selectedItem?.toString().let {
-            if (it.isNullOrEmpty()) {
-                myFontList.selectedIndex = 0
-                myFontList.getItemAt(0).toString()
-            } else {
-                it
-            }
-        }
         val plotComponent = svgComponentFactory(
-            Dimension(size.width / 2 , size.height),
+            Dimension(size.width - myTextArea.width - 50, size.height - 50),
             TextSettings(
                 lines = myTextArea.text.split("\n").filter(String::isNotEmpty),
-                fontName = "\"$font\"",
+                fontName = getSelectedFontName(),
                 fontSize = myFontSize.value.toString().toInt(),
                 isBold = myIsBold.isSelected,
                 isItalic = myIsItalic.isSelected,
-                isMonospaced = font in listOf("Courier New", "Courier", "monospace"), // todo
                 fontWidthRatio = myFontWidthRatio.value.toString().toDouble()
             )
         )
@@ -75,11 +71,11 @@ class TextSizeDemoWindow(
     }
 
     init {
-        myCharCount.addChangeListener { categoryChanged() }
+        myCharCount.addChangeListener { textAreaUpdate() }
         myFontSize.addChangeListener { rebuild() }
-        myCharCategories.addActionListener { categoryChanged() }
+        myCharCategories.addActionListener { textAreaUpdate() }
         myFontWidthRatio.addChangeListener { rebuild() }
-        myFontList.addActionListener { rebuild() }
+        myFontList.addActionListener { fontChanged() }
         myIsBold.addChangeListener { rebuild() }
         myIsItalic.addChangeListener { rebuild() }
         myTextArea.addCaretListener { rebuild() }
@@ -89,17 +85,15 @@ class TextSizeDemoWindow(
         size = windowSize
         setLocationRelativeTo(null)
 
-        mySplitPane.dividerLocation = size.width / 3
         mySplitPane.dividerSize = 0
 
         // input panel
 
         myInputPanel.layout = BoxLayout(myInputPanel, BoxLayout.Y_AXIS)
-
         myInputPanel.add(myCharCategories)
 
         myTextArea.lineWrap = true
-        myInputPanel.add(myTextArea)
+        myInputPanel.add(myScrollPane)
 
         val grid = JPanel()
         val gridLayout = GridLayout(5, 2)
@@ -109,12 +103,12 @@ class TextSizeDemoWindow(
         myCharCount.value = 15
         grid.add(myCharCount)
 
-        grid.add(JLabel("Ratio:"))
-        grid.add(myFontWidthRatio)
-
         grid.add(JLabel("Font:"))
         myFontList.isEditable = true;
         grid.add(myFontList)
+
+        grid.add(JLabel("Font ratio:"))
+        grid.add(myFontWidthRatio)
 
         grid.add(JLabel("Font size:"))
         myFontSize.value = 19
@@ -126,17 +120,35 @@ class TextSizeDemoWindow(
         myInputPanel.add(grid)
     }
 
-    private fun categoryChanged() {
+    private fun getSelectedFontName(): String {
+        return myFontList.selectedItem?.toString().let {
+            if (it.isNullOrEmpty()) {
+                myFontList.selectedIndex = 0
+                myFontList.getItemAt(0).toString()
+            } else {
+                it
+            }
+        }
+    }
+
+    private fun textAreaUpdate() {
         myTextArea.text = ""
         val n = myCharCount.value.toString().toInt()
         categoryToChars(
-            myCharCategories.selectedItem?.toString() ?: ""
-        ).forEach { ch -> myTextArea.append(List(n) { ch }.joinToString("") + "\n") }
+            myCharCategories.selectedItem?.toString() ?: "",
+            myFontList.selectedItem?.toString() ?: ""
+        ).forEach { ch ->
+            myTextArea.append(List(n) { ch }.joinToString("") + "\n")
+        }
         rebuild()
+    }
+
+    private fun fontChanged() {
+        myFontWidthRatio.value = defaultFontRatio(getSelectedFontName())
+        textAreaUpdate()
     }
 
     fun run() {
         isVisible = true
-        rebuild()
     }
 }

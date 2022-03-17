@@ -6,7 +6,9 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plotDemo.model.component.CharCategory
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
+import jetbrains.datalore.plotDemo.model.component.getFontRatio
 import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -29,7 +31,6 @@ fun main() {
             settings.fontSize,
             settings.isBold,
             settings.isItalic,
-            settings.isMonospaced,
             settings.fontWidthRatio
         )
         return svgRoot?.let(::createPlotComponent)
@@ -38,10 +39,11 @@ fun main() {
     SwingUtilities.invokeLater {
         TextSizeDemoWindow(
             "Text size estimation",
-            Dimension(1200, 1000),
+            Dimension(1600, 1200),
             ::buildPlotComponent,
-            categoryNames = TextSizeEstimationDemo.CharCategory.getCharCategoryNamesWithRatios(),
-            categoryToChars = TextSizeEstimationDemo.CharCategory::getCharsForCategory
+            categoryNames = CharCategory.getCharCategoryNamesWithRatios(),
+            categoryToChars = CharCategory::getCharsForCategory,
+            defaultFontRatio = ::getFontRatio
         ).run()
     }
 }
