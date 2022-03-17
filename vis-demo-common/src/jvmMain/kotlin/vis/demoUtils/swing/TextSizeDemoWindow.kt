@@ -16,7 +16,8 @@ data class TextSettings(
     val fontSize: Int,
     val isBold: Boolean,
     val isItalic: Boolean,
-    val fontWidthRatio: Double
+    val fontWidthRatio: Double,
+    val categoryRatio: Double?
 )
 
 class TextSizeDemoWindow(
@@ -26,9 +27,10 @@ class TextSizeDemoWindow(
     categoryNames: List<String>,
     private val categoryToChars: (String, String) -> List<Char>,
     private val defaultFontRatio: (String) -> Double,
+    private val defaultCategoryRatio: (String?) -> Double?
 ) : JFrame(title) {
 
-    private val myTextArea = JTextArea(60, 1)
+    private val myTextArea = JTextArea(80, 1)
     private val myScrollPane = JScrollPane(
         myTextArea,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -36,7 +38,9 @@ class TextSizeDemoWindow(
     )
 
     private val myCharCategories = JComboBox(categoryNames.toTypedArray())
-
+    private val myCategoryRatio = JSpinner(
+        SpinnerNumberModel(getDefaultRatioForSelectedCategory(), 0.1, 2.0, 0.01)
+    )
     private val myCharCount = JSpinner()
     private val myFontList = JComboBox(
         arrayOf(
@@ -64,7 +68,12 @@ class TextSizeDemoWindow(
                 fontSize = myFontSize.value.toString().toInt(),
                 isBold = myIsBold.isSelected,
                 isItalic = myIsItalic.isSelected,
-                fontWidthRatio = myFontWidthRatio.value.toString().toDouble()
+                fontWidthRatio = myFontWidthRatio.value.toString().toDouble(),
+                categoryRatio = if (myCategoryRatio.value.toString() == "-1") {
+                    null
+                } else {
+                    myCategoryRatio.value.toString().toDouble()
+                }
             )
         )
         mySplitPane.rightComponent = plotComponent
@@ -74,6 +83,7 @@ class TextSizeDemoWindow(
         myCharCount.addChangeListener { textAreaUpdate() }
         myFontSize.addChangeListener { rebuild() }
         myCharCategories.addActionListener { textAreaUpdate() }
+        myCategoryRatio.addChangeListener { rebuild() }
         myFontWidthRatio.addChangeListener { rebuild() }
         myFontList.addActionListener { fontChanged() }
         myIsBold.addChangeListener { rebuild() }
@@ -90,14 +100,18 @@ class TextSizeDemoWindow(
         // input panel
 
         myInputPanel.layout = BoxLayout(myInputPanel, BoxLayout.Y_AXIS)
-        myInputPanel.add(myCharCategories)
+
+        val catGridPanel = JPanel()
+        catGridPanel.layout = GridLayout(0, 2)
+        catGridPanel.add(myCharCategories)
+        catGridPanel.add(myCategoryRatio)
+        myInputPanel.add(catGridPanel)
 
         myTextArea.lineWrap = true
         myInputPanel.add(myScrollPane)
 
         val grid = JPanel()
-        val gridLayout = GridLayout(5, 2)
-        grid.layout = gridLayout
+        grid.layout = GridLayout(0, 2)
 
         grid.add(JLabel("Char count to generate:"))
         myCharCount.value = 15
@@ -130,17 +144,30 @@ class TextSizeDemoWindow(
             }
         }
     }
+    private fun getDefaultRatioForSelectedCategory(): Double? {
+        return defaultCategoryRatio(myCharCategories.selectedItem?.toString())
+    }
 
     private fun textAreaUpdate() {
         myTextArea.text = ""
+
+        val categoryRatio = getDefaultRatioForSelectedCategory()
+        if (categoryRatio == null) {
+            myCategoryRatio.isEnabled = false
+            myCategoryRatio.value = -1
+        } else  {
+            myCategoryRatio.isEnabled = true
+            myCategoryRatio.value = categoryRatio
+        }
+
         val n = myCharCount.value.toString().toInt()
-        categoryToChars(
+        val lines = categoryToChars(
             myCharCategories.selectedItem?.toString() ?: "",
             myFontList.selectedItem?.toString() ?: ""
-        ).forEach { ch ->
-            myTextArea.append(List(n) { ch }.joinToString("") + "\n")
+        ).map { ch ->
+            List(n) { ch }.joinToString("") + "\n"
         }
-        rebuild()
+        myTextArea.append(lines.joinToString(""))
     }
 
     private fun fontChanged() {

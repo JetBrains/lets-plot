@@ -21,13 +21,15 @@ import jetbrains.datalore.vis.svg.SvgUtils
 
 class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
 
-    fun width(text: String, font: Font, fontRatio: Double): Double {
+    fun width(text: String, font: Font, fontRatio: Double, categoryRatio: Double?): Double {
 
         //   val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 1.0
         //   val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
 
         val options = getOptionsForFont(font.family.toString())
-        val width = text.map { getCharRatio(it, options) }.sum() * font.size * fontRatio
+        val width = text.map {
+            categoryRatio ?: getCharRatio(it, options)
+        }.sum() * font.size * fontRatio
         return if (font.isBold) {
             width //* FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
         } else {
@@ -35,17 +37,17 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         }
     }
 
-    private fun titleDimensions(spec: LabelSpec, widthRatio: Double): DoubleVector {
+    private fun titleDimensions(spec: LabelSpec, widthRatio: Double, categoryRatio: Double?): DoubleVector {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
         return DoubleVector(
-            width(spec.text, spec.font, widthRatio),
+            width(spec.text, spec.font, widthRatio, categoryRatio),
             spec.font.size.toDouble()
         )
     }
 
-    fun createModel(lines: List<String>, font: Font, fontWidthRatio: Double): GroupComponent {
+    fun createModel(lines: List<String>, font: Font, fontWidthRatio: Double, categoryRatio: Double?): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
         var y = 20.0
@@ -61,7 +63,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                 SvgUtils.transformTranslate(element, x, y)
                 groupComponent.add(element)
 
-                val titleSize = titleDimensions(spec, fontWidthRatio)
+                val titleSize = titleDimensions(spec, fontWidthRatio, categoryRatio)
                 val rectNew = DoubleRectangle(x, y - titleSize.y / 2, titleSize.x, titleSize.y)
 
                 groupComponent.add(svgRect(rectNew, Color.MAGENTA, strokeWidth = 1.5))
@@ -117,7 +119,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
-            fontWidthRatio: Double
+            fontWidthRatio: Double,
+            categoryRatio: Double?
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
@@ -130,7 +133,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                                 isBold,
                                 isItalic
                             ),
-                            fontWidthRatio
+                            fontWidthRatio,
+                            categoryRatio
                         )
                     )
                 ).firstOrNull()

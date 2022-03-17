@@ -31,7 +31,8 @@ fun main() {
             settings.fontSize,
             settings.isBold,
             settings.isItalic,
-            settings.fontWidthRatio
+            settings.fontWidthRatio,
+            settings.categoryRatio
         )
         return svgRoot?.let(::createPlotComponent)
     }
@@ -43,7 +44,8 @@ fun main() {
             ::buildPlotComponent,
             categoryNames = CharCategory.getCharCategoryNamesWithRatios(),
             categoryToChars = CharCategory::getCharsForCategory,
-            defaultFontRatio = ::getFontRatio
+            defaultFontRatio = ::getFontRatio,
+            defaultCategoryRatio = CharCategory::getDefaultCategoryRatio
         ).run()
     }
 }

@@ -137,8 +137,6 @@ enum class CharCategory(private val value: Double) {
     NORMAL(1.0),
     WIDE(1.4);
 
-    val nameWithRatio = "$name ($value)"
-
     companion object {
 
         fun getCharRatio(ch: Char, options: TextFontOptions): Double {
@@ -160,7 +158,7 @@ enum class CharCategory(private val value: Double) {
         )
 
         fun getCharCategoryNamesWithRatios(): List<String> =
-            values().map(CharCategory::nameWithRatio) + extendedCharLists.keys
+            values().map(CharCategory::name) + extendedCharLists.keys
 
         private fun getCharListByCategory(category: CharCategory, font: String): List<Char> {
             val options = getOptionsForFont(font)
@@ -172,12 +170,16 @@ enum class CharCategory(private val value: Double) {
         }
 
         fun getCharsForCategory(catName: String?, font: String): List<Char> {
-            val category = values().find { it.name == catName || it.nameWithRatio == catName }
+            val category = values().find { it.name == catName }
             return when {
                 category != null -> getCharListByCategory(category, font)
                 extendedCharLists.containsKey(catName) -> extendedCharLists[catName]!!.toList()
                 else -> emptyList()
             }
+        }
+
+        fun getDefaultCategoryRatio(catName: String?): Double? {
+            return values().find { it.name == catName }?.value
         }
     }
 }
