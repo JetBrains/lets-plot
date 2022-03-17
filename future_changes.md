@@ -34,7 +34,7 @@
 - New geometries:
   - `geom_violin()`
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21a/notebooks/geom_violin.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_violin.ipynb).
 
   - `geom_dotplot()`
 
