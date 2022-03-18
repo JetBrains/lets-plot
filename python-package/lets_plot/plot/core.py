@@ -110,7 +110,7 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     using geom_* or stat_* calls but they can be created directly using this function.
 
     Examples
-    ---------
+    --------
     .. jupyter-execute::
         :linenos:
         :emphasize-lines: 8

@@ -29,7 +29,7 @@ def ggtitle(label, subtitle=None):
     Split a long title/subtitle into two lines or more using `\n` as a text separator.
 
     Returns
-    --------
+    -------
     `FeatureSpec`
         Plot title specification.
 
