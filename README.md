@@ -59,40 +59,63 @@ Also read:
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
 
-## What is new in 2.2.0
+## What is new in 2.3.0
 
-- Added support for `coord_flip()`. 
+- ### Geometries
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/coord_flip.ipynb).
-                          
+  - `geom_violin()`
 
-- Improved plot appearance and better `theme` support:
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_violin.ipynb).
 
-  - Bigger fonts across the board;
-  - Gridlines;
-  - 4 themes from ggplot2 (R) library: `theme_grey(), theme_light(), theme_classic(), theme_minimal()`;
-  - Our designer theme: `theme_minimal2()` (used by default);
-  - `theme_none()` for the case you want to design another theme;
-  - A lot more parameters in the `theme()` function, also helpers: `element_line()`, `element_rect()`, `element_text()`.
+  - `geom_dotplot()`
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/themes.ipynb).
-    
-> Note: fonts size, family and face still can not be configured.
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_dotplot.ipynb).
+
+  - `geom_ydotplot()`
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_ydotplot.ipynb).
+
+- ### Labels and Legends
+
+  - Plot **subtitle** and **caption** are now supported.
+  
+    You can use parameter `subtitle`in `ggtitle()` and `labs()` to add a subtitle below the plot' title, and 
+    parameter `caption` in `labs()` to add a caption below plot.
+  
+  - Multi-line labels.
+
+    The 'newline' character (`\n`) now works as `line break` in plot title, subtitle and caption, in legend's title and in tooltips.
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/title_subtitle_caption.ipynb).
+
+- ### Tooltips
+
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22a/images/tooltip.png" alt="f-22a/images/tooltip.png" width="362" height="310">
+
+  - Improved appearance
+  - Automatic word wrap makes long text values look better
+  - Tooltip title 
+  
+    You can use new method `title()` in the [Tooltip castomization API](https://lets-plot.org/pages/tooltips.html) to add a title to tooltip.
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/tooltip_title.ipynb).
+                                         
+- ### Maps
+
+  Our interactive map widget now supports automatic size adjustment for markers on map (i.e. the radius of points and the width of lines) when zooming.
+  You can control this behavior using new parameters `data_size_zoomin, const_size_zoomin` in `geom_livemap()`.
+
+  Also note new "reset" tool-button.                        
+
+<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22a/images/map_airports_zoomin.gif" alt="f-22a/images/map_airports_zoomin.gif">
 
 
-- Improved Date-time formatting support:
+- ### Facets
 
-  - tooltip format() should understand date-time format pattern [[#387](https://github.com/JetBrains/lets-plot/issues/387)];
-  - scale_x_datetime should apply date-time formatting to the breaks [[#392](https://github.com/JetBrains/lets-plot/issues/392)].
+  "Free" scales are now supported on faceted plots. 
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-21-10/notebooks/datetime_formatting.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/facets_free_scales.ipynb).
 
-
-- `corr_plot()` function now also accepts pre-computed correlation coefficients. I.e. the following two expressions are equivalent:
-```python
-    corr_plot(iris_df).points().labels().build()
-    corr_plot(iris_df.corr()).points().labels().build()  # new
-``` 
 
 ## Change Log
 
