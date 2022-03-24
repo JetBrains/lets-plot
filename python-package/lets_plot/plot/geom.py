@@ -855,8 +855,12 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
 
 def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
-                 bins=None,
                  binwidth=None,
+                 bins=None,
+                 method=None,
+                 stackdir=None,
+                 stackratio=None,
+                 dotsize=None,
                  center=None,
                  boundary=None,
                  **other_args):
@@ -985,8 +989,12 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 bins=bins,
                  binwidth=binwidth,
+                 bins=bins,
+                 method=method,
+                 stackdir=stackdir,
+                 stackratio=stackratio,
+                 dotsize=dotsize,
                  center=center,
                  boundary=boundary,
                  **other_args)
@@ -2786,7 +2794,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 **other_args):
+                draw_quantiles=None,
+                scale=None,
+                **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
 
@@ -2926,12 +2936,18 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 draw_quantiles=draw_quantiles,
+                 scale=scale,
                  **other_args)
 
 
 def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                  bins=None,
                   binwidth=None,
+                  bins=None,
+                  method=None,
+                  stackdir=None,
+                  stackratio=None,
+                  dotsize=None,
                   center=None,
                   boundary=None,
                   **other_args):
@@ -3073,8 +3089,12 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 bins=bins,
                  binwidth=binwidth,
+                 bins=bins,
+                 method=method,
+                 stackdir=stackdir,
+                 stackratio=stackratio,
+                 dotsize=dotsize,
                  center=center,
                  boundary=boundary,
                  **other_args)
