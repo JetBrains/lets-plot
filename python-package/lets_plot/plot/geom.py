@@ -861,6 +861,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
                  stackdir=None,
                  stackratio=None,
                  dotsize=None,
+                 stackgroups=None,
                  center=None,
                  boundary=None,
                  **other_args):
@@ -904,6 +905,8 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
         Use smaller values for closer, overlapping dots.
     dotsize : float, default=1.0
         The diameter of the dots relative to binwidth.
+    stackgroups : bool, default=False
+        Stacks dots across groups when method='histodot'.
     center : float
         When method is 'histodot', this specifies x-value to align bin centers to.
     boundary : float
@@ -995,6 +998,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
                  stackdir=stackdir,
                  stackratio=stackratio,
                  dotsize=dotsize,
+                 stackgroups=stackgroups,
                  center=center,
                  boundary=boundary,
                  **other_args)
@@ -2948,6 +2952,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                   stackdir=None,
                   stackratio=None,
                   dotsize=None,
+                  stackgroups=None,
                   center=None,
                   boundary=None,
                   **other_args):
@@ -2992,6 +2997,10 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
         Use smaller values for closer, overlapping dots.
     dotsize : float, default=1.0
         The diameter of the dots relative to binwidth.
+    stackgroups : bool, default=False
+        Separates overlapping stack groups when stackgroups=False.
+        Overlaps stack groups when method='dotdensity' and stackgroups=True.
+        Stacks dots across groups when method='histodot' and stackgroups=True.
     center : float
         When method is 'histodot', this specifies x-value to align bin centers to.
     boundary : float
@@ -3095,6 +3104,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stackdir=stackdir,
                  stackratio=stackratio,
                  dotsize=dotsize,
+                 stackgroups=stackgroups,
                  center=center,
                  boundary=boundary,
                  **other_args)
