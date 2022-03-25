@@ -866,7 +866,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
                  boundary=None,
                  **other_args):
     """
-    Dot plots represent individual observations in a batch of data with circular dots.
+    Dotplot represents individual observations in a batch of data with circular dots.
     The diameter of a dot corresponds to the maximum width or bin width, depending on the binning algorithm.
 
     Parameters
@@ -2957,7 +2957,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                   boundary=None,
                   **other_args):
     """
-    Dot plots represent individual observations in a batch of data with circular dots.
+    Dotplot represents individual observations in a batch of data with circular dots.
     The diameter of a dot corresponds to the maximum width or bin width, depending on the binning algorithm.
     `geom_ydotplot()` is an obvious blend of `geom_violin()` and `geom_dotplot()`.
 
