@@ -5,3 +5,5 @@
 ### Changed
 
 ### Fixed
+
+- differences in tooltip color marker for plots with and without livemap
