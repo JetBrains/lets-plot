@@ -243,8 +243,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE,
-                Aes.WIDTH
+                Aes.SIZE
             )
 
             GeomKind.RIBBON -> listOf(
