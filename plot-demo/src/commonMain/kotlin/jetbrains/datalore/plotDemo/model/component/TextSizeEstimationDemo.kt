@@ -13,41 +13,51 @@ import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.presentation.CharCategory.Companion.getCharRatio
+import jetbrains.datalore.plot.builder.presentation.getOptionsForFont
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.plotDemo.model.component.CharCategory.Companion.getCharRatio
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgUtils
 
 class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
 
-    fun width(text: String, font: Font, fontRatio: Double, categoryRatio: Double?): Double {
-
-        //   val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 1.0
-        //   val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
-
+    fun width(text: String, font: Font, fontRatio: Double?, categoryRatio: Double?, boldRatio: Double?): Double {
         val options = getOptionsForFont(font.family.toString())
         val width = text.map {
             categoryRatio ?: getCharRatio(it, options)
-        }.sum() * font.size * fontRatio
+        }.sum() *
+                font.size *
+                (fontRatio ?: options.fontRatio)
         return if (font.isBold) {
-            width //* FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
+            width * (boldRatio ?: options.fontBoldRatio)
         } else {
             width
         }
     }
 
-    private fun titleDimensions(spec: LabelSpec, widthRatio: Double, categoryRatio: Double?): DoubleVector {
+    private fun titleDimensions(
+        spec: LabelSpec,
+        widthRatio: Double?,
+        categoryRatio: Double?,
+        boldRatio: Double?,
+    ): DoubleVector {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
         return DoubleVector(
-            width(spec.text, spec.font, widthRatio, categoryRatio),
+            width(spec.text, spec.font, widthRatio, categoryRatio, boldRatio),
             spec.font.size.toDouble()
         )
     }
 
-    fun createModel(lines: List<String>, font: Font, fontWidthRatio: Double, categoryRatio: Double?): GroupComponent {
+    fun createModel(
+        lines: List<String>,
+        font: Font,
+        fontWidthRatio: Double?,
+        categoryRatio: Double?,
+        boldRatio: Double?
+    ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
         var y = 20.0
@@ -63,7 +73,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                 SvgUtils.transformTranslate(element, x, y)
                 groupComponent.add(element)
 
-                val titleSize = titleDimensions(spec, fontWidthRatio, categoryRatio)
+                val titleSize = titleDimensions(spec, fontWidthRatio, categoryRatio, boldRatio)
                 val rectNew = DoubleRectangle(x, y - titleSize.y / 2, titleSize.x, titleSize.y)
 
                 groupComponent.add(svgRect(rectNew, Color.MAGENTA, strokeWidth = 1.5))
@@ -119,8 +129,9 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
-            fontWidthRatio: Double,
-            categoryRatio: Double?
+            fontWidthRatio: Double?,
+            categoryRatio: Double?,
+            boldRatio: Double?
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
@@ -134,7 +145,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                                 isItalic
                             ),
                             fontWidthRatio,
-                            categoryRatio
+                            categoryRatio,
+                            boldRatio
                         )
                     )
                 ).firstOrNull()

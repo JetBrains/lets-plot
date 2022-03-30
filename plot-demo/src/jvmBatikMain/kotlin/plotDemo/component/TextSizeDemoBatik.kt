@@ -6,16 +6,17 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plotDemo.model.component.CharCategory
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
-import jetbrains.datalore.plotDemo.model.component.getFontRatio
-import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
+import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoCharCategories
+import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import java.awt.Color
 import java.awt.Dimension
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.JComponent
+import javax.swing.SwingUtilities
 
 fun main() {
     fun buildPlotComponent(demoInnerSize: Dimension, settings: TextSettings): JComponent? {
@@ -32,7 +33,8 @@ fun main() {
             settings.isBold,
             settings.isItalic,
             settings.fontWidthRatio,
-            settings.categoryRatio
+            settings.categoryRatio,
+            settings.boldRatio
         )
         return svgRoot?.let(::createPlotComponent)
     }
@@ -42,10 +44,10 @@ fun main() {
             "Text size estimation",
             Dimension(1600, 1200),
             ::buildPlotComponent,
-            categoryNames = CharCategory.getCharCategoryNamesWithRatios(),
-            categoryToChars = CharCategory::getCharsForCategory,
-            defaultFontRatio = ::getFontRatio,
-            defaultCategoryRatio = CharCategory::getDefaultCategoryRatio
+            categoryNames = TextSizeDemoCharCategories.getCategoryNamesForDemo(),
+            categoryToChars = TextSizeDemoCharCategories::getCharsForCategory,
+            fontToDefaultRatio = TextSizeDemoCharCategories::getFontRatio,
+            categoryToDefaultRatio = TextSizeDemoCharCategories::getDefaultRatioForCategory
         ).run()
     }
 }

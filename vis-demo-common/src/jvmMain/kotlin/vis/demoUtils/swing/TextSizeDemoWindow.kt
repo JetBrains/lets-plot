@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
+import jetbrains.datalore.plot.builder.presentation.CharCategory
+import jetbrains.datalore.plot.builder.presentation.getOptionsForFont
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridLayout
@@ -17,8 +19,41 @@ data class TextSettings(
     val isBold: Boolean,
     val isItalic: Boolean,
     val fontWidthRatio: Double,
-    val categoryRatio: Double?
+    val categoryRatio: Double?,
+    val boldRatio: Double
 )
+
+object TextSizeDemoCharCategories {
+
+    private val extendedCharLists = mapOf(
+        "All printable" to (32..126).map(Int::toChar),
+        "Letters" to ('a'..'z') + ('A'..'Z'),
+        "Digits" to ('0'..'9'),
+        "Symbols" to (32..126).map(Int::toChar) -
+                (('0'..'9') + ('a'..'z') + ('A'..'Z')),
+        "Extended chars" to (128..255).map(Int::toChar)
+    )
+
+    fun getCategoryNamesForDemo(): List<String> {
+        return CharCategory.values().map(CharCategory::name) + extendedCharLists.keys
+    }
+
+    fun getCharsForCategory(catName: String?, font: String): List<Char> {
+        val category = CharCategory.values().find { it.name == catName }
+        return when {
+            category != null -> CharCategory.getCharListByCategory(category, font)
+            extendedCharLists.containsKey(catName) -> extendedCharLists[catName]!!.toList()
+            else -> emptyList()
+        }
+    }
+
+    fun getDefaultRatioForCategory(catName: String?): Double? {
+        return CharCategory.values().find { it.name == catName }?.value
+    }
+
+    fun getFontRatio(font: String) = getOptionsForFont(font).fontRatio
+}
+
 
 class TextSizeDemoWindow(
     title: String,
@@ -26,8 +61,8 @@ class TextSizeDemoWindow(
     private val svgComponentFactory: (Dimension, TextSettings) -> JComponent?,
     categoryNames: List<String>,
     private val categoryToChars: (String, String) -> List<Char>,
-    private val defaultFontRatio: (String) -> Double,
-    private val defaultCategoryRatio: (String?) -> Double?
+    private val fontToDefaultRatio: (String) -> Double,
+    private val categoryToDefaultRatio: (String?) -> Double?
 ) : JFrame(title) {
 
     private val myTextArea = JTextArea(80, 1)
@@ -48,11 +83,14 @@ class TextSizeDemoWindow(
         )
     )
     private val myFontWidthRatio = JSpinner(
-        SpinnerNumberModel(defaultFontRatio(getSelectedFontName()), 0.1, 2.0, 0.01)
+        SpinnerNumberModel(fontToDefaultRatio(getSelectedFontName()), 0.1, 2.0, 0.01)
     )
 
     private val myFontSize = JSpinner()
     private val myIsBold = JCheckBox("bold")
+    private val myBoldRatio = JSpinner(
+        SpinnerNumberModel(1.2, 0.01, 2.0, 0.01)
+    )
     private val myIsItalic = JCheckBox("italic")
 
     private val myInputPanel = JPanel()
@@ -73,7 +111,8 @@ class TextSizeDemoWindow(
                     null
                 } else {
                     myCategoryRatio.value.toString().toDouble()
-                }
+                },
+                boldRatio = myBoldRatio.value.toString().toDouble()
             )
         )
         mySplitPane.rightComponent = plotComponent
@@ -89,6 +128,7 @@ class TextSizeDemoWindow(
         myIsBold.addChangeListener { rebuild() }
         myIsItalic.addChangeListener { rebuild() }
         myTextArea.addCaretListener { rebuild() }
+        myBoldRatio.addChangeListener { rebuild() }
 
         contentPane.add(mySplitPane, BorderLayout.CENTER)
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -129,6 +169,8 @@ class TextSizeDemoWindow(
         grid.add(myFontSize)
 
         grid.add(myIsBold)
+        grid.add(myBoldRatio)
+
         grid.add(myIsItalic)
 
         myInputPanel.add(grid)
@@ -145,7 +187,7 @@ class TextSizeDemoWindow(
         }
     }
     private fun getDefaultRatioForSelectedCategory(): Double? {
-        return defaultCategoryRatio(myCharCategories.selectedItem?.toString())
+        return categoryToDefaultRatio(myCharCategories.selectedItem?.toString())
     }
 
     private fun textAreaUpdate() {
@@ -171,7 +213,7 @@ class TextSizeDemoWindow(
     }
 
     private fun fontChanged() {
-        myFontWidthRatio.value = defaultFontRatio(getSelectedFontName())
+        myFontWidthRatio.value = fontToDefaultRatio(getSelectedFontName())
         textAreaUpdate()
     }
 
