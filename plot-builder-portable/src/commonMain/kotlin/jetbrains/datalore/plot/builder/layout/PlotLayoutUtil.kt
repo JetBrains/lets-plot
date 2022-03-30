@@ -28,7 +28,7 @@ internal object PlotLayoutUtil {
             return DoubleVector(0.0, labelSpec.height())
         }
         return DoubleVector(
-            labelSpec.width(text.length),
+            labelSpec.width(text, fontFamily = null),
             labelSpec.height()
         )
     }

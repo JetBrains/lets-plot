@@ -18,5 +18,7 @@ interface LabelSpec {
 
     fun width(labelLength: Int): Double
 
+    fun width(text: String, fontFamily: String?): Double
+
     fun height(): Double
 }
