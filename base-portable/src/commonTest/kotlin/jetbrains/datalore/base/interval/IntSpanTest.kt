@@ -17,8 +17,8 @@ class IntSpanTest {
         range0: IntSpan,
         range1: IntSpan
     ) {
-        assertEquals(expected, range0.span(range1))
-        assertEquals(expected, range1.span(range0))
+        assertEquals(expected, range0.union(range1))
+        assertEquals(expected, range1.union(range0))
     }
 
     private fun assertIntersection(
@@ -51,15 +51,15 @@ class IntSpanTest {
     @Test
     fun isConnected() {
         val r = range(-1, 1)
-        assertFalse(r.isConnected(range(-3, -2)))
-        assertTrue(r.isConnected(range(-3, -1)))
-        assertTrue(r.isConnected(range(-3, 0)))
-        assertTrue(r.isConnected(range(-1, 0)))
-        assertTrue(r.isConnected(range(-2, 0)))
-        assertTrue(r.isConnected(range(-2, 2)))
-        assertTrue(r.isConnected(range(0, 3)))
-        assertTrue(r.isConnected(range(1, 3)))
-        assertFalse(r.isConnected(range(2, 3)))
+        assertFalse(r.connected(range(-3, -2)))
+        assertTrue(r.connected(range(-3, -1)))
+        assertTrue(r.connected(range(-3, 0)))
+        assertTrue(r.connected(range(-1, 0)))
+        assertTrue(r.connected(range(-2, 0)))
+        assertTrue(r.connected(range(-2, 2)))
+        assertTrue(r.connected(range(0, 3)))
+        assertTrue(r.connected(range(1, 3)))
+        assertFalse(r.connected(range(2, 3)))
     }
 
     @Test
@@ -80,9 +80,9 @@ class IntSpanTest {
     fun span() {
         val r = range(-2, 2)
         val inner = range(-1, 1)
-        assertSame(r, r.span(inner))
-        assertSame(r, r.span(r))
-        assertSame(r, inner.span(r))
+        assertSame(r, r.union(inner))
+        assertSame(r, r.union(r))
+        assertSame(r, inner.union(r))
 
         assertUnion(
             range(-3, 2),

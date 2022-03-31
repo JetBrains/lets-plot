@@ -48,7 +48,7 @@ internal class HorizontalSimpleLabelsLayout(
             HORIZONTAL_TICK_LOCATION
         )
         for (labelBounds in boundsList) {
-            overlap = overlap || bounds != null && bounds.xRange().isConnected(
+            overlap = overlap || bounds != null && bounds.xRange().connected(
                 SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
             )
             bounds = GeometryUtil.union(labelBounds, bounds)

@@ -18,7 +18,7 @@ class MercatorProjectionY : Projection {
     }
 
     override fun toValidDomain(domain: DoubleSpan): DoubleSpan {
-        if (VALID_LATITUDE_RANGE.isConnected(domain)) {
+        if (VALID_LATITUDE_RANGE.connected(domain)) {
             return VALID_LATITUDE_RANGE.intersection(domain)
         }
         throw IllegalArgumentException("Illegal latitude range for mercator projection: $domain")

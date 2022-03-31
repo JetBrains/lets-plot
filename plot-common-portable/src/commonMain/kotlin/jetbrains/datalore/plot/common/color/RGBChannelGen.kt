@@ -23,7 +23,7 @@ class RGBChannelGen(private val myBaseValues: List<Int>) {
                 if (myRange == null) {
                     myRange = r
                 } else {
-                    myRange = myRange!!.span(r)
+                    myRange = myRange!!.union(r)
                 }
             }
         }

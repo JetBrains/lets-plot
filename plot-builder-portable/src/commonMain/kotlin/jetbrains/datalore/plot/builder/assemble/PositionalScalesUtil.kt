@@ -155,14 +155,14 @@ internal object PositionalScalesUtil {
         if (rangeX == null) {
             rangeX = xRangeAfterSizeExpand
         } else if (xRangeAfterSizeExpand != null) {
-            rangeX = rangeX.span(xRangeAfterSizeExpand)
+            rangeX = rangeX.union(xRangeAfterSizeExpand)
         }
 
         var rangeY = rangesAfterPosAdjustment.second
         if (rangeY == null) {
             rangeY = yRangeAfterSizeExpand
         } else if (yRangeAfterSizeExpand != null) {
-            rangeY = rangeY.span(yRangeAfterSizeExpand)
+            rangeY = rangeY.union(yRangeAfterSizeExpand)
         }
 
         return Pair(rangeX, rangeY)
@@ -347,7 +347,7 @@ internal object PositionalScalesUtil {
             val newRange = DoubleSpan.encloseAll(values)
             return when {
                 wasRange == null -> newRange
-                else -> wasRange.span(newRange)
+                else -> wasRange.union(newRange)
             }
         }
 
@@ -356,7 +356,7 @@ internal object PositionalScalesUtil {
             var range = range
             if (range != null) {
                 if (wasRange != null) {
-                    range = wasRange.span(range)
+                    range = wasRange.union(range)
                 }
                 return range
             }
@@ -368,7 +368,7 @@ internal object PositionalScalesUtil {
             for (aes in aesList) {
                 val range = aesthetics.range(aes)
                 if (range != null) {
-                    result = result?.span(range) ?: range
+                    result = result?.union(range) ?: range
                 }
             }
             return result

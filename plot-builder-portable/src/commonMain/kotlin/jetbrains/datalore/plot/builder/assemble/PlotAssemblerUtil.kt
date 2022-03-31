@@ -34,7 +34,7 @@ internal object PlotAssemblerUtil {
         if (range != null) {
             val wasRange = rangeByAes[aes]
             if (wasRange != null) {
-                range = wasRange.span(range)
+                range = wasRange.union(range)
             }
             rangeByAes[aes] = range
         }

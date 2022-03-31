@@ -87,7 +87,7 @@ class ViewportHelper(
             loop: Boolean
         ): List<Double> {
             if (!loop) {
-                return if (objRange.isConnected(viewRange)) listOf(objRange.lowerEnd) else emptyList()
+                return if (objRange.connected(viewRange)) listOf(objRange.lowerEnd) else emptyList()
             }
 
             val mapRangeLen = length(mapRange)

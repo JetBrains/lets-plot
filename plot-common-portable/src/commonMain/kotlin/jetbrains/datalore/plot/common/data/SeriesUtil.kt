@@ -205,7 +205,7 @@ object SeriesUtil {
 
     fun span(range0: DoubleSpan?, range1: DoubleSpan?): DoubleSpan? {
         if (range0 == null) return range1
-        return if (range1 == null) range0 else range0.span(range1)
+        return if (range1 == null) range0 else range0.union(range1)
     }
 
     fun expand(range: DoubleSpan, newSpan: Double): DoubleSpan {

@@ -29,12 +29,11 @@ class DoubleSpan(
         return lowerEnd <= other.lowerEnd && upperEnd >= other.upperEnd
     }
 
-    fun isConnected(other: DoubleSpan): Boolean {
+    fun connected(other: DoubleSpan): Boolean {
         return !(lowerEnd > other.upperEnd || upperEnd < other.lowerEnd)
     }
 
-    // ToDo: rename to 'union'
-    fun span(other: DoubleSpan): DoubleSpan {
+    fun union(other: DoubleSpan): DoubleSpan {
         if (encloses(other)) return this
         return if (other.encloses(this)) {
             other
@@ -47,7 +46,7 @@ class DoubleSpan(
     }
 
     fun intersection(other: DoubleSpan): DoubleSpan {
-        if (!isConnected(other)) throw IllegalArgumentException("Ranges are not connected: this=$this other=$other")
+        if (!connected(other)) throw IllegalArgumentException("Ranges are not connected: this=$this other=$other")
         if (encloses(other)) return other
         return if (other.encloses(this)) {
             this
