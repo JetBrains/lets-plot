@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.render.point.PointShape
@@ -160,7 +160,7 @@ open class OptionsAccessor(
         return list as List<String>
     }
 
-    internal fun getRange(option: String): ClosedRange<Double> {
+    internal fun getRange(option: String): DoubleSpan {
         require(has(option)) { "'Range' value is expected in form: [min, max]" }
 
         val range = getRangeOrNull(option)
@@ -170,7 +170,7 @@ open class OptionsAccessor(
         return range
     }
 
-    fun getRangeOrNull(option: String): ClosedRange<Double>? {
+    fun getRangeOrNull(option: String): DoubleSpan? {
         val pair = get(option)
         if ((pair is List<*> && pair.size == 2 && pair.all { it is Number }) != true) {
             return null
@@ -180,7 +180,7 @@ open class OptionsAccessor(
         val upper = (pair.last() as Number).toDouble()
 
         return try {
-            ClosedRange(lower, upper)
+            DoubleSpan(lower, upper)
         } catch (ex: Throwable) {
             null
         }

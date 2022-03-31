@@ -79,8 +79,8 @@ internal class InsideOutTileLayout constructor(
             hAxisLayout: AxisLayout,
             vAxisLayout: AxisLayout,
             geomSize: DoubleVector,
-            hDomain: ClosedRange<Double>,
-            vDomain: ClosedRange<Double>,
+            hDomain: DoubleSpan,
+            vDomain: DoubleSpan,
         ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
             val geomBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
             var hAxisInfo = computeHAxisInfo(
@@ -100,7 +100,7 @@ internal class InsideOutTileLayout constructor(
 
         private fun computeHAxisInfo(
             axisLayout: AxisLayout,
-            axisDomain: ClosedRange<Double>,
+            axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
             val axisLength = geomBounds.dimension.x
@@ -116,7 +116,7 @@ internal class InsideOutTileLayout constructor(
 
         private fun computeVAxisInfo(
             axisLayout: AxisLayout,
-            axisDomain: ClosedRange<Double>,
+            axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
             return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, null)

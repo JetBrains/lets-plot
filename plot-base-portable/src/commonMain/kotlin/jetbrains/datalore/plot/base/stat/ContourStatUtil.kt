@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -57,7 +57,7 @@ object ContourStatUtil {
         return computeLevels(zRange, binOptions)
     }
 
-    fun computeLevels(zRange: ClosedRange<Double>?, binOptions: BinStatUtil.BinOptions): List<Double>? {
+    fun computeLevels(zRange: DoubleSpan?, binOptions: BinStatUtil.BinOptions): List<Double>? {
         if (zRange == null || SeriesUtil.isBeyondPrecision(zRange)) return null
 
         val b = BinStatUtil.binCountAndWidth(SeriesUtil.span(zRange), binOptions)
@@ -92,8 +92,8 @@ object ContourStatUtil {
     }
 
     fun computeContours(
-        xRange: ClosedRange<Double>,
-        yRange: ClosedRange<Double>,
+        xRange: DoubleSpan,
+        yRange: DoubleSpan,
         colCount: Int,
         rowCount: Int,
         data: List<Double?>,

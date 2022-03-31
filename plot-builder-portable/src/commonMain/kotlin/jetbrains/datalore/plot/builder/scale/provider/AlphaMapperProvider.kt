@@ -5,17 +5,17 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 
 class AlphaMapperProvider(
-    range: ClosedRange<Double>,
+    range: DoubleSpan,
     naValue: Double
 ) : LinearNormalizingMapperProvider(range, naValue) {
 
     companion object {
-        private val DEF_RANGE = ClosedRange(0.1, 1.0)
+        private val DEF_RANGE = DoubleSpan(0.1, 1.0)
 
         val DEFAULT = AlphaMapperProvider(
             DEF_RANGE,

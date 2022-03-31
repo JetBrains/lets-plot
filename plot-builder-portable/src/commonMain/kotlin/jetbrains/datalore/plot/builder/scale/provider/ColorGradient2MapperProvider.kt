@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -35,14 +35,14 @@ class ColorGradient2MapperProvider(
     }
 
     override fun createContinuousMapper(
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         trans: ContinuousTransform
     ): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
 
-        val lowDomain = ClosedRange(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
-        val highDomain = ClosedRange(min(myMidpoint, domain.upperEnd), domain.upperEnd)
+        val lowDomain = DoubleSpan(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
+        val highDomain = DoubleSpan(min(myMidpoint, domain.upperEnd), domain.upperEnd)
 
         val lowMapper = ColorMapper.gradient(lowDomain, myLow, myMid, naValue)
         val highMapper = ColorMapper.gradient(highDomain, myMid, myHigh, naValue)

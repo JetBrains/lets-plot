@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class HorizontalMultilineLabelsLayout(
     orientation: Orientation,
-    axisDomain: ClosedRange<Double>,
+    axisDomain: DoubleSpan,
     labelSpec: PlotLabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme,
@@ -61,7 +61,7 @@ internal class HorizontalMultilineLabelsLayout(
                 var shelfBounds = boundsByShelfIndex[shelfIndex]!!
                 // not overlapped?
                 if (!shelfBounds.xRange()
-                        .isConnected(ClosedRange(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))
+                        .isConnected(DoubleSpan(labelBounds.left - MIN_DISTANCE, labelBounds.right + MIN_DISTANCE))
                 ) {
                     myShelfIndexForTickIndex.add(shelfIndex)
                     shelfBounds = shelfBounds.union(labelBounds)

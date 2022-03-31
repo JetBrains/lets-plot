@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
 import jetbrains.datalore.plot.base.ContinuousTransform
@@ -38,7 +38,7 @@ class GreyscaleLightnessMapperProvider(
         return createDiscreteMapper(discreteTransform.effectiveDomainTransformed, myFromHSV, myToHSV)
     }
 
-    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
+    override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
         return createContinuousMapper(

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -66,7 +66,7 @@ class DensityStat(
 
         if (xs.isEmpty()) return withEmptyStatValues()
 
-        val rangeX = statCtx.overallXRange() ?: ClosedRange(-0.5, 0.5)
+        val rangeX = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
 
         val statX = DensityStatUtil.createStepValues(rangeX, n)
         val statDensity = ArrayList<Double>()

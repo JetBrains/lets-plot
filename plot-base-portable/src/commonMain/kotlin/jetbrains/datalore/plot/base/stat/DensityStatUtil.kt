@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.*
 
@@ -133,7 +133,7 @@ object DensityStatUtil {
         }
     }
 
-    fun createStepValues(range: ClosedRange<Double>, n: Int): List<Double> {
+    fun createStepValues(range: DoubleSpan, n: Int): List<Double> {
         val x = ArrayList<Double>()
         var min = range.lowerEnd
         var max = range.upperEnd

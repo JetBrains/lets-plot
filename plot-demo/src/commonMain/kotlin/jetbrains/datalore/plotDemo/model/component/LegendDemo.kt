@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
@@ -60,7 +60,7 @@ open class LegendDemo : SimpleDemoBase() {
     }
 
     private fun colorBar(): GroupComponent {
-        val domain = ClosedRange(0.0, 4.0)
+        val domain = DoubleSpan(0.0, 4.0)
 
         val mapper = jetbrains.datalore.plot.base.ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
         val scale = Scales.continuousDomain<Color>("color", /*mapper,*/ true)

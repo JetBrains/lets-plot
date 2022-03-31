@@ -5,15 +5,15 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.map.MercatorProjectionX
 import jetbrains.datalore.plot.builder.coord.map.MercatorProjectionY
 
 object CoordProviders {
     @Suppress("NAME_SHADOWING")
     fun cartesian(
-        xLim: ClosedRange<Double>? = null,
-        yLim: ClosedRange<Double>? = null,
+        xLim: DoubleSpan? = null,
+        yLim: DoubleSpan? = null,
         flipped: Boolean = false
     ): CoordProvider {
         return CartesianCoordProvider(xLim, yLim, flipped)
@@ -22,8 +22,8 @@ object CoordProviders {
     @Suppress("NAME_SHADOWING")
     fun fixed(
         ratio: Double,
-        xLim: ClosedRange<Double>? = null,
-        yLim: ClosedRange<Double>? = null,
+        xLim: DoubleSpan? = null,
+        yLim: DoubleSpan? = null,
         flipped: Boolean = false
     ): CoordProvider {
         return FixedRatioCoordProvider(ratio, xLim, yLim, flipped)
@@ -31,8 +31,8 @@ object CoordProviders {
 
     @Suppress("NAME_SHADOWING")
     fun map(
-        xLim: ClosedRange<Double>? = null,
-        yLim: ClosedRange<Double>? = null,
+        xLim: DoubleSpan? = null,
+        yLim: DoubleSpan? = null,
         flipped: Boolean = false
     ): CoordProvider {
         // Only Mercator so far.

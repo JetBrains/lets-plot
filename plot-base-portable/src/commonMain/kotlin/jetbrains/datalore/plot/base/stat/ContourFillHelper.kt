@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.stat.ContourStatUtil.removePathByEndpoints
 
-class ContourFillHelper(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>) {
+class ContourFillHelper(xRange: DoubleSpan, yRange: DoubleSpan) {
 
     private val myLowLeft: DoubleVector
     private val myLowRight: DoubleVector
@@ -270,7 +270,7 @@ class ContourFillHelper(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>
 
     companion object {
 
-        fun computeFillLevels(zRange: ClosedRange<Double>, levels: List<Double>): List<Double> {
+        fun computeFillLevels(zRange: DoubleSpan, levels: List<Double>): List<Double> {
             val fillLevels = ArrayList<Double>()
             fillLevels.add(zRange.lowerEnd)
             for (i in 0 until levels.size - 1) {

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
@@ -73,11 +73,11 @@ class ContinuousScaleTest {
                 TODO("Not yet implemented")
             }
 
-            override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+            override fun createApplicableDomain(middle: Double?): DoubleSpan {
                 TODO("Not yet implemented")
             }
 
-            override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+            override fun toApplicableDomain(range: DoubleSpan): DoubleSpan {
                 TODO("Not yet implemented")
             }
         }
@@ -95,15 +95,15 @@ class ContinuousScaleTest {
         val scale = createScale()
 
         val bg = object : BreaksGenerator {
-            override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+            override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
                 return ScaleBreaks.EMPTY
             }
 
-            override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+            override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
                 return { "hi" }
             }
 
-            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) =
+            override fun defaultFormatter(domain: DoubleSpan, targetCount: Int) =
                 labelFormatter(domain, targetCount)
         }
 

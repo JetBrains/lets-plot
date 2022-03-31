@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
@@ -29,7 +29,7 @@ object DefaultMapperProviderUtil {
             }
 
             override fun createContinuousMapper(
-                domain: ClosedRange<Double>,
+                domain: DoubleSpan,
                 trans: ContinuousTransform
             ): GuideMapper<Color> {
                 return continuous.createContinuousMapper(domain, trans)
@@ -44,7 +44,7 @@ object DefaultMapperProviderUtil {
             }
 
             override fun createContinuousMapper(
-                domain: ClosedRange<Double>,
+                domain: DoubleSpan,
                 trans: ContinuousTransform
             ): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(

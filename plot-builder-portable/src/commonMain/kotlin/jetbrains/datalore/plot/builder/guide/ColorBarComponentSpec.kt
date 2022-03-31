@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 class ColorBarComponentSpec(
     title: String,
-    val domain: ClosedRange<Double>,
+    val domain: DoubleSpan,
     val breaks: ScaleBreaks,
     val scaleMapper: ScaleMapper<Color>,
     val binCount: Int,

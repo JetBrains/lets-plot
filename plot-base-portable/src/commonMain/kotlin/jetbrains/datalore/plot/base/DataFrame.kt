@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
@@ -16,7 +16,7 @@ class DataFrame private constructor(builder: Builder) {
     private val myIsDateTime: MutableMap<Variable, Boolean>
 
     // volatile variables (yet)
-    private val myRanges = HashMap<Variable, ClosedRange<Double>?>()
+    private val myRanges = HashMap<Variable, DoubleSpan?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
     class OrderSpec(
@@ -133,7 +133,7 @@ class DataFrame private constructor(builder: Builder) {
         return myIsDateTime.containsKey(variable)
     }
 
-    fun range(variable: Variable): ClosedRange<Double>? {
+    fun range(variable: Variable): DoubleSpan? {
         if (!myRanges.containsKey(variable)) {
             val v = getNumeric(variable)
             val r = SeriesUtil.range(v)

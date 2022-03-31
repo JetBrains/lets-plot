@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import org.junit.Ignore
@@ -26,12 +26,12 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
     @Test
     fun limits() {
         fun squareCoord(
-            xDomain: ClosedRange<Double>,// = ClosedRange(0.0, 25.0),
-            yDomain: ClosedRange<Double>,// = ClosedRange(0.0, 25.0),
-            xLim: ClosedRange<Double>? = null,
-            yLim: ClosedRange<Double>? = null,
+            xDomain: DoubleSpan,// = DoubleSpan(0.0, 25.0),
+            yDomain: DoubleSpan,// = DoubleSpan(0.0, 25.0),
+            xLim: DoubleSpan? = null,
+            yLim: DoubleSpan? = null,
             displaySize: DoubleVector = DoubleVector(800.0, 600.0)
-        ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        ): Pair<DoubleSpan, DoubleSpan> {
             return CoordProviders
                 .fixed(1.0, xLim, yLim)
 //                .adjustDomains(xDomain, yDomain, displaySize)
@@ -40,13 +40,13 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
         }
 
         fun squareCoord_0_25(
-            xLim: ClosedRange<Double>? = null,
-            yLim: ClosedRange<Double>? = null,
+            xLim: DoubleSpan? = null,
+            yLim: DoubleSpan? = null,
             displaySize: DoubleVector = DoubleVector(800.0, 600.0)
-        ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        ): Pair<DoubleSpan, DoubleSpan> {
             return squareCoord(
-                ClosedRange(0.0, 25.0),
-                ClosedRange(0.0, 25.0),
+                DoubleSpan(0.0, 25.0),
+                DoubleSpan(0.0, 25.0),
                 xLim, yLim, displaySize
             )
         }
@@ -56,105 +56,105 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
         run {
             // rectangular domain
             squareCoord(
-                xDomain = ClosedRange(0.0, 40.0),
-                yDomain = ClosedRange(0.0, 20.0),
-                xLim = ClosedRange(0.0, 10.0),
+                xDomain = DoubleSpan(0.0, 40.0),
+                yDomain = DoubleSpan(0.0, 20.0),
+                xLim = DoubleSpan(0.0, 10.0),
                 displaySize = DoubleVector(40.0, 40.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(-5.0, 15.0), adjustedXDomain) // adjusted to square
-                assertEquals(ClosedRange(0.0, 20.0), adjustedYDomain) // unchanged
+                assertEquals(DoubleSpan(-5.0, 15.0), adjustedXDomain) // adjusted to square
+                assertEquals(DoubleSpan(0.0, 20.0), adjustedYDomain) // unchanged
             }
 
             // rectangular domain with wide range from negative to positive
             squareCoord(
-                xDomain = ClosedRange(-193.0, 195.0),
-                yDomain = ClosedRange(-61.0, 86.0),
-                xLim = ClosedRange(-130.0, 20.0),
+                xDomain = DoubleSpan(-193.0, 195.0),
+                yDomain = DoubleSpan(-61.0, 86.0),
+                xLim = DoubleSpan(-130.0, 20.0),
                 displaySize = DoubleVector(394.3, 291.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(-154.59123711340206, 44.59123711340206), adjustedXDomain) // adjusted to square
-                assertEquals(ClosedRange(-61.0, 86.0), adjustedYDomain) // unchanged
+                assertEquals(DoubleSpan(-154.59123711340206, 44.59123711340206), adjustedXDomain) // adjusted to square
+                assertEquals(DoubleSpan(-61.0, 86.0), adjustedYDomain) // unchanged
             }
 
             // zero length y-domain
             squareCoord(
-                xDomain = ClosedRange(0.0, 20.0),
-                yDomain = ClosedRange(0.0, 0.0),
-                xLim = ClosedRange(5.0, 15.0)
+                xDomain = DoubleSpan(0.0, 20.0),
+                yDomain = DoubleSpan(0.0, 0.0),
+                xLim = DoubleSpan(5.0, 15.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(5.0, 15.0), adjustedXDomain)  // lims
-                assertEquals(ClosedRange(0.0, 0.0), adjustedYDomain)   // unchanged
+                assertEquals(DoubleSpan(5.0, 15.0), adjustedXDomain)  // lims
+                assertEquals(DoubleSpan(0.0, 0.0), adjustedYDomain)   // unchanged
             }
 
             // limit larger than x-domain with zero length y-domain
             squareCoord(
-                xDomain = ClosedRange(100.0, 120.0),
-                yDomain = ClosedRange(0.0, 0.0),
-                xLim = ClosedRange(80.0, 140.0)
+                xDomain = DoubleSpan(100.0, 120.0),
+                yDomain = DoubleSpan(0.0, 0.0),
+                xLim = DoubleSpan(80.0, 140.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain) // lims
-                assertEquals(ClosedRange(0.0, 0.0), adjustedYDomain)   // unchanged
+                assertEquals(DoubleSpan(80.0, 140.0), adjustedXDomain) // lims
+                assertEquals(DoubleSpan(0.0, 0.0), adjustedYDomain)   // unchanged
             }
 
             // limit larger than x-domain with non-zero length y-domain
             squareCoord(
-                xDomain = ClosedRange(100.0, 120.0),
-                yDomain = ClosedRange(-5.0, 5.0),
-                xLim = ClosedRange(80.0, 140.0)
+                xDomain = DoubleSpan(100.0, 120.0),
+                yDomain = DoubleSpan(-5.0, 5.0),
+                xLim = DoubleSpan(80.0, 140.0)
             ).let { (adjustedXDomain, adjustedYDomain) ->
-                assertEquals(ClosedRange(80.0, 140.0), adjustedXDomain)  // lims
-                assertEquals(ClosedRange(-22.5, 22.5), adjustedYDomain)  // adjusted to square
+                assertEquals(DoubleSpan(80.0, 140.0), adjustedXDomain)  // lims
+                assertEquals(DoubleSpan(-22.5, 22.5), adjustedYDomain)  // adjusted to square
             }
 
             // xLim in range
-            squareCoord_0_25(xLim = ClosedRange(1.0, 4.0))
+            squareCoord_0_25(xLim = DoubleSpan(1.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
                     assertEquals(
-                        ClosedRange(-14.166666666666664, 19.166666666666664),
+                        DoubleSpan(-14.166666666666664, 19.166666666666664),
                         adjustedXDomain
                     ) // adjusted to square
-                    assertEquals(ClosedRange(0.0, 25.0), adjustedYDomain) // unchanged
+                    assertEquals(DoubleSpan(0.0, 25.0), adjustedYDomain) // unchanged
                 }
 
             // xLim wider than range
-            squareCoord_0_25(xLim = ClosedRange(-3.0, 4.0))
+            squareCoord_0_25(xLim = DoubleSpan(-3.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
                     assertEquals(
-                        ClosedRange(-16.166666666666664, 17.166666666666664),
+                        DoubleSpan(-16.166666666666664, 17.166666666666664),
                         adjustedXDomain
                     ) // adjusted to square
-                    assertEquals(ClosedRange(0.0, 25.0), adjustedYDomain) // unchanged
+                    assertEquals(DoubleSpan(0.0, 25.0), adjustedYDomain) // unchanged
                 }
 
             // xLim out of range
-            squareCoord_0_25(xLim = ClosedRange(-9.0, -4.0))
+            squareCoord_0_25(xLim = DoubleSpan(-9.0, -4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(-23.166666666666664, 10.166666666666664), adjustedXDomain)
-                    assertEquals(ClosedRange(0.0, 25.0), adjustedYDomain) // unchanged
+                    assertEquals(DoubleSpan(-23.166666666666664, 10.166666666666664), adjustedXDomain)
+                    assertEquals(DoubleSpan(0.0, 25.0), adjustedYDomain) // unchanged
                 }
         }
 
         // yLim
         run {
             // yLim in range
-            squareCoord_0_25(yLim = ClosedRange(1.0, 4.0))
+            squareCoord_0_25(yLim = DoubleSpan(1.0, 4.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(0.0, 25.0), adjustedXDomain) // unchanged
-                    assertEquals(ClosedRange(-6.875, 11.875), adjustedYDomain)  // adjusted to square
+                    assertEquals(DoubleSpan(0.0, 25.0), adjustedXDomain) // unchanged
+                    assertEquals(DoubleSpan(-6.875, 11.875), adjustedYDomain)  // adjusted to square
                 }
 
             // yLim wider than range
-            squareCoord_0_25(yLim = ClosedRange(-3.0, 6.0))
+            squareCoord_0_25(yLim = DoubleSpan(-3.0, 6.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(0.0, 25.0), adjustedXDomain) // unchanged
-                    assertEquals(ClosedRange(-7.875, 10.875), adjustedYDomain) // adjusted to square
+                    assertEquals(DoubleSpan(0.0, 25.0), adjustedXDomain) // unchanged
+                    assertEquals(DoubleSpan(-7.875, 10.875), adjustedYDomain) // adjusted to square
                 }
 
             // yLim out of range
-            squareCoord_0_25(yLim = ClosedRange(-9.0, -6.0))
+            squareCoord_0_25(yLim = DoubleSpan(-9.0, -6.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(0.0, 25.0), adjustedXDomain) // unchanged
-                    assertEquals(ClosedRange(-16.875, 1.875), adjustedYDomain)   // adjusted to square
+                    assertEquals(DoubleSpan(0.0, 25.0), adjustedXDomain) // unchanged
+                    assertEquals(DoubleSpan(-16.875, 1.875), adjustedYDomain)   // adjusted to square
                 }
         }
 
@@ -162,31 +162,31 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
         // xLim && yLim
         run {
             // intersecting, wider yLim wins
-            squareCoord_0_25(xLim = ClosedRange(10.0, 15.0), yLim = ClosedRange(9.0, 16.0))
+            squareCoord_0_25(xLim = DoubleSpan(10.0, 15.0), yLim = DoubleSpan(9.0, 16.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(7.833, 17.166), adjustedXDomain)
-                    assertEquals(ClosedRange(9.0, 16.0), adjustedYDomain)
+                    assertEquals(DoubleSpan(7.833, 17.166), adjustedXDomain)
+                    assertEquals(DoubleSpan(9.0, 16.0), adjustedYDomain)
                 }
 
             // intersecting, wider xLim wins
-            squareCoord_0_25(xLim = ClosedRange(9.0, 16.0), yLim = ClosedRange(12.0, 14.0))
+            squareCoord_0_25(xLim = DoubleSpan(9.0, 16.0), yLim = DoubleSpan(12.0, 14.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(9.0, 16.0), adjustedXDomain)
-                    assertEquals(ClosedRange(10.375, 15.625), adjustedYDomain)
+                    assertEquals(DoubleSpan(9.0, 16.0), adjustedXDomain)
+                    assertEquals(DoubleSpan(10.375, 15.625), adjustedYDomain)
                 }
 
             // non-intersecting, wider xLim wins
-            squareCoord_0_25(xLim = ClosedRange(9.0, 16.0), yLim = ClosedRange(19.0, 22.0))
+            squareCoord_0_25(xLim = DoubleSpan(9.0, 16.0), yLim = DoubleSpan(19.0, 22.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(9.0, 16.0), adjustedXDomain)
-                    assertEquals(ClosedRange(17.875, 23.125), adjustedYDomain)
+                    assertEquals(DoubleSpan(9.0, 16.0), adjustedXDomain)
+                    assertEquals(DoubleSpan(17.875, 23.125), adjustedYDomain)
                 }
 
             // non-intersecting, wider yLim wins
-            squareCoord_0_25(xLim = ClosedRange(15.0, 16.0), yLim = ClosedRange(18.0, 22.0))
+            squareCoord_0_25(xLim = DoubleSpan(15.0, 16.0), yLim = DoubleSpan(18.0, 22.0))
                 .let { (adjustedXDomain, adjustedYDomain) ->
-                    assertEquals(ClosedRange(12.833, 18.166), adjustedXDomain)
-                    assertEquals(ClosedRange(18.0, 22.0), adjustedYDomain)
+                    assertEquals(DoubleSpan(12.833, 18.166), adjustedXDomain)
+                    assertEquals(DoubleSpan(18.0, 22.0), adjustedYDomain)
                 }
         }
     }
@@ -304,14 +304,14 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
         return min(displaySize.x, displaySize.y)
     }
 
-    private fun ClosedRange<Double>.equals(other: ClosedRange<Double>, epsilon: Double = 0.00001): Boolean {
+    private fun DoubleSpan.equals(other: DoubleSpan, epsilon: Double = 0.00001): Boolean {
         fun doubleEquals(expected: Double, actual: Double, epsilon: Double) = abs(expected - actual) < epsilon
 
         return doubleEquals(lowerEnd, other.lowerEnd, epsilon) &&
                 doubleEquals(upperEnd, other.upperEnd, epsilon)
     }
 
-    private fun assertEquals(expected: ClosedRange<Double>, actual: ClosedRange<Double>, epsilon: Double = 0.001) {
+    private fun assertEquals(expected: DoubleSpan, actual: DoubleSpan, epsilon: Double = 0.001) {
         if (!expected.equals(actual, epsilon)) {
             fail("$expected != $actual")
         }

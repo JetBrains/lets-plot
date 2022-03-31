@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 interface ContinuousTransform : Transform {
     override fun isInDomain(v: Any?): Boolean {
@@ -16,7 +16,7 @@ interface ContinuousTransform : Transform {
     fun apply(v: Double?): Double?
     override fun applyInverse(v: Double?): Double?
     override fun applyInverse(l: List<Double?>): List<Double?>
-    fun createApplicableDomain(middle: Double? = null): ClosedRange<Double>
-    fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double>
+    fun createApplicableDomain(middle: Double? = null): DoubleSpan
+    fun toApplicableDomain(range: DoubleSpan): DoubleSpan
     fun definedLimits(): Pair<Double?, Double?> = null to null
 }

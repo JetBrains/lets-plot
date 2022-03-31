@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 interface Projection {
     val nonlinear: Boolean
 
     fun apply(v: Double): Double
 
-    fun toValidDomain(domain: ClosedRange<Double>): ClosedRange<Double>
+    fun toValidDomain(domain: DoubleSpan): DoubleSpan
 }

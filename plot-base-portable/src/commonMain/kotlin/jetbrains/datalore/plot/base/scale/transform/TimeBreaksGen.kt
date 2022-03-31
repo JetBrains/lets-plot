@@ -5,29 +5,29 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.TimeBreaksHelper
 
 class TimeBreaksGen : BreaksGenerator {
-    override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+    override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val helper = breaksHelper(domain, targetCount)
         val ticks = helper.breaks
         val labels = helper.formatBreaks(ticks)
         return ScaleBreaks(ticks, ticks, labels)
     }
 
-    override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return breaksHelper(domain, targetCount).formatter
     }
 
-    override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+    override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return breaksHelper(domain, targetCount).formatter
     }
 
     private fun breaksHelper(
-        domainAfterTransform: ClosedRange<Double>,
+        domainAfterTransform: DoubleSpan,
         targetCount: Int
     ): TimeBreaksHelper {
         return TimeBreaksHelper(

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Transform
 
@@ -52,8 +52,8 @@ internal class ContinuousTransformWithLimits(
     override fun apply(l: List<*>): List<Double?> = actual.apply(l)
     override fun applyInverse(v: Double?): Double? = actual.applyInverse(v)
     override fun applyInverse(l: List<Double?>): List<Double?> = actual.applyInverse(l)
-    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> = actual.createApplicableDomain(middle)
-    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> = actual.toApplicableDomain(range)
+    override fun createApplicableDomain(middle: Double?): DoubleSpan = actual.createApplicableDomain(middle)
+    override fun toApplicableDomain(range: DoubleSpan): DoubleSpan = actual.toApplicableDomain(range)
 
     override fun unwrap(): Transform = actual.unwrap()
     override fun definedLimits(): Pair<Double?, Double?> {

@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.datetime.*
 import jetbrains.datalore.base.datetime.tz.TimeZone
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -254,14 +254,14 @@ class ScaleConfigLabelsTest {
         val xLabels = getScaleLabels(
             scaleMap[Aes.X],
             targetCount = 1,
-            closeRange = ClosedRange(instant, instant)
+            closeRange = DoubleSpan(instant, instant)
         )
         assertEquals(listOf("01-01-2021 10:10"), xLabels)
 
         val yLabels = getScaleLabels(
             scaleMap[Aes.Y],
             targetCount = 1,
-            closeRange = ClosedRange(instant, instant)
+            closeRange = DoubleSpan(instant, instant)
         )
         assertEquals(listOf("January 2021"), yLabels)
     }
@@ -290,7 +290,7 @@ class ScaleConfigLabelsTest {
         val xLabels = getScaleLabels(
             scaleMap[Aes.X],
             targetCount = 1,
-            closeRange = ClosedRange(instants.first(), instants.last())
+            closeRange = DoubleSpan(instants.first(), instants.last())
         )
         assertEquals(
             expected = listOf("01-01-2021", "02-01-2021", "03-01-2021"),
@@ -394,7 +394,7 @@ class ScaleConfigLabelsTest {
         internal fun getScaleLabels(
             scale: Scale<Double>,
             targetCount: Int = 5,
-            closeRange: ClosedRange<Double> = ClosedRange(-0.5, 0.5),
+            closeRange: DoubleSpan = DoubleSpan(-0.5, 0.5),
         ): List<String> {
             val breaksProvider = AxisBreaksProviderFactory.forScale(scale).createAxisBreaksProvider(closeRange)
             return breaksProvider.getBreaks(

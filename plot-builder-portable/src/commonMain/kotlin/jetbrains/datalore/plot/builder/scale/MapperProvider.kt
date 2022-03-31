@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -20,7 +20,7 @@ interface MapperProvider<T> {
      * Create mapper with continuous (numeric) input (domain)
      */
     fun createContinuousMapper(
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         trans: ContinuousTransform
     ): GuideMapper<T>
 }

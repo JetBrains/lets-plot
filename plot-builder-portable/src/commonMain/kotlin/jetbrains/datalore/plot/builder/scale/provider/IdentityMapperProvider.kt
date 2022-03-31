@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -22,7 +22,7 @@ class IdentityMapperProvider<T>(
         return discreteMapperProvider.createDiscreteMapper(discreteTransform)
     }
 
-    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<T> {
+    override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<T> {
         return GuideMappers.asContinuous(continuousMapper)
     }
 }

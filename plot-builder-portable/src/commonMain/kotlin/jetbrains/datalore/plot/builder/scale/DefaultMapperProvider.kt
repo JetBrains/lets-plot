@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
@@ -161,7 +161,7 @@ object DefaultMapperProvider {
                 }
 
                 override fun createContinuousMapper(
-                    domain: ClosedRange<Double>,
+                    domain: DoubleSpan,
                     trans: ContinuousTransform
                 ): GuideMapper<Double> {
                     return GuideMappers.NUMERIC_UNDEFINED
@@ -174,7 +174,7 @@ object DefaultMapperProvider {
                 }
 
                 override fun createContinuousMapper(
-                    domain: ClosedRange<Double>,
+                    domain: DoubleSpan,
                     trans: ContinuousTransform
                 ): GuideMapper<Double> {
                     return GuideMappers.IDENTITY

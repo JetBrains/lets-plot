@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -13,11 +13,11 @@ import jetbrains.datalore.plot.base.data.TransformVar
 class SimpleStatContext(private val myDataFrame: DataFrame) :
     StatContext {
 
-    override fun overallXRange(): ClosedRange<Double>? {
+    override fun overallXRange(): DoubleSpan? {
         return myDataFrame.range(TransformVar.X)
     }
 
-    override fun overallYRange(): ClosedRange<Double>? {
+    override fun overallYRange(): DoubleSpan? {
         return myDataFrame.range(TransformVar.Y)
     }
 }

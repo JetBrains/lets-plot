@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.HSV
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -48,7 +48,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
     }
 
     protected fun createContinuousMapper(
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         hsvIntervals: List<Pair<HSV, HSV>>
     ): GuideMapper<Color> {
         val gradientMapper = when (hsvIntervals.size) {
@@ -63,7 +63,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
 
     companion object {
         private fun createCompositeColorMapper(
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             hsvIntervals: List<Pair<HSV, HSV>>,
             autoHueDirection: Boolean,
             naColor: Color
@@ -82,11 +82,11 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
         }
 
         private fun createColorMappersPerSubDomain(
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             hsvIntervals: List<Pair<HSV, HSV>>,
             autoHueDirection: Boolean,
             naColor: Color
-        ): List<Pair<ClosedRange<Double>, (Double?) -> Color>> {
+        ): List<Pair<DoubleSpan, (Double?) -> Color>> {
             val subDomains = splitContinuousDomain(domain, hsvIntervals)
 
             return subDomains.zip(hsvIntervals).map {
@@ -101,9 +101,9 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
         }
 
         private fun splitContinuousDomain(
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             hsvIntervals: List<Pair<HSV, HSV>>
-        ): List<ClosedRange<Double>> {
+        ): List<DoubleSpan> {
             val domainSize = domain.upperEnd - domain.lowerEnd
             val hueIntervalSizeList = hsvIntervals.map {
                 abs(it.first.h - it.second.h)
@@ -112,11 +112,11 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
 
             val domainToHueIntevalRatio = domainSize / hueIntervalsTotalSize
 
-            val subDomains = ArrayList<ClosedRange<Double>>()
+            val subDomains = ArrayList<DoubleSpan>()
             var lowerEnd = domain.lowerEnd
             for (hueIntervalSize in hueIntervalSizeList) {
                 val upperEnd = lowerEnd + hueIntervalSize * domainToHueIntevalRatio
-                subDomains.add(ClosedRange(lowerEnd, upperEnd))
+                subDomains.add(DoubleSpan(lowerEnd, upperEnd))
                 lowerEnd = upperEnd
             }
             return subDomains

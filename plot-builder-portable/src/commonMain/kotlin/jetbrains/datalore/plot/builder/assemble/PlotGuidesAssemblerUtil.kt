@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
@@ -55,8 +55,8 @@ internal object PlotGuidesAssemblerUtil {
     fun guideTransformedDomainByAes(
         stitchedLayers: StitchedPlotLayers,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
-    ): Map<Aes<*>, ClosedRange<Double>> {
-        val transformedDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+    ): Map<Aes<*>, DoubleSpan> {
+        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
         val aesSet = mappedRenderedAesToCreateGuides(
             stitchedLayers,
             guideOptionsMap
@@ -83,9 +83,9 @@ internal object PlotGuidesAssemblerUtil {
     }
 
     private fun refineTransformedDataRangeForContinuousDomain(
-        transformedDataRange: ClosedRange<Double>?,
+        transformedDataRange: DoubleSpan?,
         transform: ContinuousTransform
-    ): ClosedRange<Double> {
+    ): DoubleSpan {
         val (dataLower, dataUpper) = when (transformedDataRange) {
             null -> Pair(Double.NaN, Double.NaN)
             else -> Pair(transformedDataRange.lowerEnd, transformedDataRange.upperEnd)
@@ -96,9 +96,9 @@ internal object PlotGuidesAssemblerUtil {
         val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
 
         val newRange = when {
-            lowerEnd.isFinite() && upperEnd.isFinite() -> ClosedRange(lowerEnd, upperEnd)
-            lowerEnd.isFinite() -> ClosedRange(lowerEnd, lowerEnd)
-            upperEnd.isFinite() -> ClosedRange(upperEnd, upperEnd)
+            lowerEnd.isFinite() && upperEnd.isFinite() -> DoubleSpan(lowerEnd, upperEnd)
+            lowerEnd.isFinite() -> DoubleSpan(lowerEnd, lowerEnd)
+            upperEnd.isFinite() -> DoubleSpan(upperEnd, upperEnd)
             else -> null
         }
 
@@ -107,7 +107,7 @@ internal object PlotGuidesAssemblerUtil {
 
     fun createColorBarAssembler(
         scaleName: String,
-        transformedDomain: ClosedRange<Double>,
+        transformedDomain: DoubleSpan,
         scale: Scale<Color>,
         scaleMapper: ScaleMapper<Color>,
         options: ColorBarOptions?,

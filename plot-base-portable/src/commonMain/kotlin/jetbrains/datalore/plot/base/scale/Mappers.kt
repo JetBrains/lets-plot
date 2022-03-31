@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
@@ -38,7 +38,7 @@ object Mappers {
         override fun invoke(v: Double?): T? = constant
     }
 
-    fun mul(domain: ClosedRange<Double>, rangeSpan: Double): ScaleMapper<Double> {
+    fun mul(domain: DoubleSpan, rangeSpan: Double): ScaleMapper<Double> {
         val factor = rangeSpan / (domain.upperEnd - domain.lowerEnd)
         check(!(factor.isInfinite() || factor.isNaN())) { "Can't create mapper with ratio: $factor" }
         return mul(factor)
@@ -53,7 +53,7 @@ object Mappers {
         }
     }
 
-    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, reverse: Boolean = false): ScaleMapper<Double> {
+    fun linear(domain: DoubleSpan, range: DoubleSpan, reverse: Boolean = false): ScaleMapper<Double> {
         return linear(
             domain,
             rangeLow = if (reverse) range.upperEnd else range.lowerEnd,
@@ -62,7 +62,7 @@ object Mappers {
         )
     }
 
-    fun linear(domain: ClosedRange<Double>, range: ClosedRange<Double>, defaultValue: Double): ScaleMapper<Double> {
+    fun linear(domain: DoubleSpan, range: DoubleSpan, defaultValue: Double): ScaleMapper<Double> {
         return linear(
             domain,
             range.lowerEnd,
@@ -72,7 +72,7 @@ object Mappers {
     }
 
     fun linear(
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         rangeLow: Double,
         rangeHigh: Double,
         defaultValue: Double?
@@ -96,7 +96,7 @@ object Mappers {
 
     fun discreteToContinuous(
         transformedDomain: List<Double>,
-        outputRange: ClosedRange<Double>,
+        outputRange: DoubleSpan,
         naValue: Double
     ): ScaleMapper<Double> {
         val dataRange = SeriesUtil.range(transformedDomain) ?: return IDENTITY
@@ -119,7 +119,7 @@ object Mappers {
     }
 
     fun <T> quantized(
-        domain: ClosedRange<Double>?,
+        domain: DoubleSpan?,
         outputValues: Collection<T>,
         defaultOutputValue: T
     ): ScaleMapper<T> {

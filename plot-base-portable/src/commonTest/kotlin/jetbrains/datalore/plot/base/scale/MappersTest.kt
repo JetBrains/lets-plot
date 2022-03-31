@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.assertion.assertEquals
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import kotlin.test.Test
 
 class MappersTest {
     private fun checkWithZeroDomain(rangeLow: Double, rangeHigh: Double) {
-        val zeroDomain = ClosedRange(10.0, 10.0)
+        val zeroDomain = DoubleSpan(10.0, 10.0)
         val mapper = Mappers.linear(zeroDomain, rangeLow, rangeHigh, Double.NaN)
         // The range's midpoint in expected
         assertEquals(1.5, mapper(10.0), 0.0)
@@ -32,7 +32,7 @@ class MappersTest {
     @Test
     fun linearWithNaInput() {
         val naValue = 888.0
-        val mapper = Mappers.linear(ClosedRange(0.0, 1.0), 0.0, 1.0, naValue)
+        val mapper = Mappers.linear(DoubleSpan(0.0, 1.0), 0.0, 1.0, naValue)
 //        Assert.assertEquals(naValue, mapper(null), 0.0)
         assertEquals(naValue, mapper(Double.NaN), 0.0)
         assertEquals(naValue, mapper(Double.NEGATIVE_INFINITY), 0.0)

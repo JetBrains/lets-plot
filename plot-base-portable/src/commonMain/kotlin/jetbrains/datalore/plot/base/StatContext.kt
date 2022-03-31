@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 interface StatContext {
-    fun overallXRange(): ClosedRange<Double>?
+    fun overallXRange(): DoubleSpan?
 
-    fun overallYRange(): ClosedRange<Double>?
+    fun overallYRange(): DoubleSpan?
 }

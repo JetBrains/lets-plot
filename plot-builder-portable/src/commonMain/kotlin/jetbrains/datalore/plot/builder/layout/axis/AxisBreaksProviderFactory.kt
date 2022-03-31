@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 
 abstract class AxisBreaksProviderFactory {
-    abstract fun createAxisBreaksProvider(axisDomain: ClosedRange<Double>): AxisBreaksProvider
+    abstract fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider
 
     companion object {
         fun forScale(scale: Scale<Double>): AxisBreaksProviderFactory {
@@ -24,13 +24,13 @@ abstract class AxisBreaksProviderFactory {
 
     class FixedBreaksProviderFactory(private val breaksBrovider: FixedAxisBreaksProvider) :
         AxisBreaksProviderFactory() {
-        override fun createAxisBreaksProvider(axisDomain: ClosedRange<Double>): AxisBreaksProvider {
+        override fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider {
             return breaksBrovider
         }
     }
 
     class AdaptableBreaksProviderFactory(private val breaksGenerator: BreaksGenerator) : AxisBreaksProviderFactory() {
-        override fun createAxisBreaksProvider(axisDomain: ClosedRange<Double>): AxisBreaksProvider {
+        override fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider {
             return AdaptableAxisBreaksProvider(axisDomain, breaksGenerator)
         }
     }

@@ -5,16 +5,16 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
-        xRange: ClosedRange<Double>,
-        yRange: ClosedRange<Double>,
-        xLim: ClosedRange<Double>? = null,
-        yLim: ClosedRange<Double>? = null
+        xRange: DoubleSpan,
+        yRange: DoubleSpan,
+        xLim: DoubleSpan? = null,
+        yLim: DoubleSpan? = null
     ): CoordinateSystem {
         val origin = DoubleVector(
             originX(xRange),
@@ -25,8 +25,8 @@ object Coords {
 
     fun create(
         origin: DoubleVector,
-        xLim: ClosedRange<Double>? = null,
-        yLim: ClosedRange<Double>? = null
+        xLim: DoubleSpan? = null,
+        yLim: DoubleSpan? = null
     ): CoordinateSystem {
         return DefaultCoordinateSystem(
             toClientOffsetX(origin.x),
@@ -38,7 +38,7 @@ object Coords {
         )
     }
 
-    fun toClientOffsetX(xRange: ClosedRange<Double>): (Double) -> Double {
+    fun toClientOffsetX(xRange: DoubleSpan): (Double) -> Double {
         return toClientOffsetX(
             originX(
                 xRange
@@ -46,7 +46,7 @@ object Coords {
         )
     }
 
-    fun toClientOffsetY(yRange: ClosedRange<Double>): (Double) -> Double {
+    fun toClientOffsetY(yRange: DoubleSpan): (Double) -> Double {
         return toClientOffsetY(
             originY(
                 yRange
@@ -54,11 +54,11 @@ object Coords {
         )
     }
 
-    private fun originX(xRange: ClosedRange<Double>): Double {
+    private fun originX(xRange: DoubleSpan): Double {
         return -xRange.lowerEnd
     }
 
-    private fun originY(yRange: ClosedRange<Double>): Double {
+    private fun originY(yRange: DoubleSpan): Double {
         return yRange.upperEnd
     }
 

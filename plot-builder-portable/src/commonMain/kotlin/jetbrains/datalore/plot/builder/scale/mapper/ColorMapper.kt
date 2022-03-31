@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.mapper
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.HSV
@@ -19,7 +19,7 @@ object ColorMapper {
     val DEF_GRADIENT_LOW = Color.parseHex("#132B43")
     val DEF_GRADIENT_HIGH = Color.parseHex("#56B1F7")
 
-    fun gradientDefault(domain: ClosedRange<Double>): (Double?) -> Color {
+    fun gradientDefault(domain: DoubleSpan): (Double?) -> Color {
         return gradient(
             domain,
             DEF_GRADIENT_LOW,
@@ -28,7 +28,7 @@ object ColorMapper {
         )
     }
 
-    fun gradient(domain: ClosedRange<Double>, low: Color, high: Color, naColor: Color): (Double?) -> Color {
+    fun gradient(domain: DoubleSpan, low: Color, high: Color, naColor: Color): (Double?) -> Color {
         return gradientHSV(
             domain,
             Colors.hsvFromRgb(low),
@@ -42,7 +42,7 @@ object ColorMapper {
      * @deprecated
      */
     fun gradientHSV(
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         lowHSV: DoubleArray,
         highHSV: DoubleArray,
         autoHueDirection: Boolean,
@@ -58,7 +58,7 @@ object ColorMapper {
     }
 
     fun gradientHSV(
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         lowHSV: HSV,
         highHSV: HSV,
         autoHueDirection: Boolean,

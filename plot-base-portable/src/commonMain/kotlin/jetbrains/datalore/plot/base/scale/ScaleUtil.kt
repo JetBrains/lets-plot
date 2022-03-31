@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
@@ -48,15 +48,15 @@ object ScaleUtil {
         return transform.apply(source)
     }
 
-    fun applyTransform(r: ClosedRange<Double>, transform: ContinuousTransform): ClosedRange<Double> {
+    fun applyTransform(r: DoubleSpan, transform: ContinuousTransform): DoubleSpan {
         val a = transform.apply(r.lowerEnd)!!
         val b = transform.apply(r.upperEnd)!!
-        return ClosedRange(min(a, b), max(a, b))
+        return DoubleSpan(min(a, b), max(a, b))
     }
 
-    fun applyInverseTransform(r: ClosedRange<Double>, transform: ContinuousTransform): ClosedRange<Double> {
+    fun applyInverseTransform(r: DoubleSpan, transform: ContinuousTransform): DoubleSpan {
         val a = transform.applyInverse(r.lowerEnd)!!
         val b = transform.applyInverse(r.upperEnd)!!
-        return ClosedRange(min(a, b), max(a, b))
+        return DoubleSpan(min(a, b), max(a, b))
     }
 }

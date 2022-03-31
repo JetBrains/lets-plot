@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.geometry
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 
 class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
@@ -42,17 +42,17 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     constructor(x: Double, y: Double, w: Double, h: Double) : this(DoubleVector(x, y), DoubleVector(w, h))
 
-    constructor(xRange: ClosedRange<Double>, yRange: ClosedRange<Double>) : this(
+    constructor(xRange: DoubleSpan, yRange: DoubleSpan) : this(
         xRange.lowerEnd, yRange.lowerEnd,
         xRange.upperEnd - xRange.lowerEnd, yRange.upperEnd - yRange.lowerEnd
     )
 
-    fun xRange(): ClosedRange<Double> {
-        return ClosedRange(origin.x, origin.x + dimension.x)
+    fun xRange(): DoubleSpan {
+        return DoubleSpan(origin.x, origin.x + dimension.x)
     }
 
-    fun yRange(): ClosedRange<Double> {
-        return ClosedRange(origin.y, origin.y + dimension.y)
+    fun yRange(): DoubleSpan {
+        return DoubleSpan(origin.y, origin.y + dimension.y)
     }
 
     operator fun contains(v: DoubleVector): Boolean {

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 
 open class LinearNormalizingMapperProvider(
-    private val outputRange: ClosedRange<Double>,
+    private val outputRange: DoubleSpan,
     naValue: Double
 ) : MapperProviderBase<Double>(naValue) {
 
@@ -22,7 +22,7 @@ open class LinearNormalizingMapperProvider(
         return GuideMappers.discreteToContinuous(discreteTransform, outputRange, naValue)
     }
 
-    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Double> {
+    override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Double> {
         val dataRange = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
         return GuideMappers.continuousToContinuous(dataRange, outputRange, naValue)
     }

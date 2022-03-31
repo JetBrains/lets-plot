@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.mapper
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -30,7 +30,7 @@ object GuideMappers {
     }
 
     fun <TargetT> continuousToDiscrete(
-        domain: ClosedRange<Double>?,
+        domain: DoubleSpan?,
         outputValues: List<TargetT>,
         naValue: TargetT
     ): GuideMapper<TargetT> {
@@ -41,7 +41,7 @@ object GuideMappers {
 
     fun discreteToContinuous(
         discreteTransform: DiscreteTransform,
-        outputRange: ClosedRange<Double>,
+        outputRange: DoubleSpan,
         naValue: Double
     ): ScaleMapper<Double> {
 
@@ -54,8 +54,8 @@ object GuideMappers {
     }
 
     fun continuousToContinuous(
-        domain: ClosedRange<Double>,
-        range: ClosedRange<Double>,
+        domain: DoubleSpan,
+        range: DoubleSpan,
         naValue: Double
     ): GuideMapper<Double> {
         return asContinuous(

@@ -6,22 +6,23 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.ScaleMapper
 import kotlin.math.max
 import kotlin.math.min
 
 object MapperUtil {
-    fun map(r: ClosedRange<Double>, mapper: ScaleMapper<Double>): ClosedRange<Double> {
+    fun map(r: DoubleSpan, mapper: ScaleMapper<Double>): DoubleSpan {
         val a = mapper(r.lowerEnd)!!
         val b = mapper(r.upperEnd)!!
-        return ClosedRange(min(a, b), max(a, b))
+        return DoubleSpan(min(a, b), max(a, b))
     }
 
     fun rangeWithLimitsAfterTransform2(
-        dataRange: ClosedRange<Double>,
+        dataRange: DoubleSpan,
         trans: ContinuousTransform
-    ): ClosedRange<Double> {
+    ): DoubleSpan {
         check(trans.isInDomain(dataRange.lowerEnd)) {
             "[${trans::class.simpleName}] Lower end ${dataRange.lowerEnd} is outside of transform's domain."
         }

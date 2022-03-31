@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
@@ -217,7 +216,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         private val myConstantAes: Set<Aes<*>> = HashSet(b.myConstantAes)
 
         private val myResolutionByAes = HashMap<Aes<*>, Double>()
-        private val myRangeByNumericAes = HashMap<Aes<Double>, ClosedRange<Double>?>()
+        private val myRangeByNumericAes = HashMap<Aes<Double>, DoubleSpan?>()
 
         override val isEmpty: Boolean
             get() = myDataPointCount == 0
@@ -252,7 +251,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             if (!myRangeByNumericAes.containsKey(aes)) {
                 val r = when {
                     myDataPointCount <= 0 -> null
-//                        ClosedRange(0.0, 0.0)
+//                        DoubleSpan(0.0, 0.0)
                     myConstantAes.contains(aes) -> {
                         // constant should not be null
                         val v = numericValues(aes).iterator().next()!!
@@ -483,7 +482,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             return get(YEND)
         }
 
-        override fun label(): Any? {
+        override fun label(): Any {
             return get(LABEL)
         }
 

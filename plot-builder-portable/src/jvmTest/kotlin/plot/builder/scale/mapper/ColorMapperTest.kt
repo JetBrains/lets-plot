@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.assertion.assertEquals
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import kotlin.test.Test
@@ -20,7 +20,7 @@ class ColorMapperTest {
         val value = 0.9
 
         val f = ColorMapper.gradientHSV(
-                ClosedRange(0.0, 1.0),
+                DoubleSpan(0.0, 1.0),
                 doubleArrayOf(lowHue, saturation, value),
                 doubleArrayOf(highHue, saturation, value),
                 false,

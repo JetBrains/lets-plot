@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -56,11 +56,11 @@ class CoordConfig private constructor(
             }
         }
 
-        private fun validateRange(r: ClosedRange<Double>, t: Transform): ClosedRange<Double> {
+        private fun validateRange(r: DoubleSpan, t: Transform): DoubleSpan {
             return when (t) {
                 is ContinuousTransform -> {
                     val ar = t.toApplicableDomain(r)
-                    ClosedRange<Double>(
+                    DoubleSpan(
                         t.apply(ar.lowerEnd)!!,
                         t.apply(ar.upperEnd)!!
                     )

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class IdentityTransform : FunTransform({ v -> v }, { v -> v }) {
@@ -13,17 +13,17 @@ internal class IdentityTransform : FunTransform({ v -> v }, { v -> v }) {
 
     override fun isInDomain(v: Double?) = SeriesUtil.isFinite(v)
 
-    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+    override fun createApplicableDomain(middle: Double?): DoubleSpan {
         if (middle == null) {
             return createApplicableDomain(0.0)
         }
 
         @Suppress("NAME_SHADOWING")
         val middle = if (middle.isFinite()) middle else 0.0
-        return ClosedRange(middle - 0.5, middle + 0.5)
+        return DoubleSpan(middle - 0.5, middle + 0.5)
     }
 
-    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+    override fun toApplicableDomain(range: DoubleSpan): DoubleSpan {
         return range
     }
 

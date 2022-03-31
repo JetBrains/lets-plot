@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class VerticalFixedBreaksLabelsLayout(
     orientation: Orientation,
-    axisDomain: ClosedRange<Double>,
+    axisDomain: DoubleSpan,
     tickLabelSpec: PlotLabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme

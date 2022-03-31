@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.tile
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -22,8 +22,8 @@ import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxTickLabelsB
 internal class TopDownTileLayout(
     private val hAxisLayout: AxisLayout,
     private val vAxisLayout: AxisLayout,
-    private val hDomain: ClosedRange<Double>, // transformed data ranges.
-    private val vDomain: ClosedRange<Double>,
+    private val hDomain: DoubleSpan, // transformed data ranges.
+    private val vDomain: DoubleSpan,
 ) : TileLayout {
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
@@ -132,8 +132,8 @@ internal class TopDownTileLayout(
             hAxisLayout: AxisLayout,
             vAxisLayout: AxisLayout,
             plotSize: DoubleVector,
-            hDomain: ClosedRange<Double>,
-            vDomain: ClosedRange<Double>,
+            hDomain: DoubleSpan,
+            vDomain: DoubleSpan,
             coordProvider: CoordProvider
         ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
             val hAxisThickness = hAxisLayout.initialThickness()
@@ -186,7 +186,7 @@ internal class TopDownTileLayout(
 
         private fun computeHAxisInfo(
             axisLayout: AxisLayout,
-            axisDomain: ClosedRange<Double>,
+            axisDomain: DoubleSpan,
             plotSize: DoubleVector,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
@@ -203,7 +203,7 @@ internal class TopDownTileLayout(
 
         private fun computeVAxisInfo(
             axisLayout: AxisLayout,
-            axisDomain: ClosedRange<Double>,
+            axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
             return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, null)

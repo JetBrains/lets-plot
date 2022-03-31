@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 class ContourFillHelperTest {
 
     private val myTest =
-        ContourFillHelper(ClosedRange(0.0, 1.0), ClosedRange(0.0, 1.0))
+        ContourFillHelper(DoubleSpan(0.0, 1.0), DoubleSpan(0.0, 1.0))
     private val myLevels = listOf(0.5)
     private val myFillLevels = listOf(0.0, 1.0)
     private val myPathByLevels = HashMap<Double, List<List<DoubleVector>>>()

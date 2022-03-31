@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 abstract class AxisLabelsLayout protected constructor(
     val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-    val axisDomain: ClosedRange<Double>,
+    val axisDomain: DoubleSpan,
     val labelSpec: PlotLabelSpec,
     val theme: AxisTheme
 ) {
@@ -56,7 +56,7 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun horizontalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: ClosedRange<Double>, breaksProvider: AxisBreaksProvider, theme: AxisTheme
+            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
@@ -72,7 +72,7 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun horizontalFixedBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: ClosedRange<Double>, breaks: ScaleBreaks, theme: AxisTheme
+            axisDomain: DoubleSpan, breaks: ScaleBreaks, theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
@@ -87,7 +87,7 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun verticalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: ClosedRange<Double>, breaksProvider: AxisBreaksProvider, theme: AxisTheme
+            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(!orientation.isHorizontal) { orientation.toString() }
@@ -103,7 +103,7 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun verticalFixedBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: ClosedRange<Double>,
+            axisDomain: DoubleSpan,
             breaks: ScaleBreaks,
             theme: AxisTheme
         ): AxisLabelsLayout {

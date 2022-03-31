@@ -23,7 +23,7 @@ internal object PositionalScalesUtil {
      * Computers X/Y ranges of transformed input series.
      *
      * @return list of pairs (x-domain, y-domain).
-     *          Elements is this list match corresponding elements in the `layersByTile` list.
+     *          Elements in this list match corresponding elements in the `layersByTile` list.
      */
     fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
@@ -105,15 +105,15 @@ internal object PositionalScalesUtil {
 
     private fun computeTileXYDomains(
         layers: List<GeomLayer>,
-        xInitialDomain: ClosedRange<Double>?,
-        yInitialDomain: ClosedRange<Double>?
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+        xInitialDomain: DoubleSpan?,
+        yInitialDomain: DoubleSpan?
+    ): Pair<DoubleSpan?, DoubleSpan?> {
         val positionaDryRunAestheticsByLayer: Map<GeomLayer, Aesthetics> = layers.associateWith {
             positionaDryRunAesthetics(it)
         }
 
-        var xDomainOverall: ClosedRange<Double>? = null
-        var yDomainOverall: ClosedRange<Double>? = null
+        var xDomainOverall: DoubleSpan? = null
+        var yDomainOverall: DoubleSpan? = null
         for (layer in layers) {
             // use dry-run aesthetics to estimate ranges
             val aesthetics = positionaDryRunAestheticsByLayer.getValue(layer)
@@ -145,7 +145,7 @@ internal object PositionalScalesUtil {
 
     private fun computeLayerDryRunXYRanges(
         layer: GeomLayer, aes: Aesthetics
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+    ): Pair<DoubleSpan?, DoubleSpan?> {
         val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
         val rangesAfterPosAdjustment =
@@ -172,7 +172,7 @@ internal object PositionalScalesUtil {
 
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
         layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+    ): Pair<DoubleSpan?, DoubleSpan?> {
         val posAesX = Aes.affectingScaleX(layer.renderedAes())
         val posAesY = Aes.affectingScaleY(layer.renderedAes())
 
@@ -233,12 +233,12 @@ internal object PositionalScalesUtil {
 
         // X range
         val xRange = if (rangesInited)
-            ClosedRange(adjustedMinX, adjustedMaxX)
+            DoubleSpan(adjustedMinX, adjustedMaxX)
         else
             null
 
         val yRange = if (rangesInited)
-            ClosedRange(adjustedMinY, adjustedMaxY)
+            DoubleSpan(adjustedMinY, adjustedMaxY)
         else
             null
         return Pair(xRange, yRange)
@@ -248,7 +248,7 @@ internal object PositionalScalesUtil {
         layer: GeomLayer,
         aesthetics: Aesthetics,
         geomCtx: GeomContext
-    ): Pair<ClosedRange<Double>?, ClosedRange<Double>?> {
+    ): Pair<DoubleSpan?, DoubleSpan?> {
         val renderedAes = layer.renderedAes()
         val rangeX = when {
             Aes.WIDTH in renderedAes -> Aes.WIDTH
@@ -270,7 +270,7 @@ internal object PositionalScalesUtil {
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
         locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext
-    ): ClosedRange<Double>? {
+    ): DoubleSpan? {
         val locations = aesthetics.numericValues(locationAes).iterator()
         val sizes = aesthetics.numericValues(sizeAes).iterator()
 
@@ -293,7 +293,7 @@ internal object PositionalScalesUtil {
         }
 
         return if (minMax[0] <= minMax[1])
-            ClosedRange(minMax[0], minMax[1])
+            DoubleSpan(minMax[0], minMax[1])
         else
             null
     }
@@ -305,7 +305,7 @@ internal object PositionalScalesUtil {
 
 
     private object RangeUtil {
-        fun initialRange(transform: Transform): ClosedRange<Double>? {
+        fun initialRange(transform: Transform): DoubleSpan? {
             // Init with 'scale limits'.
             return when (transform) {
                 is ContinuousTransform -> {
@@ -321,11 +321,11 @@ internal object PositionalScalesUtil {
         }
 
         internal fun expandRange(
-            range: ClosedRange<Double>?,
+            range: DoubleSpan?,
             aes: Aes<Double>,
             scale: Scale<*>,
             layers: List<GeomLayer>
-        ): ClosedRange<Double>? {
+        ): DoubleSpan? {
             val includeZero = layers.any { it.rangeIncludesZero(aes) }
 
             @Suppress("NAME_SHADOWING")
@@ -337,7 +337,7 @@ internal object PositionalScalesUtil {
             return PlotUtil.rangeWithExpand(range, scale, includeZero)
         }
 
-        private fun updateRange(values: Iterable<Double>, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
+        private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan? {
             if (!Iterables.isEmpty(values)) {
                 var newRange = ClosedRange.encloseAll(values)
                 if (wasRange != null) {
@@ -348,7 +348,7 @@ internal object PositionalScalesUtil {
             return wasRange
         }
 
-        internal fun updateRange(range: ClosedRange<Double>?, wasRange: ClosedRange<Double>?): ClosedRange<Double>? {
+        internal fun updateRange(range: DoubleSpan?, wasRange: DoubleSpan?): DoubleSpan? {
             @Suppress("NAME_SHADOWING")
             var range = range
             if (range != null) {
@@ -360,8 +360,8 @@ internal object PositionalScalesUtil {
             return wasRange
         }
 
-        internal fun combineRanges(aesList: List<Aes<Double>>, aesthetics: Aesthetics): ClosedRange<Double>? {
-            var result: ClosedRange<Double>? = null
+        internal fun combineRanges(aesList: List<Aes<Double>>, aesthetics: Aesthetics): DoubleSpan? {
+            var result: DoubleSpan? = null
             for (aes in aesList) {
                 val range = aesthetics.range(aes)
                 if (range != null) {

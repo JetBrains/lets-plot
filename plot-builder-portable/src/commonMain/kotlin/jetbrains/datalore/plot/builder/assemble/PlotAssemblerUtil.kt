@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
@@ -26,8 +26,8 @@ internal object PlotAssemblerUtil {
 
     private fun updateAesRangeMap(
         aes: Aes<*>,
-        range: ClosedRange<Double>?,
-        rangeByAes: MutableMap<Aes<*>, ClosedRange<Double>>
+        range: DoubleSpan?,
+        rangeByAes: MutableMap<Aes<*>, DoubleSpan>
     ) {
         @Suppress("NAME_SHADOWING")
         var range = range
@@ -69,7 +69,7 @@ internal object PlotAssemblerUtil {
             )
         }
 
-        val transformedDomainByAes = HashMap<Aes<*>, ClosedRange<Double>>()
+        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
         for (stitchedPlotLayers in stitchedLayersList) {
             val layerTransformedDomainByAes = guideTransformedDomainByAes(stitchedPlotLayers, guideOptionsMap)
             for ((aes, transformedDomain) in layerTransformedDomainByAes) {
@@ -92,7 +92,7 @@ internal object PlotAssemblerUtil {
 
     private fun createLegends(
         stitchedLayersList: List<StitchedPlotLayers>,
-        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>,
+        transformedDomainByAes: Map<Aes<*>, DoubleSpan>,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme

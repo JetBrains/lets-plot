@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.color
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.IntSpan
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -13,7 +13,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class RGBChannelGen(private val myBaseValues: List<Int>) {
-    private var myRange: ClosedRange<Int>? = null
+    private var myRange: IntSpan? = null
 
     init {
         val min = natural<Int>().min(myBaseValues)
@@ -69,11 +69,11 @@ class RGBChannelGen(private val myBaseValues: List<Int>) {
 
     companion object {
         private val RANGES = arrayOf(
-                ClosedRange(0, 37),
-                ClosedRange(38, 97),
-                ClosedRange(98, 157),
-                ClosedRange(158, 217),
-                ClosedRange(218, 255)
+            IntSpan(0, 37),
+            IntSpan(38, 97),
+            IntSpan(98, 157),
+            IntSpan(158, 217),
+            IntSpan(218, 255)
         )
     }
 }

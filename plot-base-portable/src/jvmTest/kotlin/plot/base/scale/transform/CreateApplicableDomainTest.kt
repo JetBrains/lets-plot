@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import junit.framework.TestCase.failNotEquals
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
 internal class CreateApplicableDomainTest(
     private val transform: ContinuousTransform,
     private val value: Double,
-    private val expected: ClosedRange<Double>
+    private val expected: DoubleSpan
 ) {
 
     @Test
@@ -41,7 +41,7 @@ internal class CreateApplicableDomainTest(
         val lowerInversed = transform.applyInverse(lowerTransformed)
         val upperInversed = transform.applyInverse(upperTransformed)
 
-        val actualInversed = ClosedRange(lowerInversed!!, upperInversed!!)
+        val actualInversed = DoubleSpan(lowerInversed!!, upperInversed!!)
         assertEqualRanges(expected, actualInversed, "${transform::class.simpleName} [$value] <inversed>")
     }
 
@@ -57,17 +57,17 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.IDENTITY,
                     0.0,
-                    ClosedRange(-0.5, 0.5)
+                    DoubleSpan(-0.5, 0.5)
                 ),
                 arrayOf(
                     Transforms.IDENTITY,
                     -5.0,
-                    ClosedRange(-5.5, -4.5)
+                    DoubleSpan(-5.5, -4.5)
                 ),
                 arrayOf(
                     Transforms.IDENTITY,
                     Double.NaN,
-                    ClosedRange(-0.5, 0.5)
+                    DoubleSpan(-0.5, 0.5)
                 ),
             )
         }
@@ -77,17 +77,17 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.REVERSE,
                     0.0,
-                    ClosedRange(-0.5, 0.5)
+                    DoubleSpan(-0.5, 0.5)
                 ),
                 arrayOf(
                     Transforms.REVERSE,
                     -5.0,
-                    ClosedRange(-5.5, -4.5)
+                    DoubleSpan(-5.5, -4.5)
                 ),
                 arrayOf(
                     Transforms.REVERSE,
                     Double.NaN,
-                    ClosedRange(-0.5, 0.5)
+                    DoubleSpan(-0.5, 0.5)
                 ),
             )
         }
@@ -97,27 +97,27 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.SQRT,
                     0.0,
-                    ClosedRange(0.0, 0.5)
+                    DoubleSpan(0.0, 0.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     -5.0,
-                    ClosedRange(0.5, 1.5)
+                    DoubleSpan(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     Double.NaN,
-                    ClosedRange(0.5, 1.5)
+                    DoubleSpan(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     0.3,
-                    ClosedRange(0.0, 0.8)
+                    DoubleSpan(0.0, 0.8)
                 ),
                 arrayOf(
                     Transforms.SQRT,
                     0.7,
-                    ClosedRange(0.2, 1.2)
+                    DoubleSpan(0.2, 1.2)
                 ),
             )
         }
@@ -127,38 +127,38 @@ internal class CreateApplicableDomainTest(
                 arrayOf(
                     Transforms.LOG10,
                     0.0,
-                    ClosedRange(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
+                    DoubleSpan(Log10Transform.LOWER_LIM_DOMAIN, 0.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     -5.0,
-                    ClosedRange(0.5, 1.5)
+                    DoubleSpan(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     Double.NaN,
-                    ClosedRange(0.5, 1.5)
+                    DoubleSpan(0.5, 1.5)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     0.3,
-                    ClosedRange(0.15, 0.8)
+                    DoubleSpan(0.15, 0.8)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     10.0.pow(20),
-                    ClosedRange(1.0E20, 1.0E20)
+                    DoubleSpan(1.0E20, 1.0E20)
                 ),
                 arrayOf(
                     Transforms.LOG10,
                     10.0.pow(-20),
-                    ClosedRange(5.0E-21, 0.5)
+                    DoubleSpan(5.0E-21, 0.5)
                 ),
             )
         }
 
 
-        private fun assertEqualRanges(expected: ClosedRange<Double>, actual: ClosedRange<Double>, message: String) {
+        private fun assertEqualRanges(expected: DoubleSpan, actual: DoubleSpan, message: String) {
             fun almostEqual(v0: Double, v1: Double): Boolean {
                 return abs(v0 - v1) <= (v0.absoluteValue + v1.absoluteValue) / 10.0.pow(10)
             }

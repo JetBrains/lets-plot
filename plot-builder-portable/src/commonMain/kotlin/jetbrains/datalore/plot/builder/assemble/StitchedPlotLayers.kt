@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
@@ -73,9 +73,9 @@ internal class StitchedPlotLayers(layers: List<jetbrains.datalore.plot.builder.G
         return myLayers[0].scaleMap
     }
 
-    fun getDataRange(variable: DataFrame.Variable): ClosedRange<Double>? {
+    fun getDataRange(variable: DataFrame.Variable): DoubleSpan? {
         check(isNumericData(variable)) { "Not numeric data [$variable]" }
-        var result: ClosedRange<Double>? = null
+        var result: DoubleSpan? = null
         for (layer in myLayers) {
             val range = layer.dataFrame.range(variable)
             result = SeriesUtil.span(result, range)

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -49,7 +49,7 @@ object BinStatUtil {
 
     fun computeHistogramStatSeries(
         data: DataFrame,
-        rangeX: ClosedRange<Double>,
+        rangeX: DoubleSpan,
         valuesX: List<Double?>,
         xPosKind: BinStat.XPosKind,
         xPos: Double,
@@ -120,7 +120,7 @@ object BinStatUtil {
     }
 
     fun computeDotdensityStatSeries(
-        rangeX: ClosedRange<Double>,
+        rangeX: DoubleSpan,
         valuesX: List<Double?>,
         binOptions: BinOptions
     ): BinsData {

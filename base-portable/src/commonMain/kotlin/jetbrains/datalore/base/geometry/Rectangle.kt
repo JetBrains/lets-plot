@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.geometry
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.IntSpan
 
 class Rectangle(val origin: Vector, val dimension: Vector) {
 
@@ -16,7 +16,12 @@ class Rectangle(val origin: Vector, val dimension: Vector) {
         }
 
     private val boundPoints: Array<Vector>
-        get() = arrayOf(origin, origin.add(Vector(dimension.x, 0)), origin.add(dimension), origin.add(Vector(0, dimension.y)))
+        get() = arrayOf(
+            origin,
+            origin.add(Vector(dimension.x, 0)),
+            origin.add(dimension),
+            origin.add(Vector(0, dimension.y))
+        )
 
     constructor(x: Int, y: Int, width: Int, height: Int) : this(Vector(x, y), Vector(width, height))
 
@@ -82,12 +87,12 @@ class Rectangle(val origin: Vector, val dimension: Vector) {
         return toDoubleRectangle().distance(to.toDoubleVector())
     }
 
-    fun xRange(): ClosedRange<Int> {
-        return ClosedRange(origin.x, origin.x + dimension.x)
+    fun xRange(): IntSpan {
+        return IntSpan(origin.x, origin.x + dimension.x)
     }
 
-    fun yRange(): ClosedRange<Int> {
-        return ClosedRange(origin.y, origin.y + dimension.y)
+    fun yRange(): IntSpan {
+        return IntSpan(origin.y, origin.y + dimension.y)
     }
 
     override fun hashCode(): Int {

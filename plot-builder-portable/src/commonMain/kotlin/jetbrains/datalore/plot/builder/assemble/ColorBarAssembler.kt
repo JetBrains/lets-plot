@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 class ColorBarAssembler(
     private val legendTitle: String,
-    private val transformedDomain: ClosedRange<Double>,
+    private val transformedDomain: DoubleSpan,
     private val scale: Scale<Color>,
     private val scaleMapper: ScaleMapper<Color>,
     private val theme: LegendTheme
@@ -65,7 +65,7 @@ class ColorBarAssembler(
 
         fun createColorBarSpec(
             title: String,
-            transformedDomain: ClosedRange<Double>,
+            transformedDomain: DoubleSpan,
             breaks: ScaleBreaks,
             scaleMapper: ScaleMapper<Color>,
             theme: LegendTheme,

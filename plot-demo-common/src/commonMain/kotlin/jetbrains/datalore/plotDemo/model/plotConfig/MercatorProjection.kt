@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.parsePlotSpec
 
 open class MercatorProjection {
@@ -63,27 +63,27 @@ open class MercatorProjection {
 
         @Suppress("FunctionName")
         fun polygon_Mercator_ZoomOut_Y(): MutableMap<String, Any> {
-            spec["coord"] = coord_map_spec(yLim = ClosedRange(64.0, 75.0))
+            spec["coord"] = coord_map_spec(yLim = DoubleSpan(64.0, 75.0))
             spec["ggtitle"] = mapOf("text" to "Zoom-out Y")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
         fun polygon_Mercator_ZoomOut_X(): MutableMap<String, Any> {
-            spec["coord"] = coord_map_spec(xLim = ClosedRange(15.0, 35.0))
+            spec["coord"] = coord_map_spec(xLim = DoubleSpan(15.0, 35.0))
             spec["ggtitle"] = mapOf("text" to "Zoom-out X")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
         fun polygon_Mercator_ZoomIn_Y(): MutableMap<String, Any> {
-            spec["coord"] = coord_map_spec(yLim = ClosedRange(69.2, 69.8))
+            spec["coord"] = coord_map_spec(yLim = DoubleSpan(69.2, 69.8))
             spec["ggtitle"] = mapOf("text" to "Zoom-in Y")
             return HashMap(spec)
         }
 
         @Suppress("FunctionName")
-        private fun coord_map_spec(xLim: ClosedRange<Double>? = null, yLim: ClosedRange<Double>? = null): Map<*, *> {
+        private fun coord_map_spec(xLim: DoubleSpan? = null, yLim: DoubleSpan? = null): Map<*, *> {
             val map = mutableMapOf<String, Any>("name" to "map")
             xLim?.run { map["xlim"] = listOf(lowerEnd, upperEnd) }
             yLim?.run { map["ylim"] = listOf(lowerEnd, upperEnd) }

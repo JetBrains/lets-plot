@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
@@ -137,10 +137,10 @@ object PlotUtil {
      * Expand X/Y-range to ensure that the data is placed some distance away from the axes.
      */
     internal fun rangeWithExpand(
-        range: ClosedRange<Double>?,
+        range: DoubleSpan?,
         scale: Scale<*>,
         includeZero: Boolean
-    ): ClosedRange<Double>? {
+    ): DoubleSpan? {
         if (range == null) return null
 
         val mulExp = scale.multiplicativeExpand
@@ -190,7 +190,7 @@ object PlotUtil {
                 transformed
             }
         }
-        return ClosedRange(lowerEndWithExpand, upperEndWithExpand)
+        return DoubleSpan(lowerEndWithExpand, upperEndWithExpand)
     }
 
     object DemoAndTest {

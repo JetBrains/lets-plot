@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
@@ -16,8 +16,8 @@ internal class ConfiguredStatContext(
     private val transformByAes: Map<Aes<*>, Transform>
 ) : StatContext {
 
-    private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): ClosedRange<Double>? {
-        var range: ClosedRange<Double>? = null
+    private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): DoubleSpan? {
+        var range: DoubleSpan? = null
         for (dataFrame in dataFrames) {
             if (dataFrame.has(variable)) {
                 range = SeriesUtil.span(range, dataFrame.range(variable))
@@ -26,15 +26,15 @@ internal class ConfiguredStatContext(
         return range
     }
 
-    override fun overallXRange(): ClosedRange<Double>? {
+    override fun overallXRange(): DoubleSpan? {
         return overallRange(Aes.X)
     }
 
-    override fun overallYRange(): ClosedRange<Double>? {
+    override fun overallYRange(): DoubleSpan? {
         return overallRange(Aes.Y)
     }
 
-    private fun overallRange(aes: Aes<*>): ClosedRange<Double>? {
+    private fun overallRange(aes: Aes<*>): DoubleSpan? {
         val transformVar = DataFrameUtil.transformVarFor(aes)
 
         val undefinedLimits = Pair(Double.NaN, Double.NaN)
@@ -62,7 +62,7 @@ internal class ConfiguredStatContext(
         }
 
         return ends?.let {
-            ClosedRange(ends.first, ends.second)
+            DoubleSpan(ends.first, ends.second)
         }
     }
 }

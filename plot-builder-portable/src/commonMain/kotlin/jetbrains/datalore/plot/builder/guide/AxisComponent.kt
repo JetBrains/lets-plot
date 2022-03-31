@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
@@ -293,7 +293,7 @@ class AxisComponent(
     }
 
     private class TickLabelsCleaner(val horizontalAxis: Boolean) {
-        private val filledRanges = ArrayList<ClosedRange<Double>>()
+        private val filledRanges = ArrayList<DoubleSpan>()
 
         fun beforeAddLabel(loc: Double, rotationDegree: Double): Boolean {
             if (!isRelevant(rotationDegree)) return true
@@ -306,7 +306,7 @@ class AxisComponent(
                 return false
             }
 
-            filledRanges.add(ClosedRange(loc, loc + len))
+            filledRanges.add(DoubleSpan(loc, loc + len))
             return true
         }
 

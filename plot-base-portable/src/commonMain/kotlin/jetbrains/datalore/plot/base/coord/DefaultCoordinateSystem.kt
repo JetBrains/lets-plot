@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.gcommon.collect.Comparables.min
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
@@ -17,8 +17,8 @@ internal open class DefaultCoordinateSystem(
     val toClientOffsetY: (Double) -> Double,
     val fromClientOffsetX: (Double) -> Double,
     val fromClientOffsetY: (Double) -> Double,
-    val clientLimitsX: ClosedRange<Double>?,
-    val clientLimitsY: ClosedRange<Double>?
+    val clientLimitsX: DoubleSpan?,
+    val clientLimitsY: DoubleSpan?
 ) : CoordinateSystem {
 
     override fun toClient(p: DoubleVector): DoubleVector {
@@ -44,10 +44,10 @@ internal open class DefaultCoordinateSystem(
 
 
     companion object {
-        private fun convertRange(range: ClosedRange<Double>, offset: (Double) -> Double): ClosedRange<Double> {
+        private fun convertRange(range: DoubleSpan, offset: (Double) -> Double): DoubleSpan {
             val l = offset(range.lowerEnd)
             val u = offset(range.upperEnd)
-            return ClosedRange(
+            return DoubleSpan(
                 min(l, u),
                 max(l, u),
             )

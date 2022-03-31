@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
@@ -19,7 +19,7 @@ internal class NonlinearBreaksGen(
     private val formatter: ((Any) -> String)? = null
 ) : BreaksGenerator {
 
-    override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+    override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
         val breakValues = generateBreakValues(domain, targetCount, transform)
         val breakFormatters = if (formatter != null) {
             List(breakValues.size) { formatter }
@@ -31,17 +31,17 @@ internal class NonlinearBreaksGen(
         return ScaleBreaks(breakValues, breakValues, labels)
     }
 
-    override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+    override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return formatter ?: defaultFormatter(domain, targetCount)
     }
 
-    override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+    override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
         return createMultiFormatter(generateBreakValues(domain, targetCount, transform))
     }
 
     companion object {
         private fun generateBreakValues(
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             targetCount: Int,
             transform: ContinuousTransform
         ): List<Double> {

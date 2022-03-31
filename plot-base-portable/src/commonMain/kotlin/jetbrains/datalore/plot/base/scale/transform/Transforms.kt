@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
@@ -38,9 +38,9 @@ object Transforms {
     }
 
     fun ensureApplicableDomain(
-        dataRange: ClosedRange<Double>?,
+        dataRange: DoubleSpan?,
         transform: ContinuousTransform
-    ): ClosedRange<Double> {
+    ): DoubleSpan {
         if (dataRange == null) {
             return transform.createApplicableDomain()
         }
@@ -56,17 +56,17 @@ object Transforms {
         private val transform: ContinuousTransform,
         val breaksGenerator: BreaksGenerator
     ) : BreaksGenerator {
-        override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.labelFormatter(domainBeforeTransform, targetCount)
         }
 
-        override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+        override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             return breaksGenerator.defaultFormatter(domainBeforeTransform, targetCount)
         }
 
-        override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+        override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
             val domainBeforeTransform = ScaleUtil.applyInverseTransform(domain, transform)
             val scaleBreaks = breaksGenerator.generateBreaks(domainBeforeTransform, targetCount)
             val originalBreaks = scaleBreaks.domainValues

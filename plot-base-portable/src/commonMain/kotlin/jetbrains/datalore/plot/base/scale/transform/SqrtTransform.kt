@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 import kotlin.math.sqrt
@@ -20,19 +20,19 @@ internal class SqrtTransform : FunTransform(
         return SeriesUtil.isFinite(v) && v!! >= 0.0
     }
 
-    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+    override fun createApplicableDomain(middle: Double?): DoubleSpan {
         @Suppress("NAME_SHADOWING")
         val middle = when {
             isInDomain(middle) -> max(middle!!, 0.0)
             else -> 1.0
         }
 
-        return ClosedRange(max(middle - 0.5, 0.0), middle + 0.5)
+        return DoubleSpan(max(middle - 0.5, 0.0), middle + 0.5)
     }
 
-    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+    override fun toApplicableDomain(range: DoubleSpan): DoubleSpan {
         val lower = max(range.lowerEnd, 0.0)
         val upper = max(range.upperEnd, 0.0)
-        return ClosedRange(lower, upper)
+        return DoubleSpan(lower, upper)
     }
 }

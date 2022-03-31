@@ -5,25 +5,25 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 
 internal class CartesianCoordProvider(
-    xLim: ClosedRange<Double>?,
-    yLim: ClosedRange<Double>?,
+    xLim: DoubleSpan?,
+    yLim: DoubleSpan?,
     flipped: Boolean = false
 ) : CoordProviderBase(xLim, yLim, flipped) {
     override fun with(
-        xLim: ClosedRange<Double>?,
-        yLim: ClosedRange<Double>?,
+        xLim: DoubleSpan?,
+        yLim: DoubleSpan?,
         flipped: Boolean
     ): CoordProvider {
         return CartesianCoordProvider(xLim, yLim, flipped)
     }
 
     override fun adjustGeomSize(
-        hDomain: ClosedRange<Double>,
-        vDomain: ClosedRange<Double>,
+        hDomain: DoubleSpan,
+        vDomain: DoubleSpan,
         geomSize: DoubleVector
     ): DoubleVector {
         // No adjustment needed.

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
@@ -56,7 +56,7 @@ class ColorBrewerMapperProvider(
         return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
 
-    override fun createContinuousMapper(domain: ClosedRange<Double>, trans: ContinuousTransform): GuideMapper<Color> {
+    override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Color> {
         val colorScheme = colorScheme(false)
         val colors = colors(colorScheme, colorScheme.maxColors)
 

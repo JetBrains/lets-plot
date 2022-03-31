@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.algorithms
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.IntSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.math.abs
 
@@ -25,27 +25,27 @@ private fun <T> makeClosed(path: List<T>) = path.toMutableList() + path.first()
 
 fun <T> List<T>.isClosed() = first() == last()
 
-private fun <T> findRingIntervals(path: List<T>): List<ClosedRange<Int>> {
-    val intervals = ArrayList<ClosedRange<Int>>()
+private fun <T> findRingIntervals(path: List<T>): List<IntSpan> {
+    val intervals = ArrayList<IntSpan>()
     var startIndex = 0
 
     var i = 0
     val n = path.size
     while (i < n) {
         if (startIndex != i && path[startIndex] == path[i]) {
-            intervals.add(ClosedRange(startIndex, i + 1))
+            intervals.add(IntSpan(startIndex, i + 1))
             startIndex = i + 1
         }
         i++
     }
 
     if (startIndex != path.size) {
-        intervals.add(ClosedRange(startIndex, path.size))
+        intervals.add(IntSpan(startIndex, path.size))
     }
     return intervals
 }
 
-private fun <T> List<T>.sublist(range: ClosedRange<Int>): List<T> {
+private fun <T> List<T>.sublist(range: IntSpan): List<T> {
     return this.subList(range.lowerEnd, range.upperEnd)
 }
 

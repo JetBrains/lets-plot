@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.tile
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -46,8 +46,8 @@ internal object TileLayoutUtil {
         hAxisThickness: Double,
         vAxisThickness: Double,
         plotSize: DoubleVector,
-        hDomain: ClosedRange<Double>,
-        vDomain: ClosedRange<Double>,
+        hDomain: DoubleSpan,
+        vDomain: DoubleSpan,
         coordProvider: CoordProvider
     ): DoubleRectangle {
         val geomBounds = subtractMargins(hAxisThickness, vAxisThickness, plotSize)

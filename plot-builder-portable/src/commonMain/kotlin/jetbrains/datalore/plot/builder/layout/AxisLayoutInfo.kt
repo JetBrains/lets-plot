@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
@@ -16,7 +16,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
     val axisBreaks: ScaleBreaks
     val axisLength: Double
     val orientation: Orientation
-    val axisDomain: ClosedRange<Double>
+    val axisDomain: DoubleSpan
 
     val tickLabelsBounds: DoubleRectangle?
     val tickLabelRotationAngle: Double
@@ -73,7 +73,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
     class Builder {
         var myAxisLength: Double = 0.0
         var myOrientation: Orientation? = null
-        var myAxisDomain: ClosedRange<Double>? = null
+        var myAxisDomain: DoubleSpan? = null
         var myMaxTickLabelsBounds: DoubleRectangle? = null
         var myTickLabelSmallFont = false
         var myLabelAdditionalOffsets: List<DoubleVector>? = null
@@ -97,7 +97,7 @@ class AxisLayoutInfo private constructor(b: Builder) {
             return this
         }
 
-        fun axisDomain(r: ClosedRange<Double>): Builder {
+        fun axisDomain(r: DoubleSpan): Builder {
             myAxisDomain = r
             return this
         }

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.datetime.Date
 import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Duration
 import jetbrains.datalore.base.datetime.Month
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -204,7 +204,7 @@ class TooltipAxisConfigTest {
             tooltipFormat = tooltipFormat
         )
 
-        val closedRange = ClosedRange(-0.5, -0.5)
+        val closedRange = DoubleSpan(-0.5, -0.5)
 
         run {
             val geomLayer = log10(scaleFormat = null, tooltipFormat = null)
@@ -245,7 +245,7 @@ class TooltipAxisConfigTest {
             Aes.X.name to "v",
             Aes.Y.name to "date"
         )
-        val closedRange = ClosedRange(instants.first(), instants.last())
+        val closedRange = DoubleSpan(instants.first(), instants.last())
 
         fun dtLayer(scaleFormat: String?, tooltipFormat: String?): GeomLayer = geomLayer(
             dtData,
@@ -301,7 +301,7 @@ class TooltipAxisConfigTest {
             assertEquals(expected, yAxisTooltip, "Wrong axis tooltip")
         }
 
-        private fun getYTick(geomLayer: GeomLayer, closedRange: ClosedRange<Double> = ClosedRange(0.3,0.4)): String  {
+        private fun getYTick(geomLayer: GeomLayer, closedRange: DoubleSpan = DoubleSpan(0.3,0.4)): String  {
             return ScaleConfigLabelsTest.getScaleLabels(
                 geomLayer.scaleMap[Aes.Y],
                 targetCount = 1,

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.Coord.RATIO
@@ -18,8 +18,8 @@ internal object CoordProto {
 
     fun createCoordProvider(
         coordName: String,
-        xLim: ClosedRange<Double>?,
-        yLim: ClosedRange<Double>?,
+        xLim: DoubleSpan?,
+        yLim: DoubleSpan?,
         options: OptionsAccessor
     ): CoordProvider {
 //        val xLim = options.getRangeOrNull(X_LIM)
@@ -36,8 +36,8 @@ internal object CoordProto {
 
     fun createCoordProvider(
         defaultProvider: CoordProvider,
-        xLim: ClosedRange<Double>?,
-        yLim: ClosedRange<Double>?,
+        xLim: DoubleSpan?,
+        yLim: DoubleSpan?,
         flipped: Boolean,
     ): CoordProvider {
 //        val xLim = options.getRangeOrNull(X_LIM)

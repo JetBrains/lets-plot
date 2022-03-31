@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
 
 
 object ScaleBreaksUtil {
     fun <TargetT> withBreaks(
         scale: Scale<TargetT>,
-        transformedDomain: ClosedRange<Double>,
+        transformedDomain: DoubleSpan,
         breakCount: Int
     ): Scale<TargetT> {
         val scaleBreaks = scale.getBreaksGenerator().generateBreaks(transformedDomain, breakCount)

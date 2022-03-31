@@ -5,18 +5,18 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 
 class SizeMapperProvider(
-    range: ClosedRange<Double>,
+    range: DoubleSpan,
     naValue: Double
 ) : LinearNormalizingMapperProvider(range, naValue) {
 
     companion object {
-        private val DEF_RANGE = ClosedRange(
+        private val DEF_RANGE = DoubleSpan(
             AesScaling.sizeFromCircleDiameter(3.0),
             AesScaling.sizeFromCircleDiameter(21.0)
         )

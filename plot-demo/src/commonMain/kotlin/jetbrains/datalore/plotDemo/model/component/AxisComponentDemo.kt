@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
@@ -42,11 +42,11 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         groupComponent.add(background)
 
 
-        val domainX = ClosedRange(0.0, 1000.0)
-        val domainY = ClosedRange(0.0, 1000.0)
+        val domainX = DoubleSpan(0.0, 1000.0)
+        val domainY = DoubleSpan(0.0, 1000.0)
 
-        val rangeX = ClosedRange(0.0, CENTER_SQUARE_SIZE.x)
-        val rangeY = ClosedRange(0.0, CENTER_SQUARE_SIZE.y)
+        val rangeX = DoubleSpan(0.0, CENTER_SQUARE_SIZE.x)
+        val rangeY = DoubleSpan(0.0, CENTER_SQUARE_SIZE.y)
 
         val mapperX = Mappers.linear(domainX, rangeX)
         val mapperY = Mappers.linear(domainY, rangeY)

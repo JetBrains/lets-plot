@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import kotlin.test.*
 import jetbrains.datalore.base.assertion.assertEquals as assertDoubleEquals
 
@@ -85,6 +85,6 @@ class OptionsAccessorTest {
             "a" to listOf(1, 2)
         )
 
-        assertEquals(ClosedRange<Double>(1.0, 2.0), OptionsAccessor.over(options).getRangeOrNull("a"))
+        assertEquals(DoubleSpan(1.0, 2.0), OptionsAccessor.over(options).getRangeOrNull("a"))
     }
 }

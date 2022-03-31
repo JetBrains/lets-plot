@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -15,24 +15,24 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal abstract class CoordProviderBase(
-    _xLim: ClosedRange<Double>?,
-    _yLim: ClosedRange<Double>?,
+    _xLim: DoubleSpan?,
+    _yLim: DoubleSpan?,
     override val flipAxis: Boolean,
 ) : CoordProvider {
 
-    private val hLim: ClosedRange<Double>? = when {
+    private val hLim: DoubleSpan? = when {
         flipAxis -> _yLim
         else -> _xLim
     }
 
-    private val vLim: ClosedRange<Double>? = when {
+    private val vLim: DoubleSpan? = when {
         flipAxis -> _xLim
         else -> _yLim
     }
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double> {
         return buildAxisScaleDefault(
@@ -43,7 +43,7 @@ internal abstract class CoordProviderBase(
 
     override fun buildAxisScaleY(
         scaleProto: Scale<Double>,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double> {
         return buildAxisScaleDefault(
@@ -52,18 +52,18 @@ internal abstract class CoordProviderBase(
         )
     }
 
-    override fun buildAxisXScaleMapper(domain: ClosedRange<Double>, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
         return buildAxisScaleMapperDefault(domain, axisLength)
     }
 
-    override fun buildAxisYScaleMapper(domain: ClosedRange<Double>, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
         return buildAxisScaleMapperDefault(domain, axisLength)
     }
 
     override fun createCoordinateSystem(
-        xDomain: ClosedRange<Double>,
+        xDomain: DoubleSpan,
         xAxisLength: Double,
-        yDomain: ClosedRange<Double>,
+        yDomain: DoubleSpan,
         yAxisLength: Double
     ): CoordinateSystem {
         val mapperX = linearMapper(xDomain, xAxisLength)
@@ -83,9 +83,9 @@ internal abstract class CoordProviderBase(
     }
 
     final override fun adjustDomains(
-        hDomain: ClosedRange<Double>,
-        vDomain: ClosedRange<Double>,
-    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        hDomain: DoubleSpan,
+        vDomain: DoubleSpan,
+    ): Pair<DoubleSpan, DoubleSpan> {
         return adjustDomainsIntern(
             hDomain = hLim ?: hDomain,
             vDomain = vLim ?: vDomain
@@ -93,20 +93,20 @@ internal abstract class CoordProviderBase(
     }
 
     protected open fun adjustDomainsIntern(
-        hDomain: ClosedRange<Double>,
-        vDomain: ClosedRange<Double>
-    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        hDomain: DoubleSpan,
+        vDomain: DoubleSpan
+    ): Pair<DoubleSpan, DoubleSpan> {
         return (hDomain to vDomain)
     }
 
 
     companion object {
-        fun linearMapper(domain: ClosedRange<Double>, axisLength: Double): ScaleMapper<Double> {
+        fun linearMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
             return Mappers.mul(domain, axisLength)
         }
 
         private fun buildAxisScaleMapperDefault(
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             axisLength: Double,
         ): ScaleMapper<Double> {
             return linearMapper(domain, axisLength)

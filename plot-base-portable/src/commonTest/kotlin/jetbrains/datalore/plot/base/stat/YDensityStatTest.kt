@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -55,7 +55,7 @@ class YDensityStatTest {
         assertEquals(statDf.getNumeric(variable).toSet(), expectedValuesDomain, "Unique values of var " + variable.name)
     }
 
-    private fun checkStatVarAndValuesRange(statDf: DataFrame, variable: DataFrame.Variable, expectedValuesRange: ClosedRange<Double>) {
+    private fun checkStatVarAndValuesRange(statDf: DataFrame, variable: DataFrame.Variable, expectedValuesRange: DoubleSpan) {
         checkStatVar(statDf, variable)
         val actualMinValue = statDf.getNumeric(variable).minByOrNull { it!! }!!
         assertEquals(expectedValuesRange.lowerEnd, actualMinValue, "Min value of var " + variable.name)
@@ -109,7 +109,7 @@ class YDensityStatTest {
         val statDf = stat.normalize(stat.apply(df, statContext(df)))
 
         checkStatVarAndValuesDomain(statDf, Stats.X, setOf(0.0))
-        checkStatVarAndValuesRange(statDf, Stats.Y, ClosedRange(2.71, 3.14))
+        checkStatVarAndValuesRange(statDf, Stats.Y, DoubleSpan(2.71, 3.14))
         checkStatVarAndMaxValue(statDf, Stats.VIOLIN_WIDTH, 1.0)
     }
 
@@ -125,7 +125,7 @@ class YDensityStatTest {
         val statDf = stat.normalize(stat.apply(df, statContext(df)))
 
         checkStatVarAndValuesDomain(statDf, Stats.X, setOf(1.0, 2.0, 3.0))
-        checkStatVarAndValuesRange(statDf, Stats.Y, ClosedRange(0.0, 3.0))
+        checkStatVarAndValuesRange(statDf, Stats.Y, DoubleSpan(0.0, 3.0))
         checkStatVarAndMaxValue(statDf, Stats.VIOLIN_WIDTH, 1.0)
     }
 
@@ -145,8 +145,8 @@ class YDensityStatTest {
             val statDf1 = filteredDataFrame(statDf, Stats.X) { it == 1.0 }
 
             checkStatVarAndValuesDomain(statDf, Stats.X, setOf(0.0, 1.0))
-            checkStatVarAndValuesRange(statDf0, Stats.Y, ClosedRange(0.0, 3.0))
-            checkStatVarAndValuesRange(statDf1, Stats.Y, ClosedRange(0.0, 1.0))
+            checkStatVarAndValuesRange(statDf0, Stats.Y, DoubleSpan(0.0, 3.0))
+            checkStatVarAndValuesRange(statDf1, Stats.Y, DoubleSpan(0.0, 1.0))
             when (scale) {
                 YDensityStat.Scale.AREA -> {
                     checkStatVarAndMaxLimit(statDf0, Stats.VIOLIN_WIDTH, 0.5)

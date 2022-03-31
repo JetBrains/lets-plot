@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
@@ -36,7 +36,7 @@ class LegendAssembler(
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
         scaleByAes: TypedScaleMap,
-        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>
+        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
     ) {
 
         legendLayers.add(
@@ -112,7 +112,7 @@ class LegendAssembler(
         aestheticsDefaults: AestheticsDefaults,
         scaleMap: TypedScaleMap,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-        transformedDomainByAes: Map<Aes<*>, ClosedRange<Double>>
+        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
     ) {
 
         internal val keyAesthetics: Aesthetics

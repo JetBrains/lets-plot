@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 abstract class ColorBarComponentLayout(
     title: String,
-    domain: ClosedRange<Double>,
+    domain: DoubleSpan,
     breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
@@ -34,7 +34,7 @@ abstract class ColorBarComponentLayout(
 
     init {
         val guideBarLength = guideBarLength
-        val targetRange = ClosedRange(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
+        val targetRange = DoubleSpan(0.0 + barLengthExpand, guideBarLength - barLengthExpand)
         val mapper = Mappers.linear(domain, targetRange, reverse)
         breakInfos = breaks.transformedValues.map {
             val tickLocation = mapper(it)!!
@@ -54,7 +54,7 @@ abstract class ColorBarComponentLayout(
 
     private class HorizontalLayout(
         title: String,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
         reverse: Boolean
@@ -86,7 +86,7 @@ abstract class ColorBarComponentLayout(
 
     private class VerticalLayout(
         title: String,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
         reverse: Boolean
@@ -123,7 +123,7 @@ abstract class ColorBarComponentLayout(
     companion object {
         fun horizontal(
             title: String,
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
             reverse: Boolean
@@ -139,7 +139,7 @@ abstract class ColorBarComponentLayout(
 
         fun vertical(
             title: String,
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
             reverse: Boolean

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -93,7 +93,7 @@ class ColorBarComponent(
 
     private fun addColorBar(
         g: SvgGElement,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         mapper: ScaleMapper<Color>,
         numBins: Int,
         barBounds: DoubleRectangle,

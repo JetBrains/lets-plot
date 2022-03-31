@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering
@@ -110,7 +109,7 @@ object SeriesUtil {
         }
     }
 
-    fun range(values: Iterable<Double?>): ClosedRange<Double>? {
+    fun range(values: Iterable<Double?>): DoubleSpan? {
         var min = 0.0
         var max = 0.0
         var inited = false
@@ -127,7 +126,7 @@ object SeriesUtil {
             }
         }
         return if (inited)
-            ClosedRange(min, max)
+            DoubleSpan(min, max)
         else
             null
     }
@@ -185,40 +184,40 @@ object SeriesUtil {
      * ToDo: The correct method of domain validation is temporarily in 'Transforms.ensureApplicableDomain'.
      */
     fun ensureApplicableRange(
-        range: ClosedRange<Double>?,
-        preferableNullRange: ClosedRange<Double>? = null
-    ): ClosedRange<Double> {
+        range: DoubleSpan?,
+        preferableNullRange: DoubleSpan? = null
+    ): DoubleSpan {
         if (range == null) {
-            return preferableNullRange ?: ClosedRange(-0.5, 0.5)
+            return preferableNullRange ?: DoubleSpan(-0.5, 0.5)
         }
 //        if (isSubTiny(range)) {
         if (isBeyondPrecision(range)) {
             val median = range.lowerEnd
-            return ClosedRange(median - 0.5, median + 0.5)
+            return DoubleSpan(median - 0.5, median + 0.5)
         }
         return range
     }
 
-    fun span(range: ClosedRange<Double>): Double {
+    fun span(range: DoubleSpan): Double {
         require(isFinite(range)) { "range must be finite: $range" }
         return range.upperEnd - range.lowerEnd
     }
 
-    fun span(range0: ClosedRange<Double>?, range1: ClosedRange<Double>?): ClosedRange<Double>? {
+    fun span(range0: DoubleSpan?, range1: DoubleSpan?): DoubleSpan? {
         if (range0 == null) return range1
         return if (range1 == null) range0 else range0.span(range1)
     }
 
-    fun expand(range: ClosedRange<Double>, newSpan: Double): ClosedRange<Double> {
+    fun expand(range: DoubleSpan, newSpan: Double): DoubleSpan {
         val expand = (newSpan - span(range)) / 2
         return expand(range, expand, expand)
     }
 
-    fun expand(range: ClosedRange<Double>, lowerExpand: Double, upperExpand: Double): ClosedRange<Double> {
-        return ClosedRange(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
+    fun expand(range: DoubleSpan, lowerExpand: Double, upperExpand: Double): DoubleSpan {
+        return DoubleSpan(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
     }
 
-    fun isFinite(range: ClosedRange<Double>): Boolean {
+    fun isFinite(range: DoubleSpan): Boolean {
         return !(range.lowerEnd.isInfinite() || range.upperEnd.isInfinite())
     }
 

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -51,11 +51,11 @@ class CoordsTest {
 
         private const val Y_LOWER = 200.0
         private const val Y_UPPER = 600.0
-        private val X_RANGE = ClosedRange(
+        private val X_RANGE = DoubleSpan(
             X_LOWER,
             X_UPPER
         )
-        private val Y_RANGE = ClosedRange(
+        private val Y_RANGE = DoubleSpan(
             Y_LOWER,
             Y_UPPER
         )

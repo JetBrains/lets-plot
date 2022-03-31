@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -111,7 +111,7 @@ class YDensityStat(
                 .unzip()
             if (binY.isEmpty()) continue
             val ySummary = FiveNumberSummary(binY)
-            val rangeY = ClosedRange(ySummary.min, ySummary.max)
+            val rangeY = DoubleSpan(ySummary.min, ySummary.max)
             val binStatY = DensityStatUtil.createStepValues(rangeY, n)
             val densityFunction = DensityStatUtil.densityFunction(
                 binY, binW,

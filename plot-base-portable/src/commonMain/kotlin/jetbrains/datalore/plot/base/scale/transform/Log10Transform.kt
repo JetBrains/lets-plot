@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.log10
 import kotlin.math.max
@@ -29,7 +29,7 @@ internal class Log10Transform : FunTransform(
         return trimInfinity(super.apply(v))
     }
 
-    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+    override fun createApplicableDomain(middle: Double?): DoubleSpan {
         @Suppress("NAME_SHADOWING")
         val middle = when {
             isInDomain(middle) -> max(middle!!, LOWER_LIM_DOMAIN)
@@ -42,13 +42,13 @@ internal class Log10Transform : FunTransform(
         } else {
             middle - 0.5
         }
-        return ClosedRange(max(lower, LOWER_LIM_DOMAIN), middle + 0.5)
+        return DoubleSpan(max(lower, LOWER_LIM_DOMAIN), middle + 0.5)
     }
 
-    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+    override fun toApplicableDomain(range: DoubleSpan): DoubleSpan {
         val lower = max(range.lowerEnd, LOWER_LIM_DOMAIN)
         val upper = max(range.upperEnd, lower)
-        return ClosedRange(lower, upper)
+        return DoubleSpan(lower, upper)
     }
 
     companion object {

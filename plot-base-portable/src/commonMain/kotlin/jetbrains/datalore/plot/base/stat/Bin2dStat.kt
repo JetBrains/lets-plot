@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -175,12 +175,12 @@ class Bin2dStat(
             Aes.FILL to Stats.COUNT
         )
 
-        private fun adjustRangeInitial(r: ClosedRange<Double>): ClosedRange<Double> {
+        private fun adjustRangeInitial(r: DoubleSpan): DoubleSpan {
             // span can't be 0
             return ensureApplicableRange(r)
         }
 
-        private fun adjustRangeFinal(r: ClosedRange<Double>, binWidth: Double): ClosedRange<Double> {
+        private fun adjustRangeFinal(r: DoubleSpan, binWidth: Double): DoubleSpan {
             return if (isBeyondPrecision(r)) {
                 // 0 span allways becomes 1
                 expand(r, 0.5, 0.5)

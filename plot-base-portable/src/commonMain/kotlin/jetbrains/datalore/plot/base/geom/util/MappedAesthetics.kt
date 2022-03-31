@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -31,7 +31,7 @@ class MappedAesthetics(
         return source.map { myPointAestheticsMapper(it) }
     }
 
-    override fun range(aes: Aes<Double>): ClosedRange<Double> {
+    override fun range(aes: Aes<Double>): DoubleSpan {
         throw IllegalStateException("MappedAesthetics.range: not implemented $aes")
     }
 

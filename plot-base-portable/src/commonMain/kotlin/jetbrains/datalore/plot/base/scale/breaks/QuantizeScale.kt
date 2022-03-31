@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import kotlin.math.max
 import kotlin.math.min
 
@@ -27,26 +27,26 @@ class QuantizeScale<T> : WithFiniteOrderedOutput<T> {
     while (upperBound < myDomainEnd - error) {
       double lowerBound = upperBound;
       upperBound = lowerBound + bucketSize;
-      ClosedRange<Double> bucket = ClosedRangeOpen(lowerBound, upperBound);
+      DoubleSpan bucket = ClosedRangeOpen(lowerBound, upperBound);
       list.add(bucket);
     }
-*///ClosedRange<Double> bucket = ClosedRangeOpen(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1));
+*///DoubleSpan bucket = ClosedRangeOpen(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1));
     // ToDo: move inside the cycle
     // last bucket - closed
-    val domainQuantized: List<ClosedRange<Double>>
+    val domainQuantized: List<DoubleSpan>
         get() {
             if (myDomainStart == myDomainEnd) {
-                return listOf(ClosedRange(myDomainStart, myDomainEnd))
+                return listOf(DoubleSpan(myDomainStart, myDomainEnd))
             }
 
-            val list = ArrayList<ClosedRange<Double>>()
+            val list = ArrayList<DoubleSpan>()
             val numBuckets = myOutputValues.size
             val bucketSize = bucketSize()
             for (i in 0 until numBuckets - 1) {
-                val bucket = ClosedRange(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1))
+                val bucket = DoubleSpan(myDomainStart + bucketSize * i, myDomainStart + bucketSize * (i + 1))
                 list.add(bucket)
             }
-            val bucket = ClosedRange(myDomainStart + bucketSize * (numBuckets - 1), myDomainEnd)
+            val bucket = DoubleSpan(myDomainStart + bucketSize * (numBuckets - 1), myDomainEnd)
             list.add(bucket)
             return list
         }

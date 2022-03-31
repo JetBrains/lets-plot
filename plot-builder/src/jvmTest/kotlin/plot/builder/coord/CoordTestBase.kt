@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
@@ -21,8 +21,8 @@ internal open class CoordTestBase {
     fun tryAdjustDomains(
         ratio: Double,
         provider: CoordProvider,
-        expectedX: ClosedRange<Double>,
-        expectedY: ClosedRange<Double>
+        expectedX: DoubleSpan,
+        expectedY: DoubleSpan
     ) {
 
         val dataBounds = this.dataBounds
@@ -93,16 +93,16 @@ internal open class CoordTestBase {
             return DoubleVector(w, h)
         }
 
-        fun expand(range: ClosedRange<Double>, ratio: Double): ClosedRange<Double> {
+        fun expand(range: DoubleSpan, ratio: Double): DoubleSpan {
             val span = range.upperEnd - range.lowerEnd
             val expand = span * (ratio - 1) / 2.0
-            return ClosedRange(
+            return DoubleSpan(
                 range.lowerEnd - expand,
                 range.upperEnd + expand
             )
         }
 
-//        fun scaleX(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
+//        fun scaleX(provider: CoordProvider, domain: DoubleSpan, axisLength: Double): Scale<Double> {
 //            return provider.buildAxisScaleX(
 //                Scales.DemoAndTest.continuousDomainNumericRange("Test scale X"),
 //                domain,
@@ -111,7 +111,7 @@ internal open class CoordTestBase {
 //            )
 //        }
 
-//        fun scaleY(provider: CoordProvider, domain: ClosedRange<Double>, axisLength: Double): Scale<Double> {
+//        fun scaleY(provider: CoordProvider, domain: DoubleSpan, axisLength: Double): Scale<Double> {
 //            return provider.buildAxisScaleY(
 //                Scales.DemoAndTest.continuousDomainNumericRange("Test scale Y"),
 //                domain,

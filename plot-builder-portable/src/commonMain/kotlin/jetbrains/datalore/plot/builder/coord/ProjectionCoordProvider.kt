@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -18,23 +18,23 @@ import kotlin.math.abs
 internal class ProjectionCoordProvider(
     private val projectionX: Projection,
     private val projectionY: Projection,
-    xLim: ClosedRange<Double>?,
-    yLim: ClosedRange<Double>?,
+    xLim: DoubleSpan?,
+    yLim: DoubleSpan?,
     flipped: Boolean
 ) : CoordProviderBase(xLim, yLim, flipped) {
 
     override fun with(
-        xLim: ClosedRange<Double>?,
-        yLim: ClosedRange<Double>?,
+        xLim: DoubleSpan?,
+        yLim: DoubleSpan?,
         flipped: Boolean
     ): CoordProvider {
         return ProjectionCoordProvider(projectionX, projectionY, xLim, yLim, flipped)
     }
 
     protected override fun adjustDomainsIntern(
-        hDomain: ClosedRange<Double>,
-        vDomain: ClosedRange<Double>
-    ): Pair<ClosedRange<Double>, ClosedRange<Double>> {
+        hDomain: DoubleSpan,
+        vDomain: DoubleSpan
+    ): Pair<DoubleSpan, DoubleSpan> {
         @Suppress("NAME_SHADOWING")
         val xDomain = projectionX.toValidDomain(hDomain)
 
@@ -44,8 +44,8 @@ internal class ProjectionCoordProvider(
     }
 
     override fun adjustGeomSize(
-        hDomain: ClosedRange<Double>,
-        vDomain: ClosedRange<Double>,
+        hDomain: DoubleSpan,
+        vDomain: DoubleSpan,
         geomSize: DoubleVector
     ): DoubleVector {
         // Adjust geom dimensions ratio.
@@ -60,7 +60,7 @@ internal class ProjectionCoordProvider(
 
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double> {
         return if (projectionX.nonlinear) {
@@ -77,7 +77,7 @@ internal class ProjectionCoordProvider(
 
     override fun buildAxisScaleY(
         scaleProto: Scale<Double>,
-        domain: ClosedRange<Double>,
+        domain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double> {
         return if (projectionY.nonlinear) {
@@ -92,7 +92,7 @@ internal class ProjectionCoordProvider(
         }
     }
 
-    override fun buildAxisXScaleMapper(domain: ClosedRange<Double>, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
         return if (projectionX.nonlinear) {
             buildAxisScaleMapperWithProjection(
                 projectionX,
@@ -104,7 +104,7 @@ internal class ProjectionCoordProvider(
         }
     }
 
-    override fun buildAxisYScaleMapper(domain: ClosedRange<Double>, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
         return if (projectionY.nonlinear) {
             buildAxisScaleMapperWithProjection(
                 projectionY,
@@ -120,7 +120,7 @@ internal class ProjectionCoordProvider(
     companion object {
         private fun buildAxisScaleWithProjection(
             projection: Projection, scaleProto: Scale<Double>,
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             breaks: ScaleBreaks
         ): Scale<Double> {
 
@@ -132,7 +132,7 @@ internal class ProjectionCoordProvider(
             )
         }
 
-        private fun validateBreaks(validDomain: ClosedRange<Double>, breaks: ScaleBreaks): ScaleBreaks {
+        private fun validateBreaks(validDomain: DoubleSpan, breaks: ScaleBreaks): ScaleBreaks {
             val validIndices = ArrayList<Int>()
             var i = 0
             for (v in breaks.domainValues) {
@@ -158,7 +158,7 @@ internal class ProjectionCoordProvider(
 
         private fun buildAxisScaleMapperWithProjection(
             projection: Projection,
-            domain: ClosedRange<Double>,
+            domain: DoubleSpan,
             axisLength: Double,
         ): ScaleMapper<Double> {
             val linearMapper = linearMapper(
@@ -167,7 +167,7 @@ internal class ProjectionCoordProvider(
             )
 
             val validDomain = projection.toValidDomain(domain)
-            val validDomainProjected = ClosedRange(
+            val validDomainProjected = DoubleSpan(
                 projection.apply(validDomain.lowerEnd),
                 projection.apply(validDomain.upperEnd)
             )

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
@@ -58,7 +58,7 @@ internal object BreakLabelsLayoutUtil {
     fun doLayoutVerticalAxisLabels(
         orientation: Orientation,
         breaks: ScaleBreaks,
-        axisDomain: ClosedRange<Double>,
+        axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?,
         theme: AxisTheme
     ): AxisLabelsLayoutInfo {
@@ -95,7 +95,7 @@ internal object BreakLabelsLayoutUtil {
 
     fun mapToAxis(
         breaks: List<Double>,
-        axisDomain: ClosedRange<Double>,
+        axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?
     ): List<Double> {
         val axisMin = axisDomain.lowerEnd
@@ -133,7 +133,7 @@ internal object BreakLabelsLayoutUtil {
 
     private fun verticalAxisLabelsBounds(
         breaks: ScaleBreaks,
-        axisDomain: ClosedRange<Double>,
+        axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?
     ): DoubleRectangle {
         val maxLength = maxLength(breaks.labels)

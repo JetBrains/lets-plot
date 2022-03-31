@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
@@ -19,15 +19,15 @@ internal class ScaleProviderBuilderTest {
     @Test
     fun withBreaksGenerator() {
         val bg = object : BreaksGenerator {
-            override fun generateBreaks(domain: ClosedRange<Double>, targetCount: Int): ScaleBreaks {
+            override fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks {
                 return ScaleBreaks.EMPTY
             }
 
-            override fun labelFormatter(domain: ClosedRange<Double>, targetCount: Int): (Any) -> String {
+            override fun labelFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
                 return { "hi" }
             }
 
-            override fun defaultFormatter(domain: ClosedRange<Double>, targetCount: Int) =
+            override fun defaultFormatter(domain: DoubleSpan, targetCount: Int) =
                 labelFormatter(domain, targetCount)
         }
 

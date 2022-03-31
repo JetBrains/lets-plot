@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal class AdaptableAxisBreaksProvider(
-    private val domainAfterTransform: ClosedRange<Double>,
+    private val domainAfterTransform: DoubleSpan,
     private val breaksGenerator: BreaksGenerator
 ) : AxisBreaksProvider {
 

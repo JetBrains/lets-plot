@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
 import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -20,8 +19,8 @@ import jetbrains.datalore.plot.builder.theme.Theme
 internal class SquareFrameOfReferenceProvider(
     private val hScaleProto: Scale<Double>,
     private val vScaleProto: Scale<Double>,
-    hDomain: ClosedRange<Double>,
-    vDomain: ClosedRange<Double>,
+    hDomain: DoubleSpan,
+    vDomain: DoubleSpan,
     override val flipAxis: Boolean,
     private val theme: Theme
 ) : TileFrameOfReferenceProvider {
@@ -118,7 +117,7 @@ internal class SquareFrameOfReferenceProvider(
 
     private class AxisSpec(
         val breaksProviderFactory: AxisBreaksProviderFactory,
-        val domainTransformed: ClosedRange<Double>,
+        val domainTransformed: DoubleSpan,
         val label: String?,
         val theme: AxisTheme
     )

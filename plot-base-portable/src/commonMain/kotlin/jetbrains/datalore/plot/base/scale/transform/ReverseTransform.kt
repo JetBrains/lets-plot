@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
+import jetbrains.datalore.base.gcommon.collect.DoubleSpan
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
@@ -14,11 +14,11 @@ internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {
         return SeriesUtil.isFinite(v)
     }
 
-    override fun createApplicableDomain(middle: Double?): ClosedRange<Double> {
+    override fun createApplicableDomain(middle: Double?): DoubleSpan {
         return Transforms.IDENTITY.createApplicableDomain(middle)
     }
 
-    override fun toApplicableDomain(range: ClosedRange<Double>): ClosedRange<Double> {
+    override fun toApplicableDomain(range: DoubleSpan): DoubleSpan {
         return Transforms.IDENTITY.toApplicableDomain(range)
     }
 }
