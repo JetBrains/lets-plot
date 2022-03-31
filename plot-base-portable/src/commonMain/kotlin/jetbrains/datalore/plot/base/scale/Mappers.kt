@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale

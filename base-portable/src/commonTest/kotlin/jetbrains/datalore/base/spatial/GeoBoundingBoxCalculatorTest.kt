@@ -7,7 +7,7 @@ package jetbrains.datalore.base.spatial
 
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals

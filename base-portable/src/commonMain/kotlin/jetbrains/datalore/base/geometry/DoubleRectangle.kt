@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.geometry
 
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 
 class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 

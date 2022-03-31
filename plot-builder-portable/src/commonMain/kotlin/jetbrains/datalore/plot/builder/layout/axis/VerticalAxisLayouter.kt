@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 

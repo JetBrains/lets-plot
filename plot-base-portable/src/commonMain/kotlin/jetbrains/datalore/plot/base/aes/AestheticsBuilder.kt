@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.coord.map
 
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.MercatorUtils.VALID_LATITUDE_RANGE
 import jetbrains.datalore.base.spatial.MercatorUtils.getMercatorY
 import jetbrains.datalore.plot.base.coord.Projection

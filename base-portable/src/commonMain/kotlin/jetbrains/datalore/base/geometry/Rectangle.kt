@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.geometry
 
-import jetbrains.datalore.base.gcommon.collect.IntSpan
+import jetbrains.datalore.base.interval.IntSpan
 
 class Rectangle(val origin: Vector, val dimension: Vector) {
 

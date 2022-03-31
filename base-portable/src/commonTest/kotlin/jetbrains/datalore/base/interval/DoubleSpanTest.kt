@@ -3,28 +3,28 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.gcommon.collect
+package jetbrains.datalore.base.interval
 
 import kotlin.test.*
 
-class ClosedRangeTest {
-    private fun <T : Comparable<T>> range(lower: T, upper: T): ClosedRange<T> {
-        return ClosedRange(lower, upper)
+class DoubleSpanTest {
+    private fun range(lower: Number, upper: Number): DoubleSpan {
+        return DoubleSpan(lower.toDouble(), upper.toDouble())
     }
 
-    private fun <T : Comparable<T>> assertSpan(
-        expected: ClosedRange<T>,
-        range0: ClosedRange<T>,
-        range1: ClosedRange<T>
+    private fun assertUnion(
+        expected: DoubleSpan,
+        range0: DoubleSpan,
+        range1: DoubleSpan
     ) {
         assertEquals(expected, range0.span(range1))
         assertEquals(expected, range1.span(range0))
     }
 
-    private fun <T : Comparable<T>> assertIntersection(
-        expected: ClosedRange<T>,
-        range0: ClosedRange<T>,
-        range1: ClosedRange<T>
+    private fun assertIntersection(
+        expected: DoubleSpan,
+        range0: DoubleSpan,
+        range1: DoubleSpan
     ) {
         assertEquals(expected, range0.intersection(range1))
         assertEquals(expected, range1.intersection(range0))
@@ -51,11 +51,11 @@ class ClosedRangeTest {
     @Test
     fun contains() {
         val r = range(-1, 1)
-        assertFalse(r.contains(-2))
-        assertTrue(r.contains(-1))
-        assertTrue(r.contains(0))
-        assertTrue(r.contains(1))
-        assertFalse(r.contains(2))
+        assertFalse(r.contains(-2.0))
+        assertTrue(r.contains(-1.0))
+        assertTrue(r.contains(0.0))
+        assertTrue(r.contains(1.0))
+        assertFalse(r.contains(2.0))
     }
 
     @Test
@@ -94,22 +94,22 @@ class ClosedRangeTest {
         assertSame(r, r.span(r))
         assertSame(r, inner.span(r))
 
-        assertSpan(
+        assertUnion(
             range(-3, 2),
             r,
             range(-3, 1)
         )
-        assertSpan(
+        assertUnion(
             range(-2, 3),
             r,
             range(-1, 3)
         )
-        assertSpan(
+        assertUnion(
             range(-5, 2),
             r,
             range(-5, -3)
         )
-        assertSpan(
+        assertUnion(
             range(-2, 5),
             r,
             range(3, 5)
@@ -149,12 +149,11 @@ class ClosedRangeTest {
 
     @Test
     fun encloseAll() {
-        assertFailsWith<NullPointerException> { ClosedRange.encloseAll(listOf(1, null)) }
-        assertFailsWith<NoSuchElementException> { ClosedRange.encloseAll<Int>(emptyList()) }
+        assertFailsWith<NoSuchElementException> { DoubleSpan.encloseAll(emptyList()) }
 
         assertEquals(
             range(-3, 0),
-            ClosedRange.encloseAll(listOf(-3, 0))
+            DoubleSpan.encloseAll(listOf(-3.0, 0.0))
         )
     }
 }

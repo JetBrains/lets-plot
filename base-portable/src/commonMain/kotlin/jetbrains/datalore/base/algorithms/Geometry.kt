@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.algorithms
 
-import jetbrains.datalore.base.gcommon.collect.IntSpan
+import jetbrains.datalore.base.interval.IntSpan
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.math.abs
 

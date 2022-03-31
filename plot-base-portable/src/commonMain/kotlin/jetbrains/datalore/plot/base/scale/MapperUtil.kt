@@ -5,8 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.ScaleMapper
 import kotlin.math.max
@@ -35,8 +34,8 @@ object MapperUtil {
             trans.apply(trans.definedLimits().second),
             trans.apply(dataRange.lowerEnd),
             trans.apply(dataRange.upperEnd),
-        ).filterNotNull()
+        )
 
-        return ClosedRange.encloseAll(transformedLimits)
+        return DoubleSpan.encloseAll(transformedLimits)
     }
 }

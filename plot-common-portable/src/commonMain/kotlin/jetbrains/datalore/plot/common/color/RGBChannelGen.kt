@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.color
 
-import jetbrains.datalore.base.gcommon.collect.IntSpan
+import jetbrains.datalore.base.interval.IntSpan
 import jetbrains.datalore.base.gcommon.collect.Ordering.Companion.natural
 import kotlin.math.ceil
 import kotlin.math.floor

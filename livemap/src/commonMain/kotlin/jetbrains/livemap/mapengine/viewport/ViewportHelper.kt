@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.viewport
 
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
 import jetbrains.datalore.base.spatial.calculateQuadKeys
 import jetbrains.datalore.base.spatial.union

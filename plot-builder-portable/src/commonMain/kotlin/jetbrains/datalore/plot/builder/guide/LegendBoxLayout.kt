@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
@@ -27,7 +26,7 @@ abstract class LegendBoxLayout(
             var origin = DoubleVector.ZERO
             if (isHorizontal) {
                 val titleHeight = titleSize(title).y
-                val y = if (graphSize.y > titleHeight ) (graphSize.y - titleHeight) / 2 else origin.y
+                val y = if (graphSize.y > titleHeight) (graphSize.y - titleHeight) / 2 else origin.y
                 origin = DoubleVector(origin.x, y)
             }
             return DoubleRectangle(origin, titleSize(title))
@@ -37,7 +36,7 @@ abstract class LegendBoxLayout(
         get() = when {
             isHorizontal -> {
                 val titleSize = titleSize(title)
-                val y = if (titleSize.y > graphSize.y ) (titleSize.y - graphSize.y) / 2 else 0.0
+                val y = if (titleSize.y > graphSize.y) (titleSize.y - graphSize.y) / 2 else 0.0
                 DoubleVector(titleSize.x, y)
             }
             else -> {

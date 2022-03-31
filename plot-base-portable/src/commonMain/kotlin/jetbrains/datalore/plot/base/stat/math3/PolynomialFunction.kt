@@ -26,9 +26,8 @@
 
 package jetbrains.datalore.plot.base.stat.math3
 
-import jetbrains.datalore.base.gcommon.collect.Comparables.min
-import jetbrains.datalore.base.gcommon.collect.Comparables.max
-import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Immutable representation of a real polynomial function with real coefficients.

@@ -5,10 +5,8 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.gcommon.collect.ClosedRange
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
-import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
@@ -311,10 +309,10 @@ internal object PositionalScalesUtil {
                 is ContinuousTransform -> {
                     val lims = ScaleUtil.transformedDefinedLimits(transform).toList().filter { it.isFinite() }
                     if (lims.isEmpty()) null
-                    else ClosedRange.encloseAll(lims)
+                    else DoubleSpan.encloseAll(lims)
                 }
                 is DiscreteTransform -> {
-                    ClosedRange.encloseAll(transform.effectiveDomainTransformed)
+                    DoubleSpan.encloseAll(transform.effectiveDomainTransformed)
                 }
                 else -> throw IllegalStateException("Unexpected transform type: ${transform::class.simpleName}")
             }
@@ -330,7 +328,7 @@ internal object PositionalScalesUtil {
 
             @Suppress("NAME_SHADOWING")
             val range = when (includeZero) {
-                true -> updateRange(ClosedRange.singleton(0.0), range)
+                true -> updateRange(DoubleSpan.singleton(0.0), range)
                 false -> range
             }
 
@@ -338,14 +336,19 @@ internal object PositionalScalesUtil {
         }
 
         private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan? {
-            if (!Iterables.isEmpty(values)) {
-                var newRange = ClosedRange.encloseAll(values)
-                if (wasRange != null) {
-                    newRange = wasRange.span(newRange)
-                }
-                return newRange
+//            if (!Iterables.isEmpty(values)) {
+//                var newRange = DoubleSpan.encloseAll(values)
+//                if (wasRange != null) {
+//                    newRange = wasRange.span(newRange)
+//                }
+//                return newRange
+//            }
+//            return wasRange
+            val newRange = DoubleSpan.encloseAll(values)
+            return when {
+                wasRange == null -> newRange
+                else -> wasRange.span(newRange)
             }
-            return wasRange
         }
 
         internal fun updateRange(range: DoubleSpan?, wasRange: DoubleSpan?): DoubleSpan? {

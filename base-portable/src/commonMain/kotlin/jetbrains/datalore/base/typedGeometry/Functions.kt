@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 
 class Generic
 

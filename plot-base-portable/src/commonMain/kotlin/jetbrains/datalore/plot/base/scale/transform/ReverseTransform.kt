@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ReverseTransform : FunTransform({ v -> -v }, { v -> -v }) {

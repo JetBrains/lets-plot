@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.gcommon.collect.Comparables.max
-import jetbrains.datalore.base.gcommon.collect.Comparables.min
-import jetbrains.datalore.base.gcommon.collect.DoubleSpan
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
+import kotlin.math.max
+import kotlin.math.min
 
 internal open class DefaultCoordinateSystem(
     val toClientOffsetX: (Double) -> Double,
