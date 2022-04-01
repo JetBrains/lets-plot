@@ -250,14 +250,14 @@ internal object PositionalScalesUtil {
         val renderedAes = layer.renderedAes()
         val rangeX = when {
             Aes.WIDTH in renderedAes -> Aes.WIDTH
-            Aes.BINWIDTH in renderedAes && layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
+            layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
             else -> null
         }?.let {
             computeLayerDryRunRangeAfterSizeExpand(Aes.X, it, aesthetics, geomCtx)
         }
         val rangeY = when {
             Aes.HEIGHT in renderedAes -> Aes.HEIGHT
-            Aes.BINWIDTH in renderedAes && layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
+            layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
             else -> null
         }?.let {
             computeLayerDryRunRangeAfterSizeExpand(Aes.Y, it, aesthetics, geomCtx)
