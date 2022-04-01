@@ -34,8 +34,8 @@ object GeomInteractionUtil {
         theme: Theme
     ): GeomInteractionBuilder {
         val axisWithoutTooltip = HashSet<Aes<*>>()
-        if (isLiveMap || !theme.axisX().showTooltip()) axisWithoutTooltip.add(Aes.X)
-        if (isLiveMap || !theme.axisY().showTooltip()) axisWithoutTooltip.add(Aes.Y)
+        if (isLiveMap || !theme.horizontalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.X)
+        if (isLiveMap || !theme.verticalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.Y)
 
         val isCrosshairEnabled = isCrosshairEnabled(layerConfig)
         val builder = createGeomInteractionBuilder(
@@ -117,8 +117,8 @@ object GeomInteractionUtil {
         }.let {
             // Not show the axis tooltip if the axis tick labels are hidden
             val axisAesList = it.toMutableList()
-            if (!theme.axisX().showLabels()) axisAesList.remove(Aes.X)
-            if (!theme.axisY().showLabels()) axisAesList.remove(Aes.Y)
+            if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisAesList.remove(Aes.X)
+            if (!theme.verticalAxis(flipAxis = false).showLabels()) axisAesList.remove(Aes.Y)
             axisAesList
         }
     }
@@ -151,7 +151,7 @@ object GeomInteractionUtil {
                 val variable = layerConfig.getVariableForAes(aes)!!
                 val mappingToShow = mappingsToShow[variable]
                 when {
-                    mappingToShow == null ->  {
+                    mappingToShow == null -> {
                         mappingsToShow[variable] = aes
                     }
                     !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {

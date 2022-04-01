@@ -26,7 +26,7 @@ internal class ThemeElemSizeTest(
 
     @Test
     fun eval() {
-        assertEquals(expected, theme.axisX().lineWidth())
+        assertEquals(expected, theme.horizontalAxis(flipAxis = false).lineWidth())
     }
 
 

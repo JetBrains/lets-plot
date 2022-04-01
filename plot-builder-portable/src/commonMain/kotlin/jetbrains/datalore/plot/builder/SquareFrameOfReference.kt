@@ -69,8 +69,8 @@ internal class SquareFrameOfReference(
         val panelTheme = theme.panel()
 
         // Flip theme
-        val hAxisTheme = theme.axisX(flipAxis)
-        val vAxisTheme = theme.axisY(flipAxis)
+        val hAxisTheme = theme.horizontalAxis(flipAxis)
+        val vAxisTheme = theme.verticalAxis(flipAxis)
 
         val hGridTheme = panelTheme.gridX(flipAxis)
         val vGridTheme = panelTheme.gridY(flipAxis)

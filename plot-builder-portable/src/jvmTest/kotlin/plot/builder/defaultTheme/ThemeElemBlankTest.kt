@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_X
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_X
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
+import jetbrains.datalore.plot.builder.theme.Theme
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -26,7 +26,7 @@ internal class ThemeElemBlankTest(
 
     @Test
     fun eval() {
-        assertEquals(isBlank, !theme.axisX().showLine())
+        assertEquals(isBlank, !theme.horizontalAxis(flipAxis = false).showLine())
     }
 
 

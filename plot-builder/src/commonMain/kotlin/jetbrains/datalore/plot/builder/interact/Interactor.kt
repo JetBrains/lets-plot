@@ -42,8 +42,8 @@ internal class Interactor(
             decorationLayer,
             flippedAxis,
             plotSize,
-            theme.axisX(flippedAxis),
-            theme.axisY(flippedAxis),
+            theme.horizontalAxis(flippedAxis),
+            theme.verticalAxis(flippedAxis),
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))

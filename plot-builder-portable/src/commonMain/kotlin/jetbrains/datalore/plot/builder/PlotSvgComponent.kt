@@ -330,7 +330,7 @@ class PlotSvgComponent constructor(
                     Orientation.LEFT,
                     overallTileBounds,
                     geomAreaBounds,
-                    theme.axisY(flippedAxis)
+                    theme.verticalAxis(flippedAxis)
                 )
             }
             if (axisTitleBottom != null) {
@@ -339,7 +339,7 @@ class PlotSvgComponent constructor(
                     Orientation.BOTTOM,
                     overallTileBounds,
                     geomAreaBounds,
-                    theme.axisX(flippedAxis)
+                    theme.horizontalAxis(flippedAxis)
                 )
             }
         }

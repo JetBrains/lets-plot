@@ -33,14 +33,14 @@ internal class SquareFrameOfReferenceProvider(
             AxisBreaksProviderFactory.forScale(hScaleProto),
             hDomain,
             hScaleProto.name,
-            theme.axisX()
+            theme.horizontalAxis(flipAxis)
         )
 
         vAxisSpec = AxisSpec(
             AxisBreaksProviderFactory.forScale(vScaleProto),
             vDomain,
             vScaleProto.name,
-            theme.axisY()
+            theme.verticalAxis(flipAxis)
         )
     }
 
