@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.CharCategory.Companion.getCharRatio
 import kotlin.jvm.JvmOverloads
 
 //ToDo:
@@ -54,16 +53,6 @@ class LabelMetrics : LabelSpec,
         return if (isBold) {
             width * FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
         } else width
-    }
-
-    override fun width(text: String, fontFamily: String?): Double {
-        val options = getOptionsForFont(fontFamily)
-        val width = text.map { getCharRatio(it, options) }.sum() * fontSize * options.fontRatio
-        return if (isBold) {
-            width * options.fontBoldRatio
-        } else {
-            width
-        }
     }
 
     override fun height(): Double {
