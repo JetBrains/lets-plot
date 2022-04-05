@@ -34,7 +34,8 @@ fun main() {
             settings.isItalic,
             settings.fontWidthRatio,
             settings.categoryRatio,
-            settings.boldRatio
+            settings.boldRatio,
+            settings.lineBounds
         )
         return svgRoot?.let(::createPlotComponent)
     }

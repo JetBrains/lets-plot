@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
+import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -19,6 +20,7 @@ import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgUtils
+import kotlin.math.roundToInt
 
 class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
 
@@ -40,7 +42,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         spec: LabelSpec,
         widthRatio: Double?,
         categoryRatio: Double?,
-        boldRatio: Double?,
+        boldRatio: Double?
     ): DoubleVector {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
@@ -56,7 +58,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         font: Font,
         fontWidthRatio: Double?,
         categoryRatio: Double?,
-        boldRatio: Double?
+        boldRatio: Double?,
+        lineBounds: List<DoubleVector>
     ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
@@ -67,21 +70,33 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         lines
             .map { line -> LabelSpec(line, font) }
             .forEachIndexed { index, spec ->
-                val textLabel = createTextLabel(spec)
+                val estimatedSize = titleDimensions(spec, fontWidthRatio, categoryRatio, boldRatio)
+                val estimatedRect =
+                    DoubleRectangle(x, y - estimatedSize.y / 2, estimatedSize.x, estimatedSize.y)
+                groupComponent.add(svgRect(estimatedRect, Color.MAGENTA, strokeWidth = 1.5))
 
+                /// actual size
+                val bounds = lineBounds[index]
+                val rect = DoubleRectangle(x, y - bounds.y / 2, bounds.x, bounds.y)
+                groupComponent.add(svgRect(rect, Color.BLUE, strokeWidth = 1.0))
+
+                // label
+                val textLabel = createTextLabel(spec)
                 val element = textLabel.rootGroup
                 SvgUtils.transformTranslate(element, x, y)
                 groupComponent.add(element)
 
-                val titleSize = titleDimensions(spec, fontWidthRatio, categoryRatio, boldRatio)
-                val rectNew = DoubleRectangle(x, y - titleSize.y / 2, titleSize.x, titleSize.y)
+                // delta
+                val delta = estimatedSize.x - bounds.x
+                val deltaStr = "∆=${(delta * 10000).roundToInt().toDouble() / 10000}"
+                val deltaLabel = createTextLabel(LabelSpec(deltaStr, Font(FontFamily.MONOSPACED, 10)))
+                val deltaElement = deltaLabel.rootGroup
+                SvgUtils.transformTranslate(deltaElement, x + max(estimatedSize.x, bounds.x) + 10.0, y)
+                groupComponent.add(deltaElement)
 
-                groupComponent.add(svgRect(rectNew, Color.MAGENTA, strokeWidth = 1.5))
-
-                y += titleSize.y + lineInterval
-
+                y += estimatedSize.y + lineInterval
                 if ((index + 1) % rowsCount == 0) {
-                    x += titleSize.x + 150.0
+                    x += max(estimatedSize.x, bounds.x) + 200.0
                     y = 20.0
                 }
             }
@@ -100,7 +115,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
 
         private class LabelSpec(
             val text: String,
-            val font: Font,
+            val font: Font
         )
 
         private fun createTextLabel(spec: LabelSpec): TextLabel {
@@ -131,7 +146,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             isItalic: Boolean,
             fontWidthRatio: Double?,
             categoryRatio: Double?,
-            boldRatio: Double?
+            boldRatio: Double?,
+            lineBounds: List<DoubleVector>
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
@@ -146,7 +162,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                             ),
                             fontWidthRatio,
                             categoryRatio,
-                            boldRatio
+                            boldRatio,
+                            lineBounds
                         )
                     )
                 ).firstOrNull()

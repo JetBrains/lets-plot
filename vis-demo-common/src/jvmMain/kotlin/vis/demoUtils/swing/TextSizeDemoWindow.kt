@@ -5,11 +5,14 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.CharCategory
 import jetbrains.datalore.plot.builder.presentation.getOptionsForFont
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.Font
 import java.awt.GridLayout
+import java.awt.font.FontRenderContext
 import javax.swing.*
 
 data class TextSettings(
@@ -20,7 +23,8 @@ data class TextSettings(
     val isItalic: Boolean,
     val fontWidthRatio: Double,
     val categoryRatio: Double?,
-    val boldRatio: Double
+    val boldRatio: Double,
+    val lineBounds: List<DoubleVector>
 )
 
 object TextSizeDemoCharCategories {
@@ -97,13 +101,42 @@ class TextSizeDemoWindow(
     private val myOutputPanel = JPanel()
     private val mySplitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myInputPanel, myOutputPanel)
 
+    private fun getStringBounds(
+        text: String,
+        fontName: String,
+        fontSize: Int,
+        isBold: Boolean,
+        isItalic: Boolean
+    ): DoubleVector {
+        val fontStyle = when {
+            isBold && isItalic -> Font.BOLD + Font.ITALIC
+            isBold -> Font.BOLD
+            isItalic -> Font.ITALIC
+            else -> Font.PLAIN
+        }
+        val font = Font(fontName, fontStyle, fontSize)
+
+        // val metrics: FontMetrics = object : FontMetrics(font) {}
+        // val bounds =  metrics.getStringBounds(text, null)
+
+        val frc = FontRenderContext(font.transform, true, true)
+        val bounds = font.getStringBounds(text, frc)
+        return DoubleVector(bounds.width, bounds.height)
+    }
+
     private fun rebuild() {
+        val lines = myTextArea.text.split("\n").filter(String::isNotEmpty)
+        val fontName = getSelectedFontName()
+        val fontSize = myFontSize.value.toString().toInt()
+        val lineBounds = lines.map {
+            getStringBounds(it, fontName, fontSize, myIsBold.isSelected, myIsItalic.isSelected)
+        }
         val plotComponent = svgComponentFactory(
             Dimension(size.width - myTextArea.width - 50, size.height - 50),
             TextSettings(
-                lines = myTextArea.text.split("\n").filter(String::isNotEmpty),
-                fontName = getSelectedFontName(),
-                fontSize = myFontSize.value.toString().toInt(),
+                lines = lines,
+                fontName = fontName,
+                fontSize = fontSize,
                 isBold = myIsBold.isSelected,
                 isItalic = myIsItalic.isSelected,
                 fontWidthRatio = myFontWidthRatio.value.toString().toDouble(),
@@ -112,7 +145,8 @@ class TextSizeDemoWindow(
                 } else {
                     myCategoryRatio.value.toString().toDouble()
                 },
-                boldRatio = myBoldRatio.value.toString().toDouble()
+                boldRatio = myBoldRatio.value.toString().toDouble(),
+                lineBounds = lineBounds
             )
         )
         mySplitPane.rightComponent = plotComponent
