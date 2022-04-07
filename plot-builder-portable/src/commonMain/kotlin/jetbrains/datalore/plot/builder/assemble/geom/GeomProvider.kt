@@ -314,6 +314,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { JitterGeom() }.build()
         }
 
+        fun qq(): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.Q_Q,
+                AestheticsDefaults.qq(),
+                QQGeom.HANDLES_GROUPS
+            ) { QQGeom() }.build()
+        }
+
         fun freqpoly(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.FREQPOLY,

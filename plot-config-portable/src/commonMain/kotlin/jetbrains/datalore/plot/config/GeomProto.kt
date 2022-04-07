@@ -54,6 +54,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             DENSITY2D -> DefaultSampling.DENSITY2D
             DENSITY2DF -> DefaultSampling.DENSITY2DF
             JITTER -> DefaultSampling.JITTER
+            Q_Q -> DefaultSampling.Q_Q
             FREQPOLY -> DefaultSampling.FREQPOLY
             STEP -> DefaultSampling.STEP
             RECT -> DefaultSampling.RECT
@@ -126,6 +127,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 density2dDefaults()
             DEFAULTS[DENSITY2DF] =
                 density2dfDefaults()
+            DEFAULTS[Q_Q] =
+                qqDefaults()
             DEFAULTS[FREQPOLY] =
                 freqpolyDefaults()
             DEFAULTS[BIN_2D] =
@@ -227,6 +230,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun density2dfDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "density2df"
+            return defaults
+        }
+
+        private fun qqDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "qq"
             return defaults
         }
 

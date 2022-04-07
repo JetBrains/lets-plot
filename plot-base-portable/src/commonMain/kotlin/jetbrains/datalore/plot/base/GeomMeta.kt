@@ -261,6 +261,7 @@ object GeomMeta {
             GeomKind.DENSITY2D -> PATH
             GeomKind.DENSITY2DF -> POLYGON
             GeomKind.JITTER -> POINT
+            GeomKind.Q_Q -> POINT
             GeomKind.FREQPOLY -> PATH
             GeomKind.STEP -> PATH
             GeomKind.RECT -> listOf(
