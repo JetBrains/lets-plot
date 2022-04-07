@@ -48,10 +48,27 @@ object HintColorUtil {
 
     private fun pointFillMapper(p:DataPointAesthetics): Color =
         when (val shape = p.shape()) {
-            is NamedShape -> AestheticsUtil.fill(shape.isFilled, shape.isSolid, p)
+            is NamedShape -> applyAlpha(
+                AestheticsUtil.fill(shape.isFilled, shape.isSolid, p),
+                p.alpha()!!
+            )
             TinyPointShape -> p.color()!!
             else -> Color.TRANSPARENT
         }
+
+    private fun pointStrokeMapper(p:DataPointAesthetics): Color {
+        return when(val shape = p.shape()) {
+            is NamedShape -> {
+                when {
+                    shape.isSolid -> Color.TRANSPARENT
+                    shape.isFilled -> p.color()!!
+                    else -> colorWithAlpha(p)
+                }
+            }
+            TinyPointShape -> p.color()!!
+            else ->  Color.TRANSPARENT
+        }
+    }
 
     fun createColorMarkerMapper(
         geomKind: GeomKind?,
@@ -66,7 +83,8 @@ object HintColorUtil {
         }
 
         val strokeColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
-            ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT, POINT_RANGE, TEXT, TILE -> HintColorUtil::colorWithAlpha
+            ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT_RANGE, TEXT, TILE -> HintColorUtil::colorWithAlpha
+            POINT -> this::pointStrokeMapper
             else -> DataPointAesthetics::color // border always ignores alpha
         }.let { colorSelector -> { p: DataPointAesthetics ->
             colorSelector(p)?.takeIf { it.alpha > 0 && p.size() != 0.0 } }
