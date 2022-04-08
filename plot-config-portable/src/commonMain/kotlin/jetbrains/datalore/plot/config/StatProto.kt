@@ -95,7 +95,7 @@ object StatProto {
 
             StatKind.DENSITY2DF -> return configureDensity2dStat(options, true)
 
-            StatKind.QQ -> return Stats.qq(options.getInteger("version"))
+            StatKind.QQ -> return Stats.qq()
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }

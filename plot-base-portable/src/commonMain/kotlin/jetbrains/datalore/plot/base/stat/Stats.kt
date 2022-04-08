@@ -285,8 +285,8 @@ object Stats {
         )
     }
 
-    fun qq(version: Int?): Stat {
-        return QQStat(version)
+    fun qq(): Stat {
+        return QQStat()
     }
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {

@@ -11,14 +11,8 @@ import kotlin.math.*
 class NormalDistribution
 @JvmOverloads constructor(
     private val mean: Double,
-    private val standardDeviation: Double,
-    private val accuracy: Int = 1_000
+    private val standardDeviation: Double
 ) : AbstractRealDistribution() {
-    // TODO: Refactor
-    private val cumProbValuesCache: MutableMap<Double, Double> = mutableMapOf()
-    // TODO: Refactor
-    private val step: Double = 6.0 * standardDeviation / accuracy
-    // TODO: Refactor
     override val numericalMean: Double = mean
     override val numericalVariance: Double = standardDeviation.pow(2)
     override val supportLowerBound: Double = Double.NEGATIVE_INFINITY
@@ -28,9 +22,20 @@ class NormalDistribution
     override val isSupportConnected: Boolean = true
 
     init {
-        if (standardDeviation <= 0) {
+        if (standardDeviation <= 0.0) {
             error("NotStrictlyPositive - STANDARD_DEVIATION: $standardDeviation")
         }
+        // TODO: Move it to tests
+        require(abs(cumulativeProbability(-4.0 * standardDeviation + mean) * standardDeviation - 3.1671241833116014e-5) < 1.0e-16) { "Cumulative probability for normal distribution when x=-4.0 isn't work well." }
+        require(abs(cumulativeProbability(-1.0 * standardDeviation + mean) * standardDeviation - 0.15865525393145702) < 1.0e-16) { "Cumulative probability for normal distribution when x=-1.0 isn't work well." }
+        require(abs(cumulativeProbability(0.0 * standardDeviation + mean) * standardDeviation - 0.5) < 1.0e-16) { "Cumulative probability for normal distribution when x=0.0 isn't work well." }
+        require(abs(cumulativeProbability(1.0 * standardDeviation + mean) * standardDeviation - 0.841344746068543) < 1.0e-16) { "Cumulative probability for normal distribution when x=1.0 isn't work well." }
+        require(abs(cumulativeProbability(4.0 * standardDeviation + mean) * standardDeviation - 0.9999683287581669) < 1.0e-16) { "Cumulative probability for normal distribution when x=4.0 isn't work well." }
+        require(abs(inverseCumulativeProbability(0.0001) - (mean + standardDeviation * -3.71901648545568)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.0001 isn't work well." }
+        require(abs(inverseCumulativeProbability(0.3) - (mean + standardDeviation * -0.5244005127080407)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.3 isn't work well." }
+        require(abs(inverseCumulativeProbability(0.5) - mean) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.5 isn't work well." }
+        require(abs(inverseCumulativeProbability(0.7) - (mean + standardDeviation * 0.5244005127080407)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.7 isn't work well." }
+        require(abs(inverseCumulativeProbability(0.9999) - (mean + standardDeviation * 3.7190164854557084)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.9999 isn't work well." }
     }
 
     override fun probability(x: Double): Double {
@@ -43,41 +48,139 @@ class NormalDistribution
         )
     }
 
-    // TODO: Refactor, optimize, fix errors
-    // TODO: `n` in calculateIntegral() should be a parameter
     override fun cumulativeProbability(x: Double): Double {
-        // TODO: Change to the better one method
-        val calculateIntegral: (Double, Double, Int, (Double) -> Double) -> Double = { a, b, n, f ->
-            var sum = 0.0
-            for (k in 0..n)
-                sum += f(a + k * (b - a) / n)
-            (b - a) / n * sum
+        /*
+            Based on the paper of G. West, "Better approximations to cumulative normal functions".
+            http://www.codeplanet.eu/files/download/accuratecumnorm.pdf
+        */
+        val y = (x - mean) / standardDeviation
+        val yAbs = abs(y)
+        if (yAbs > 37.0) return 0.0
+        val exp = E.pow(-yAbs.pow(2) / 2.0)
+        var cumNorm: Double
+        if (yAbs < 7.07106781186547) {
+            var build = 3.52624965998911E-02 * yAbs + 0.700383064443688
+            build = build * yAbs + 6.37396220353165
+            build = build * yAbs + 33.912866078383
+            build = build * yAbs + 112.079291497871
+            build = build * yAbs + 221.213596169931
+            build = build * yAbs + 220.206867912376
+            cumNorm = exp * build
+            build = 8.83883476483184E-02 * yAbs + 1.75566716318264
+            build = build * yAbs + 16.064177579207
+            build = build * yAbs + 86.7807322029461
+            build = build * yAbs + 296.564248779674
+            build = build * yAbs + 637.333633378831
+            build = build * yAbs + 793.826512519948
+            build = build * yAbs + 440.413735824752
+            cumNorm /= build
+        } else {
+            var build = yAbs + 0.65
+            build = yAbs + 4.0 / build
+            build = yAbs + 3.0 / build
+            build = yAbs + 2.0 / build
+            build = yAbs + 1.0 / build
+            cumNorm = exp / build / 2.506628274631
         }
-        val transformedDensity: (Double) -> (Double) -> Double = { a ->
-            { t ->
-                if (t == 0.0)
-                    0.0
-                else
-                    density(a - (1.0 - t) / t) / t.pow(2)
+        if (y > 0.0) cumNorm = 1 - cumNorm
+
+        return cumNorm / standardDeviation
+    }
+
+    override fun inverseCumulativeProbability(p: Double): Double {
+        /*
+            Based on the paper of M. Wichura, "The Percentage Points of the Normal Distribution".
+            http://csg.sph.umich.edu/abecasis/gas_power_calculator/algorithm-as-241-the-percentage-points-of-the-normal-distribution.pdf
+        */
+        if (p < 0.0 || p > 1.0)
+            throw IllegalArgumentException("The probality p must be bigger than 0 and smaller than 1")
+
+        if (p == 0.0)
+            return Double.NEGATIVE_INFINITY
+        if (p == 1.0)
+            return Double.POSITIVE_INFINITY
+
+        var r: Double
+        val q: Double = p - 0.5
+        var result: Double
+
+        val a: List<Double> = listOf(
+            3.387132872796366608,
+            1.3314166789178437745e2,
+            1.9715909503065514427e3,
+            1.3731693765509461125e4,
+            4.5921953931549871457e4,
+            6.7265770927008700853e4,
+            3.3430575583588128105e4,
+            2.5090809287301226727e3,
+        )
+        val b: List<Double> = listOf(
+            4.2313330701600911252e1,
+            6.871870074920579083e2,
+            5.3941960214247511077e3,
+            2.1213794301586595867e4,
+            3.930789580009271061e4,
+            2.8729085735721942674e4,
+            5.226495278852854561e3,
+        )
+        val c: List<Double> = listOf(
+            1.42343711074968357734,
+            4.6303378461565452959,
+            5.7694972214606914055,
+            3.64784832476320460504,
+            1.27045825245236838258,
+            2.4178072517745061177e-1,
+            2.27238449892691845833e-2,
+            7.7454501427834140764e-4,
+        )
+        val d: List<Double> = listOf(
+            2.05319162663775882187,
+            1.6763848301838038494,
+            6.8976733498510000455e-1,
+            1.4810397642748007459e-1,
+            1.51986665636164571966e-2,
+            5.475938084995344946e-4,
+            1.05075007164441684324e-9,
+        )
+        val e: List<Double> = listOf(
+            6.6579046435011037772,
+            5.4637849111641143699,
+            1.7848265399172913358,
+            2.9656057182850489123e-1,
+            2.6532189526576123093e-2,
+            1.2426609473880784386e-3,
+            2.71155556874348757815e-5,
+            2.01033439929228813265e-7,
+        )
+        val f: List<Double> = listOf(
+            5.9983220655588793769e-1,
+            1.3692988092273580531e-1,
+            1.48753612908506148525e-2,
+            7.868691311456132591e-4,
+            1.8463183175100546818e-5,
+            1.4215117583164458887e-7,
+            2.04426310338993978564e-15,
+        )
+
+        if (abs(q) <= 0.425) {
+            r = 0.180625 - q.pow(2)
+            result = q * (((((((r * a[7] + a[6]) * r + a[5]) * r + a[4]) * r + a[3]) * r + a[2]) * r + a[1]) * r + a[0]) /
+                    (((((((r * b[6] + b[5]) * r + b[4]) * r + b[3]) * r + b[2]) * r + b[1]) * r + b[0]) * r + 1.0)
+        } else {
+            r = if (q > 0.0) 1.0 - p else p
+            r = sqrt(-ln(r))
+            if (r <= 5.0) {
+                r -= 1.6
+                result = (((((((r * c[7] + c[6]) * r + c[5]) * r + c[4]) * r + c[3]) * r + c[2]) * r + c[1]) * r + c[0]) /
+                        (((((((r * d[6] + d[5]) * r + d[4]) * r + d[3]) * r + d[2]) * r + d[1]) * r + d[0]) * r + 1.0)
+            } else {
+                r -= 5.0
+                result = (((((((r * e[7] + e[6]) * r + e[5]) * r + e[4]) * r + e[3]) * r + e[2]) * r + e[1]) * r + e[0]) /
+                        (((((((r * f[6] + f[5]) * r + f[4]) * r + f[3]) * r + f[2]) * r + f[1]) * r + f[0]) * r + 1.0)
             }
+            if (q < 0.0) result = -result
         }
 
-        // TODO: Refactor
-        if (!cumProbValuesCache.any()) {
-            for (k in -3..3) {
-                val xk = mean + k * standardDeviation
-                cumProbValuesCache[xk] = calculateIntegral(0.0, 1.0, accuracy, transformedDensity(xk))
-            }
-        }
-        val xNearest: Double = cumProbValuesCache.keys.minByOrNull { abs(x - it) }!!
-        val cumProbValueNearest: Double = cumProbValuesCache[xNearest]!!
-        val n: Int = round(abs(x - xNearest) / step).toInt()
-
-        return when {
-            n < 1 -> cumProbValueNearest
-            x > xNearest -> cumProbValueNearest + calculateIntegral(xNearest, x, n) { density(it) }
-            x < xNearest -> cumProbValueNearest - calculateIntegral(x, xNearest, n) { density(it) }
-            else -> throw IllegalArgumentException("x should be finite, but it isn't: $x")
-        }
+        return mean + standardDeviation * result
     }
 }
