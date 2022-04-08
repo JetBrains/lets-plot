@@ -79,7 +79,8 @@ object Defaults {
 
             const val BORDER_RADIUS = 4.0
             const val COLOR_BAR_WIDTH = 4.0
-            const val COLOR_BARS_MARGIN = 0.5
+            const val COLOR_BAR_STROKE_WIDTH = 1.5
+
             const val BORDER_WIDTH = 4.0
 
             val DARK_TEXT_COLOR = Color.BLACK

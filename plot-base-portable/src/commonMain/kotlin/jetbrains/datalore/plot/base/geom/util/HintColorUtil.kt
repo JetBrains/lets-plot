@@ -48,10 +48,27 @@ object HintColorUtil {
 
     private fun pointFillMapper(p:DataPointAesthetics): Color =
         when (val shape = p.shape()) {
-            is NamedShape -> AestheticsUtil.fill(shape.isFilled, shape.isSolid, p)
+            is NamedShape -> applyAlpha(
+                AestheticsUtil.fill(shape.isFilled, shape.isSolid, p),
+                p.alpha()!!
+            )
             TinyPointShape -> p.color()!!
             else -> Color.TRANSPARENT
         }
+
+    private fun pointStrokeMapper(p:DataPointAesthetics): Color {
+        return when(val shape = p.shape()) {
+            is NamedShape -> {
+                when {
+                    shape.isSolid -> Color.TRANSPARENT
+                    shape.isFilled -> p.color()!!
+                    else -> colorWithAlpha(p)
+                }
+            }
+            TinyPointShape -> p.color()!!
+            else ->  Color.TRANSPARENT
+        }
+    }
 
     fun createColorMarkerMapper(
         geomKind: GeomKind?,
@@ -66,7 +83,8 @@ object HintColorUtil {
         }
 
         val strokeColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
-            ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT, POINT_RANGE, TEXT, TILE -> HintColorUtil::colorWithAlpha
+            ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT_RANGE, TEXT, TILE -> HintColorUtil::colorWithAlpha
+            POINT -> this::pointStrokeMapper
             else -> DataPointAesthetics::color // border always ignores alpha
         }.let { colorSelector -> { p: DataPointAesthetics ->
             colorSelector(p)?.takeIf { it.alpha > 0 && p.size() != 0.0 } }
@@ -79,13 +97,26 @@ object HintColorUtil {
                     strokeColorGetter.takeIf { isMappedColor },
                 )
 
-            PATH, CONTOUR, DENSITY2D, FREQPOLY, LINE, STEP ->
+            PATH, CONTOUR, DENSITY2D, FREQPOLY, LINE, STEP, H_LINE, V_LINE, SEGMENT ->
                 listOf(strokeColorGetter) // show even without mapping (usecase - layers with const color)
 
             DENSITY -> when {
                 !isMappedFill -> listOf(strokeColorGetter)
                 else -> listOfNotNull(
                     fillColorGetter.takeIf { isMappedFill },
+                    strokeColorGetter.takeIf { isMappedColor },
+                )
+            }
+
+            POINT -> {
+                // For solid points: Color is used as fill
+                val pointFillColorGetter = { p: DataPointAesthetics ->
+                    val shape = p.shape()!!
+                    val isMapped = if (shape is NamedShape && shape.isSolid) isMappedColor else isMappedFill
+                    fillColorGetter(p).takeIf { isMapped }
+                }
+                listOfNotNull(
+                    pointFillColorGetter,
                     strokeColorGetter.takeIf { isMappedColor },
                 )
             }

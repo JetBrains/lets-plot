@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
@@ -246,7 +246,7 @@ class TooltipBox: SvgComponent() {
             height().set(0.0)
         }
 
-        private val myColorBars = List(2) { SvgPathElement() }  // max two bars
+        private val myColorBars = List(3) { SvgPathElement() }  // max 3 bars
         private var colorBarIndent = 0.0
 
         val dimension get() = myContent.run { DoubleVector(width().get()!!, height().get()!!) }
@@ -325,52 +325,58 @@ class TooltipBox: SvgComponent() {
             layoutColorBars(markerColors)
         }
 
-        private fun colorBarWidth(barsNum: Int): Double {
-            // make color bars wider if there are more than one
-            return COLOR_BAR_WIDTH * if (barsNum > 1) 1.4 else barsNum.toDouble()
+        private fun colorBarsWidth(barsNum: Int): List<Double> {
+            // make color bar wider if there are more than one
+            val middleBarWidth = COLOR_BAR_WIDTH.takeIf { barsNum > 0 } ?: 0.0
+            val strokeBarWidth = COLOR_BAR_STROKE_WIDTH.takeIf { barsNum > 1 } ?: 0.0
+            return listOf(
+                strokeBarWidth,
+                middleBarWidth,
+                strokeBarWidth
+            )
         }
 
         private fun calculateColorBarIndent(markerColors: List<Color>) {
             colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
-                if (colorBarNums > 0) {
-                    myHorizontalContentPadding +
-                            colorBarNums * colorBarWidth(colorBarNums) +
-                            (colorBarNums - 1) * COLOR_BARS_MARGIN
-                } else {
-                    0.0
+                colorBarsWidth(colorBarNums).sum().let { width ->
+                    if (width != 0.0) width + myHorizontalContentPadding else 0.0
                 }
             }
         }
 
         private fun layoutColorBars(markerColors: List<Color>) {
-            myColorBars.forEachIndexed { index, bar ->
-                if (markerColors.size > index) {
-                    bar.fillOpacity().set(1.0)
-                    bar.fillColor().set(markerColors[index])
-                } else {
-                    bar.fillOpacity().set(0.0)
-                }
+            // stroke | fill | stroke
+            val fillColor = markerColors.firstOrNull()
+            val strokeColor = if (markerColors.size > 1) markerColors[1] else null
+            myColorBars
+                .zip(listOf(strokeColor, fillColor, strokeColor))
+                .forEach { (bar, color) ->
+                    if (color == null) {
+                        bar.fillOpacity().set(0.0)
+                    } else {
+                        bar.fillOpacity().set(1.0)
+                        bar.fillColor().set(color)
+                    }
             }
 
-            val colorBars = myColorBars.filter { it.fillOpacity().get()!! > 0 }
-            val barWidth = colorBarWidth(colorBars.size)
-            colorBars
-                .forEachIndexed { index, bar ->
+            var x = contentRect.left + myHorizontalContentPadding
+            myColorBars
+                .zip(colorBarsWidth(markerColors.size))
+                .filter { (bar, _) -> bar.fillOpacity().get()!! > 0 }
+                .forEach { (bar, width) ->
                     // adjacent vertical bars
                     bar.d().set(
                         SvgPathDataBuilder().apply {
-                            val x = contentRect.left + myHorizontalContentPadding +
-                                    index * (barWidth + COLOR_BARS_MARGIN)
                             val y = myLinesContainer.y().get()!!
                             val bottom = myLinesContainer.height().get()!!
-
                             moveTo(x, y)
-                            horizontalLineTo(x + barWidth)
+                            horizontalLineTo(x + width)
                             verticalLineTo(bottom)
                             horizontalLineTo(x)
                             verticalLineTo(y)
                         }.build()
                     )
+                    x += width
                 }
         }
 
