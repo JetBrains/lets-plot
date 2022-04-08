@@ -108,6 +108,19 @@ object HintColorUtil {
                 )
             }
 
+            POINT -> {
+                // For solid points: Color is used as fill
+                val pointFillColorGetter = { p: DataPointAesthetics ->
+                    val shape = p.shape()!!
+                    val isMapped = if (shape is NamedShape && shape.isSolid) isMappedColor else isMappedFill
+                    fillColorGetter(p).takeIf { isMapped }
+                }
+                listOfNotNull(
+                    pointFillColorGetter,
+                    strokeColorGetter.takeIf { isMappedColor },
+                )
+            }
+
             else ->
                 listOfNotNull(
                     fillColorGetter.takeIf { isMappedFill && Aes.FILL in GeomMeta.renders(geomKind) },
