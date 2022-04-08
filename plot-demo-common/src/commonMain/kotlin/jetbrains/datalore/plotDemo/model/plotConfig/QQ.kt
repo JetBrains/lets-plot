@@ -12,7 +12,6 @@ class QQ {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            emptyData(),
         )
     }
 
@@ -35,29 +34,6 @@ class QQ {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
-
-    }
-
-    // TODO: Move it to tests
-    private fun emptyData(): MutableMap<String, Any> {
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'data' : {'x': []}," +
-                "   'mapping': {" +
-                "                'x': 'x'" +
-                "              }," +
-                "   'ggtitle': {" +
-                "                'text': 'Empty data'" +
-                "              }," +
-                "   'layers': [" +
-                "               {" +
-                "                 'geom': 'qq'," +
-                "                 'stat': 'qq'" +
-                "               }" +
-                "             ]" +
-                "}"
-
-        return HashMap(parsePlotSpec(spec))
 
     }
 }
