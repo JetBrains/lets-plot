@@ -339,7 +339,7 @@ class TooltipBox: SvgComponent() {
         private fun calculateColorBarIndent(markerColors: List<Color>) {
             colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
                 colorBarsWidth(colorBarNums).sum().let { width ->
-                    if (width > 0) width + myHorizontalContentPadding else width
+                    if (width != 0.0) width + myHorizontalContentPadding else 0.0
                 }
             }
         }
