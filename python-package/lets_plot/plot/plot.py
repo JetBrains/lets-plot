@@ -2,9 +2,10 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import json
 import numbers
 
-from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT
+from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT, PLOT_THEME
 from lets_plot.geo_data_internals.utils import is_geocoder
 from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import PlotSpec
@@ -84,7 +85,14 @@ def ggplot(data=None, mapping=None):
 
     data, mapping, data_meta = as_annotated_data(data, mapping)
 
-    return PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
+    plot_spec = PlotSpec(data, mapping, scales=[], layers=[], **data_meta)
+
+    if has_global_value(PLOT_THEME):
+        theme_options = json.loads(get_global_val(PLOT_THEME))
+        theme_name = theme_options.pop('name', None)
+        plot_spec += FeatureSpec('theme', theme_name, **theme_options)
+
+    return plot_spec
 
 
 # noinspection SpellCheckingInspection
