@@ -2,6 +2,9 @@
 
 ### Added
 
+- Global theme configuring with `plot_theme(...)` function.  
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/notebooks/plot_theme.ipynb).
+
 ### Changed
 
 ### Fixed
