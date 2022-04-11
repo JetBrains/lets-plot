@@ -120,6 +120,7 @@ object Option {
         const val TOOLTIP_TITLE = "tooltip_title"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
+        const val ORIENTATION = "orientation"
     }
 
     object TooltipFormat {

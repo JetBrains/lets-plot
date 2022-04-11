@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 
 object DemoAndTest {
 
@@ -53,7 +53,7 @@ object DemoAndTest {
     private fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
         @Suppress("NAME_SHADOWING")
         var plotSpec = plotSpec
-        plotSpec = PlotConfigServerSide.processTransform(plotSpec)
+        plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
         return PlotConfigClientSide.processTransform(plotSpec)
     }
 

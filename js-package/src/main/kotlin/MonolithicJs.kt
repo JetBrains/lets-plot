@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProvider
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgNodeContainer
@@ -249,7 +249,7 @@ private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolea
         if (frontendOnly) {
             plotSpec
         } else {
-            PlotConfigServerSide.processTransform(plotSpec)
+            BackendSpecTransformUtil.processTransform(plotSpec)
         }
 
     if (PlotConfig.isFailure(plotSpec)) {

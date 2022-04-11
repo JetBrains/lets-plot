@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
@@ -52,7 +51,7 @@ object DataProcessing {
         bindings: List<VarBinding>,
         transformByAes: Map<Aes<*>, Transform>,
         groupingContext: GroupingContext,
-        facets: PlotFacets,
+        facetVariables: List<Variable>,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
@@ -75,7 +74,7 @@ object DataProcessing {
                 stat,
                 bindings,
                 transformByAes,
-                facets,
+                facetVariables,
                 statCtx,
                 varsWithoutBinding,
                 messageConsumer
@@ -91,7 +90,7 @@ object DataProcessing {
                     stat,
                     bindings,
                     transformByAes,
-                    facets,
+                    facetVariables,
                     statCtx,
                     varsWithoutBinding,
                     messageConsumer
@@ -190,7 +189,7 @@ object DataProcessing {
         stat: Stat,
         bindings: List<VarBinding>,
         transformByAes: Map<Aes<*>, Transform>,
-        facets: PlotFacets,
+        facetVariables: List<Variable>,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
         compMessageConsumer: Consumer<String>
@@ -213,11 +212,8 @@ object DataProcessing {
         val statDataSize = statData.rowCount()
 
         // generate new series for facet variables
-        val facetVars = facets.variables.map {
-            DataFrameUtil.findVariableOrFail(data, it)
-        }
         val inputSeriesForFacetVars: Map<Variable, List<Any?>> = run {
-            val facetLevelByFacetVar = facetVars.associateWith { data[it][0] }
+            val facetLevelByFacetVar = facetVariables.associateWith { data[it][0] }
             facetLevelByFacetVar.mapValues { (_, facetLevel) -> List(statDataSize) { facetLevel } }
         }
 
@@ -233,7 +229,7 @@ object DataProcessing {
         val newInputSeries = HashMap<Variable, List<Any?>>()
         for (binding in bindings) {
             val variable = binding.variable
-            if (variable.isStat || facetVars.contains(variable)) {
+            if (variable.isStat || facetVariables.contains(variable)) {
                 continue
             }
 

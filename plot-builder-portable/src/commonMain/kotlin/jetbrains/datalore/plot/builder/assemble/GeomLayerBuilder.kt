@@ -296,7 +296,7 @@ class GeomLayerBuilder {
                             builder.myBindings,
                             transformByAes,
                             groupingContext,
-                            PlotFacets.undefined(),
+                            facetVariables = emptyList(),
                             statCtx,
                             varsWithoutBinding = emptyList(),
                             orderOptions = emptyList(),

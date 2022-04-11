@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
 import java.awt.Color
@@ -194,7 +194,7 @@ internal object AwtPlotFactoryUtil {
             } else {
                 // This transform doesn't need to be "portable"
                 // Could use PlotConfigServerSideJvm in case we needed "encoding"
-                PlotConfigServerSide.processTransform(plotSpec)
+                BackendSpecTransformUtil.processTransform(plotSpec)
             }
 
         if (PlotConfig.isFailure(plotSpec)) {

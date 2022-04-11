@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Layer.NONE
+import jetbrains.datalore.plot.config.Option.Layer.ORIENTATION
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
@@ -93,6 +94,18 @@ class LayerConfig(
         PosProto.STACK -> SeriesUtil::sum
         else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
     }
+
+    val isYOrientation: Boolean
+        get() = when (hasOwn(ORIENTATION)) {
+            true -> getString(ORIENTATION)?.lowercase()?.let {
+                when (it) {
+                    "y" -> true
+                    "x" -> false
+                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
+                }
+            } ?: false
+            false -> false
+        }
 
     init {
         val (layerMappings, layerData) = createDataFrame(

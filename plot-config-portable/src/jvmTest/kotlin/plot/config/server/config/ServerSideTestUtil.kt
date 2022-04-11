@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
@@ -35,7 +34,7 @@ object ServerSideTestUtil {
     }
 
     fun serverTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
-        return PlotConfigServerSide.processTransform(plotSpec)
+        return BackendSpecTransformUtil.processTransform(plotSpec)
     }
 
     fun createLayerConfigsWithoutEncoding(plotSpec: MutableMap<String, Any>): List<LayerConfig> {

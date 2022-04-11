@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import kotlin.test.assertEquals
 
 object TestUtil {
@@ -60,7 +60,7 @@ object TestUtil {
     }
 
     private fun createGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {
-        val transformed = PlotConfigServerSide.processTransform(plotSpec)
+        val transformed = BackendSpecTransformUtil.processTransform(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigClientSide.create(transformed) {}
         return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single()
