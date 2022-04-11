@@ -59,14 +59,14 @@ or tests will stuck in running state.
 
 _As the result you will get artifacts for jvm-package and python-package (python wheel file built with Python 3.6)_
 
-##### 5. Build python wheels with Python 3.7, 3.8 and 3.9:
+##### 5. Build python wheels with Python 3.7, 3.8, 3.9 and 3.10:
 
  - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
  - run `./gradlew python-package-build:build`
  
-Reproduce this steps for Python 3.8 and 3.9
- 
-_Then you'll get python wheel files built with Python 3.7, 3.8 and 3.9._
+Reproduce this steps for Python 3.8, 3.9 and 3.10
+
+_Then you'll get python wheel files built with Python 3.6, 3.7, 3.8, 3.9 and 3.10._
 
 ##### 6. _(for Linux only)_ Build python wheels for Manylinux platform:
 
