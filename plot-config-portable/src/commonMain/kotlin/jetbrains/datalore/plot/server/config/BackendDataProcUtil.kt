@@ -9,9 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
@@ -24,7 +22,7 @@ internal object BackendDataProcUtil {
         layerConfig: LayerConfig,
         statCtx: StatContext,
         transformByAes: Map<Aes<*>, Transform>,
-        facets: PlotFacets,
+        facetVariables: List<DataFrame.Variable>,
         massageHandler: (String) -> Unit
     ): DataFrame {
         val varBindings = layerConfig.varBindings
@@ -50,11 +48,6 @@ internal object BackendDataProcUtil {
                     .filterIsInstance<DataFrameValue>()
                     .map(DataFrameValue::getVariableName) +
                         orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable)
-            }
-
-            // ToDo: this can fail!
-            val facetVariables = facets.variables.map {
-                DataFrameUtil.findVariableOrFail(data, it)
             }
 
             val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(

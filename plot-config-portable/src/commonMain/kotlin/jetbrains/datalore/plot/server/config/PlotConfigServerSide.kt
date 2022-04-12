@@ -169,12 +169,16 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
             for (tileIndex in inputDataByTileByLayer.indices) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
+                val facetVariables = facets.variables.mapNotNull { facetVarName ->
+                    tileLayerInputData.variables().firstOrNull { it.name == facetVarName }
+                }
+
                 val tileLayerDataAfterStat = BackendDataProcUtil.applyStatisticalTransform(
                     data = tileLayerInputData,
                     layerConfig = layerConfig,
                     statCtx = statCtx,
                     transformByAes = transformByAes,
-                    facets = facets,
+                    facetVariables = facetVariables,
                 ) { message ->
                     layerIndexAndSamplingMessage(
                         layerIndex,
