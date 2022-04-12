@@ -78,10 +78,10 @@ class LayerConfig(
             !getBoolean(SHOW_LEGEND, true)
         } else false
 
-    val samplings: List<Sampling>?
+    val samplings: List<Sampling>
         get() {
             check(!clientSide)
-            return mySamplings
+            return mySamplings!!
         }
 
     val isLiveMap: Boolean

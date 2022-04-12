@@ -70,8 +70,8 @@ internal object BackendDataProcUtil {
         // Apply sampling to layer tile data if necessary
         tileLayerDataAfterStat =
             PlotSampling.apply(
-                tileLayerDataAfterStat, // layerConfig,
-                layerConfig.samplings!!,
+                tileLayerDataAfterStat,
+                layerConfig.samplings,
                 groupingContextAfterStat.groupMapper
             ) { message -> massageHandler(createSamplingMessage(message, layerConfig)) }
 
