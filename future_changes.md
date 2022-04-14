@@ -6,6 +6,8 @@
 See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/notebooks/plot_theme.ipynb).
 
 ### Changed
+- New style of tooltip color marker (two side bars with a stroke color)
+  and symbols in legend (rectangle with a stroke instead of a slash-line).
 
 ### Fixed
 
