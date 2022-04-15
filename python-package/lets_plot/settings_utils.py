@@ -1,33 +1,13 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-import json
 
 from ._global_settings import GEOCODING_PROVIDER_URL, MAPTILES_SOLID_FILL_COLOR, TILES_CHESSBOARD, \
-    _DATALORE_TILES_SERVICE, PLOT_THEME
+    _DATALORE_TILES_SERVICE
 from ._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, MAPTILES_MIN_ZOOM, \
     MAPTILES_MAX_ZOOM, TILES_VECTOR_LETS_PLOT, TILES_RASTER_ZXY, TILES_SOLID, _DATALORE_TILES_ATTRIBUTION
 from ._global_settings import has_global_value, get_global_val, _DATALORE_TILES_MIN_ZOOM, _DATALORE_TILES_MAX_ZOOM
 
-__all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid', 'plot_theme']
-
-
-def plot_theme(theme: 'FeatureSpec') -> dict:
-    """
-    Makes global theme config. Expected to be used with `LetsPlot.set()` function.
-    Parameters
-    ----------
-    theme : dict
-        Theme spec provided by `theme(...)` or `theme_xxx()` functions.
-
-    Returns
-    -------
-    dict
-        Theme settings.
-
-    """
-    return {
-        PLOT_THEME: json.dumps(theme.as_dict())
-    }
+__all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid']
 
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
