@@ -13,6 +13,10 @@ from ._global_settings import _settings, is_production, get_global_bool, PLOT_TH
 from ._global_settings import NO_JS, OFFLINE
 
 from .plot import *
+from .export import *
+from .frontend_context import *
+from .settings_utils import *
+from .bistro import *
 
 __all__ = (plot.__all__ +
            bistro.__all__ +
