@@ -5,12 +5,14 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
 import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.ArrowSpec
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathRenderer
@@ -82,6 +84,8 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
+    var arrowSpec: ArrowSpec? = null
+
     fun build(nonInteractive: Boolean): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
 
@@ -101,6 +105,7 @@ class PathBuilder(
                         strokeColor = this@PathBuilder.strokeColor
                         strokeWidth = this@PathBuilder.strokeWidth
                         lineDash = this@PathBuilder.lineDash.toDoubleArray()
+                        arrowSpec = this@PathBuilder.arrowSpec
                     }
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = coord }
@@ -146,4 +151,24 @@ class PathBuilder(
 
 fun PathBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
     multiPolygon = geometry(points, isClosed = false, isGeodesic = isGeodesic)
+}
+
+fun arrow(angle: Double = 30.0, length: Double = 10.0, ends: String = "last", type: String = "open"): ArrowSpec {
+    val arrowEnd = when (ends) {
+        "last" -> ArrowSpec.End.LAST
+        "first" -> ArrowSpec.End.FIRST
+        "both" -> ArrowSpec.End.BOTH
+        else -> throw IllegalArgumentException("Expected: first|last|both")
+    }
+    val arrowType = when (type) {
+        "open" -> ArrowSpec.Type.OPEN
+        "closed" -> ArrowSpec.Type.CLOSED
+        else -> throw IllegalArgumentException("Expected: open|closed")
+    }
+    return ArrowSpec(
+        toRadians(angle),
+        length,
+        arrowEnd,
+        arrowType
+    )
 }

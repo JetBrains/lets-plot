@@ -135,6 +135,7 @@ object LayerConverter {
                             animation = it.animation
                             speed = it.speed
                             flow = it.flow
+                            arrowSpec = it.myArrowSpec
                         }
                     }
                 }

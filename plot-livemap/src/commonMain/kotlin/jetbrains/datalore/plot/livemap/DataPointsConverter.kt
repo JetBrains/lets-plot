@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.ArrowSpec
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
@@ -16,7 +17,6 @@ import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.geom.PathGeom
 import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.geom.SegmentGeom
-import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_RECTANGLE

@@ -28,6 +28,17 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
             explicitVec(-102.568325, 51.356414)
         )
 
+        val path3 = listOf<LonLatPoint>(
+            explicitVec(-102.5513756, 26.3281169),
+            explicitVec(-82.9946306, 39.5602949),
+            explicitVec(-75.2230467, 40.7465046)
+        )
+
+        val path4 = listOf<LonLatPoint>(
+            explicitVec(-100.2052394, 32.2622384),
+            explicitVec(-84.9196668, 31.9644662)
+        )
+
         return basicLiveMap {
             layers {
                 paths {
@@ -45,6 +56,22 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         strokeColor = Color.BLUE
                         strokeWidth = 6.0
                         animation = 2
+                    }
+
+                    path {
+                        geometry(path3, isGeodesic = true)
+
+                        strokeColor = Color.RED
+                        strokeWidth = 3.0
+                        lineDash = listOf(5.0)
+                        arrowSpec = arrow(length = 20.0, ends = "both", type = "open")
+                    }
+                    path {
+                        geometry(path4, isGeodesic = true)
+
+                        strokeColor = Color.RED
+                        strokeWidth = 3.0
+                        arrowSpec = arrow(ends = "both", type = "closed")
                     }
                 }
             }

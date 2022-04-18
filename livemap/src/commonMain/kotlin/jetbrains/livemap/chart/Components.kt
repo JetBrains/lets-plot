@@ -1,5 +1,6 @@
 package jetbrains.livemap.chart
 
+import jetbrains.datalore.base.ArrowSpec
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
@@ -18,6 +19,7 @@ class ChartElementComponent : EcsComponent {
     var alphaScalingEnabled: Boolean = false
     var scalingSizeFactor: Double = 1.0
     var scalingAlphaValue: Int? = null
+    var arrowSpec: ArrowSpec? = null
 }
 
 class TextSpecComponent : EcsComponent {
