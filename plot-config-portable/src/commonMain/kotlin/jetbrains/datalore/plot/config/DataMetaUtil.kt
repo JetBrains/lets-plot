@@ -47,10 +47,10 @@ object DataMetaUtil {
     /**
     @returns Set<aes> of discrete aes
      */
-    fun getAsDiscreteAesSet(options: Map<*, *>): Set<Any> {
+    fun getAsDiscreteAesSet(options: Map<*, *>): Set<String> {
         return options
             .getMaps(MappingAnnotation.TAG)
-            ?.associate { it.read(AES)!! to it.read(ANNOTATION)!! }
+            ?.associate { it.read(AES) as String to it.read(ANNOTATION)!! }
             ?.filterValues(AS_DISCRETE::equals)
             ?.keys
             ?: emptySet()
@@ -83,7 +83,7 @@ object DataMetaUtil {
     fun createDataFrame(
         options: OptionsAccessor,
         commonData: DataFrame,
-        commonDiscreteAes: Set<*>,
+        commonDiscreteAes: Set<String>,
         commonMappings: Map<*, *>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {

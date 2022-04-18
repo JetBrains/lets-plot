@@ -30,7 +30,7 @@ class DataVectorsInAesMappingTest {
             )
         )
 
-        val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
             .haveBinding(Aes.X, "x")
             .haveDataVector("x", inputVector)
@@ -54,7 +54,7 @@ class DataVectorsInAesMappingTest {
             )
         )
 
-        val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
             .haveBinding(Aes.X, "x1")
             .haveDataVector("x1", inputVector)
@@ -74,7 +74,7 @@ class DataVectorsInAesMappingTest {
             )
         )
 
-        val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
             .haveBinding(Aes.X, "x")
             .haveDataVector("x", inputVector)
@@ -98,7 +98,7 @@ class DataVectorsInAesMappingTest {
             )
         )
 
-        val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
             .haveBinding(Aes.X, "x1")
             .haveDataVector("x1", inputVector)
@@ -120,7 +120,7 @@ class DataVectorsInAesMappingTest {
 
         val expectedVector = inputVector.map { it.toDouble() }
 
-        val layers = ServerSideTestUtil.createLayerConfigsWithoutEncoding(plotOpts)
+        val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
             .haveBinding(Aes.X, "x")
             .haveDataVector("x", expectedVector)

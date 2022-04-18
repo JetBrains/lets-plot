@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.data
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
-import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
@@ -46,21 +45,23 @@ object DataProcessing {
      * Backend-side only
      */
     fun buildStatData(
-        data: DataFrame,
+        statInput: StatInput,
+//        data: DataFrame,
         stat: Stat,
-        bindings: List<VarBinding>,
-        transformByAes: Map<Aes<*>, Transform>,
+//        bindings: List<VarBinding>,
+//        transformByAes: Map<Aes<*>, Transform>,
         groupingContext: GroupingContext,
         facetVariables: List<Variable>,
-        statCtx: StatContext,
+//        statCtx: StatContext,
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
-        if (stat === Stats.IDENTITY) {
-            return DataAndGroupingContext(emptyFrame(), groupingContext)
-        }
+        check(stat != Stats.IDENTITY)
+//        if (stat === Stats.IDENTITY) {
+//            return DataAndGroupingContext(emptyFrame(), groupingContext)
+//        }
 
         val groups = groupingContext.groupMapper
 
@@ -70,12 +71,12 @@ object DataProcessing {
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
             val statData = applyStat(
-                data,
+                statInput.data,
                 stat,
-                bindings,
-                transformByAes,
+                statInput.bindings,
+                statInput.transformByAes,
                 facetVariables,
-                statCtx,
+                statInput.statCtx,
                 varsWithoutBinding,
                 messageConsumer
             )
@@ -84,21 +85,21 @@ object DataProcessing {
         } else { // add offset to each group
             val groupMerger = GroupMerger()
             var lastStatGroupEnd = -1
-            for (d in splitByGroup(data, groups)) {
+            for (d in splitByGroup(statInput.data, groups)) {
                 var statData = applyStat(
                     d,
                     stat,
-                    bindings,
-                    transformByAes,
+                    statInput.bindings,
+                    statInput.transformByAes,
                     facetVariables,
-                    statCtx,
+                    statInput.statCtx,
                     varsWithoutBinding,
                     messageConsumer
                 )
                 if (statData.isEmpty) {
                     continue
                 }
-                groupMerger.initOrderSpecs(orderOptions, statData.variables(), bindings, aggregateOperation)
+                groupMerger.initOrderSpecs(orderOptions, statData.variables(), statInput.bindings, aggregateOperation)
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
@@ -142,7 +143,7 @@ object DataProcessing {
 
             // set ordering specifications
             val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption, aggregateOperation)
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, statInput.bindings, orderOption, aggregateOperation)
             }
             addOrderSpecs(orderSpecs)
 

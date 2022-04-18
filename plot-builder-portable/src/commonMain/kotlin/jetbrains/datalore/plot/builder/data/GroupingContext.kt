@@ -24,15 +24,14 @@ class GroupingContext(
     internal val optionalGroupingVar: Variable? = findOptionalVariable(data, groupingVarName)
     private val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
 
-    private var myGroupMapper: ((Int) -> Int)? = null
+    private var _groupMapper: ((Int) -> Int)? = null
 
-    //myGroupMapper = DataProcessing.computeGroups(myData, myBindings, myOptionalGroupingVar, myExpectMultiple);
     val groupMapper: (Int) -> Int
         get() = { index ->
-            if (myGroupMapper == null) {
-                myGroupMapper = computeGroups()
+            if (_groupMapper == null) {
+                _groupMapper = computeGroups()
             }
-            myGroupMapper!!(index)
+            _groupMapper!!(index)
         }
 
     private fun computeGroups(): (Int) -> Int {

@@ -51,6 +51,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
      */
     internal fun updatePlotSpec() {
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
+
+        // apply tranform and stat
         val dataByTileByLayerAfterStat = dataByTileByLayerAfterStat { layerIndex, message ->
             layerIndexWhereSamplingOccurred.add(layerIndex)
             PlotConfigUtil.addComputationMessage(this, message)

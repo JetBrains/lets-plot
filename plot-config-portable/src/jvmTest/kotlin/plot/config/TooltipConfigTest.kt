@@ -469,7 +469,7 @@ class TooltipConfigTest {
                 )
             )
         )
-        val plotSpec = ServerSideTestUtil.serverTransformWithoutEncoding(plotOpts.toMutableMap())
+        val plotSpec = ServerSideTestUtil.backendSpecTransform(plotOpts.toMutableMap())
 
         assertTrue(PlotConfig.isFailure(plotSpec))
         assertEquals(expectedMessage, PlotConfig.getErrorMessage(plotSpec))

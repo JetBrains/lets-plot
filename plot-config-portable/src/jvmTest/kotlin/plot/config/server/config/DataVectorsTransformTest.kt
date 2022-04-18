@@ -23,7 +23,7 @@ class DataVectorsTransformTest(
 
     @Test
     fun transformed() {
-        val transformed = ServerSideTestUtil.serverTransformWithoutEncoding(myInput)
+        val transformed = ServerSideTestUtil.backendSpecTransform(myInput)
         assertEquals(myExpected, transformed)
         if (myIdentityComparison) {
             // This only works for plot data located on the top level

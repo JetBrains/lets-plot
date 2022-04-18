@@ -605,7 +605,7 @@ class DropUnusedDataTest {
 
 
         parsePlotSpec(spec)
-            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .let(ServerSideTestUtil::backendSpecTransform)
             .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
             .let(TestUtil::assertClientWontFail)
 
@@ -645,7 +645,7 @@ class DropUnusedDataTest {
 }"""
 
         parsePlotSpec(spec)
-            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .let(ServerSideTestUtil::backendSpecTransform)
             .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
             .let(TestUtil::assertClientWontFail)
 
@@ -682,7 +682,7 @@ class DropUnusedDataTest {
   ]
 }"""
         parsePlotSpec(spec)
-            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .let(ServerSideTestUtil::backendSpecTransform)
             .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
             .let(TestUtil::assertClientWontFail)
             .assertBinding(Aes.X, POINT_X)
@@ -721,7 +721,7 @@ class DropUnusedDataTest {
             """.trimIndent()
 
         parsePlotSpec(spec)
-            .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+            .let(ServerSideTestUtil::backendSpecTransform)
             .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
             .let(TestUtil::assertClientWontFail)
     }

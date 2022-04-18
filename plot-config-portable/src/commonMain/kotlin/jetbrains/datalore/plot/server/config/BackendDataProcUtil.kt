@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import jetbrains.datalore.plot.builder.data.StatInput
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
 import jetbrains.datalore.plot.config.LayerConfig
 
@@ -26,6 +27,8 @@ internal object BackendDataProcUtil {
         massageHandler: (String) -> Unit
     ): DataFrame {
         val varBindings = layerConfig.varBindings
+
+        // ToDo: dont pass `varBindings` to GroupingContext. The binding' Aes is only checked if it's not positional.
         val groupingContext = GroupingContext(
             data = data,
             bindings = varBindings,
@@ -50,14 +53,19 @@ internal object BackendDataProcUtil {
                         orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable)
             }
 
-            val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
+            val statInput = StatInput(
                 data,
-                stat,
                 varBindings,
                 transformByAes,
+                statCtx,
+                flipXY = false
+            )
+
+            val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
+                statInput,
+                stat,
                 groupingContext,
                 facetVariables,
-                statCtx,
                 varsWithoutBinding,
                 layerConfig.orderOptions,
                 layerConfig.aggregateOperation

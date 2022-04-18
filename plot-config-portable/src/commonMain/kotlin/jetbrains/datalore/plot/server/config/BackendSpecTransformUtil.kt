@@ -80,15 +80,29 @@ object BackendSpecTransformUtil {
     }
 
     private fun processTransformIntern(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
+        val (plotSpec, _) = processTransformIntern2(plotSpecRaw)
+        return plotSpec
+    }
+
+    /**
+     * For tests only!
+     */
+    internal fun getTransformedSpecsAndPlotConfig(plotSpecRaw: MutableMap<String, Any>): Pair<MutableMap<String, Any>, PlotConfigServerSide> {
+        return processTransformIntern2(plotSpecRaw)
+    }
+
+    private fun processTransformIntern2(plotSpecRaw: MutableMap<String, Any>): Pair<MutableMap<String, Any>, PlotConfigServerSide> {
         // testing of error handling
 //            throwTestingException(plotSpecRaw)
 
         var plotSpec = PlotConfigServerSideTransforms.migrationTransform().apply(plotSpecRaw)
         plotSpec = PlotConfigServerSideTransforms.bistroTransform().apply(plotSpec)
         plotSpec = PlotConfigServerSideTransforms.entryTransform().apply(plotSpec)
-        PlotConfigServerSide(plotSpec).updatePlotSpec()
-        return plotSpec
+        val plotConfig = PlotConfigServerSide(plotSpec)
+        plotConfig.updatePlotSpec()
+        return Pair(plotSpec, plotConfig)
     }
+
 
     @Suppress("unused")
     private fun throwTestingException(plotSpec: Map<String, Any>) {

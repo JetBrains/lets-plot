@@ -17,6 +17,31 @@ object OrderOptionUtil {
     ) {
         fun getOrderDir(): Int = orderDir ?: -1 // descending by default
 
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+
+            other as OrderOption
+
+            if (variableName != other.variableName) return false
+            if (byVariable != other.byVariable) return false
+            if (orderDir != other.orderDir) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = variableName.hashCode()
+            result = 31 * result + (byVariable?.hashCode() ?: 0)
+            result = 31 * result + (orderDir ?: 0)
+            return result
+        }
+
+        override fun toString(): String {
+            return "OrderOption(variableName='$variableName', byVariable=$byVariable, orderDir=$orderDir)"
+        }
+
+
         companion object {
             fun create(
                 variableName: String,

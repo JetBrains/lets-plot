@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
+import jetbrains.datalore.plot.builder.data.StatInput
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
@@ -290,14 +291,18 @@ class GeomLayerBuilder {
                             builder.myPathIdVarName,
                             true
                         )
-                        val dataAndGroupingContext = DataProcessing.buildStatData(
+                        val statInput = StatInput(
                             transformedData,
-                            stat,
                             builder.myBindings,
                             transformByAes,
+                            statCtx,
+                            flipXY = false
+                        )
+                        val dataAndGroupingContext = DataProcessing.buildStatData(
+                            statInput,
+                            stat,
                             groupingContext,
                             facetVariables = emptyList(),
-                            statCtx,
                             varsWithoutBinding = emptyList(),
                             orderOptions = emptyList(),
                             aggregateOperation = null,
