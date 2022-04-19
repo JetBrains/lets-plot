@@ -9,6 +9,7 @@ from typing import Dict
 # To handle the situation when the 'lets_plot' package is shared by modules in different locations.
 __path__ = extend_path(__path__, __name__)
 
+from ._version import __version__
 from ._global_settings import _settings, is_production, get_global_bool, PLOT_THEME
 from ._global_settings import NO_JS, OFFLINE
 
