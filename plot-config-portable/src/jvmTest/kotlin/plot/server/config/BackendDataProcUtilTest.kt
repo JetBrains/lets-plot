@@ -14,6 +14,11 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/**
+ * Testing layer's property: orientation = "y"
+ *
+ * See related: YOrientationBatik.kt demo.
+ */
 class BackendDataProcUtilTest {
 
     @Test
@@ -21,6 +26,8 @@ class BackendDataProcUtilTest {
         check(plotSpecs_basic(), expected_basic())
         check(plotSpecs_sortedAlphabeticallyRevesed(), expected_sortedAlphabeticallyRevesed())
         check(plotSpecs_sortedByCount(), expected_sortedByCount())
+
+        check(plotSpecs_basic(yOrientation = true), expected_basic())
     }
 
     private fun check(plotSpec: MutableMap<String, Any>, expected: Expected) {
@@ -59,10 +66,6 @@ class BackendDataProcUtilTest {
         private const val CATEGORY_VAR = "varCategory"
         private const val GROUP_VAR = "varGroup"
         private const val NUMERIC_VAR = "varNum"
-
-        //
-        // See YOrientationBatik.kt demo
-        //
 
         private val DATA = mapOf(
             CATEGORY_VAR to List(30) { "a" } +
@@ -106,12 +109,17 @@ class BackendDataProcUtilTest {
             }
         """.trimIndent()
 
-        private fun createPlotSpec(layerMapping: String, dataMeta: String = "{}"): MutableMap<String, Any> {
+        private fun createPlotSpec(
+            layerMapping: String,
+            dataMeta: String = "{}",
+            yOrientation: Boolean
+        ): MutableMap<String, Any> {
             val spec = """
                 {
                     'kind': 'plot',
                     'layers': [
                         {
+                            ${if (yOrientation) "'orientation': 'y'," else ""}
                             'geom': 'bar', 
                             'mapping': $layerMapping, 
                             'data_meta': $dataMeta
@@ -125,10 +133,14 @@ class BackendDataProcUtilTest {
             return plotSpec
         }
 
+        private fun categoryAes(yOrientation:Boolean): String {
+            return if(yOrientation) "y" else "x"
+        }
+
         // Basic
 
-        private fun plotSpecs_basic(): MutableMap<String, Any> {
-            return createPlotSpec("{'x': '$CATEGORY_VAR'}")
+        private fun plotSpecs_basic(yOrientation: Boolean = false): MutableMap<String, Any> {
+            return createPlotSpec("{'${categoryAes(yOrientation)}': '$CATEGORY_VAR'}", yOrientation = yOrientation)
         }
 
         private fun expected_basic(): Expected {
@@ -142,9 +154,9 @@ class BackendDataProcUtilTest {
 
         // Categories are sorted alphabetically
 
-        private fun plotSpecs_sortedAlphabeticallyRevesed(): MutableMap<String, Any> {
+        private fun plotSpecs_sortedAlphabeticallyRevesed(yOrientation: Boolean = false): MutableMap<String, Any> {
             val dataMeta = SORT_ALPHABETICALLY_REVERSED_DATA_META
-            return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta)
+            return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta, yOrientation = yOrientation)
         }
 
         private fun expected_sortedAlphabeticallyRevesed(): Expected {
@@ -164,9 +176,9 @@ class BackendDataProcUtilTest {
 
         // Categories are sorted by count
 
-        private fun plotSpecs_sortedByCount(): MutableMap<String, Any> {
+        private fun plotSpecs_sortedByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
             val dataMeta = SORT_BY_COUNT_DATA_META
-            return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta)
+            return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta, yOrientation = yOrientation)
         }
 
         private fun expected_sortedByCount(): Expected {

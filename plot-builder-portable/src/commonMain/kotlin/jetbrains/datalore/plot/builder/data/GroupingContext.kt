@@ -5,24 +5,29 @@
 
 package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
 
-class GroupingContext(
+class GroupingContext constructor(
     private val data: DataFrame,
-    bindings: List<VarBinding>,
-    groupingVarName: String?,
-    pathIdVarName: String?,
+    defaultGroupingVariables: List<Variable>,
+    explicitGroupingVarName: String?,
     private val expectMultiple: Boolean,
     private val groupSizeList: List<Int>? = null
 ) {
 
-    private val varBindings: List<VarBinding> = ArrayList(bindings)
-    internal val optionalGroupingVar: Variable? = findOptionalVariable(data, groupingVarName)
-    private val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
+    internal val optionalGroupingVar: Variable? = findOptionalVariable(data, explicitGroupingVarName)
+    private val groupingVariables: List<Variable> = when(optionalGroupingVar) {
+        null -> defaultGroupingVariables
+        else -> {
+            // The explicit grouping var was 1-st in list before so we just keep this invariant.
+            (linkedSetOf(optionalGroupingVar) + defaultGroupingVariables).toList()
+        }
+    }
 
     private var _groupMapper: ((Int) -> Int)? = null
 
@@ -49,9 +54,7 @@ class GroupingContext(
         } else if (expectMultiple) {
             return DataProcessing.computeGroups(
                 data,
-                varBindings,
-                optionalGroupingVar,
-                pathIdVar
+                groupingVariables
             )
         }
         return GroupUtil.SINGLE_GROUP
@@ -59,9 +62,16 @@ class GroupingContext(
 
     companion object {
         internal fun withOrderedGroups(data: DataFrame, groupSizeList: List<Int>): GroupingContext {
+            val groupingVariables = DataProcessing.defaultGroupingVariables(
+                data,
+                bindings = emptyList(),
+                pathIdVarName = null
+            )
             return GroupingContext(
                 data,
-                emptyList(), null, null, false,
+                groupingVariables,
+                explicitGroupingVarName = null,
+                expectMultiple = false,
                 groupSizeList = ArrayList(groupSizeList)
             )
         }
@@ -79,5 +89,37 @@ class GroupingContext(
             }
             return result
         }
+
+        private fun getGroupingVariables(
+            data: DataFrame,
+            bindings: List<VarBinding>,
+            explicitGroupingVar: Variable?
+        ): Iterable<Variable> {
+
+            // all 'origin' discrete vars (but not positional) + explicitGroupingVar
+            val result = LinkedHashSet<Variable>()
+            for (binding in bindings) {
+                val variable = binding.variable
+                if (!result.contains(variable)) {
+                    if (variable.isOrigin) {
+                        if (variable == explicitGroupingVar || isDefaultGroupingVariable(
+                                data,
+                                binding.aes,
+                                variable
+                            )
+                        ) {
+                            result.add(variable)
+                        }
+                    }
+                }
+            }
+            return result
+        }
+
+        private fun isDefaultGroupingVariable(
+            data: DataFrame,
+            aes: Aes<*>,
+            variable: Variable
+        ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
     }
 }

@@ -53,29 +53,35 @@ object TransformVar {
     val SYM_Y = DataFrame.Variable("transform.SYM_Y", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
-    private val VARS: Map<String, DataFrame.Variable>
+    private val VAR_BY_NAME: Map<String, DataFrame.Variable>
+    private val AES_BY_VAR: Map<DataFrame.Variable, Aes<*>>
 
     init {
-        val varByName = HashMap<String, DataFrame.Variable>()
-        for (aes in Aes.values()) {
-            val `var` = VAR_BY_AES.visit(aes)
-            varByName[`var`.name] = `var`
+        VAR_BY_NAME = Aes.values().associate { aes ->
+            val variable = VAR_BY_AES.visit(aes)
+            variable.name to variable
         }
 
-        VARS = varByName
+        AES_BY_VAR = Aes.values().associateBy { aes ->
+            VAR_BY_AES.visit(aes)
+        }
     }
 
     fun isTransformVar(varName: String): Boolean {
-        return VARS.containsKey(varName)
+        return VAR_BY_NAME.containsKey(varName)
     }
 
     operator fun get(varName: String): DataFrame.Variable {
-        check(VARS.containsKey(varName)) { "Unknown transform variable $varName" }
-        return VARS[varName]!!
+        check(VAR_BY_NAME.containsKey(varName)) { "Unknown transform variable $varName" }
+        return VAR_BY_NAME[varName]!!
     }
 
     fun forAes(aes: Aes<*>): DataFrame.Variable {
         return VAR_BY_AES.visit(aes)
+    }
+
+    fun toAes(variable: DataFrame.Variable): Aes<*> {
+        return AES_BY_VAR.getValue(variable)
     }
 
     private class TransformVarByAes : AesVisitor<DataFrame.Variable>() {

@@ -46,22 +46,15 @@ object DataProcessing {
      */
     fun buildStatData(
         statInput: StatInput,
-//        data: DataFrame,
         stat: Stat,
-//        bindings: List<VarBinding>,
-//        transformByAes: Map<Aes<*>, Transform>,
         groupingContext: GroupingContext,
         facetVariables: List<Variable>,
-//        statCtx: StatContext,
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         check(stat != Stats.IDENTITY)
-//        if (stat === Stats.IDENTITY) {
-//            return DataAndGroupingContext(emptyFrame(), groupingContext)
-//        }
 
         val groups = groupingContext.groupMapper
 
@@ -118,7 +111,8 @@ object DataProcessing {
                             statData = statData.builder().putNumeric(Stats.GROUP, newG).build()
                         }
                     }
-                } else { // if stat has ..group.. then groupingVar won't be checked, so no need to update
+                } else {
+                    // If stat has ..group.. then groupingVar won't be checked, so no need to update.
                     val groupingVar = groupingContext.optionalGroupingVar
                     if (groupingVar != null) {
                         val size = statData[statData.variables().first()].size
@@ -303,8 +297,9 @@ object DataProcessing {
         }
 
         val inverseTransformedSeries = statData.variables()
-            .filter { aesByStatVar.containsKey(it) }
             .filter {
+                aesByStatVar.containsKey(it)
+            }.filter {
                 val aes = aesByStatVar.getValue(it)
                 needInverseTransform(aes)
             }.associateWith {
@@ -324,17 +319,10 @@ object DataProcessing {
 
     internal fun computeGroups(
         data: DataFrame,
-        bindings: List<VarBinding>,
-        groupingVar: Variable?,
-        pathIdVar: Variable?
+        groupingVariables: List<Variable>,
     ): (Int) -> Int {
-        val groupingVariables = getGroupingVariables(data, bindings, groupingVar) + listOfNotNull(pathIdVar)
 
         var currentGroups: List<Int>? = null
-        if (groupingVar != null) {
-            currentGroups = computeGroups(data[groupingVar])
-        }
-
         for (groupingVariable in groupingVariables) {
             val values = data[groupingVariable]
             val groups = computeGroups(values)
@@ -390,32 +378,33 @@ object DataProcessing {
         return dummies
     }
 
-    private fun getGroupingVariables(
+    fun defaultGroupingVariables(
         data: DataFrame,
         bindings: List<VarBinding>,
-        explicitGroupingVar: Variable?
-    ): Iterable<Variable> {
+        pathIdVarName: String?,
+    ): List<Variable> {
+        val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
+        return defaultGroupingVariables(data, bindings) + listOfNotNull(pathIdVar)
+    }
 
-        // all 'origin' discrete vars (but not positional) + explicitGroupingVar
-        val result = LinkedHashSet<Variable>()
-        for (binding in bindings) {
-            val variable = binding.variable
-            if (!result.contains(variable)) {
-                if (variable.isOrigin) {
-                    if (variable == explicitGroupingVar || isDefaultGroupingVariable(data, binding.aes, variable)) {
-                        result.add(variable)
-                    }
-                }
-            }
-        }
-        return result
+    private fun defaultGroupingVariables(
+        data: DataFrame,
+        bindings: List<VarBinding>,
+    ): Iterable<Variable> {
+        return bindings
+            .filter { isDefaultGroupingVariable(data, it.aes, it.variable) }
+            .map { it.variable }
+            .distinct()
     }
 
     private fun isDefaultGroupingVariable(
         data: DataFrame,
         aes: Aes<*>,
         variable: Variable
-    ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
+    ): Boolean {
+        // 'origin' discrete vars (but not positional)
+        return variable.isOrigin && !(Aes.isPositional(aes) || data.isNumeric(variable))
+    }
 
 
     class DataAndGroupingContext internal constructor(

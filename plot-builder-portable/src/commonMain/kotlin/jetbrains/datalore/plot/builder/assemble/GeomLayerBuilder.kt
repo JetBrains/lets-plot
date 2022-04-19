@@ -160,12 +160,19 @@ class GeomLayerBuilder {
         // Data Access shouldn't use aes mapper (!)
         val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
 
+        val groupingVariables = DataProcessing.defaultGroupingVariables(
+            data,
+            myBindings,
+            myPathIdVarName
+        )
+
+        val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
         return MyGeomLayer(
             data,
             myGeomProvider,
             myPosProvider,
             myGeomProvider.renders(),
-            GroupingContext(data, myBindings, myGroupingVarName, myPathIdVarName, handlesGroups()).groupMapper,
+            groupingContext.groupMapper,
             replacementBindings.values,
             myConstantByAes,
             scaleMap,
@@ -284,12 +291,16 @@ class GeomLayerBuilder {
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-                        val groupingContext = GroupingContext(
-                            transformedData,
+                        val groupingVariables = DataProcessing.defaultGroupingVariables(
+                            data,
                             builder.myBindings,
+                            builder.myPathIdVarName
+                        )
+                        val groupingCtx = GroupingContext(
+                            transformedData,
+                            groupingVariables,
                             builder.myGroupingVarName,
-                            builder.myPathIdVarName,
-                            true
+                            expectMultiple = true  // ?
                         )
                         val statInput = StatInput(
                             transformedData,
@@ -301,7 +312,7 @@ class GeomLayerBuilder {
                         val dataAndGroupingContext = DataProcessing.buildStatData(
                             statInput,
                             stat,
-                            groupingContext,
+                            groupingCtx,
                             facetVariables = emptyList(),
                             varsWithoutBinding = emptyList(),
                             orderOptions = emptyList(),

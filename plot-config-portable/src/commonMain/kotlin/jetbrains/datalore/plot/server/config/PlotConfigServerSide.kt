@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
+import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
@@ -203,7 +204,11 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             // keep all original vars
             // keep default-mapped stat vars only if not overwritten by actual mapping
             val defStatMapping = Stats.defaultMapping(stat)
-            val bindings = layerConfig.varBindings
+            val bindings = when (layerConfig.isYOrientation) {
+                true -> YOrientationUtil.flipVarBinding(layerConfig.varBindings)
+                false -> layerConfig.varBindings
+            }
+
             val varsToKeep = HashSet(defStatMapping.values)  // initially add all def stat mapping
             for (binding in bindings) {
                 val aes = binding.aes

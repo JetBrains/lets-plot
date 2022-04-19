@@ -26,15 +26,16 @@ internal object BackendDataProcUtil {
         facetVariables: List<DataFrame.Variable>,
         massageHandler: (String) -> Unit
     ): DataFrame {
-        val varBindings = layerConfig.varBindings
-
-        // ToDo: dont pass `varBindings` to GroupingContext. The binding' Aes is only checked if it's not positional.
+        val groupingVariables = DataProcessing.defaultGroupingVariables(
+            data,
+            layerConfig.varBindings,
+            pathIdVarName = null // only on client side
+        )
         val groupingContext = GroupingContext(
-            data = data,
-            bindings = varBindings,
-            groupingVarName = layerConfig.explicitGroupingVarName,
-            pathIdVarName = null, // only on client side
-            expectMultiple = true
+            data,
+            groupingVariables,
+            explicitGroupingVarName = layerConfig.explicitGroupingVarName,
+            expectMultiple = true // ?
         )
 
         val groupingContextAfterStat: GroupingContext
@@ -55,10 +56,10 @@ internal object BackendDataProcUtil {
 
             val statInput = StatInput(
                 data,
-                varBindings,
+                layerConfig.varBindings,
                 transformByAes,
                 statCtx,
-                flipXY = false
+                flipXY = layerConfig.isYOrientation
             )
 
             val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
