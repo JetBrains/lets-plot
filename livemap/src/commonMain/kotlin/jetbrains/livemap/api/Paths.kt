@@ -12,7 +12,6 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
 import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.ArrowSpec
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathRenderer
@@ -36,6 +35,8 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PathLocatorHelper
+import kotlin.math.cos
+import kotlin.math.sin
 
 @LiveMapDsl
 class Paths(
@@ -147,28 +148,66 @@ class PathBuilder(
     private fun EcsEntity.addGrowingPathEffectComponent(block: GrowingPathEffectComponent.() -> Unit): EcsEntity {
         return add(GrowingPathEffectComponent().apply(block))
     }
+
+    class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: Type) {
+        val isOnFirstEnd: Boolean
+            get() = end == End.FIRST || end == End.BOTH
+
+        val isOnLastEnd: Boolean
+            get() = end == End.LAST || end == End.BOTH
+
+        fun createGeometry(polarAngle: Double, x: Double, y: Double): Pair<DoubleArray, DoubleArray> {
+            val xs = doubleArrayOf(x - length * cos(polarAngle - angle), x, x - length * cos(polarAngle + angle))
+            val ys = doubleArrayOf(y - length * sin(polarAngle - angle), y, y - length * sin(polarAngle + angle))
+            return xs to ys
+        }
+
+        enum class End {
+            LAST, FIRST, BOTH
+        }
+
+        enum class Type {
+            OPEN, CLOSED
+        }
+
+        companion object {
+            private const val DEF_ANGLE = 30.0
+            private const val DEF_LENGTH = 10.0
+
+            /**
+             * @param angle - the angle of the arrow head in degrees
+             * @param length - the length of the arrow head (px).
+             * @param ends - {'last', 'first', 'both'}
+             * @param type - {'open', 'closed'}
+             * */
+            fun arrow(
+                angle: Double = DEF_ANGLE,
+                length: Double = DEF_LENGTH,
+                ends: String = "last",
+                type: String = "open"
+            ): ArrowSpec {
+                val arrowEnd = when (ends) {
+                    "last" -> End.LAST
+                    "first" -> End.FIRST
+                    "both" -> End.BOTH
+                    else -> throw IllegalArgumentException("Expected: first|last|both")
+                }
+                val arrowType = when (type) {
+                    "open" -> Type.OPEN
+                    "closed" -> Type.CLOSED
+                    else -> throw IllegalArgumentException("Expected: open|closed")
+                }
+                return ArrowSpec(
+                    toRadians(angle),
+                    length,
+                    arrowEnd,
+                    arrowType
+                )
+            }
+        }
+    }
 }
 
 fun PathBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
     multiPolygon = geometry(points, isClosed = false, isGeodesic = isGeodesic)
-}
-
-fun arrow(angle: Double = 30.0, length: Double = 10.0, ends: String = "last", type: String = "open"): ArrowSpec {
-    val arrowEnd = when (ends) {
-        "last" -> ArrowSpec.End.LAST
-        "first" -> ArrowSpec.End.FIRST
-        "both" -> ArrowSpec.End.BOTH
-        else -> throw IllegalArgumentException("Expected: first|last|both")
-    }
-    val arrowType = when (type) {
-        "open" -> ArrowSpec.Type.OPEN
-        "closed" -> ArrowSpec.Type.CLOSED
-        else -> throw IllegalArgumentException("Expected: open|closed")
-    }
-    return ArrowSpec(
-        toRadians(angle),
-        length,
-        arrowEnd,
-        arrowType
-    )
 }

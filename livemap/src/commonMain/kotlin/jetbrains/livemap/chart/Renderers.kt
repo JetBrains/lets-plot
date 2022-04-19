@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.chart
 
-import jetbrains.datalore.base.ArrowSpec
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
@@ -13,6 +12,7 @@ import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
+import jetbrains.livemap.api.PathBuilder.ArrowSpec
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity

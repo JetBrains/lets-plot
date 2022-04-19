@@ -5,22 +5,16 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.ArrowSpec
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.DataPointAestheticsDelegate
+import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.decorate
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.render.linetype.LineType
-import jetbrains.datalore.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import jetbrains.datalore.vis.svg.SvgPathElement
 import kotlin.math.PI
 import kotlin.math.atan2
 
@@ -92,41 +86,5 @@ class SegmentGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-
-        fun ArrowSpec.toArrowAes(p: DataPointAesthetics): DataPointAesthetics {
-            return object : DataPointAestheticsDelegate(p) {
-                private val myFilled = type == ArrowSpec.Type.CLOSED
-
-                override fun fill(): Color? {
-                    return if (myFilled) {
-                        color()
-                    } else Color.TRANSPARENT
-                }
-
-                override fun lineType(): LineType {
-                    return if (myFilled) {
-                        NamedLineType.SOLID // avoid ugly patterns if linetype is other than 'solid'
-                    } else {
-                        super.lineType()
-                    }
-                }
-            }
-        }
-
-        fun ArrowSpec.createElement(polarAngle: Double, x: Double, y: Double): SvgPathElement {
-            val (xs, ys) = createGeometry(polarAngle,x, y)
-            val b = SvgPathDataBuilder(true)
-                .moveTo(xs[0], ys[0])
-
-            for (i in 1..2) {
-                b.lineTo(xs[i], ys[i], true)
-            }
-
-            if (type == ArrowSpec.Type.CLOSED) {
-                b.closePath()
-            }
-
-            return SvgPathElement(b.build())
-        }
     }
 }

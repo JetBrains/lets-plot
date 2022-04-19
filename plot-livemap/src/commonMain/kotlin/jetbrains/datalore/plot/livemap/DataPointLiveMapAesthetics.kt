@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
@@ -27,7 +28,6 @@ import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
 import jetbrains.livemap.api.geometry
 import jetbrains.livemap.api.limitCoord
-import jetbrains.datalore.base.ArrowSpec
 import kotlin.math.ceil
 
 internal class DataPointLiveMapAesthetics {

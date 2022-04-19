@@ -1,10 +1,10 @@
 package jetbrains.livemap.chart
 
-import jetbrains.datalore.base.ArrowSpec
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
+import jetbrains.livemap.api.PathBuilder.ArrowSpec
 import jetbrains.livemap.core.ecs.EcsComponent
 
 

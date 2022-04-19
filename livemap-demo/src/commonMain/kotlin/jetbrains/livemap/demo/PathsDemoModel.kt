@@ -10,6 +10,7 @@ import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
+import jetbrains.livemap.api.PathBuilder.ArrowSpec.Companion.arrow
 
 class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
