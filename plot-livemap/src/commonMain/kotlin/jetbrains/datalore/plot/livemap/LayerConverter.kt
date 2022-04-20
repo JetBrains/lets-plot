@@ -9,11 +9,9 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.livemap.api.*
-import jetbrains.livemap.chart.Renderers.PathRenderer
 
 
 object LayerConverter {
@@ -137,21 +135,10 @@ object LayerConverter {
                             animation = it.animation
                             speed = it.speed
                             flow = it.flow
-                            arrowSpec = it.arrowSpec?.let { arrow ->
-                                PathRenderer.ArrowSpec(
-                                    arrow.angle,
-                                    arrow.length,
-                                    end = when (arrow.end) {
-                                        ArrowSpec.End.LAST -> PathRenderer.ArrowSpec.End.LAST
-                                        ArrowSpec.End.FIRST -> PathRenderer.ArrowSpec.End.FIRST
-                                        ArrowSpec.End.BOTH -> PathRenderer.ArrowSpec.End.BOTH
-                                    },
-                                    type = when (arrow.type) {
-                                        ArrowSpec.Type.OPEN -> PathRenderer.ArrowSpec.Type.OPEN
-                                        ArrowSpec.Type.CLOSED -> PathRenderer.ArrowSpec.Type.CLOSED
-                                    }
-                                )
-                            }
+                            arrowAngle = it.arrowSpec?.angle
+                            arrowLength = it.arrowSpec?.length
+                            arrowAtEnds = it.arrowSpec?.end?.name?.lowercase()
+                            arrowType = it.arrowSpec?.type?.name?.lowercase()
                         }
                     }
                 }

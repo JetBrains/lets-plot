@@ -10,7 +10,6 @@ import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
-import jetbrains.livemap.chart.Renderers.PathRenderer.ArrowSpec.Companion.arrow
 
 class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
@@ -65,14 +64,14 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         strokeColor = Color.RED
                         strokeWidth = 3.0
                         lineDash = listOf(5.0)
-                        arrowSpec = arrow(length = 20.0, ends = "both", type = "open")
+                        arrow(length = 20.0, ends = "both") // type = "open"
                     }
                     path {
                         geometry(path4, isGeodesic = true)
 
                         strokeColor = Color.RED
                         strokeWidth = 3.0
-                        arrowSpec = arrow(ends = "both", type = "closed")
+                        arrow(ends = "both", type = "closed")
                     }
                 }
             }

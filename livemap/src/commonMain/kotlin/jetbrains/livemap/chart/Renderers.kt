@@ -6,7 +6,6 @@
 package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
@@ -117,7 +116,12 @@ object Renderers {
             chartElement.arrowSpec?.let { arrowSpec -> drawArrows(arrowSpec, geometry, color, ctx) }
         }
 
-        class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: Type) {
+        class ArrowSpec private constructor(
+            val angle: Double,
+            val length: Double,
+            val end: End,
+            val type: Type
+        ) {
             val isOnFirstEnd: Boolean
                 get() = end == End.FIRST || end == End.BOTH
 
@@ -139,38 +143,27 @@ object Renderers {
             }
 
             companion object {
-                private const val DEF_ANGLE = 30.0
-                private const val DEF_LENGTH = 10.0
-
-                /**
-                 * @param angle - the angle of the arrow head in degrees
-                 * @param length - the length of the arrow head (px).
-                 * @param ends - {'last', 'first', 'both'}
-                 * @param type - {'open', 'closed'}
-                 * */
-                fun arrow(
-                    angle: Double = DEF_ANGLE,
-                    length: Double = DEF_LENGTH,
-                    ends: String = "last",
-                    type: String = "open"
-                ): ArrowSpec {
-                    val arrowEnd = when (ends) {
+                fun create(
+                    arrowAngle: Double?,
+                    arrowLength: Double?,
+                    arrowAtEnds: String?,
+                    arrowType: String?
+                ): ArrowSpec? {
+                    if (arrowAngle == null || arrowLength == null) {
+                        return null
+                    }
+                    val ends = when (arrowAtEnds) {
                         "last" -> End.LAST
                         "first" -> End.FIRST
                         "both" -> End.BOTH
                         else -> throw IllegalArgumentException("Expected: first|last|both")
                     }
-                    val arrowType = when (type) {
+                    val type = when (arrowType) {
                         "open" -> Type.OPEN
                         "closed" -> Type.CLOSED
                         else -> throw IllegalArgumentException("Expected: open|closed")
                     }
-                    return ArrowSpec(
-                        toRadians(angle),
-                        length,
-                        arrowEnd,
-                        arrowType
-                    )
+                    return ArrowSpec(arrowAngle, arrowLength, ends, type)
                 }
             }
         }

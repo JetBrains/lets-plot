@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
@@ -83,7 +84,11 @@ class PathBuilder(
     var speed: Double = 0.0
     var flow: Double = 0.0
 
-    var arrowSpec: ArrowSpec? = null
+    // Arrow specification
+    var arrowAngle: Double? = null
+    var arrowLength: Double? = null
+    var arrowAtEnds: String? = null
+    var arrowType: String? = null
 
     fun build(nonInteractive: Boolean): EcsEntity? {
         val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
@@ -104,7 +109,12 @@ class PathBuilder(
                         strokeColor = this@PathBuilder.strokeColor
                         strokeWidth = this@PathBuilder.strokeWidth
                         lineDash = this@PathBuilder.lineDash.toDoubleArray()
-                        arrowSpec = this@PathBuilder.arrowSpec
+                        arrowSpec = ArrowSpec.create(
+                            this@PathBuilder.arrowAngle,
+                            this@PathBuilder.arrowLength,
+                            this@PathBuilder.arrowAtEnds,
+                            this@PathBuilder.arrowType,
+                        )
                     }
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = coord }
@@ -150,4 +160,24 @@ class PathBuilder(
 
 fun PathBuilder.geometry(points: List<LonLatPoint>, isGeodesic: Boolean) {
     multiPolygon = geometry(points, isClosed = false, isGeodesic = isGeodesic)
+}
+
+/**
+ * @param angle - the angle of the arrow head in degrees
+ * @param length - the length of the arrow head (px).
+ * @param ends - {'last', 'first', 'both'}
+ * @param type - {'open', 'closed'}
+ * */
+fun PathBuilder.arrow(
+    angle: Double = 30.0,
+    length: Double = 10.0,
+    ends: String = "last",
+    type: String = "open"
+) {
+    arrowAngle = toRadians(angle)
+    arrowLength = length
+    require(ends in listOf("last", "first", "both")) { "Expected ends to draw arrows values: 'first'|'last'|'both', but was '$ends'"}
+    arrowAtEnds = ends
+    require(type in listOf("open", "closed")) { "Expected arrowhead type values: 'open'|'closed', but was '$type'"}
+    arrowType = type
 }
