@@ -56,7 +56,16 @@ internal class DataPointLiveMapAesthetics {
     var geometry: MultiPolygon<LonLat>? = null
     var point: Vec<LonLat>? = null
     var animation = 0
-    var arrowSpec: ArrowSpec? = null
+
+    private var myArrowSpec: ArrowSpec? = null
+    val arrowAngle: Double?
+        get() = myArrowSpec?.angle
+    val arrowLength: Double?
+        get() = myArrowSpec?.length
+    val arrowAtEnds: String?
+        get() = myArrowSpec?.end?.name?.lowercase()
+    val arrowType: String?
+        get() = myArrowSpec?.type?.name?.lowercase()
 
     val index get() = myP.index()
     val flow get() = myP.flow()!!
@@ -168,7 +177,7 @@ internal class DataPointLiveMapAesthetics {
     }
 
     fun setArrowSpec(arrowSpec: ArrowSpec?): DataPointLiveMapAesthetics {
-        this.arrowSpec = arrowSpec
+        myArrowSpec = arrowSpec
         return this
     }
 
