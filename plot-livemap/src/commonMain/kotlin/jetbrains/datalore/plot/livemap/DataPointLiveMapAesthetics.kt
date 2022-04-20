@@ -47,7 +47,6 @@ internal class DataPointLiveMapAesthetics {
     }
 
     val myP: DataPointAesthetics
-    var myArrowSpec: ArrowSpec? = null
     private var myColorArray: List<Color> = emptyList()
     val indices: List<Int>
     val valueArray: List<Double>
@@ -57,6 +56,7 @@ internal class DataPointLiveMapAesthetics {
     var geometry: MultiPolygon<LonLat>? = null
     var point: Vec<LonLat>? = null
     var animation = 0
+    var arrowSpec: ArrowSpec? = null
 
     val index get() = myP.index()
     val flow get() = myP.flow()!!
@@ -168,7 +168,7 @@ internal class DataPointLiveMapAesthetics {
     }
 
     fun setArrowSpec(arrowSpec: ArrowSpec?): DataPointLiveMapAesthetics {
-        myArrowSpec = arrowSpec
+        this.arrowSpec = arrowSpec
         return this
     }
 

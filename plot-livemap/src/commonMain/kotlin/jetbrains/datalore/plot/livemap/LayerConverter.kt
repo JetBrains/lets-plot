@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.livemap.api.*
+import jetbrains.livemap.chart.Renderers.PathRenderer
 
 
 object LayerConverter {
@@ -136,18 +137,18 @@ object LayerConverter {
                             animation = it.animation
                             speed = it.speed
                             flow = it.flow
-                            arrowSpec = it.myArrowSpec?.let { arrow ->
-                                PathBuilder.ArrowSpec(
+                            arrowSpec = it.arrowSpec?.let { arrow ->
+                                PathRenderer.ArrowSpec(
                                     arrow.angle,
                                     arrow.length,
                                     end = when (arrow.end) {
-                                        ArrowSpec.End.LAST -> PathBuilder.ArrowSpec.End.LAST
-                                        ArrowSpec.End.FIRST -> PathBuilder.ArrowSpec.End.FIRST
-                                        ArrowSpec.End.BOTH -> PathBuilder.ArrowSpec.End.BOTH
+                                        ArrowSpec.End.LAST -> PathRenderer.ArrowSpec.End.LAST
+                                        ArrowSpec.End.FIRST -> PathRenderer.ArrowSpec.End.FIRST
+                                        ArrowSpec.End.BOTH -> PathRenderer.ArrowSpec.End.BOTH
                                     },
                                     type = when (arrow.type) {
-                                        ArrowSpec.Type.OPEN -> PathBuilder.ArrowSpec.Type.OPEN
-                                        ArrowSpec.Type.CLOSED -> PathBuilder.ArrowSpec.Type.CLOSED
+                                        ArrowSpec.Type.OPEN -> PathRenderer.ArrowSpec.Type.OPEN
+                                        ArrowSpec.Type.CLOSED -> PathRenderer.ArrowSpec.Type.CLOSED
                                     }
                                 )
                             }

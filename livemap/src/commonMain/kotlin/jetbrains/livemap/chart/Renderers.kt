@@ -6,13 +6,13 @@
 package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
-import jetbrains.livemap.api.PathBuilder.ArrowSpec
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -22,6 +22,8 @@ import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.lineTo
 import jetbrains.livemap.mapengine.moveTo
 import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 object Renderers {
 
@@ -113,6 +115,64 @@ object Renderers {
 
             drawLines(geometry, ctx, Context2d::stroke)
             chartElement.arrowSpec?.let { arrowSpec -> drawArrows(arrowSpec, geometry, color, ctx) }
+        }
+
+        class ArrowSpec(val angle: Double, val length: Double, val end: End, val type: Type) {
+            val isOnFirstEnd: Boolean
+                get() = end == End.FIRST || end == End.BOTH
+
+            val isOnLastEnd: Boolean
+                get() = end == End.LAST || end == End.BOTH
+
+            fun createGeometry(polarAngle: Double, x: Double, y: Double): Pair<DoubleArray, DoubleArray> {
+                val xs = doubleArrayOf(x - length * cos(polarAngle - angle), x, x - length * cos(polarAngle + angle))
+                val ys = doubleArrayOf(y - length * sin(polarAngle - angle), y, y - length * sin(polarAngle + angle))
+                return xs to ys
+            }
+
+            enum class End {
+                LAST, FIRST, BOTH
+            }
+
+            enum class Type {
+                OPEN, CLOSED
+            }
+
+            companion object {
+                private const val DEF_ANGLE = 30.0
+                private const val DEF_LENGTH = 10.0
+
+                /**
+                 * @param angle - the angle of the arrow head in degrees
+                 * @param length - the length of the arrow head (px).
+                 * @param ends - {'last', 'first', 'both'}
+                 * @param type - {'open', 'closed'}
+                 * */
+                fun arrow(
+                    angle: Double = DEF_ANGLE,
+                    length: Double = DEF_LENGTH,
+                    ends: String = "last",
+                    type: String = "open"
+                ): ArrowSpec {
+                    val arrowEnd = when (ends) {
+                        "last" -> End.LAST
+                        "first" -> End.FIRST
+                        "both" -> End.BOTH
+                        else -> throw IllegalArgumentException("Expected: first|last|both")
+                    }
+                    val arrowType = when (type) {
+                        "open" -> Type.OPEN
+                        "closed" -> Type.CLOSED
+                        else -> throw IllegalArgumentException("Expected: open|closed")
+                    }
+                    return ArrowSpec(
+                        toRadians(angle),
+                        length,
+                        arrowEnd,
+                        arrowType
+                    )
+                }
+            }
         }
 
         private fun drawArrows(arrowSpec: ArrowSpec, geometry: MultiPolygon<Client>, color: Color, ctx: Context2d) {
