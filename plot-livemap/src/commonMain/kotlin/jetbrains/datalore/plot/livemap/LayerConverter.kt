@@ -135,6 +135,10 @@ object LayerConverter {
                             animation = it.animation
                             speed = it.speed
                             flow = it.flow
+                            arrowAngle = it.arrowAngle
+                            arrowLength = it.arrowLength
+                            arrowAtEnds = it.arrowAtEnds
+                            arrowType = it.arrowType
                         }
                     }
                 }

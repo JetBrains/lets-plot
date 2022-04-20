@@ -4,6 +4,7 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
+import jetbrains.livemap.chart.Renderers.PathRenderer.ArrowSpec
 import jetbrains.livemap.core.ecs.EcsComponent
 
 
@@ -13,6 +14,7 @@ class ChartElementComponent : EcsComponent {
     var fillColor: Color? = null
     var strokeColor: Color? = null
     var lineDash: DoubleArray? = null
+    var arrowSpec: ArrowSpec? = null
 
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false

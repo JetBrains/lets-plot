@@ -7,9 +7,11 @@ package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
 import jetbrains.livemap.Client
+import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -18,6 +20,9 @@ import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.lineTo
 import jetbrains.livemap.mapengine.moveTo
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
 
 object Renderers {
 
@@ -99,14 +104,111 @@ object Renderers {
             if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
-
+            val geometry = entity.get<ScreenGeometryComponent>().geometry
             val chartElement = entity.get<ChartElementComponent>()
-            ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
+            val color = changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue)
+            ctx.setStrokeStyle(color)
             ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scalingSizeFactor }.toDoubleArray())
             ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
             ctx.beginPath()
 
-            drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx, Context2d::stroke)
+            drawLines(geometry, ctx, Context2d::stroke)
+            chartElement.arrowSpec?.let { arrowSpec -> drawArrows(arrowSpec, geometry, color, ctx) }
+        }
+
+        class ArrowSpec private constructor(
+            val angle: Double,
+            val length: Double,
+            val end: End,
+            val type: Type
+        ) {
+            val isOnFirstEnd: Boolean
+                get() = end == End.FIRST || end == End.BOTH
+
+            val isOnLastEnd: Boolean
+                get() = end == End.LAST || end == End.BOTH
+
+            fun createGeometry(polarAngle: Double, x: Double, y: Double): Pair<DoubleArray, DoubleArray> {
+                val xs = doubleArrayOf(x - length * cos(polarAngle - angle), x, x - length * cos(polarAngle + angle))
+                val ys = doubleArrayOf(y - length * sin(polarAngle - angle), y, y - length * sin(polarAngle + angle))
+                return xs to ys
+            }
+
+            enum class End {
+                LAST, FIRST, BOTH
+            }
+
+            enum class Type {
+                OPEN, CLOSED
+            }
+
+            companion object {
+                fun create(
+                    arrowAngle: Double?,
+                    arrowLength: Double?,
+                    arrowAtEnds: String?,
+                    arrowType: String?
+                ): ArrowSpec? {
+                    if (arrowAngle == null || arrowLength == null) {
+                        return null
+                    }
+                    val ends = when (arrowAtEnds) {
+                        "last" -> End.LAST
+                        "first" -> End.FIRST
+                        "both" -> End.BOTH
+                        else -> throw IllegalArgumentException("Expected: first|last|both")
+                    }
+                    val type = when (arrowType) {
+                        "open" -> Type.OPEN
+                        "closed" -> Type.CLOSED
+                        else -> throw IllegalArgumentException("Expected: open|closed")
+                    }
+                    return ArrowSpec(arrowAngle, arrowLength, ends, type)
+                }
+            }
+        }
+
+        private fun drawArrows(arrowSpec: ArrowSpec, geometry: MultiPolygon<Client>, color: Color, ctx: Context2d) {
+
+            fun drawArrowAtEnd(points: List<ClientPoint>, arrowSpec: ArrowSpec) {
+                if (points.size < 2) {
+                    return
+                }
+                val start = points[0]
+                val end = points[1]
+                val abscissa = end.x - start.x
+                val ordinate = end.y - start.y
+                if (abscissa != 0.0 || ordinate != 0.0) {
+                    ctx.beginPath()
+                    ctx.setLineDash(doubleArrayOf())
+
+                    val polarAngle = atan2(ordinate, abscissa)
+                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y)
+                    ctx.moveTo(xs[0], ys[0])
+                    for (i in 1..2) {
+                        ctx.lineTo(xs[i], ys[i])
+                    }
+                    if (arrowSpec.type == ArrowSpec.Type.CLOSED) {
+                        ctx.closePath()
+                        ctx.setFillStyle(color)
+                        ctx.fill()
+                    }
+                    ctx.stroke()
+                }
+            }
+
+            for (polygon in geometry) {
+                for (ring in polygon) {
+                    if (arrowSpec.isOnFirstEnd) {
+                        val segment = ring.take(2).reversed()
+                        drawArrowAtEnd(segment, arrowSpec)
+                    }
+                    if (arrowSpec.isOnLastEnd) {
+                        val segment = ring.takeLast(2)
+                        drawArrowAtEnd(segment, arrowSpec)
+                    }
+                }
+            }
         }
     }
 
