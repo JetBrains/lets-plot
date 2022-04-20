@@ -121,17 +121,16 @@ class DataFrame private constructor(builder: Builder) {
 
     operator fun get(variable: Variable): List<*> {
         assertDefined(variable)
-        return myVectorByVar[variable]!!
+        return myVectorByVar.getValue(variable)
     }
 
     fun getNumeric(variable: Variable): List<Double?> {
         assertDefined(variable)
-        val list = myVectorByVar[variable]
-        if (list!!.isEmpty()) {
-            return emptyList()
+        val list = myVectorByVar.getValue(variable)
+        if (list.isNotEmpty()) {
+            assertNumeric(variable)
         }
 
-        assertNumeric(variable)
         @Suppress("UNCHECKED_CAST")
         return list as List<Double?>
     }

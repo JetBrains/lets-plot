@@ -14,10 +14,10 @@ class YOrientation {
             sortedXAlphabeticallyRevesed(),
             sortedXByCount(),
             groupedByFill(),
-            groupedByFillSortedX(),
+            groupedByFillSortedByCount(),
             fillByNumeric(),
             fillByNumericGrouped(),
-            fillByNumericGroupedSortedX()
+            fillByNumericGroupedSortedByCount()
         )
     }
 
@@ -39,7 +39,7 @@ class YOrientation {
         return createPlotSpec("{'x': 'varX', 'fill': 'varGroup'}")
     }
 
-    private fun groupedByFillSortedX(): MutableMap<String, Any> {
+    private fun groupedByFillSortedByCount(): MutableMap<String, Any> {
         return createPlotSpec("{'x': 'varX', 'fill': 'varGroup'}", SORT_BY_COUNT_DATA_META)
     }
 
@@ -51,7 +51,7 @@ class YOrientation {
         return createPlotSpec("{'x': 'varX', 'fill': 'varNum', 'group': 'varGroup'}")
     }
 
-    private fun fillByNumericGroupedSortedX(): MutableMap<String, Any> {
+    private fun fillByNumericGroupedSortedByCount(): MutableMap<String, Any> {
         return createPlotSpec("{'x': 'varX', 'fill': 'varNum', 'group': 'varGroup'}", SORT_BY_COUNT_DATA_META)
     }
 

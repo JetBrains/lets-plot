@@ -149,7 +149,7 @@ object DataMetaUtil {
             ?.getMappingAnnotationsSpec(AS_DISCRETE)
             ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             ?.mapNotNull { (aesName, parameters) ->
-                require(aesName in commonMappings)
+                check(aesName in commonMappings)
                 val variableName = commonMappings[aesName] as String
                 OrderOptionUtil.OrderOption.create(
                     variableName,

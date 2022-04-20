@@ -26,8 +26,30 @@ class BackendDataProcUtilTest {
         check(plotSpecs_basic(), expected_basic())
         check(plotSpecs_sortedAlphabeticallyRevesed(), expected_sortedAlphabeticallyRevesed())
         check(plotSpecs_sortedByCount(), expected_sortedByCount())
+        check(plotSpecs_groupedByFill(), expected_groupedByFill())
+        check(plotSpecs_groupedByFillSortedByCount(), expected_groupedByFillSortedByCount())
+        check(plotSpecs_fillByNumeric(), expected_fillByNumeric())
+        check(plotSpecs_fillByNumericGrouped(), expected_fillByNumericGrouped())
+        check(plotSpecs_fillByNumericGroupedSortedByCount(), expected_fillByNumericGroupedSortedByCount())
+
 
         check(plotSpecs_basic(yOrientation = true), expected_basic())
+        check(
+            plotSpecs_sortedAlphabeticallyRevesed(yOrientation = true),
+            expected_sortedAlphabeticallyRevesed(yOrientation = true)
+        )
+        check(plotSpecs_sortedByCount(yOrientation = true), expected_sortedByCount(yOrientation = true))
+        check(plotSpecs_groupedByFill(yOrientation = true), expected_groupedByFill())
+        check(
+            plotSpecs_groupedByFillSortedByCount(yOrientation = true),
+            expected_groupedByFillSortedByCount(yOrientation = true)
+        )
+        check(plotSpecs_fillByNumeric(yOrientation = true), expected_fillByNumeric())
+        check(plotSpecs_fillByNumericGrouped(yOrientation = true), expected_fillByNumericGrouped())
+        check(
+            plotSpecs_fillByNumericGroupedSortedByCount(yOrientation = true),
+            expected_fillByNumericGroupedSortedByCount(yOrientation = true)
+        )
     }
 
     private fun check(plotSpec: MutableMap<String, Any>, expected: Expected) {
@@ -79,11 +101,12 @@ class BackendDataProcUtilTest {
                     List(19) { 1 } + listOf(0),
         )
 
-        private val SORT_BY_COUNT_DATA_META = """
+        private fun dataMeta_SortByCount(yOrientation: Boolean): String {
+            return """
             {
                 'mapping_annotations': [ 
                     {
-                        'aes': 'x',
+                        'aes': '${categoryAes(yOrientation)}',
                         'annotation': 'as_discrete',
                         'parameters': { 
                                 'label': '$CATEGORY_VAR',
@@ -93,12 +116,14 @@ class BackendDataProcUtilTest {
                 ]
             }
         """.trimIndent()
+        }
 
-        private val SORT_ALPHABETICALLY_REVERSED_DATA_META = """
+        private fun dataMeta_SortAlphabeticallyReversed(yOrientation: Boolean): String {
+            return """
             {
                 'mapping_annotations': [ 
                     {
-                        'aes': 'x',
+                        'aes': '${categoryAes(yOrientation)}',
                         'annotation': 'as_discrete',
                         'parameters': { 
                                 'label': '$CATEGORY_VAR',
@@ -108,6 +133,7 @@ class BackendDataProcUtilTest {
                 ]
             }
         """.trimIndent()
+        }
 
         private fun createPlotSpec(
             layerMapping: String,
@@ -133,8 +159,8 @@ class BackendDataProcUtilTest {
             return plotSpec
         }
 
-        private fun categoryAes(yOrientation:Boolean): String {
-            return if(yOrientation) "y" else "x"
+        private fun categoryAes(yOrientation: Boolean): String {
+            return if (yOrientation) "y" else "x"
         }
 
         // Basic
@@ -152,20 +178,21 @@ class BackendDataProcUtilTest {
             )
         }
 
-        // Categories are sorted alphabetically
+        // Categories are sorted alphabetically.
 
         private fun plotSpecs_sortedAlphabeticallyRevesed(yOrientation: Boolean = false): MutableMap<String, Any> {
-            val dataMeta = SORT_ALPHABETICALLY_REVERSED_DATA_META
-            return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta, yOrientation = yOrientation)
+            val categoryAes = categoryAes(yOrientation)
+            val dataMeta = dataMeta_SortAlphabeticallyReversed(yOrientation)
+            return createPlotSpec("{'$categoryAes': '$CATEGORY_VAR'}", dataMeta, yOrientation = yOrientation)
         }
 
-        private fun expected_sortedAlphabeticallyRevesed(): Expected {
+        private fun expected_sortedAlphabeticallyRevesed(yOrientation: Boolean = false): Expected {
             return Expected(
                 data = mapOf<String, List<Any>>(
                     DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c"),
                     "..count.." to listOf(30.0, 40.0, 20.0)
                 ),
-                asDiscreteAesSet = setOf("x"),
+                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
                 orderOption = OrderOptionUtil.OrderOption.create(
                     variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
                     orderBy = null,
@@ -174,20 +201,129 @@ class BackendDataProcUtilTest {
             )
         }
 
-        // Categories are sorted by count
+        // Categories are sorted by count.
 
         private fun plotSpecs_sortedByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
-            val dataMeta = SORT_BY_COUNT_DATA_META
-            return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta, yOrientation = yOrientation)
+            val categoryAes = categoryAes(yOrientation)
+            val dataMeta = dataMeta_SortByCount(yOrientation)
+            return createPlotSpec("{'$categoryAes': '$CATEGORY_VAR'}", dataMeta, yOrientation = yOrientation)
         }
 
-        private fun expected_sortedByCount(): Expected {
+        private fun expected_sortedByCount(yOrientation: Boolean = false): Expected {
             return Expected(
                 data = mapOf<String, List<Any>>(
                     DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c"),
                     "..count.." to listOf(30.0, 40.0, 20.0)
                 ),
-                asDiscreteAesSet = setOf("x"),
+                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
+                orderOption = OrderOptionUtil.OrderOption.create(
+                    variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
+                    orderBy = "..count..",
+                    order = null
+                )
+            )
+        }
+
+        // Grouping by 'fill'.
+
+        private fun plotSpecs_groupedByFill(yOrientation: Boolean = false): MutableMap<String, Any> {
+            val categoryAes = categoryAes(yOrientation)
+            val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$GROUP_VAR'}"
+            return createPlotSpec(mapping, "{}", yOrientation = yOrientation)
+        }
+
+        private fun expected_groupedByFill(): Expected {
+            return Expected(
+                data = mapOf<String, List<Any>>(
+                    CATEGORY_VAR to listOf("a", "b", "c", "a", "b", "c"),
+                    "..count.." to listOf(1.0, 1.0, 1.0, 29.0, 39.0, 19.0),
+                    GROUP_VAR to listOf("g0", "g0", "g0", "g1", "g1", "g1"),
+                )
+            )
+        }
+
+        // Grouping by 'fill' and sorted by count.
+
+        private fun plotSpecs_groupedByFillSortedByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
+            val categoryAes = categoryAes(yOrientation)
+            val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$GROUP_VAR'}"
+            val dataMeta = dataMeta_SortByCount(yOrientation)
+            return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
+        }
+
+        private fun expected_groupedByFillSortedByCount(yOrientation: Boolean = false): Expected {
+            return Expected(
+                data = mapOf<String, List<Any>>(
+                    DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c", "a", "b", "c"),
+                    "..count.." to listOf(1.0, 1.0, 1.0, 29.0, 39.0, 19.0),
+                    GROUP_VAR to listOf("g0", "g0", "g0", "g1", "g1", "g1"),
+                ),
+                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
+                orderOption = OrderOptionUtil.OrderOption.create(
+                    variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
+                    orderBy = "..count..",
+                    order = null
+                )
+            )
+        }
+
+        // Fill by numeric.
+
+        private fun plotSpecs_fillByNumeric(yOrientation: Boolean = false): MutableMap<String, Any> {
+            val categoryAes = categoryAes(yOrientation)
+            val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR'}"
+            val dataMeta = "{}"
+            return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
+        }
+
+        private fun expected_fillByNumeric(): Expected {
+            return Expected(
+                data = mapOf<String, List<Any>>(
+                    CATEGORY_VAR to listOf("a", "b", "c"),
+                    "..count.." to listOf(30.0, 40.0, 20.0),
+                    NUMERIC_VAR to listOf(0.9666666666666669, 0.9666666666666669, 0.9666666666666669),
+                ),
+            )
+        }
+
+        // Fill by numeric, grouped.
+
+        private fun plotSpecs_fillByNumericGrouped(yOrientation: Boolean = false): MutableMap<String, Any> {
+            val categoryAes = categoryAes(yOrientation)
+            val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR', 'group': '$GROUP_VAR'}"
+            val dataMeta = "{}"
+            return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
+        }
+
+        private fun expected_fillByNumericGrouped(): Expected {
+            return Expected(
+                data = mapOf<String, List<Any>>(
+                    CATEGORY_VAR to listOf("a", "b", "c", "a", "b", "c"),
+                    "..count.." to listOf(1.0, 1.0, 1.0, 29.0, 39.0, 19.0),
+                    GROUP_VAR to listOf("g0", "g0", "g0", "g1", "g1", "g1"),
+                    NUMERIC_VAR to listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+                ),
+            )
+        }
+
+        // Fill by numeric, grouped, sorted by count.
+
+        private fun plotSpecs_fillByNumericGroupedSortedByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
+            val categoryAes = categoryAes(yOrientation)
+            val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR', 'group': '$GROUP_VAR'}"
+            val dataMeta = dataMeta_SortByCount(yOrientation)
+            return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
+        }
+
+        private fun expected_fillByNumericGroupedSortedByCount(yOrientation: Boolean = false): Expected {
+            return Expected(
+                data = mapOf<String, List<Any>>(
+                    DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c", "a", "b", "c"),
+                    "..count.." to listOf(1.0, 1.0, 1.0, 29.0, 39.0, 19.0),
+                    GROUP_VAR to listOf("g0", "g0", "g0", "g1", "g1", "g1"),
+                    NUMERIC_VAR to listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
+                ),
+                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
                 orderOption = OrderOptionUtil.OrderOption.create(
                     variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
                     orderBy = "..count..",
