@@ -53,12 +53,12 @@ internal object LayerConfigUtil {
             val aesSet = HashSet(consumedAesSet)
             aesSet.retainAll(mapping.keys)
             for (aes in aesSet) {
-                val variable = mapping[aes]!!
+                val variable = mapping.getValue(aes)
                 val binding: VarBinding = when {
                     data.has(variable) -> VarBinding(variable, aes)
                     variable.isStat && !clientSide -> VarBinding(variable, aes) // 'stat' is not yet built.
                     else -> throw IllegalArgumentException(
-                        "Undefined variable: '${variable.name}'. Variables in data frame: ${data.variables().map { "'${it.name}'" }}"
+                        data.undefinedVariableErrorMessage(variable.name)
                     )
                 }
                 result.add(binding)

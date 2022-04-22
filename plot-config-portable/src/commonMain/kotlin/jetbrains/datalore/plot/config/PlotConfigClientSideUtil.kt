@@ -116,6 +116,7 @@ object PlotConfigClientSideUtil {
             .stat(stat)
             .geom(geomProvider)
             .pos(layerConfig.posProvider)
+            .yOrientation(layerConfig.isYOrientation)
 
 
         val constantAesMap = layerConfig.constantsMap

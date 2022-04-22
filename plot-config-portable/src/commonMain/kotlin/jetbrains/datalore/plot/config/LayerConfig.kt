@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
+import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -121,10 +122,20 @@ class LayerConfig(
         }
 
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
-        val consumedAesSet = HashSet(geomProto.renders())
-        if (!clientSide) {
-            consumedAesSet.addAll(stat.consumes())
+        val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {
+            when (clientSide) {
+                true -> it
+                false -> it + stat.consumes()
+            }
+        }.let {
+            when (isYOrientation) {
+                true -> it.map { YOrientationUtil.flipAes(it) }.toSet()
+                false -> it
+            }
         }
+//        if (!clientSide) {
+//            consumedAesSet.addAll(stat.consumes())
+//        }
 
         // mapping (inherit from plot) + 'layer' mapping
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
@@ -179,7 +190,12 @@ class LayerConfig(
 
         if (clientSide) {
             // add stat default mappings
-            val statDefMapping = Stats.defaultMapping(stat)
+            val statDefMapping = Stats.defaultMapping(stat).let {
+                when (isYOrientation) {
+                    true -> YOrientationUtil.flipAesKeys(it)
+                    false -> it
+                }
+            }
             // Only keys (aes) in 'statDefMapping' that are not already present in 'aesMappinds'.
             aesMappings = statDefMapping + aesMappings
         }

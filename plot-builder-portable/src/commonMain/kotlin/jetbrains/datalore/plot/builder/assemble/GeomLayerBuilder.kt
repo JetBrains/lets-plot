@@ -28,10 +28,11 @@ import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
+import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-class GeomLayerBuilder {
+class GeomLayerBuilder constructor() {
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
     private lateinit var myStat: Stat
@@ -46,6 +47,7 @@ class GeomLayerBuilder {
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
+    private var isYOrientation: Boolean = false
 
     fun stat(v: Stat): GeomLayerBuilder {
         myStat = v
@@ -104,6 +106,12 @@ class GeomLayerBuilder {
 
     fun disableLegend(v: Boolean): GeomLayerBuilder {
         myIsLegendDisabled = v
+        return this
+    }
+
+
+    fun yOrientation(v: Boolean): GeomLayerBuilder {
+        isYOrientation = v
         return this
     }
 
@@ -180,7 +188,8 @@ class GeomLayerBuilder {
             dataAccess,
             myLocatorLookupSpec,
             myContextualMappingProvider.createContextualMapping(dataAccess, data),
-            myIsLegendDisabled
+            myIsLegendDisabled,
+            isYOrientation = isYOrientation
         )
     }
 
@@ -202,7 +211,8 @@ class GeomLayerBuilder {
         override val dataAccess: MappedDataAccess,
         override val locatorLookupSpec: LookupSpec,
         override val contextualMapping: ContextualMapping,
-        override val isLegendDisabled: Boolean
+        override val isLegendDisabled: Boolean,
+        override val isYOrientation: Boolean
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
@@ -265,10 +275,20 @@ class GeomLayerBuilder {
         }
 
         override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
+            @Suppress("NAME_SHADOWING")
+            val aes = when(isYOrientation) {
+                true -> YOrientationUtil.flipAes(aes)
+                false -> aes
+            }
             return (geom as GeomBase).preferableNullDomain(aes)
         }
 
         override fun rangeIncludesZero(aes: Aes<*>): Boolean {
+            @Suppress("NAME_SHADOWING")
+            val aes = when(isYOrientation) {
+                true -> YOrientationUtil.flipAes(aes)
+                false -> aes
+            }
             return aestheticsDefaults.rangeIncludesZero(aes)
         }
 

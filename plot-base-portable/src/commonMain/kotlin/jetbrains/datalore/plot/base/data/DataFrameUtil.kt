@@ -51,9 +51,7 @@ object DataFrameUtil {
             }
         }
         throw IllegalArgumentException(
-            "Variable not found: '$varName'. Variables in data frame: ${
-                data.variables().map { "'${it.name}'" }
-            }"
+            data.undefinedVariableErrorMessage(varName)
         )
     }
 

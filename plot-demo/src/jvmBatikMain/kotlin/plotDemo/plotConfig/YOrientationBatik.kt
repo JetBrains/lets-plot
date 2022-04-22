@@ -12,7 +12,8 @@ fun main() {
     with(YOrientation()) {
         PlotSpecsDemoWindowBatik(
             "Y-orientation",
-            plotSpecList()
+            plotSpecList(),
+            maxCol = 2
         ).open()
     }
 }

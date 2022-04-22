@@ -43,6 +43,8 @@ interface GeomLayer {
 
     val contextualMapping: ContextualMapping
 
+    val isYOrientation: Boolean
+
     fun renderedAes(): List<Aes<*>>
 
     fun createPos(ctx: PosProviderContext): PositionAdjustment

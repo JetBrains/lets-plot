@@ -101,6 +101,10 @@ class BackendDataProcUtilTest {
                     List(19) { 1 } + listOf(0),
         )
 
+        private fun categoryAes(yOrientation: Boolean): String {
+            return if (yOrientation) "y" else "x"
+        }
+
         private fun dataMeta_SortByCount(yOrientation: Boolean): String {
             return """
             {
@@ -157,10 +161,6 @@ class BackendDataProcUtilTest {
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
-        }
-
-        private fun categoryAes(yOrientation: Boolean): String {
-            return if (yOrientation) "y" else "x"
         }
 
         // Basic

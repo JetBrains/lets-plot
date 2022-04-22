@@ -52,6 +52,9 @@ object YOrientationUtil {
         }
     }
 
+    fun flipAes(aes: Aes<*>): Aes<*> {
+        return AES_FLIPPER.visit(aes)
+    }
 
     private class AesFlipper : AesVisitor<Aes<*>>() {
 

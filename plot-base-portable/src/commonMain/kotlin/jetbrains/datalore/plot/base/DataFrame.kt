@@ -181,12 +181,18 @@ class DataFrame private constructor(builder: Builder) {
         return Builder(this, indices).build()
     }
 
-    private fun assertDefined(variable: Variable) {
+    fun assertDefined(variable: Variable) {
         if (!has(variable)) {
-            val e = IllegalArgumentException("Undefined variable: '$variable'")
+            val e = IllegalArgumentException(undefinedVariableErrorMessage(variable.name))
             LOG.error(e) { e.message!! }
             throw e
         }
+    }
+
+    fun undefinedVariableErrorMessage(varName: String): String {
+        return "Variable not found: '$varName'. Variables in data frame: ${
+            this.variables().map { "'${it.name}'" }
+        }"
     }
 
     private fun assertNumeric(variable: Variable) {

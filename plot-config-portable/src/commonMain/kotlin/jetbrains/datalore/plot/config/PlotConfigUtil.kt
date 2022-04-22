@@ -101,11 +101,7 @@ object PlotConfigUtil {
         // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
-            require(data.has(variable)) {
-                "Undefined variable: '${variable.name}'. Variables in data frame: ${
-                    data.variables().map { "'${it.name}'" }
-                }"
-            }
+            data.assertDefined(variable)
         }
 
         return dataByVarBinding
