@@ -9,9 +9,13 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.base.stat.math3.AbstractRealDistribution
 import jetbrains.datalore.plot.base.stat.math3.NormalDistribution
+import jetbrains.datalore.plot.base.stat.math3.TDistribution
 
-class QQStat : BaseStat(DEF_MAPPING) {
+class QQStat(
+    private val distribution: Distribution
+) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X)
@@ -26,7 +30,10 @@ class QQStat : BaseStat(DEF_MAPPING) {
         val statY = xs.filter { it?.isFinite() == true }.map { it!! }.sorted()
 
         val t = (1..statY.size).map { (it - 0.5) / statY.size }
-        val dist = NormalDistribution(0.0, 1.0)
+        val dist: AbstractRealDistribution = when (distribution) {
+            Distribution.NORMAL -> NormalDistribution(0.0, 1.0)
+            Distribution.T -> TDistribution(1.0)
+        }
         val statX = t.map { dist.inverseCumulativeProbability(it) }
 
         return DataFrame.Builder()
@@ -35,7 +42,14 @@ class QQStat : BaseStat(DEF_MAPPING) {
             .build()
     }
 
+    enum class Distribution {
+        NORMAL,
+        T
+    }
+
     companion object {
+        val DEF_DISTRIBUTION = Distribution.NORMAL
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y

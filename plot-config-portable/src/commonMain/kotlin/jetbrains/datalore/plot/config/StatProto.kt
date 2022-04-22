@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.config.Option.Stat.Density
 import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
 import jetbrains.datalore.plot.config.Option.Stat.YDensity
+import jetbrains.datalore.plot.config.Option.Stat.QQ
 
 object StatProto {
 
@@ -95,7 +96,7 @@ object StatProto {
 
             StatKind.DENSITY2DF -> return configureDensity2dStat(options, true)
 
-            StatKind.QQ -> return Stats.qq()
+            StatKind.QQ -> return configureQQStat(options)
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
@@ -302,5 +303,20 @@ object StatProto {
                 binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
             )
         }
+    }
+
+    private fun configureQQStat(options: OptionsAccessor): QQStat {
+        val distribution = options.getString(QQ.DISTRIBUTION)?.let {
+            when (it.lowercase()) {
+                "normal" -> QQStat.Distribution.NORMAL
+                "t" -> QQStat.Distribution.T
+                else -> throw IllegalArgumentException(
+                    "Unsupported distribution: '$it'\n" +
+                    "Use one of: normal, t."
+                )
+            }
+        }
+
+        return Stats.qq(distribution ?: QQStat.DEF_DISTRIBUTION)
     }
 }

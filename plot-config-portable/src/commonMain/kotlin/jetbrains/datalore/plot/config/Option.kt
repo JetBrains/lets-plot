@@ -314,6 +314,10 @@ object Option {
         object YDensity {
             const val SCALE = "scale"
         }
+
+        object QQ {
+            const val DISTRIBUTION = "distribution"
+        }
     }
 
     object Scale {
