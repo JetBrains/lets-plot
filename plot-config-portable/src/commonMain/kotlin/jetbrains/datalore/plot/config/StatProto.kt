@@ -309,10 +309,12 @@ object StatProto {
         val distribution = options.getString(QQ.DISTRIBUTION)?.let {
             when (it.lowercase()) {
                 "normal" -> QQStat.Distribution.NORMAL
+                "uniform" -> QQStat.Distribution.UNIFORM
                 "t" -> QQStat.Distribution.T
+                "gamma" -> QQStat.Distribution.GAMMA
                 else -> throw IllegalArgumentException(
                     "Unsupported distribution: '$it'\n" +
-                    "Use one of: normal, t."
+                    "Use one of: normal, uniform, t, gamma."
                 )
             }
         }

@@ -92,13 +92,12 @@ class NormalDistribution
             Based on the paper of M. Wichura, "The Percentage Points of the Normal Distribution".
             http://csg.sph.umich.edu/abecasis/gas_power_calculator/algorithm-as-241-the-percentage-points-of-the-normal-distribution.pdf
         */
-        if (p < 0.0 || p > 1.0)
-            throw IllegalArgumentException("The probality p must be bigger than 0 and smaller than 1")
+        if (p < 0.0 || p > 1.0) {
+            error("OutOfRange [0, 1] - p$p")
+        }
 
-        if (p == 0.0)
-            return Double.NEGATIVE_INFINITY
-        if (p == 1.0)
-            return Double.POSITIVE_INFINITY
+        if (p == 0.0) return supportLowerBound
+        if (p == 1.0) return supportUpperBound
 
         var r: Double
         val q: Double = p - 0.5

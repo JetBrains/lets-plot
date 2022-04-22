@@ -9,9 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.stat.math3.AbstractRealDistribution
-import jetbrains.datalore.plot.base.stat.math3.NormalDistribution
-import jetbrains.datalore.plot.base.stat.math3.TDistribution
+import jetbrains.datalore.plot.base.stat.math3.*
 
 class QQStat(
     private val distribution: Distribution
@@ -32,7 +30,9 @@ class QQStat(
         val t = (1..statY.size).map { (it - 0.5) / statY.size }
         val dist: AbstractRealDistribution = when (distribution) {
             Distribution.NORMAL -> NormalDistribution(0.0, 1.0)
+            Distribution.UNIFORM -> UniformDistribution(0.0, 1.0)
             Distribution.T -> TDistribution(1.0)
+            Distribution.GAMMA -> GammaDistribution(1.0, 1.0)
         }
         val statX = t.map { dist.inverseCumulativeProbability(it) }
 
@@ -44,7 +44,9 @@ class QQStat(
 
     enum class Distribution {
         NORMAL,
-        T
+        UNIFORM,
+        T,
+        GAMMA
     }
 
     companion object {
