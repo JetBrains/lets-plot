@@ -48,7 +48,7 @@ internal object CorrUtil {
 
         coeff.forEach { (vx, vxCoeffs) ->
             coeff.keys.forEachIndexed() { vyIndex, vy ->
-                correlations[vx to vy] = vxCoeffs.get(vyIndex) as Double
+                correlations[vx to vy] = vxCoeffs.get(vyIndex) as? Double ?: Double.NaN
             }
         }
 
