@@ -164,6 +164,8 @@ class DomCanvasControl(
             handle(MOUSE_DOWN) {
                 if (!isHitOnTarget(it)) return@handle
 
+                // Prevent text selection outside of Canvas element in Safari
+                it.preventDefault()
                 myButtonPressed = true
                 myButtonPressCoord = Vector(it.x.toInt(), it.y.toInt())
                 dispatch(MouseEventSpec.MOUSE_PRESSED, translate(it))
@@ -181,12 +183,14 @@ class DomCanvasControl(
 
             handle(MOUSE_MOVE) {
                 if (myWasDragged) {
+                    it.preventDefault()
                     dispatch(MouseEventSpec.MOUSE_DRAGGED, translate(it))
                 }
                 else if (myButtonPressed && !myWasDragged) {
                     val distance = myButtonPressCoord?.sub(Vector(it.x.toInt(), it.y.toInt()))?.length() ?: 0.0
                     if (distance > myDragToleranceDistance) {
                         myWasDragged = true
+                        it.preventDefault()
                         dispatch(MouseEventSpec.MOUSE_DRAGGED, translate(it))
                     } else {
                         // Just in case do not generate move event. Can be changed if needed.
