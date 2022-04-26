@@ -5,15 +5,17 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
@@ -274,8 +276,29 @@ internal class SquareFrameOfReference(
                 xAesMapper, yAesMapper
             )
 
-            val aestheticMappers = rendererData.aestheticMappers
-            val aesthetics = rendererData.aesthetics
+            @Suppress("NAME_SHADOWING")
+            val flippedAxis = if (layer.isYOrientation) !flippedAxis else flippedAxis
+            val aestheticMappers = rendererData.aestheticMappers.let {
+                when (layer.isYOrientation) {
+                    true -> YOrientationBaseUtil.flipAesKeys(it)
+                    false -> it
+                }
+            }
+            val aesthetics = rendererData.aesthetics.let {
+                when (layer.isYOrientation) {
+                    true -> YOrientationAesthetics(it)
+                    false -> it
+                }
+            }
+
+//            val aestheticMappers = rendererData.aestheticMappers
+//            val aesthetics = rendererData.aesthetics
+
+            @Suppress("NAME_SHADOWING")
+            val coord = when (layer.isYOrientation) {
+                true -> coord.flip()
+                false -> coord
+            }
 
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)

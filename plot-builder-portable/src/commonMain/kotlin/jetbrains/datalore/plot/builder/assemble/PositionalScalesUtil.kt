@@ -107,7 +107,7 @@ internal object PositionalScalesUtil {
         yInitialDomain: DoubleSpan?
     ): Pair<DoubleSpan?, DoubleSpan?> {
         val positionaDryRunAestheticsByLayer: Map<GeomLayer, Aesthetics> = layers.associateWith {
-            positionaDryRunAesthetics(it)
+            positionalDryRunAesthetics(it)
         }
 
         var xDomainOverall: DoubleSpan? = null
@@ -128,7 +128,7 @@ internal object PositionalScalesUtil {
         return Pair(xDomainOverall, yDomainOverall)
     }
 
-    private fun positionaDryRunAesthetics(layer: GeomLayer): Aesthetics {
+    private fun positionalDryRunAesthetics(layer: GeomLayer): Aesthetics {
         val aesList = layer.renderedAes().filter {
             Aes.affectingScaleX(it) ||
                     Aes.affectingScaleY(it) ||
@@ -248,22 +248,30 @@ internal object PositionalScalesUtil {
         geomCtx: GeomContext
     ): Pair<DoubleSpan?, DoubleSpan?> {
         val renderedAes = layer.renderedAes()
-        val rangeX = when {
-            Aes.WIDTH in renderedAes -> Aes.WIDTH
-            layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
-            else -> null
-        }?.let {
-            computeLayerDryRunRangeAfterSizeExpand(Aes.X, it, aesthetics, geomCtx)
-        }
-        val rangeY = when {
-            Aes.HEIGHT in renderedAes -> Aes.HEIGHT
-            layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
-            else -> null
-        }?.let {
-            computeLayerDryRunRangeAfterSizeExpand(Aes.Y, it, aesthetics, geomCtx)
+
+        val (widthOrientedAxisAes, heightOrientedAxisAes) = when (layer.isYOrientation) {
+            true -> Aes.Y to Aes.X
+            false -> Aes.X to Aes.Y
         }
 
-        return Pair(rangeX, rangeY)
+        val xy = mapOf(
+            widthOrientedAxisAes to when {
+                Aes.WIDTH in renderedAes -> Aes.WIDTH
+                layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
+                else -> null
+            }?.let {
+                computeLayerDryRunRangeAfterSizeExpand(widthOrientedAxisAes, it, aesthetics, geomCtx)
+            },
+            heightOrientedAxisAes to when {
+                Aes.HEIGHT in renderedAes -> Aes.HEIGHT
+                layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
+                else -> null
+            }?.let {
+                computeLayerDryRunRangeAfterSizeExpand(heightOrientedAxisAes, it, aesthetics, geomCtx)
+            }
+        )
+
+        return Pair(xy.getValue(Aes.X), xy.getValue(Aes.Y))
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(

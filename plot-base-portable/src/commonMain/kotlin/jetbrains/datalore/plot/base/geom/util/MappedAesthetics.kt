@@ -10,28 +10,28 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
-class MappedAesthetics(
-    private val myAesthetics: Aesthetics,
-    private val myPointAestheticsMapper: (DataPointAesthetics) -> DataPointAesthetics
+open class MappedAesthetics(
+    private val aesthetics: Aesthetics,
+    private val pointAestheticsMapper: (DataPointAesthetics) -> DataPointAesthetics
 ) : Aesthetics {
 
     override val isEmpty: Boolean
-        get() = myAesthetics.isEmpty
+        get() = aesthetics.isEmpty
 
     override fun dataPointAt(index: Int): DataPointAesthetics {
-        return myPointAestheticsMapper(myAesthetics.dataPointAt(index))
+        return pointAestheticsMapper(aesthetics.dataPointAt(index))
     }
 
     override fun dataPointCount(): Int {
-        return myAesthetics.dataPointCount()
+        return aesthetics.dataPointCount()
     }
 
     override fun dataPoints(): Iterable<DataPointAesthetics> {
-        val source = myAesthetics.dataPoints()
-        return source.map { myPointAestheticsMapper(it) }
+        val source = aesthetics.dataPoints()
+        return source.map { pointAestheticsMapper(it) }
     }
 
-    override fun range(aes: Aes<Double>): DoubleSpan {
+    override fun range(aes: Aes<Double>): DoubleSpan? {
         throw IllegalStateException("MappedAesthetics.range: not implemented $aes")
     }
 
@@ -44,6 +44,6 @@ class MappedAesthetics(
     }
 
     override fun groups(): Iterable<Int> {
-        return myAesthetics.groups()
+        return aesthetics.groups()
     }
 }

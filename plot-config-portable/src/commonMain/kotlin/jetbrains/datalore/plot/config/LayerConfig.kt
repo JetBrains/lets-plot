@@ -12,12 +12,13 @@ import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
+import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
-import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -127,12 +128,8 @@ class LayerConfig(
                 true -> it
                 false -> it + stat.consumes()
             }
-        }.let {
-            when (isYOrientation) {
-                true -> it.map { YOrientationUtil.flipAes(it) }.toSet()
-                false -> it
-            }
-        }
+        }.afterOrientation(isYOrientation)
+
 //        if (!clientSide) {
 //            consumedAesSet.addAll(stat.consumes())
 //        }
@@ -192,7 +189,7 @@ class LayerConfig(
             // add stat default mappings
             val statDefMapping = Stats.defaultMapping(stat).let {
                 when (isYOrientation) {
-                    true -> YOrientationUtil.flipAesKeys(it)
+                    true -> YOrientationBaseUtil.flipAesKeys(it)
                     false -> it
                 }
             }

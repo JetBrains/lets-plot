@@ -346,12 +346,12 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
 
     private class MyDataPointAesthetics(
-        private val myIndex: Int?,
+        private val myIndex: Int,
         private val myAesthetics: MyAesthetics
     ) : DataPointAesthetics {
 
         override fun index(): Int {
-            return myIndex!!
+            return myIndex
         }
 
         override fun x(): Double {
@@ -515,7 +515,7 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
 
         override fun group(): Int {
-            return myAesthetics.group(myIndex!!)
+            return myAesthetics.group(myIndex)
         }
 
         override fun numeric(aes: Aes<Double>): Double {
@@ -523,12 +523,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         }
 
         override fun <T> get(aes: Aes<T>): T {
-            return myAesthetics.aes(aes)(myIndex!!)
+            return myAesthetics.aes(aes)(myIndex)
         }
     }
 
 
-    private class ArrayAes<ValueT> internal constructor(private val myVal: Array<out ValueT>) : Function<Int, ValueT> {
+    private class ArrayAes<ValueT> internal constructor(
+        private val myVal: Array<out ValueT>
+    ) : Function<Int, ValueT> {
         override fun apply(value: Int): ValueT {
             return myVal[value]
         }

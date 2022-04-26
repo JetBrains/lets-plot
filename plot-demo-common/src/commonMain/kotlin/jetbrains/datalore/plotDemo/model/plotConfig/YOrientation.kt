@@ -11,14 +11,15 @@ class YOrientation {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            (basic() + COORD_FLIP).toMutableMap(),
             basic(yOrientation = true),
-            sortedXAlphabeticallyRevesed(),
-            sortedXByCount(),
-            groupedByFill(),
-            groupedByFillSortedByCount(),
-            fillByNumeric(),
-            fillByNumericGrouped(),
-            fillByNumericGroupedSortedByCount()
+//            sortedXAlphabeticallyRevesed(),
+//            sortedXByCount(),
+//            groupedByFill(),
+//            groupedByFillSortedByCount(),
+//            fillByNumeric(),
+//            fillByNumericGrouped(),
+//            fillByNumericGroupedSortedByCount()
         )
     }
 
@@ -77,6 +78,13 @@ class YOrientation {
             "$NUMERIC_VAR" to listOf(0) + List(29) { 1 } +
                     List(39) { 1 } + listOf(0) +
                     List(19) { 1 } + listOf(0),
+        )
+
+        private val COORD_FLIP = mapOf(
+            "coord" to mapOf(
+                "name" to "flip",
+                "flip" to true
+            )
         )
 
         private val SORT_BY_COUNT_DATA_META = """

@@ -13,7 +13,7 @@ fun main() {
         PlotSpecsDemoWindowBatik(
             "Y-orientation",
             plotSpecList(),
-            maxCol = 2
+            maxCol = 3
         ).open()
     }
 }

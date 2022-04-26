@@ -279,7 +279,7 @@ class PlotSvgComponent constructor(
                 placementArea = geomBoundsAbsolute,
                 handlingArea = tile.geomDrawingBounds.add(geomBoundsAbsolute.origin)
             )
-            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
+            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators, tile.layerYOrientations)
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
@@ -45,10 +46,25 @@ object GeomInteractionUtil {
             multilayerWithTooltips,
             isCrosshairEnabled
         )
-        val hiddenAesList = createHiddenAesList(layerConfig, builder.getAxisFromFunctionKind) + axisWithoutTooltip
-        val axisAes = createAxisAesList(builder, layerConfig.geomProto.geomKind, theme) - hiddenAesList
-        val aesList = createTooltipAesList(layerConfig, scaleMap, builder.getAxisFromFunctionKind) - hiddenAesList
-        val outlierAesList = createOutlierAesList(layerConfig.geomProto.geomKind)
+        val hiddenAesList = createHiddenAesList(
+            layerConfig,
+            builder.axisAesFromFunctionKind
+        ) + axisWithoutTooltip
+        val axisAes = createAxisAesList(
+            builder,
+            layerConfig.geomProto.geomKind,
+            layerConfig.isYOrientation,
+            theme
+        ) - hiddenAesList
+        val aesList = createTooltipAesList(
+            layerConfig,
+            scaleMap,
+            builder.axisAesFromFunctionKind
+        ) - hiddenAesList
+        val outlierAesList = createOutlierAesList(
+            layerConfig.geomProto.geomKind,
+            layerConfig.isYOrientation
+        )
 
         return builder.axisAes(axisAes)
             .tooltipAes(aesList)
@@ -106,17 +122,22 @@ object GeomInteractionUtil {
                 }
             }
             else -> emptyList()
-        }
+        }.afterOrientation(layerConfig.isYOrientation)
     }
 
-    private fun createAxisAesList(geomBuilder: GeomInteractionBuilder, geomKind: GeomKind, theme: Theme): List<Aes<*>> {
+    private fun createAxisAesList(
+        geomBuilder: GeomInteractionBuilder,
+        geomKind: GeomKind,
+        yOrientation: Boolean,
+        theme: Theme
+    ): List<Aes<*>> {
         return when {
             !geomBuilder.isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
-            else -> geomBuilder.getAxisFromFunctionKind
+            else -> geomBuilder.axisAesFromFunctionKind
         }.let {
             // Not show the axis tooltip if the axis tick labels are hidden
-            val axisAesList = it.toMutableList()
+            val axisAesList = it.afterOrientation(yOrientation).toMutableList()
             if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisAesList.remove(Aes.X)
             if (!theme.verticalAxis(flipAxis = false).showLabels()) axisAesList.remove(Aes.Y)
             axisAesList
@@ -128,8 +149,12 @@ object GeomInteractionUtil {
         scaleMap: TypedScaleMap,
         axisAes: List<Aes<*>>
     ): List<Aes<*>> {
+        @Suppress("NAME_SHADOWING")
+        val axisAes = axisAes.afterOrientation(layerConfig.isYOrientation)
+        val layerRendersAes = layerConfig.geomProto.renders().afterOrientation(layerConfig.isYOrientation)
+
         // remove axis mapping: if aes and axis are bound to the same data
-        val aesListForTooltip = ArrayList(layerConfig.geomProto.renders() - axisAes)
+        val aesListForTooltip = ArrayList(layerRendersAes - axisAes)
         for (aes in axisAes) {
             val axisVariable = layerConfig.getVariableForAes(aes)
             aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
@@ -168,15 +193,17 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createOutlierAesList(geomKind: GeomKind) = when (geomKind) {
-        GeomKind.CROSS_BAR,
-        GeomKind.ERROR_BAR,
-        GeomKind.LINE_RANGE,
-        GeomKind.POINT_RANGE,
-        GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
-        GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
-        GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
-        else -> emptyList()
+    private fun createOutlierAesList(geomKind: GeomKind, yOrientation: Boolean): List<Aes<*>> {
+        return when (geomKind) {
+            GeomKind.CROSS_BAR,
+            GeomKind.ERROR_BAR,
+            GeomKind.LINE_RANGE,
+            GeomKind.POINT_RANGE,
+            GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
+            GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
+            GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
+            else -> emptyList()
+        }.afterOrientation(yOrientation)
     }
 
     private fun createConstantAesList(layerConfig: LayerConfig): Map<Aes<*>, Any> {

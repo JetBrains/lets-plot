@@ -53,8 +53,9 @@ internal class Interactor(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>,
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, tooltipBounds, targetLocators)
+        tooltipRenderer.addTileInfo(geomBounds, tooltipBounds, targetLocators, layerYOrientations)
         geomBoundsList.add(geomBounds)
     }
 

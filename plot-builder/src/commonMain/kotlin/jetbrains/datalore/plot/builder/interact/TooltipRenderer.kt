@@ -190,12 +190,14 @@ internal class TooltipRenderer(
     fun addTileInfo(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
-        targetLocators: List<GeomTargetLocator>
+        targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>
     ) {
         val tileInfo = TileInfo(
             geomBounds,
             tooltipBounds,
             targetLocators,
+            layerYOrientations,
             flippedAxis
         )
         myTileInfos.add(tileInfo)
@@ -228,22 +230,25 @@ internal class TooltipRenderer(
         val geomBounds: DoubleRectangle,
         val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean
     ) {
 
-        private val myTargetLocators = targetLocators.map {
-            when {
-                flippedAxis -> FlippedTileTargetLocator(it)
-                else -> TileTargetLocator(it)
+        private val transformedLocators = targetLocators.zip(layerYOrientations)
+            .map { (targetLocator, isYOrientation) ->
+                val flip = if (isYOrientation) !flippedAxis else flippedAxis
+                when (flip) {
+                    true -> FlippedTileTargetLocator(targetLocator)
+                    false -> TileTargetLocator(targetLocator)
+                }
             }
-        }
 
         internal val axisOrigin: DoubleVector
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
             val targetsPicker = LocatedTargetsPicker(flippedAxis).apply {
-                for (locator in myTargetLocators) {
+                for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
                         addLookupResult(result, plotCoord)

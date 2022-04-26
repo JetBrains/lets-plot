@@ -20,6 +20,7 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PosProviderContext
 import jetbrains.datalore.plot.builder.VarBinding
@@ -28,7 +29,6 @@ import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
-import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
@@ -276,19 +276,13 @@ class GeomLayerBuilder constructor() {
 
         override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
             @Suppress("NAME_SHADOWING")
-            val aes = when(isYOrientation) {
-                true -> YOrientationUtil.flipAes(aes)
-                false -> aes
-            }
+            val aes = aes.afterOrientation(isYOrientation)
             return (geom as GeomBase).preferableNullDomain(aes)
         }
 
         override fun rangeIncludesZero(aes: Aes<*>): Boolean {
             @Suppress("NAME_SHADOWING")
-            val aes = when(isYOrientation) {
-                true -> YOrientationUtil.flipAes(aes)
-                false -> aes
-            }
+            val aes = aes.afterOrientation(isYOrientation)
             return aestheticsDefaults.rangeIncludesZero(aes)
         }
 

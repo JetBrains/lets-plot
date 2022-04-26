@@ -27,6 +27,7 @@ internal class FlippedCoordinateSystem(
     }
 
     override fun flip(): CoordinateSystem {
-        throw IllegalStateException("'flip()' is not applicable to FlippedCoordinateSystem")
+//        throw IllegalStateException("'flip()' is not applicable to FlippedCoordinateSystem")
+        return actual
     }
 }

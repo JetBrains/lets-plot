@@ -34,13 +34,15 @@ internal class PlotTile(
     private val frameOfReference: TileFrameOfReference,
 ) : SvgComponent() {
 
-    private val myTargetLocators = ArrayList<GeomTargetLocator>()
+    private val _targetLocators = ArrayList<GeomTargetLocator>()
 
     var liveMapFigure: SomeFig? = null
         private set
 
     val targetLocators: List<GeomTargetLocator>
-        get() = myTargetLocators
+        get() = _targetLocators
+
+    val layerYOrientations: List<Boolean> = layers.map { it.isYOrientation }
 
     lateinit var geomDrawingBounds: DoubleRectangle  // the area between axes or x/y limits
         private set
@@ -70,7 +72,7 @@ internal class PlotTile(
             val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
 
             liveMapFigure = liveMapData.canvasFigure
-            myTargetLocators.add(liveMapData.targetLocator)
+            _targetLocators.add(liveMapData.targetLocator)
             geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
         } else {
             // Normal plot tiles
@@ -84,7 +86,7 @@ internal class PlotTile(
                     layer.locatorLookupSpec,
                     layer.contextualMapping,
                 )
-                myTargetLocators.add(collectorWithLocator)
+                _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
                 layerComponent.moveTo(geomBounds.origin)
