@@ -64,7 +64,6 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
             .bounds(applyLabelsOffset(bounds))
-            .smallFont(false)
             .overlap(overlap)
     }
 
@@ -78,7 +77,6 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
             return AxisLabelsLayoutInfo.Builder()
                 .breaks(breaks)
                 .bounds(bounds)
-                .smallFont(false)
                 .overlap(false)
                 .labelAdditionalOffsets(null)
                 .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)

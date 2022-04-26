@@ -87,7 +87,6 @@ internal class HorizontalMultilineLabelsLayout(
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
             .bounds(applyLabelsOffset(bounds))
-            .smallFont(false)
             .overlap(linesCount > myMaxLines)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)

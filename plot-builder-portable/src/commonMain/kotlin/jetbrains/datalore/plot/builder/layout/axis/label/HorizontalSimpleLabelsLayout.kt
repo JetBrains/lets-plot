@@ -57,7 +57,6 @@ internal class HorizontalSimpleLabelsLayout(
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
             .bounds(applyLabelsOffset(bounds!!))
-            .smallFont(false)
             .overlap(overlap)
             .labelAdditionalOffsets(null)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)

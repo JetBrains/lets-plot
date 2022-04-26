@@ -35,6 +35,8 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
         Utils.setAttribute(target, name, value)
     }
 
+    open fun applyStyle() {}
+
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
 
@@ -45,6 +47,7 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
                 myReg = source.addListener(object : SvgElementListener {
                     override fun onAttrSet(event: SvgAttributeEvent<*>) {
                         setTargetAttribute(event.attrSpec.name, event.newValue)
+                        applyStyle()
                     }
 
                 })
@@ -54,6 +57,7 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
                     val value = source.getAttribute(name).get()
                     setTargetAttribute(name, value)
                 }
+                applyStyle()
             }
 
             override fun detach() {

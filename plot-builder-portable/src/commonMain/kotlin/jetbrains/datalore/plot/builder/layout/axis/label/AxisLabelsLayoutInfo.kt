@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val breaks: ScaleBreaks?
     val bounds: DoubleRectangle?
-    val smallFont: Boolean
     val labelAdditionalOffsets: List<DoubleVector>?
     val labelHorizontalAnchor: Text.HorizontalAnchor?
     val labelVerticalAnchor: Text.VerticalAnchor?
@@ -23,7 +22,6 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
 
     init {
         this.breaks = b.myBreaks
-        this.smallFont = b.mySmallFont
         this.bounds = b.myBounds
         this.isOverlap = b.myOverlap
         this.labelAdditionalOffsets = if (b.myLabelAdditionalOffsets == null)
@@ -38,7 +36,6 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
     class Builder {
         internal var myBreaks: ScaleBreaks? = null
         internal var myBounds: DoubleRectangle? = null
-        internal var mySmallFont: Boolean = false
         internal var myOverlap: Boolean = false
         internal var myLabelAdditionalOffsets: List<DoubleVector>? = null
         internal var myLabelHorizontalAnchor: Text.HorizontalAnchor? = null
@@ -52,11 +49,6 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
 
         fun bounds(bounds: DoubleRectangle): Builder {
             myBounds = bounds
-            return this
-        }
-
-        fun smallFont(b: Boolean): Builder {
-            mySmallFont = b
             return this
         }
 

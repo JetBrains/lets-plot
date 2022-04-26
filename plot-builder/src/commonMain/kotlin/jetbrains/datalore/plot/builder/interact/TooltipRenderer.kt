@@ -277,12 +277,12 @@ internal class TooltipRenderer(
     private val TooltipSpec.style
         get() =
             when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
-                Y_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
-                VERTICAL_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                HORIZONTAL_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                CURSOR_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                ROTATED_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
+                X_AXIS_TOOLTIP -> Style.AXIS_TOOLTIP + "-x"
+                Y_AXIS_TOOLTIP -> Style.AXIS_TOOLTIP + "-y"
+                VERTICAL_TOOLTIP -> Style.TOOLTIP_TEXT
+                HORIZONTAL_TOOLTIP -> Style.TOOLTIP_TEXT
+                CURSOR_TOOLTIP -> Style.TOOLTIP_TEXT
+                ROTATED_TOOLTIP -> Style.TOOLTIP_TEXT
             }
 
     private val LayoutManager.PositionedTooltip.orientation

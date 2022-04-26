@@ -47,4 +47,6 @@ interface AxisTheme {
     fun tooltipColor(): Color
     fun tooltipStrokeWidth(): Double
     fun tooltipTextColor(): Color
+
+    fun suffix(): String = ""
 }

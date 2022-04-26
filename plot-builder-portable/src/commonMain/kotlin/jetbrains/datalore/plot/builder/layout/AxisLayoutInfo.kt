@@ -23,7 +23,6 @@ class AxisLayoutInfo private constructor(b: Builder) {
     val tickLabelHorizontalAnchor: Text.HorizontalAnchor?    // optional
     val tickLabelVerticalAnchor: Text.VerticalAnchor?        // optional
     val tickLabelAdditionalOffsets: List<DoubleVector>?           // optional
-    val tickLabelSmallFont: Boolean
     private val tickLabelsBoundsMax: DoubleRectangle?                     // debug
 
     init {
@@ -42,7 +41,6 @@ class AxisLayoutInfo private constructor(b: Builder) {
         this.tickLabelHorizontalAnchor = b.myLabelHorizontalAnchor
         this.tickLabelVerticalAnchor = b.myLabelVerticalAnchor
         this.tickLabelAdditionalOffsets = b.myLabelAdditionalOffsets
-        this.tickLabelSmallFont = b.myTickLabelSmallFont
         this.tickLabelsBoundsMax = b.myMaxTickLabelsBounds
     }
 
@@ -61,7 +59,6 @@ class AxisLayoutInfo private constructor(b: Builder) {
         b.myLabelHorizontalAnchor = this.tickLabelHorizontalAnchor
         b.myLabelVerticalAnchor = this.tickLabelVerticalAnchor
         b.myLabelAdditionalOffsets = this.tickLabelAdditionalOffsets
-        b.myTickLabelSmallFont = this.tickLabelSmallFont
         b.myMaxTickLabelsBounds = this.tickLabelsBoundsMax
         return b
     }
@@ -75,7 +72,6 @@ class AxisLayoutInfo private constructor(b: Builder) {
         var myOrientation: Orientation? = null
         var myAxisDomain: DoubleSpan? = null
         var myMaxTickLabelsBounds: DoubleRectangle? = null
-        var myTickLabelSmallFont = false
         var myLabelAdditionalOffsets: List<DoubleVector>? = null
         var myLabelHorizontalAnchor: Text.HorizontalAnchor? = null
         var myLabelVerticalAnchor: Text.VerticalAnchor? = null
@@ -104,11 +100,6 @@ class AxisLayoutInfo private constructor(b: Builder) {
 
         fun tickLabelsBoundsMax(r: DoubleRectangle?): Builder {
             myMaxTickLabelsBounds = r
-            return this
-        }
-
-        fun tickLabelSmallFont(b: Boolean): Builder {
-            myTickLabelSmallFont = b
             return this
         }
 

@@ -13,6 +13,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
+import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -159,6 +160,9 @@ class TooltipBoxTest {
             } else {
                 error("")
             }
+        }
+
+        override fun applyStyleRenderer(styleRenderer: StyleRenderer) {
         }
 
         fun labelsBbox(vararg sizes: Pair<String, DoubleVector>) {

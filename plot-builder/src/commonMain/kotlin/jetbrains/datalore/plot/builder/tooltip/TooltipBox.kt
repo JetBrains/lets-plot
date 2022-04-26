@@ -27,6 +27,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
+import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_LABEL
+import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
@@ -84,8 +86,6 @@ class TooltipBox: SvgComponent() {
         borderRadius: Double,
         markerColors: List<Color>
     ) {
-        addClassName(style)
-
         val totalLines = lines.size + if (title != null) 1 else 0
         myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
         myVerticalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
@@ -97,7 +97,8 @@ class TooltipBox: SvgComponent() {
             valueTextColor = textColor,
             tooltipMinWidth,
             rotate,
-            markerColors
+            markerColors,
+            style
         )
         myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
     }
@@ -130,7 +131,7 @@ class TooltipBox: SvgComponent() {
 
             myPointerPath.apply {
                 strokeColor().set(borderColor)
-                strokeOpacity().set(strokeWidth)
+                strokeWidth().set(strokeWidth)
                 fillColor().set(fillColor)
             }
         }
@@ -265,7 +266,8 @@ class TooltipBox: SvgComponent() {
             valueTextColor: Color,
             tooltipMinWidth: Double?,
             rotate: Boolean,
-            markerColors: List<Color>
+            markerColors: List<Color>,
+            textStyle: String
         ) {
             myLinesContainer.children().clear()
             myTitleContainer.children().clear()
@@ -286,7 +288,8 @@ class TooltipBox: SvgComponent() {
                 labelTextColor,
                 valueTextColor,
                 minWidthWithTitle,
-                rotate
+                rotate,
+                textStyle
             )
 
             val totalTooltipWidth = textSize.x + colorBarIndent + myHorizontalContentPadding * 2
@@ -393,9 +396,9 @@ class TooltipBox: SvgComponent() {
             titleColor: Color
         ): MultilineLabel {
             val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
-            titleComponent.textColor().set(titleColor)
+            titleComponent.addClassName(TOOLTIP_TITLE)
+            titleComponent.textColor().set(titleColor) // todo
             titleComponent.setX(0.0)
-            titleComponent.setFontWeight("bold")
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
             titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
@@ -448,7 +451,8 @@ class TooltipBox: SvgComponent() {
             labelTextColor: Color,
             valueTextColor: Color,
             tooltipMinWidth: Double?,
-            rotate: Boolean
+            rotate: Boolean,
+            textStyle: String
         ): DoubleVector {
             // bBoxes
             val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
@@ -461,15 +465,16 @@ class TooltipBox: SvgComponent() {
             // for labels
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
-                    labelComponent.textColor().set(labelTextColor)
-                    labelComponent.setFontWeight("bold")
+                    labelComponent.addClassName(TOOLTIP_LABEL)
+                    labelComponent.textColor().set(labelTextColor) // todo
                     labelComponent.setX(0.0)
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
             }
             // for values
             components.onEach { (_, valueComponent) ->
-                valueComponent.textColor().set(valueTextColor)
+                valueComponent.addClassName(textStyle)
+                valueComponent.textColor().set(valueTextColor)  // todo
                 valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }

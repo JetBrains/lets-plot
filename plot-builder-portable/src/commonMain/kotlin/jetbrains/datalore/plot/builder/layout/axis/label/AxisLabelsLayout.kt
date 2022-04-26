@@ -52,7 +52,6 @@ abstract class AxisLabelsLayout protected constructor(
         val TICK_LABEL_SPEC = PlotLabelSpec.AXIS_TICK
         const val INITIAL_TICK_LABEL_LENGTH = 4 // symbols
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
-        val TICK_LABEL_SPEC_SMALL = PlotLabelSpec.AXIS_TICK_SMALL
 
         fun horizontalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,

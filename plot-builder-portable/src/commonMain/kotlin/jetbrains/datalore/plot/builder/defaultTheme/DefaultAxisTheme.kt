@@ -108,4 +108,6 @@ internal class DefaultAxisTheme(
     override fun tooltipTextColor(): Color {
         return getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
     }
+
+    override fun suffix(): String = suffix.substring(1)
 }

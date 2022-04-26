@@ -234,7 +234,6 @@ internal class SquareFrameOfReference(
                 gridLineLength = gridLineLength,
                 axisTheme = axisTheme,
                 gridTheme = gridTheme,
-                useSmallFont = info.tickLabelSmallFont,
                 hideAxis = hideAxis,
                 hideAxisBreaks = hideAxisBreaks,
                 hideGridlines = hideGridlines

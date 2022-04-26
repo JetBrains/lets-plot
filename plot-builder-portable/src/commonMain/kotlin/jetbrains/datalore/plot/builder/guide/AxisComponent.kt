@@ -30,7 +30,6 @@ class AxisComponent(
     private val gridLineLength: Double,
     private val axisTheme: AxisTheme,
     private val gridTheme: PanelGridTheme,
-    private val useSmallFont: Boolean = false,
     private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
     private val hideGridlines: Boolean = false,
@@ -46,9 +45,6 @@ class AxisComponent(
         val rootElement = rootGroup
         if (!hideAxis) {
             rootElement.addClass(Style.AXIS)
-            if (useSmallFont) {
-                rootElement.addClass(Style.SMALL_TICK_FONT)
-            }
         }
 
         val x1: Double
@@ -177,7 +173,8 @@ class AxisComponent(
         var tickLabel: TextLabel? = null
         if (!skipLabel && axisTheme.showLabels()) {
             tickLabel = TextLabel(label)
-            tickLabel.textColor().set(axisTheme.labelColor())
+            tickLabel.addClassName(Style.AXIS_TEXT + "-" + axisTheme.suffix())
+            tickLabel.textColor().set(axisTheme.labelColor()) // todo
         }
 
         val markLength = axisTheme.tickMarkLength()

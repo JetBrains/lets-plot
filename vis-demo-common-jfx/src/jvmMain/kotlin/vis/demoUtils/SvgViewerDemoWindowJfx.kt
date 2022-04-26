@@ -26,7 +26,8 @@ class SvgViewerDemoWindowJfx(
     override fun createPlotComponent(svgRoot: SvgSvgElement): JComponent {
         val component = SceneMapperJfxPanel(
             svgRoot,
-            stylesheets
+            stylesheets,
+            Style.DEFAULT_STYLE_RENDERER
         )
 
         component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)

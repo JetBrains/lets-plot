@@ -8,12 +8,16 @@ package jetbrains.datalore.vis.svgMapper.jfx
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Bounds
+import javafx.scene.text.Font
+import javafx.scene.text.FontPosture
+import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
+import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping
 
@@ -42,6 +46,10 @@ internal class SvgTextElementMapper(
         myTextAttrSupport.setAttribute(name, value)
     }
 
+    override fun applyStyle() {
+        setFontProperties(target, peer.styleRenderer)
+    }
+
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
 
@@ -58,6 +66,20 @@ internal class SvgTextElementMapper(
                 targetTextProperty(target)
             )
         )
+    }
+
+    private fun setFontProperties(target: Text, styleRenderer: StyleRenderer?) {
+        if (styleRenderer == null) {
+            return
+        }
+        val className = target.parent.styleClass?.toString()
+        if (!className.isNullOrEmpty()) {
+            styleRenderer.getFont(className)?.let { newFont -> target.font = newFont }
+
+            // todo set color here
+            //val color = styleRenderer.getColor(className)
+            //myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${color.toHexColor()};")
+        }
     }
 
     companion object {
@@ -80,6 +102,22 @@ internal class SvgTextElementMapper(
                     target.text = value ?: "n/a"
                 }
             }
+        }
+
+        private fun StyleRenderer.getFont(className: String): Font? {
+            if (!has(className)) {
+                return null
+            }
+            //val fontFamily = getFontFamily(className)
+            val size = getFontSize(className)
+            val posture = if (getIsItalic(className)) FontPosture.ITALIC else null
+            val weight = if (getIsBold(className)) FontWeight.BOLD else null
+            return Font.font(
+                "Helvetica", // todo
+                weight,
+                posture,
+                size
+            )
         }
     }
 

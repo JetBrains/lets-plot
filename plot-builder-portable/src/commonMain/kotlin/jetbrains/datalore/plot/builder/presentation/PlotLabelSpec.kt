@@ -15,7 +15,6 @@ enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Bo
     PLOT_CAPTION(Defaults.Common.Caption.FONT_SIZE.toDouble()),
 
     AXIS_TICK(Plot.Axis.TICK_FONT_SIZE.toDouble()),
-    AXIS_TICK_SMALL(Plot.Axis.TICK_FONT_SIZE_SMALL.toDouble()),
     AXIS_TITLE(Plot.Axis.TITLE_FONT_SIZE.toDouble()),
 
     LEGEND_TITLE(Defaults.Common.Legend.TITLE_FONT_SIZE.toDouble()),
