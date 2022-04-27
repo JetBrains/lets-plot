@@ -21,13 +21,13 @@ class ThemeTextStyler(theme: Theme, flippedAxis: Boolean) : TextStyler() {
         myTextStyles.setColor(Style.LEGEND_ITEM, theme.legend().textColor())
 
         val hAxisTheme = theme.horizontalAxis(flippedAxis)
-        var suffix = "-" + hAxisTheme.suffix()
+        var suffix = if (flippedAxis) "-y" else "-x"
         myTextStyles.setColor(Style.AXIS_TITLE + suffix, hAxisTheme.titleColor())
         myTextStyles.setColor(Style.AXIS_TEXT + suffix, hAxisTheme.labelColor())
         myTextStyles.setColor(Style.AXIS_TOOLTIP_TEXT + suffix, hAxisTheme.tooltipTextColor())
 
         val vAxisTheme = theme.verticalAxis(flippedAxis)
-        suffix = "-" + vAxisTheme.suffix()
+        suffix = if (flippedAxis) "-x" else "-y"
         myTextStyles.setColor(Style.AXIS_TITLE + suffix, vAxisTheme.titleColor())
         myTextStyles.setColor(Style.AXIS_TEXT + suffix, vAxisTheme.labelColor())
         myTextStyles.setColor(Style.AXIS_TOOLTIP_TEXT + suffix, vAxisTheme.tooltipTextColor())
