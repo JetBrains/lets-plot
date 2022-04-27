@@ -239,7 +239,8 @@ internal class SquareFrameOfReference(
                 gridTheme = gridTheme,
                 hideAxis = hideAxis,
                 hideAxisBreaks = hideAxisBreaks,
-                hideGridlines = hideGridlines
+                hideGridlines = hideGridlines,
+                flippedAxis = flippedAxis
             )
 
             if (isDebugDrawing) {
