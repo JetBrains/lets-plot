@@ -19,6 +19,7 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
 import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping
 
 internal class SvgTextElementMapper(
@@ -76,9 +77,8 @@ internal class SvgTextElementMapper(
         if (!className.isNullOrEmpty()) {
             target.font = styleRenderer.getFont(className)
 
-            // todo set color here
-            //val color = styleRenderer.getColor(className)
-            //myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${color.toHexColor()};")
+            val color = styleRenderer.getColor(className)
+            myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${color.toHexColor()};")
         }
     }
 

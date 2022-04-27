@@ -60,7 +60,6 @@ class LegendComponent(
         // add label at position as was layout
         val label = TextLabel(br.label)
         label.addClassName(Style.LEGEND_ITEM)
-        label.textColor().set(theme.textColor())  // todo
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin.add(DoubleVector(0.0, labelBox.height / 2)))

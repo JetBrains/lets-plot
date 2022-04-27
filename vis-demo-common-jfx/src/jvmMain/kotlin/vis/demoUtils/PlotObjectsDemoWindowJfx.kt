@@ -33,6 +33,6 @@ class PlotObjectsDemoWindowJfx(
         )
 
         plotContainer.ensureContentBuilt()
-        return SceneMapperJfxPanel(plotContainer.svg, stylesheets, Style.DEFAULT_STYLE_RENDERER)
+        return SceneMapperJfxPanel(plotContainer.svg, stylesheets, plotContainer.styleRenderer)
     }
 }

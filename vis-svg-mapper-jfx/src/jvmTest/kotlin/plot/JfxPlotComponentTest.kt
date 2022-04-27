@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePlot
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import jetbrains.datalore.vis.swing.runOnFxThread
@@ -44,7 +45,7 @@ class JfxPlotComponentTest {
     }
 
     companion object {
-        private val COMPONENT_FACTORY = { svg: SvgSvgElement ->
+        private val COMPONENT_FACTORY = { svg: SvgSvgElement, _: StyleRenderer ->
             SceneMapperJfxPanel(
                 svg,
                 listOf(Style.JFX_PLOT_STYLESHEET),

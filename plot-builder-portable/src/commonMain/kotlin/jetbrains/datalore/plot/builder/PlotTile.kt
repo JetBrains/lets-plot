@@ -120,7 +120,6 @@ internal class PlotTile(
                 val lab = TextLabel(xLabel)
                 lab.addClassName(Style.FACET_STRIP_TEXT + "-x")
                 lab.moveTo(x, y)
-                lab.textColor().set(theme.stripTextColor()) // todo
                 lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                 lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                 add(lab)
@@ -149,7 +148,6 @@ internal class PlotTile(
             val lab = TextLabel(tileLayoutInfo.facetYLabel)
             lab.addClassName(Style.FACET_STRIP_TEXT + "-y")
             lab.moveTo(x, y)
-            lab.textColor().set(theme.stripTextColor()) // todo
             lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
             lab.rotate(90.0)

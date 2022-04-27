@@ -54,7 +54,6 @@ abstract class LegendBox : SvgComponent() {
                 l.titleBounds.origin,
                 l.titleHorizontalAnchor
             )
-            label.textColor().set(theme.titleColor())
             innerGroup.children().add(label.rootGroup)
         }
 

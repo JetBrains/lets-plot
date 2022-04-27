@@ -26,8 +26,9 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.vis.StyleRenderer
 
 
-class TextStyler : StyleRenderer {
-    private val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
+open class TextStyler : StyleRenderer {
+
+    protected val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
         PLOT_TITLE to fontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
         PLOT_SUBTITLE to fontProperties(size = Subtitle.FONT_SIZE.toDouble()),
         PLOT_CAPTION to fontProperties(size = Caption.FONT_SIZE.toDouble()),
@@ -99,11 +100,16 @@ class TextStyler : StyleRenderer {
         val DEFAULT_FACE = FontFace.NORMAL
         val DEFAULT_COLOR = Color.BLACK
 
-        private fun fontProperties(
-            family: FontFamily = DEFAULT_FAMILY,
-            face: FontFace = DEFAULT_FACE,
-            size: Double = DEFAULT_SIZE,
-            color: Color = DEFAULT_COLOR
-        ) = FontProperties(family, face, size, color)
+        fun fontProperties(
+            family: FontFamily? = null,
+            face: FontFace? = null,
+            size: Double? = null,
+            color: Color? = null
+        ) = FontProperties(
+            family ?: DEFAULT_FAMILY,
+            face ?: DEFAULT_FACE,
+            size ?: DEFAULT_SIZE,
+            color ?: DEFAULT_COLOR
+        )
     }
 }
