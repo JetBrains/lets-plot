@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.INTERVAL_BETWEEN_SUBSTRINGS
@@ -92,7 +93,8 @@ class TooltipBox: SvgComponent() {
         myContentBox.update(
             lines,
             title,
-            textColor,
+            labelTextColor = DARK_TEXT_COLOR,
+            valueTextColor = textColor,
             tooltipMinWidth,
             rotate,
             markerColors,
@@ -260,7 +262,8 @@ class TooltipBox: SvgComponent() {
         internal fun update(
             lines: List<TooltipSpec.Line>,
             title: String?,
-            textColor: Color,
+            labelTextColor: Color,
+            valueTextColor: Color,
             tooltipMinWidth: Double?,
             rotate: Boolean,
             markerColors: List<Color>,
@@ -272,7 +275,7 @@ class TooltipBox: SvgComponent() {
             calculateColorBarIndent(markerColors)
 
             // title component
-            val titleComponent = title?.let(::initTitleComponent)
+            val titleComponent = title?.let { initTitleComponent(it, valueTextColor) }
             val rawTitleBBox = getBBox(title, titleComponent)
             val titleHeight = rawTitleBBox?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
@@ -282,7 +285,8 @@ class TooltipBox: SvgComponent() {
             // lines (label: value)
             val textSize = layoutLines(
                 lines,
-                textColor,
+                labelTextColor,
+                valueTextColor,
                 minWidthWithTitle,
                 rotate,
                 textStyle
@@ -387,9 +391,13 @@ class TooltipBox: SvgComponent() {
             return textLabel.rootGroup.bBox
         }
 
-        private fun initTitleComponent(titleLine: String): MultilineLabel {
+        private fun initTitleComponent(
+            titleLine: String,
+            titleColor: Color
+        ): MultilineLabel {
             val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
             titleComponent.addClassName(TOOLTIP_TITLE)
+            titleComponent.textColor().set(titleColor)
             titleComponent.setX(0.0)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
@@ -440,7 +448,8 @@ class TooltipBox: SvgComponent() {
 
         private fun layoutLines(
             lines: List<TooltipSpec.Line>,
-            textColor: Color,
+            labelTextColor: Color,
+            valueTextColor: Color,
             tooltipMinWidth: Double?,
             rotate: Boolean,
             textStyle: String
@@ -457,6 +466,7 @@ class TooltipBox: SvgComponent() {
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
                     labelComponent.addClassName(TOOLTIP_LABEL)
+                    labelComponent.textColor().set(labelTextColor)
                     labelComponent.setX(0.0)
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
@@ -464,7 +474,7 @@ class TooltipBox: SvgComponent() {
             // for values
             components.onEach { (_, valueComponent) ->
                 valueComponent.addClassName(textStyle)
-                valueComponent.textColor().set(textColor)  // for outliers the colors depends on fill color
+                valueComponent.textColor().set(valueTextColor)
                 valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }

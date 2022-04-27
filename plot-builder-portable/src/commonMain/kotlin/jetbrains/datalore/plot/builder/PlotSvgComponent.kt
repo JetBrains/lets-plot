@@ -75,8 +75,6 @@ class PlotSvgComponent constructor(
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
 
-    val styleRenderer = ThemeTextStyler(theme, flippedAxis)
-
     // ToDo: remove
     private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel
 
@@ -296,7 +294,8 @@ class PlotSvgComponent constructor(
                 titleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
                 className = Style.PLOT_TITLE,
-                labelSpec = PlotLabelSpec.PLOT_TITLE
+                labelSpec = PlotLabelSpec.PLOT_TITLE,
+                color = theme.plot().titleColor()
             )
         }
         // add plot subtitle
@@ -306,7 +305,8 @@ class PlotSvgComponent constructor(
                 subtitleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
                 className = Style.PLOT_SUBTITLE,
-                labelSpec = PlotLabelSpec.PLOT_SUBTITLE
+                labelSpec = PlotLabelSpec.PLOT_SUBTITLE,
+                color = theme.plot().subtitleColor()
             )
         }
 
@@ -326,6 +326,7 @@ class PlotSvgComponent constructor(
                     Orientation.LEFT,
                     overallTileBounds,
                     geomAreaBounds,
+                    theme.verticalAxis(flippedAxis).titleColor(),
                     "${Style.AXIS_TITLE}${if (flippedAxis) "-x" else "-y"}"
                 )
             }
@@ -335,6 +336,7 @@ class PlotSvgComponent constructor(
                     Orientation.BOTTOM,
                     overallTileBounds,
                     geomAreaBounds,
+                    theme.horizontalAxis(flippedAxis).titleColor(),
                     "${Style.AXIS_TITLE}${if (flippedAxis) "-y" else "-x"}"
                 )
             }
@@ -360,6 +362,7 @@ class PlotSvgComponent constructor(
             val captionLineHeight = PlotLabelSpec.PLOT_CAPTION.height()
             val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
             captionLabel.addClassName(Style.PLOT_CAPTION)
+            captionLabel.textColor().set(theme.plot().captionColor())
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
             captionLabel.setX(0.0)
             captionLabel.setLineHeight(captionLineHeight)
@@ -384,11 +387,13 @@ class PlotSvgComponent constructor(
         titleLines: List<String>,
         leftTop: DoubleVector,
         className: String,
-        labelSpec: LabelSpec
+        labelSpec: LabelSpec,
+        color: Color
     ) {
         val titleLineHeight = labelSpec.height()
         val titleLabel = MultilineLabel(titleLines.joinToString("\n"))
         titleLabel.addClassName(className)
+        titleLabel.textColor().set(color)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setX(0.0)
         titleLabel.setLineHeight(titleLineHeight)
@@ -418,6 +423,7 @@ class PlotSvgComponent constructor(
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
+        color: Color,
         className: String
     ) {
         val referenceRect = when (orientation) {
@@ -463,6 +469,7 @@ class PlotSvgComponent constructor(
         titleLabel.addClassName(className)
         titleLabel.setHorizontalAnchor(horizontalAnchor)
         titleLabel.setVerticalAnchor(verticalAnchor)
+        titleLabel.textColor().set(color)
         titleLabel.moveTo(titleLocation)
         titleLabel.rotate(rotation)
         add(titleLabel)

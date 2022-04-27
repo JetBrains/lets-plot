@@ -26,9 +26,9 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.vis.StyleRenderer
 
 
-open class TextStyler : StyleRenderer {
+class TextStyler : StyleRenderer {
 
-    protected val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
+    private val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
         PLOT_TITLE to fontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
         PLOT_SUBTITLE to fontProperties(size = Subtitle.FONT_SIZE.toDouble()),
         PLOT_CAPTION to fontProperties(size = Caption.FONT_SIZE.toDouble()),
@@ -84,7 +84,7 @@ open class TextStyler : StyleRenderer {
         myTextStyles.forEach { (className, props) ->
             css
                 .append(".$className text").append(" {")
-                .append("\n  fill: ").append(props.color.toHexColor() + ";")
+                //.append("\n  fill: ").append(props.color.toHexColor() + ";")
                 .append("\n  font-family: ").append(props.family.toString() + ";")
                 .append("\n  font-size: ").append(props.size).append("px;")
                 .append("\n  font-weight: ").append(if (props.face.bold) "bold;" else "normal;")
@@ -100,16 +100,11 @@ open class TextStyler : StyleRenderer {
         val DEFAULT_FACE = FontFace.NORMAL
         val DEFAULT_COLOR = Color.BLACK
 
-        fun fontProperties(
-            family: FontFamily? = null,
-            face: FontFace? = null,
-            size: Double? = null,
-            color: Color? = null
-        ) = FontProperties(
-            family ?: DEFAULT_FAMILY,
-            face ?: DEFAULT_FACE,
-            size ?: DEFAULT_SIZE,
-            color ?: DEFAULT_COLOR
-        )
+        private fun fontProperties(
+            family: FontFamily = DEFAULT_FAMILY,
+            face: FontFace = DEFAULT_FACE,
+            size: Double = DEFAULT_SIZE,
+            color: Color = DEFAULT_COLOR
+        ) = FontProperties(family, face, size, color)
     }
 }

@@ -180,6 +180,7 @@ class AxisComponent(
                 if (flippedAxis) "-x" else "-y"
             }
             tickLabel.addClassName(Style.AXIS_TEXT + suffix)
+            tickLabel.textColor().set(axisTheme.labelColor())
         }
 
         val markLength = axisTheme.tickMarkLength()
