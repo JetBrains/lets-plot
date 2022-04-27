@@ -147,7 +147,6 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 gridLineLength = 100.0,
                 axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(flipAxis = false),
                 gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),
-                flippedAxis = false
             )
 
             return axis

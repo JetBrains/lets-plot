@@ -327,7 +327,7 @@ class PlotSvgComponent constructor(
                     overallTileBounds,
                     geomAreaBounds,
                     theme.verticalAxis(flippedAxis).titleColor(),
-                    "${Style.AXIS_TITLE}${if (flippedAxis) "-x" else "-y"}"
+                    "${Style.AXIS_TITLE}-${if (flippedAxis) "x" else "y"}"
                 )
             }
             if (axisTitleBottom != null) {
@@ -337,7 +337,7 @@ class PlotSvgComponent constructor(
                     overallTileBounds,
                     geomAreaBounds,
                     theme.horizontalAxis(flippedAxis).titleColor(),
-                    "${Style.AXIS_TITLE}${if (flippedAxis) "-y" else "-x"}"
+                    "${Style.AXIS_TITLE}-${if (flippedAxis) "y" else "x"}"
                 )
             }
         }

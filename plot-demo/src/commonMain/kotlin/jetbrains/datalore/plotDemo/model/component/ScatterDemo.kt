@@ -111,7 +111,6 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridX(),
-                flippedAxis = false
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -129,7 +128,6 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 axisTheme = theme.verticalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridY(),
-                flippedAxis = false
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -291,7 +289,6 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridX(),
-                flippedAxis = false
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -309,7 +306,6 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 axisTheme = theme.verticalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridY(),
-                flippedAxis = false
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -413,7 +409,6 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridX(),
-                flippedAxis = false
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -431,7 +426,6 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 axisTheme = theme.verticalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridY(),
-                flippedAxis = false
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
