@@ -13,4 +13,5 @@ interface StyleRenderer {
     fun getFontFamily(className: String): String
     fun getIsItalic(className: String): Boolean
     fun getIsBold(className: String): Boolean
+    fun css(): String
 }

@@ -9,9 +9,11 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.builder.defaultTheme.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.FontProperties
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.*
+import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TITLE
-import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TOOLTIP
+import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.FACET_STRIP_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.LEGEND_ITEM
 import jetbrains.datalore.plot.builder.presentation.Style.LEGEND_TITLE
@@ -25,7 +27,34 @@ import jetbrains.datalore.vis.StyleRenderer
 
 
 class TextStyler : StyleRenderer {
-    private val myTextStyles: MutableMap<String, FontProperties> = DEFAULT_STYLES.toMutableMap()
+    private val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
+        PLOT_TITLE to fontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
+        PLOT_SUBTITLE to fontProperties(size = Subtitle.FONT_SIZE.toDouble()),
+        PLOT_CAPTION to fontProperties(size = Caption.FONT_SIZE.toDouble()),
+
+        LEGEND_TITLE to fontProperties(size = Legend.TITLE_FONT_SIZE.toDouble()),
+        LEGEND_ITEM to fontProperties(size = Legend.ITEM_FONT_SIZE.toDouble()),
+
+        TOOLTIP_TEXT to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
+        TOOLTIP_TITLE to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
+        TOOLTIP_LABEL to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
+
+        "$AXIS_TITLE-x" to fontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+        "$AXIS_TITLE-y" to fontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+        "$AXIS_TEXT-x" to fontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
+        "$AXIS_TEXT-y" to fontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
+        "$AXIS_TOOLTIP_TEXT-x" to fontProperties(
+            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            color = Color.WHITE
+        ),
+        "$AXIS_TOOLTIP_TEXT-y" to fontProperties(
+            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            color = Color.WHITE
+        ),
+
+        "$FACET_STRIP_TEXT-x" to fontProperties(size = Defaults.FONT_MEDIUM.toDouble()),
+        "$FACET_STRIP_TEXT-y" to fontProperties(size = Defaults.FONT_MEDIUM.toDouble())
+    )
 
     override fun getColor(className: String): Color {
         return myTextStyles[className]?.color ?: DEFAULT_COLOR
@@ -49,7 +78,7 @@ class TextStyler : StyleRenderer {
         return face.bold
     }
 
-    fun css(): String {
+    override fun css(): String {
         val css = StringBuilder()
         myTextStyles.forEach { (className, props) ->
             css
@@ -69,29 +98,6 @@ class TextStyler : StyleRenderer {
         const val DEFAULT_SIZE = Defaults.FONT_MEDIUM.toDouble()
         val DEFAULT_FACE = FontFace.NORMAL
         val DEFAULT_COLOR = Color.BLACK
-
-        private val DEFAULT_STYLES = mapOf(
-            PLOT_TITLE to fontProperties(size = 16.0, face = FontFace.BOLD),
-            PLOT_SUBTITLE to fontProperties(size = 15.0),
-            PLOT_CAPTION to fontProperties(size = 13.0),
-
-            LEGEND_TITLE to fontProperties(size = 15.0),
-            LEGEND_ITEM to fontProperties(size = 13.0),
-
-            TOOLTIP_TEXT to fontProperties(size = 13.0),
-            TOOLTIP_TITLE to fontProperties(size = 13.0),
-            TOOLTIP_LABEL to fontProperties(size = 13.0, face = FontFace.BOLD)
-
-        ) + listOf("-x", "-y")
-            .flatMap { suffix ->
-                listOf(
-                    AXIS_TITLE + suffix to fontProperties(size = 15.0),
-                    AXIS_TEXT + suffix to fontProperties(size = 13.0),
-                    AXIS_TOOLTIP + suffix to fontProperties(size = 13.0, color = Color.WHITE),
-
-                    FACET_STRIP_TEXT + suffix to fontProperties(size = 15.0)
-                )
-            }
 
         private fun fontProperties(
             family: FontFamily = DEFAULT_FAMILY,

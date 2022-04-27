@@ -123,6 +123,11 @@ internal class TooltipRenderer(
                     spec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) -> 0.0
                     else -> BORDER_RADIUS
                 }
+                val style = when (spec.layoutHint.kind) {
+                    X_AXIS_TOOLTIP -> Style.AXIS_TOOLTIP_TEXT + "-" + xAxisTheme.suffix()
+                    Y_AXIS_TOOLTIP -> Style.AXIS_TOOLTIP_TEXT + "-" + yAxisTheme.suffix()
+                    else -> Style.TOOLTIP_TEXT
+                }
 
                 tooltipBox
                     // not all tooltips will get position - overlapped axis toooltips likely won't.
@@ -135,7 +140,7 @@ internal class TooltipRenderer(
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         title = spec.title,
-                        style = spec.style,
+                        style = style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
                         borderRadius = borderRadius,
@@ -273,17 +278,6 @@ internal class TooltipRenderer(
     }
 
     private fun Color.isReadableOnWhite() = Colors.luminance(this) < 0.5
-
-    private val TooltipSpec.style
-        get() =
-            when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> Style.AXIS_TOOLTIP + "-x"
-                Y_AXIS_TOOLTIP -> Style.AXIS_TOOLTIP + "-y"
-                VERTICAL_TOOLTIP -> Style.TOOLTIP_TEXT
-                HORIZONTAL_TOOLTIP -> Style.TOOLTIP_TEXT
-                CURSOR_TOOLTIP -> Style.TOOLTIP_TEXT
-                ROTATED_TOOLTIP -> Style.TOOLTIP_TEXT
-            }
 
     private val LayoutManager.PositionedTooltip.orientation
         get() =

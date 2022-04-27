@@ -37,7 +37,7 @@ object Style {
     const val TOOLTIP_TEXT = "tooltip-text"
     const val TOOLTIP_TITLE = "tooltip-title"
     const val TOOLTIP_LABEL = "tooltip-label"
-    const val AXIS_TOOLTIP = "axis-tooltip"
+    const val AXIS_TOOLTIP_TEXT = "axis-tooltip-text"
 
     const val FACET_STRIP_TEXT = "facet-strip-text"
 
