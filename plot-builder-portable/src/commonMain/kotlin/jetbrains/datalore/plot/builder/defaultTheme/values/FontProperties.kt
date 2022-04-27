@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.defaultTheme.values
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFamily
 
-class FontProperties(
+data class FontProperties(
     val family: FontFamily,
     val face: FontFace,
     val size: Double,

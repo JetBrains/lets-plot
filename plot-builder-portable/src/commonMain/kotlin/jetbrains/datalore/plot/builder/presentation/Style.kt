@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
 object Style {
     const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
 
-    val DEFAULT_STYLE_RENDERER = DefaultTextStyler()
+    val DEFAULT_STYLE_RENDERER = TextStyler()
 
     // classes
     const val PLOT_CONTAINER = "plt-container"

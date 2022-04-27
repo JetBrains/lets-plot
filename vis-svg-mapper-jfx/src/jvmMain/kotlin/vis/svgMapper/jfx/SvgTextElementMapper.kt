@@ -74,7 +74,7 @@ internal class SvgTextElementMapper(
         }
         val className = target.parent.styleClass?.toString()
         if (!className.isNullOrEmpty()) {
-            styleRenderer.getFont(className)?.let { newFont -> target.font = newFont }
+            target.font = styleRenderer.getFont(className)
 
             // todo set color here
             //val color = styleRenderer.getColor(className)
@@ -104,10 +104,7 @@ internal class SvgTextElementMapper(
             }
         }
 
-        private fun StyleRenderer.getFont(className: String): Font? {
-            if (!has(className)) {
-                return null
-            }
+        private fun StyleRenderer.getFont(className: String): Font {
             //val fontFamily = getFontFamily(className)
             val size = getFontSize(className)
             val posture = if (getIsItalic(className)) FontPosture.ITALIC else null

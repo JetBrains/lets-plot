@@ -8,7 +8,6 @@ package jetbrains.datalore.vis
 import jetbrains.datalore.base.values.Color
 
 interface StyleRenderer {
-    fun has(className: String): Boolean
     fun getColor(className: String): Color
     fun getFontSize(className: String): Double
     fun getFontFamily(className: String): String
