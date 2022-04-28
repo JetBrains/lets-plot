@@ -28,34 +28,36 @@ import jetbrains.datalore.vis.StyleRenderer
 
 class TextStyler : StyleRenderer {
 
-    private val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
-        PLOT_TITLE to fontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
-        PLOT_SUBTITLE to fontProperties(size = Subtitle.FONT_SIZE.toDouble()),
-        PLOT_CAPTION to fontProperties(size = Caption.FONT_SIZE.toDouble()),
+    private val myTextStyles: Map<String, FontProperties> by lazy {
+        mapOf(
+            PLOT_TITLE to fontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
+            PLOT_SUBTITLE to fontProperties(size = Subtitle.FONT_SIZE.toDouble()),
+            PLOT_CAPTION to fontProperties(size = Caption.FONT_SIZE.toDouble()),
 
-        LEGEND_TITLE to fontProperties(size = Legend.TITLE_FONT_SIZE.toDouble()),
-        LEGEND_ITEM to fontProperties(size = Legend.ITEM_FONT_SIZE.toDouble()),
+            LEGEND_TITLE to fontProperties(size = Legend.TITLE_FONT_SIZE.toDouble()),
+            LEGEND_ITEM to fontProperties(size = Legend.ITEM_FONT_SIZE.toDouble()),
 
-        TOOLTIP_TEXT to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
-        TOOLTIP_TITLE to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
-        TOOLTIP_LABEL to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
+            TOOLTIP_TEXT to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
+            TOOLTIP_TITLE to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
+            TOOLTIP_LABEL to fontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
 
-        "$AXIS_TITLE-x" to fontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
-        "$AXIS_TITLE-y" to fontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
-        "$AXIS_TEXT-x" to fontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
-        "$AXIS_TEXT-y" to fontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
-        "$AXIS_TOOLTIP_TEXT-x" to fontProperties(
-            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
-            color = Color.WHITE
-        ),
-        "$AXIS_TOOLTIP_TEXT-y" to fontProperties(
-            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
-            color = Color.WHITE
-        ),
+            "$AXIS_TITLE-x" to fontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+            "$AXIS_TITLE-y" to fontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+            "$AXIS_TEXT-x" to fontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
+            "$AXIS_TEXT-y" to fontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
+            "$AXIS_TOOLTIP_TEXT-x" to fontProperties(
+                size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+                color = Color.WHITE
+            ),
+            "$AXIS_TOOLTIP_TEXT-y" to fontProperties(
+                size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+                color = Color.WHITE
+            ),
 
-        "$FACET_STRIP_TEXT-x" to fontProperties(size = Defaults.FONT_MEDIUM.toDouble()),
-        "$FACET_STRIP_TEXT-y" to fontProperties(size = Defaults.FONT_MEDIUM.toDouble())
-    )
+            "$FACET_STRIP_TEXT-x" to fontProperties(size = Defaults.FONT_MEDIUM.toDouble()),
+            "$FACET_STRIP_TEXT-y" to fontProperties(size = Defaults.FONT_MEDIUM.toDouble())
+        )
+    }
 
     override fun getColor(className: String): Color {
         return myTextStyles[className]?.color ?: DEFAULT_COLOR
