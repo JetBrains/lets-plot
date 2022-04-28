@@ -53,7 +53,7 @@ abstract class DataPointAesthetics {
     }
 
     fun lineType(): LineType {
-        return get(Aes.LINETYPE)!!
+        return getNotNull(Aes.LINETYPE)
     }
 
     fun size(): Double? {
@@ -113,11 +113,11 @@ abstract class DataPointAesthetics {
     }
 
     fun mapId(): Any {
-        return get(Aes.MAP_ID)!!
+        return getNotNull(Aes.MAP_ID)
     }
 
     fun frame(): String {
-        return get(Aes.FRAME)!!
+        return getNotNull(Aes.FRAME)
     }
 
     fun speed(): Double? {
@@ -149,19 +149,19 @@ abstract class DataPointAesthetics {
     }
 
     fun family(): String {
-        return get(Aes.FAMILY)!!
+        return getNotNull(Aes.FAMILY)
     }
 
     fun fontface(): String {
-        return get(Aes.FONTFACE)!!
+        return getNotNull(Aes.FONTFACE)
     }
 
     fun hjust(): Any {
-        return get(Aes.HJUST)!!
+        return getNotNull(Aes.HJUST)
     }
 
     fun vjust(): Any {
-        return get(Aes.VJUST)!!
+        return getNotNull(Aes.VJUST)
     }
 
     fun angle(): Double? {
@@ -186,5 +186,9 @@ abstract class DataPointAesthetics {
             return number != null && (number as Double).isFinite()
         }
         return true
+    }
+
+    private fun <T> getNotNull(aes: Aes<T>): T {
+        return get(aes) ?: throw IllegalStateException("No value for aesthetic $aes at index ${index()}")
     }
 }
