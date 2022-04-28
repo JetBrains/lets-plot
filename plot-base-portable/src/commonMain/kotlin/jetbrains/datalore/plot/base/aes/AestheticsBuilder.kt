@@ -11,44 +11,31 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
-import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
 import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
 import jetbrains.datalore.plot.base.Aes.Companion.FRAME
-import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
-import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
-import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
-import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
-import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
-import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.X
-import jetbrains.datalore.plot.base.Aes.Companion.XEND
-import jetbrains.datalore.plot.base.Aes.Companion.XINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.XMAX
 import jetbrains.datalore.plot.base.Aes.Companion.XMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Y
-import jetbrains.datalore.plot.base.Aes.Companion.YEND
-import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
-import jetbrains.datalore.plot.base.Aes.Companion.Z
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -251,7 +238,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
             if (!myRangeByNumericAes.containsKey(aes)) {
                 val r = when {
                     myDataPointCount <= 0 -> null
-//                        DoubleSpan(0.0, 0.0)
                     myConstantAes.contains(aes) -> {
                         // constant should not be null
                         val v = numericValues(aes).iterator().next()!!
@@ -348,181 +334,17 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     private class MyDataPointAesthetics(
         private val myIndex: Int,
         private val myAesthetics: MyAesthetics
-    ) : DataPointAesthetics {
+    ) : DataPointAesthetics() {
 
         override fun index(): Int {
             return myIndex
-        }
-
-        override fun x(): Double {
-            return get(X)
-        }
-
-        override fun y(): Double {
-            return get(Y)
-        }
-
-        override fun z(): Double {
-            return get(Z)
-        }
-
-        override fun ymin(): Double {
-            return get(YMIN)
-        }
-
-        override fun ymax(): Double {
-            return get(YMAX)
-        }
-
-        override fun color(): Color {
-            return get(COLOR)
-        }
-
-        override fun fill(): Color {
-            return get(FILL)
-        }
-
-        override fun alpha(): Double {
-            return get(ALPHA)
-        }
-
-        override fun shape(): PointShape {
-            return get(SHAPE)
-        }
-
-        override fun lineType(): LineType {
-            return get(LINETYPE)
-        }
-
-        override fun size(): Double {
-            return get(SIZE)
-        }
-
-        override fun stacksize(): Double {
-            return get(STACKSIZE)
-        }
-
-        override fun width(): Double {
-            return get(WIDTH)
-        }
-
-        override fun height(): Double {
-            return get(HEIGHT)
-        }
-
-        override fun binwidth(): Double {
-            return get(BINWIDTH)
-        }
-
-        override fun violinwidth(): Double {
-            return get(VIOLINWIDTH)
-        }
-
-        override fun weight(): Double {
-            return get(WEIGHT)
-        }
-
-        override fun intercept(): Double {
-            return get(INTERCEPT)
-        }
-
-        override fun slope(): Double {
-            return get(SLOPE)
-        }
-
-        override fun interceptX(): Double {
-            return get(XINTERCEPT)
-        }
-
-        override fun interceptY(): Double {
-            return get(YINTERCEPT)
-        }
-
-        override fun lower(): Double {
-            return get(LOWER)
-        }
-
-        override fun middle(): Double {
-            return get(MIDDLE)
-        }
-
-        override fun upper(): Double {
-            return get(UPPER)
-        }
-
-        override fun mapId(): Any {
-            return get(MAP_ID)
-        }
-
-        override fun frame(): String {
-            return get(FRAME)
-        }
-
-        override fun speed(): Double {
-            return get(SPEED)
-        }
-
-        override fun flow(): Double {
-            return get(FLOW)
-        }
-
-        override fun xmin(): Double {
-            return get(XMIN)
-        }
-
-        override fun xmax(): Double {
-            return get(XMAX)
-        }
-
-        override fun xend(): Double {
-            return get(XEND)
-        }
-
-        override fun yend(): Double {
-            return get(YEND)
-        }
-
-        override fun label(): Any {
-            return get(LABEL)
-        }
-
-        override fun family(): String {
-            return get(FAMILY)
-        }
-
-        override fun fontface(): String {
-            return get(FONTFACE)
-        }
-
-        override fun hjust(): Any {
-            return get(HJUST)
-        }
-
-        override fun vjust(): Any {
-            return get(VJUST)
-        }
-
-        override fun angle(): Double {
-            return get(ANGLE)
-        }
-
-        override fun symX(): Double {
-            return get(SYM_X)
-        }
-
-        override fun symY(): Double {
-            return get(SYM_Y)
         }
 
         override fun group(): Int {
             return myAesthetics.group(myIndex)
         }
 
-        override fun numeric(aes: Aes<Double>): Double {
-            return get(aes)
-        }
-
-        override fun <T> get(aes: Aes<T>): T {
+        override fun <T> get(aes: Aes<T>): T? {
             return myAesthetics.aes(aes)(myIndex)
         }
     }
