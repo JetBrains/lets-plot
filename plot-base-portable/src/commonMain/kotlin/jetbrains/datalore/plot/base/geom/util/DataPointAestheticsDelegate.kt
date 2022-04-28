@@ -15,179 +15,179 @@ open class DataPointAestheticsDelegate(
     private val p: DataPointAesthetics
 ) : DataPointAesthetics {
 
-    override fun index(): Int {
+    final override fun index(): Int {
         return p.index()
     }
 
-    override fun x(): Double? {
+    final override fun x(): Double? {
         return get(Aes.X)
     }
 
-    override fun y(): Double? {
+    final override fun y(): Double? {
         return get(Aes.Y)
     }
 
-    override fun z(): Double? {
+    final override fun z(): Double? {
         return get(Aes.Z)
     }
 
-    override fun ymin(): Double? {
+    final override fun ymin(): Double? {
         return get(Aes.YMIN)
     }
 
-    override fun ymax(): Double? {
+    final override fun ymax(): Double? {
         return get(Aes.YMAX)
     }
 
-    override fun color(): Color? {
+    final override fun color(): Color? {
         return get(Aes.COLOR)
     }
 
-    override fun fill(): Color? {
+    final override fun fill(): Color? {
         return get(Aes.FILL)
     }
 
-    override fun alpha(): Double? {
+    final override fun alpha(): Double? {
         return get(Aes.ALPHA)
     }
 
-    override fun shape(): PointShape? {
+    final override fun shape(): PointShape? {
         return get(Aes.SHAPE)
     }
 
-    override fun lineType(): LineType {
+    final override fun lineType(): LineType {
         return get(Aes.LINETYPE)!!
     }
 
-    override fun size(): Double? {
+    final override fun size(): Double? {
         return get(Aes.SIZE)
     }
 
-    override fun stacksize(): Double? {
+    final override fun stacksize(): Double? {
         return get(Aes.STACKSIZE)
     }
 
-    override fun width(): Double? {
+    final override fun width(): Double? {
         return get(Aes.WIDTH)
     }
 
-    override fun height(): Double? {
+    final override fun height(): Double? {
         return get(Aes.HEIGHT)
     }
 
-    override fun binwidth(): Double? {
+    final override fun binwidth(): Double? {
         return get(Aes.BINWIDTH)
     }
 
-    override fun violinwidth(): Double? {
+    final override fun violinwidth(): Double? {
         return get(Aes.VIOLINWIDTH)
     }
 
-    override fun weight(): Double? {
+    final override fun weight(): Double? {
         return get(Aes.WEIGHT)
     }
 
-    override fun intercept(): Double? {
+    final override fun intercept(): Double? {
         return get(Aes.INTERCEPT)
     }
 
-    override fun slope(): Double? {
+    final override fun slope(): Double? {
         return get(Aes.SLOPE)
     }
 
-    override fun interceptX(): Double? {
+    final override fun interceptX(): Double? {
         return get(Aes.XINTERCEPT)
     }
 
-    override fun interceptY(): Double? {
+    final override fun interceptY(): Double? {
         return get(Aes.YINTERCEPT)
     }
 
-    override fun lower(): Double? {
+    final override fun lower(): Double? {
         return get(Aes.LOWER)
     }
 
-    override fun middle(): Double? {
+    final override fun middle(): Double? {
         return get(Aes.MIDDLE)
     }
 
-    override fun upper(): Double? {
+    final override fun upper(): Double? {
         return get(Aes.UPPER)
     }
 
-    override fun mapId(): Any {
+    final override fun mapId(): Any {
         return get(Aes.MAP_ID)!!
     }
 
-    override fun frame(): String {
+    final override fun frame(): String {
         return get(Aes.FRAME)!!
     }
 
-    override fun speed(): Double? {
+    final override fun speed(): Double? {
         return get(Aes.SPEED)
     }
 
-    override fun flow(): Double? {
+    final override fun flow(): Double? {
         return get(Aes.FLOW)
     }
 
-    override fun xmin(): Double? {
+    final override fun xmin(): Double? {
         return get(Aes.XMIN)
     }
 
-    override fun xmax(): Double? {
+    final override fun xmax(): Double? {
         return get(Aes.XMAX)
     }
 
-    override fun xend(): Double? {
+    final override fun xend(): Double? {
         return get(Aes.XEND)
     }
 
-    override fun yend(): Double? {
+    final override fun yend(): Double? {
         return get(Aes.YEND)
     }
 
-    override fun label(): Any? {
+    final override fun label(): Any? {
         return get(Aes.LABEL)
     }
 
-    override fun family(): String {
+    final override fun family(): String {
         return get(Aes.FAMILY)!!
     }
 
-    override fun fontface(): String {
+    final override fun fontface(): String {
         return get(Aes.FONTFACE)!!
     }
 
-    override fun hjust(): Any {
+    final override fun hjust(): Any {
         return get(Aes.HJUST)!!
     }
 
-    override fun vjust(): Any {
+    final override fun vjust(): Any {
         return get(Aes.VJUST)!!
     }
 
-    override fun angle(): Double? {
+    final override fun angle(): Double? {
         return get(Aes.ANGLE)
     }
 
-    override fun symX(): Double? {
+    final override fun symX(): Double? {
         return get(Aes.SYM_X)
     }
 
-    override fun symY(): Double? {
+    final override fun symY(): Double? {
         return get(Aes.SYM_Y)
     }
 
-    override fun group(): Int? {
+    final override fun group(): Int? {
         return p.group()
     }
 
-    override fun numeric(aes: Aes<Double>): Double? {
+    final override fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }
 
     override fun <T> get(aes: Aes<T>): T? {
-        return p[aes]
+        return p.get(aes)
     }
 }
