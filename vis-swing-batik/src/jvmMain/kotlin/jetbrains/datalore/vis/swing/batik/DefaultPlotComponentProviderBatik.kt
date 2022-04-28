@@ -49,7 +49,7 @@ open class DefaultPlotComponentProviderBatik(
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderBatik::class)
 
         private val SVG_COMPONENT_FACTORY_BATIK =
-            { svg: SvgSvgElement, _: StyleRenderer -> BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK) }
+            { svg: SvgSvgElement -> BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK) }
 
         private val BATIK_MESSAGE_CALLBACK = object : BatikMessageCallback {
             override fun handleMessage(message: String) {

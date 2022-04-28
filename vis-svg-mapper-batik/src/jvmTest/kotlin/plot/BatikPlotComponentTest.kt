@@ -53,7 +53,7 @@ class BatikPlotComponentTest {
             }
         }
 
-        private val COMPONENT_FACTORY = { svg: SvgSvgElement, _: StyleRenderer ->
+        private val COMPONENT_FACTORY = { svg: SvgSvgElement ->
             BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK)
         }
 

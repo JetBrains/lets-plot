@@ -45,7 +45,7 @@ class JfxPlotComponentTest {
     }
 
     companion object {
-        private val COMPONENT_FACTORY = { svg: SvgSvgElement, _: StyleRenderer ->
+        private val COMPONENT_FACTORY = { svg: SvgSvgElement ->
             SceneMapperJfxPanel(
                 svg,
                 listOf(Style.JFX_PLOT_STYLESHEET),
