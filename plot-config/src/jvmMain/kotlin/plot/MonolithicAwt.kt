@@ -8,7 +8,6 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 

@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
-import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
 import java.awt.Color

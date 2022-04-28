@@ -6,7 +6,6 @@
 package jetbrains.datalore.vis.swing.batik
 
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback

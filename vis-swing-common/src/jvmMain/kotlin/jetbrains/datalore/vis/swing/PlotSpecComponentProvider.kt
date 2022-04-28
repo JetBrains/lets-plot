@@ -5,7 +5,6 @@ import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.plot.PlotSizeHelper
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
