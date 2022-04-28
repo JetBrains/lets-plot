@@ -46,7 +46,7 @@ class TooltipBoxTest {
                 strokeWidth = 1.0,
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
                 title = null,
-                style = "anyStyle",
+                textClassName = "anyStyle",
                 rotate = false,
                 borderRadius = 0.0,
                 markerColors = emptyList()

@@ -80,7 +80,7 @@ class TooltipBox: SvgComponent() {
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         title: String?,
-        style: String,
+        textClassName: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
@@ -98,7 +98,7 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth,
             rotate,
             markerColors,
-            style
+            textClassName
         )
         myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
     }
@@ -267,7 +267,7 @@ class TooltipBox: SvgComponent() {
             tooltipMinWidth: Double?,
             rotate: Boolean,
             markerColors: List<Color>,
-            textStyle: String
+            textClassName: String
         ) {
             myLinesContainer.children().clear()
             myTitleContainer.children().clear()
@@ -289,7 +289,7 @@ class TooltipBox: SvgComponent() {
                 valueTextColor,
                 minWidthWithTitle,
                 rotate,
-                textStyle
+                textClassName
             )
 
             val totalTooltipWidth = textSize.x + colorBarIndent + myHorizontalContentPadding * 2
@@ -452,7 +452,7 @@ class TooltipBox: SvgComponent() {
             valueTextColor: Color,
             tooltipMinWidth: Double?,
             rotate: Boolean,
-            textStyle: String
+            textClassName: String
         ): DoubleVector {
             // bBoxes
             val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
@@ -473,7 +473,7 @@ class TooltipBox: SvgComponent() {
             }
             // for values
             components.onEach { (_, valueComponent) ->
-                valueComponent.addClassName(textStyle)
+                valueComponent.addClassName(textClassName)
                 valueComponent.textColor().set(valueTextColor)
                 valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
