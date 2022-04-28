@@ -84,15 +84,17 @@ class TextStyler : StyleRenderer {
     override fun css(): String {
         val css = StringBuilder()
         myTextStyles.forEach { (className, props) ->
-            css
-                .append(".$className text").append(" {")
-                //.append("\n  fill: ").append(props.color.toHexColor() + ";")
-                .append("\n  font-family: ").append(props.family.toString() + ";")
-                .append("\n  font-size: ").append(props.size).append("px;")
-                .append("\n  font-weight: ").append(if (props.face.bold) "bold;" else "normal;")
-                .append("\n  font-style: ").append(if (props.face.italic) "italic;" else "normal;")
-                .append("\n}\n")
+            css.append("""
+                |.$className text {
+                |      font-family: ${props.family};
+                |      font-size: ${props.size}px;
+                |      font-weight: ${if (props.face.bold) "bold" else "normal"};
+                |      font-style: ${if (props.face.italic) "italic" else "normal"};
+                |}
+                |""".trimMargin()
+            )
         }
+        // todo add color: "fill: ${props.color.toCssColor()};"
         return css.toString()
     }
 

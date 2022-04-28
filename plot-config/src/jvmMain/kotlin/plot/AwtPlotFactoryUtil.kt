@@ -31,7 +31,7 @@ internal object AwtPlotFactoryUtil {
 
     private fun buildPlotComponent(
         plotBuildInfo: MonolithicCommon.PlotBuildInfo,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
         val assembler = plotBuildInfo.plotAssembler
@@ -56,7 +56,7 @@ internal object AwtPlotFactoryUtil {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
@@ -80,7 +80,7 @@ internal object AwtPlotFactoryUtil {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
@@ -118,7 +118,7 @@ internal object AwtPlotFactoryUtil {
 
     private fun buildGGBunchComponent(
         plotInfos: List<MonolithicCommon.PlotBuildInfo>,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
 
@@ -209,13 +209,13 @@ internal object AwtPlotFactoryUtil {
 
     fun buildPlotComponent(
         plotContainer: PlotContainer,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
         plotContainer.ensureContentBuilt()
         val svg = plotContainer.svg
 
-        val plotComponent: JComponent = svgComponentFactory(svg, plotContainer.styleRenderer)
+        val plotComponent: JComponent = svgComponentFactory(svg)
 
         plotComponent.addMouseMotionListener(object : MouseAdapter() {
             override fun mouseMoved(e: MouseEvent) {

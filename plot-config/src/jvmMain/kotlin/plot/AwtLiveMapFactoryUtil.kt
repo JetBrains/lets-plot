@@ -20,7 +20,7 @@ internal object AwtLiveMapFactoryUtil {
         assembler: PlotAssembler,
         processedSpec: MutableMap<String, Any>,
         preferredSize: DoubleVector,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
         val cursorServiceConfig = CursorServiceConfig()

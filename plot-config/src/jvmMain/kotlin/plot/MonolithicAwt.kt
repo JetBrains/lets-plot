@@ -17,7 +17,7 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
@@ -34,7 +34,7 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
@@ -49,7 +49,7 @@ object MonolithicAwt {
 
     fun buildPlotComponent(
         plotContainer: PlotContainer,
-        svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
         return AwtPlotFactoryUtil.buildPlotComponent(

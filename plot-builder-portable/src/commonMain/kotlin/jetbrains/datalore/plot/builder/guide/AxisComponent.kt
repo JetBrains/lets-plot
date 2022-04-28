@@ -174,12 +174,12 @@ class AxisComponent(
         var tickLabel: TextLabel? = null
         if (!skipLabel && axisTheme.showLabels()) {
             tickLabel = TextLabel(label)
-            val suffix = if (orientation.isHorizontal) {
+            val axis = if (orientation.isHorizontal) {
                 if (flippedAxis) "y" else "x"
             } else {
                 if (flippedAxis) "x" else "y"
             }
-            tickLabel.addClassName("${Style.AXIS_TEXT}-$suffix")
+            tickLabel.addClassName("${Style.AXIS_TEXT}-$axis")
             tickLabel.textColor().set(axisTheme.labelColor())
         }
 
