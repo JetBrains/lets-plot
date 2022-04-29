@@ -100,17 +100,18 @@ internal class TooltipRenderer(
                     else -> WHITE
                 }
 
-                val textColor = when {
-                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipTextColor()
-                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipTextColor()
+                val borderColor = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
                     spec.isOutlier -> LIGHT_TEXT_COLOR.takeIf { fillColor.isReadableOnWhite() } ?: DARK_TEXT_COLOR
                     else -> BLACK
                 }
 
-                val borderColor = when {
-                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
-                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
-                    else -> textColor
+                // Text color is set in JFX mapper and css (for Batik) by element class name,
+                // but for outliers the color is not constant - it depends on the fill color
+                val textColor = when {
+                    spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isOutlier -> borderColor
+                    else -> null
                 }
 
                 val strokeWidth = when {

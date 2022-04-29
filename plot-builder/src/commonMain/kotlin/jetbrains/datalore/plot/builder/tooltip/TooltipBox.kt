@@ -75,7 +75,7 @@ class TooltipBox: SvgComponent() {
 
     fun update(
         fillColor: Color,
-        textColor: Color,
+        textColor: Color?,
         borderColor: Color,
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
@@ -93,7 +93,7 @@ class TooltipBox: SvgComponent() {
         myContentBox.update(
             lines,
             title,
-            valueTextColor = textColor,
+            textColor,
             tooltipMinWidth,
             rotate,
             markerColors,
@@ -261,7 +261,7 @@ class TooltipBox: SvgComponent() {
         internal fun update(
             lines: List<TooltipSpec.Line>,
             title: String?,
-            valueTextColor: Color,
+            valueTextColor: Color?,
             tooltipMinWidth: Double?,
             rotate: Boolean,
             markerColors: List<Color>,
@@ -273,7 +273,7 @@ class TooltipBox: SvgComponent() {
             calculateColorBarIndent(markerColors)
 
             // title component
-            val titleComponent = title?.let { initTitleComponent(it, valueTextColor) }
+            val titleComponent = title?.let(::initTitleComponent)
             val rawTitleBBox = getBBox(title, titleComponent)
             val titleHeight = rawTitleBBox?.height ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
 
@@ -388,10 +388,7 @@ class TooltipBox: SvgComponent() {
             return textLabel.rootGroup.bBox
         }
 
-        private fun initTitleComponent(
-            titleLine: String,
-            titleColor: Color
-        ): MultilineLabel {
+        private fun initTitleComponent(titleLine: String): MultilineLabel {
             val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setX(0.0)
@@ -444,7 +441,7 @@ class TooltipBox: SvgComponent() {
 
         private fun layoutLines(
             lines: List<TooltipSpec.Line>,
-            valueTextColor: Color,
+            valueTextColor: Color?,
             tooltipMinWidth: Double?,
             rotate: Boolean,
             textClassName: String
@@ -468,7 +465,7 @@ class TooltipBox: SvgComponent() {
             // for values
             components.onEach { (_, valueComponent) ->
                 valueComponent.addClassName(textClassName)
-                valueComponent.textColor().set(valueTextColor) // todo for outliers the colors depends on fill color
+                valueTextColor?.let(valueComponent.textColor()::set)
                 valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
