@@ -105,8 +105,7 @@ object GeomInteractionUtil {
         return builder
             .tooltipLinesSpec(layerConfig.tooltips)
             .tooltipConstants(createConstantAesList(layerConfig))
-            .showAxisTooltip(isAxisTooltipEnabled && !isLiveMap)
-            .setIsCrosshairEnabled(isCrosshairEnabled(layerConfig))
+            .enableCrosshair(isCrosshairEnabled(layerConfig))
     }
 
     private fun createGeomTooltipSetup(

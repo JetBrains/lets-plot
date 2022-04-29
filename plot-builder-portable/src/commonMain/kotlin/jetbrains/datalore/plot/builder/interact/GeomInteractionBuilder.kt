@@ -20,11 +20,16 @@ class GeomInteractionBuilder constructor(
     private val tooltipOutlierAes: List<Aes<*>>,
 ) {
 
-    private var myIgnoreInvisibleTargets: Boolean = false
-    private var myTooltipConstantsAesList: Map<Aes<*>, Any>? = null
     private var myUserTooltipSpec: TooltipSpecification? = null
-    private var myIsCrosshairEnabled: Boolean = false
-    private var isAxisTooltipEnabled: Boolean = true
+
+    var ignoreInvisibleTargets: Boolean = false
+        private set
+
+    var tooltipConstants: Map<Aes<*>, Any>? = null
+        private set
+
+    var isCrosshairEnabled: Boolean = false
+        private set
 
     val tooltipLines: List<TooltipLine>
         get() = createTooltipLines(
@@ -32,7 +37,7 @@ class GeomInteractionBuilder constructor(
             tooltipAes = tooltipAes,
             tooltipAxisAes = tooltipAxisAes,
             sideTooltipAes = tooltipOutlierAes,
-            tooltipConstantAes = myTooltipConstantsAesList
+            tooltipConstantAes = tooltipConstants
         )
 
     val tooltipProperties: TooltipSpecification.TooltipProperties
@@ -41,35 +46,24 @@ class GeomInteractionBuilder constructor(
     val tooltipTitle: TooltipLine?
         get() = myUserTooltipSpec?.tooltipTitle
 
-    val isCrosshairEnabled: Boolean
-        get() = myIsCrosshairEnabled
 
-    val ignoreInvisibleTargets: Boolean
-        get() = myIgnoreInvisibleTargets
-
-
-    fun showAxisTooltip(v: Boolean): GeomInteractionBuilder {
-        isAxisTooltipEnabled = v
+    fun tooltipConstants(v: Map<Aes<*>, Any>): GeomInteractionBuilder {
+        tooltipConstants = v
         return this
     }
 
-    fun tooltipConstants(constantsMap: Map<Aes<*>, Any>): GeomInteractionBuilder {
-        myTooltipConstantsAesList = constantsMap
+    fun tooltipLinesSpec(v: TooltipSpecification): GeomInteractionBuilder {
+        myUserTooltipSpec = v
         return this
     }
 
-    fun tooltipLinesSpec(tooltipSpec: TooltipSpecification): GeomInteractionBuilder {
-        myUserTooltipSpec = tooltipSpec
+    fun enableCrosshair(v: Boolean): GeomInteractionBuilder {
+        isCrosshairEnabled = v
         return this
     }
 
-    fun setIsCrosshairEnabled(isTrue: Boolean): GeomInteractionBuilder {
-        myIsCrosshairEnabled = isTrue
-        return this
-    }
-
-    fun ignoreInvisibleTargets(isTrue: Boolean): GeomInteractionBuilder {
-        myIgnoreInvisibleTargets = isTrue
+    fun ignoreInvisibleTargets(v: Boolean): GeomInteractionBuilder {
+        ignoreInvisibleTargets = v
         return this
     }
 
