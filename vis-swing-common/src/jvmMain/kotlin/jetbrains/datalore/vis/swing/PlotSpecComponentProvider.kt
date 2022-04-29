@@ -5,6 +5,7 @@ import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.plot.PlotSizeHelper
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -15,7 +16,7 @@ import kotlin.math.floor
 abstract class PlotSpecComponentProvider(
     private val processedSpec: MutableMap<String, Any>,
     private val preserveAspectRatio: Boolean,
-    private val svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+    private val svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val computationMessagesHandler: (List<String>) -> Unit
 ) : PlotComponentProvider {
@@ -55,7 +56,7 @@ abstract class PlotSpecComponentProvider(
         private fun createPlotComponent(
             figureSpecProcessed: MutableMap<String, Any>,
             preferredSize: DoubleVector?,
-            svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+            svgComponentFactory: (svg: SvgSvgElement, styleRenderer: StyleRenderer) -> JComponent,
             executor: (() -> Unit) -> Unit,
             computationMessagesHandler: ((List<String>) -> Unit)
         ): JComponent {

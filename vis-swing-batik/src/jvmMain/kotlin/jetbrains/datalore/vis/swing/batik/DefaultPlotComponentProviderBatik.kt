@@ -6,6 +6,7 @@
 package jetbrains.datalore.vis.swing.batik
 
 import jetbrains.datalore.base.logging.PortableLogging
+import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback
@@ -48,7 +49,7 @@ open class DefaultPlotComponentProviderBatik(
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderBatik::class)
 
         private val SVG_COMPONENT_FACTORY_BATIK =
-            { svg: SvgSvgElement -> BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK) }
+            { svg: SvgSvgElement, _: StyleRenderer -> BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK) }
 
         private val BATIK_MESSAGE_CALLBACK = object : BatikMessageCallback {
             override fun handleMessage(message: String) {
