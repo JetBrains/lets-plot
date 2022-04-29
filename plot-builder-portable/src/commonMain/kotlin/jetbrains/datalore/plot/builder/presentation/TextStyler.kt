@@ -27,8 +27,8 @@ import jetbrains.datalore.vis.StyleProperties
 
 class TextStyler : StyleProperties {
 
-    private val myTextStyles: Map<String, FontProperties> by lazy {
-        mapOf(PLOT_TITLE to FontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
+    protected val myTextStyles: MutableMap<String, FontProperties> by lazy {
+        mutableMapOf(PLOT_TITLE to FontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
             PLOT_SUBTITLE to FontProperties(size = Subtitle.FONT_SIZE.toDouble()),
             PLOT_CAPTION to FontProperties(size = Caption.FONT_SIZE.toDouble()),
             LEGEND_TITLE to FontProperties(size = Legend.TITLE_FONT_SIZE.toDouble()),
@@ -79,6 +79,7 @@ class TextStyler : StyleProperties {
         myTextStyles.forEach { (className, props) ->
             css.append("""
                 |.$className text {
+                |      fill: ${props.color.toCssColor()};
                 |      font-family: ${props.family};
                 |      font-size: ${props.size}px;
                 |      font-weight: ${if (props.face.bold) "bold" else "normal"};
@@ -87,7 +88,6 @@ class TextStyler : StyleProperties {
                 |""".trimMargin()
             )
         }
-        // todo add color: "fill: ${props.color.toCssColor()};"
         return css.toString()
     }
 

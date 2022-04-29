@@ -30,8 +30,8 @@ open class PlotContainerPortable(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
-    val styleProperties: StyleProperties
-        get() = Style.DEFAULT_STYLE_RENDERER
+    val styleRenderer: StyleProperties
+        get() = plot.styleProperties
 
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()

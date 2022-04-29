@@ -70,7 +70,6 @@ class ColorBarComponent(
 
             val label = TextLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
-            label.textColor().set(theme.textColor())
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setVerticalAnchor(brInfo.labelVerticalAnchor)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top)
