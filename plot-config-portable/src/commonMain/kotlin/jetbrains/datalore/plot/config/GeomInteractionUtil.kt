@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
+import jetbrains.datalore.plot.builder.interact.GeomTooltipSetup
 import jetbrains.datalore.plot.builder.theme.Theme
 
 object GeomInteractionUtil {
@@ -34,6 +35,24 @@ object GeomInteractionUtil {
         isLiveMap: Boolean,
         theme: Theme
     ): GeomInteractionBuilder {
+        val tooltipSetup = createGeomTooltipSetup(
+            allSupportedAes = layerConfig.geomProto.renders(),
+            geomKind = layerConfig.geomProto.geomKind,
+            statKind = layerConfig.statKind,
+            isCrosshairEnabled = isCrosshairEnabled(layerConfig),
+            multilayerWithTooltips = multilayerWithTooltips
+        )
+        return createGeomInteractionBuilder(layerConfig, scaleMap, tooltipSetup, isLiveMap, theme)
+    }
+
+    private fun createGeomInteractionBuilder(
+        layerConfig: LayerConfig,
+        scaleMap: TypedScaleMap,
+        tooltipSetup: GeomTooltipSetup,
+        isLiveMap: Boolean,
+        theme: Theme
+    ): GeomInteractionBuilder {
+
         val axisWithoutTooltip = HashSet<Aes<*>>()
         if (isLiveMap || !theme.horizontalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.X)
         if (isLiveMap || !theme.verticalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.Y)
@@ -43,81 +62,163 @@ object GeomInteractionUtil {
         if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.X)
         if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.Y)
 
-
-        val isCrosshairEnabled = isCrosshairEnabled(layerConfig)
-        val builder = createGeomInteractionBuilder(
-            layerConfig.geomProto.renders(),
-            layerConfig.geomProto.geomKind,
-            layerConfig.statKind,
-            multilayerWithTooltips,
-            isCrosshairEnabled
-        )
         val yOrientation = layerConfig.isYOrientation
-        val axisAesFromFunctionType = builder.axisAesFromFunctionKind
+        val axisAesFromFunctionKind = tooltipSetup.axisAesFromFunctionKind
+        val isAxisTooltipEnabled = tooltipSetup.axisTooltipEnabled
 
         val hiddenAesList = createHiddenAesList(
             layerConfig,
-            axisAesFromFunctionType
+            axisAesFromFunctionKind
         ).afterOrientation(yOrientation) +
                 axisWithoutTooltip
 
         val axisAes = createAxisAesList(
-            builder,
+            isAxisTooltipEnabled,
+            axisAesFromFunctionKind,
             layerConfig.geomProto.geomKind,
         ).afterOrientation(yOrientation) -
                 hiddenAesList -
                 axisWithNoLabels
 
+        val outlierAesList = createOutlierAesList(
+            layerConfig.geomProto.geomKind
+        ).afterOrientation(yOrientation)
 
-        val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionType.afterOrientation(yOrientation)
+        val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
         val layerRendersAesAfterOrientation = layerConfig.geomProto.renders().afterOrientation(yOrientation)
-        val aesList = createTooltipAesList(
+        val tooltipAes = createTooltipAesList(
             layerConfig,
             scaleMap,
             layerRendersAesAfterOrientation,
             axisAesFromFunctionTypeAfterOrientation
         ) - hiddenAesList
-        val outlierAesList = createOutlierAesList(
-            layerConfig.geomProto.geomKind
-        ).afterOrientation(yOrientation)
 
-        return builder.axisAes(axisAes)
-            .tooltipAes(aesList)
-            .tooltipOutliers(outlierAesList)
+
+        val builder = GeomInteractionBuilder(
+            locatorLookupSpace = tooltipSetup.locatorLookupSpace,
+            locatorLookupStrategy = tooltipSetup.locatorLookupStrategy,
+            tooltipAes = tooltipAes,
+            tooltipAxisAes = axisAes,
+            tooltipOutlierAes = outlierAesList
+        )
+
+        return builder
             .tooltipLinesSpec(layerConfig.tooltips)
             .tooltipConstants(createConstantAesList(layerConfig))
-            .showAxisTooltip(!isLiveMap)
-            .setIsCrosshairEnabled(isCrosshairEnabled)
+            .showAxisTooltip(isAxisTooltipEnabled && !isLiveMap)
+            .setIsCrosshairEnabled(isCrosshairEnabled(layerConfig))
     }
 
-    private fun createGeomInteractionBuilder(
-        renders: List<Aes<*>>,
+    private fun createGeomTooltipSetup(
+        allSupportedAes: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind,
+        isCrosshairEnabled: Boolean,
         multilayerWithTooltips: Boolean,
-        isCrosshairEnabled: Boolean
-    ): GeomInteractionBuilder {
-
-        val builder = initGeomInteractionBuilder(renders, geomKind, statKind, isCrosshairEnabled)
-
-        if (multilayerWithTooltips && !isCrosshairEnabled) {
-            // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
-            // and tooltips should not be disabled in other layers.
-            // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
-            // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
-            // but not above a column).
-            if (listOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY).contains(geomKind)) {
-                builder.multilayerLookupStrategy()
-            } else if (statKind === StatKind.SMOOTH) {
-                when (geomKind) {
-                    GeomKind.POINT, GeomKind.CONTOUR -> builder.multilayerLookupStrategy()
-                    else -> {
-                    }
+    ): GeomTooltipSetup {
+        val tooltipSetup = createGeomTooltipSetup(
+            allSupportedAes,
+            geomKind,
+            statKind,
+            isCrosshairEnabled,
+        ).let {
+            var multilayerLookup: Boolean = false
+            if (multilayerWithTooltips && !isCrosshairEnabled) {
+                // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
+                // and tooltips should not be disabled in other layers.
+                // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
+                // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
+                // but not above a column).
+                if (listOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY).contains(geomKind)) {
+                    multilayerLookup = true
+                } else if (statKind === StatKind.SMOOTH) {
+                    multilayerLookup = geomKind in listOf(GeomKind.POINT, GeomKind.CONTOUR)
                 }
+            }
+
+            if (multilayerLookup) {
+                it.toMultilayerLookupStrategy()
+            } else {
+                it
             }
         }
 
-        return builder
+        return tooltipSetup
+    }
+
+    private fun createGeomTooltipSetup(
+        allSupportedAes: List<Aes<*>>,
+        geomKind: GeomKind,
+        statKind: StatKind,
+        isCrosshairEnabled: Boolean,
+    ): GeomTooltipSetup {
+        if (statKind === StatKind.SMOOTH) {
+            when (geomKind) {
+                GeomKind.POINT,
+                GeomKind.CONTOUR -> return GeomTooltipSetup.univariateFunction(
+                    GeomTargetLocator.LookupStrategy.NEAREST
+                )
+                else -> {}
+            }
+        }
+
+        when (geomKind) {
+            GeomKind.DENSITY,
+            GeomKind.FREQPOLY,
+            GeomKind.HISTOGRAM,
+            GeomKind.DOT_PLOT,
+            GeomKind.LINE,
+            GeomKind.AREA,
+            GeomKind.BAR,
+            GeomKind.ERROR_BAR,
+            GeomKind.CROSS_BAR,
+            GeomKind.POINT_RANGE,
+            GeomKind.LINE_RANGE,
+            GeomKind.SEGMENT,
+            GeomKind.V_LINE -> return GeomTooltipSetup.univariateFunction(
+                GeomTargetLocator.LookupStrategy.HOVER,
+                axisTooltipVisibilityFromConfig = true
+            )
+            GeomKind.RIBBON -> return GeomTooltipSetup.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
+                GeomTooltipSetup.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            } else {
+                GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            }
+            GeomKind.BOX_PLOT,
+            GeomKind.Y_DOT_PLOT,
+            GeomKind.BIN_2D,
+            GeomKind.TILE -> return GeomTooltipSetup.bivariateFunction(
+                GeomTooltipSetup.AREA_GEOM,
+                axisTooltipVisibilityFromConfig = true
+            )
+            GeomKind.TEXT,
+            GeomKind.POINT,
+            GeomKind.JITTER,
+            GeomKind.CONTOUR,
+            GeomKind.DENSITY2D,
+            GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            GeomKind.PATH -> {
+                return when (statKind) {
+                    StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> GeomTooltipSetup.bivariateFunction(
+                        GeomTooltipSetup.NON_AREA_GEOM
+                    )
+                    else -> {
+                        GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
+                    }
+                }
+            }
+            GeomKind.H_LINE,
+            GeomKind.DENSITY2DF,
+            GeomKind.CONTOURF,
+            GeomKind.POLYGON,
+            GeomKind.MAP,
+            GeomKind.RECT -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
+
+            GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+
+            else -> return GeomTooltipSetup.none(allSupportedAes)
+        }
     }
 
     private fun createHiddenAesList(layerConfig: LayerConfig, axisAes: List<Aes<*>>): List<Aes<*>> {
@@ -141,13 +242,14 @@ object GeomInteractionUtil {
     }
 
     private fun createAxisAesList(
-        geomBuilder: GeomInteractionBuilder,
+        isAxisTooltipEnabled: Boolean,
+        axisAesFromFunctionKind: List<Aes<*>>,
         geomKind: GeomKind,
     ): List<Aes<*>> {
         return when {
-            !geomBuilder.isAxisTooltipEnabled -> emptyList()
+            !isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
-            else -> geomBuilder.axisAesFromFunctionKind
+            else -> axisAesFromFunctionKind
         }
     }
 
@@ -254,75 +356,6 @@ object GeomInteractionUtil {
         }
         val factors = scaleMap.safeGet(aes)?.getScaleBreaks()?.domainValues ?: return false
         return factors.size >= MIN_FACTORS_TO_SHOW_TOOLTIPS
-    }
-
-    private fun initGeomInteractionBuilder(
-        renders: List<Aes<*>>,
-        geomKind: GeomKind,
-        statKind: StatKind,
-        isCrosshairEnabled: Boolean
-    ): GeomInteractionBuilder {
-        val builder = GeomInteractionBuilder(renders)
-        if (statKind === StatKind.SMOOTH) {
-            when (geomKind) {
-                GeomKind.POINT,
-                GeomKind.CONTOUR -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-                else -> {}
-            }
-        }
-
-        when (geomKind) {
-            GeomKind.DENSITY,
-            GeomKind.FREQPOLY,
-            GeomKind.HISTOGRAM,
-            GeomKind.DOT_PLOT,
-            GeomKind.LINE,
-            GeomKind.AREA,
-            GeomKind.BAR,
-            GeomKind.ERROR_BAR,
-            GeomKind.CROSS_BAR,
-            GeomKind.POINT_RANGE,
-            GeomKind.LINE_RANGE,
-            GeomKind.SEGMENT,
-            GeomKind.V_LINE -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
-                .showAxisTooltip(true)
-            GeomKind.RIBBON -> return builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-            GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
-                builder.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-            } else {
-                builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
-            }
-            GeomKind.BOX_PLOT,
-            GeomKind.Y_DOT_PLOT,
-            GeomKind.BIN_2D,
-            GeomKind.TILE -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM).showAxisTooltip(true)
-            GeomKind.TEXT,
-            GeomKind.POINT,
-            GeomKind.JITTER,
-            GeomKind.CONTOUR,
-            GeomKind.DENSITY2D,
-            GeomKind.VIOLIN -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
-            GeomKind.PATH -> {
-                when (statKind) {
-                    StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> return builder.bivariateFunction(
-                        GeomInteractionBuilder.NON_AREA_GEOM
-                    )
-                    else -> {
-                    }
-                }
-                return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
-            }
-            GeomKind.H_LINE,
-            GeomKind.DENSITY2DF,
-            GeomKind.CONTOURF,
-            GeomKind.POLYGON,
-            GeomKind.MAP,
-            GeomKind.RECT -> return builder.bivariateFunction(GeomInteractionBuilder.AREA_GEOM)
-
-            GeomKind.LIVE_MAP -> return builder.bivariateFunction(GeomInteractionBuilder.NON_AREA_GEOM)
-
-            else -> return builder.none()
-        }
     }
 }
 

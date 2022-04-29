@@ -95,8 +95,8 @@ class LocatorByGeneralTooltipTest {
             ),
             createLocator(
                 lookupSpec = lookupSpec,
-                contextualMapping = createContextualMapping
-                    (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
                     axisTooltips = true
                 ),
                 targetPrototypes = listOf(SECOND_TARGET)
@@ -152,10 +152,15 @@ class LocatorByGeneralTooltipTest {
         }
     }
 
-    private fun createContextualMapping(mappedDataAccessMock: MappedDataAccessMock, axisTooltips: Boolean = false): ContextualMapping {
-        val contextualMappingProvider = GeomInteractionBuilder(Aes.values())
+    private fun createContextualMapping(
+        mappedDataAccessMock: MappedDataAccessMock,
+        axisTooltips: Boolean = false
+    ): ContextualMapping {
+        val contextualMappingProvider = GeomInteractionBuilder.DemoAndTest(
+            supportedAes = Aes.values(),
+            axisAes = if (axisTooltips) listOf(Aes.X) else emptyList()
+        )
             .bivariateFunction(true)
-            .axisAes(if (axisTooltips) listOf(Aes.X) else emptyList())
             .build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,

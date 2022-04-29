@@ -78,7 +78,7 @@ class BarPlotResizeDemo private constructor(
             .addConstantAes(Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
-        val geomInteraction = GeomInteractionBuilder(
+        val geomInteraction = GeomInteractionBuilder.DemoAndTest(
             listOf(
                 Aes.X,
                 Aes.Y,

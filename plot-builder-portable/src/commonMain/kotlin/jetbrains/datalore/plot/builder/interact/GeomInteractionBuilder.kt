@@ -13,43 +13,25 @@ import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 
 class GeomInteractionBuilder constructor(
-    private val supportedAesList: List<Aes<*>>
+    val locatorLookupSpace: LookupSpace,
+    val locatorLookupStrategy: LookupStrategy,
+    private val tooltipAes: List<Aes<*>>,
+    private val tooltipAxisAes: List<Aes<*>>,
+    private val tooltipOutlierAes: List<Aes<*>>,
 ) {
 
     private var myIgnoreInvisibleTargets: Boolean = false
-    private var myAxisTooltipVisibilityFromFunctionKind: Boolean = false
-    private var myAxisTooltipVisibilityFromConfig: Boolean? = null
-    private var myAxisAesFromFunctionKind: List<Aes<*>>? = null
-    private lateinit var myTooltipAxisAes: List<Aes<*>>
-    private lateinit var myTooltipAes: List<Aes<*>>
-    private lateinit var myTooltipOutlierAesList: List<Aes<*>>
     private var myTooltipConstantsAesList: Map<Aes<*>, Any>? = null
     private var myUserTooltipSpec: TooltipSpecification? = null
     private var myIsCrosshairEnabled: Boolean = false
-
-    // ToDo: TMP public - used as intermediate builder result.
-    val axisAesFromFunctionKind: List<Aes<*>>
-        get() = myAxisAesFromFunctionKind ?: emptyList()
-
-
-    lateinit var locatorLookupSpace: LookupSpace
-        private set
-
-    lateinit var locatorLookupStrategy: LookupStrategy
-        private set
-
-    val isAxisTooltipEnabled: Boolean
-        get() = if (myAxisTooltipVisibilityFromConfig == null)
-            myAxisTooltipVisibilityFromFunctionKind
-        else
-            myAxisTooltipVisibilityFromConfig!!
+    private var isAxisTooltipEnabled: Boolean = true
 
     val tooltipLines: List<TooltipLine>
         get() = createTooltipLines(
             myUserTooltipSpec,
-            tooltipAes = myTooltipAes,
-            tooltipAxisAes = myTooltipAxisAes,
-            sideTooltipAes = myTooltipOutlierAesList,
+            tooltipAes = tooltipAes,
+            tooltipAxisAes = tooltipAxisAes,
+            sideTooltipAes = tooltipOutlierAes,
             tooltipConstantAes = myTooltipConstantsAesList
         )
 
@@ -66,23 +48,8 @@ class GeomInteractionBuilder constructor(
         get() = myIgnoreInvisibleTargets
 
 
-    fun showAxisTooltip(isTrue: Boolean): GeomInteractionBuilder {
-        myAxisTooltipVisibilityFromConfig = isTrue
-        return this
-    }
-
-    fun tooltipAes(aes: List<Aes<*>>): GeomInteractionBuilder {
-        myTooltipAes = aes
-        return this
-    }
-
-    fun axisAes(axisAes: List<Aes<*>>): GeomInteractionBuilder {
-        myTooltipAxisAes = axisAes
-        return this
-    }
-
-    fun tooltipOutliers(aes: List<Aes<*>>): GeomInteractionBuilder {
-        myTooltipOutlierAesList = aes
+    fun showAxisTooltip(v: Boolean): GeomInteractionBuilder {
+        isAxisTooltipEnabled = v
         return this
     }
 
@@ -101,67 +68,38 @@ class GeomInteractionBuilder constructor(
         return this
     }
 
-    fun multilayerLookupStrategy(): GeomInteractionBuilder {
-        locatorLookupStrategy = LookupStrategy.NEAREST
-        locatorLookupSpace = LookupSpace.XY
-        return this
-    }
-
-    fun univariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
-        myAxisAesFromFunctionKind = AES_X
-        locatorLookupStrategy = lookupStrategy
-        myAxisTooltipVisibilityFromFunctionKind = true
-        locatorLookupSpace = LookupSpace.X
-        initDefaultTooltips()
-        return this
-    }
-
-    fun bivariateFunction(area: Boolean): GeomInteractionBuilder {
-        myAxisAesFromFunctionKind = AES_XY
-
-        if (area) {
-            locatorLookupStrategy = LookupStrategy.HOVER
-            myAxisTooltipVisibilityFromFunctionKind = false
-        } else {
-            locatorLookupStrategy = LookupStrategy.NEAREST
-            myAxisTooltipVisibilityFromFunctionKind = true
-        }
-        locatorLookupSpace = LookupSpace.XY
-        initDefaultTooltips()
-        return this
-    }
-
-    fun none(): GeomInteractionBuilder {
-        myAxisAesFromFunctionKind = ArrayList(supportedAesList)
-        locatorLookupStrategy = LookupStrategy.NONE
-        myAxisTooltipVisibilityFromFunctionKind = true
-        locatorLookupSpace = LookupSpace.NONE
-        initDefaultTooltips()
-        return this
-    }
-
-    private fun initDefaultTooltips() {
-        myTooltipAxisAes = if (!isAxisTooltipEnabled) emptyList() else axisAesFromFunctionKind
-        myTooltipAes = supportedAesList - axisAesFromFunctionKind
-        myTooltipOutlierAesList = emptyList()
-    }
-
-
-    fun build(): GeomInteraction {
-        return GeomInteraction(this)
-    }
-
     fun ignoreInvisibleTargets(isTrue: Boolean): GeomInteractionBuilder {
         myIgnoreInvisibleTargets = isTrue
         return this
     }
 
-    companion object {
-        const val AREA_GEOM = true
-        const val NON_AREA_GEOM = false
+    fun build(): GeomInteraction {
+        return GeomInteraction(this)
+    }
 
-        private val AES_X = listOf(Aes.X)
-        private val AES_XY = listOf(Aes.X, Aes.Y)
 
+    class DemoAndTest(
+        private val supportedAes: List<Aes<*>>,
+        private val axisAes: List<Aes<*>>? = null,
+    ) {
+        fun univariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
+            return createBuilder(GeomTooltipSetup.univariateFunction(lookupStrategy))
+        }
+
+        fun bivariateFunction(area: Boolean): GeomInteractionBuilder {
+            return createBuilder(GeomTooltipSetup.bivariateFunction(area))
+        }
+
+        private fun createBuilder(geomTooltipSetup: GeomTooltipSetup): GeomInteractionBuilder {
+            return GeomInteractionBuilder(
+                locatorLookupSpace = geomTooltipSetup.locatorLookupSpace,
+                locatorLookupStrategy = geomTooltipSetup.locatorLookupStrategy,
+                tooltipAes = supportedAes - geomTooltipSetup.axisAesFromFunctionKind,
+                tooltipAxisAes = axisAes
+                    ?: if (!geomTooltipSetup.axisTooltipEnabled) emptyList()
+                    else geomTooltipSetup.axisAesFromFunctionKind,
+                tooltipOutlierAes = emptyList()
+            )
+        }
     }
 }
