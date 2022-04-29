@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.mapper.core.Mapper
+import jetbrains.datalore.vis.StyleRenderer
 import jetbrains.datalore.vis.svg.SvgLocatable
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgPlatformPeer
@@ -17,6 +18,9 @@ import jetbrains.datalore.vis.svg.SvgTextContent
 
 class SvgJfxPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
+
+    var styleRenderer: StyleRenderer? = null
+        private set
 
 //    private fun ensureElementConsistency(source: SvgNode, target: Node) {
 //        if (source is SvgElement && target !is SVGOMElement) {
@@ -93,5 +97,9 @@ class SvgJfxPeer : SvgPlatformPeer {
         }
 
         return DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
+    }
+
+    override fun applyStyleRenderer(styleRenderer: StyleRenderer) {
+        this.styleRenderer = styleRenderer
     }
 }

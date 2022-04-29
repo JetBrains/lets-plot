@@ -30,10 +30,10 @@ class AxisComponent(
     private val gridLineLength: Double,
     private val axisTheme: AxisTheme,
     private val gridTheme: PanelGridTheme,
-    private val useSmallFont: Boolean = false,
     private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
     private val hideGridlines: Boolean = false,
+    private val flippedAxis: Boolean
 ) : SvgComponent() {
 
     private val tickMarkPadding = Defaults.Plot.Axis.TICK_MARK_PADDING
@@ -46,9 +46,6 @@ class AxisComponent(
         val rootElement = rootGroup
         if (!hideAxis) {
             rootElement.addClass(Style.AXIS)
-            if (useSmallFont) {
-                rootElement.addClass(Style.SMALL_TICK_FONT)
-            }
         }
 
         val x1: Double
@@ -177,6 +174,12 @@ class AxisComponent(
         var tickLabel: TextLabel? = null
         if (!skipLabel && axisTheme.showLabels()) {
             tickLabel = TextLabel(label)
+            val axis = if (orientation.isHorizontal) {
+                if (flippedAxis) "y" else "x"
+            } else {
+                if (flippedAxis) "x" else "y"
+            }
+            tickLabel.addClassName("${Style.AXIS_TEXT}-$axis")
             tickLabel.textColor().set(axisTheme.labelColor())
         }
 

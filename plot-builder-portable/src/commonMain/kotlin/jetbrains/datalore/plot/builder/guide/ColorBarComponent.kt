@@ -11,6 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -68,6 +69,7 @@ class ColorBarComponent(
             addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
 
             val label = TextLabel(brLabel)
+            label.addClassName(Style.LEGEND_ITEM)
             label.textColor().set(theme.textColor())
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setVerticalAnchor(brInfo.labelVerticalAnchor)

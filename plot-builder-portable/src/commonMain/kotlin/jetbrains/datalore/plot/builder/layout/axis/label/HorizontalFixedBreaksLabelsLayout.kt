@@ -52,10 +52,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
                 labelsInfo = tiltedLayout().doLayout(axisLength, axisMapper, maxLabelsBounds)
                 if (overlap(labelsInfo, maxLabelsBounds)) {
                     labelsInfo = verticalLayout(labelSpec).doLayout(axisLength, axisMapper, maxLabelsBounds)
-                    if (overlap(labelsInfo, maxLabelsBounds)) {
-                        labelsInfo =
-                            verticalLayout(TICK_LABEL_SPEC_SMALL).doLayout(axisLength, axisMapper, maxLabelsBounds)
-                    }
                 }
             }
         }

@@ -30,7 +30,6 @@ abstract class AxisLayouter(
             .axisDomain(domainRange)
             .tickLabelsBoundsMax(maxTickLabelsBounds)
             // todo: add 1 labels info object
-            .tickLabelSmallFont(labelsInfo.smallFont)
             .tickLabelAdditionalOffsets(labelsInfo.labelAdditionalOffsets)
             .tickLabelHorizontalAnchor(labelsInfo.labelHorizontalAnchor)
             .tickLabelVerticalAnchor(labelsInfo.labelVerticalAnchor)

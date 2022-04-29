@@ -54,7 +54,6 @@ abstract class LegendBox : SvgComponent() {
                 l.titleBounds.origin,
                 l.titleHorizontalAnchor
             )
-            label.textColor().set(theme.titleColor())
             innerGroup.children().add(label.rootGroup)
         }
 
@@ -92,6 +91,7 @@ abstract class LegendBox : SvgComponent() {
     ): MultilineLabel {
         val label = MultilineLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
+        label.textColor().set(theme.titleColor())
         label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
         label.setLineHeight(PlotLabelSpec.LEGEND_TITLE.height())

@@ -5,11 +5,10 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DATA_TOOLTIP_FONT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
 import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
+import jetbrains.datalore.vis.StyleRenderer
 
 /**
  * Duplicating stylesheet for JavaFX platform is defined in
@@ -18,26 +17,30 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
 object Style {
     const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
 
+    val DEFAULT_STYLE_RENDERER = TextStyler()
+
     // classes
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"
-    const val PLOT_TITLE = "plt-plot-title"
-    const val PLOT_SUBTITLE = "plt-plot-subtitle"
-    const val PLOT_CAPTION = "plt-plot-caption"
+    const val PLOT_TITLE = "plot-title"
+    const val PLOT_SUBTITLE = "plot-subtitle"
+    const val PLOT_CAPTION = "plot-caption"
 
     const val AXIS = "plt-axis"
-
-    const val AXIS_TITLE = "plt-axis-title"
+    const val AXIS_TITLE = "axis-title"
+    const val AXIS_TEXT = "axis-text"
     const val TICK = "tick"
-    const val SMALL_TICK_FONT = "small-tick-font"
 
-    const val BACK = "back"
-
-    const val LEGEND = "plt_legend"
+    const val LEGEND = "legend"
     const val LEGEND_TITLE = "legend-title"
+    const val LEGEND_ITEM = "legend-item"
 
-    const val PLOT_DATA_TOOLTIP = "plt-data-tooltip"
-    const val PLOT_AXIS_TOOLTIP = "plt-axis-tooltip"
+    const val TOOLTIP_TEXT = "tooltip-text"
+    const val TOOLTIP_TITLE = "tooltip-title"
+    const val TOOLTIP_LABEL = "tooltip-label"
+    const val AXIS_TOOLTIP_TEXT = "axis-tooltip-text"
+
+    const val FACET_STRIP_TEXT = "facet-strip-text"
 
     private val CSS = """
         |.$PLOT_CONTAINER {
@@ -54,38 +57,15 @@ object Style {
         |	
         |	text-rendering: optimizeLegibility;
         |}
-        |.$PLOT_DATA_TOOLTIP text {
-        |	font-size: ${DATA_TOOLTIP_FONT_SIZE}px;
-        |}
-        |.$PLOT_AXIS_TOOLTIP text {
-        |	font-size: ${AXIS_TOOLTIP_FONT_SIZE}px;
-        |}
         |.$AXIS line {
         |	shape-rendering: crispedges;
         |}
     """.trimMargin()
 
-    val css: String
-        get() {
-            val css = StringBuilder(CSS.toString())
-            css.append('\n')
-            for (labelSpec in PlotLabelSpec.values()) {
-                val selector = selector(labelSpec)
-                css.append(LabelCss[labelSpec, selector])
-            }
-            return css.toString()
-        }
-
-    private fun selector(labelSpec: PlotLabelSpec): String {
-        return when (labelSpec) {
-            PlotLabelSpec.PLOT_TITLE -> ".$PLOT_TITLE text"
-            PlotLabelSpec.PLOT_SUBTITLE -> ".$PLOT_SUBTITLE text"
-            PlotLabelSpec.PLOT_CAPTION -> ".$PLOT_CAPTION text"
-            PlotLabelSpec.AXIS_TICK -> ".$AXIS .$TICK text"
-            PlotLabelSpec.AXIS_TICK_SMALL -> ".$AXIS.$SMALL_TICK_FONT .$TICK text"
-            PlotLabelSpec.AXIS_TITLE -> ".$AXIS_TITLE text"
-            PlotLabelSpec.LEGEND_TITLE -> ".$LEGEND .$LEGEND_TITLE text"
-            PlotLabelSpec.LEGEND_ITEM -> ".$LEGEND text"
-        }
+    fun generateCSS(styleRenderer: StyleRenderer): String {
+        val css = StringBuilder(CSS)
+        css.append('\n')
+        css.append(styleRenderer.css())
+        return css.toString()
     }
 }

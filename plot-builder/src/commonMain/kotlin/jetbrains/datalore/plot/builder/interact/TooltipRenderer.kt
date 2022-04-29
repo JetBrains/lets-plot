@@ -135,7 +135,7 @@ internal class TooltipRenderer(
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         title = spec.title,
-                        style = spec.style,
+                        textClassName = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
                         borderRadius = borderRadius,
@@ -282,12 +282,12 @@ internal class TooltipRenderer(
     private val TooltipSpec.style
         get() =
             when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
-                Y_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
-                VERTICAL_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                HORIZONTAL_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                CURSOR_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                ROTATED_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
+                X_AXIS_TOOLTIP -> if (flippedAxis) "${Style.AXIS_TOOLTIP_TEXT}-y" else "${Style.AXIS_TOOLTIP_TEXT}-x"
+                Y_AXIS_TOOLTIP -> if (flippedAxis) "${Style.AXIS_TOOLTIP_TEXT}-x" else "${Style.AXIS_TOOLTIP_TEXT}-y"
+                VERTICAL_TOOLTIP -> Style.TOOLTIP_TEXT
+                HORIZONTAL_TOOLTIP -> Style.TOOLTIP_TEXT
+                CURSOR_TOOLTIP -> Style.TOOLTIP_TEXT
+                ROTATED_TOOLTIP -> Style.TOOLTIP_TEXT
             }
 
     private val LayoutManager.PositionedTooltip.orientation

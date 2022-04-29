@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadHeight
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColLabelSize
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -119,8 +120,9 @@ internal class PlotTile(
                 val x = labelBounds.center.x
                 val y = labelBounds.center.y
                 val lab = TextLabel(xLabel)
-                lab.moveTo(x, y)
+                lab.addClassName("${Style.FACET_STRIP_TEXT}-x")
                 lab.textColor().set(theme.stripTextColor())
+                lab.moveTo(x, y)
                 lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                 lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                 add(lab)
@@ -147,8 +149,9 @@ internal class PlotTile(
             val y = labelBounds.center.y
 
             val lab = TextLabel(tileLayoutInfo.facetYLabel)
-            lab.moveTo(x, y)
+            lab.addClassName("${Style.FACET_STRIP_TEXT}-y")
             lab.textColor().set(theme.stripTextColor())
+            lab.moveTo(x, y)
             lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
             lab.rotate(90.0)
