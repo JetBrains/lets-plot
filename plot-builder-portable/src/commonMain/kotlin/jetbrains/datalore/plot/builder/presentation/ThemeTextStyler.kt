@@ -7,33 +7,42 @@ package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.FontProperties
+import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TEXT
+import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TITLE
+import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
+import jetbrains.datalore.plot.builder.presentation.Style.FACET_STRIP_TEXT
+import jetbrains.datalore.plot.builder.presentation.Style.LEGEND_ITEM
+import jetbrains.datalore.plot.builder.presentation.Style.LEGEND_TITLE
+import jetbrains.datalore.plot.builder.presentation.Style.PLOT_CAPTION
+import jetbrains.datalore.plot.builder.presentation.Style.PLOT_SUBTITLE
+import jetbrains.datalore.plot.builder.presentation.Style.PLOT_TITLE
 import jetbrains.datalore.plot.builder.theme.Theme
 
 
 class ThemeTextStyler(theme: Theme, flippedAxis: Boolean) : TextStyler() {
 
     init {
-        myTextStyles.setColor(Style.PLOT_TITLE, theme.plot().titleColor())
-        myTextStyles.setColor(Style.PLOT_SUBTITLE, theme.plot().subtitleColor())
-        myTextStyles.setColor(Style.PLOT_CAPTION, theme.plot().captionColor())
+        myTextStyles.setColor(PLOT_TITLE, theme.plot().titleColor())
+        myTextStyles.setColor(PLOT_SUBTITLE, theme.plot().subtitleColor())
+        myTextStyles.setColor(PLOT_CAPTION, theme.plot().captionColor())
 
-        myTextStyles.setColor(Style.LEGEND_TITLE, theme.legend().titleColor())
-        myTextStyles.setColor(Style.LEGEND_ITEM, theme.legend().textColor())
+        myTextStyles.setColor(LEGEND_TITLE, theme.legend().titleColor())
+        myTextStyles.setColor(LEGEND_ITEM, theme.legend().textColor())
 
         val hAxisTheme = theme.horizontalAxis(flippedAxis)
-        var suffix = if (flippedAxis) "-y" else "-x"
-        myTextStyles.setColor(Style.AXIS_TITLE + suffix, hAxisTheme.titleColor())
-        myTextStyles.setColor(Style.AXIS_TEXT + suffix, hAxisTheme.labelColor())
-        myTextStyles.setColor(Style.AXIS_TOOLTIP_TEXT + suffix, hAxisTheme.tooltipTextColor())
+        var axis = if (flippedAxis) "y" else "x"
+        myTextStyles.setColor("$AXIS_TITLE-$axis", hAxisTheme.titleColor())
+        myTextStyles.setColor("$AXIS_TEXT-$axis", hAxisTheme.labelColor())
+        myTextStyles.setColor("$AXIS_TOOLTIP_TEXT-$axis", hAxisTheme.tooltipTextColor())
 
         val vAxisTheme = theme.verticalAxis(flippedAxis)
-        suffix = if (flippedAxis) "-x" else "-y"
-        myTextStyles.setColor(Style.AXIS_TITLE + suffix, vAxisTheme.titleColor())
-        myTextStyles.setColor(Style.AXIS_TEXT + suffix, vAxisTheme.labelColor())
-        myTextStyles.setColor(Style.AXIS_TOOLTIP_TEXT + suffix, vAxisTheme.tooltipTextColor())
+        axis = if (flippedAxis) "x" else "y"
+        myTextStyles.setColor("$AXIS_TITLE-$axis", vAxisTheme.titleColor())
+        myTextStyles.setColor("$AXIS_TEXT-$axis", vAxisTheme.labelColor())
+        myTextStyles.setColor("$AXIS_TOOLTIP_TEXT-$axis", vAxisTheme.tooltipTextColor())
 
-        myTextStyles.setColor("${Style.FACET_STRIP_TEXT}-x", theme.facets().stripTextColor())
-        myTextStyles.setColor("${Style.FACET_STRIP_TEXT}-y", theme.facets().stripTextColor())
+        myTextStyles.setColor("$FACET_STRIP_TEXT-x", theme.facets().stripTextColor())
+        myTextStyles.setColor("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor())
     }
 
     companion object {
