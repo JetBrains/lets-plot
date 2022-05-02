@@ -22,7 +22,6 @@ import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PosProviderContext
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
@@ -201,7 +200,7 @@ class GeomLayerBuilder constructor() {
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
-        private val myPosProvider: PosProvider,
+        override val posProvider: PosProvider,
         renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
         varBindings: Collection<VarBinding>,
@@ -247,10 +246,6 @@ class GeomLayerBuilder constructor() {
 
         override fun renderedAes(): List<Aes<*>> {
             return myRenderedAes
-        }
-
-        override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-            return myPosProvider.createPos(ctx)
         }
 
         override fun hasBinding(aes: Aes<*>): Boolean {

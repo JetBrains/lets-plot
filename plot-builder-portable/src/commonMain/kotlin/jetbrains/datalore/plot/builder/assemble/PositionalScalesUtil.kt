@@ -174,7 +174,7 @@ internal object PositionalScalesUtil {
         val posAesX = Aes.affectingScaleX(layer.renderedAes())
         val posAesY = Aes.affectingScaleY(layer.renderedAes())
 
-        val pos = PlotUtil.createLayerPos(layer, aes)
+        val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aes)
         if (pos.isIdentity) {
             // simplified ranges
             val rangeX = RangeUtil.combineRanges(posAesX, aes)

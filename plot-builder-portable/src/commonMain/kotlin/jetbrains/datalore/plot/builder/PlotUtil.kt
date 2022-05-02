@@ -11,11 +11,12 @@ import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.assemble.PosProvider
 import kotlin.math.sign
 
 object PlotUtil {
-    internal fun createLayerPos(layer: GeomLayer, aes: Aesthetics): PositionAdjustment {
-        return layer.createPos(object : PosProviderContext {
+    internal fun createPositionAdjustment(posProvider: PosProvider, aes: Aesthetics): PositionAdjustment {
+        return posProvider.createPos(object : PosProviderContext {
             override val aesthetics: Aesthetics
                 get() = aes
 

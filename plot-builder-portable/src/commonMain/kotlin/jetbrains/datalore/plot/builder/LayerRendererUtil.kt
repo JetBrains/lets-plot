@@ -42,24 +42,26 @@ object LayerRendererUtil {
             }
         }
 
-        val pos = PlotUtil.createLayerPos(layer, aestheticsAfterOrientation)
+        val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
+        val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aestheticsAfterOrientation)
         return LayerRendererData(
-            layer,
-            aestheticsAfterOrientation,
-            aestheticMappersAfterOrientation,
-            pos
+            geom = layer.geom,
+            geomKind = layer.geomKind,
+            aesthetics = aestheticsAfterOrientation,
+            aestheticMappers = aestheticMappersAfterOrientation,
+            pos = pos,
+            contextualMapping = layer.contextualMapping,
+            mappedAes = mappedAes
         )
     }
 
     class LayerRendererData(
-        private val layer: GeomLayer,
+        val geom: Geom,
+        val geomKind: GeomKind,
         val aesthetics: Aesthetics,
         val aestheticMappers: Map<Aes<*>, ScaleMapper<*>>,
-        val pos: PositionAdjustment
-    ) {
-        val geom: Geom = layer.geom
-        val geomKind: GeomKind = layer.geomKind
-        val contextualMapping: ContextualMapping = layer.contextualMapping
-        val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
-    }
+        val pos: PositionAdjustment,
+        val contextualMapping: ContextualMapping,
+        val mappedAes: Set<Aes<*>>,
+    )
 }

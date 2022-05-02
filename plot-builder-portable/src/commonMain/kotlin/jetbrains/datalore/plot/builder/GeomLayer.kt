@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
+import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 
 interface GeomLayer {
@@ -23,6 +24,8 @@ interface GeomLayer {
     val geomKind: GeomKind
 
     val geom: Geom
+
+    val posProvider: PosProvider
 
     // ToDo: move: positional scales -> tile, all other scales -> plot
     val scaleMap: TypedScaleMap
@@ -46,8 +49,6 @@ interface GeomLayer {
     val isYOrientation: Boolean
 
     fun renderedAes(): List<Aes<*>>
-
-    fun createPos(ctx: PosProviderContext): PositionAdjustment
 
     fun hasBinding(aes: Aes<*>): Boolean
 
