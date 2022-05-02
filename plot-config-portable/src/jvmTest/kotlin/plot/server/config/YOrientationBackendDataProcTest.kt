@@ -15,11 +15,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Testing layer's property: orientation = "y"
- *
  * See related: YOrientationBatik.kt demo.
  */
-class BackendDataProcUtilTest {
+class YOrientationBackendDataProcTest {
 
     @Test
     fun test() {

@@ -6,7 +6,9 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 
 object LayerRendererUtil {
 
@@ -25,11 +27,26 @@ object LayerRendererUtil {
             layer.renderedAes(),
             aestheticMappers,
         )
-        val pos = PlotUtil.createLayerPos(layer, aesthetics)
+
+        val aestheticMappersAfterOrientation = aestheticMappers.let {
+            when (layer.isYOrientation) {
+                true -> YOrientationBaseUtil.flipAesKeys(it)
+                false -> it
+            }
+        }
+
+        val aestheticsAfterOrientation = aesthetics.let {
+            when (layer.isYOrientation) {
+                true -> YOrientationAesthetics(it)
+                false -> it
+            }
+        }
+
+        val pos = PlotUtil.createLayerPos(layer, aestheticsAfterOrientation)
         return LayerRendererData(
             layer,
-            aesthetics,
-            aestheticMappers,
+            aestheticsAfterOrientation,
+            aestheticMappersAfterOrientation,
             pos
         )
     }

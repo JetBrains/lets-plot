@@ -13,13 +13,34 @@ class YOrientation {
             basic(),
             (basic() + COORD_FLIP).toMutableMap(),
             basic(yOrientation = true),
-//            sortedXAlphabeticallyRevesed(),
-//            sortedXByCount(),
-//            groupedByFill(),
-//            groupedByFillSortedByCount(),
-//            fillByNumeric(),
-//            fillByNumericGrouped(),
-//            fillByNumericGroupedSortedByCount()
+            //---
+            sortedXAlphabeticallyRevesed(),
+            (sortedXAlphabeticallyRevesed() + COORD_FLIP).toMutableMap(),
+            sortedXAlphabeticallyRevesed(yOrientation = true),
+            //---
+            sortedXByCount(),
+            (sortedXByCount() + COORD_FLIP).toMutableMap(),
+            sortedXByCount(yOrientation = true),
+            //---
+            groupedByFill(),
+            (groupedByFill() + COORD_FLIP).toMutableMap(),
+            groupedByFill(yOrientation = true),
+            //---
+            groupedByFillSortedByCount(),
+            (groupedByFillSortedByCount() + COORD_FLIP).toMutableMap(),
+            groupedByFillSortedByCount(yOrientation = true),
+            //---
+            fillByNumeric(),
+            (fillByNumeric() + COORD_FLIP).toMutableMap(),
+            fillByNumeric(yOrientation = true),
+            //---
+            fillByNumericGrouped(),
+            (fillByNumericGrouped() + COORD_FLIP).toMutableMap(),
+            fillByNumericGrouped(yOrientation = true),
+            //---
+            fillByNumericGroupedSortedByCount(),
+            (fillByNumericGroupedSortedByCount() + COORD_FLIP).toMutableMap(),
+            fillByNumericGroupedSortedByCount(yOrientation = true),
         )
     }
 
@@ -29,37 +50,50 @@ class YOrientation {
         return createPlotSpec(mapping, yOrientation = yOrientation)
     }
 
-    private fun sortedXAlphabeticallyRevesed(): MutableMap<String, Any> {
-        val dataMeta = SORT_ALPHABETICALLY_REVERSED_DATA_META
-        return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta)
+    private fun sortedXAlphabeticallyRevesed(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR'}"
+        val dataMeta = dataMeta_SortAlphabeticallyReversed(yOrientation)
+        return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
     }
 
-    private fun sortedXByCount(): MutableMap<String, Any> {
-        val dataMeta = SORT_BY_COUNT_DATA_META
-        return createPlotSpec("{'x': '$CATEGORY_VAR'}", dataMeta)
+    private fun sortedXByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR'}"
+        val dataMeta = dataMeta_SortByCount(yOrientation)
+        return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
     }
 
-    private fun groupedByFill(): MutableMap<String, Any> {
-        return createPlotSpec("{'x': '$CATEGORY_VAR', 'fill': '$GROUP_VAR'}")
+    private fun groupedByFill(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$GROUP_VAR'}"
+        return createPlotSpec(mapping, yOrientation = yOrientation)
     }
 
-    private fun groupedByFillSortedByCount(): MutableMap<String, Any> {
-        return createPlotSpec("{'x': '$CATEGORY_VAR', 'fill': '$GROUP_VAR'}", SORT_BY_COUNT_DATA_META)
+    private fun groupedByFillSortedByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$GROUP_VAR'}"
+        val dataMeta = dataMeta_SortByCount(yOrientation)
+        return createPlotSpec(mapping, dataMeta, yOrientation = yOrientation)
     }
 
-    private fun fillByNumeric(): MutableMap<String, Any> {
-        return createPlotSpec("{'x': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR'}")
+    private fun fillByNumeric(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR'}"
+        return createPlotSpec(mapping, yOrientation = yOrientation)
     }
 
-    private fun fillByNumericGrouped(): MutableMap<String, Any> {
-        return createPlotSpec("{'x': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR', 'group': '$GROUP_VAR'}")
+    private fun fillByNumericGrouped(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR', 'group': '$GROUP_VAR'}"
+        return createPlotSpec(mapping, yOrientation = yOrientation)
     }
 
-    private fun fillByNumericGroupedSortedByCount(): MutableMap<String, Any> {
-        return createPlotSpec(
-            "{'x': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR', 'group': '$GROUP_VAR'}",
-            SORT_BY_COUNT_DATA_META
-        )
+    private fun fillByNumericGroupedSortedByCount(yOrientation: Boolean = false): MutableMap<String, Any> {
+        val categoryAes = categoryAes(yOrientation)
+        val mapping = "{'$categoryAes': '$CATEGORY_VAR', 'fill': '$NUMERIC_VAR', 'group': '$GROUP_VAR'}"
+        val dataMeta = dataMeta_SortByCount(yOrientation)
+        return createPlotSpec(mapping, dataMeta, yOrientation)
     }
 
 
@@ -87,11 +121,13 @@ class YOrientation {
             )
         )
 
-        private val SORT_BY_COUNT_DATA_META = """
+        @Suppress("FunctionName")
+        private fun dataMeta_SortByCount(yOrientation: Boolean): String {
+            return """
             {
                 'mapping_annotations': [ 
                     {
-                        'aes': 'x',
+                        'aes': '${categoryAes(yOrientation)}',
                         'annotation': 'as_discrete',
                         'parameters': { 
                                 'label': '$CATEGORY_VAR',
@@ -101,12 +137,15 @@ class YOrientation {
                 ]
             }
         """.trimIndent()
+        }
 
-        private val SORT_ALPHABETICALLY_REVERSED_DATA_META = """
+        @Suppress("FunctionName")
+        private fun dataMeta_SortAlphabeticallyReversed(yOrientation: Boolean): String {
+            return """
             {
                 'mapping_annotations': [ 
                     {
-                        'aes': 'x',
+                        'aes': '${categoryAes(yOrientation)}',
                         'annotation': 'as_discrete',
                         'parameters': { 
                                 'label': '$CATEGORY_VAR',
@@ -116,6 +155,7 @@ class YOrientation {
                 ]
             }
         """.trimIndent()
+        }
 
         private fun categoryAes(yOrientation: Boolean): String {
             return if (yOrientation) "y" else "x"
