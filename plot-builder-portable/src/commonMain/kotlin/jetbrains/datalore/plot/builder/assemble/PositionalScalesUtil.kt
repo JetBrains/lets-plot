@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -137,19 +138,33 @@ internal object PositionalScalesUtil {
         }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
-
         return PlotUtil.createLayerAesthetics(layer, aesList, mappers)
     }
 
     private fun computeLayerDryRunXYRanges(
-        layer: GeomLayer, aes: Aesthetics
+        layer: GeomLayer,
+        aesthetics: Aesthetics
     ): Pair<DoubleSpan?, DoubleSpan?> {
-        val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
-        val rangesAfterPosAdjustment =
-            computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
+        @Suppress("NAME_SHADOWING")
+        val rangesAfterPosAdjustment = when (layer.isYOrientation) {
+            true -> YOrientationAesthetics(aesthetics)
+            false -> aesthetics
+        }.let { aesthetics ->
+            val geomCtx = GeomContextBuilder().aesthetics(aesthetics).build()
+            val rangesXY =
+                computeLayerDryRunXYRangesAfterPosAdjustment(layer, aesthetics, geomCtx)
+
+            // return to "normal" orientation
+            when (layer.isYOrientation) {
+                true -> Pair(rangesXY.second, rangesXY.first)
+                false -> rangesXY
+            }
+        }
+
+        val geomCtx = GeomContextBuilder().aesthetics(aesthetics).build()
         val (xRangeAfterSizeExpand, yRangeAfterSizeExpand) =
-            computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
+            computeLayerDryRunXYRangesAfterSizeExpand(layer, aesthetics, geomCtx)
 
         var rangeX = rangesAfterPosAdjustment.first
         if (rangeX == null) {
@@ -249,25 +264,25 @@ internal object PositionalScalesUtil {
     ): Pair<DoubleSpan?, DoubleSpan?> {
         val renderedAes = layer.renderedAes()
 
-        val (widthOrientedAxisAes, heightOrientedAxisAes) = when (layer.isYOrientation) {
+        val (widthAxis, heightAxis) = when (layer.isYOrientation) {
             true -> Aes.Y to Aes.X
             false -> Aes.X to Aes.Y
         }
 
         val xy = mapOf(
-            widthOrientedAxisAes to when {
+            widthAxis to when {
                 Aes.WIDTH in renderedAes -> Aes.WIDTH
                 layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
                 else -> null
-            }?.let {
-                computeLayerDryRunRangeAfterSizeExpand(widthOrientedAxisAes, it, aesthetics, geomCtx)
+            }?.let { widthAes ->
+                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx)
             },
-            heightOrientedAxisAes to when {
+            heightAxis to when {
                 Aes.HEIGHT in renderedAes -> Aes.HEIGHT
                 layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
                 else -> null
-            }?.let {
-                computeLayerDryRunRangeAfterSizeExpand(heightOrientedAxisAes, it, aesthetics, geomCtx)
+            }?.let { heightAes ->
+                computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx)
             }
         )
 
