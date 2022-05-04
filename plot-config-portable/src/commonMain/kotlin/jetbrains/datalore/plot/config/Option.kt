@@ -317,6 +317,7 @@ object Option {
 
         object QQ {
             const val DISTRIBUTION = "distribution"
+            const val DISTRIBUTION_PARAMETERS = "dparams"
         }
     }
 

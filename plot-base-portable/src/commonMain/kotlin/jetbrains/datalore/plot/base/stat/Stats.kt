@@ -286,9 +286,10 @@ object Stats {
     }
 
     fun qq(
-        distribution: QQStat.Distribution
+        distribution: QQStat.Distribution,
+        distributionParameters: List<Double>
     ): QQStat {
-        return QQStat(distribution)
+        return QQStat(distribution, distributionParameters)
     }
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {

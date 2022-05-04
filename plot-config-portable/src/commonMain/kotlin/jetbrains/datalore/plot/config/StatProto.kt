@@ -318,7 +318,8 @@ object StatProto {
                 )
             }
         }
+        val distributionParameters = options.getDoubleList(QQ.DISTRIBUTION_PARAMETERS)
 
-        return Stats.qq(distribution ?: QQStat.DEF_DISTRIBUTION)
+        return Stats.qq(distribution ?: QQStat.DEF_DISTRIBUTION, distributionParameters)
     }
 }

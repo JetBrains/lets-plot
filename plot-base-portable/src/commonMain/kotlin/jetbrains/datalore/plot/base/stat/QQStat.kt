@@ -12,7 +12,8 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.math3.*
 
 class QQStat(
-    private val distribution: Distribution
+    private val distribution: Distribution,
+    private val distributionParameters: List<Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -29,10 +30,22 @@ class QQStat(
 
         val t = (1..statY.size).map { (it - 0.5) / statY.size }
         val dist: AbstractRealDistribution = when (distribution) {
-            Distribution.NORMAL -> NormalDistribution(0.0, 1.0)
-            Distribution.UNIFORM -> UniformDistribution(0.0, 1.0)
-            Distribution.T -> TDistribution(1.0)
-            Distribution.GAMMA -> GammaDistribution(1.0, 1.0)
+            Distribution.NORMAL -> {
+                val mean = distributionParameters.getOrNull(0) ?: 0.0
+                val standardDeviation = distributionParameters.getOrNull(1) ?: 1.0
+                NormalDistribution(mean, standardDeviation)
+            }
+            Distribution.UNIFORM -> {
+                val a = distributionParameters.getOrNull(0) ?: 0.0
+                val b = distributionParameters.getOrNull(1) ?: 1.0
+                UniformDistribution(a, b)
+            }
+            Distribution.T -> TDistribution(distributionParameters.getOrNull(0) ?: 1.0)
+            Distribution.GAMMA -> {
+                val alpha = distributionParameters.getOrNull(0) ?: 1.0
+                val beta = distributionParameters.getOrNull(1) ?: 1.0
+                GammaDistribution(alpha, beta)
+            }
         }
         val statX = t.map { dist.inverseCumulativeProbability(it) }
 
