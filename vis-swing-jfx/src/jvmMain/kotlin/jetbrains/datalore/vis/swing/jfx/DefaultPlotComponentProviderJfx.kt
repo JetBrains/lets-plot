@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.swing.jfx
 
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.vis.StyleRenderer
+import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.PlotSpecComponentProvider
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
@@ -45,8 +45,8 @@ open class DefaultPlotComponentProviderJfx(
     companion object {
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderJfx::class)
 
-        private val SVG_COMPONENT_FACTORY_JFX = { svg: SvgSvgElement, styleRenderer: StyleRenderer ->
-            SceneMapperJfxPanel(svg, listOf(Style.JFX_PLOT_STYLESHEET), styleRenderer)
+        private val SVG_COMPONENT_FACTORY_JFX = { svg: SvgSvgElement, styleProperties: StyleProperties ->
+            SceneMapperJfxPanel(svg, listOf(Style.JFX_PLOT_STYLESHEET), styleProperties)
         }
     }
 }

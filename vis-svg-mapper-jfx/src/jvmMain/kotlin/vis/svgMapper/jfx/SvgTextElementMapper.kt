@@ -77,7 +77,7 @@ internal class SvgTextElementMapper(
         if (!className.isNullOrEmpty()) {
             target.font = styleProperties.getFont(className)
 
-            val color = styleRenderer.getColor(className)
+            val color = styleProperties.getColor(className)
             myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${color.toHexColor()};")
         }
     }

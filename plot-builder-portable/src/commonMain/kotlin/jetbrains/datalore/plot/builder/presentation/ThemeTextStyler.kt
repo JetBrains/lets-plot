@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.defaultTheme.values.FontProperties
 import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TITLE
 import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
@@ -16,6 +15,7 @@ import jetbrains.datalore.plot.builder.presentation.Style.LEGEND_TITLE
 import jetbrains.datalore.plot.builder.presentation.Style.PLOT_CAPTION
 import jetbrains.datalore.plot.builder.presentation.Style.PLOT_SUBTITLE
 import jetbrains.datalore.plot.builder.presentation.Style.PLOT_TITLE
+import jetbrains.datalore.plot.builder.presentation.TextStyler.Companion.FontProperties
 import jetbrains.datalore.plot.builder.theme.Theme
 
 
@@ -47,7 +47,7 @@ class ThemeTextStyler(theme: Theme, flippedAxis: Boolean) : TextStyler() {
 
     companion object {
         private fun MutableMap<String, FontProperties>.setColor(key: String, color: Color) {
-            this[key] = fontProperties(
+            this[key] = FontProperties.create(
                 this[key]?.family,
                 this[key]?.face,
                 this[key]?.size,

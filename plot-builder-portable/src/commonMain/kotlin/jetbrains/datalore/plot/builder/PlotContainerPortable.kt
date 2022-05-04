@@ -30,7 +30,7 @@ open class PlotContainerPortable(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
-    val styleRenderer: StyleProperties
+    val styleProperties: StyleProperties
         get() = plot.styleProperties
 
     private var myContentBuilt: Boolean = false

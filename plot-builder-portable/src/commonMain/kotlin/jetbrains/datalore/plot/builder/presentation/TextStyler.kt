@@ -25,32 +25,31 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.vis.StyleProperties
 
 
-class TextStyler : StyleProperties {
+open class TextStyler : StyleProperties {
 
-    protected val myTextStyles: MutableMap<String, FontProperties> by lazy {
-        mutableMapOf(PLOT_TITLE to FontProperties(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
-            PLOT_SUBTITLE to FontProperties(size = Subtitle.FONT_SIZE.toDouble()),
-            PLOT_CAPTION to FontProperties(size = Caption.FONT_SIZE.toDouble()),
-            LEGEND_TITLE to FontProperties(size = Legend.TITLE_FONT_SIZE.toDouble()),
-            LEGEND_ITEM to FontProperties(size = Legend.ITEM_FONT_SIZE.toDouble()),
-            TOOLTIP_TEXT to FontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
-            TOOLTIP_TITLE to FontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
-            TOOLTIP_LABEL to FontProperties(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
-            "$AXIS_TITLE-x" to FontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
-            "$AXIS_TITLE-y" to FontProperties(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
-            "$AXIS_TEXT-x" to FontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
-            "$AXIS_TEXT-y" to FontProperties(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
-            "$AXIS_TOOLTIP_TEXT-x" to FontProperties(
-                size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
-                color = Color.WHITE
-            ),
-            "$AXIS_TOOLTIP_TEXT-y" to FontProperties(
-                size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
-                color = Color.WHITE
-            ),
-            "$FACET_STRIP_TEXT-x" to FontProperties(size = Defaults.FONT_MEDIUM.toDouble()),
-            "$FACET_STRIP_TEXT-y" to FontProperties(size = Defaults.FONT_MEDIUM.toDouble()))
-    }
+    protected val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
+        PLOT_TITLE to FontProperties.create(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
+        PLOT_SUBTITLE to FontProperties.create(size = Subtitle.FONT_SIZE.toDouble()),
+        PLOT_CAPTION to FontProperties.create(size = Caption.FONT_SIZE.toDouble()),
+        LEGEND_TITLE to FontProperties.create(size = Legend.TITLE_FONT_SIZE.toDouble()),
+        LEGEND_ITEM to FontProperties.create(size = Legend.ITEM_FONT_SIZE.toDouble()),
+        TOOLTIP_TEXT to FontProperties.create(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
+        TOOLTIP_TITLE to FontProperties.create(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
+        TOOLTIP_LABEL to FontProperties.create(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(), face = FontFace.BOLD),
+        "$AXIS_TITLE-x" to FontProperties.create(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+        "$AXIS_TITLE-y" to FontProperties.create(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+        "$AXIS_TEXT-x" to FontProperties.create(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
+        "$AXIS_TEXT-y" to FontProperties.create(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
+        "$AXIS_TOOLTIP_TEXT-x" to FontProperties.create(
+            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            color = Color.WHITE
+        ),
+        "$AXIS_TOOLTIP_TEXT-y" to FontProperties.create(
+            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            color = Color.WHITE
+        ),
+        "$FACET_STRIP_TEXT-x" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble()),
+        "$FACET_STRIP_TEXT-y" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble()))
 
     override fun getColor(className: String): Color {
         return myTextStyles[className]?.color ?: DEFAULT_COLOR
@@ -97,11 +96,25 @@ class TextStyler : StyleProperties {
         val DEFAULT_FACE = FontFace.NORMAL
         val DEFAULT_COLOR = Color.BLACK
 
-        private data class FontProperties(
-            val family: FontFamily = DEFAULT_FAMILY,
-            val face: FontFace = DEFAULT_FACE,
-            val size: Double = DEFAULT_SIZE,
-            val color: Color = DEFAULT_COLOR
-        )
+        data class FontProperties(
+            val family: FontFamily,
+            val face: FontFace,
+            val size: Double,
+            val color: Color,
+        ) {
+            companion object {
+                fun create(
+                    family: FontFamily? = null,
+                    face: FontFace? = null,
+                    size: Double? = null,
+                    color: Color? = null
+                ) = FontProperties(
+                    family ?: DEFAULT_FAMILY,
+                    face ?: DEFAULT_FACE,
+                    size ?: DEFAULT_SIZE,
+                    color ?: DEFAULT_COLOR
+                )
+            }
+        }
     }
 }
