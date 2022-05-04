@@ -312,9 +312,11 @@ object StatProto {
                 "uniform" -> QQStat.Distribution.UNIFORM
                 "t" -> QQStat.Distribution.T
                 "gamma" -> QQStat.Distribution.GAMMA
+                "exp" -> QQStat.Distribution.EXP
+                "chi-squared" -> QQStat.Distribution.CHI_SQUARED
                 else -> throw IllegalArgumentException(
                     "Unsupported distribution: '$it'\n" +
-                    "Use one of: normal, uniform, t, gamma."
+                    "Use one of: normal, uniform, t, gamma, exp, chi-squared."
                 )
             }
         }

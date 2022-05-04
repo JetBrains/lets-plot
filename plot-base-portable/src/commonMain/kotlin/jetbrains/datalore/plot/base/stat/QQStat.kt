@@ -46,6 +46,14 @@ class QQStat(
                 val beta = distributionParameters.getOrNull(1) ?: 1.0
                 GammaDistribution(alpha, beta)
             }
+            Distribution.EXP -> {
+                val lambda = distributionParameters.getOrNull(0) ?: 1.0
+                GammaDistribution(1.0, lambda)
+            }
+            Distribution.CHI_SQUARED -> {
+                val k = distributionParameters.getOrNull(0) ?: 1.0
+                GammaDistribution(k / 2.0, 0.5)
+            }
         }
         val statX = t.map { dist.inverseCumulativeProbability(it) }
 
@@ -59,7 +67,9 @@ class QQStat(
         NORMAL,
         UNIFORM,
         T,
-        GAMMA
+        GAMMA,
+        EXP,
+        CHI_SQUARED
     }
 
     companion object {
