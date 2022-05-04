@@ -113,7 +113,9 @@ object Renderers {
             ctx.beginPath()
 
             drawLines(geometry, ctx, Context2d::stroke)
-            chartElement.arrowSpec?.let { arrowSpec -> drawArrows(arrowSpec, geometry, color, ctx) }
+            chartElement.arrowSpec?.let { arrowSpec ->
+                drawArrows(arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx)
+            }
         }
 
         class ArrowSpec private constructor(
@@ -128,9 +130,17 @@ object Renderers {
             val isOnLastEnd: Boolean
                 get() = end == End.LAST || end == End.BOTH
 
-            fun createGeometry(polarAngle: Double, x: Double, y: Double): Pair<DoubleArray, DoubleArray> {
-                val xs = doubleArrayOf(x - length * cos(polarAngle - angle), x, x - length * cos(polarAngle + angle))
-                val ys = doubleArrayOf(y - length * sin(polarAngle - angle), y, y - length * sin(polarAngle + angle))
+            fun createGeometry(polarAngle: Double, x: Double, y: Double, scalingFactor: Double): Pair<DoubleArray, DoubleArray> {
+                val xs = doubleArrayOf(
+                    x - length * scalingFactor * cos(polarAngle - angle),
+                    x,
+                    x - length * scalingFactor * cos(polarAngle + angle)
+                )
+                val ys = doubleArrayOf(
+                    y - length * scalingFactor * sin(polarAngle - angle),
+                    y,
+                    y - length * scalingFactor * sin(polarAngle + angle)
+                )
                 return xs to ys
             }
 
@@ -168,7 +178,13 @@ object Renderers {
             }
         }
 
-        private fun drawArrows(arrowSpec: ArrowSpec, geometry: MultiPolygon<Client>, color: Color, ctx: Context2d) {
+        private fun drawArrows(
+            arrowSpec: ArrowSpec,
+            geometry: MultiPolygon<Client>,
+            color: Color,
+            scalingSizeFactor: Double,
+            ctx: Context2d
+        ) {
 
             fun drawArrowAtEnd(points: List<ClientPoint>, arrowSpec: ArrowSpec) {
                 if (points.size < 2) {
@@ -183,7 +199,7 @@ object Renderers {
                     ctx.setLineDash(doubleArrayOf())
 
                     val polarAngle = atan2(ordinate, abscissa)
-                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y)
+                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y, scalingSizeFactor)
                     ctx.moveTo(xs[0], ys[0])
                     for (i in 1..2) {
                         ctx.lineTo(xs[i], ys[i])
