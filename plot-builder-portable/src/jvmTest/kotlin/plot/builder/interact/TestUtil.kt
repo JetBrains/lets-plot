@@ -26,7 +26,9 @@ import kotlin.test.assertTrue
 
 object TestUtil {
     val axisTheme = object : AxisTheme {
-        override val axis = ""
+        override val axis: String
+            get() = TODO("Not yet implemented")
+
         override fun showLine() = TODO("Not yet implemented")
         override fun showTickMarks() = TODO("Not yet implemented")
         override fun showLabels() = TODO("Not yet implemented")
