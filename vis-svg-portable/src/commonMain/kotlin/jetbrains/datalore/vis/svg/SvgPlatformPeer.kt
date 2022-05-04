@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.svg
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.vis.StyleRenderer
+import jetbrains.datalore.vis.StyleProperties
 
 interface SvgPlatformPeer {
     fun getComputedTextLength(node: SvgTextContent): Double
@@ -18,5 +18,5 @@ interface SvgPlatformPeer {
 
     fun getBBox(element: SvgLocatable): DoubleRectangle
 
-    fun applyStyleRenderer(styleRenderer: StyleRenderer)
+    fun applyStyleProperties(styleProperties: StyleProperties)
 }

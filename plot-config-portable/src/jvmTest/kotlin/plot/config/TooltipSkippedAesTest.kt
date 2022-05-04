@@ -179,6 +179,7 @@ class TooltipSkippedAesTest {
 
     companion object {
         private val axisTheme = object : AxisTheme {
+            override val axis = ""
             override fun showLine() = TODO("Not yet implemented")
             override fun showTickMarks() = TODO("Not yet implemented")
             override fun showLabels() = TODO("Not yet implemented")

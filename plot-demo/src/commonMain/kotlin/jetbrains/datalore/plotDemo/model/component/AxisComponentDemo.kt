@@ -146,8 +146,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 breaksData = AxisUtil.breaksData(scale.getScaleBreaks(), scaleMapper, coord, orientation.isHorizontal),
                 gridLineLength = 100.0,
                 axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(flipAxis = false),
-                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),
-                flippedAxis = false
+                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
             )
 
             return axis

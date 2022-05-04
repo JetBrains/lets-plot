@@ -17,7 +17,7 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.StyleRenderer
+import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping
 
@@ -47,7 +47,7 @@ internal class SvgTextElementMapper(
     }
 
     override fun applyStyle() {
-        setFontProperties(target, peer.styleRenderer)
+        setFontProperties(target, peer.styleProperties)
     }
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
@@ -68,13 +68,13 @@ internal class SvgTextElementMapper(
         )
     }
 
-    private fun setFontProperties(target: Text, styleRenderer: StyleRenderer?) {
-        if (styleRenderer == null) {
+    private fun setFontProperties(target: Text, styleProperties: StyleProperties?) {
+        if (styleProperties == null) {
             return
         }
         val className = target.parent.styleClass?.toString()
         if (!className.isNullOrEmpty()) {
-            target.font = styleRenderer.getFont(className)
+            target.font = styleProperties.getFont(className)
 
             //val color = styleRenderer.getColor(className)
             //myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${color.toHexColor()};")
@@ -103,7 +103,7 @@ internal class SvgTextElementMapper(
             }
         }
 
-        private fun StyleRenderer.getFont(className: String): Font {
+        private fun StyleProperties.getFont(className: String): Font {
             //val fontFamily = getFontFamily(className)
             val size = getFontSize(className)
             val posture = if (getIsItalic(className)) FontPosture.ITALIC else null

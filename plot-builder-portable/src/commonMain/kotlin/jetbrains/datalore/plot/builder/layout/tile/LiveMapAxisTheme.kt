@@ -10,6 +10,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class LiveMapAxisTheme : AxisTheme {
+    override val axis: String = UNSUPPORTED()
+
     override fun showLine(): Boolean = false
 
     override fun showTickMarks(): Boolean = false

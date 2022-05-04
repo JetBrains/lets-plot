@@ -104,8 +104,7 @@ internal class SquareFrameOfReference(
                 hAxisTheme,
                 hGridTheme,
                 geomBounds.height,
-                isDebugDrawing,
-                flipAxis
+                isDebugDrawing
             )
             hAxis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
             parent.add(hAxis)
@@ -125,8 +124,7 @@ internal class SquareFrameOfReference(
                 vAxisTheme,
                 vGridTheme,
                 geomBounds.width,
-                isDebugDrawing,
-                flipAxis
+                isDebugDrawing
             )
             vAxis.moveTo(geomBounds.origin)
             parent.add(vAxis)
@@ -209,8 +207,7 @@ internal class SquareFrameOfReference(
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
-            isDebugDrawing: Boolean,
-            flippedAxis: Boolean
+            isDebugDrawing: Boolean
         ): AxisComponent {
             check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis componenmt" }
             val orientation = info.orientation
@@ -239,8 +236,7 @@ internal class SquareFrameOfReference(
                 gridTheme = gridTheme,
                 hideAxis = hideAxis,
                 hideAxisBreaks = hideAxisBreaks,
-                hideGridlines = hideGridlines,
-                flippedAxis = flippedAxis
+                hideGridlines = hideGridlines
             )
 
             if (isDebugDrawing) {

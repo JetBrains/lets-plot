@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.svgMapper.batik
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.vis.StyleRenderer
+import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.*
 import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.anim.dom.SVGOMTextContentElement
@@ -106,6 +106,6 @@ internal class SvgBatikPeer : SvgPlatformPeer {
         return bbox
     }
 
-    override fun applyStyleRenderer(styleRenderer: StyleRenderer) {
+    override fun applyStyleProperties(styleProperties: StyleProperties) {
     }
 }

@@ -282,8 +282,8 @@ internal class TooltipRenderer(
     private val TooltipSpec.style
         get() =
             when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> if (flippedAxis) "${Style.AXIS_TOOLTIP_TEXT}-y" else "${Style.AXIS_TOOLTIP_TEXT}-x"
-                Y_AXIS_TOOLTIP -> if (flippedAxis) "${Style.AXIS_TOOLTIP_TEXT}-x" else "${Style.AXIS_TOOLTIP_TEXT}-y"
+                X_AXIS_TOOLTIP -> "${Style.AXIS_TOOLTIP_TEXT}-${xAxisTheme.axis}"
+                Y_AXIS_TOOLTIP -> "${Style.AXIS_TOOLTIP_TEXT}-${yAxisTheme.axis}"
                 VERTICAL_TOOLTIP -> Style.TOOLTIP_TEXT
                 HORIZONTAL_TOOLTIP -> Style.TOOLTIP_TEXT
                 CURSOR_TOOLTIP -> Style.TOOLTIP_TEXT

@@ -23,7 +23,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class DefaultAxisTheme(
-    axis: String,
+    override val axis: String,
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), AxisTheme {
 

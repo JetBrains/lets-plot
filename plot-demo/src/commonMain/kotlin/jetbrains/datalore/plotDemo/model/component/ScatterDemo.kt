@@ -110,8 +110,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX(),
-                flippedAxis = false
+                gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -128,8 +127,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY(),
-                flippedAxis = false
+                gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -290,8 +288,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX(),
-                flippedAxis = false
+                gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -308,8 +305,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY(),
-                flippedAxis = false
+                gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -412,8 +408,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX(),
-                flippedAxis = false
+                gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -430,8 +425,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY(),
-                flippedAxis = false
+                gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
