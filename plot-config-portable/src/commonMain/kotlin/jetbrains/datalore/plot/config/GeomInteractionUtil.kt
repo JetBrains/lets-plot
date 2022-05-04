@@ -36,7 +36,6 @@ object GeomInteractionUtil {
         theme: Theme
     ): GeomInteractionBuilder {
         val tooltipSetup = createGeomTooltipSetup(
-            allSupportedAes = layerConfig.geomProto.renders(),
             geomKind = layerConfig.geomProto.geomKind,
             statKind = layerConfig.statKind,
             isCrosshairEnabled = isCrosshairEnabled(layerConfig),
@@ -109,14 +108,12 @@ object GeomInteractionUtil {
     }
 
     private fun createGeomTooltipSetup(
-        allSupportedAes: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
         multilayerWithTooltips: Boolean,
     ): GeomTooltipSetup {
         val tooltipSetup = createGeomTooltipSetup(
-            allSupportedAes,
             geomKind,
             statKind,
             isCrosshairEnabled,
@@ -146,7 +143,6 @@ object GeomInteractionUtil {
     }
 
     private fun createGeomTooltipSetup(
-        allSupportedAes: List<Aes<*>>,
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
@@ -216,7 +212,7 @@ object GeomInteractionUtil {
 
             GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
-            else -> return GeomTooltipSetup.none(allSupportedAes)
+            else -> return GeomTooltipSetup.none()
         }
     }
 

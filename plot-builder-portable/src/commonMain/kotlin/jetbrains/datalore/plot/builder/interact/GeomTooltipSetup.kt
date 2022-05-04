@@ -73,12 +73,12 @@ class GeomTooltipSetup private constructor(
             )
         }
 
-        fun none(allSupportedAes: List<Aes<*>>): GeomTooltipSetup {
+        fun none(): GeomTooltipSetup {
             val axisTooltipVisibilityFromFunctionKind = true
             return GeomTooltipSetup(
                 locatorLookupStrategy = GeomTargetLocator.LookupStrategy.NONE,
                 locatorLookupSpace = GeomTargetLocator.LookupSpace.NONE,
-                axisAesFromFunctionKind = allSupportedAes,
+                axisAesFromFunctionKind = emptyList(),
                 axisTooltipVisibilityFromFunctionKind = axisTooltipVisibilityFromFunctionKind,
                 axisTooltipEnabled = isAxisTooltipEnabled(
                     axisTooltipVisibilityFromConfig = null,
