@@ -11,15 +11,15 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.ScaledCanvas
 import java.awt.Graphics2D
-import java.awt.Image
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
+
 
 internal class AwtCanvas
 private constructor(
     val image: BufferedImage,
     size: Vector,
-    pixelRatio: Double
+    pixelRatio: Double,
 ) : ScaledCanvas(AwtContext2d(image.createGraphics() as Graphics2D), size, pixelRatio) {
 
     companion object {
@@ -36,5 +36,17 @@ private constructor(
         return Asyncs.constant(AwtSnapshot(image))
     }
 
-    internal data class AwtSnapshot(val image: Image) : Canvas.Snapshot
+    override fun immidiateSnapshot(): Canvas.Snapshot {
+        return AwtSnapshot(image)
+    }
+
+    internal data class AwtSnapshot(val image: BufferedImage) : Canvas.Snapshot {
+        override fun copy(): AwtSnapshot {
+            val b = BufferedImage(image.getWidth(), image.getHeight(), image.getType())
+            val g: Graphics2D = b.createGraphics()
+            g.drawImage(image, 0, 0, null)
+            g.dispose()
+            return AwtSnapshot(b)
+        }
+    }
 }

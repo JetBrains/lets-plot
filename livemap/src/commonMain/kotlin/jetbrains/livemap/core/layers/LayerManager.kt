@@ -5,9 +5,169 @@
 
 package jetbrains.livemap.core.layers
 
-interface LayerManager {
-    fun createLayerRenderingSystem(): LayersRenderingSystem
-    fun addLayer(name: String, group: LayerGroup): CanvasLayerComponent
-    fun removeLayer(group: LayerGroup, canvasLayer: CanvasLayer)
-    fun createLayersOrderComponent(): LayersOrderComponent
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.minus
+import jetbrains.datalore.vis.canvas.Canvas
+import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.SingleCanvasControl
+import jetbrains.datalore.vis.canvas.drawImage
+import jetbrains.livemap.Client
+import jetbrains.livemap.core.layers.LayerKind.UI
+
+abstract class LayerManager {
+    abstract fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent
+    abstract fun removeLayer(canvasLayer: CanvasLayer)
+    abstract fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>)
+    abstract fun repaint(dirtyLayers: List<CanvasLayer>)
+
+    protected abstract fun repaintLayer(layer: CanvasLayer, offset: Vec<Client> = Client.ZERO_VEC)
+
+    private val children = HashMap<LayerKind, MutableList<CanvasLayer>>()
+    val layers: MutableList<CanvasLayer> = mutableListOf()
+
+    protected fun add(kind: LayerKind, layer: CanvasLayer) {
+        children.getOrPut(kind, ::ArrayList).add(layer)
+        layers.clear()
+        layers.addAll(LayerKind.values().flatMap { children[it] ?: emptyList<CanvasLayer>() })
+    }
+
+    protected fun remove(layer: CanvasLayer) {
+        children[layer.kind]?.remove(layer)
+        layers.remove(layer)
+    }
+}
+
+class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
+    private val singleCanvasControl: SingleCanvasControl = SingleCanvasControl(canvasControl)
+    private val rect: DoubleRectangle = DoubleRectangle(DoubleVector.ZERO, canvasControl.size.toDoubleVector())
+    private val myBackingStore = mutableMapOf<CanvasLayer, Canvas.Snapshot>()
+    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<Client>>()
+
+    override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>) {
+        singleCanvasControl.context.clearRect(rect)
+
+        layers.forEach { layer ->
+            when (layer.panningPolicy) {
+                PanningPolicy.COPY -> panLayer(layer, offset)
+                PanningPolicy.REPAINT -> {
+                    if (layer in dirtyLayers) {
+                        repaintLayer(layer, offset)
+                    }
+                    panLayer(layer, offset)
+                }
+            }
+        }
+    }
+
+    override fun repaint(dirtyLayers: List<CanvasLayer>) {
+        if (dirtyLayers.isEmpty()) return
+
+        dirtyLayers.forEach(::repaintLayer)
+
+        singleCanvasControl.context.clearRect(rect)
+        layers.forEach {
+            myBackingStore[it]?.let { snapshot ->
+                singleCanvasControl.context.drawImage(snapshot)
+            }
+        }
+    }
+
+    private fun panLayer(layer: CanvasLayer, offset: Vec<Client>) {
+        when (layer.kind) {
+            UI -> Client.ZERO_VEC
+            else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
+        }.let { p ->
+            myBackingStore[layer]?.let { snapshot ->
+                singleCanvasControl.context.drawImage(snapshot, p)
+            }
+        }
+    }
+
+    override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>) {
+        layer.clear()
+        layer.render()
+        myBackingStore[layer] = layer.snapshot()
+        myPanningOffsets[layer] = offset
+    }
+
+    override fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent {
+        val canvasLayer = CanvasLayer(singleCanvasControl.createCanvas(), name, layerKind)
+        add(layerKind, canvasLayer)
+        return CanvasLayerComponent(canvasLayer)
+    }
+
+    override fun removeLayer(canvasLayer: CanvasLayer) {
+        remove(canvasLayer)
+    }
+}
+
+class ScreenLayerManager(
+    private val canvasControl: CanvasControl,
+) : LayerManager() {
+    private val myBackingStore = mutableMapOf<CanvasLayer, Canvas.Snapshot>()
+    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<Client>>()
+
+    override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>) {
+        layers.forEach { layer ->
+            when (layer.panningPolicy) {
+                PanningPolicy.COPY -> panLayer(layer, offset)
+                PanningPolicy.REPAINT -> {
+                    if (layer in dirtyLayers) {
+                        repaintLayer(layer, offset)
+                        myBackingStore[layer] = layer.snapshot()
+                        myPanningOffsets[layer] = offset
+                    }
+                    if (layer !in myBackingStore) {
+                        myBackingStore[layer] = layer.snapshot()
+                        myPanningOffsets[layer] = offset
+                    }
+                    panLayer(layer, offset)
+                }
+            }
+        }
+    }
+
+    override fun repaint(dirtyLayers: List<CanvasLayer>) {
+        if (dirtyLayers.isEmpty()) return
+
+        dirtyLayers.forEach {
+            myBackingStore.remove(it)
+            myPanningOffsets.remove(it)
+            repaintLayer(it)
+        }
+    }
+
+    override fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent {
+        val canvas = canvasControl.createCanvas(canvasControl.size)
+        val canvasLayer = CanvasLayer(canvas, name, layerKind)
+        add(layerKind, canvasLayer)
+
+        canvasControl.addChild(layers.indexOf(canvasLayer), canvas)
+        return CanvasLayerComponent(canvasLayer)
+    }
+
+    override fun removeLayer(canvasLayer: CanvasLayer) {
+        canvasLayer.removeFrom(canvasControl)
+        remove(canvasLayer)
+    }
+
+    private fun panLayer(layer: CanvasLayer, offset: Vec<Client>) {
+        when (layer.kind) {
+            UI -> {}
+            else -> {
+                myBackingStore.getOrPut(layer) { layer.snapshot() }
+                    .let { snapshot ->
+                        layer.clear()
+                        layer.canvas.context2d.drawImage(snapshot, offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC))
+                }
+            }
+        }
+    }
+
+    override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>) {
+        layer.clear()
+        layer.render()
+    }
 }

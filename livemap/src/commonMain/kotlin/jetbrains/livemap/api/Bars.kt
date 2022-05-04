@@ -6,7 +6,7 @@ import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
@@ -27,7 +27,7 @@ fun LayersBuilder.bars(block: Bars.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_bar")
         .addComponents {
-            + layerManager.addLayer("livemap_bar", LayerGroup.FEATURES)
+            + layerManager.addLayer("livemap_bar", LayerKind.FEATURES)
             + LayerEntitiesComponent()
         }
 

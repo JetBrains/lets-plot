@@ -62,6 +62,10 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         return JavafxColor(red / 255.0, green / 255.0, blue / 255.0, alpha / 255.0)
     }
 
+    override fun drawImage(snapshot: Snapshot) {
+        drawImage(snapshot, 0.0, 0.0)
+    }
+
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         val javafxSnapshot = snapshot as JavafxCanvas.JavafxSnapshot
         myContext2d.drawImage(javafxSnapshot.image, x, y)

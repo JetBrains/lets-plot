@@ -8,7 +8,6 @@ package jetbrains.livemap.mapengine.placement
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.Client
-import jetbrains.livemap.Coordinates
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.core.ecs.EcsComponent
 import kotlin.math.floor
@@ -29,13 +28,13 @@ class ScreenLoopComponent : EcsComponent {
 }
 
 class ScreenDimensionComponent : EcsComponent {
-    var dimension: Vec<Client> = Coordinates.ZERO_CLIENT_POINT
+    var dimension: Vec<Client> = Client.ZERO_VEC
 }
 
 class ScreenOriginComponent : EcsComponent {
-    var origin: Vec<Client> = Coordinates.ZERO_CLIENT_POINT
+    var origin: Vec<Client> = Client.ZERO_VEC
 }
 
 class ScreenOffsetComponent : EcsComponent {
-    var offset: Vec<Client> = Coordinates.ZERO_CLIENT_POINT
+    var offset: Vec<Client> = Client.ZERO_VEC
 }

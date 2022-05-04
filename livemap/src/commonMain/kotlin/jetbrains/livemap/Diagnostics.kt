@@ -14,7 +14,7 @@ import jetbrains.livemap.core.graphics.GraphicsService
 import jetbrains.livemap.core.graphics.Text
 import jetbrains.livemap.core.layers.CanvasLayer
 import jetbrains.livemap.core.layers.CanvasLayerComponent
-import jetbrains.livemap.core.layers.LayersOrderComponent
+import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.fragment.CachedFragmentsComponent
@@ -34,7 +34,8 @@ open class Diagnostics {
         private val schedulerSystem: SchedulerSystem,
         private val debugService: MetricsService,
         private val graphicsService: GraphicsService,
-        private val registry: EcsComponentManager
+        private val registry: EcsComponentManager,
+        private val layerManager: LayerManager
     ) : Diagnostics() {
 
         private val diagnostics = ArrayList<Diagnostic>()
@@ -139,7 +140,7 @@ open class Diagnostics {
                     .getEntitiesById(dirtyLayers)
                     .map { it.get<CanvasLayerComponent>().canvasLayer }
                     .toSet()
-                    .intersect(registry.getSingleton<LayersOrderComponent>().canvasLayers)
+                    .intersect(layerManager.layers.toSet())
                     .joinToString(transform = CanvasLayer::name)
 
                 debugService.setValue(DIRTY_LAYERS, "Dirty layers: $dirtyLayers")

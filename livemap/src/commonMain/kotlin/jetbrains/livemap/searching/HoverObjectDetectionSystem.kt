@@ -37,15 +37,11 @@ class HoverObjectDetectionSystem(
         getSingletonEntity<HoverObjectComponent>().let { hoverObject ->
             val mouseInputComponent = hoverObject.get<MouseInputComponent>()
 
-            if (mouseInputComponent.moveEvent == null &&
-                mouseInputComponent.dragDistance == null
-            ) {
+            if (mouseInputComponent.moveEvent == null) {
                 return
             }
 
-
-            // move or drag event happened - location won't be null in this case
-            val mouseLocation: Vec<Client> = mouseInputComponent.location!!.toClientPoint()
+            val mouseLocation: Vec<Client> = mouseInputComponent.moveEvent!!.location.toClientPoint()
 
             val hoverObjectComponent = hoverObject.get<HoverObjectComponent>()
             if (
@@ -66,7 +62,7 @@ class HoverObjectDetectionSystem(
                 return
             }
 
-            if (mouseInputComponent.dragDistance != null) {
+            if (mouseInputComponent.dragState != null) {
                 // On panning an object and a mouse are synchronized and there is no need to do a search again, only update cursor position
                 hoverObjectComponent.cursotPosition = mouseLocation
                 return

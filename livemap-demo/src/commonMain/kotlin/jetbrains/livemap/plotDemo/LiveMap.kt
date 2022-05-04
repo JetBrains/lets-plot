@@ -5,15 +5,18 @@
 
 package jetbrains.livemap.plotDemo
 
+import jetbrains.datalore.plot.config.asMaps
+import jetbrains.datalore.plot.config.asMutable
+import jetbrains.datalore.plot.config.getList
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.random.Random
 
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            titanic(),
-            airports(),
-//            volcanos(),
+            titanic().updateTiles(Tileset.devVector)
+//            airports().updateTiles(Tileset.devVector),
+//            volcanos().updateTiles(Tileset.devVector),
 //            georeference(),
 //            blankPoint(),
 //            blankMap(),
@@ -32,6 +35,46 @@ class LiveMap {
 //            bunch(),
 //           facet()
         )
+    }
+
+    object Tileset {
+        val nasa = mapOf(
+            "tiles" to mapOf(
+                "kind" to "raster_zxy",
+                "url" to "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/ASTER_GDEM_Greyscale_Shaded_Relief/default//GoogleMapsCompatible_Level12/{z}/{y}/{x}.jpg",
+                "attribution" to "<a href=\"https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs\">\u00a9 NASA Global Imagery Browse Services (GIBS)</a>",
+                "min_zoom" to 1,
+                "max_zoom" to 12
+            )
+        )
+
+        val osm = mapOf(
+            "tiles" to mapOf(
+                "kind" to "raster_zxy",
+                "url" to "https://[abc].tile.openstreetmap.org/{z}/{x}/{y}.png",
+                "attribution" to "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
+            )
+        )
+
+        val devVector = mapOf(
+            "tiles" to mapOf(
+                "kind" to "vector_lets_plot",
+                "url" to "ws://10.0.0.127:3943",
+                "min_zoom" to 1,
+                "max_zoom" to 15,
+                "theme" to "color"
+            )
+        )
+
+        val chessboard = mapOf(
+            "tiles" to mapOf(
+                "kind" to "chessboard"
+            )
+        )
+    }
+
+    private fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any>) = apply {
+        getList("layers")!!.asMaps().first().asMutable().putAll(tilesSpec)
     }
 
     private fun volcanos(): MutableMap<String, Any> {

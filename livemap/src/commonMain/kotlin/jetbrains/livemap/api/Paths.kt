@@ -21,7 +21,7 @@ import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
@@ -47,7 +47,7 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
-            +layerManager.addLayer("geom_path", LayerGroup.FEATURES)
+            +layerManager.addLayer("geom_path", LayerKind.FEATURES)
             +LayerEntitiesComponent()
         }
 

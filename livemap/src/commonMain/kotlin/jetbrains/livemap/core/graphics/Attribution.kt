@@ -39,14 +39,13 @@ class Attribution : RenderBox() {
 
     override fun updateState() {
         // cleanup
-        texts.onEach(graphics::removeFromRenderer).clear()
         clickHandler.onEach(Registration::remove).clear()
 
         AttributionParser.parse(text).forEach { part ->
             val c = if (part is SimpleLink) Color(26, 13, 171) else Color.BLACK
 
             val attributionText = Text()
-            graphics.addToRenderer(attributionText)
+            attributionText.attach(graphics)
 
             attributionText.setState {
                 color = c

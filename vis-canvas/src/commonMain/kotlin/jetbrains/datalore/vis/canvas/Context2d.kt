@@ -6,11 +6,13 @@
 package jetbrains.datalore.vis.canvas
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
 interface Context2d {
     fun clearRect(rect: DoubleRectangle)
+    fun drawImage(snapshot: Snapshot)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double)
     fun drawImage(
@@ -106,3 +108,6 @@ interface Context2d {
         }
     }
 }
+
+fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
+

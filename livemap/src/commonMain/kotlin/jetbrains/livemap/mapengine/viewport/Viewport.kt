@@ -25,12 +25,12 @@ open class Viewport internal constructor(
     private val zoomTransform = Projections.zoom<World, Client> { zoom }
     val center: ClientPoint = size / 2.0
     private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
-    private var windowSize = Coordinates.ZERO_WORLD_POINT
-    private var windowOrigin = Coordinates.ZERO_WORLD_POINT
+    private var windowSize = World.ZERO_VEC
+    private var windowOrigin = World.ZERO_VEC
     var window: WorldRectangle =
         WorldRectangle(
-            Coordinates.ZERO_WORLD_POINT,
-            Coordinates.ZERO_WORLD_POINT
+            World.ZERO_VEC,
+            World.ZERO_VEC
         )
         private set
 
@@ -38,14 +38,14 @@ open class Viewport internal constructor(
         set(zoom) {
             field = max(minZoom, min(zoom, maxZoom))
             windowSize = zoomTransform.invert(size)
-            windowOrigin = viewportTransform.invert(Coordinates.ZERO_CLIENT_POINT)
+            windowOrigin = viewportTransform.invert(Client.ZERO_VEC)
             updateWindow()
         }
 
-    open var position: WorldPoint = Coordinates.ZERO_WORLD_POINT
+    open var position: WorldPoint = World.ZERO_VEC
         set(value) {
             field = helper.normalize(value)
-            windowOrigin = viewportTransform.invert(Coordinates.ZERO_CLIENT_POINT)
+            windowOrigin = viewportTransform.invert(Client.ZERO_VEC)
             updateWindow()
         }
 
@@ -84,7 +84,13 @@ open class Viewport internal constructor(
     }
 
     companion object {
-        fun create(helper: ViewportHelper, size: ClientPoint, position: WorldPoint, minZoom: Int, maxZoom: Int): Viewport {
+        fun create(
+            helper: ViewportHelper,
+            size: ClientPoint,
+            position: WorldPoint,
+            minZoom: Int,
+            maxZoom: Int
+        ): Viewport {
             return Viewport(helper, size, minZoom, maxZoom).apply {
                 this.position = position
             }

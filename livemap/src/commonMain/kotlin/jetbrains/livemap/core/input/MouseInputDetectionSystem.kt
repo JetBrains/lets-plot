@@ -11,17 +11,20 @@ import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.layers.CanvasLayer
 import jetbrains.livemap.core.layers.CanvasLayerComponent
-import jetbrains.livemap.core.layers.LayersOrderComponent
+import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.mapengine.camera.CameraComponent
 
-class MouseInputDetectionSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
+class MouseInputDetectionSystem(
+    componentManager: EcsComponentManager,
+    private val layerManager: LayerManager
+) : AbstractSystem<EcsContext>(componentManager) {
 
     private val myInteractiveEntityView: InteractiveEntityView = InteractiveEntityView()
 
     override fun updateImpl(context: EcsContext, dt: Double) {
         val entitiesByEventTypeAndZIndex = HashMap<MouseEventType, HashMap<Int, ArrayList<EcsEntity>>>()
-        val canvasLayers = getSingleton<LayersOrderComponent>().canvasLayers
+        val canvasLayers = layerManager.layers
 
         getEntities(COMPONENTS).forEach { entity ->
             myInteractiveEntityView.setEntity(entity)

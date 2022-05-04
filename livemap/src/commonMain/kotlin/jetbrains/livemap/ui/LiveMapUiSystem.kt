@@ -19,7 +19,7 @@ import jetbrains.livemap.core.graphics.*
 import jetbrains.livemap.core.input.InputMouseEvent
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.core.layers.CanvasLayerComponent
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetComponent
 import jetbrains.livemap.makegeometrywidget.createFormattedGeometryString
@@ -75,7 +75,7 @@ class LiveMapUiSystem(
             .run(::getEntitiesById)
             .forEach(EcsEntity::remove)
 
-        myLayerManager.removeLayer(LayerGroup.FEATURES, widget.get<CanvasLayerComponent>().canvasLayer)
+        myLayerManager.removeLayer(widget.get<CanvasLayerComponent>().canvasLayer)
 
         widget.remove()
     }
@@ -83,7 +83,7 @@ class LiveMapUiSystem(
     private fun activateCreateWidget() {
         createEntity("make_geometry_widget")
             .addComponents {
-                +myLayerManager.addLayer("make_geometry_layer", LayerGroup.FEATURES)
+                +myLayerManager.addLayer("make_geometry_layer", LayerKind.FEATURES)
                 +LayerEntitiesComponent()
                 +MouseInputComponent()
                 +MakeGeometryWidgetComponent()
