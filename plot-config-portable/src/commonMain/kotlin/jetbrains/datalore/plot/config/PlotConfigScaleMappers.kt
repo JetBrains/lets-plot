@@ -24,7 +24,6 @@ internal object PlotConfigScaleMappers {
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
         mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
-        excludeStatVariables: Boolean
     ): Map<Aes<*>, ScaleMapper<*>> {
         // X,Y scale - always.
         check(transformByAes.containsKey(Aes.X))
@@ -32,21 +31,15 @@ internal object PlotConfigScaleMappers {
         check(mapperProviderByAes.containsKey(Aes.X))
         check(mapperProviderByAes.containsKey(Aes.Y))
 
-        val dataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(
+        val setup = PlotConfigUtil.createPlotAesBindingSetup(
             layerConfigs,
-            excludeStatVariables
+            excludeStatVariables = false
         )
 
-        val variablesByMappedAes = PlotConfigUtil.associateAesWithMappedVariables(
-            PlotConfigUtil.getVarBindings(
-                layerConfigs,
-                excludeStatVariables
-            )
-        )
-
-        // All aes used in bindings (an always X/Y)
-        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet() +
-                setOf(Aes.X, Aes.Y)
+        // All aes used in bindings and x/y aes.
+        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
+        val dataByVarBinding = setup.dataByVarBinding
+        val variablesByMappedAes = setup.variablesByMappedAes
 
         // Compute domains for 'continuous' data.
         //

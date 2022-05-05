@@ -34,20 +34,23 @@ object PlotUtil {
         yAesMapper: ScaleMapper<Double>,
     ): Map<Aes<*>, ScaleMapper<*>> {
 
+        val yOrientation = layer.isYOrientation
         val mappers = HashMap<Aes<*>, ScaleMapper<*>>()
         val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
         for (aes in renderedAes) {
             var mapper: ScaleMapper<*>? = when {
                 aes == Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
                 // positional aes share their mappers
-                Aes.isPositionalX(aes) -> xAesMapper
-                Aes.isPositionalY(aes) -> yAesMapper
+                aes == Aes.X -> xAesMapper
+                aes == Aes.Y -> yAesMapper
+                Aes.isPositionalX(aes) -> if (yOrientation) yAesMapper else xAesMapper
+                Aes.isPositionalY(aes) -> if (yOrientation) xAesMapper else yAesMapper
                 layer.hasBinding(aes) -> layer.scaleMapppersNP.getValue(aes)
                 else -> null  // rendered but has no binding - just ignore.
             }
 
-            mapper?.run {
-                mappers[aes] = this
+            mapper?.let {
+                mappers[aes] = it
             }
         }
         return mappers

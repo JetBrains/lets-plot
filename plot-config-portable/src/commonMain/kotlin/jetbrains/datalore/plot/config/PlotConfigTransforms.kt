@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.scale.ContinuousOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.DiscreteOnlyMapperProvider
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import jetbrains.datalore.plot.config.PlotConfigUtil.createPlotAesBindingSetup
 
 internal object PlotConfigTransforms {
     internal fun createTransforms(
@@ -26,17 +27,14 @@ internal object PlotConfigTransforms {
         check(mapperProviderByAes.containsKey(Aes.X))
         check(mapperProviderByAes.containsKey(Aes.Y))
 
-        val dataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(
-            layerConfigs, excludeStatVariables
-        )
-
-        val variablesByMappedAes = PlotConfigUtil.associateAesWithMappedVariables(
-            PlotConfigUtil.getVarBindings(layerConfigs, excludeStatVariables)
-        )
+        val setup = createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
         // All aes used in bindings and x/y aes.
-        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet() +
-                setOf(Aes.X, Aes.Y)
+        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
+        val xAesSet = setup.xAesSet
+        val yAesSet = setup.yAesSet
+        val dataByVarBinding = setup.dataByVarBinding
+        val variablesByMappedAes = setup.variablesByMappedAes
 
         // Compute domains for all aes with discrete input.
 
@@ -63,13 +61,13 @@ internal object PlotConfigTransforms {
         }
 
         // If axis is 'discrete' then put all 'positional' aes to 'discrete' aes set.
-        val discreteX: Boolean = discreteAesSet.any { Aes.isPositionalX(it) }
-        val discreteY: Boolean = discreteAesSet.any { Aes.isPositionalY(it) }
+        val discreteX: Boolean = discreteAesSet.any { setup.isXAxis(it) }
+        val discreteY: Boolean = discreteAesSet.any { setup.isYAxis(it) }
         if (discreteX) {
-            discreteAesSet.addAll(aesSet.filter { Aes.isPositionalX(it) })
+            discreteAesSet.addAll(xAesSet)
         }
         if (discreteY) {
-            discreteAesSet.addAll(aesSet.filter { Aes.isPositionalY(it) })
+            discreteAesSet.addAll(yAesSet)
         }
 
         // Discrete domains from 'data'.
@@ -92,7 +90,7 @@ internal object PlotConfigTransforms {
             val domainValues = if (discreteDomainByAes.containsKey(aes)) {
                 discreteDomainByAes.getValue(aes)
             } else if (aes in setOf(Aes.X, Aes.Y)) {
-                // We always add x/y wherefore it's possible there is no data associated with x/y aes.
+                // Aes x/y are always in the list, thus it's possible there is no data associated with x/y aes.
                 emptySet()
             } else {
                 throw IllegalStateException("No discrete data found for aes $aes")
@@ -141,20 +139,18 @@ internal object PlotConfigTransforms {
         }
 
         val xAxisTransform = when (discreteX) {
-            true -> joinDiscreteTransforms(aesSet.filter { Aes.isPositionalX(it) })
+            true -> joinDiscreteTransforms(xAesSet.toList())
             false -> continuousTransformByAes.getValue(Aes.X)
         }
         val yAxisTransform = when (discreteY) {
-            true -> joinDiscreteTransforms(aesSet.filter { Aes.isPositionalY(it) })
+            true -> joinDiscreteTransforms(yAesSet.toList())
             false -> continuousTransformByAes.getValue(Aes.Y)
         }
 
         // Replace all 'positional' transforms with the 'axis' transform.
         val transformByPositionalAes: Map<Aes<*>, Transform> =
-            aesSet.filter { Aes.isPositionalX(it) }
-                .associateWith { xAxisTransform } +
-                    aesSet.filter { Aes.isPositionalY(it) }
-                        .associateWith { yAxisTransform }
+            xAesSet.associateWith { xAxisTransform } +
+                    yAesSet.associateWith { yAxisTransform }
 
         return discreteTransformByAes + continuousTransformByAes + transformByPositionalAes
     }

@@ -9,16 +9,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 
 object ScaleProviderHelper {
-    fun getOrCreateDefault(aes: Aes<*>, providers: Map<Aes<*>, ScaleProvider<*>>): ScaleProvider<*> {
-        val realAes = when {
-            Aes.isPositionalX(aes) -> Aes.X
-            Aes.isPositionalY(aes) -> Aes.Y
-            else -> aes
-        }
-
-        return providers[realAes] ?: createDefault(realAes)
-    }
-
     fun <T> createDefault(aes: Aes<T>): ScaleProvider<T> {
         return ScaleProviderBuilder(aes).build()
     }

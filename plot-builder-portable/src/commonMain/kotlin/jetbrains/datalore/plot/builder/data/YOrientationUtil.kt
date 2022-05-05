@@ -19,15 +19,23 @@ object YOrientationUtil {
             .filterKeys { Aes.isPositionalXY(it) }
             .values
 
-        var flippedData: DataFrame = data
-        for (positionalTransformVar in positionalTransformVars) {
-            val aes = TransformVar.toAes(positionalTransformVar)
-            val flippedAes = YOrientationBaseUtil.flipAes(aes)
-            val toVar = TransformVar.forAes(flippedAes)
-            flippedData = flippedData.replaceVariable(positionalTransformVar, toVar)
+
+        // Clean target data builder.
+        var toDataBuilder: DataFrame.Builder = data.builder()
+        for (transformVar in positionalTransformVars) {
+            toDataBuilder.remove(transformVar)
         }
 
-        return flippedData
+        // Update positional transform vars.
+        for (transformVar in positionalTransformVars) {
+            val aes = TransformVar.toAes(transformVar)
+            val flippedAes = YOrientationBaseUtil.flipAes(aes)
+            val toVar = TransformVar.forAes(flippedAes)
+            val serie = data.getNumeric(transformVar)
+            toDataBuilder.putNumeric(toVar, serie)
+        }
+
+        return toDataBuilder.build()
     }
 
     fun flipVarBinding(bindings: List<VarBinding>): List<VarBinding> {

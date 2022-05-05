@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 
-class ScaleProviderBuilder<T>(private val aes: Aes<T>) {
+class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     private var _mapperProvider: MapperProvider<T>? = null
     private var myName: String? = null

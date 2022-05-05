@@ -42,38 +42,6 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    fun replaceVariable(from: Variable, to: Variable): DataFrame {
-        val toVectorByVar = myVectorByVar.mapKeys { (k, _) ->
-            if (k == from) to else k
-        }
-        val toIsNumeric = myIsNumeric.mapKeys { (k, _) ->
-            if (k == from) to else k
-        }
-        val toIsDateTime = myIsDateTime.mapKeys { (k, _) ->
-            if (k == from) to else k
-        }
-        val toOrderSpecs = myOrderSpecs.map {
-            if (it.variable == from) {
-                OrderSpec(to, it.orderBy, it.direction, it.aggregateOperation)
-            } else {
-                it
-            }
-        }.map {
-            if (it.orderBy == from) {
-                OrderSpec(it.variable, to, it.direction, it.aggregateOperation)
-            } else {
-                it
-            }
-        }
-
-        return Builder(
-            toVectorByVar,
-            isNumeric = toIsNumeric,
-            isDateTime = toIsDateTime,
-            orderSpecs = toOrderSpecs
-        ).build()
-    }
-
     private fun assertAllSeriesAreSameSize(vectorByVar: Map<Variable, List<*>>) {
         if (vectorByVar.size > 1) {
             val entries = vectorByVar.entries.iterator()
@@ -315,20 +283,6 @@ class DataFrame private constructor(builder: Builder) {
                 data.myIsNumeric,
                 data.myIsDateTime,
                 data.myOrderSpecs,
-            )
-        }
-
-        internal constructor(
-            vectorByVar: Map<Variable, List<*>>,
-            isNumeric: Map<Variable, Boolean>,
-            isDateTime: Map<Variable, Boolean>,
-            orderSpecs: List<OrderSpec>,
-        ) {
-            initInternals(
-                vectorByVar,
-                isNumeric,
-                isDateTime,
-                orderSpecs,
             )
         }
 

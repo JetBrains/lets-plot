@@ -24,5 +24,9 @@ interface StatContext {
         override fun overallYRange(): DoubleSpan? {
             return orig.overallXRange()
         }
+
+        override fun getFlipped(): StatContext {
+            return orig
+        }
     }
 }
