@@ -6,15 +6,94 @@
 package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Group
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.svg.SvgStyleElement
 
 internal class SvgStyleElementMapper(
     source: SvgStyleElement,
     target: Group,
-    peer: SvgJfxPeer) : SvgElementMapper<SvgStyleElement, Group>(source, target, peer) {
+    peer: SvgJfxPeer,
+) : SvgElementMapper<SvgStyleElement, Group>(source, target, peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
-        // just empty group - no synchronization.
-        // CSS is added to JavaFX scene from external resource
+        // Parse CSS to prepare StyleProperties
+        val styles = parseCSS(source.resource.css())
+        peer.applyStyleProperties(
+            FontStyleProperties(styles)
+        )
+    }
+
+    private fun parseCSS(css: String): Map<String, Any> {
+        val styles = mutableMapOf<String, Any>()
+
+        fun extractProperty(block: String, property: String): String? {
+            val regex = Regex("$property:(.+);")
+            return regex.find(block)?.groupValues?.get(1)?.trim()?.removeSuffix("px")
+        }
+
+        Regex(CSS_REGEX)
+            .findAll(css)
+            .map { it.groupValues[SELECTOR_NAME] to it.groupValues[DECLARATION] }
+            .forEach { (selector, declaration) ->
+                styles[selector] = mapOf(
+                    FONT_FAMILY to extractProperty(declaration, FONT_FAMILY),
+                    FONT_SIZE to extractProperty(declaration, FONT_SIZE),
+                    FONT_COLOR to extractProperty(declaration, FONT_COLOR),
+                    FONT_WEIGHT to extractProperty(declaration, FONT_WEIGHT),
+                    FONT_STYLE to extractProperty(declaration, FONT_STYLE)
+                )
+            }
+        return styles
+    }
+
+    companion object {
+        // .selector text : {
+        //      property: value;
+        //      ....
+        // }
+        const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
+        const val SELECTOR_NAME = 1
+        const val DECLARATION = 2
+
+        //properties
+        const val FONT_FAMILY = "font-family"
+        const val FONT_SIZE = "font-size"
+        const val FONT_COLOR = "fill"
+        const val FONT_WEIGHT = "font-weight"
+        const val FONT_STYLE = "font-style"
+    }
+
+    private class FontStyleProperties(private val myTextStyles: Map<String, Any>) : StyleProperties {
+
+        private fun getMap(key: String): Map<String, String> {
+            val map = myTextStyles[key]
+            @Suppress("UNCHECKED_CAST")
+            return map as? Map<String, String> ?: emptyMap()
+        }
+
+        override fun getColor(className: String): Color {
+            val color = getMap(className)[FONT_COLOR]?.let(Color.Companion::parseRGB)
+            return color ?: Color.BLACK
+        }
+
+        override fun getFontSize(className: String): Double {
+            val size = getMap(className)[FONT_SIZE]
+            return size?.toDouble() ?: 15.0
+        }
+
+        override fun getFontFamily(className: String): String {
+            val family = getMap(className)[FONT_FAMILY]
+            return family ?: "Helvetica"
+        }
+
+        override fun getIsItalic(className: String): Boolean {
+            val style = getMap(className)[FONT_STYLE] ?: return false
+            return style == "italic"
+        }
+
+        override fun getIsBold(className: String): Boolean {
+            val weight = getMap(className)[FONT_WEIGHT] ?: return false
+            return weight == "bold"
+        }
     }
 }

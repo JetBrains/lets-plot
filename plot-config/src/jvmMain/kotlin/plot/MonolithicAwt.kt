@@ -8,7 +8,6 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 
@@ -17,7 +16,7 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        svgComponentFactory: (svg: SvgSvgElement, styleProperties: StyleProperties) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
@@ -34,7 +33,7 @@ object MonolithicAwt {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        svgComponentFactory: (svg: SvgSvgElement, styleProperties: StyleProperties) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): JComponent {
@@ -49,7 +48,7 @@ object MonolithicAwt {
 
     fun buildPlotComponent(
         plotContainer: PlotContainer,
-        svgComponentFactory: (svg: SvgSvgElement, styleProperties: StyleProperties) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
         return AwtPlotFactoryUtil.buildPlotComponent(

@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgLocatable
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgPlatformPeer
@@ -99,7 +98,7 @@ class SvgJfxPeer : SvgPlatformPeer {
         return DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
     }
 
-    override fun applyStyleProperties(styleProperties: StyleProperties) {
+    fun applyStyleProperties(styleProperties: StyleProperties) {
         this.styleProperties = styleProperties
     }
 }

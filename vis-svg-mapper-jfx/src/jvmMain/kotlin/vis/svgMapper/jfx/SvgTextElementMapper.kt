@@ -17,7 +17,6 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping

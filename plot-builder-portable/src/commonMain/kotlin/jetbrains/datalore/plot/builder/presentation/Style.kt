@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.presentation
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
 import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
-import jetbrains.datalore.vis.StyleProperties
 
 /**
  * Duplicating stylesheet for JavaFX platform is defined in
@@ -62,7 +61,7 @@ object Style {
         |}
     """.trimMargin()
 
-    fun generateCSS(styleProperties: StyleProperties): String {
+    fun generateCSS(styleProperties: TextStyler): String {
         val css = StringBuilder(CSS)
         css.append('\n')
         css.append(styleProperties.css())

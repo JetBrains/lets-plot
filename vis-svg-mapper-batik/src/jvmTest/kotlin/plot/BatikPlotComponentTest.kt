@@ -9,7 +9,6 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePlot
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback
@@ -53,7 +52,7 @@ class BatikPlotComponentTest {
             }
         }
 
-        private val COMPONENT_FACTORY = { svg: SvgSvgElement, _: StyleProperties ->
+        private val COMPONENT_FACTORY = { svg: SvgSvgElement ->
             BatikMapperComponent(svg, BATIK_MESSAGE_CALLBACK)
         }
 

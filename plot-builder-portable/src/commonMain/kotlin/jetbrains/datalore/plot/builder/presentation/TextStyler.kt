@@ -22,10 +22,9 @@ import jetbrains.datalore.plot.builder.presentation.Style.PLOT_TITLE
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_LABEL
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
-import jetbrains.datalore.vis.StyleProperties
 
 
-open class TextStyler : StyleProperties {
+open class TextStyler {
 
     protected val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
         PLOT_TITLE to FontProperties.create(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
@@ -51,38 +50,16 @@ open class TextStyler : StyleProperties {
         "$FACET_STRIP_TEXT-x" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble()),
         "$FACET_STRIP_TEXT-y" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble()))
 
-    override fun getColor(className: String): Color {
-        return myTextStyles[className]?.color ?: DEFAULT_COLOR
-    }
-
-    override fun getFontSize(className: String): Double {
-        return myTextStyles[className]?.size ?: DEFAULT_SIZE
-    }
-
-    override fun getFontFamily(className: String): String {
-        return myTextStyles[className]?.family?.toString() ?: DEFAULT_FAMILY.toString()
-    }
-
-    override fun getIsItalic(className: String): Boolean {
-        val face = myTextStyles[className]?.face ?: DEFAULT_FACE
-        return face.italic
-    }
-
-    override fun getIsBold(className: String): Boolean {
-        val face = myTextStyles[className]?.face ?: DEFAULT_FACE
-        return face.bold
-    }
-
-    override fun css(): String {
+    fun css(): String {
         val css = StringBuilder()
         myTextStyles.forEach { (className, props) ->
             css.append("""
                 |.$className text {
-                |      fill: ${props.color.toCssColor()};
-                |      font-family: ${props.family};
-                |      font-size: ${props.size}px;
-                |      font-weight: ${if (props.face.bold) "bold" else "normal"};
-                |      font-style: ${if (props.face.italic) "italic" else "normal"};
+                |   fill: ${props.color.toCssColor()};
+                |   font-family: ${props.family};
+                |   font-size: ${props.size}px;
+                |   font-weight: ${if (props.face.bold) "bold" else "normal"};
+                |   font-style: ${if (props.face.italic) "italic" else "normal"};
                 |}
                 |""".trimMargin()
             )

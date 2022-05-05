@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProvider
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 
@@ -20,7 +19,7 @@ internal object AwtLiveMapFactoryUtil {
         assembler: PlotAssembler,
         processedSpec: MutableMap<String, Any>,
         preferredSize: DoubleVector,
-        svgComponentFactory: (svg: SvgSvgElement, styleProperties: StyleProperties) -> JComponent,
+        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
         val cursorServiceConfig = CursorServiceConfig()
