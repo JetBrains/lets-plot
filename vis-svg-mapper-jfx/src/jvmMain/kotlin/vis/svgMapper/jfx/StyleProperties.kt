@@ -5,10 +5,8 @@
 
 package jetbrains.datalore.vis.svgMapper.jfx
 
-import jetbrains.datalore.base.values.Color
-
 interface StyleProperties {
-    fun getColor(className: String): Color
+    fun getColor(className: String): String
     fun getFontSize(className: String): Double
     fun getFontFamily(className: String): String
     fun getIsItalic(className: String): Boolean

@@ -28,7 +28,7 @@ internal class SvgStyleElementMapper(
 
         fun extractProperty(block: String, property: String): String? {
             val regex = Regex("$property:(.+);")
-            return regex.find(block)?.groupValues?.get(1)?.trim()?.removeSuffix("px")
+            return regex.find(block)?.groupValues?.get(1)?.trim()
         }
 
         Regex(CSS_REGEX)
@@ -71,29 +71,24 @@ internal class SvgStyleElementMapper(
             return map as? Map<String, String> ?: emptyMap()
         }
 
-        override fun getColor(className: String): Color {
-            val color = getMap(className)[FONT_COLOR]?.let(Color.Companion::parseRGB)
-            return color ?: Color.BLACK
+        override fun getColor(className: String): String {
+            return getMap(className)[FONT_COLOR] ?: Color.BLACK.toCssColor()
         }
 
         override fun getFontSize(className: String): Double {
-            val size = getMap(className)[FONT_SIZE]
-            return size?.toDouble() ?: 15.0
+            return getMap(className)[FONT_SIZE]?.removeSuffix("px")?.toDouble() ?: 15.0
         }
 
         override fun getFontFamily(className: String): String {
-            val family = getMap(className)[FONT_FAMILY]
-            return family ?: "Helvetica"
+            return getMap(className)[FONT_FAMILY] ?: "Helvetica"
         }
 
         override fun getIsItalic(className: String): Boolean {
-            val style = getMap(className)[FONT_STYLE] ?: return false
-            return style == "italic"
+            return getMap(className)[FONT_STYLE] == "italic"
         }
 
         override fun getIsBold(className: String): Boolean {
-            val weight = getMap(className)[FONT_WEIGHT] ?: return false
-            return weight == "bold"
+            return getMap(className)[FONT_WEIGHT] == "bold"
         }
     }
 }
