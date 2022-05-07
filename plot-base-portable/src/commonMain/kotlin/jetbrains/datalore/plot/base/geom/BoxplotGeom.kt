@@ -150,6 +150,7 @@ class BoxplotGeom : GeomBase() {
                     Aes.FILL -> outlierFill ?: super.get(aes)
                     Aes.SHAPE -> outlierShape ?: super.get(aes)
                     Aes.SIZE -> outlierSize ?: OUTLIER_DEF_SIZE  // 'size' of 'super' is line thickness on box-plot
+                    Aes.ALPHA -> 1.0 // Don't apply boxplot' alpha to outlier points.
                     else -> super.get(aes)
                 }
                 @Suppress("UNCHECKED_CAST")
