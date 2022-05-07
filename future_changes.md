@@ -2,10 +2,10 @@
 
 ### Added
 
-- Global theme configuring with `plot_theme(...)` function.  
-See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/notebooks/plot_theme.ipynb).
+- `LetsPlot.set_theme()` - configuring a default plot theme.
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/plot_theme.ipynb).
 
-- `geom_livemap`: support of arrows drawing for segments.
+- `geom_livemap`: support of the `arrow` parameter in `geom_segment` [[#525](https://github.com/JetBrains/lets-plot/issues/131)].
 
 ### Changed
 - New style of tooltip color marker (two side bars with a stroke color)
