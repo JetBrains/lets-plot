@@ -259,7 +259,10 @@ internal class SquareFrameOfReference(
             }
         }
 
-        private fun buildGeom(
+        /**
+         * 'internal' access for tests.
+         */
+        internal fun buildGeom(
             layer: GeomLayer,
             xAesMapper: ScaleMapper<Double>,
             yAesMapper: ScaleMapper<Double>,

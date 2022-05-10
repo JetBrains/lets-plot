@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.CoordinateSystem
 import kotlin.math.max
 import kotlin.math.min
@@ -30,11 +30,6 @@ internal open class DefaultCoordinateSystem(
     }
 
     override fun applyClientLimits(clientBounds: DoubleRectangle): DoubleRectangle {
-//        val hRange = clientLimitsX?.let { lim -> convertRange(lim, toClientOffsetX) }
-//            ?: clientBounds.xRange()
-//        val vRange = clientLimitsY?.let { lim -> convertRange(lim, toClientOffsetY) }
-//            ?: clientBounds.yRange()
-//        return DoubleRectangle(hRange, vRange)
         return clientBounds
     }
 
