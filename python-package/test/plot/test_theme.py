@@ -62,10 +62,8 @@ def test_element_values_merged():
 
 
 def test_global_theme():
-    gg.LetsPlot.set(
-        gg.plot_theme(
-            theme(axis_tooltip=element_blank())
-        )
+    gg.LetsPlot.set_theme(
+        theme(axis_tooltip=element_blank())
     )
 
     spec = gg.ggplot() + _geom('foo')
@@ -75,10 +73,8 @@ def test_global_theme():
 
 
 def test_global_theme_overriding():
-    gg.LetsPlot.set(
-        gg.plot_theme(
-            theme(legend_position='bottom')
-        )
+    gg.LetsPlot.set_theme(
+        theme(legend_position='bottom')
     )
 
     spec = gg.ggplot() + _geom('foo') + theme(legend_position='top')
@@ -87,10 +83,8 @@ def test_global_theme_overriding():
 
 
 def test_overriding_global_named_theme():
-    gg.LetsPlot.set(
-        gg.plot_theme(
-            theme_classic()
-        )
+    gg.LetsPlot.set_theme(
+        theme_classic()
     )
 
     spec = gg.ggplot() + _geom('foo') + theme(legend_position='top')
@@ -99,10 +93,8 @@ def test_overriding_global_named_theme():
 
 
 def test_overriding_global_theme_with_named():
-    gg.LetsPlot.set(
-        gg.plot_theme(
-            theme(legend_position='top')
-        )
+    gg.LetsPlot.set_theme(
+        theme(legend_position='top')
     )
 
     spec = gg.ggplot() + _geom('foo') + theme_classic()
