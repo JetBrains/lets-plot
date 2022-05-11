@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 
 
-open class TextStyler {
+open class StyleProperties {
 
     protected val myTextStyles: MutableMap<String, FontProperties> = mutableMapOf(
         PLOT_TITLE to FontProperties.create(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
@@ -48,7 +48,8 @@ open class TextStyler {
             color = Color.WHITE
         ),
         "$FACET_STRIP_TEXT-x" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble()),
-        "$FACET_STRIP_TEXT-y" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble()))
+        "$FACET_STRIP_TEXT-y" to FontProperties.create(size = Defaults.FONT_MEDIUM.toDouble())
+    )
 
     fun css(): String {
         val css = StringBuilder()

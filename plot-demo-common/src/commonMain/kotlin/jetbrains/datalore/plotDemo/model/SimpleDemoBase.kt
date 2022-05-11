@@ -26,7 +26,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
     protected open val padding: DoubleVector
         get() = DEFAULT_PADDING
     protected val theme: Theme = DEFAULT_THEME
-    protected open val cssStyle: String = Style.generateCSS(Style.DEFAULT_STYLE_RENDERER)
+    protected open val cssStyle: String = Style.generateCSS(Style.DEFAULT_STYLE_PROPERTIES)
 
     private fun toComponentSize(innerSize: DoubleVector): DoubleVector {
         return innerSize.add(padding.mul(2.0))

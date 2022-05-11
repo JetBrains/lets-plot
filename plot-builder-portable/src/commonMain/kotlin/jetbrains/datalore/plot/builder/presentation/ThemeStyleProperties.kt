@@ -15,11 +15,11 @@ import jetbrains.datalore.plot.builder.presentation.Style.LEGEND_TITLE
 import jetbrains.datalore.plot.builder.presentation.Style.PLOT_CAPTION
 import jetbrains.datalore.plot.builder.presentation.Style.PLOT_SUBTITLE
 import jetbrains.datalore.plot.builder.presentation.Style.PLOT_TITLE
-import jetbrains.datalore.plot.builder.presentation.TextStyler.Companion.FontProperties
+import jetbrains.datalore.plot.builder.presentation.StyleProperties.Companion.FontProperties
 import jetbrains.datalore.plot.builder.theme.Theme
 
 
-class ThemeTextStyler(theme: Theme, flippedAxis: Boolean) : TextStyler() {
+class ThemeStyleProperties(theme: Theme, flippedAxis: Boolean) : StyleProperties() {
 
     init {
         myTextStyles.setColor(PLOT_TITLE, theme.plot().titleColor())

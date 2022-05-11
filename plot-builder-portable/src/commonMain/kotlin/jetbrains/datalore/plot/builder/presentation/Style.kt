@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
 object Style {
     const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
 
-    val DEFAULT_STYLE_RENDERER = TextStyler()
+    val DEFAULT_STYLE_PROPERTIES = StyleProperties()
 
     // classes
     const val PLOT_CONTAINER = "plt-container"
@@ -61,7 +61,7 @@ object Style {
         |}
     """.trimMargin()
 
-    fun generateCSS(styleProperties: TextStyler): String {
+    fun generateCSS(styleProperties: StyleProperties): String {
         val css = StringBuilder(CSS)
         css.append('\n')
         css.append(styleProperties.css())

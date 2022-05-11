@@ -31,11 +31,8 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
+import jetbrains.datalore.plot.builder.presentation.*
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.presentation.ThemeTextStyler
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgNode
@@ -78,7 +75,7 @@ class PlotSvgComponent constructor(
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
 
-    val styleProperties = ThemeTextStyler(theme, flippedAxis)
+    val styleProperties: StyleProperties = ThemeStyleProperties(theme, flippedAxis)
 
     // ToDo: remove
     private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel
