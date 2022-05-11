@@ -103,7 +103,7 @@ internal class TooltipRenderer(
                 val borderColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
-                    spec.isOutlier -> LIGHT_TEXT_COLOR.takeIf { fillColor.isReadableOnWhite() } ?: DARK_TEXT_COLOR
+                    spec.isOutlier -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
                     else -> BLACK
                 }
 
@@ -278,7 +278,7 @@ internal class TooltipRenderer(
         }
     }
 
-    private fun Color.isReadableOnWhite() = Colors.luminance(this) < 0.5
+    private fun Color.isDark() = Colors.luminance(this) < 0.5
 
     private val TooltipSpec.style
         get() =
