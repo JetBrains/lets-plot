@@ -81,7 +81,7 @@ object GeomInteractionUtil {
 
         val outlierAesList = createOutlierAesList(
             layerConfig.geomProto.geomKind
-        ).afterOrientation(yOrientation)
+        )//.afterOrientation(yOrientation)
 
         val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
         val layerRendersAesAfterOrientation = layerConfig.geomProto.renders().afterOrientation(yOrientation)
