@@ -8,9 +8,6 @@ package jetbrains.datalore.vis.svgMapper.jfx
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Bounds
-import javafx.scene.text.Font
-import javafx.scene.text.FontPosture
-import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 import jetbrains.datalore.base.observable.property.ReadableProperty
@@ -68,16 +65,15 @@ internal class SvgTextElementMapper(
         )
     }
 
-    private fun setFontProperties(target: Text, styleProperties: StyleProperties?) {
+    private fun setFontProperties(target: Text, styleProperties: ((String) -> StyleProperty)?) {
         if (styleProperties == null) {
             return
         }
         val className = target.parent.styleClass?.toString()
         if (!className.isNullOrEmpty()) {
-            target.font = styleProperties.getFont(className)
-
-            val color = styleProperties.getColor(className)
-            myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:$color;")
+            val style = styleProperties(className)
+            target.font = style.font
+            myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${style.color};")
         }
     }
 
@@ -101,19 +97,6 @@ internal class SvgTextElementMapper(
                     target.text = value ?: "n/a"
                 }
             }
-        }
-
-        private fun StyleProperties.getFont(className: String): Font {
-            //val fontFamily = getFontFamily(className)
-            val size = getFontSize(className)
-            val posture = if (getIsItalic(className)) FontPosture.ITALIC else null
-            val weight = if (getIsBold(className)) FontWeight.BOLD else null
-            return Font.font(
-                "Helvetica", // todo
-                weight,
-                posture,
-                size
-            )
         }
     }
 

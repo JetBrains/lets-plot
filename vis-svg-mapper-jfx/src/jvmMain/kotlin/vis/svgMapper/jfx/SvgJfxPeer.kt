@@ -18,7 +18,7 @@ import jetbrains.datalore.vis.svg.SvgTextContent
 class SvgJfxPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()
 
-    var styleProperties: StyleProperties? = null
+    var styleProperties: ((String) -> StyleProperty)? = null
         private set
 
 //    private fun ensureElementConsistency(source: SvgNode, target: Node) {
@@ -98,7 +98,7 @@ class SvgJfxPeer : SvgPlatformPeer {
         return DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
     }
 
-    fun applyStyleProperties(styleProperties: StyleProperties) {
+    fun applyStyleProperties(styleProperties: (String) -> StyleProperty) {
         this.styleProperties = styleProperties
     }
 }
