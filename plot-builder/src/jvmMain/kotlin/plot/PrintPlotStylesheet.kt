@@ -7,10 +7,10 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.presentation.StyleProperties
+import jetbrains.datalore.plot.builder.presentation.ThemeStyleProperties
 
 fun main() {
-    println(Style.generateCSS(StyleProperties()))
+    println(Style.generateCSS(ThemeStyleProperties()))
     println("======")
-    println(Style.generateCSS(StyleProperties().applyTheme(DefaultTheme.minimal2(), flippedAxis = true)))
+    println(Style.generateCSS(ThemeStyleProperties().applyTheme(DefaultTheme.minimal2(), flippedAxis = true)))
 }
