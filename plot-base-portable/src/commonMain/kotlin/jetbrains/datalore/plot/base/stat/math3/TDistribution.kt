@@ -202,7 +202,7 @@ class TDistribution
          * Default inverse cumulative probability accuracy.
          * @since 2.1
          */
-        val DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9
+        const val DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9
         /** Serializable version identifier  */
         private val serialVersionUID = -5852615386664158222L
     }

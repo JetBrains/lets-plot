@@ -37,51 +37,56 @@ class NormalDistribution
         )
     }
 
+    /*
+        Based on the paper of G. West, "Better approximations to cumulative normal functions".
+        http://www.codeplanet.eu/files/download/accuratecumnorm.pdf
+    */
     override fun cumulativeProbability(x: Double): Double {
-        /*
-            Based on the paper of G. West, "Better approximations to cumulative normal functions".
-            http://www.codeplanet.eu/files/download/accuratecumnorm.pdf
-        */
         val y = (x - mean) / standardDeviation
         if (y < -37.0) return 0.0
         if (y > 37.0) return 1.0
+
+        val a: List<Double> = listOf(
+            220.206867912376,
+            221.213596169931,
+            112.079291497871,
+            33.912866078383,
+            6.37396220353165,
+            0.700383064443688,
+            3.52624965998911e-2,
+        )
+        val b: List<Double> = listOf(
+            440.413735824752,
+            793.826512519948,
+            637.333633378831,
+            296.564248779674,
+            86.7807322029461,
+            16.064177579207,
+            1.75566716318264,
+            8.83883476483184e-2
+        )
+        val c = 2.506628274631
         val yAbs = abs(y)
         val exp = E.pow(-yAbs.pow(2) / 2.0)
-        var cumNorm: Double
-        if (yAbs < 7.07106781186547) {
-            var build = 3.52624965998911E-02 * yAbs + 0.700383064443688
-            build = build * yAbs + 6.37396220353165
-            build = build * yAbs + 33.912866078383
-            build = build * yAbs + 112.079291497871
-            build = build * yAbs + 221.213596169931
-            build = build * yAbs + 220.206867912376
-            cumNorm = exp * build
-            build = 8.83883476483184E-02 * yAbs + 1.75566716318264
-            build = build * yAbs + 16.064177579207
-            build = build * yAbs + 86.7807322029461
-            build = build * yAbs + 296.564248779674
-            build = build * yAbs + 637.333633378831
-            build = build * yAbs + 793.826512519948
-            build = build * yAbs + 440.413735824752
-            cumNorm /= build
-        } else {
-            var build = yAbs + 0.65
-            build = yAbs + 4.0 / build
-            build = yAbs + 3.0 / build
-            build = yAbs + 2.0 / build
-            build = yAbs + 1.0 / build
-            cumNorm = exp / build / 2.506628274631
-        }
-        if (y > 0.0) cumNorm = 1 - cumNorm
 
-        return cumNorm / standardDeviation
+        val cumNorm = if (yAbs < 7.07106781186547) {
+            (exp * ((((((a[6] * yAbs + a[5]) * yAbs + a[4]) * yAbs + a[3]) * yAbs + a[2]) * yAbs + a[1]) * yAbs + a[0])) /
+                (((((((b[7] * yAbs + b[6]) * yAbs + b[5]) * yAbs + b[4]) * yAbs + b[3]) * yAbs + b[2]) * yAbs + b[1]) * yAbs + b[0])
+        } else {
+            exp / ((yAbs + 1.0 / (yAbs + 2.0 / (yAbs + 3.0 / (yAbs + 4.0 / (yAbs + 0.65))))) * c)
+        }
+
+        return if (y > 0.0)
+            (1 - cumNorm) / standardDeviation
+        else
+            cumNorm / standardDeviation
     }
 
+    /*
+        Based on the paper of M. Wichura, "The Percentage Points of the Normal Distribution".
+        http://csg.sph.umich.edu/abecasis/gas_power_calculator/algorithm-as-241-the-percentage-points-of-the-normal-distribution.pdf
+    */
     override fun inverseCumulativeProbability(p: Double): Double {
-        /*
-            Based on the paper of M. Wichura, "The Percentage Points of the Normal Distribution".
-            http://csg.sph.umich.edu/abecasis/gas_power_calculator/algorithm-as-241-the-percentage-points-of-the-normal-distribution.pdf
-        */
         if (p < 0.0 || p > 1.0) {
             error("OutOfRange [0, 1] - p$p")
         }

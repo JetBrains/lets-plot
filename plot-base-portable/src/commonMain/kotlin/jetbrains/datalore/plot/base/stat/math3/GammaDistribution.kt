@@ -11,9 +11,10 @@ import kotlin.math.*
 class GammaDistribution
 @JvmOverloads constructor(
     private val alpha: Double,
-    private val beta: Double
+    private val beta: Double,
+    private val gammaEpsilon: Double = DEFAULT_GAMMA_EPSILON,
+    override val solverAbsoluteAccuracy: Double = DEFAULT_INVERSE_ABSOLUTE_ACCURACY
 ) : AbstractRealDistribution() {
-    private val epsilon = 10e-15
 
     override val numericalMean: Double = alpha / beta
     override val numericalVariance: Double = alpha / beta.pow(2)
@@ -38,9 +39,9 @@ class GammaDistribution
 
     override fun density(x: Double): Double {
         val gamma: (Double) -> Double = { t ->
-            Gamma.regularizedGammaP(alpha, beta * t, epsilon)
+            Gamma.regularizedGammaP(alpha, beta * t, gammaEpsilon)
         }
-        val h = sqrt(epsilon) * x
+        val h = sqrt(gammaEpsilon) * x
 
         return (gamma(x + h) - gamma(x - h)) / (2.0 * h)
     }
@@ -48,6 +49,11 @@ class GammaDistribution
     override fun cumulativeProbability(x: Double): Double {
         if (x <= 0.0) return 0.0
         if (x > 37.0) return 1.0
-        return Gamma.regularizedGammaP(alpha, beta * x, epsilon)
+        return Gamma.regularizedGammaP(alpha, beta * x, gammaEpsilon)
+    }
+
+    companion object {
+        const val DEFAULT_INVERSE_ABSOLUTE_ACCURACY = 1e-9
+        const val DEFAULT_GAMMA_EPSILON = 1e-14
     }
 }

@@ -5,10 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.plot.base.stat.math3.GammaDistribution
-import jetbrains.datalore.plot.base.stat.math3.NormalDistribution
-import jetbrains.datalore.plot.base.stat.math3.TDistribution
-import jetbrains.datalore.plot.base.stat.math3.UniformDistribution
+import jetbrains.datalore.plot.base.stat.math3.*
 import kotlin.test.*
 
 class DistributionsTest {
@@ -104,13 +101,14 @@ class DistributionsTest {
 
     @Test
     fun tQuantileFunctionTest() {
+        val accuracy = TDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
         val dist = TDistribution(1.0)
         assertEquals(Double.NEGATIVE_INFINITY, dist.inverseCumulativeProbability(0.0))
-        assertEquals(-31.8205159538, dist.inverseCumulativeProbability(0.01), 1e-10)
-        assertEquals(-0.726542528, dist.inverseCumulativeProbability(0.3), 1e-10)
+        assertEquals(-31.820515954, dist.inverseCumulativeProbability(0.01), accuracy)
+        assertEquals(-0.726542528, dist.inverseCumulativeProbability(0.3), accuracy)
         assertEquals(0.0, dist.inverseCumulativeProbability(0.5))
-        assertEquals(0.726542528, dist.inverseCumulativeProbability(0.7), 1e-10)
-        assertEquals(31.8205159538, dist.inverseCumulativeProbability(0.99), 1e-10)
+        assertEquals(0.726542528, dist.inverseCumulativeProbability(0.7), accuracy)
+        assertEquals(31.820515954, dist.inverseCumulativeProbability(0.99), accuracy)
         assertEquals(Double.POSITIVE_INFINITY, dist.inverseCumulativeProbability(1.0))
     }
 
@@ -144,13 +142,14 @@ class DistributionsTest {
 
     @Test
     fun gammaQuantileFunctionTest() {
+        val accuracy = GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY
         val dist = GammaDistribution(1.0, 1.0)
         assertEquals(0.0, dist.inverseCumulativeProbability(0.0))
-        assertEquals(0.0001, dist.inverseCumulativeProbability(0.0001), 1e-5)
-        assertEquals(0.35667, dist.inverseCumulativeProbability(0.3), 1e-5)
-        assertEquals(0.69315, dist.inverseCumulativeProbability(0.5), 1e-5)
-        assertEquals(1.20397, dist.inverseCumulativeProbability(0.7), 1e-5)
-        assertEquals(9.21034, dist.inverseCumulativeProbability(0.9999), 1e-5)
+        assertEquals(0.000100005, dist.inverseCumulativeProbability(0.0001), accuracy)
+        assertEquals(0.356674944, dist.inverseCumulativeProbability(0.3), accuracy)
+        assertEquals(0.693147181, dist.inverseCumulativeProbability(0.5), accuracy)
+        assertEquals(1.203972804, dist.inverseCumulativeProbability(0.7), accuracy)
+        assertEquals(9.210340372, dist.inverseCumulativeProbability(0.9999), accuracy)
         assertEquals(Double.POSITIVE_INFINITY, dist.inverseCumulativeProbability(1.0))
     }
 }
