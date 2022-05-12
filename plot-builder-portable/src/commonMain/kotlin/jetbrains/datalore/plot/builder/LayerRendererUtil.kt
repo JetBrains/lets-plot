@@ -6,7 +6,9 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 
 object LayerRendererUtil {
 
@@ -25,24 +27,41 @@ object LayerRendererUtil {
             layer.renderedAes(),
             aestheticMappers,
         )
-        val pos = PlotUtil.createLayerPos(layer, aesthetics)
+
+        val aestheticMappersAfterOrientation = aestheticMappers.let {
+            when (layer.isYOrientation) {
+                true -> YOrientationBaseUtil.flipAesKeys(it)
+                false -> it
+            }
+        }
+
+        val aestheticsAfterOrientation = aesthetics.let {
+            when (layer.isYOrientation) {
+                true -> YOrientationAesthetics(it)
+                false -> it
+            }
+        }
+
+        val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
+        val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aestheticsAfterOrientation)
         return LayerRendererData(
-            layer,
-            aesthetics,
-            aestheticMappers,
-            pos
+            geom = layer.geom,
+            geomKind = layer.geomKind,
+            aesthetics = aestheticsAfterOrientation,
+            aestheticMappers = aestheticMappersAfterOrientation,
+            pos = pos,
+            contextualMapping = layer.contextualMapping,
+            mappedAes = mappedAes
         )
     }
 
     class LayerRendererData(
-        private val layer: GeomLayer,
+        val geom: Geom,
+        val geomKind: GeomKind,
         val aesthetics: Aesthetics,
         val aestheticMappers: Map<Aes<*>, ScaleMapper<*>>,
-        val pos: PositionAdjustment
-    ) {
-        val geom: Geom = layer.geom
-        val geomKind: GeomKind = layer.geomKind
-        val contextualMapping: ContextualMapping = layer.contextualMapping
-        val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
-    }
+        val pos: PositionAdjustment,
+        val contextualMapping: ContextualMapping,
+        val mappedAes: Set<Aes<*>>,
+    )
 }

@@ -43,13 +43,10 @@ import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.graphics.Rectangle
 import jetbrains.livemap.core.graphics.TextMeasurer
 import jetbrains.livemap.core.input.*
-import jetbrains.livemap.core.layers.LayerGroup
-import jetbrains.livemap.core.layers.LayerManager
-import jetbrains.livemap.core.layers.LayerManagers.createLayerManager
-import jetbrains.livemap.core.layers.LayersRenderingSystem
-import jetbrains.livemap.core.layers.RenderTarget
+import jetbrains.livemap.core.layers.*
+import jetbrains.livemap.core.layers.RenderTarget.OWN_OFFSCREEN_CANVAS
+import jetbrains.livemap.core.layers.RenderTarget.OWN_SCREEN_CANVAS
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
-import jetbrains.livemap.core.multitasking.MicroTaskExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.core.projections.MapRuler
@@ -63,13 +60,9 @@ import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.mapengine.*
 import jetbrains.livemap.mapengine.basemap.*
-import jetbrains.livemap.mapengine.basemap.raster.RasterTileLayerComponent
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugDataSystem
-import jetbrains.livemap.mapengine.camera.CameraComponent
-import jetbrains.livemap.mapengine.camera.CameraInputSystem
-import jetbrains.livemap.mapengine.camera.CameraScale
+import jetbrains.livemap.mapengine.camera.*
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.mapengine.camera.MutableCamera
 import jetbrains.livemap.mapengine.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.mapengine.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
@@ -128,17 +121,21 @@ class LiveMap(
                 requestPosition(viewport.position)
             }
 
+        myLayerManager = when (myRenderTarget) {
+            OWN_OFFSCREEN_CANVAS -> OffscreenLayerManager(canvasControl)
+            OWN_SCREEN_CANVAS -> ScreenLayerManager(canvasControl)
+        }
+
         myContext = LiveMapContext(
             mapProjection = myMapProjection,
             mouseEventSource = canvasControl,
             mapRenderContext = MapRenderContext(viewport, canvasControl),
             errorHandler = { canvasControl.schedule { errorEvent.fire(it) } },
-            camera = camera
+            camera = camera,
+            layerManager = myLayerManager
         )
         myTextMeasurer = TextMeasurer(myContext.mapRenderContext.canvasProvider.createCanvas(Vector.ZERO).context2d)
         myUiService = UiService(myComponentManager, myTextMeasurer)
-
-        myLayerManager = createLayerManager(myComponentManager, myRenderTarget, canvasControl)
 
         val updateController = UpdateController(
             { dt -> animationHandler(myComponentManager, dt) },
@@ -170,7 +167,7 @@ class LiveMap(
 
         myDiagnostics.update(dt)
 
-        return myLayerRenderingSystem.dirtyLayers.isNotEmpty()
+        return myLayerRenderingSystem.updated
     }
 
     private fun init(componentManager: EcsComponentManager) {
@@ -184,7 +181,8 @@ class LiveMap(
                 mySchedulerSystem,
                 myContext.metricsService,
                 myUiService,
-                componentManager
+                componentManager,
+                myLayerManager
             )
         } else {
             Diagnostics()
@@ -192,12 +190,12 @@ class LiveMap(
     }
 
     private fun initSystems(componentManager: EcsComponentManager) {
-        val microTaskExecutor: MicroTaskExecutor = when (myDevParams.read(MICRO_TASK_EXECUTOR)) {
+        val microTaskExecutor = when (myDevParams.read(MICRO_TASK_EXECUTOR)) {
             UI_THREAD -> MicroTaskCooperativeExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
             AUTO, BACKGROUND -> MicroTaskMultiThreadedExecutorFactory.create()
         } ?: MicroTaskCooperativeExecutor(myContext, myDevParams.read(COMPUTATION_FRAME_TIME).toLong())
 
-        myLayerRenderingSystem = myLayerManager.createLayerRenderingSystem()
+        myLayerRenderingSystem = LayersRenderingSystem(componentManager, myLayerManager)
         mySchedulerSystem = SchedulerSystem(microTaskExecutor, componentManager)
         myEcsController = EcsController(
             componentManager,
@@ -205,7 +203,7 @@ class LiveMap(
             listOf(
                 // Input systems
                 MouseInputSystem(componentManager),
-                MouseInputDetectionSystem(componentManager),
+                MouseInputDetectionSystem(componentManager, myLayerManager),
                 CameraInputSystem(componentManager),
                 CursorStyleSystem(componentManager, myCursorService),
 
@@ -261,9 +259,9 @@ class LiveMap(
 
                 // Charts
                 ChartElementScalingSystem(componentManager),
-                RenderingSystem(componentManager),
+                MapEntitiesRenderingSystem(componentManager),
+                UiEntitiesRenderingSystem(componentManager),
 
-                UiRenderingTaskSystem(componentManager),
                 myLayerRenderingSystem,
                 mySchedulerSystem,
 
@@ -282,7 +280,7 @@ class LiveMap(
             .addComponents {
                 + ClickableComponent(
                     Rectangle().apply {
-                        origin = Coordinates.ZERO_CLIENT_POINT.toDoubleVector()
+                        origin = Client.ZERO_VEC.toDoubleVector()
                         dimension = viewport.size.toDoubleVector()
                     }
                 )
@@ -301,27 +299,23 @@ class LiveMap(
     }
 
     private fun initLayers(componentManager: EcsComponentManager) {
-
-        componentManager
-            .createEntity("layers_order")
-            .addComponents { + myLayerManager.createLayersOrderComponent() }
-
         if (myBasemapTileSystemProvider.isVector) {
             componentManager
                 .createEntity("vector_layer_ground")
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.WORLD)
                     + LayerEntitiesComponent()
-                    + myLayerManager.addLayer("ground", LayerGroup.BACKGROUND)
+                    + CameraListenerComponent()
+                    + myLayerManager.addLayer("ground", LayerKind.BASEMAP_TILES)
                 }
         } else {
             componentManager
                 .createEntity("raster_layer_ground")
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.RASTER)
-                    + RasterTileLayerComponent()
                     + LayerEntitiesComponent()
-                    + myLayerManager.addLayer("http_ground", LayerGroup.BACKGROUND)
+                    + CameraListenerComponent()
+                    + myLayerManager.addLayer("http_ground", LayerKind.BASEMAP_TILES)
                 }
         }
 
@@ -340,7 +334,8 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.LABEL)
                     + LayerEntitiesComponent()
-                    + myLayerManager.addLayer("labels", LayerGroup.FOREGROUND)
+                    + CameraListenerComponent()
+                    + myLayerManager.addLayer("labels", LayerKind.BASEMAP_LABELS)
                 }
         }
 
@@ -351,15 +346,16 @@ class LiveMap(
                     + BasemapLayerComponent(BasemapLayerKind.DEBUG)
                     + DebugCellLayerComponent()
                     + LayerEntitiesComponent()
-                    + myLayerManager.addLayer("debug", LayerGroup.FOREGROUND)
+                    + CameraListenerComponent()
+                    + myLayerManager.addLayer("debug", LayerKind.BASEMAP_LABELS)
                 }
         }
 
         componentManager
             .createEntity("layer_ui")
             .addComponents {
-                + UiRenderingTaskSystem.UiLayerComponent()
-                + myLayerManager.addLayer("ui", LayerGroup.UI)
+                + UiEntitiesRenderingSystem.UiLayerComponent()
+                + myLayerManager.addLayer("ui", LayerKind.UI)
             }
     }
 

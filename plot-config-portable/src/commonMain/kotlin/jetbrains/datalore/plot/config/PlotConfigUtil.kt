@@ -74,13 +74,57 @@ object PlotConfigUtil {
         return accessor.getList(PLOT_COMPUTATION_MESSAGES).map { it as String }
     }
 
-    internal fun getVarBindings(
+    internal fun createPlotAesBindingSetup(
+        layerConfigs: List<LayerConfig>,
+        excludeStatVariables: Boolean
+    ): PlotAesBindingSetup {
+        val xAesSet = mutableSetOf<Aes<*>>(Aes.X)
+        val yAesSet = mutableSetOf<Aes<*>>(Aes.Y)
+        layerConfigs.forEach { layer ->
+            layer.varBindings.filter { !(excludeStatVariables && it.variable.isStat) }
+                .map { it.aes }
+                .filterNot { aes -> aes == Aes.X || aes == Aes.Y }
+                .filter { Aes.isPositionalXY(it) }
+                .forEach { aes ->
+                    // See XOR issue: https://youtrack.jetbrains.com/issue/KT-52296/Kotlin-JS-the-xor-operation-sometimes-evaluates-to-int-value-ins
+//                    val b = layer.isYOrientation xor Aes.isPositionalX(aes)
+                    val b = if (layer.isYOrientation) !Aes.isPositionalX(aes) else Aes.isPositionalX(aes)
+                    when (b) {
+                        true -> xAesSet.add(aes)
+                        false -> yAesSet.add(aes)
+                    }
+                }
+        }
+
+        val dataByVarBinding = associateVarBindingsWithData(
+            layerConfigs, excludeStatVariables
+        )
+
+        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet()
+
+        val variablesByMappedAes = associateAesWithMappedVariables(
+            getVarBindings(layerConfigs, excludeStatVariables)
+        )
+
+        val varBindings = getVarBindings(layerConfigs, excludeStatVariables)
+
+        return PlotAesBindingSetup(
+            mappedAesSet = aesSet,
+            xAesSet = xAesSet,
+            yAesSet = yAesSet,
+            varBindings = varBindings,
+            dataByVarBinding = dataByVarBinding,
+            variablesByMappedAes = variablesByMappedAes,
+        )
+    }
+
+    private fun getVarBindings(
         layerConfigs: List<LayerConfig>, excludeStatVariables: Boolean
     ): List<VarBinding> {
         return layerConfigs.flatMap { it.varBindings }.filter { !(excludeStatVariables && it.variable.isStat) }
     }
 
-    internal fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<Aes<*>, List<DataFrame.Variable>> {
+    private fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<Aes<*>, List<DataFrame.Variable>> {
         val variablesByMappedAes: MutableMap<Aes<*>, MutableList<DataFrame.Variable>> = HashMap()
         for (varBinding in varBindings) {
             val aes = varBinding.aes
@@ -90,7 +134,7 @@ object PlotConfigUtil {
         return variablesByMappedAes
     }
 
-    internal fun associateVarBindingsWithData(
+    private fun associateVarBindingsWithData(
         layerConfigs: List<LayerConfig>, excludeStatVariables: Boolean
     ): Map<VarBinding, DataFrame> {
         val dataByVarBinding: Map<VarBinding, DataFrame> = layerConfigs.flatMap { layer ->
@@ -101,11 +145,7 @@ object PlotConfigUtil {
         // Check that all variables in bindings are mapped to data.
         for ((varBinding, data) in dataByVarBinding) {
             val variable = varBinding.variable
-            require(data.has(variable)) {
-                "Undefined variable: '${variable.name}'. Variables in data frame: ${
-                    data.variables().map { "'${it.name}'" }
-                }"
-            }
+            data.assertDefined(variable)
         }
 
         return dataByVarBinding

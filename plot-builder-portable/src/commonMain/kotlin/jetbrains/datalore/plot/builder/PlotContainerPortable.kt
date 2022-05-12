@@ -10,6 +10,7 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgCssResource
 import jetbrains.datalore.vis.svg.SvgSvgElement
 
@@ -29,6 +30,8 @@ open class PlotContainerPortable(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
+    val styleProperties: StyleProperties
+        get() = Style.DEFAULT_STYLE_RENDERER
 
     private var myContentBuilt: Boolean = false
     private var myRegistrations = CompositeRegistration()
@@ -68,7 +71,7 @@ open class PlotContainerPortable(
 
         svg.setStyle(object : SvgCssResource {
             override fun css(): String {
-                return Style.css
+                return Style.generateCSS(styleProperties)
             }
         })
 

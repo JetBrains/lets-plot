@@ -89,17 +89,16 @@ class DataFrame private constructor(builder: Builder) {
 
     operator fun get(variable: Variable): List<*> {
         assertDefined(variable)
-        return myVectorByVar[variable]!!
+        return myVectorByVar.getValue(variable)
     }
 
     fun getNumeric(variable: Variable): List<Double?> {
         assertDefined(variable)
-        val list = myVectorByVar[variable]
-        if (list!!.isEmpty()) {
-            return emptyList()
+        val list = myVectorByVar.getValue(variable)
+        if (list.isNotEmpty()) {
+            assertNumeric(variable)
         }
 
-        assertNumeric(variable)
         @Suppress("UNCHECKED_CAST")
         return list as List<Double?>
     }
@@ -150,12 +149,18 @@ class DataFrame private constructor(builder: Builder) {
         return Builder(this, indices).build()
     }
 
-    private fun assertDefined(variable: Variable) {
+    fun assertDefined(variable: Variable) {
         if (!has(variable)) {
-            val e = IllegalArgumentException("Undefined variable: '$variable'")
+            val e = IllegalArgumentException(undefinedVariableErrorMessage(variable.name))
             LOG.error(e) { e.message!! }
             throw e
         }
+    }
+
+    fun undefinedVariableErrorMessage(varName: String): String {
+        return "Variable not found: '$varName'. Variables in data frame: ${
+            this.variables().map { "'${it.name}'" }
+        }"
     }
 
     private fun assertNumeric(variable: Variable) {
@@ -187,6 +192,41 @@ class DataFrame private constructor(builder: Builder) {
         }
         return builder.build()
     }
+
+    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any> {
+        fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
+
+        val orderedValues = if (orderSpec.aggregateOperation != null) {
+            require(isNumeric(orderSpec.orderBy)) { "Can't apply aggregate operation to non-numeric values" }
+            get(orderSpec.variable)
+                .zip(getNumeric(orderSpec.orderBy))
+                .groupBy({ (value) -> value }) { (_, byValue) -> byValue }
+                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues.filter(::isValueComparable)) }
+                .toList()
+        } else {
+            get(orderSpec.variable).zip(get(orderSpec.orderBy))
+        }
+            .filter { isValueComparable(it.second) && isValueComparable(it.first) }
+            .sortedWith(compareBy({ it.second as Comparable<*> }, { it.first as Comparable<*> }))
+            .mapNotNull { it.first }
+
+        // the values corresponding to non-comparable values will be placed at the end of the result
+        val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
+            .filterNot { isValueComparable(it.second) }
+            .mapNotNull { it.first }
+
+        return (if (orderSpec.direction < 0) {
+            orderedValues.reversed()
+        } else {
+            orderedValues
+        } + nonComparableAppendix).toSet()
+    }
+
+
+    companion object {
+        private val LOG = PortableLogging.logger(DataFrame::class)
+    }
+
 
     class Variable @JvmOverloads constructor(
         val name: String,
@@ -229,39 +269,6 @@ class DataFrame private constructor(builder: Builder) {
         }
     }
 
-    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any> {
-        fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
-
-        val orderedValues = if (orderSpec.aggregateOperation != null) {
-            require(isNumeric(orderSpec.orderBy)) { "Can't apply aggregate operation to non-numeric values" }
-            get(orderSpec.variable)
-                .zip(getNumeric(orderSpec.orderBy))
-                .groupBy({ (value) -> value }) { (_, byValue) -> byValue }
-                .mapValues { (_, byValues) -> orderSpec.aggregateOperation.invoke(byValues.filter(::isValueComparable)) }
-                .toList()
-        } else {
-            get(orderSpec.variable).zip(get(orderSpec.orderBy))
-        }
-            .filter { isValueComparable(it.second) && isValueComparable(it.first) }
-            .sortedWith(compareBy({ it.second as Comparable<*> }, { it.first as Comparable<*> }))
-            .mapNotNull { it.first }
-
-        // the values corresponding to non-comparable values will be placed at the end of the result
-        val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
-            .filterNot { isValueComparable(it.second) }
-            .mapNotNull { it.first }
-
-        return (if (orderSpec.direction < 0) {
-            orderedValues.reversed()
-        } else {
-            orderedValues
-        } + nonComparableAppendix).toSet()
-    }
-
-    companion object {
-        private val LOG = PortableLogging.logger(DataFrame::class)
-    }
-
     class Builder {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
@@ -271,10 +278,12 @@ class DataFrame private constructor(builder: Builder) {
         constructor()
 
         constructor(data: DataFrame) {
-            myVectorByVar.putAll(data.myVectorByVar)
-            myIsNumeric.putAll(data.myIsNumeric)
-            myIsDateTime.putAll(data.myIsDateTime)
-            myOrderSpecs.addAll(data.myOrderSpecs)
+            initInternals(
+                data.myVectorByVar,
+                data.myIsNumeric,
+                data.myIsDateTime,
+                data.myOrderSpecs,
+            )
         }
 
         internal constructor(data: DataFrame, indices: Iterable<Int>) {
@@ -282,10 +291,24 @@ class DataFrame private constructor(builder: Builder) {
                 serie.slice(indices)
             }
 
-            myVectorByVar.putAll(newVectors)
-            myIsNumeric.putAll(data.myIsNumeric)
-            myIsDateTime.putAll(data.myIsDateTime)
-            myOrderSpecs.addAll(data.myOrderSpecs)
+            initInternals(
+                newVectors,
+                data.myIsNumeric,
+                data.myIsDateTime,
+                data.myOrderSpecs,
+            )
+        }
+
+        private fun initInternals(
+            vectorByVar: Map<Variable, List<*>>,
+            isNumeric: Map<Variable, Boolean>,
+            isDateTime: Map<Variable, Boolean>,
+            orderSpecs: List<OrderSpec>,
+        ) {
+            myVectorByVar.putAll(vectorByVar)
+            myIsNumeric.putAll(isNumeric)
+            myIsDateTime.putAll(isDateTime)
+            myOrderSpecs.addAll(orderSpecs)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {

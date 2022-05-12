@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import json
 from pkgutil import extend_path
 from typing import Dict
 
@@ -9,7 +10,7 @@ from typing import Dict
 __path__ = extend_path(__path__, __name__)
 
 from ._version import __version__
-from ._global_settings import _settings, is_production, get_global_bool
+from ._global_settings import _settings, is_production, get_global_bool, PLOT_THEME
 from ._global_settings import NO_JS, OFFLINE
 
 from .plot import *
@@ -166,3 +167,21 @@ class LetsPlot:
             _settings.update(settings)
         else:
             _settings.update({'dev_' + key: value for key, value in settings.items()})
+
+    @classmethod
+    def set_theme(cls, theme: 'plot.FeatureSpec'):
+        """
+        Set up global theme.
+
+        Parameters
+        ----------
+        theme : spec
+            Theme spec provided by `theme(...)` or `theme_xxx()` functions.
+
+        """
+        if theme.kind != 'theme':
+            raise ValueError("Wrong option type. Expected `theme` but was `{}`.".format(theme.kind))
+
+        LetsPlot.set({
+            PLOT_THEME: json.dumps(theme.as_dict())
+        })

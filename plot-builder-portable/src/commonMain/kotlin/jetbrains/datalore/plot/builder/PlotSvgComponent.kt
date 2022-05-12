@@ -35,10 +35,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
@@ -69,7 +67,7 @@ class PlotSvgComponent constructor(
 
     var interactor: PlotInteractor? = null
         set(value) {
-            check(field == null) { "Can be intialize only once." }
+            check(field == null) { "Can be initialize only once." }
             field = value
         }
 
@@ -279,7 +277,7 @@ class PlotSvgComponent constructor(
                 placementArea = geomBoundsAbsolute,
                 handlingArea = tile.geomDrawingBounds.add(geomBoundsAbsolute.origin)
             )
-            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators)
+            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators, tile.layerYOrientations)
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
@@ -330,7 +328,8 @@ class PlotSvgComponent constructor(
                     Orientation.LEFT,
                     overallTileBounds,
                     geomAreaBounds,
-                    theme.axisY(flippedAxis)
+                    theme.verticalAxis(flippedAxis).titleColor(),
+                    "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
             if (axisTitleBottom != null) {
@@ -339,7 +338,8 @@ class PlotSvgComponent constructor(
                     Orientation.BOTTOM,
                     overallTileBounds,
                     geomAreaBounds,
-                    theme.axisX(flippedAxis)
+                    theme.horizontalAxis(flippedAxis).titleColor(),
+                    "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
         }
@@ -425,7 +425,8 @@ class PlotSvgComponent constructor(
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
-        axisTheme: AxisTheme
+        color: Color,
+        className: String
     ) {
         val referenceRect = when (orientation) {
             Orientation.LEFT,
@@ -467,21 +468,13 @@ class PlotSvgComponent constructor(
         }
 
         val titleLabel = TextLabel(text)
+        titleLabel.addClassName(className)
         titleLabel.setHorizontalAnchor(horizontalAnchor)
         titleLabel.setVerticalAnchor(verticalAnchor)
-        titleLabel.textColor().set(axisTheme.titleColor())
+        titleLabel.textColor().set(color)
         titleLabel.moveTo(titleLocation)
         titleLabel.rotate(rotation)
-
-        val titleElement = titleLabel.rootGroup
-        titleElement.addClass(Style.AXIS_TITLE)
-
-        // hack: we have style: ".axis .title text" and we don't want to break backward-compatibility with 'census' charts
-        val parent = SvgGElement()
-        parent.addClass(Style.AXIS)
-
-        parent.children().add(titleElement)
-        add(parent)
+        add(titleLabel)
     }
 
 

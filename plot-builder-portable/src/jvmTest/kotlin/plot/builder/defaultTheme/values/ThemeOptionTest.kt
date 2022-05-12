@@ -85,18 +85,18 @@ internal class ThemeOptionTest {
     private fun accessKeyForOption(theme: Theme, option: String): List<String> {
         return when (option) {
             // Elements
-            ThemeOption.AXIS_TICKS_X -> (theme.axisX() as DefaultAxisTheme).tickKey
-            ThemeOption.AXIS_LINE_X -> (theme.axisX() as DefaultAxisTheme).lineKey
-            ThemeOption.AXIS_TOOLTIP_X -> (theme.axisX() as DefaultAxisTheme).tooltipKey
-            ThemeOption.AXIS_TITLE_X -> (theme.axisX() as DefaultAxisTheme).titleKey
-            ThemeOption.AXIS_TEXT_X -> (theme.axisX() as DefaultAxisTheme).textKey
-            ThemeOption.AXIS_TOOLTIP_TEXT_X -> (theme.axisX() as DefaultAxisTheme).tooltipKey
-            ThemeOption.AXIS_TICKS_Y -> (theme.axisY() as DefaultAxisTheme).tickKey
-            ThemeOption.AXIS_LINE_Y -> (theme.axisY() as DefaultAxisTheme).lineKey
-            ThemeOption.AXIS_TOOLTIP_Y -> (theme.axisY() as DefaultAxisTheme).tooltipKey
-            ThemeOption.AXIS_TITLE_Y -> (theme.axisY() as DefaultAxisTheme).titleKey
-            ThemeOption.AXIS_TEXT_Y -> (theme.axisY() as DefaultAxisTheme).textKey
-            ThemeOption.AXIS_TOOLTIP_TEXT_Y -> (theme.axisY() as DefaultAxisTheme).tooltipKey
+            ThemeOption.AXIS_TICKS_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickKey
+            ThemeOption.AXIS_LINE_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).lineKey
+            ThemeOption.AXIS_TOOLTIP_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tooltipKey
+            ThemeOption.AXIS_TITLE_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).titleKey
+            ThemeOption.AXIS_TEXT_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).textKey
+            ThemeOption.AXIS_TOOLTIP_TEXT_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tooltipKey
+            ThemeOption.AXIS_TICKS_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickKey
+            ThemeOption.AXIS_LINE_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).lineKey
+            ThemeOption.AXIS_TOOLTIP_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tooltipKey
+            ThemeOption.AXIS_TITLE_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).titleKey
+            ThemeOption.AXIS_TEXT_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).textKey
+            ThemeOption.AXIS_TOOLTIP_TEXT_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tooltipKey
 
             ThemeOption.PANEL_BKGR_RECT -> (theme.panel() as DefaultPanelTheme).rectKey
             ThemeOption.PANEL_GRID_MAJOR_X -> (theme.panel().gridX() as DefaultPanelGridTheme).majorLineKey
@@ -116,8 +116,8 @@ internal class ThemeOptionTest {
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey
 
             // Simple option
-            ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.axisX() as DefaultAxisTheme).tickLengthKey
-            ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.axisY() as DefaultAxisTheme).tickLengthKey
+            ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
+            ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
 
             else -> throw IllegalStateException("Unknown theme option: $option")
         }

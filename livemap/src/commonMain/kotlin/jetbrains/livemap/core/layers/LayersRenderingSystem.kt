@@ -5,37 +5,57 @@
 
 package jetbrains.livemap.core.layers
 
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.mapengine.LiveMapContext
 
 class LayersRenderingSystem internal constructor(
     componentManager: EcsComponentManager,
-    private val myRenderingStrategy: RenderingStrategy
-) : AbstractSystem<EcsContext>(componentManager) {
-    private val myDirtyLayers = ArrayList<Int>()
+    private val myLayerManager: LayerManager,
+) : AbstractSystem<LiveMapContext>(componentManager) {
+    private var myDirtyLayers: List<Int> = emptyList()
 
     val dirtyLayers: List<Int>
         get() = myDirtyLayers
 
-    override fun updateImpl(context: EcsContext, dt: Double) {
-        val canvasLayers = getSingleton<LayersOrderComponent>().canvasLayers
+    var updated: Boolean = true
+        private set
 
-        val layerEntities = getEntities(CanvasLayerComponent::class).toList()
-        val dirtyEntities = getEntities(DirtyCanvasLayerComponent::class).toList()
+    override fun updateImpl(context: LiveMapContext, dt: Double) {
+        updated = false
+        if (context.camera.panFrameDistance != null) {
+            if (context.camera.panFrameDistance == Client.ZERO_VEC && dirtyLayers.isEmpty()) {
+                return
+            }
 
-        myDirtyLayers.clear()
-        dirtyEntities.forEach { myDirtyLayers.add(it.id) }
+            val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>().toList()
+            myDirtyLayers = dirtyLayerEntities.map(EcsEntity::id)
+            updated = dirtyLayerEntities.isNotEmpty()
+            val dirtyLayers = dirtyLayerEntities.map { it.get<CanvasLayerComponent>().canvasLayer }
+            myDirtyLayers = dirtyLayerEntities.map(EcsEntity::id)
+            dirtyLayerEntities.forEach {
+                if (it.get<CanvasLayerComponent>().canvasLayer.panningPolicy == PanningPolicy.REPAINT) {
+                    it.untag<DirtyCanvasLayerComponent>()
+                }
+            }
 
-        myRenderingStrategy.render(canvasLayers, layerEntities, dirtyEntities)
-    }
+            myLayerManager.pan(context.camera.panDistance!!, dirtyLayers)
+            updated = true
 
-    interface RenderingStrategy {
-        fun render(
-            renderingOrder: List<CanvasLayer>,
-            layerEntities: Collection<EcsEntity>,
-            dirtyLayerEntities: Collection<EcsEntity>
-        )
+        } else {
+            val dirtyEntities = getEntities<DirtyCanvasLayerComponent>().toList()
+            myDirtyLayers = dirtyEntities.map(EcsEntity::id)
+            updated = dirtyEntities.isNotEmpty()
+
+            dirtyEntities.forEach {
+                it.untag<DirtyCanvasLayerComponent>()
+            }
+
+            myLayerManager.repaint(
+                dirtyEntities.map { it.get<CanvasLayerComponent>().canvasLayer }
+            )
+        }
     }
 }

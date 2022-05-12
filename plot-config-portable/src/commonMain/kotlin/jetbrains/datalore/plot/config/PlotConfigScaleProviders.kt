@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 
@@ -18,9 +17,6 @@ internal object PlotConfigScaleProviders {
         excludeStatVariables: Boolean
     ): Map<Aes<*>, ScaleProvider<*>> {
 
-        val varBindings = PlotConfigUtil.getVarBindings(layerConfigs, excludeStatVariables)
-        val aesSet = varBindings.map(VarBinding::aes).toSet() + setOf(Aes.X, Aes.Y)
-
         val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
 
         // Create 'configured' scale providers.
@@ -29,12 +25,19 @@ internal object PlotConfigScaleProviders {
             scaleProviderByAes[scaleConfig.aes] = scaleProvider
         }
 
+        val setup = PlotConfigUtil.createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
+
+        // All aes used in bindings and x/y aes.
+        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
+        val dataByVarBinding = setup.dataByVarBinding
+        val variablesByMappedAes = setup.variablesByMappedAes
+
         // Append date-time scale provider
-        val variablesByMappedAes = PlotConfigUtil.associateAesWithMappedVariables(varBindings)
-        val dateTimeDataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(layerConfigs, excludeStatVariables)
+        val dateTimeDataByVarBinding = dataByVarBinding
             .filter { (varBinding, df) ->
                 df.isDateTime(varBinding.variable)
             }
+
         dateTimeDataByVarBinding
             .map { (varBinding, _) -> varBinding.aes }
             .filter { aes -> aes in setOf(Aes.X, Aes.Y) }
@@ -45,8 +48,16 @@ internal object PlotConfigScaleProviders {
             }
 
         // Append all the rest scale providers.
-        return aesSet.associateWith {
-            ScaleProviderHelper.getOrCreateDefault(it, scaleProviderByAes)
+        return aesSet.associateWith { aes ->
+            val scaleAes = when {
+                setup.isXAxis(aes) -> Aes.X
+                setup.isYAxis(aes) -> Aes.Y
+                else -> aes
+            }
+
+            scaleProviderByAes.getOrElse(scaleAes) {
+                ScaleProviderHelper.createDefault(scaleAes)
+            }
         }
     }
 }

@@ -9,94 +9,176 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.point.PointShape
 
-interface DataPointAesthetics {
-    fun index(): Int
+abstract class DataPointAesthetics {
+    abstract fun index(): Int
 
-    fun x(): Double?
+    abstract fun group(): Int?
 
-    fun y(): Double?
+    abstract operator fun <T> get(aes: Aes<T>): T?
 
-    fun z(): Double?
+    fun x(): Double? {
+        return get(Aes.X)
+    }
 
-    fun ymin(): Double?
+    fun y(): Double? {
+        return get(Aes.Y)
+    }
 
-    fun ymax(): Double?
+    fun z(): Double? {
+        return get(Aes.Z)
+    }
 
-    fun color(): Color?
+    fun ymin(): Double? {
+        return get(Aes.YMIN)
+    }
 
-    fun fill(): Color?
+    fun ymax(): Double? {
+        return get(Aes.YMAX)
+    }
 
-    fun alpha(): Double?
+    fun color(): Color? {
+        return get(Aes.COLOR)
+    }
 
-    fun shape(): PointShape?
+    fun fill(): Color? {
+        return get(Aes.FILL)
+    }
 
-    fun lineType(): LineType
+    fun alpha(): Double? {
+        return get(Aes.ALPHA)
+    }
 
-    fun size(): Double?
+    fun shape(): PointShape? {
+        return get(Aes.SHAPE)
+    }
 
-    fun stacksize(): Double?
+    fun lineType(): LineType {
+        return getNotNull(Aes.LINETYPE)
+    }
 
-    fun width(): Double?
+    fun size(): Double? {
+        return get(Aes.SIZE)
+    }
 
-    fun height(): Double?
+    fun stacksize(): Double? {
+        return get(Aes.STACKSIZE)
+    }
 
-    fun binwidth(): Double?
+    fun width(): Double? {
+        return get(Aes.WIDTH)
+    }
 
-    fun violinwidth(): Double?
+    fun height(): Double? {
+        return get(Aes.HEIGHT)
+    }
 
-    fun weight(): Double?
+    fun binwidth(): Double? {
+        return get(Aes.BINWIDTH)
+    }
 
-    fun intercept(): Double?
+    fun violinwidth(): Double? {
+        return get(Aes.VIOLINWIDTH)
+    }
 
-    fun slope(): Double?
+    fun weight(): Double? {
+        return get(Aes.WEIGHT)
+    }
 
-    fun interceptX(): Double?
+    fun intercept(): Double? {
+        return get(Aes.INTERCEPT)
+    }
 
-    fun interceptY(): Double?
+    fun slope(): Double? {
+        return get(Aes.SLOPE)
+    }
 
-    fun lower(): Double?
+    fun interceptX(): Double? {
+        return get(Aes.XINTERCEPT)
+    }
 
-    fun middle(): Double?
+    fun interceptY(): Double? {
+        return get(Aes.YINTERCEPT)
+    }
 
-    fun upper(): Double?
+    fun lower(): Double? {
+        return get(Aes.LOWER)
+    }
 
-    fun mapId(): Any
+    fun middle(): Double? {
+        return get(Aes.MIDDLE)
+    }
 
-    fun frame(): String
+    fun upper(): Double? {
+        return get(Aes.UPPER)
+    }
 
-    fun speed(): Double?
+    fun mapId(): Any {
+        return getNotNull(Aes.MAP_ID)
+    }
 
-    fun flow(): Double?
+    fun frame(): String {
+        return getNotNull(Aes.FRAME)
+    }
 
-    fun xmin(): Double?
+    fun speed(): Double? {
+        return get(Aes.SPEED)
+    }
 
-    fun xmax(): Double?
+    fun flow(): Double? {
+        return get(Aes.FLOW)
+    }
 
-    fun xend(): Double?
+    fun xmin(): Double? {
+        return get(Aes.XMIN)
+    }
 
-    fun yend(): Double?
+    fun xmax(): Double? {
+        return get(Aes.XMAX)
+    }
 
-    fun label(): Any?
+    fun xend(): Double? {
+        return get(Aes.XEND)
+    }
 
-    fun family(): String
+    fun yend(): Double? {
+        return get(Aes.YEND)
+    }
 
-    fun fontface(): String
+    fun label(): Any? {
+        return get(Aes.LABEL)
+    }
 
-    fun hjust(): Any
+    fun family(): String {
+        return getNotNull(Aes.FAMILY)
+    }
 
-    fun vjust(): Any
+    fun fontface(): String {
+        return getNotNull(Aes.FONTFACE)
+    }
 
-    fun angle(): Double?
+    fun hjust(): Any {
+        return getNotNull(Aes.HJUST)
+    }
 
-    fun symX(): Double?
+    fun vjust(): Any {
+        return getNotNull(Aes.VJUST)
+    }
 
-    fun symY(): Double?
+    fun angle(): Double? {
+        return get(Aes.ANGLE)
+    }
 
-    fun group(): Int?
+    fun symX(): Double? {
+        return get(Aes.SYM_X)
+    }
 
-    fun numeric(aes: Aes<Double>): Double?
+    fun symY(): Double? {
+        return get(Aes.SYM_Y)
+    }
 
-    operator fun <T> get(aes: Aes<T>): T?
+    fun numeric(aes: Aes<Double>): Double? {
+        return get(aes)
+    }
 
     fun defined(aes: Aes<*>): Boolean {
         if (aes.isNumeric) {
@@ -104,5 +186,9 @@ interface DataPointAesthetics {
             return number != null && (number as Double).isFinite()
         }
         return true
+    }
+
+    private fun <T> getNotNull(aes: Aes<T>): T {
+        return get(aes) ?: throw IllegalStateException("No value for aesthetic $aes at index ${index()}")
     }
 }

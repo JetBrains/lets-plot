@@ -42,8 +42,8 @@ internal class Interactor(
             decorationLayer,
             flippedAxis,
             plotSize,
-            theme.axisX(flippedAxis),
-            theme.axisY(flippedAxis),
+            theme.horizontalAxis(flippedAxis),
+            theme.verticalAxis(flippedAxis),
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))
@@ -53,8 +53,9 @@ internal class Interactor(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>,
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, tooltipBounds, targetLocators)
+        tooltipRenderer.addTileInfo(geomBounds, tooltipBounds, targetLocators, layerYOrientations)
         geomBoundsList.add(geomBounds)
     }
 

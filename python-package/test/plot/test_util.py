@@ -25,3 +25,7 @@ from lets_plot.plot import util
 def test_as_boolean(val, default, expected):
     assert util.as_boolean(val, default=default) == expected
 
+
+def test_import():
+    import lets_plot
+    assert lets_plot.__version__ is not None

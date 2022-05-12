@@ -8,12 +8,10 @@ package jetbrains.datalore.plot.builder.data
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
-import jetbrains.datalore.plot.base.DataFrame.Builder.Companion.emptyFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
@@ -30,7 +28,7 @@ object DataProcessing {
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isOrigin) {
-                check(data.has(variable)) { "Undefined variable $variable" }
+                data.assertDefined(variable)
                 data = DataFrameUtil.applyTransform(
                     data,
                     variable,
@@ -47,21 +45,16 @@ object DataProcessing {
      * Backend-side only
      */
     fun buildStatData(
-        data: DataFrame,
+        statInput: StatInput,
         stat: Stat,
-        bindings: List<VarBinding>,
-        transformByAes: Map<Aes<*>, Transform>,
         groupingContext: GroupingContext,
-        facets: PlotFacets,
-        statCtx: StatContext,
+        facetVariables: List<Variable>,
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
-        if (stat === Stats.IDENTITY) {
-            return DataAndGroupingContext(emptyFrame(), groupingContext)
-        }
+        check(stat != Stats.IDENTITY)
 
         val groups = groupingContext.groupMapper
 
@@ -71,12 +64,12 @@ object DataProcessing {
         // if only one group no need to modify
         if (groups === GroupUtil.SINGLE_GROUP) {
             val statData = applyStat(
-                data,
+                statInput.data,
                 stat,
-                bindings,
-                transformByAes,
-                facets,
-                statCtx,
+                statInput.bindings,
+                statInput.transformByAes,
+                facetVariables,
+                statInput.statCtx,
                 varsWithoutBinding,
                 messageConsumer
             )
@@ -85,21 +78,21 @@ object DataProcessing {
         } else { // add offset to each group
             val groupMerger = GroupMerger()
             var lastStatGroupEnd = -1
-            for (d in splitByGroup(data, groups)) {
+            for (d in splitByGroup(statInput.data, groups)) {
                 var statData = applyStat(
                     d,
                     stat,
-                    bindings,
-                    transformByAes,
-                    facets,
-                    statCtx,
+                    statInput.bindings,
+                    statInput.transformByAes,
+                    facetVariables,
+                    statInput.statCtx,
                     varsWithoutBinding,
                     messageConsumer
                 )
                 if (statData.isEmpty) {
                     continue
                 }
-                groupMerger.initOrderSpecs(orderOptions, statData.variables(), bindings, aggregateOperation)
+                groupMerger.initOrderSpecs(orderOptions, statData.variables(), statInput.bindings, aggregateOperation)
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
@@ -118,7 +111,8 @@ object DataProcessing {
                             statData = statData.builder().putNumeric(Stats.GROUP, newG).build()
                         }
                     }
-                } else { // if stat has ..group.. then groupingVar won't be checked, so no need to update
+                } else {
+                    // If stat has ..group.. then groupingVar won't be checked, so no need to update.
                     val groupingVar = groupingContext.optionalGroupingVar
                     if (groupingVar != null) {
                         val size = statData[statData.variables().first()].size
@@ -143,7 +137,7 @@ object DataProcessing {
 
             // set ordering specifications
             val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderSpec(resultSeries.keys, bindings, orderOption, aggregateOperation)
+                OrderOptionUtil.createOrderSpec(resultSeries.keys, statInput.bindings, orderOption, aggregateOperation)
             }
             addOrderSpecs(orderSpecs)
 
@@ -190,7 +184,7 @@ object DataProcessing {
         stat: Stat,
         bindings: List<VarBinding>,
         transformByAes: Map<Aes<*>, Transform>,
-        facets: PlotFacets,
+        facetVariables: List<Variable>,
         statCtx: StatContext,
         varsWithoutBinding: List<String>,
         compMessageConsumer: Consumer<String>
@@ -213,11 +207,8 @@ object DataProcessing {
         val statDataSize = statData.rowCount()
 
         // generate new series for facet variables
-        val facetVars = facets.variables.map {
-            DataFrameUtil.findVariableOrFail(data, it)
-        }
         val inputSeriesForFacetVars: Map<Variable, List<Any?>> = run {
-            val facetLevelByFacetVar = facetVars.associateWith { data[it][0] }
+            val facetLevelByFacetVar = facetVariables.associateWith { data[it][0] }
             facetLevelByFacetVar.mapValues { (_, facetLevel) -> List(statDataSize) { facetLevel } }
         }
 
@@ -233,7 +224,7 @@ object DataProcessing {
         val newInputSeries = HashMap<Variable, List<Any?>>()
         for (binding in bindings) {
             val variable = binding.variable
-            if (variable.isStat || facetVars.contains(variable)) {
+            if (variable.isStat || facetVariables.contains(variable)) {
                 continue
             }
 
@@ -306,8 +297,9 @@ object DataProcessing {
         }
 
         val inverseTransformedSeries = statData.variables()
-            .filter { aesByStatVar.containsKey(it) }
             .filter {
+                aesByStatVar.containsKey(it)
+            }.filter {
                 val aes = aesByStatVar.getValue(it)
                 needInverseTransform(aes)
             }.associateWith {
@@ -327,17 +319,10 @@ object DataProcessing {
 
     internal fun computeGroups(
         data: DataFrame,
-        bindings: List<VarBinding>,
-        groupingVar: Variable?,
-        pathIdVar: Variable?
+        groupingVariables: List<Variable>,
     ): (Int) -> Int {
-        val groupingVariables = getGroupingVariables(data, bindings, groupingVar) + listOfNotNull(pathIdVar)
 
         var currentGroups: List<Int>? = null
-        if (groupingVar != null) {
-            currentGroups = computeGroups(data[groupingVar])
-        }
-
         for (groupingVariable in groupingVariables) {
             val values = data[groupingVariable]
             val groups = computeGroups(values)
@@ -393,32 +378,33 @@ object DataProcessing {
         return dummies
     }
 
-    private fun getGroupingVariables(
+    fun defaultGroupingVariables(
         data: DataFrame,
         bindings: List<VarBinding>,
-        explicitGroupingVar: Variable?
-    ): Iterable<Variable> {
+        pathIdVarName: String?,
+    ): List<Variable> {
+        val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
+        return defaultGroupingVariables(data, bindings) + listOfNotNull(pathIdVar)
+    }
 
-        // all 'origin' discrete vars (but not positional) + explicitGroupingVar
-        val result = LinkedHashSet<Variable>()
-        for (binding in bindings) {
-            val variable = binding.variable
-            if (!result.contains(variable)) {
-                if (variable.isOrigin) {
-                    if (variable == explicitGroupingVar || isDefaultGroupingVariable(data, binding.aes, variable)) {
-                        result.add(variable)
-                    }
-                }
-            }
-        }
-        return result
+    private fun defaultGroupingVariables(
+        data: DataFrame,
+        bindings: List<VarBinding>,
+    ): Iterable<Variable> {
+        return bindings
+            .filter { isDefaultGroupingVariable(data, it.aes, it.variable) }
+            .map { it.variable }
+            .distinct()
     }
 
     private fun isDefaultGroupingVariable(
         data: DataFrame,
         aes: Aes<*>,
         variable: Variable
-    ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
+    ): Boolean {
+        // 'origin' discrete vars (but not positional)
+        return variable.isOrigin && !(Aes.isPositional(aes) || data.isNumeric(variable))
+    }
 
 
     class DataAndGroupingContext internal constructor(

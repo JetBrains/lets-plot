@@ -23,7 +23,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     private val myLocatorLookupStrategy: LookupStrategy = builder.locatorLookupStrategy
     private val myTooltipLines: List<TooltipLine> = builder.tooltipLines
     private val myTooltipProperties: TooltipProperties = builder.tooltipProperties
-    private val myIgnoreInvisibleTargets = builder.isIgnoringInvisibleTargets()
+    private val myIgnoreInvisibleTargets = builder.ignoreInvisibleTargets
     private val myIsCrosshairEnabled: Boolean = builder.isCrosshairEnabled
     private val myTooltipTitle: TooltipLine? = builder.tooltipTitle
 
@@ -37,7 +37,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     ): ContextualMapping {
         return createContextualMapping(
             myTooltipLines.map(::TooltipLine),  // clone tooltip lines to not share DataContext between plots when facet is used
-                                                // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
+            // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             dataAccess,
             dataFrame,
             myTooltipProperties,
@@ -57,7 +57,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame: DataFrame,
             userDefinedValueSources: List<ValueSource>? = null
         ): ContextualMapping {
-            val defaultTooltipLines = GeomInteractionBuilder.defaultValueSourceTooltipLines(
+            val defaultTooltipLines = GeomInteractionBuilderUtil.defaultValueSourceTooltipLines(
                 aesListForTooltip,
                 axisAes,
                 outliers,

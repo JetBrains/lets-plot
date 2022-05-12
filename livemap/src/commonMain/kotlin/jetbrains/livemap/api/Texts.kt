@@ -15,7 +15,7 @@ import jetbrains.livemap.chart.TextSpecComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.graphics.TextMeasurer
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.*
@@ -30,7 +30,7 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_text")
         .addComponents {
-            + layerManager.addLayer("livemap_text", LayerGroup.FEATURES)
+            + layerManager.addLayer("livemap_text", LayerKind.FEATURES)
             + LayerEntitiesComponent()
         }
 

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -107,7 +108,7 @@ internal object PositionalScalesUtil {
         yInitialDomain: DoubleSpan?
     ): Pair<DoubleSpan?, DoubleSpan?> {
         val positionaDryRunAestheticsByLayer: Map<GeomLayer, Aesthetics> = layers.associateWith {
-            positionaDryRunAesthetics(it)
+            positionalDryRunAesthetics(it)
         }
 
         var xDomainOverall: DoubleSpan? = null
@@ -128,7 +129,7 @@ internal object PositionalScalesUtil {
         return Pair(xDomainOverall, yDomainOverall)
     }
 
-    private fun positionaDryRunAesthetics(layer: GeomLayer): Aesthetics {
+    private fun positionalDryRunAesthetics(layer: GeomLayer): Aesthetics {
         val aesList = layer.renderedAes().filter {
             Aes.affectingScaleX(it) ||
                     Aes.affectingScaleY(it) ||
@@ -137,19 +138,33 @@ internal object PositionalScalesUtil {
         }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
-
         return PlotUtil.createLayerAesthetics(layer, aesList, mappers)
     }
 
     private fun computeLayerDryRunXYRanges(
-        layer: GeomLayer, aes: Aesthetics
+        layer: GeomLayer,
+        aesthetics: Aesthetics
     ): Pair<DoubleSpan?, DoubleSpan?> {
-        val geomCtx = GeomContextBuilder().aesthetics(aes).build()
 
-        val rangesAfterPosAdjustment =
-            computeLayerDryRunXYRangesAfterPosAdjustment(layer, aes, geomCtx)
+        @Suppress("NAME_SHADOWING")
+        val rangesAfterPosAdjustment = when (layer.isYOrientation) {
+            true -> YOrientationAesthetics(aesthetics)
+            false -> aesthetics
+        }.let { aesthetics ->
+            val geomCtx = GeomContextBuilder().aesthetics(aesthetics).build()
+            val rangesXY =
+                computeLayerDryRunXYRangesAfterPosAdjustment(layer, aesthetics, geomCtx)
+
+            // return to "normal" orientation
+            when (layer.isYOrientation) {
+                true -> Pair(rangesXY.second, rangesXY.first)
+                false -> rangesXY
+            }
+        }
+
+        val geomCtx = GeomContextBuilder().aesthetics(aesthetics).build()
         val (xRangeAfterSizeExpand, yRangeAfterSizeExpand) =
-            computeLayerDryRunXYRangesAfterSizeExpand(layer, aes, geomCtx)
+            computeLayerDryRunXYRangesAfterSizeExpand(layer, aesthetics, geomCtx)
 
         var rangeX = rangesAfterPosAdjustment.first
         if (rangeX == null) {
@@ -174,7 +189,7 @@ internal object PositionalScalesUtil {
         val posAesX = Aes.affectingScaleX(layer.renderedAes())
         val posAesY = Aes.affectingScaleY(layer.renderedAes())
 
-        val pos = PlotUtil.createLayerPos(layer, aes)
+        val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aes)
         if (pos.isIdentity) {
             // simplified ranges
             val rangeX = RangeUtil.combineRanges(posAesX, aes)
@@ -248,22 +263,30 @@ internal object PositionalScalesUtil {
         geomCtx: GeomContext
     ): Pair<DoubleSpan?, DoubleSpan?> {
         val renderedAes = layer.renderedAes()
-        val rangeX = when {
-            Aes.WIDTH in renderedAes -> Aes.WIDTH
-            layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
-            else -> null
-        }?.let {
-            computeLayerDryRunRangeAfterSizeExpand(Aes.X, it, aesthetics, geomCtx)
-        }
-        val rangeY = when {
-            Aes.HEIGHT in renderedAes -> Aes.HEIGHT
-            layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
-            else -> null
-        }?.let {
-            computeLayerDryRunRangeAfterSizeExpand(Aes.Y, it, aesthetics, geomCtx)
+
+        val (widthAxis, heightAxis) = when (layer.isYOrientation) {
+            true -> Aes.Y to Aes.X
+            false -> Aes.X to Aes.Y
         }
 
-        return Pair(rangeX, rangeY)
+        val xy = mapOf(
+            widthAxis to when {
+                Aes.WIDTH in renderedAes -> Aes.WIDTH
+                layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
+                else -> null
+            }?.let { widthAes ->
+                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx)
+            },
+            heightAxis to when {
+                Aes.HEIGHT in renderedAes -> Aes.HEIGHT
+                layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
+                else -> null
+            }?.let { heightAes ->
+                computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx)
+            }
+        )
+
+        return Pair(xy.getValue(Aes.X), xy.getValue(Aes.Y))
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(

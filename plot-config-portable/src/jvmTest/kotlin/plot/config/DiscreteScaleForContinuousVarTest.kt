@@ -9,7 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.TestUtil.assertClientWontFail
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plot.server.config.ServerSideTestUtil.serverTransformWithoutEncoding
+import jetbrains.datalore.plot.server.config.ServerSideTestUtil.backendSpecTransform
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -48,7 +48,7 @@ class DiscreteScaleForContinuousVarTest {
                 "}"
 
         val opts = parsePlotSpec(spec)
-        val opts1 = serverTransformWithoutEncoding(opts)
+        val opts1 = backendSpecTransform(opts)
 
         val plotConfigClientSide = assertClientWontFail(opts1)
         assertEquals(1, plotConfigClientSide.layerConfigs.size.toLong())

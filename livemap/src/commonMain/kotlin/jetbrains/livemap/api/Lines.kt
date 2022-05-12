@@ -15,7 +15,7 @@ import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.PathRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.core.layers.LayerGroup
+import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedGeocodeLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
@@ -39,7 +39,7 @@ private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_line")
         .addComponents {
-            +layerManager.addLayer("geom_line", LayerGroup.FEATURES)
+            +layerManager.addLayer("geom_line", LayerKind.FEATURES)
             +LayerEntitiesComponent()
         }
 

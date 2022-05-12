@@ -10,11 +10,11 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 
 class SvgLayerRenderer(
-    private val myAesthetics: Aesthetics,
-    private val myGeom: Geom,
-    private val myPos: PositionAdjustment,
-    private val myCoord: CoordinateSystem,
-    private val myGeomContext: GeomContext
+    private val aesthetics: Aesthetics,
+    private val geom: Geom,
+    private val pos: PositionAdjustment,
+    private val coord: CoordinateSystem,
+    private val geomContext: GeomContext
 ) : SvgComponent(), SvgRoot {
 
     override fun buildComponent() {
@@ -22,6 +22,6 @@ class SvgLayerRenderer(
     }
 
     private fun buildLayer() {
-        myGeom.build(this, myAesthetics, myPos, myCoord, myGeomContext)
+        geom.build(this, aesthetics, pos, coord, geomContext)
     }
 }

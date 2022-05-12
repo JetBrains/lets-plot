@@ -11,4 +11,22 @@ interface StatContext {
     fun overallXRange(): DoubleSpan?
 
     fun overallYRange(): DoubleSpan?
+
+    fun getFlipped(): StatContext {
+        return Flipped(this)
+    }
+
+    class Flipped(private val orig: StatContext) : StatContext {
+        override fun overallXRange(): DoubleSpan? {
+            return orig.overallYRange()
+        }
+
+        override fun overallYRange(): DoubleSpan? {
+            return orig.overallXRange()
+        }
+
+        override fun getFlipped(): StatContext {
+            return orig
+        }
+    }
 }

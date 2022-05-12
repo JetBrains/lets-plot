@@ -5,16 +5,11 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
-import jetbrains.datalore.plot.config.Option.Meta.KIND
-import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
-import jetbrains.datalore.plot.config.Option.Plot.LAYERS
-import jetbrains.datalore.plot.config.Option.Plot.SCALES
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 import jetbrains.datalore.plot.config.PlotConfig
@@ -31,16 +26,33 @@ object ServerSideTestUtil {
         if (dataOption != null) {
             opts[DATA] = dataOption
         }
-        return serverTransformWithoutEncoding(opts)
+        return backendSpecTransform(opts)
     }
 
-    fun serverTransformWithoutEncoding(plotSpec: MutableMap<String, Any>): Map<String, Any> {
-        return PlotConfigServerSide.processTransform(plotSpec)
+    fun backendSpecTransform(plotSpec: MutableMap<String, Any>): Map<String, Any> {
+        return BackendSpecTransformUtil.processTransform(plotSpec)
     }
 
-    fun createLayerConfigsWithoutEncoding(plotSpec: MutableMap<String, Any>): List<LayerConfig> {
+    /**
+     * Single plot only (not GGBunch)
+     */
+    fun createPlotConfig(plotSpecRaw: MutableMap<String, Any>): PlotConfigServerSide {
+        val (plotSpec, plotConfig) = BackendSpecTransformUtil.getTransformedSpecsAndPlotConfig(plotSpecRaw)
+        if (PlotConfig.isFailure(plotSpec)) {
+            val errorMessage = PlotConfig.getErrorMessage(plotSpec)
+            throw IllegalStateException(errorMessage)
+        }
+
+        return plotConfig
+    }
+
+    fun createLayerConfigs(plotSpec: MutableMap<String, Any>): List<LayerConfig> {
+        return createPlotConfig(plotSpec).layerConfigs
+    }
+
+    fun createLayerConfigsBeforeDataUpdate(plotSpec: MutableMap<String, Any>): List<LayerConfig> {
         @Suppress("NAME_SHADOWING")
-        val plotSpec = serverTransformWithoutEncoding(plotSpec)
+        val plotSpec = backendSpecTransform(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
             throw IllegalStateException(errorMessage)
@@ -49,17 +61,17 @@ object ServerSideTestUtil {
         return PlotConfigServerSide(plotSpec).layerConfigs
     }
 
-    internal fun createLayerConfigsByLayerSpec(layerSpec: Map<String, Any?>): List<LayerConfig> {
-        return createLayerConfigsWithoutEncoding(
-            mutableMapOf(
-                KIND to PLOT,
-                SCALES to emptyList,
-                LAYERS to listOf(
-                    layerSpec
-                )
-            )
-        )
-    }
+//    internal fun createLayerConfigsByLayerSpec(layerSpec: Map<String, Any?>): List<LayerConfig> {
+//        return createLayerConfigs(
+//            mutableMapOf(
+//                KIND to PLOT,
+//                SCALES to emptyList,
+//                LAYERS to listOf(
+//                    layerSpec
+//                )
+//            )
+//        )
+//    }
 
     internal fun geomPolygonSpec(
         mapData: Map<String, Any>,

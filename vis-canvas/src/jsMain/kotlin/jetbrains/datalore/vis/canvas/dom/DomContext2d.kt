@@ -52,6 +52,10 @@ internal class DomContext2d(
         }
     }
 
+    override fun drawImage(snapshot: Snapshot) {
+        drawImage(snapshot, 0.0, 0.0)
+    }
+
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         val domSnapshot = snapshot as DomSnapshot
         ctx.drawImage(domSnapshot.canvasElement, x, y)

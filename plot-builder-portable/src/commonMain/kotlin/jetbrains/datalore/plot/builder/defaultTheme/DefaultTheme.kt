@@ -20,9 +20,9 @@ class DefaultTheme(
     private val plot = DefaultPlotTheme(options)
 
 
-    override fun axisX(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
+    override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 
-    override fun axisY(flipAxis: Boolean): AxisTheme = if (flipAxis) axisX else axisY
+    override fun verticalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisX else axisY
 
     override fun legend(): LegendTheme = legend
 

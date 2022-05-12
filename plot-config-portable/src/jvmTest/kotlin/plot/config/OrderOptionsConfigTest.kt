@@ -241,7 +241,7 @@ class OrderOptionsConfigTest {
 
         private fun assertFailed(spec: String, expectedMessage: String) {
             parsePlotSpec(spec)
-                .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+                .let(ServerSideTestUtil::backendSpecTransform)
                 .also {
                     require(PlotConfig.isFailure(it))
                     assertEquals(

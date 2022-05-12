@@ -21,7 +21,8 @@ interface PlotInteractor : Disposable {
     fun onTileAdded(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
-        targetLocators: List<GeomTargetLocator>
+        targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>
     )
 
     fun startToolFeedback(toolFeedback: ToolFeedback): Registration

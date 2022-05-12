@@ -5,54 +5,56 @@
 
 package jetbrains.datalore.plot.builder.data
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
 
-class GroupingContext(
-    private val myData: DataFrame,
-    bindings: List<VarBinding>,
-    groupingVarName: String?,
-    pathIdVarName: String?,
-    private val myExpectMultiple: Boolean
+class GroupingContext constructor(
+    private val data: DataFrame,
+    defaultGroupingVariables: List<Variable>,
+    explicitGroupingVarName: String?,
+    private val expectMultiple: Boolean,
+    private val groupSizeList: List<Int>? = null
 ) {
 
-    private val myBindings: List<VarBinding> = ArrayList(bindings)
-    internal val optionalGroupingVar: Variable? = findOptionalVariable(myData, groupingVarName)
-    private val pathIdVar: Variable? = findOptionalVariable(myData, pathIdVarName)
+    internal val optionalGroupingVar: Variable? = findOptionalVariable(data, explicitGroupingVarName)
+    private val groupingVariables: List<Variable> = when(optionalGroupingVar) {
+        null -> defaultGroupingVariables
+        else -> {
+            // The explicit grouping var was 1-st in list before so we just keep this invariant.
+            (linkedSetOf(optionalGroupingVar) + defaultGroupingVariables).toList()
+        }
+    }
 
-    private var myGroupSizeList: List<Int>? = null
-    private var myGroupMapper: ((Int) -> Int)? = null
+    private var _groupMapper: ((Int) -> Int)? = null
 
-    //myGroupMapper = DataProcessing.computeGroups(myData, myBindings, myOptionalGroupingVar, myExpectMultiple);
     val groupMapper: (Int) -> Int
         get() = { index ->
-            if (myGroupMapper == null) {
-                myGroupMapper = computeGroups()
+            if (_groupMapper == null) {
+                _groupMapper = computeGroups()
             }
-            myGroupMapper!!(index)
+            _groupMapper!!(index)
         }
 
     private fun computeGroups(): (Int) -> Int {
-        if (myData.has(Stats.GROUP)) {
-            val list = myData.getNumeric(Stats.GROUP)
+        if (data.has(Stats.GROUP)) {
+            val list = data.getNumeric(Stats.GROUP)
             return GroupUtil.wrap(list)
-        } else if (myGroupSizeList != null) {
-            if (myGroupSizeList!!.size == myData.rowCount()) {
+        } else if (groupSizeList != null) {
+            if (groupSizeList.size == data.rowCount()) {
                 return GroupUtil.SINGLE_GROUP
             } else {
                 val groupByPointIndex =
-                    toIndexMap(myGroupSizeList!!)
+                    toIndexMap(groupSizeList)
                 return GroupUtil.wrap(groupByPointIndex)
             }
-        } else if (myExpectMultiple) {
+        } else if (expectMultiple) {
             return DataProcessing.computeGroups(
-                myData,
-                myBindings,
-                optionalGroupingVar,
-                pathIdVar
+                data,
+                groupingVariables
             )
         }
         return GroupUtil.SINGLE_GROUP
@@ -60,9 +62,18 @@ class GroupingContext(
 
     companion object {
         internal fun withOrderedGroups(data: DataFrame, groupSizeList: List<Int>): GroupingContext {
-            val groupingContext = GroupingContext(data, emptyList(), null, null, false)
-            groupingContext.myGroupSizeList = ArrayList(groupSizeList)
-            return groupingContext
+            val groupingVariables = DataProcessing.defaultGroupingVariables(
+                data,
+                bindings = emptyList(),
+                pathIdVarName = null
+            )
+            return GroupingContext(
+                data,
+                groupingVariables,
+                explicitGroupingVarName = null,
+                expectMultiple = false,
+                groupSizeList = ArrayList(groupSizeList)
+            )
         }
 
         private fun toIndexMap(groupSizeList: List<Int>): Map<Int, Int> {
@@ -78,5 +89,37 @@ class GroupingContext(
             }
             return result
         }
+
+        private fun getGroupingVariables(
+            data: DataFrame,
+            bindings: List<VarBinding>,
+            explicitGroupingVar: Variable?
+        ): Iterable<Variable> {
+
+            // all 'origin' discrete vars (but not positional) + explicitGroupingVar
+            val result = LinkedHashSet<Variable>()
+            for (binding in bindings) {
+                val variable = binding.variable
+                if (!result.contains(variable)) {
+                    if (variable.isOrigin) {
+                        if (variable == explicitGroupingVar || isDefaultGroupingVariable(
+                                data,
+                                binding.aes,
+                                variable
+                            )
+                        ) {
+                            result.add(variable)
+                        }
+                    }
+                }
+            }
+            return result
+        }
+
+        private fun isDefaultGroupingVariable(
+            data: DataFrame,
+            aes: Aes<*>,
+            variable: Variable
+        ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
     }
 }

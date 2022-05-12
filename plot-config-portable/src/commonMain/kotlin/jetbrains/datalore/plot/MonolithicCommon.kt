@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svgToString.SvgToString
 import kotlin.math.max
 
@@ -199,7 +199,7 @@ object MonolithicCommon {
             if (frontendOnly) {
                 plotSpec
             } else {
-                PlotConfigServerSide.processTransform(plotSpec)
+                BackendSpecTransformUtil.processTransform(plotSpec)
             }
 
         if (PlotConfig.isFailure(plotSpec)) {

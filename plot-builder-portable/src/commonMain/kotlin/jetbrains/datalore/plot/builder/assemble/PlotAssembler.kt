@@ -114,8 +114,8 @@ class PlotAssembler private constructor(
                 layoutProviderByTile,
                 facets,
                 theme.facets(),
-                hAxisTheme = theme.axisX(flipAxis),
-                vAxisTheme = theme.axisY(flipAxis),
+                hAxisTheme = theme.horizontalAxis(flipAxis),
+                vAxisTheme = theme.verticalAxis(flipAxis),
             )
 
             createPlot(frameOfReferenceProviderByTile, plotLayout, legendsBoxInfos)

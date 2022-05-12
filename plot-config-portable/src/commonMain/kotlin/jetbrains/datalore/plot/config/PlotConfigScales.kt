@@ -23,24 +23,18 @@ internal object PlotConfigScales {
         scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
     ): TypedScaleMap {
 
-        val dataByVarBinding = PlotConfigUtil.associateVarBindingsWithData(
+        val setup = PlotConfigUtil.createPlotAesBindingSetup(
             layerConfigs,
             excludeStatVariables = false
         )
 
-        val variablesByMappedAes = PlotConfigUtil.associateAesWithMappedVariables(
-            PlotConfigUtil.getVarBindings(
-                layerConfigs,
-                excludeStatVariables = false
-            )
-        )
-
-        // All aes used in bindings.
-        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet()
+        // All aes used in bindings and x/y aes.
+        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
+        val variablesByMappedAes = setup.variablesByMappedAes
 
         // Create scales for all aes.
         val scaleByAes = HashMap<Aes<*>, Scale<*>>()
-        for (aes in aesSet + setOf(Aes.X, Aes.Y)) {
+        for (aes in aesSet) {
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
             val scaleProvider = scaleProviderByAes.getValue(aes)
 

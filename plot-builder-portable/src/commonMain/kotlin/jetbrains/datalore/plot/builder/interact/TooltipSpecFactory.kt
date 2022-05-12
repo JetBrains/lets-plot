@@ -59,7 +59,7 @@ class TooltipSpecFactory(
                             layoutHint = hint,
                             title = null,
                             lines = linesForAes,
-                            fill = hint.fillColor ?: tipLayoutHint().fillColor ?: hint.markerColors.firstOrNull() ?: WHITE,
+                            fill = hint.fillColor ?: tipLayoutHint().fillColor ?: tipLayoutHint().markerColors.firstOrNull() ?: WHITE,
                             markerColors = emptyList(),
                             isOutlier = true
                         )

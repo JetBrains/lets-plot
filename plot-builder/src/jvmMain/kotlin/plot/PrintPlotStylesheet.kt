@@ -9,5 +9,5 @@ import jetbrains.datalore.plot.builder.presentation.Style
 
 
 fun main() {
-    println(Style.css)
+    println(Style.generateCSS(Style.DEFAULT_STYLE_RENDERER))
 }

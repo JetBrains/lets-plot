@@ -12,7 +12,9 @@ import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.core.layers.DirtyCanvasLayerComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 
-class UiRenderingTaskSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
+class UiEntitiesRenderingSystem(
+    componentManager: EcsComponentManager
+) : AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         val uiLayer = getSingletonEntity(UiLayerComponent::class)

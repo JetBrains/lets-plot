@@ -19,7 +19,6 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import java.awt.Graphics2D
-import java.awt.Image
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.IOException
@@ -80,7 +79,7 @@ class AwtCanvasControl(
         return AwtCanvas.create(size, myPixelRatio)
     }
 
-    private fun imagePngBase64ToImage(dataUrl: String): Image {
+    private fun imagePngBase64ToImage(dataUrl: String): BufferedImage {
         val mediaType = "data:image/png;base64,"
         val imageString = dataUrl.replace(mediaType, "")
 
@@ -105,6 +104,7 @@ class AwtCanvasControl(
         val dst = BufferedImage(size.x, size.y, BufferedImage.TYPE_INT_ARGB)
         val graphics2D = dst.createGraphics() as Graphics2D
         graphics2D.drawImage(src, 0, 0, size.x, size.y, null)
+        graphics2D.dispose()
 
         return Asyncs.constant(
             AwtCanvas.AwtSnapshot(dst)

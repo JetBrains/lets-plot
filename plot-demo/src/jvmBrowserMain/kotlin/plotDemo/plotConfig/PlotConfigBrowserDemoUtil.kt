@@ -7,7 +7,7 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.JsObjectSupport.mapToJsObjectInitializer
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
@@ -63,7 +63,7 @@ object PlotConfigBrowserDemoUtil {
         for (spec in plotSpecList) {
             @Suppress("NAME_SHADOWING")
             val spec = if (applyBackendTransform) {
-                PlotConfigServerSide.processTransform(spec)
+                BackendSpecTransformUtil.processTransform(spec)
             } else {
                 spec  // raw: JS is going to apply transform on the client side
             }

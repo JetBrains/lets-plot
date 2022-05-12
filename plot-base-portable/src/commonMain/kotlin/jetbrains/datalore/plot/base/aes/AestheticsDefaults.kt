@@ -218,7 +218,7 @@ open class AestheticsDefaults {
         }
 
         fun freqpoly(): AestheticsDefaults {
-            return path()
+            return area()
         }
 
         fun step(): AestheticsDefaults {

@@ -109,7 +109,7 @@ class LayerTargetCollectorWithLocatorTest {
         }
 
         private fun createGeomInteractionBuilder(area: Boolean): GeomInteraction {
-            return GeomInteractionBuilder(Aes.values())
+            return GeomInteractionBuilder.DemoAndTest(Aes.values())
                 .bivariateFunction(area)
                 .ignoreInvisibleTargets(true)
                 .build()

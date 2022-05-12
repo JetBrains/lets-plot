@@ -16,44 +16,44 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
-    private var myFlipped: Boolean = false
-    private var myAesthetics: Aesthetics? = null
-    private var myAestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
-    private var myAesBounds: DoubleRectangle? = null
-    private var myGeomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    private var flipped: Boolean = false
+    private var aesthetics: Aesthetics? = null
+    private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
+    private var aesBounds: DoubleRectangle? = null
+    private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
 
     constructor()
 
     private constructor(ctx: MyGeomContext) {
-        myFlipped = ctx.flipped
-        myAesthetics = ctx.myAesthetics
-        myAestheticMappers = ctx.myAestheticMappers
-        myAesBounds = ctx.myAesBounds
-        myGeomTargetCollector = ctx.targetCollector
+        flipped = ctx.flipped
+        aesthetics = ctx.aesthetics
+        aestheticMappers = ctx.aestheticMappers
+        aesBounds = ctx._aesBounds
+        geomTargetCollector = ctx.targetCollector
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
-        myFlipped = flipped
+        this.flipped = flipped
         return this
     }
 
     override fun aesthetics(aesthetics: Aesthetics): ImmutableGeomContext.Builder {
-        myAesthetics = aesthetics
+        this.aesthetics = aesthetics
         return this
     }
 
     override fun aestheticMappers(aestheticMappers: Map<Aes<*>, ScaleMapper<*>>): ImmutableGeomContext.Builder {
-        myAestheticMappers = aestheticMappers
+        this.aestheticMappers = aestheticMappers
         return this
     }
 
     override fun aesBounds(aesBounds: DoubleRectangle): ImmutableGeomContext.Builder {
-        myAesBounds = aesBounds
+        this.aesBounds = aesBounds
         return this
     }
 
     override fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): ImmutableGeomContext.Builder {
-        myGeomTargetCollector = geomTargetCollector
+        this.geomTargetCollector = geomTargetCollector
         return this
     }
 
@@ -63,17 +63,17 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
 
     private class MyGeomContext(b: GeomContextBuilder) : ImmutableGeomContext {
-        val myAesthetics = b.myAesthetics
-        val myAestheticMappers = b.myAestheticMappers
-        val myAesBounds: DoubleRectangle? = b.myAesBounds
+        val aesthetics = b.aesthetics
+        val aestheticMappers = b.aestheticMappers
+        val _aesBounds: DoubleRectangle? = b.aesBounds
 
-        override val flipped: Boolean = b.myFlipped
-        override val targetCollector = b.myGeomTargetCollector
+        override val flipped: Boolean = b.flipped
+        override val targetCollector = b.geomTargetCollector
 
         override fun getResolution(aes: Aes<Double>): Double {
             var resolution = 0.0
-            if (myAesthetics != null) {
-                resolution = myAesthetics.resolution(aes, 0.0)
+            if (aesthetics != null) {
+                resolution = aesthetics.resolution(aes, 0.0)
             }
             if (resolution <= SeriesUtil.TINY) {
                 resolution = getUnitResolution(aes)
@@ -83,17 +83,17 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         }
 
         override fun getUnitResolution(aes: Aes<Double>): Double {
-            val mapper = myAestheticMappers?.get(aes) ?: Mappers.IDENTITY
+            val mapper = aestheticMappers?.get(aes) ?: Mappers.IDENTITY
             return mapper(1.0) as Double
         }
 
         override fun isMappedAes(aes: Aes<*>): Boolean {
-            return myAestheticMappers?.containsKey(aes) ?: false
+            return aestheticMappers?.containsKey(aes) ?: false
         }
 
         override fun getAesBounds(): DoubleRectangle {
-            check(myAesBounds != null) { "GeomContext: aesthetics bounds are not defined." }
-            return myAesBounds
+            check(_aesBounds != null) { "GeomContext: aesthetics bounds are not defined." }
+            return _aesBounds
         }
 
         override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {

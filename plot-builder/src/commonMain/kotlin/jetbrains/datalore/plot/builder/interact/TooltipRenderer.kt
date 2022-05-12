@@ -135,7 +135,7 @@ internal class TooltipRenderer(
                         strokeWidth = strokeWidth,
                         lines = spec.lines,
                         title = spec.title,
-                        style = spec.style,
+                        textClassName = spec.style,
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
                         borderRadius = borderRadius,
@@ -190,12 +190,14 @@ internal class TooltipRenderer(
     fun addTileInfo(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
-        targetLocators: List<GeomTargetLocator>
+        targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>
     ) {
         val tileInfo = TileInfo(
             geomBounds,
             tooltipBounds,
             targetLocators,
+            layerYOrientations,
             flippedAxis
         )
         myTileInfos.add(tileInfo)
@@ -228,22 +230,25 @@ internal class TooltipRenderer(
         val geomBounds: DoubleRectangle,
         val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
+        layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean
     ) {
 
-        private val myTargetLocators = targetLocators.map {
-            when {
-                flippedAxis -> FlippedTileTargetLocator(it)
-                else -> TileTargetLocator(it)
+        private val transformedLocators = targetLocators.zip(layerYOrientations)
+            .map { (targetLocator, isYOrientation) ->
+                val flip = if (isYOrientation) !flippedAxis else flippedAxis
+                when (flip) {
+                    true -> FlippedTileTargetLocator(targetLocator)
+                    false -> TileTargetLocator(targetLocator)
+                }
             }
-        }
 
         internal val axisOrigin: DoubleVector
             get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
             val targetsPicker = LocatedTargetsPicker(flippedAxis).apply {
-                for (locator in myTargetLocators) {
+                for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
                         addLookupResult(result, plotCoord)
@@ -277,12 +282,12 @@ internal class TooltipRenderer(
     private val TooltipSpec.style
         get() =
             when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
-                Y_AXIS_TOOLTIP -> Style.PLOT_AXIS_TOOLTIP
-                VERTICAL_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                HORIZONTAL_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                CURSOR_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
-                ROTATED_TOOLTIP -> Style.PLOT_DATA_TOOLTIP
+                X_AXIS_TOOLTIP -> "${Style.AXIS_TOOLTIP_TEXT}-${xAxisTheme.axis}"
+                Y_AXIS_TOOLTIP -> "${Style.AXIS_TOOLTIP_TEXT}-${yAxisTheme.axis}"
+                VERTICAL_TOOLTIP -> Style.TOOLTIP_TEXT
+                HORIZONTAL_TOOLTIP -> Style.TOOLTIP_TEXT
+                CURSOR_TOOLTIP -> Style.TOOLTIP_TEXT
+                ROTATED_TOOLTIP -> Style.TOOLTIP_TEXT
             }
 
     private val LayoutManager.PositionedTooltip.orientation

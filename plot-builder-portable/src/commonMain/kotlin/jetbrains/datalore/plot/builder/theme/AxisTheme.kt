@@ -9,6 +9,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.presentation.Defaults
 
 interface AxisTheme {
+    val axis: String
+
     fun isOntop(): Boolean = false
 
     fun showLine(): Boolean

@@ -144,19 +144,13 @@ class BoxplotGeom : GeomBase() {
         }
 
         return object : DataPointAestheticsDelegate(p) {
-            override operator fun <T> get(aes: Aes<T>): T? = getIntern(aes)
-
-            override fun color(): Color? = getIntern(Aes.COLOR)
-            override fun fill(): Color? = getIntern(Aes.FILL)
-            override fun shape(): PointShape? = getIntern(Aes.SHAPE)
-            override fun size(): Double? = getIntern(Aes.SIZE)
-
-            private fun <T> getIntern(aes: Aes<T>): T? {
+            override operator fun <T> get(aes: Aes<T>): T? {
                 val value: Any? = when (aes) {
-                    Aes.COLOR -> outlierColor ?: super.color()
-                    Aes.FILL -> outlierFill ?: super.fill()
-                    Aes.SHAPE -> outlierShape ?: super.shape()
+                    Aes.COLOR -> outlierColor ?: super.get(aes)
+                    Aes.FILL -> outlierFill ?: super.get(aes)
+                    Aes.SHAPE -> outlierShape ?: super.get(aes)
                     Aes.SIZE -> outlierSize ?: OUTLIER_DEF_SIZE  // 'size' of 'super' is line thickness on box-plot
+                    Aes.ALPHA -> 1.0 // Don't apply boxplot' alpha to outlier points.
                     else -> super.get(aes)
                 }
                 @Suppress("UNCHECKED_CAST")

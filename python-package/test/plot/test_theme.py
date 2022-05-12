@@ -59,3 +59,44 @@ def test_element_values_merged():
     assert 'c' == rect['color']
     assert 'b' == rect['fill']
     assert 1 == rect['size']
+
+
+def test_global_theme():
+    gg.LetsPlot.set_theme(
+        theme(axis_tooltip=element_blank())
+    )
+
+    spec = gg.ggplot() + _geom('foo')
+
+    assert spec.as_dict()['theme']['axis_tooltip']['blank']
+    assert isinstance(spec.props()['theme']['axis_tooltip'], dict)
+
+
+def test_global_theme_overriding():
+    gg.LetsPlot.set_theme(
+        theme(legend_position='bottom')
+    )
+
+    spec = gg.ggplot() + _geom('foo') + theme(legend_position='top')
+
+    assert 'top' == spec.as_dict()['theme']['legend_position']
+
+
+def test_overriding_global_named_theme():
+    gg.LetsPlot.set_theme(
+        theme_classic()
+    )
+
+    spec = gg.ggplot() + _geom('foo') + theme(legend_position='top')
+
+    assert 'top' == spec.as_dict()['theme']['legend_position']
+
+
+def test_overriding_global_theme_with_named():
+    gg.LetsPlot.set_theme(
+        theme(legend_position='top')
+    )
+
+    spec = gg.ggplot() + _geom('foo') + theme_classic()
+
+    assert 'legend_position' not in spec.as_dict()['theme']

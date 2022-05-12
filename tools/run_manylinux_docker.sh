@@ -22,7 +22,7 @@ else
 fi
 
 
-platform_name="manylinux1_x86_64"
+platform_name="manylinux2014_x86_64"
 docker_image="quay.io/pypa/${platform_name}"
 python_extension_path="${root_path}/python-extension"
 python_package_path="${root_path}/python-package"

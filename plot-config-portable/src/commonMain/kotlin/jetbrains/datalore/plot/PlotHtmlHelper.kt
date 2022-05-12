@@ -8,7 +8,7 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.JsObjectSupport
 import jetbrains.datalore.base.random.RandomString.randomString
-import jetbrains.datalore.plot.server.config.PlotConfigServerSide
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 
 object PlotHtmlHelper {
     // Data-attributes used to store extra information about the meaning of 'script' elements
@@ -90,7 +90,7 @@ object PlotHtmlHelper {
     fun getDynamicDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
-        val plotSpec = PlotConfigServerSide.processTransform(plotSpec)
+        val plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
         val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
         return getDynamicDisplayHtml(plotSpecJs, size)
     }
@@ -119,7 +119,7 @@ object PlotHtmlHelper {
     fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
-        val plotSpec = PlotConfigServerSide.processTransform(plotSpec)
+        val plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
         val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
         return getStaticDisplayHtml(plotSpecJs, size)
     }

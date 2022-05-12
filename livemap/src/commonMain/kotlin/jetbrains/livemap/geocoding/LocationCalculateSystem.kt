@@ -7,7 +7,6 @@ package jetbrains.livemap.geocoding
 
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.limit
-import jetbrains.livemap.Coordinates.ZERO_WORLD_POINT
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -43,7 +42,7 @@ class LocationCalculateSystem(
                     entity.contains<WorldOriginComponent>() -> {
                         Rect(
                             entity.get<WorldOriginComponent>().origin,
-                            entity.tryGet<WorldDimensionComponent>()?.dimension ?: ZERO_WORLD_POINT
+                            entity.tryGet<WorldDimensionComponent>()?.dimension ?: World.ZERO_VEC
                         )
                     }
                     entity.contains<RegionBBoxComponent>() -> {

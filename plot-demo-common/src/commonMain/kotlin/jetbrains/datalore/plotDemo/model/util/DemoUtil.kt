@@ -14,12 +14,7 @@ import kotlin.random.Random
 object DemoUtil {
     fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
         val r = RandomGaussian(Random(seed))
-        val list = ArrayList<Double>()
-        for (i in 0 until count) {
-            val next = r.nextGaussian() * stdDeviance + mean
-            list.add(next)
-        }
-        return list
+        return List(count) { r.nextGaussian() * stdDeviance + mean }
     }
 
     fun naturals(count: Int): List<Double> {

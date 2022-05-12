@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
@@ -20,7 +20,7 @@ class ArrowSpec
  * Essentially describes the width of the arrow head.
  * @param length The length of the arrow head (px).
  */
-(val angle: Double, val length: Double, val end: End, val type: Type) {
+    (val angle: Double, val length: Double, val end: End, val type: Type) {
 
     val isOnFirstEnd: Boolean
         get() = end == End.FIRST || end == End.BOTH
@@ -36,7 +36,7 @@ class ArrowSpec
         val ys = doubleArrayOf(y - length * sin(polarAngle - angle), y, y - length * sin(polarAngle + angle))
 
         val b = SvgPathDataBuilder(true)
-                .moveTo(xs[0], ys[0])
+            .moveTo(xs[0], ys[0])
 
         for (i in 1..2) {
             b.lineTo(xs[i], ys[i], true)
@@ -51,18 +51,20 @@ class ArrowSpec
 
     fun toArrowAes(p: DataPointAesthetics): DataPointAesthetics {
         return object : DataPointAestheticsDelegate(p) {
-            private val myFilled = type == Type.CLOSED
+            private val filled = (type == Type.CLOSED)
 
-            override fun fill(): Color? {
-                return if (myFilled) {
-                    color()
-                } else Color.TRANSPARENT
-            }
-
-            override fun lineType(): LineType {
-                return if (myFilled) {
-                    NamedLineType.SOLID // avoid ugly patterns if linetype is other than 'solid'
-                } else super.lineType()
+            override operator fun <T> get(aes: Aes<T>): T? {
+                val value: Any? = when (aes) {
+                    Aes.FILL -> if (filled) super.get(Aes.COLOR) else Color.TRANSPARENT
+                    Aes.LINETYPE -> if (filled) {
+                        NamedLineType.SOLID // avoid ugly patterns if linetype is other than 'solid'
+                    } else {
+                        super.get(aes)
+                    }
+                    else -> super.get(aes)
+                }
+                @Suppress("UNCHECKED_CAST")
+                return value as T?
             }
         }
     }

@@ -34,7 +34,6 @@ object Defaults {
     const val FONT_LARGE = 16
     const val FONT_MEDIUM = 15
     const val FONT_SMALL = 13
-    const val FONT_X_SMALL = 11
 
     const val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
     const val FONT_FAMILY_MONOSPACED = "\"Courier New\", Courier, monospace"
@@ -79,7 +78,8 @@ object Defaults {
 
             const val BORDER_RADIUS = 4.0
             const val COLOR_BAR_WIDTH = 4.0
-            const val COLOR_BARS_MARGIN = 0.5
+            const val COLOR_BAR_STROKE_WIDTH = 1.5
+
             const val BORDER_WIDTH = 4.0
 
             val DARK_TEXT_COLOR = Color.BLACK
@@ -95,7 +95,6 @@ object Defaults {
         object Axis {
             const val TITLE_FONT_SIZE = FONT_MEDIUM
             const val TICK_FONT_SIZE = FONT_SMALL
-            const val TICK_FONT_SIZE_SMALL = FONT_X_SMALL
 
             val LINE_COLOR = Color.parseHex(DARK_GRAY)
             const val TICK_MARK_PADDING = 3.0

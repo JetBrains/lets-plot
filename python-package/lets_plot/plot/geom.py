@@ -427,6 +427,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                orientation=None,
                 method=None,
                 n=None,
                 se=None,
@@ -466,6 +467,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
     n : int
@@ -579,6 +583,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  method=method,
                  n=n,
                  se=se,
@@ -591,6 +596,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
 
 def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+             orientation=None,
              **other_args):
     """
     Display a bar chart which makes the height of the bar proportional to the
@@ -623,6 +629,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -713,10 +722,12 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  **other_args)
 
 
 def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                   orientation=None,
                    bins=None,
                    binwidth=None,
                    center=None,
@@ -753,6 +764,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     bins : int, default=30
         Number of bins. Overridden by `binwidth`.
     binwidth : float
@@ -777,7 +791,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Notes
     -----
     `geom_histogram()` displays a 1d distribution by dividing variable
-    mapped to x axis into bins and counting the number of observations in each bin.
+    mapped to x-axis into bins and counting the number of observations in each bin.
 
     Computed variables:
 
@@ -847,6 +861,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  bins=bins,
                  binwidth=binwidth,
                  center=center,
@@ -2622,6 +2637,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 
 def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 orientation=None,
                  fatten=None,
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
                  varwidth=None,
@@ -2653,6 +2669,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     fatten : float, default=1.0
         A multiplicative factor applied to size of the middle bar.
     outlier_color : str
@@ -2788,6 +2807,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  fatten=fatten,
                  outlier_color=outlier_color,
                  outlier_fill=outlier_fill,
@@ -2798,6 +2818,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                orientation=None,
                 draw_quantiles=None,
                 scale=None,
                 **other_args):
@@ -2826,6 +2847,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     draw_quantiles : list of float
         Draw horizontal lines at the given quantiles of the density estimate.
     scale : {'area', 'count', 'width'}, default='area'
@@ -2940,6 +2964,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  draw_quantiles=draw_quantiles,
                  scale=scale,
                  **other_args)
@@ -3326,6 +3351,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 orientation=None,
                  kernel=None,
                  adjust=None,
                  bw=None,
@@ -3362,6 +3388,9 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -3490,6 +3519,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
                  **other_args)
 
@@ -4007,6 +4037,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
 
 def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  orientation=None,
                   **other_args):
     """
     Display a line chart which makes the y value proportional to the number
@@ -4039,6 +4070,9 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    orientation : str, default='x'
+        Specifies the axis that the layer' stat and geom should run along.
+        Possible values: 'x', 'y'.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4108,6 +4142,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 orientation=orientation,
                  **other_args)
 
 

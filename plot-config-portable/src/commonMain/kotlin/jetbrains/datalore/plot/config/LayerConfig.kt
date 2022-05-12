@@ -12,6 +12,8 @@ import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
+import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
@@ -27,6 +29,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Layer.NONE
+import jetbrains.datalore.plot.config.Option.Layer.ORIENTATION
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
@@ -77,10 +80,10 @@ class LayerConfig(
             !getBoolean(SHOW_LEGEND, true)
         } else false
 
-    val samplings: List<Sampling>?
+    val samplings: List<Sampling>
         get() {
             check(!clientSide)
-            return mySamplings
+            return mySamplings!!
         }
 
     val isLiveMap: Boolean
@@ -93,6 +96,18 @@ class LayerConfig(
         PosProto.STACK -> SeriesUtil::sum
         else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
     }
+
+    val isYOrientation: Boolean
+        get() = when (hasOwn(ORIENTATION)) {
+            true -> getString(ORIENTATION)?.lowercase()?.let {
+                when (it) {
+                    "y" -> true
+                    "x" -> false
+                    else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
+                }
+            } ?: false
+            false -> false
+        }
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -108,10 +123,16 @@ class LayerConfig(
         }
 
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
-        val consumedAesSet = HashSet(geomProto.renders())
-        if (!clientSide) {
-            consumedAesSet.addAll(stat.consumes())
-        }
+        val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {
+            when (clientSide) {
+                true -> it
+                false -> it + stat.consumes()
+            }
+        }.afterOrientation(isYOrientation)
+
+//        if (!clientSide) {
+//            consumedAesSet.addAll(stat.consumes())
+//        }
 
         // mapping (inherit from plot) + 'layer' mapping
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
@@ -166,7 +187,12 @@ class LayerConfig(
 
         if (clientSide) {
             // add stat default mappings
-            val statDefMapping = Stats.defaultMapping(stat)
+            val statDefMapping = Stats.defaultMapping(stat).let {
+                when (isYOrientation) {
+                    true -> YOrientationBaseUtil.flipAesKeys(it)
+                    false -> it
+                }
+            }
             // Only keys (aes) in 'statDefMapping' that are not already present in 'aesMappinds'.
             aesMappings = statDefMapping + aesMappings
         }

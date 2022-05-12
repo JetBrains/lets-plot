@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadHeight
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColLabelSize
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -34,13 +35,15 @@ internal class PlotTile(
     private val frameOfReference: TileFrameOfReference,
 ) : SvgComponent() {
 
-    private val myTargetLocators = ArrayList<GeomTargetLocator>()
+    private val _targetLocators = ArrayList<GeomTargetLocator>()
 
     var liveMapFigure: SomeFig? = null
         private set
 
     val targetLocators: List<GeomTargetLocator>
-        get() = myTargetLocators
+        get() = _targetLocators
+
+    val layerYOrientations: List<Boolean> = layers.map { it.isYOrientation }
 
     lateinit var geomDrawingBounds: DoubleRectangle  // the area between axes or x/y limits
         private set
@@ -70,7 +73,7 @@ internal class PlotTile(
             val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
 
             liveMapFigure = liveMapData.canvasFigure
-            myTargetLocators.add(liveMapData.targetLocator)
+            _targetLocators.add(liveMapData.targetLocator)
             geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
         } else {
             // Normal plot tiles
@@ -84,7 +87,7 @@ internal class PlotTile(
                     layer.locatorLookupSpec,
                     layer.contextualMapping,
                 )
-                myTargetLocators.add(collectorWithLocator)
+                _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
                 layerComponent.moveTo(geomBounds.origin)
@@ -117,8 +120,9 @@ internal class PlotTile(
                 val x = labelBounds.center.x
                 val y = labelBounds.center.y
                 val lab = TextLabel(xLabel)
-                lab.moveTo(x, y)
+                lab.addClassName("${Style.FACET_STRIP_TEXT}-x")
                 lab.textColor().set(theme.stripTextColor())
+                lab.moveTo(x, y)
                 lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
                 lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
                 add(lab)
@@ -145,8 +149,9 @@ internal class PlotTile(
             val y = labelBounds.center.y
 
             val lab = TextLabel(tileLayoutInfo.facetYLabel)
-            lab.moveTo(x, y)
+            lab.addClassName("${Style.FACET_STRIP_TEXT}-y")
             lab.textColor().set(theme.stripTextColor())
+            lab.moveTo(x, y)
             lab.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             lab.setVerticalAnchor(Text.VerticalAnchor.CENTER)
             lab.rotate(90.0)

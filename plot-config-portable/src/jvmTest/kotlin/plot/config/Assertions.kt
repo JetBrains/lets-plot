@@ -20,14 +20,14 @@ fun transformToClientPlotConfig(spec: String): PlotConfigClientSide {
 
 fun transformToClientPlotConfig(plotSpec: MutableMap<String, Any>): PlotConfigClientSide {
     return plotSpec
-        .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+        .let(ServerSideTestUtil::backendSpecTransform)
         .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
         .let(TestUtil::assertClientWontFail)
 }
 
 fun failedTransformToClientPlotConfig(spec: String): String {
     return parsePlotSpec(spec)
-        .let(ServerSideTestUtil::serverTransformWithoutEncoding)
+        .let(ServerSideTestUtil::backendSpecTransform)
         .let {
             try {
                 PlotConfigClientSide.create(it) {}

@@ -8,6 +8,7 @@ package jetbrains.livemap.mapengine.camera
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.minus
+import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -18,6 +19,7 @@ import jetbrains.livemap.toClientPoint
 
 class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myCamera: MutableCamera
+    private var myLastFrameDragLocation: Vector? = null
 
     override fun initImpl(context: LiveMapContext) {
         myCamera = context.camera as MutableCamera
@@ -33,20 +35,42 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         val mouseInput = cameraEntity.get<MouseInputComponent>()
         val viewport = context.mapRenderContext.viewport
 
-        val dragDistance = mouseInput.dragDistance
+        mouseInput.dragState?.let { drag ->
+            if (drag.started) {
+                myLastFrameDragLocation = drag.origin
+            } else {
 
-        if (dragDistance != null && dragDistance != Vector.ZERO) {
-            context.camera.requestPosition(viewport.getMapCoord(
-                viewport.center - dragDistance.toClientPoint()
-            ))
+                val dragFrameDistance = drag.location.sub(myLastFrameDragLocation!!)
+                myLastFrameDragLocation = drag.location
+
+                myCamera.panDistance = drag.location.sub(drag.origin).toClientPoint()
+                myCamera.panFrameDistance = dragFrameDistance.toClientPoint()
+
+                if (dragFrameDistance != Vector.ZERO) {
+                    val position = viewport.getMapCoord(viewport.center - dragFrameDistance.toClientPoint())
+                    context.camera.requestPosition(position)
+                }
+
+                if (drag.stopped) {
+                    myLastFrameDragLocation = null
+                }
+            }
+        } ?: run {
+            myCamera.panDistance = null
+            myCamera.panFrameDistance = null
         }
-
 
         removeChangedComponents()
 
         myCamera.isZoomLevelChanged = false
         myCamera.isZoomFractionChanged = false
-        myCamera.isMoved = false
+
+        myCamera.isMoved = when {
+            // requestedPosition also used by dragging. isMoved will always be false without a dragState check
+            mouseInput.dragState == null && myCamera.requestedPosition != null -> true
+            mouseInput.dragState?.stopped == true -> true
+            else -> false
+        }
         myCamera.canReset = context.initialZoom?.toDouble() != myCamera.zoom || context.initialPosition != myCamera.position
 
         if (myCamera.requestedAnimation == true) {
@@ -59,10 +83,16 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
                 }
             }
         } else if (myCamera.requestedReset == true) {
-            updateCamera(context.initialZoom!!.toDouble(), context.initialPosition)
+            updateCamera(
+                requestedZoom = context.initialZoom!!.toDouble(),
+                requestedPosition = context.initialPosition
+            )
         }
         else {
-            updateCamera(myCamera.requestedZoom, myCamera.requestedPosition)
+            updateCamera(
+                requestedZoom = myCamera.requestedZoom,
+                requestedPosition = myCamera.requestedPosition
+            )
         }
 
         myCamera.requestedZoom = null
@@ -70,22 +100,38 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         myCamera.requestedAnimation = null
         myCamera.requestedReset = null
 
-        if (myCamera.isZoomFractionChanged || myCamera.isMoved) {
-            updateAll(myCamera.isZoomLevelChanged, myCamera.isZoomFractionChanged, myCamera.isMoved)
+
+
+        if (myCamera.isZoomFractionChanged || myCamera.isMoved || myCamera.panDistance != null) {
+            for (entity in getEntities<CameraListenerComponent>()) {
+                if (myCamera.isZoomLevelChanged ||
+                    myCamera.isZoomFractionChanged ||
+                    myCamera.isMoved
+                ) {
+                    entity.tag(::CenterChangedComponent)
+                }
+
+                if (myCamera.isZoomLevelChanged) {
+                    entity.tag(::ZoomLevelChangedComponent)
+                }
+
+                if (myCamera.isZoomFractionChanged) {
+                    entity.tag(::ZoomFractionChangedComponent)
+                }
+
+                if (myCamera.panFrameDistance?.let { it != Client.ZERO_VEC } == true) {
+                    entity.tag(::CenterChangedComponent)
+                }
+            }
         }
     }
 
     private fun updateCamera(requestedZoom: Double?, requestedPosition: Vec<World>?) {
-        requestedZoom?.let {
-            myCamera.isZoomLevelChanged = it % 1.0 == 0.0
-            myCamera.isZoomFractionChanged = true
-            myCamera.zoom = it
-        }
+        requestedZoom?.let { myCamera.zoom = it }
+        requestedPosition?.let { myCamera.position = it }
 
-        requestedPosition?.let {
-            myCamera.position = it
-            myCamera.isMoved = true
-        }
+        myCamera.isZoomLevelChanged = requestedZoom?.let { it % 1.0 == 0.0 } ?: false
+        myCamera.isZoomFractionChanged = requestedZoom != null
     }
 
     private fun removeChangedComponents() {
@@ -98,25 +144,7 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         }
 
         for (entity in getEntities<CenterChangedComponent>().toList()) {
-            entity.removeComponent(CenterChangedComponent::class)
-        }
-    }
-
-    private fun updateAll(zoomLevelChanged: Boolean, zoomFractionChanged: Boolean, centerChanged: Boolean) {
-        for (entity in getEntities<CameraListenerComponent>()) {
-            if (zoomLevelChanged) {
-                entity.tag(::ZoomLevelChangedComponent)
-                entity.tag(::CenterChangedComponent)
-            }
-
-            if (zoomFractionChanged) {
-                entity.tag(::ZoomFractionChangedComponent)
-                entity.tag(::CenterChangedComponent)
-            }
-
-            if (centerChanged) {
-                entity.tag(::CenterChangedComponent)
-            }
+            entity.untag<CenterChangedComponent>()
         }
     }
 }

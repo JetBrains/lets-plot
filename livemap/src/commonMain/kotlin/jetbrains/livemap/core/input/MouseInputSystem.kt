@@ -5,119 +5,151 @@
 
 package jetbrains.livemap.core.input
 
+import jetbrains.datalore.base.concurrent.Lock
+import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.MouseEvent
+import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.observable.event.handler
+import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsContext
 
-class MouseInputSystem(componentManager: EcsComponentManager) : AbstractSystem<EcsContext>(componentManager) {
+class MouseInputSystem(
+    componentManager: EcsComponentManager,
+) : AbstractSystem<EcsContext>(componentManager) {
+
+    private data class InputEvent(
+        val moveEvent: InputMouseEvent? = null,
+        val pressEvent: InputMouseEvent? = null,
+        val clickEvent: InputMouseEvent? = null,
+        val doubleClickEvent: InputMouseEvent? = null,
+        val dragState: DragState? = null,
+    )
 
     private val myRegs = CompositeRegistration()
-    private var myLocation: Vector? = null
-    private var myDragStartLocation: Vector? = null
-    private var myDragCurrentLocation: Vector? = null
-    private var myDragDelta: Vector? = null
-    private var myPressEvent: InputMouseEvent? = null
-    private var myMoveEvent: InputMouseEvent? = null
-    private var myClickEvent: InputMouseEvent? = null
-    private var myDoubleClickEvent: InputMouseEvent? = null
+    private var myDragState: DragState? = null
+    private val rawMouseEventsQueueLock = Lock()
+    private val rawMouseEventsQueue = mutableListOf<Pair<MouseEventSpec, MouseEvent>>()
+
+    private fun enqueue(mouseEventSpec: MouseEventSpec) = object : EventHandler<MouseEvent> {
+        override fun onEvent(event: MouseEvent) {
+            rawMouseEventsQueueLock.execute {
+                rawMouseEventsQueue.add(mouseEventSpec to event)
+            }
+        }
+    }
 
     override fun init(context: EcsContext) {
-        myRegs.add(context.eventSource.addEventHandler(MOUSE_DOUBLE_CLICKED, handler(this::onMouseDoubleClicked)))
-        myRegs.add(context.eventSource.addEventHandler(MOUSE_PRESSED, handler(this::onMousePressed)))
-        myRegs.add(context.eventSource.addEventHandler(MOUSE_RELEASED, handler(this::onMouseReleased)))
-        myRegs.add(context.eventSource.addEventHandler(MOUSE_DRAGGED, handler(this::onMouseDragged)))
-        myRegs.add(context.eventSource.addEventHandler(MOUSE_MOVED, handler( this::onMouseMoved )))
-        myRegs.add(context.eventSource.addEventHandler(MOUSE_CLICKED, handler( this::onMouseClicked )))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_DOUBLE_CLICKED, enqueue(MOUSE_DOUBLE_CLICKED)))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_PRESSED, enqueue(MOUSE_PRESSED)))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_RELEASED, enqueue(MOUSE_RELEASED)))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_DRAGGED, enqueue(MOUSE_DRAGGED)))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_MOVED, enqueue(MOUSE_MOVED)))
+        myRegs.add(context.eventSource.addEventHandler(MOUSE_CLICKED, enqueue(MOUSE_CLICKED)))
     }
 
     override fun update(context: EcsContext, dt: Double) {
-        myDragCurrentLocation?.let {
-            if ( it != myDragStartLocation) {
-                myDragDelta = it.sub(myDragStartLocation!!) // (dragCurrent != null) => dragStart can't be null
-                myDragStartLocation = it
-            }
+        val events = rawMouseEventsQueueLock.execute {
+            val copy = rawMouseEventsQueue.toList()
+            rawMouseEventsQueue.clear()
+            copy
         }
+
+        // Dragging started on previous frame - now it's an event continuation
+        if (myDragState?.started == true) {
+            myDragState = myDragState?.copy(
+                started = false,
+                dragging = true
+            )
+        }
+
+        if (myDragState?.stopped == true) {
+            myDragState = null
+        }
+
+        val inputEvent = handleEvent(events) ?: InputEvent(dragState = myDragState)
 
         for (entity in getEntities(MouseInputComponent::class)) {
             entity.getComponent<MouseInputComponent>().apply {
-                location = myLocation
-                moveEvent = myMoveEvent
-                pressEvent = myPressEvent
-                clickEvent = myClickEvent
-                doubleClickEvent = myDoubleClickEvent
-                dragDistance = myDragDelta
-
-                if (
-                    moveEvent != null ||
-                    pressEvent != null ||
-                    clickEvent != null ||
-                    doubleClickEvent != null ||
-                    dragDistance != null
-                ) {
-                    //check(location != null) // sometimes fails
-                }
+                moveEvent = inputEvent.moveEvent
+                pressEvent = inputEvent.pressEvent
+                clickEvent = inputEvent.clickEvent
+                doubleClickEvent = inputEvent.doubleClickEvent
+                dragState = inputEvent.dragState
             }
         }
-
-        myLocation = null
-        myMoveEvent = null
-        myPressEvent = null
-        myClickEvent = null
-        myDoubleClickEvent = null
-        myDragDelta = null
     }
 
     override fun destroy() {
         myRegs.dispose()
     }
 
-    private fun onMouseClicked(mouseEvent: MouseEvent) {
-        myLocation = mouseEvent.location
-        if (mouseEvent.button === Button.LEFT) {
-            myClickEvent = InputMouseEvent(mouseEvent.location)
-            myDragCurrentLocation = null
-            myDragStartLocation = null
+    private fun handleEvent(events: List<Pair<MouseEventSpec, MouseEvent>>): InputEvent? {
+        if (events.isEmpty()) {
+            return  null
         }
+
+        var pressEvent: InputMouseEvent? = null
+        var moveEvent: InputMouseEvent? = null
+        var clickEvent: InputMouseEvent? = null
+        var doubleClickEvent: InputMouseEvent? = null
+
+        events.forEach { (mouseEventSpec, event) ->
+            when (mouseEventSpec) {
+                MOUSE_MOVED -> moveEvent = InputMouseEvent(event.location)
+                MOUSE_DRAGGED -> updateDragState(event.location, isStopEvent = false)
+                MOUSE_RELEASED -> if (event.button == Button.LEFT) updateDragState(event.location, isStopEvent = true)
+            }
+
+            if (event.button == Button.LEFT) {
+                when (mouseEventSpec) {
+                    MOUSE_CLICKED -> clickEvent = InputMouseEvent(event.location)
+                    MOUSE_DOUBLE_CLICKED -> doubleClickEvent = InputMouseEvent(event.location)
+                    MOUSE_PRESSED -> pressEvent = InputMouseEvent(event.location)
+                }
+            }
+        }
+
+        return InputEvent(
+            moveEvent = moveEvent,
+            pressEvent = pressEvent,
+            clickEvent = clickEvent,
+            doubleClickEvent = doubleClickEvent,
+            dragState = myDragState,
+        )
     }
 
-    private fun onMousePressed(mouseEvent: MouseEvent) {
-        myLocation = mouseEvent.location
-        if (mouseEvent.button === Button.LEFT) {
-            myPressEvent = InputMouseEvent(mouseEvent.location)
+    private fun updateDragState(location: Vector, isStopEvent: Boolean) {
+        val newOrigin = myDragState?.origin ?: location
+        myDragState = myDragState?.let {
+            when {
+                it.started -> when {
+                    !isStopEvent -> DragState(origin = newOrigin, location = location, started = true)
+                    isStopEvent -> DragState(origin = newOrigin, location = location, started = true, stopped = true)
+                    else -> throw IllegalStateException()
+                }
+                it.dragging -> when {
+                    !isStopEvent -> DragState(origin = newOrigin, location = location, dragging = true)
+                    isStopEvent -> DragState(origin = newOrigin, location = location, stopped = true)
+                    else -> throw IllegalStateException()
+                }
+                it.stopped -> when {
+                    !isStopEvent -> DragState(origin = newOrigin, location = location, stopped = true)
+                    isStopEvent -> DragState(origin = newOrigin, location = location, stopped = true)
+                    else -> throw IllegalStateException()
+                }
+                else -> throw IllegalStateException()
+            }
+        } ?: run {
+            when {
+                isStopEvent -> null // click event - do not start drag
+                !isStopEvent -> DragState(origin = location, location = location, started = true)
+                else -> null
+            }
         }
-    }
-
-    private fun onMouseReleased(mouseEvent: MouseEvent) {
-        myLocation = mouseEvent.location
-        if (mouseEvent.button === Button.LEFT) {
-            myDragCurrentLocation = null
-            myDragStartLocation = null
-        }
-    }
-
-    private fun onMouseDragged(mouseEvent: MouseEvent) {
-        myLocation = mouseEvent.location
-        if (myDragStartLocation == null) {
-          myDragStartLocation = mouseEvent.location
-        }
-        myDragCurrentLocation = mouseEvent.location
-    }
-
-    private fun onMouseDoubleClicked(mouseEvent: MouseEvent) {
-        myLocation = mouseEvent.location
-        if (mouseEvent.button === Button.LEFT) {
-            myDoubleClickEvent = InputMouseEvent(mouseEvent.location)
-        }
-    }
-
-    private fun onMouseMoved(mouseEvent: MouseEvent) {
-        myLocation = mouseEvent.location
-        myMoveEvent = InputMouseEvent(mouseEvent.location)
     }
 }

@@ -41,7 +41,6 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
             layerConfigs,
             transformByAes,
             mapperProviderByAes,
-            excludeStatVariables = false
         )
 
         // ToDo: First transform data then create scales.

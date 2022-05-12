@@ -20,17 +20,18 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PosProviderContext
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
+import jetbrains.datalore.plot.builder.data.StatInput
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-class GeomLayerBuilder {
+class GeomLayerBuilder constructor() {
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
     private lateinit var myStat: Stat
@@ -45,6 +46,7 @@ class GeomLayerBuilder {
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
     private var myIsLegendDisabled: Boolean = false
+    private var isYOrientation: Boolean = false
 
     fun stat(v: Stat): GeomLayerBuilder {
         myStat = v
@@ -106,6 +108,12 @@ class GeomLayerBuilder {
         return this
     }
 
+
+    fun yOrientation(v: Boolean): GeomLayerBuilder {
+        isYOrientation = v
+        return this
+    }
+
     fun build(
         data: DataFrame,
         scaleMap: TypedScaleMap,
@@ -159,12 +167,19 @@ class GeomLayerBuilder {
         // Data Access shouldn't use aes mapper (!)
         val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
 
+        val groupingVariables = DataProcessing.defaultGroupingVariables(
+            data,
+            myBindings,
+            myPathIdVarName
+        )
+
+        val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
         return MyGeomLayer(
             data,
             myGeomProvider,
             myPosProvider,
             myGeomProvider.renders(),
-            GroupingContext(data, myBindings, myGroupingVarName, myPathIdVarName, handlesGroups()).groupMapper,
+            groupingContext.groupMapper,
             replacementBindings.values,
             myConstantByAes,
             scaleMap,
@@ -172,7 +187,8 @@ class GeomLayerBuilder {
             dataAccess,
             myLocatorLookupSpec,
             myContextualMappingProvider.createContextualMapping(dataAccess, data),
-            myIsLegendDisabled
+            myIsLegendDisabled,
+            isYOrientation = isYOrientation
         )
     }
 
@@ -184,7 +200,7 @@ class GeomLayerBuilder {
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
-        private val myPosProvider: PosProvider,
+        override val posProvider: PosProvider,
         renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
         varBindings: Collection<VarBinding>,
@@ -194,7 +210,8 @@ class GeomLayerBuilder {
         override val dataAccess: MappedDataAccess,
         override val locatorLookupSpec: LookupSpec,
         override val contextualMapping: ContextualMapping,
-        override val isLegendDisabled: Boolean
+        override val isLegendDisabled: Boolean,
+        override val isYOrientation: Boolean
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
@@ -231,10 +248,6 @@ class GeomLayerBuilder {
             return myRenderedAes
         }
 
-        override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-            return myPosProvider.createPos(ctx)
-        }
-
         override fun hasBinding(aes: Aes<*>): Boolean {
             return myVarBindingsByAes.containsKey(aes)
         }
@@ -257,10 +270,14 @@ class GeomLayerBuilder {
         }
 
         override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
+            @Suppress("NAME_SHADOWING")
+            val aes = aes.afterOrientation(isYOrientation)
             return (geom as GeomBase).preferableNullDomain(aes)
         }
 
         override fun rangeIncludesZero(aes: Aes<*>): Boolean {
+            @Suppress("NAME_SHADOWING")
+            val aes = aes.afterOrientation(isYOrientation)
             return aestheticsDefaults.rangeIncludesZero(aes)
         }
 
@@ -283,21 +300,29 @@ class GeomLayerBuilder {
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-                        val groupingContext = GroupingContext(
-                            transformedData,
+                        val groupingVariables = DataProcessing.defaultGroupingVariables(
+                            data,
                             builder.myBindings,
-                            builder.myGroupingVarName,
-                            builder.myPathIdVarName,
-                            true
+                            builder.myPathIdVarName
                         )
-                        val dataAndGroupingContext = DataProcessing.buildStatData(
+                        val groupingCtx = GroupingContext(
                             transformedData,
-                            stat,
+                            groupingVariables,
+                            builder.myGroupingVarName,
+                            expectMultiple = true  // ?
+                        )
+                        val statInput = StatInput(
+                            transformedData,
                             builder.myBindings,
                             transformByAes,
-                            groupingContext,
-                            PlotFacets.undefined(),
                             statCtx,
+                            flipXY = false
+                        )
+                        val dataAndGroupingContext = DataProcessing.buildStatData(
+                            statInput,
+                            stat,
+                            groupingCtx,
+                            facetVariables = emptyList(),
                             varsWithoutBinding = emptyList(),
                             orderOptions = emptyList(),
                             aggregateOperation = null,

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BARS_MARGIN
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
@@ -27,6 +27,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
+import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_LABEL
+import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
@@ -78,14 +80,12 @@ class TooltipBox: SvgComponent() {
         strokeWidth: Double,
         lines: List<TooltipSpec.Line>,
         title: String?,
-        style: String,
+        textClassName: String,
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
         markerColors: List<Color>
     ) {
-        addClassName(style)
-
         val totalLines = lines.size + if (title != null) 1 else 0
         myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
         myVerticalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
@@ -97,7 +97,8 @@ class TooltipBox: SvgComponent() {
             valueTextColor = textColor,
             tooltipMinWidth,
             rotate,
-            markerColors
+            markerColors,
+            textClassName
         )
         myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
     }
@@ -130,7 +131,7 @@ class TooltipBox: SvgComponent() {
 
             myPointerPath.apply {
                 strokeColor().set(borderColor)
-                strokeOpacity().set(strokeWidth)
+                strokeWidth().set(strokeWidth)
                 fillColor().set(fillColor)
             }
         }
@@ -246,7 +247,7 @@ class TooltipBox: SvgComponent() {
             height().set(0.0)
         }
 
-        private val myColorBars = List(2) { SvgPathElement() }  // max two bars
+        private val myColorBars = List(3) { SvgPathElement() }  // max 3 bars
         private var colorBarIndent = 0.0
 
         val dimension get() = myContent.run { DoubleVector(width().get()!!, height().get()!!) }
@@ -265,7 +266,8 @@ class TooltipBox: SvgComponent() {
             valueTextColor: Color,
             tooltipMinWidth: Double?,
             rotate: Boolean,
-            markerColors: List<Color>
+            markerColors: List<Color>,
+            textClassName: String
         ) {
             myLinesContainer.children().clear()
             myTitleContainer.children().clear()
@@ -286,7 +288,8 @@ class TooltipBox: SvgComponent() {
                 labelTextColor,
                 valueTextColor,
                 minWidthWithTitle,
-                rotate
+                rotate,
+                textClassName
             )
 
             val totalTooltipWidth = textSize.x + colorBarIndent + myHorizontalContentPadding * 2
@@ -325,52 +328,58 @@ class TooltipBox: SvgComponent() {
             layoutColorBars(markerColors)
         }
 
-        private fun colorBarWidth(barsNum: Int): Double {
-            // make color bars wider if there are more than one
-            return COLOR_BAR_WIDTH * if (barsNum > 1) 1.4 else barsNum.toDouble()
+        private fun colorBarsWidth(barsNum: Int): List<Double> {
+            // make color bar wider if there are more than one
+            val middleBarWidth = COLOR_BAR_WIDTH.takeIf { barsNum > 0 } ?: 0.0
+            val strokeBarWidth = COLOR_BAR_STROKE_WIDTH.takeIf { barsNum > 1 } ?: 0.0
+            return listOf(
+                strokeBarWidth,
+                middleBarWidth,
+                strokeBarWidth
+            )
         }
 
         private fun calculateColorBarIndent(markerColors: List<Color>) {
             colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
-                if (colorBarNums > 0) {
-                    myHorizontalContentPadding +
-                            colorBarNums * colorBarWidth(colorBarNums) +
-                            (colorBarNums - 1) * COLOR_BARS_MARGIN
-                } else {
-                    0.0
+                colorBarsWidth(colorBarNums).sum().let { width ->
+                    if (width != 0.0) width + myHorizontalContentPadding else 0.0
                 }
             }
         }
 
         private fun layoutColorBars(markerColors: List<Color>) {
-            myColorBars.forEachIndexed { index, bar ->
-                if (markerColors.size > index) {
-                    bar.fillOpacity().set(1.0)
-                    bar.fillColor().set(markerColors[index])
-                } else {
-                    bar.fillOpacity().set(0.0)
-                }
+            // stroke | fill | stroke
+            val fillColor = markerColors.firstOrNull()
+            val strokeColor = if (markerColors.size > 1) markerColors[1] else null
+            myColorBars
+                .zip(listOf(strokeColor, fillColor, strokeColor))
+                .forEach { (bar, color) ->
+                    if (color == null) {
+                        bar.fillOpacity().set(0.0)
+                    } else {
+                        bar.fillOpacity().set(1.0)
+                        bar.fillColor().set(color)
+                    }
             }
 
-            val colorBars = myColorBars.filter { it.fillOpacity().get()!! > 0 }
-            val barWidth = colorBarWidth(colorBars.size)
-            colorBars
-                .forEachIndexed { index, bar ->
+            var x = contentRect.left + myHorizontalContentPadding
+            myColorBars
+                .zip(colorBarsWidth(markerColors.size))
+                .filter { (bar, _) -> bar.fillOpacity().get()!! > 0 }
+                .forEach { (bar, width) ->
                     // adjacent vertical bars
                     bar.d().set(
                         SvgPathDataBuilder().apply {
-                            val x = contentRect.left + myHorizontalContentPadding +
-                                    index * (barWidth + COLOR_BARS_MARGIN)
                             val y = myLinesContainer.y().get()!!
                             val bottom = myLinesContainer.height().get()!!
-
                             moveTo(x, y)
-                            horizontalLineTo(x + barWidth)
+                            horizontalLineTo(x + width)
                             verticalLineTo(bottom)
                             horizontalLineTo(x)
                             verticalLineTo(y)
                         }.build()
                     )
+                    x += width
                 }
         }
 
@@ -387,9 +396,9 @@ class TooltipBox: SvgComponent() {
             titleColor: Color
         ): MultilineLabel {
             val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
+            titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.textColor().set(titleColor)
             titleComponent.setX(0.0)
-            titleComponent.setFontWeight("bold")
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
             titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
@@ -442,7 +451,8 @@ class TooltipBox: SvgComponent() {
             labelTextColor: Color,
             valueTextColor: Color,
             tooltipMinWidth: Double?,
-            rotate: Boolean
+            rotate: Boolean,
+            textClassName: String
         ): DoubleVector {
             // bBoxes
             val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
@@ -455,14 +465,15 @@ class TooltipBox: SvgComponent() {
             // for labels
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
+                    labelComponent.addClassName(TOOLTIP_LABEL)
                     labelComponent.textColor().set(labelTextColor)
-                    labelComponent.setFontWeight("bold")
                     labelComponent.setX(0.0)
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
             }
             // for values
             components.onEach { (_, valueComponent) ->
+                valueComponent.addClassName(textClassName)
                 valueComponent.textColor().set(valueTextColor)
                 valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)

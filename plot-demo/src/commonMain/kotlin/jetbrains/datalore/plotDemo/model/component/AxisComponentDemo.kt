@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
@@ -145,8 +145,8 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 orientation = orientation,
                 breaksData = AxisUtil.breaksData(scale.getScaleBreaks(), scaleMapper, coord, orientation.isHorizontal),
                 gridLineLength = 100.0,
-                axisTheme = if (orientation.isHorizontal) theme.axisX() else theme.axisY(),
-                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),
+                axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(flipAxis = false),
+                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
             )
 
             return axis

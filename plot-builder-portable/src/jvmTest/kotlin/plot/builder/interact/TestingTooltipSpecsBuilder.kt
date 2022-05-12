@@ -20,12 +20,12 @@ import org.mockito.Mockito.*
 
 
 internal class TestingTooltipSpecsBuilder private constructor(
-        private val contextualMappingProvider: ContextualMappingProvider
+    private val contextualMappingProvider: ContextualMappingProvider
 ) {
 
     private val mappedDataAccessMock = MappedDataAccessMock()
     private val mockSettings = withSettings()
-            .defaultAnswer(ReturnsNotNullValuesAnswer())
+        .defaultAnswer(ReturnsNotNullValuesAnswer())
 
     fun build(): List<TooltipSpec> {
         val mappedDataAccess = buildMappedDataAccess()
@@ -34,7 +34,8 @@ internal class TestingTooltipSpecsBuilder private constructor(
             mappedDataAccess,
             DataFrame.Builder().build()
         )
-        val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
+        val factory =
+            TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
 
         val tipLayoutHint = mock(TipLayoutHint::class.java, mockSettings)
         `when`(tipLayoutHint.kind).thenReturn(VERTICAL_TOOLTIP)
@@ -62,7 +63,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
         fun univariateFunctionBuilder(): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
-                GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
+                GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
                     .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                     .build()
             )
@@ -70,7 +71,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
         fun bivariateFunctionBuilder(): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
-                GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
+                GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
                     .bivariateFunction(false)
                     .build()
             )
@@ -78,7 +79,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
         fun areaFunctionBuilder(): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
-                GeomInteractionBuilder(DISPLAYABLE_AES_LIST)
+                GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
                     .bivariateFunction(true)
                     .build()
             )
