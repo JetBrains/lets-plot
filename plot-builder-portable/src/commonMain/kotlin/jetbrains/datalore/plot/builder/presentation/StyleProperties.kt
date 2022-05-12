@@ -56,7 +56,7 @@ open class StyleProperties {
         myTextStyles.forEach { (className, props) ->
             css.append("""
                 |.$className text {
-                |   fill: ${props.color.toCssColor()};
+                |   fill: ${props.color.toHexColor()};
                 |   font-family: ${props.family};
                 |   font-size: ${props.size}px;
                 |   font-weight: ${if (props.face.bold) "bold" else "normal"};

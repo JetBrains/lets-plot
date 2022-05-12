@@ -25,12 +25,13 @@ internal class SvgStyleElementMapper(
     }
 
     private fun parseCSS(css: String): (String) -> StyleProperty {
-        val styles = mutableMapOf<String, StyleProperty>()
 
         fun extractProperty(block: String, property: String): String? {
             val regex = Regex("$property:(.+);")
             return regex.find(block)?.groupValues?.get(1)?.trim()
         }
+
+        val styles = mutableMapOf<String, StyleProperty>()
 
         Regex(CSS_REGEX)
             .findAll(css)
@@ -56,7 +57,7 @@ internal class SvgStyleElementMapper(
         //      property: value;
         //      ....
         // }
-        const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
+        private const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
 
         // properties
         const val FONT_FAMILY = "font-family"
@@ -67,7 +68,7 @@ internal class SvgStyleElementMapper(
 
         // defaults
         val DEFAULT_FONT = getFont(fontFamily = null, fontWeight = null, fontStyle = null, fontSize = null)
-        val DEFAULT_COLOR = Color.BLACK.toCssColor()
+        val DEFAULT_COLOR = Color.BLACK.toHexColor()
         private const val DEFAULT_FONT_SIZE = 15.0
         private const val DEFAULT_FONT_FAMILY = "Helvetica"
 

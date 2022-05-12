@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
-import jetbrains.datalore.plot.builder.presentation.Defaults.TEXT_COLOR
 
 /**
  * Duplicating stylesheet for JavaFX platform is defined in
@@ -41,6 +40,9 @@ object Style {
 
     const val FACET_STRIP_TEXT = "facet-strip-text"
 
+    private const val TEXT_SIZE = FONT_MEDIUM
+    private const val TEXT_COLOR = Defaults.DARK_GRAY
+
     private val CSS = """
         |.$PLOT_CONTAINER {
         |	font-family: $FONT_FAMILY_NORMAL;
@@ -51,7 +53,7 @@ object Style {
         |	-ms-user-select: none;
         |}
         |text {
-        |	font-size: ${FONT_MEDIUM}px;
+        |	font-size: ${TEXT_SIZE}px;
         |	fill: $TEXT_COLOR;
         |	
         |	text-rendering: optimizeLegibility;
