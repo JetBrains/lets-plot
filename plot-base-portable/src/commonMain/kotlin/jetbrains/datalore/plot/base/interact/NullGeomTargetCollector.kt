@@ -43,7 +43,11 @@ class NullGeomTargetCollector : GeomTargetCollector {
     ) {
     }
 
-    override fun flip(): GeomTargetCollector {
+    override fun withFlippedAxis(): GeomTargetCollector {
+        return this
+    }
+
+    override fun withYOrientation(): GeomTargetCollector {
         return this
     }
 }
