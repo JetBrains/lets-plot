@@ -6,10 +6,10 @@
 package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Group
-import javafx.scene.text.Font
-import javafx.scene.text.FontPosture
-import javafx.scene.text.FontWeight
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
+import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.SvgStyleElement
 
 internal class SvgStyleElementMapper(
@@ -19,37 +19,34 @@ internal class SvgStyleElementMapper(
 ) : SvgElementMapper<SvgStyleElement, Group>(source, target, peer) {
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
-        // Parse CSS to prepare StyleProperties
-        val styles = parseCSS(source.resource.css())
-        peer.applyStyleProperties(styles)
+        // Parse CSS to prepare StyleProvider
+        val styleProvider = parseCSS(source.resource.css())
+        peer.applyStyleProvider(styleProvider)
     }
 
-    private fun parseCSS(css: String): (String) -> StyleProperty {
-
-        fun extractProperty(block: String, property: String): String? {
-            val regex = Regex("$property:(.+);")
-            return regex.find(block)?.groupValues?.get(1)?.trim()
+    private fun parseCSS(css: String): (String) -> TextStyle {
+        fun parseProperty(styleProperties: String, propertyName: String): String? {
+            val regex = Regex("$propertyName:(.+);")
+            return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
         }
 
-        val styles = mutableMapOf<String, StyleProperty>()
+        val classes = mutableMapOf<String, TextStyle>()
 
         Regex(CSS_REGEX)
             .findAll(css)
             .forEach { matched ->
-                val (className, properties) = matched.destructured
+                val (className, styleProperties) = matched.destructured
 
-                val font = getFont(
-                    fontFamily = null,// todo extractProperty(properties, FONT_FAMILY)
-                    fontWeight = extractProperty(properties, FONT_WEIGHT),
-                    fontStyle = extractProperty(properties, FONT_STYLE),
-                    fontSize = extractProperty(properties, FONT_SIZE)
+                classes[className] = createTextStyle(
+                    fontFamily = null, // todo extractProperty(properties, "font-family")
+                    fontWeight = parseProperty(styleProperties, "font-weight"),
+                    fontStyle = parseProperty(styleProperties, "font-style"),
+                    fontSize = parseProperty(styleProperties, "font-size"),
+                    color = parseProperty(styleProperties, "fill")
                 )
-                val color = extractProperty(properties, FONT_COLOR) ?: DEFAULT_COLOR
-
-                styles[className] = StyleProperty(font, color)
             }
 
-        return { className: String -> styles[className] ?: StyleProperty(DEFAULT_FONT, DEFAULT_COLOR) }
+        return { className: String -> classes[className] ?: DEFAULT_TEXT_PROPERTIES }
     }
 
     companion object {
@@ -59,31 +56,29 @@ internal class SvgStyleElementMapper(
         // }
         private const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
 
-        // properties
-        const val FONT_FAMILY = "font-family"
-        const val FONT_SIZE = "font-size"
-        const val FONT_COLOR = "fill"
-        const val FONT_WEIGHT = "font-weight"
-        const val FONT_STYLE = "font-style"
-
         // defaults
-        val DEFAULT_FONT = getFont(fontFamily = null, fontWeight = null, fontStyle = null, fontSize = null)
-        val DEFAULT_COLOR = Color.BLACK.toHexColor()
+        private val DEFAULT_COLOR = Color.BLACK
         private const val DEFAULT_FONT_SIZE = 15.0
         private const val DEFAULT_FONT_FAMILY = "Helvetica"
+        private val DEFAULT_TEXT_PROPERTIES = createTextStyle(
+            fontFamily = null,
+            fontWeight = null,
+            fontStyle = null,
+            fontSize = null,
+            color = null
+        )
 
-        private fun getFont(
+        private fun createTextStyle(
             fontFamily: String?,
             fontWeight: String?,
             fontStyle: String?,
-            fontSize: String?
-        ): Font {
-            return Font.font(
-                fontFamily ?: DEFAULT_FONT_FAMILY,
-                if (fontWeight == "bold") FontWeight.BOLD else null,
-                if (fontStyle == "italic") FontPosture.ITALIC else null,
-                fontSize?.removeSuffix("px")?.toDoubleOrNull() ?: DEFAULT_FONT_SIZE
-            )
-        }
+            fontSize: String?,
+            color: String?
+        ) = TextStyle(
+            family = FontFamily.forName(fontFamily ?: DEFAULT_FONT_FAMILY),
+            face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
+            size = fontSize?.removeSuffix("px")?.toDoubleOrNull() ?: DEFAULT_FONT_SIZE,
+            color = color?.let(Color::parseHex) ?: DEFAULT_COLOR
+        )
     }
 }

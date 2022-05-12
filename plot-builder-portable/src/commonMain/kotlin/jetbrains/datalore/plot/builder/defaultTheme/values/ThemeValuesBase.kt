@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme.values
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem

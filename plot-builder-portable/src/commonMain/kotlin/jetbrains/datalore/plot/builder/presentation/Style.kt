@@ -15,8 +15,6 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
 object Style {
     const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
 
-    val DEFAULT_STYLE_PROPERTIES = StyleProperties()
-
     // classes
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"
@@ -66,7 +64,19 @@ object Style {
     fun generateCSS(styleProperties: StyleProperties): String {
         val css = StringBuilder(CSS)
         css.append('\n')
-        css.append(styleProperties.css())
+        styleProperties.getClasses().forEach { className ->
+            val properties = styleProperties.getProperties(className)
+            css.append("""
+                |.$className text {
+                |   fill: ${properties.color.toHexColor()};
+                |   font-family: ${properties.family};
+                |   font-size: ${properties.size}px;
+                |   font-weight: ${if (properties.face.bold) "bold" else "normal"};
+                |   font-style: ${if (properties.face.italic) "italic" else "normal"};
+                |}
+                |""".trimMargin()
+            )
+        }
         return css.toString()
     }
 }

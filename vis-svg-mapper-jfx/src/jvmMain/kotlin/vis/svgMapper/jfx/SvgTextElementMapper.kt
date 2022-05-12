@@ -8,12 +8,16 @@ package jetbrains.datalore.vis.svgMapper.jfx
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.geometry.Bounds
+import javafx.scene.text.Font
+import javafx.scene.text.FontPosture
+import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
 import jetbrains.datalore.base.observable.collections.ObservableCollection
 import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
+import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping
@@ -44,7 +48,7 @@ internal class SvgTextElementMapper(
     }
 
     override fun applyStyle() {
-        setFontProperties(target, peer.styleProperties)
+        setFontProperties(target, peer.styleProvider)
     }
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
@@ -65,15 +69,15 @@ internal class SvgTextElementMapper(
         )
     }
 
-    private fun setFontProperties(target: Text, styleProperties: ((String) -> StyleProperty)?) {
-        if (styleProperties == null) {
+    private fun setFontProperties(target: Text, styleProvider: ((String) -> TextStyle)?) {
+        if (styleProvider == null) {
             return
         }
         val className = target.parent.styleClass?.toString()
         if (!className.isNullOrEmpty()) {
-            val style = styleProperties(className)
-            target.font = style.font
-            myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${style.color};")
+            val style = styleProvider(className)
+            target.font = style.createFont()
+            myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${style.color.toHexColor()};")
         }
     }
 
@@ -97,6 +101,17 @@ internal class SvgTextElementMapper(
                     target.text = value ?: "n/a"
                 }
             }
+        }
+
+        private fun TextStyle.createFont(): Font {
+            val posture = if (face.italic) FontPosture.ITALIC else null
+            val weight = if (face.bold) FontWeight.BOLD else null
+            return Font.font(
+                family.toString(),
+                weight,
+                posture,
+                size
+            )
         }
     }
 
