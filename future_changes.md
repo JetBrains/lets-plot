@@ -23,3 +23,4 @@
 - Labels out of plot when axis_text_y='blank' [[#525](https://github.com/JetBrains/lets-plot/issues/525)].
 - NPE in corr_plot with null coefficients.
 - Outliers are not shown when boxplot' alpha=0.
+- Support for polars.DataFrame [[#526](https://github.com/JetBrains/lets-plot/issues/526)].

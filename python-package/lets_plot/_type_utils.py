@@ -19,6 +19,11 @@ except ImportError:
     pandas = None
 
 try:
+    import polars
+except ImportError:
+    polars = None
+
+try:
     import shapely
     import shapely.geometry
 except ImportError:
@@ -32,6 +37,10 @@ def standardize_dict(value: Dict) -> Dict:
         result[_standardize_value(k)] = _standardize_value(v)
 
     return result
+
+
+def is_polars_dataframe(v):
+    return polars and isinstance(v, polars.DataFrame)
 
 
 def is_dict_or_dataframe(v):
@@ -67,6 +76,8 @@ def _standardize_value(v):
         return int(v)
     if is_dict_or_dataframe(v):
         return standardize_dict(v)
+    if is_polars_dataframe(v):
+        return standardize_dict(v.to_dict(as_series=False))
     if isinstance(v, list):
         return [_standardize_value(elem) for elem in v]
     if isinstance(v, tuple):
