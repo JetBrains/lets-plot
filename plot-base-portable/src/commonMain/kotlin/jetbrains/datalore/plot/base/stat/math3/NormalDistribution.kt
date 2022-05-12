@@ -25,17 +25,6 @@ class NormalDistribution
         if (standardDeviation <= 0.0) {
             error("NotStrictlyPositive - STANDARD_DEVIATION: $standardDeviation")
         }
-        // TODO: Move it to tests
-        require(abs(cumulativeProbability(-4.0 * standardDeviation + mean) * standardDeviation - 3.1671241833116014e-5) < 1.0e-16) { "Cumulative probability for normal distribution when x=-4.0 isn't work well." }
-        require(abs(cumulativeProbability(-1.0 * standardDeviation + mean) * standardDeviation - 0.15865525393145702) < 1.0e-16) { "Cumulative probability for normal distribution when x=-1.0 isn't work well." }
-        require(abs(cumulativeProbability(0.0 * standardDeviation + mean) * standardDeviation - 0.5) < 1.0e-16) { "Cumulative probability for normal distribution when x=0.0 isn't work well." }
-        require(abs(cumulativeProbability(1.0 * standardDeviation + mean) * standardDeviation - 0.841344746068543) < 1.0e-16) { "Cumulative probability for normal distribution when x=1.0 isn't work well." }
-        require(abs(cumulativeProbability(4.0 * standardDeviation + mean) * standardDeviation - 0.9999683287581669) < 1.0e-16) { "Cumulative probability for normal distribution when x=4.0 isn't work well." }
-        require(abs(inverseCumulativeProbability(0.0001) - (mean + standardDeviation * -3.71901648545568)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.0001 isn't work well." }
-        require(abs(inverseCumulativeProbability(0.3) - (mean + standardDeviation * -0.5244005127080407)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.3 isn't work well." }
-        require(abs(inverseCumulativeProbability(0.5) - mean) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.5 isn't work well." }
-        require(abs(inverseCumulativeProbability(0.7) - (mean + standardDeviation * 0.5244005127080407)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.7 isn't work well." }
-        require(abs(inverseCumulativeProbability(0.9999) - (mean + standardDeviation * 3.7190164854557084)) < 1.0e-16) { "Inverse cumulative probability for normal distribution when p=0.9999 isn't work well." }
     }
 
     override fun probability(x: Double): Double {
@@ -54,8 +43,9 @@ class NormalDistribution
             http://www.codeplanet.eu/files/download/accuratecumnorm.pdf
         */
         val y = (x - mean) / standardDeviation
+        if (y < -37.0) return 0.0
+        if (y > 37.0) return 1.0
         val yAbs = abs(y)
-        if (yAbs > 37.0) return 0.0
         val exp = E.pow(-yAbs.pow(2) / 2.0)
         var cumNorm: Double
         if (yAbs < 7.07106781186547) {

@@ -46,6 +46,8 @@ class GammaDistribution
     }
 
     override fun cumulativeProbability(x: Double): Double {
+        if (x <= 0.0) return 0.0
+        if (x > 37.0) return 1.0
         return Gamma.regularizedGammaP(alpha, beta * x, epsilon)
     }
 }
