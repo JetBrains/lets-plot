@@ -19,16 +19,16 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 
 
 class HintsCollection(private val myPoint: DataPointAesthetics, private val myHelper: GeomHelper) {
-    private val myHints = HashMap<Aes<*>, TipLayoutHint>()
+    private val _hints = HashMap<Aes<*>, TipLayoutHint>()
 
-    val hints: MutableMap<Aes<*>, TipLayoutHint>
-        get() = myHints
+    val hints: Map<Aes<*>, TipLayoutHint>
+        get() = _hints
 
     fun addHint(hintConfig: HintConfig): HintsCollection {
         val coord = getCoord(hintConfig)
 
         if (coord != null) {
-            hints[hintConfig.aes] = createHint(hintConfig, coord)
+            _hints[hintConfig.aes] = createHint(hintConfig, coord)
         }
 
         return this
@@ -64,7 +64,12 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
 
         return when (hintConfig.kind) {
             Kind.VERTICAL_TOOLTIP -> verticalTooltip(coord, objectRadius, fillColor = color, markerColors = emptyList())
-            Kind.HORIZONTAL_TOOLTIP -> horizontalTooltip(coord, objectRadius, fillColor = color, markerColors = emptyList())
+            Kind.HORIZONTAL_TOOLTIP -> horizontalTooltip(
+                coord,
+                objectRadius,
+                fillColor = color,
+                markerColors = emptyList()
+            )
             Kind.CURSOR_TOOLTIP -> cursorTooltip(coord, markerColors = emptyList())
             Kind.ROTATED_TOOLTIP -> rotatedTooltip(coord, objectRadius, color)
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.kind)
