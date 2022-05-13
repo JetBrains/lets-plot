@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.presentation.Style
 
 fun main() {
-    println(Style.generateCSS(Style.defaults(), plotId = null, decorationLayerId = null))
+    println(Style.generateCSS(Style.default(), plotId = null, decorationLayerId = null))
     println("======")
     println(Style.generateCSS(Style.fromTheme(DefaultTheme.minimal2(), flippedAxis = true), plotId = "p123", decorationLayerId = "d456"))
 }

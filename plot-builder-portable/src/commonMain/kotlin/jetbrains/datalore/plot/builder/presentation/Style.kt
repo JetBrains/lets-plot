@@ -130,7 +130,7 @@ object Style {
         "$FACET_STRIP_TEXT-y" to createTextStyle(size = FONT_MEDIUM.toDouble())
     )
 
-    fun defaults(): StyleProperties {
+    fun default(): StyleProperties {
         return StyleProperties(
             DEFAULT_TEXT_STYLES,
             defaultFamily = FONT_FAMILY_NORMAL,
