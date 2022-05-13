@@ -17,7 +17,7 @@ internal class SvgStyleElementMapper(
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         // Parse CSS to prepare StyleProperties
-        val styleProperties = StyleProperties.parseFromCSS(
+        val styleProperties = StyleProperties.fromCSS(
             css = source.resource.css(),
             defaultFamily = "Helvetica",
             defaultSize = 15.0

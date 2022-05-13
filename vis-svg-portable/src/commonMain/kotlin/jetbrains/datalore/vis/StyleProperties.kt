@@ -10,14 +10,12 @@ import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
 
 
-open class StyleProperties(
-    protected val textStyles: MutableMap<String, TextStyle>,
+class StyleProperties(
+    private val textStyles: Map<String, TextStyle>,
     private val defaultFamily: String,
     private val defaultSize: Double
 ) {
-    fun getClasses(): List<String> = textStyles.keys.toList()
-
-    fun getProperties(className: String): TextStyle {
+    fun getTextStyle(className: String): TextStyle {
         return textStyles[className]
             ?: TextStyle(
                 family = FontFamily.forName(defaultFamily),
@@ -27,11 +25,32 @@ open class StyleProperties(
             )
     }
 
-    companion object {
+    fun toCSS(): String {
+        val css = StringBuilder()
+        textStyles.forEach { (className, properties) ->
+            css.append(
+                """
+                |.$className text {
+                |   fill: ${properties.color.toHexColor()};
+                |   font-family: ${properties.family};
+                |   font-size: ${properties.size}px;
+                |   font-weight: ${if (properties.face.bold) "bold" else "normal"};
+                |   font-style: ${if (properties.face.italic) "italic" else "normal"};
+                |}
+                |""".trimMargin()
+            )
+        }
+        return css.toString()
+    }
 
+    companion object {
+        // .className text : {
+        //      property: value;
+        //      ....
+        // }
         private const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
 
-        fun parseFromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleProperties {
+        fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleProperties {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
                 val regex = Regex("$propertyName:(.+);")
                 return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
@@ -43,7 +62,7 @@ open class StyleProperties(
                 .forEach { matched ->
                     val (className, styleProperties) = matched.destructured
 
-                    val fontFamily = defaultFamily // todo parseProperty(styleProperties, "font-family") ?: defaultFamily
+                    val fontFamily = defaultFamily // todo: parseProperty(styleProperties, "font-family")
                     val fontWeight = parseProperty(styleProperties, "font-weight")
                     val fontStyle = parseProperty(styleProperties, "font-style")
                     val fontSize = parseProperty(styleProperties, "font-size")?.removeSuffix("px")?.toDoubleOrNull()
