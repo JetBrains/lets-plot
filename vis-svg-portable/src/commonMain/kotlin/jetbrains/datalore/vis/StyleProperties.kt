@@ -15,6 +15,8 @@ class StyleProperties(
     private val defaultFamily: String,
     private val defaultSize: Double
 ) {
+    fun getClasses(): List<String> = textStyles.keys.toList()
+
     fun getTextStyle(className: String): TextStyle {
         return textStyles[className]
             ?: TextStyle(
@@ -25,25 +27,29 @@ class StyleProperties(
             )
     }
 
-    fun toCSS(): String {
+    fun toCSS(className: String, id: String?): String {
         val css = StringBuilder()
-        textStyles.forEach { (className, properties) ->
-            css.append(
-                """
-                |.$className text {
-                |   fill: ${properties.color.toHexColor()};
-                |   font-family: ${properties.family};
-                |   font-size: ${properties.size}px;
-                |   font-weight: ${if (properties.face.bold) "bold" else "normal"};
-                |   font-style: ${if (properties.face.italic) "italic" else "normal"};
-                |}
-                |""".trimMargin()
-            )
-        }
+        css.append("""
+            |${id?.let { "#$id " } ?: ""}.$className text {
+            |${getTextStyle(className).toCSS()}
+            |}
+            |""".trimMargin()
+        )
         return css.toString()
     }
 
     companion object {
+
+        private fun TextStyle.toCSS(): String {
+            return """
+                |   fill: ${color.toHexColor()};
+                |   font-family: ${family};
+                |   font-size: ${size}px;
+                |   font-weight: ${if (face.bold) "bold" else "normal"};
+                |   font-style: ${if (face.italic) "italic" else "normal"};
+                """.trimMargin()
+        }
+
         // .className text : {
         //      property: value;
         //      ....

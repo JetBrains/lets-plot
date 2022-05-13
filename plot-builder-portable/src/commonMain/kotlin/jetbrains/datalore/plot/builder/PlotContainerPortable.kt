@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
+import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgCssResource
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -61,15 +62,21 @@ open class PlotContainerPortable(
 //        }
 //    }
 
+    protected val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID)
+
     protected open fun buildContent() {
         check(!myContentBuilt)
         myContentBuilt = true
 
+        val id = SvgUID.get(PLOT_ID_PREFIX)
+
         svg.setStyle(object : SvgCssResource {
             override fun css(): String {
-                return Style.generateCSS(plot.styleProperties)
+                return Style.generateCSS(plot.styleProperties, id, decorationLayerId)
             }
         })
+
+        plot.rootGroup.id().set(id)
 
         // Notes on plot background.
         // (No more actual as the background rect is now added in PlotSvgComponent)
@@ -104,5 +111,10 @@ open class PlotContainerPortable(
     private fun setSvgSize(size: DoubleVector) {
         svg.width().set(size.x)
         svg.height().set(size.y)
+    }
+
+    companion object {
+        const val PLOT_ID_PREFIX = "p"
+        const val DECORATION_LAYER_ID = "d"
     }
 }

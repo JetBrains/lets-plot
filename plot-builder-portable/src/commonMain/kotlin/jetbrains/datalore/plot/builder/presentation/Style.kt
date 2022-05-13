@@ -69,10 +69,22 @@ object Style {
         |}
     """.trimMargin()
 
-    fun generateCSS(styleProperties: StyleProperties): String {
+    fun generateCSS(styleProperties: StyleProperties, plotId: String?, decorationLayerId: String?): String {
         val css = StringBuilder(CSS)
         css.append('\n')
-        css.append(styleProperties.toCSS())
+        styleProperties.getClasses().forEach { className ->
+            val id = when (className) {
+                in listOf(
+                    TOOLTIP_TEXT,
+                    TOOLTIP_TITLE,
+                    TOOLTIP_LABEL,
+                    "$AXIS_TOOLTIP_TEXT-x",
+                    "$AXIS_TOOLTIP_TEXT-y"
+                ) -> decorationLayerId
+                else -> plotId
+            }
+            css.append(styleProperties.toCSS(className, id))
+        }
         return css.toString()
     }
 

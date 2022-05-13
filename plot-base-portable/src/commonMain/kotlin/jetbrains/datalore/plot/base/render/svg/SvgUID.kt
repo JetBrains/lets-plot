@@ -22,6 +22,8 @@ object SvgUID {
     }
 
     fun get(prefix: String): String {
+        require(prefix.isNotBlank()) { "ID prefix should not be blank"}
+        require(prefix[0] !in '0'..'9') { "ID cannot start with a digit"}
         return "$prefix${suffixGen()}"
     }
 

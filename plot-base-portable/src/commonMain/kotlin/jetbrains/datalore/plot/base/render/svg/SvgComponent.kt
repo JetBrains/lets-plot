@@ -151,7 +151,7 @@ abstract class SvgComponent {
     }
 
     companion object {
-        const val CLIP_PATH_ID_PREFIX = "" // No prefix
+        const val CLIP_PATH_ID_PREFIX = "c"
 
         fun buildTransform(origin: DoubleVector, rotationAngle: Double): SvgTransform {
             val transformBuilder = SvgTransformBuilder()
