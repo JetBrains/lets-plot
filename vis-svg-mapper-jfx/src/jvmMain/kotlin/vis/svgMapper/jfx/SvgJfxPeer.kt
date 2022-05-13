@@ -99,7 +99,7 @@ class SvgJfxPeer : SvgPlatformPeer {
         return DoubleRectangle(bounds.minX, bounds.minY, bounds.width, bounds.height)
     }
 
-    override fun applyStyleProperties(styleProperties: StyleProperties) {
+    fun applyStyleProperties(styleProperties: StyleProperties) {
         this.styleProperties = styleProperties
     }
 }

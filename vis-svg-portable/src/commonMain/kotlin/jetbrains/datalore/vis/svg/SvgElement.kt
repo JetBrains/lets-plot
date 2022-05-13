@@ -21,7 +21,7 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 abstract class SvgElement : SvgNode() {
 
     companion object {
-        private val ID: SvgAttributeSpec<String> =
+        val ID: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("id")
     }
 
