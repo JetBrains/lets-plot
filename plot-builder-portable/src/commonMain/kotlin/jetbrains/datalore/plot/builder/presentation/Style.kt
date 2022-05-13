@@ -74,13 +74,11 @@ object Style {
         css.append('\n')
         styleProperties.getClasses().forEach { className ->
             val id = when (className) {
-                in listOf(
-                    TOOLTIP_TEXT,
-                    TOOLTIP_TITLE,
-                    TOOLTIP_LABEL,
-                    "$AXIS_TOOLTIP_TEXT-x",
-                    "$AXIS_TOOLTIP_TEXT-y"
-                ) -> decorationLayerId
+                TOOLTIP_TEXT,
+                TOOLTIP_TITLE,
+                TOOLTIP_LABEL,
+                "$AXIS_TOOLTIP_TEXT-x",
+                "$AXIS_TOOLTIP_TEXT-y" -> decorationLayerId
                 else -> plotId
             }
             css.append(styleProperties.toCSS(className, id))

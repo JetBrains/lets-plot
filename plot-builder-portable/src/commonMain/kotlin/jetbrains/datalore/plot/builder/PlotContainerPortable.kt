@@ -62,7 +62,7 @@ open class PlotContainerPortable(
 //        }
 //    }
 
-    protected val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID)
+    protected val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID_PREFIX)
 
     protected open fun buildContent() {
         check(!myContentBuilt)
@@ -115,6 +115,6 @@ open class PlotContainerPortable(
 
     companion object {
         const val PLOT_ID_PREFIX = "p"
-        const val DECORATION_LAYER_ID = "d"
+        const val DECORATION_LAYER_ID_PREFIX = "d"
     }
 }

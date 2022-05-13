@@ -22,8 +22,11 @@ object SvgUID {
     }
 
     fun get(prefix: String): String {
-        require(prefix.isNotBlank()) { "ID prefix should not be blank"}
-        require(prefix[0] !in '0'..'9') { "ID cannot start with a digit"}
+        require(prefix.isNotEmpty()) { "ID prefix should not be empty" }
+        require(prefix.first() in ('a'..'z') + ('A'..'Z')) { "ID should start with a letter" }
+        require(prefix.all { it in ('a'..'z') + ('A'..'Z') + ('0'..'9') || it == '-' || it == '_' }) {
+            "ID prefix can contain only the letter or digits, plus the hyphen and the underscore"
+        }
         return "$prefix${suffixGen()}"
     }
 
