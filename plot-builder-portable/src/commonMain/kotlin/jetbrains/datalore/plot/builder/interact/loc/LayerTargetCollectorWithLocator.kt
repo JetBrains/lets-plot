@@ -94,8 +94,12 @@ class LayerTargetCollectorWithLocator(
         )
     }
 
-    override fun flip(): GeomTargetCollector {
+    override fun withFlippedAxis(): GeomTargetCollector {
         return FlippedTargetCollector(this)
+    }
+
+    override fun withYOrientation(): GeomTargetCollector {
+        return YOrientationTargetCollector(this)
     }
 
     private fun addTarget(targetPrototype: TargetPrototype) {

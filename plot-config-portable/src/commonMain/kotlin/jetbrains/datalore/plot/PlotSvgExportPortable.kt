@@ -73,7 +73,11 @@ object PlotSvgExportPortable {
             bunchBounds = bunchBounds.union(DoubleRectangle(bunchItem.x, bunchItem.y, size.x, size.y))
         }
 
-        val svgStyle = getBunchItemSvgStyle(list[0])
+        val svgStyle = """ 
+            |<style type="text/css">
+            |${list.joinToString(separator = "\n", transform = ::getBunchItemSvgStyle)}
+            |</style>
+        """.trimMargin()
 
         return """<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="${bunchBounds.width}" height="${bunchBounds.height}">
             |$svgStyle
@@ -85,11 +89,7 @@ object PlotSvgExportPortable {
     private fun getBunchItemSvgStyle(svg: String): String {
         val split = svg.split("<style type=\"text/css\">")
         val styleAtTheTop = split[1]
-        val style = styleAtTheTop.split("</style>")[0]
-        return """ 
-            |<style type="text/css">
-            |${style}
-            |</style>""".trimMargin()
+        return styleAtTheTop.split("</style>")[0]
     }
 
     @Suppress("MemberVisibilityCanBePrivate")

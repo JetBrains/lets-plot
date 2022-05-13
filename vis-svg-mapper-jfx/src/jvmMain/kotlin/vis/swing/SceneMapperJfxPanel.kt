@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgElementListener
 import jetbrains.datalore.vis.svg.SvgNodeContainer
@@ -22,8 +21,7 @@ import java.awt.Dimension
 
 class SceneMapperJfxPanel(
     private val svg: SvgSvgElement,
-    stylesheets: List<String>,
-    private val styleProperties: StyleProperties
+    stylesheets: List<String>
 ) : AbstractJfxPanel(stylesheets), Disposable {
 
     private val nodeContainer = SvgNodeContainer(svg)  // attach root
@@ -49,7 +47,7 @@ class SceneMapperJfxPanel(
     }
 
     override fun createSceneParent(): Parent {
-        val rootMapper = SvgSvgElementMapper(svg, SvgJfxPeer().also { it.applyStyleProperties(styleProperties) })
+        val rootMapper = SvgSvgElementMapper(svg, SvgJfxPeer())
         rootMapper.attachRoot(MappingContext())
         return rootMapper.target
     }

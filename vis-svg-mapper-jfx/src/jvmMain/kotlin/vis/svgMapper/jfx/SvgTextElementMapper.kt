@@ -18,7 +18,9 @@ import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
 import jetbrains.datalore.vis.StyleProperties
+import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping
 
 internal class SvgTextElementMapper(
@@ -74,10 +76,9 @@ internal class SvgTextElementMapper(
         }
         val className = target.parent.styleClass?.toString()
         if (!className.isNullOrEmpty()) {
-            target.font = styleProperties.getFont(className)
-
-            //val color = styleRenderer.getColor(className)
-            //myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${color.toHexColor()};")
+            val style = styleProperties.getTextStyle(className)
+            target.font = style.createFont()
+            myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${style.color.toHexColor()};")
         }
     }
 
@@ -103,13 +104,11 @@ internal class SvgTextElementMapper(
             }
         }
 
-        private fun StyleProperties.getFont(className: String): Font {
-            //val fontFamily = getFontFamily(className)
-            val size = getFontSize(className)
-            val posture = if (getIsItalic(className)) FontPosture.ITALIC else null
-            val weight = if (getIsBold(className)) FontWeight.BOLD else null
+        private fun TextStyle.createFont(): Font {
+            val posture = if (face.italic) FontPosture.ITALIC else null
+            val weight = if (face.bold) FontWeight.BOLD else null
             return Font.font(
-                "Helvetica", // todo
+                family.toString(),
                 weight,
                 posture,
                 size

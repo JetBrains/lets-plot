@@ -41,6 +41,7 @@ class PlotContainer(
     override fun buildContent() {
         super.buildContent()
         if (plot.interactionsEnabled) {
+            myDecorationLayer.id().set(decorationLayerId)
             svg.children().add(myDecorationLayer)
         }
     }

@@ -44,10 +44,11 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
             private var myReg: Registration? = null
 
             override fun attach(ctx: SynchronizerContext) {
+                applyStyle()
+
                 myReg = source.addListener(object : SvgElementListener {
                     override fun onAttrSet(event: SvgAttributeEvent<*>) {
                         setTargetAttribute(event.attrSpec.name, event.newValue)
-                        applyStyle()
                     }
 
                 })
@@ -57,7 +58,6 @@ open class SvgElementMapper<SourceT : SvgElement, TargetT : Node>(
                     val value = source.getAttribute(name).get()
                     setTargetAttribute(name, value)
                 }
-                applyStyle()
             }
 
             override fun detach() {

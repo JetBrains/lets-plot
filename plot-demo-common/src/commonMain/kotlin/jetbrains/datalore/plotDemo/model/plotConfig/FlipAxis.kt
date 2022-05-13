@@ -12,30 +12,38 @@ class FlipAxis {
         return listOf(
             pointsAndSmooth(false),
             pointsAndSmooth(true),
+            pointsAndSmooth(false, yOrientation = true),
         )
     }
 
-    private fun pointsAndSmooth(flip: Boolean): MutableMap<String, Any> {
+    private fun pointsAndSmooth(flip: Boolean, yOrientation: Boolean = false): MutableMap<String, Any> {
         val coordSpec = when {
             flip -> "'coord': {'name': 'flip', 'flip': true},"
             else -> ""
         }
 
+        val mappingSpec = when {
+            yOrientation -> "'y': 'x', 'x': 'y'"
+            else -> "'x': 'x', 'y': 'y'"
+        }
+
         val spec = """
 {
- 'mapping': {'x': 'x', 'y': 'y'},
+ 'mapping': {$mappingSpec},
  'kind': 'plot',
  $coordSpec
- 'layers': [{
-   'geom': 'point',
-   'color': 'black',
-   'alpha': 0.6,
-   'size': 5},
-  {'geom': 'smooth'
+ 'layers': [
+  {'geom': 'smooth' ${if (yOrientation) ", 'orientation': 'y'" else ""}
    }],
-   'ggtitle': {'text': 'Flipped: $flip'}
+   'ggtitle': {'text': 'Flipped: $flip ${if(yOrientation) ", y-orientation" else ""}'}
  }
          """.trimIndent()
+
+//        {
+//            'geom': 'point',
+//            'color': 'black',
+//            'alpha': 0.6,
+//            'size': 5},
 
         val map = parsePlotSpec(spec)
         map["data"] = data

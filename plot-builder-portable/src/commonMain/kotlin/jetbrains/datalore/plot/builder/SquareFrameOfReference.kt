@@ -288,18 +288,25 @@ internal class SquareFrameOfReference(
                 false -> coord
             }
 
+            @Suppress("NAME_SHADOWING")
+            val targetCollector = targetCollector.let {
+                when {
+                    flippedAxis -> it.withFlippedAxis()
+                    else -> it
+                }
+            }.let {
+                when {
+                    layer.isYOrientation -> it.withYOrientation()
+                    else -> it
+                }
+            }
+
             val ctx = GeomContextBuilder()
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)
                 .aestheticMappers(aestheticMappers)
                 .aesBounds(xyAesBounds)
-                .geomTargetCollector(
-                    if (flippedAxis) {
-                        targetCollector.flip()
-                    } else {
-                        targetCollector
-                    }
-                )
+                .geomTargetCollector(targetCollector)
                 .build()
 
             val pos = rendererData.pos

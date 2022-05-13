@@ -8,7 +8,6 @@ package jetbrains.datalore.vis.svgMapper.dom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.vis.StyleProperties
 import jetbrains.datalore.vis.svg.*
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGElement
@@ -96,9 +95,6 @@ class SvgDomPeer : SvgPlatformPeer {
 
         val target = myMappingMap[element]!!.target
         return getBoundingBox(target)
-    }
-
-    override fun applyStyleProperties(styleProperties: StyleProperties) {
     }
 
     private fun getBoundingBox(target: Node): DoubleRectangle {

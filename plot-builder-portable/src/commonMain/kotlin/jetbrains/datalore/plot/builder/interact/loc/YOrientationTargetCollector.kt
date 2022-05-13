@@ -9,8 +9,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil.flipAesKeys
 
-internal class FlippedTargetCollector(private val targetCollector: GeomTargetCollector) : GeomTargetCollector {
+internal class YOrientationTargetCollector(private val targetCollector: GeomTargetCollector) : GeomTargetCollector {
 
     override fun addPoint(
         index: Int,
@@ -21,9 +22,9 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
     ) {
         targetCollector.addPoint(
             index,
-            point.flip(),
+            point,
             radius,
-            tooltipParams,
+            afterYOrientation(tooltipParams),
             tooltipKind
         )
     }
@@ -36,8 +37,8 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
     ) {
         targetCollector.addRectangle(
             index,
-            rectangle.flip(),
-            tooltipParams,
+            rectangle,
+            afterYOrientation(tooltipParams),
             tooltipKind
         )
     }
@@ -48,14 +49,10 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
-        val pointsWithIndex = points.map(DoubleVector::flip).withIndex().reversed()
-        val indices = pointsWithIndex.map {
-            localToGlobalIndex(it.index)
-        }
         targetCollector.addPath(
-            pointsWithIndex.map(IndexedValue<DoubleVector>::value),
-            { indices[it] },
-            tooltipParams,
+            points,
+            localToGlobalIndex,
+            afterYOrientation(tooltipParams),
             tooltipKind
         )
     }
@@ -67,19 +64,30 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
         tooltipKind: TipLayoutHint.Kind
     ) {
         targetCollector.addPolygon(
-            points.map(DoubleVector::flip),
+            points,
             localToGlobalIndex,
-            tooltipParams,
+            afterYOrientation(tooltipParams),
             tooltipKind
         )
     }
 
     override fun withFlippedAxis(): GeomTargetCollector {
-        throw IllegalStateException("'withFlippedAxis()' is not applicable to FlippedTargetCollector")
+        check(!(targetCollector is FlippedTargetCollector)) { "'withFlippedAxis()' is not applicable to FlippedTargetCollector" }
+        return FlippedTargetCollector(this)
     }
 
     override fun withYOrientation(): GeomTargetCollector {
-        check(!(targetCollector is YOrientationTargetCollector)) { "'withYOrientation()' is not applicable to YOrientationTargetCollector" }
-        return YOrientationTargetCollector(this)
+        throw IllegalStateException("'withYOrientation()' is not applicable to YOrientationTargetCollector")
+    }
+
+    companion object {
+        private fun afterYOrientation(tooltipParams: GeomTargetCollector.TooltipParams): GeomTargetCollector.TooltipParams {
+            return GeomTargetCollector.TooltipParams.tooltip {
+                tipLayoutHints = flipAesKeys(tooltipParams.tipLayoutHints)
+                stemLength = tooltipParams.stemLength
+                fillColor = tooltipParams.fillColor
+                markerColors = tooltipParams.markerColors
+            }
+        }
     }
 }

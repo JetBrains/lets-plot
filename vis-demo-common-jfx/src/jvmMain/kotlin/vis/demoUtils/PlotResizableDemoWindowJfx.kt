@@ -60,8 +60,7 @@ class PlotResizableDemoWindowJfx(
             plotContainer.ensureContentBuilt()
             return SceneMapperJfxPanel(
                 plotContainer.svg,
-                listOf(Style.JFX_PLOT_STYLESHEET),
-                plotContainer.styleProperties
+                listOf(Style.JFX_PLOT_STYLESHEET)
             )
         }
     }

@@ -174,7 +174,6 @@ class AxisComponent(
         if (!skipLabel && axisTheme.showLabels()) {
             tickLabel = TextLabel(label)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
-            tickLabel.textColor().set(axisTheme.labelColor())
         }
 
         val markLength = axisTheme.tickMarkLength()
