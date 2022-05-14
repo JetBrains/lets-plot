@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper.Companion.decorate
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -49,9 +49,9 @@ class SegmentGeom : GeomBase() {
                 targetCollector.addPath(
                     listOf(coord.toClient(start), coord.toClient(end)),
                     { p.index() },
-                    tooltip {
+                    GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
-                    }
+                    )
                 )
 
                 if (arrowSpec != null) {

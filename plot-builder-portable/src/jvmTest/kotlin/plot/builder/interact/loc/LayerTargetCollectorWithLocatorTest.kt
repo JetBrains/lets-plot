@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
@@ -89,9 +89,9 @@ class LayerTargetCollectorWithLocatorTest {
                     index = 0,
                     point = point,
                     radius = radius,
-                    tooltipParams = tooltip {
+                    tooltipParams = TooltipParams(
                         markerColors = listOf(color)
-                    }
+                    )
                 )
             }
         }
@@ -101,9 +101,9 @@ class LayerTargetCollectorWithLocatorTest {
                 addRectangle(
                     index = 0,
                     rectangle = rect,
-                    tooltipParams = tooltip {
+                    tooltipParams = TooltipParams(
                         markerColors = listOf(color)
-                    }
+                    )
                 )
             }
         }

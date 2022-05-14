@@ -6,16 +6,16 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.enums.EnumInfoFactory
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.GeomKind.DOT_PLOT
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
 import jetbrains.datalore.plot.base.geom.util.LinesHelper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -121,9 +121,9 @@ open class DotplotGeom : GeomBase() {
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
-            tooltip {
+            GeomTargetCollector.TooltipParams(
                 markerColors = colorMarkerMapper(p)
-            },
+            ),
             tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             } else {
@@ -139,7 +139,7 @@ open class DotplotGeom : GeomBase() {
         binWidthPx: Double,
         flip: Boolean,
         geomHelper: GeomHelper
-    ) : DoubleVector {
+    ): DoubleVector {
         val x = p.x()!!
         val shiftedDotId = when (stackDir) {
             Stackdir.UP -> dotId + 1.0 / (2.0 * stackRatio)
@@ -157,25 +157,25 @@ open class DotplotGeom : GeomBase() {
 
     protected class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
         LinesHelper(pos, coord, ctx) {
-            fun createDot(
-                p: DataPointAesthetics,
-                center: DoubleVector,
-                r: Double
-            ): LinePath {
-                val leftBound = center.add(DoubleVector(-r, 0.0))
-                val rightBound = center.add(DoubleVector(r, 0.0))
+        fun createDot(
+            p: DataPointAesthetics,
+            center: DoubleVector,
+            r: Double
+        ): LinePath {
+            val leftBound = center.add(DoubleVector(-r, 0.0))
+            val rightBound = center.add(DoubleVector(r, 0.0))
 
-                val builder = SvgPathDataBuilder(true)
-                builder.moveTo(leftBound)
-                builder.ellipticalArc(r, r, 0.0, largeArc = false, sweep = false, to = rightBound)
-                builder.ellipticalArc(r, r, 0.0, largeArc = false, sweep = false, to = leftBound)
-                builder.closePath()
+            val builder = SvgPathDataBuilder(true)
+            builder.moveTo(leftBound)
+            builder.ellipticalArc(r, r, 0.0, largeArc = false, sweep = false, to = rightBound)
+            builder.ellipticalArc(r, r, 0.0, largeArc = false, sweep = false, to = leftBound)
+            builder.closePath()
 
-                val path = LinePath(builder)
-                decorate(path, p, true)
+            val path = LinePath(builder)
+            decorate(path, p, true)
 
-                return path
-            }
+            return path
+        }
     }
 
     protected fun stackDotsAcrossGroups(): Boolean {
@@ -207,10 +207,9 @@ open class DotplotGeom : GeomBase() {
             private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Stackdir>()
 
             fun safeValueOf(v: String): Stackdir {
-                return ENUM_INFO.safeValueOf(v) ?:
-                throw IllegalArgumentException(
+                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
                     "Unsupported stackdir: '$v'\n" +
-                    "Use one of: up, down, center, centerwhole."
+                            "Use one of: up, down, center, centerwhole."
                 )
             }
         }

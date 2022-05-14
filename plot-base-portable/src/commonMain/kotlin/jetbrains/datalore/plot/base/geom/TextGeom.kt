@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -53,9 +53,9 @@ class TextGeom : GeomBase() {
                     p.index(),
                     loc,
                     sizeUnitRatio * AesScaling.textSize(p) / 2,
-                    tooltip {
+                    GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
-                    },
+                    ),
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

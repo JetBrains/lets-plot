@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
@@ -52,9 +52,9 @@ open class PointGeom : GeomBase() {
 
                 targetCollector.addPoint(
                     i, location, sizeUnitRatio * shape.size(p) / 2,
-                    tooltip {
+                    GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
-                    }
+                    )
                 )
                 val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
                 o.appendTo(slimGroup)

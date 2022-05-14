@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -111,9 +111,9 @@ class YDotplotGeom : DotplotGeom() {
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
-            tooltip {
+            GeomTargetCollector.TooltipParams(
                 markerColors = colorMarkerMapper(p)
-            },
+            ),
             TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
@@ -125,7 +125,7 @@ class YDotplotGeom : DotplotGeom() {
         binWidthPx: Double,
         flip: Boolean,
         geomHelper: GeomHelper
-    ) : DoubleVector {
+    ): DoubleVector {
         val x = p.x()!!
         val y = p.y()!!
         val shiftedDotId = when (yStackDir) {
@@ -150,10 +150,9 @@ class YDotplotGeom : DotplotGeom() {
             private val ENUM_INFO = EnumInfoFactory.createEnumInfo<YStackdir>()
 
             fun safeValueOf(v: String): YStackdir {
-                return ENUM_INFO.safeValueOf(v) ?:
-                throw IllegalArgumentException(
+                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
                     "Unsupported stackdir: '$v'\n" +
-                    "Use one of: left, right, center, centerwhole."
+                            "Use one of: left, right, center, centerwhole."
                 )
             }
         }

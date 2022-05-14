@@ -46,20 +46,10 @@ interface GeomTargetCollector {
 
     fun withYOrientation(): GeomTargetCollector
 
-    class TooltipParams {
-        var tipLayoutHints = emptyMap<Aes<*>, TipLayoutHint>()
-        var stemLength = TipLayoutHint.StemLength.NORMAL
-        var fillColor: Color? = null
-        var markerColors: List<Color> = emptyList()
-
-        companion object {
-            fun tooltip(): TooltipParams {
-                return TooltipParams()
-            }
-
-            fun tooltip(block: TooltipParams.() -> Unit): TooltipParams {
-                return TooltipParams().apply(block)
-            }
-        }
-    }
+    class TooltipParams(
+        val tipLayoutHints: Map<Aes<*>, TipLayoutHint> = emptyMap(),
+        val stemLength: TipLayoutHint.StemLength = TipLayoutHint.StemLength.NORMAL,
+        val fillColor: Color? = null,
+        val markerColors: List<Color> = emptyList()
+    )
 }

@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -22,7 +21,13 @@ open class AreaGeom : GeomBase() {
         return GeomUtil.ordered_X(aesthetics.dataPoints())
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val dataPoints = dataPoints(aesthetics)
 
         val helper = LinesHelper(pos, coord, ctx)
@@ -63,9 +68,9 @@ open class AreaGeom : GeomBase() {
     }
 
     protected open fun setupTooltipParams(aes: DataPointAesthetics, ctx: GeomContext): TooltipParams {
-        return tooltip {
+        return TooltipParams(
             markerColors = HintColorUtil.createColorMarkerMapper(GeomKind.AREA, ctx).invoke(aes)
-        }
+        )
     }
 
     private fun toClient(geomHelper: GeomHelper, p: DataPointAesthetics): DoubleVector? {

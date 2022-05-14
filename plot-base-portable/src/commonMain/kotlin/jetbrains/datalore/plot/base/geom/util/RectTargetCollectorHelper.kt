@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 
 class RectTargetCollectorHelper(
@@ -24,9 +23,9 @@ class RectTargetCollectorHelper(
             targetCollector.addRectangle(
                 p.index(),
                 rectangle,
-                tooltip {
+                GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(p)
-                },
+                ),
                 tooltipKind
             )
         }

@@ -82,12 +82,12 @@ internal class YOrientationTargetCollector(private val targetCollector: GeomTarg
 
     companion object {
         private fun afterYOrientation(tooltipParams: GeomTargetCollector.TooltipParams): GeomTargetCollector.TooltipParams {
-            return GeomTargetCollector.TooltipParams.tooltip {
-                tipLayoutHints = flipAesKeys(tooltipParams.tipLayoutHints)
-                stemLength = tooltipParams.stemLength
-                fillColor = tooltipParams.fillColor
-                markerColors = tooltipParams.markerColors
-            }
+            return GeomTargetCollector.TooltipParams(
+                tipLayoutHints = flipAesKeys(tooltipParams.tipLayoutHints),
+                stemLength = tooltipParams.stemLength,
+                fillColor = tooltipParams.fillColor,
+                markerColors = tooltipParams.markerColors,
+            )
         }
     }
 }

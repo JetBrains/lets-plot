@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -21,7 +21,13 @@ class RibbonGeom : GeomBase() {
         return GeomUtil.ordered_X(data)
     }
 
-    override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val dataPoints = dataPoints(aesthetics)
         val helper = LinesHelper(pos, coord, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
@@ -77,10 +83,10 @@ class RibbonGeom : GeomBase() {
                 p.index(),
                 helper.toClient(coord, p),
                 0.0,
-                tooltip {
-                    tipLayoutHints = hintsCollection.hints
+                GeomTargetCollector.TooltipParams(
+                    tipLayoutHints = hintsCollection.hints,
                     markerColors = colorsByDataPoint(p)
-                }
+                )
             )
         }
     }

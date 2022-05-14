@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.geom.legend.HLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -59,9 +59,9 @@ class HLineGeom : GeomBase() {
                 ctx.targetCollector.addRectangle(
                     p.index(),
                     geomHelper.toClient(rect, p),
-                    tooltip {
+                    GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
-                    },
+                    ),
                     TipLayoutHint.Kind.CURSOR_TOOLTIP
                 )
             }

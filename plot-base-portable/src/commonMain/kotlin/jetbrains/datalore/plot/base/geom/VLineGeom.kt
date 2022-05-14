@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -57,9 +57,9 @@ class VLineGeom : GeomBase() {
                 ctx.targetCollector.addRectangle(
                     p.index(),
                     geomHelper.toClient(rect, p),
-                    tooltip {
+                    GeomTargetCollector.TooltipParams(
                         markerColors = colorMarkerMapper(p)
-                    }
+                    )
                 )
             }
         }
