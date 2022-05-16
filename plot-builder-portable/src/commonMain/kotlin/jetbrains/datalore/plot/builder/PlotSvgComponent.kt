@@ -36,7 +36,7 @@ import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.StyleProperties
+import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -78,7 +78,7 @@ class PlotSvgComponent constructor(
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
 
-    val styleProperties: StyleProperties = Style.fromTheme(theme, flippedAxis)
+    val styleSheet: StyleSheet = Style.fromTheme(theme, flippedAxis)
 
     // ToDo: remove
     private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel

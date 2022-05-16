@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.StyleProperties
+import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.TextStyle
 
 /**
@@ -69,10 +69,10 @@ object Style {
         |}
     """.trimMargin()
 
-    fun generateCSS(styleProperties: StyleProperties, plotId: String?, decorationLayerId: String?): String {
+    fun generateCSS(styleSheet: StyleSheet, plotId: String?, decorationLayerId: String?): String {
         val css = StringBuilder(CSS)
         css.append('\n')
-        styleProperties.getClasses().forEach { className ->
+        styleSheet.getClasses().forEach { className ->
             val id = when (className) {
                 TOOLTIP_TEXT,
                 TOOLTIP_TITLE,
@@ -81,7 +81,7 @@ object Style {
                 "$AXIS_TOOLTIP_TEXT-y" -> decorationLayerId
                 else -> plotId
             }
-            css.append(styleProperties.toCSS(className, id))
+            css.append(styleSheet.toCSS(className, id))
         }
         return css.toString()
     }
@@ -130,15 +130,15 @@ object Style {
         "$FACET_STRIP_TEXT-y" to createTextStyle(size = FONT_MEDIUM.toDouble())
     )
 
-    fun default(): StyleProperties {
-        return StyleProperties(
+    fun default(): StyleSheet {
+        return StyleSheet(
             DEFAULT_TEXT_STYLES,
             defaultFamily = FONT_FAMILY_NORMAL,
             defaultSize = DEFAULT_SIZE
         )
     }
 
-    fun fromTheme(theme: Theme, flippedAxis: Boolean): StyleProperties {
+    fun fromTheme(theme: Theme, flippedAxis: Boolean): StyleSheet {
         fun MutableMap<String, TextStyle>.setColor(className: String, color: Color) {
             this[className] = createTextStyle(
                 this[className]?.family ?: DEFAULT_FAMILY,
@@ -172,7 +172,7 @@ object Style {
             setColor("$FACET_STRIP_TEXT-x", theme.facets().stripTextColor())
             setColor("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor())
         }
-        return StyleProperties(
+        return StyleSheet(
             textStyles,
             defaultFamily = FONT_FAMILY_NORMAL,
             defaultSize = DEFAULT_SIZE

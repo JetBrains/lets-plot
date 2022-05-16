@@ -72,7 +72,7 @@ open class PlotContainerPortable(
 
         svg.setStyle(object : SvgCssResource {
             override fun css(): String {
-                return Style.generateCSS(plot.styleProperties, id, decorationLayerId)
+                return Style.generateCSS(plot.styleSheet, id, decorationLayerId)
             }
         })
 
