@@ -46,7 +46,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     show_legend : bool, default=True
