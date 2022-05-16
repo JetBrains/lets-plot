@@ -213,6 +213,10 @@ open class AestheticsDefaults {
             return point()
         }
 
+        fun qq(): AestheticsDefaults {
+            return point()
+        }
+
         fun freqpoly(): AestheticsDefaults {
             return area()
         }

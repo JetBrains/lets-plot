@@ -190,6 +190,7 @@ object GeomInteractionUtil {
             GeomKind.TEXT,
             GeomKind.POINT,
             GeomKind.JITTER,
+            GeomKind.Q_Q,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
             GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
@@ -325,6 +326,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,
+            GeomKind.Q_Q,
             GeomKind.LINE,
             GeomKind.AREA,
             GeomKind.TILE,

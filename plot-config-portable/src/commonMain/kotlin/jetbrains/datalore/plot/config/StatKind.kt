@@ -21,7 +21,8 @@ enum class StatKind {
     YDOTPLOT,
     DENSITY,
     DENSITY2D,
-    DENSITY2DF;
+    DENSITY2DF,
+    QQ;
 
 
     companion object {

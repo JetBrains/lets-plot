@@ -315,6 +315,11 @@ object Option {
         object YDensity {
             const val SCALE = "scale"
         }
+
+        object QQ {
+            const val DISTRIBUTION = "distribution"
+            const val DISTRIBUTION_PARAMETERS = "dparams"
+        }
     }
 
     object Scale {
@@ -477,7 +482,7 @@ object Option {
         private const val SMOOTH = "smooth"
         private const val BAR = "bar"
         const val HISTOGRAM = "histogram"
-        private const val DOTPLOT = "dotplot"
+        private const val DOT_PLOT = "dotplot"
         private const val TILE = "tile"
         private const val BIN_2D = "bin2d"
         private const val MAP = "map"
@@ -491,7 +496,7 @@ object Option {
         private const val V_LINE = "vline"
         private const val BOX_PLOT = "boxplot"
         private const val VIOLIN = "violin"
-        private const val YDOTPLOT = "ydotplot"
+        private const val Y_DOT_PLOT = "ydotplot"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
         private const val RIBBON = "ribbon"
@@ -502,6 +507,7 @@ object Option {
         private const val DENSITY2D = "density2d"
         private const val DENSITY2DF = "density2df"
         private const val JITTER = "jitter"
+        private const val Q_Q = "qq"
         private const val FREQPOLY = "freqpoly"
         private const val STEP = "step"
         private const val RECT = "rect"
@@ -519,8 +525,8 @@ object Option {
             map[SMOOTH] = GeomKind.SMOOTH
             map[BAR] = GeomKind.BAR
             map[HISTOGRAM] = GeomKind.HISTOGRAM
-            map[DOTPLOT] = GeomKind.DOT_PLOT
-            map[YDOTPLOT] = GeomKind.Y_DOT_PLOT
+            map[DOT_PLOT] = GeomKind.DOT_PLOT
+            map[Y_DOT_PLOT] = GeomKind.Y_DOT_PLOT
             map[TILE] = GeomKind.TILE
             map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP
@@ -544,6 +550,7 @@ object Option {
             map[DENSITY2D] = GeomKind.DENSITY2D
             map[DENSITY2DF] = GeomKind.DENSITY2DF
             map[JITTER] = GeomKind.JITTER
+            map[Q_Q] = GeomKind.Q_Q
             map[FREQPOLY] = GeomKind.FREQPOLY
             map[STEP] = GeomKind.STEP
             map[RECT] = GeomKind.RECT
