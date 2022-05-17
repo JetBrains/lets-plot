@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.svg.LinePath
 
@@ -37,17 +36,17 @@ class LinePathConstructor(
             myTargetCollector.addPolygon(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                tooltip {
+                GeomTargetCollector.TooltipParams(
                     markerColors = myColorsByDataPoint(multiPointData.aes)
-                }
+                )
             )
         } else {
             myTargetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                tooltip {
+                GeomTargetCollector.TooltipParams(
                     markerColors = myColorsByDataPoint(multiPointData.aes)
-                },
+                ),
                 if (myFlipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {

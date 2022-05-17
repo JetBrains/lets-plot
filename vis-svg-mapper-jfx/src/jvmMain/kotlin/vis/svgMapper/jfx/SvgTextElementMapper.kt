@@ -17,7 +17,7 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.StyleProperties
+import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
@@ -49,7 +49,7 @@ internal class SvgTextElementMapper(
     }
 
     override fun applyStyle() {
-        setFontProperties(target, peer.styleProperties)
+        setFontProperties(target, peer.styleSheet)
     }
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
@@ -70,13 +70,13 @@ internal class SvgTextElementMapper(
         )
     }
 
-    private fun setFontProperties(target: Text, styleProperties: StyleProperties?) {
-        if (styleProperties == null) {
+    private fun setFontProperties(target: Text, styleSheet: StyleSheet?) {
+        if (styleSheet == null) {
             return
         }
         val className = target.parent.styleClass?.toString()
         if (!className.isNullOrEmpty()) {
-            val style = styleProperties.getTextStyle(className)
+            val style = styleSheet.getTextStyle(className)
             target.font = style.createFont()
             myTextAttrSupport.setAttribute(SVG_STYLE_ATTRIBUTE, "fill:${style.color.toHexColor()};")
         }

@@ -277,7 +277,9 @@ internal class SquareFrameOfReference(
             )
 
             @Suppress("NAME_SHADOWING")
-            val flippedAxis = layer.isYOrientation xor flippedAxis
+            // val flippedAxis = layer.isYOrientation xor flippedAxis
+            // (XOR issue: https://youtrack.jetbrains.com/issue/KT-52296/Kotlin-JS-the-xor-operation-sometimes-evaluates-to-int-value-ins)
+            val flippedAxis = if (layer.isYOrientation) !flippedAxis else flippedAxis
 
             val aestheticMappers = rendererData.aestheticMappers
             val aesthetics = rendererData.aesthetics

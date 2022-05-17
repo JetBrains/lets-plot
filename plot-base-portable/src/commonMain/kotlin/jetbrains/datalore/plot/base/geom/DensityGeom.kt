@@ -10,14 +10,13 @@ import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.GeomKind.DENSITY
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
 
 class DensityGeom : AreaGeom() {
 
     override fun setupTooltipParams(aes: DataPointAesthetics, ctx: GeomContext): TooltipParams {
-        return tooltip {
+        return TooltipParams(
             markerColors = HintColorUtil.createColorMarkerMapper(DENSITY, ctx)(aes)
-        }
+        )
     }
 
     companion object {

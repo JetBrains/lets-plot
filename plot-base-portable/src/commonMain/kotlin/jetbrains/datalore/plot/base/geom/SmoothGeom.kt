@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.ordered_X
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.with_X_Y
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -76,10 +76,10 @@ class SmoothGeom : GeomBase() {
             val clientCoord = helper.toClient(p.x(), p.y(), p)
             ctx.targetCollector.addPoint(
                 p.index(), clientCoord, objectRadius,
-                tooltip {
-                    tipLayoutHints = hintsCollection.hints
+                GeomTargetCollector.TooltipParams(
+                    tipLayoutHints = hintsCollection.hints,
                     markerColors = colorsByDataPoint(p)
-                }
+                )
             )
         }
     }

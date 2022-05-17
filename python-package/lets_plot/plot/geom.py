@@ -37,7 +37,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -195,7 +195,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -335,7 +335,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -446,7 +446,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='smooth'
@@ -608,7 +608,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='count'
@@ -743,7 +743,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -890,7 +890,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='dotplot'
@@ -1034,7 +1034,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin2d'
@@ -1171,7 +1171,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1281,7 +1281,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1361,7 +1361,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1471,7 +1471,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1589,7 +1589,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1705,7 +1705,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -1816,7 +1816,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contour'
@@ -1933,7 +1933,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contourf'
@@ -2048,7 +2048,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2213,7 +2213,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2351,7 +2351,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2452,7 +2452,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2550,7 +2550,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -2653,7 +2653,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
@@ -2831,7 +2831,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydensity'
@@ -2992,7 +2992,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydotplot'
@@ -3146,7 +3146,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3251,7 +3251,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -3367,7 +3367,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density'
@@ -3541,7 +3541,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2d'
@@ -3733,7 +3733,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2df'
@@ -3923,7 +3923,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -4049,7 +4049,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin'
@@ -4158,7 +4158,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -4261,7 +4261,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -4400,7 +4400,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
@@ -4507,7 +4507,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set of aesthetic mappings created by `aes()` function.
         Aesthetic mappings describe the way that variables in the data are
         mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `GeoDataFrame`
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'

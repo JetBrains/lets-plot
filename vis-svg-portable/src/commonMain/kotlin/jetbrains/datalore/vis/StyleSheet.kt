@@ -10,7 +10,7 @@ import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
 
 
-class StyleProperties(
+class StyleSheet(
     private val textStyles: Map<String, TextStyle>,
     private val defaultFamily: String,
     private val defaultSize: Double
@@ -56,7 +56,7 @@ class StyleProperties(
         // }
         private const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
 
-        fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleProperties {
+        fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
                 val regex = Regex("$propertyName:(.+);")
                 return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
@@ -83,7 +83,7 @@ class StyleProperties(
                     )
                 }
 
-            return StyleProperties(classes, defaultFamily, defaultSize)
+            return StyleSheet(classes, defaultFamily, defaultSize)
         }
     }
 }

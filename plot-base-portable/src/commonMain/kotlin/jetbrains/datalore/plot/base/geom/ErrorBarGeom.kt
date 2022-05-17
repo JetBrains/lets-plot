@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.geom.util.HintsCollection.HintConfigFactory
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -99,10 +99,10 @@ class ErrorBarGeom : GeomBase() {
         ctx.targetCollector.addRectangle(
             p.index(),
             clientRect,
-            tooltip {
-                tipLayoutHints = hints
+            GeomTargetCollector.TooltipParams(
+                tipLayoutHints = hints,
                 markerColors = colorsByDataPoint(p)
-            },
+            ),
             tooltipKind = if (ctx.flipped) {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             } else {

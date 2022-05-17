@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.geom.util
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 
 object BarTooltipHelper {
@@ -55,11 +55,11 @@ object BarTooltipHelper {
             ctx.targetCollector.addRectangle(
                 p.index(),
                 helper.toClient(rect, p),
-                tooltip {
-                    tipLayoutHints = hintConfigs.hints
-                    fillColor = fillColorMapper(p)
+                GeomTargetCollector.TooltipParams(
+                    tipLayoutHints = hintConfigs.hints,
+                    fillColor = fillColorMapper(p),
                     markerColors = colorMarkerMapper(p)
-                },
+                ),
                 tooltipKind = defaultTooltipKind ?: if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {

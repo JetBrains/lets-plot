@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams.Companion.tooltip
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
@@ -117,7 +117,7 @@ class ViolinGeom : GeomBase() {
 
     private fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
         // Returns (bounded) piecewise linear interpolation function
-        return fun (t: Double): Double {
+        return fun(t: Double): Double {
             val i = x.indexOfFirst { it >= t }
             if (i == 0) return y.first()
             if (i == -1) return y.last()
@@ -131,7 +131,7 @@ class ViolinGeom : GeomBase() {
         sign: Double,
         ctx: GeomContext
     ): (p: DataPointAesthetics) -> DoubleVector {
-        return fun (p: DataPointAesthetics): DoubleVector {
+        return fun(p: DataPointAesthetics): DoubleVector {
             val x = p.x()!! + ctx.getResolution(Aes.X) / 2 * sign * p.width()!! * p.violinwidth()!!
             val y = p.y()!!
             return DoubleVector(x, y)
@@ -158,9 +158,9 @@ class ViolinGeom : GeomBase() {
             targetCollector.addPath(
                 multiPointData.points,
                 multiPointData.localToGlobalIndex,
-                tooltip {
+                GeomTargetCollector.TooltipParams(
                     markerColors = colorMarkerMapper(multiPointData.aes)
-                },
+                ),
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.VERTICAL_TOOLTIP
                 } else {
