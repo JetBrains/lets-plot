@@ -41,6 +41,7 @@ internal class InsideOutTileLayout constructor(
         )
 
         return TileLayoutInfo(
+            offset = DoubleVector.ZERO,
             geomWithAxisBounds,
             geomBounds,
             TileLayoutUtil.clipBounds(geomBounds),

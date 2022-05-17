@@ -95,6 +95,7 @@ internal class TopDownTileLayout(
         vAxisInfo = vAxisInfo.withAxisLength(geomBounds.height).build()
 
         return TileLayoutInfo(
+            offset = DoubleVector.ZERO,
             geomWithAxisBounds,
             geomBounds,
             clipBounds(geomBounds),

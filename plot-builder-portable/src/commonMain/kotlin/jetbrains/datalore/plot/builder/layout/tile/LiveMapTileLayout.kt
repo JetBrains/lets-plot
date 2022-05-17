@@ -17,6 +17,7 @@ internal class LiveMapTileLayout : TileLayout {
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
         val geomBounds = liveMapGeomBounds(preferredSize)
         return TileLayoutInfo(
+            offset = DoubleVector.ZERO,
             geomBounds,
             geomBounds,
             clipBounds(geomBounds),

@@ -79,7 +79,7 @@ internal class FacetedPlotLayout constructor(
 
         // Create final plot tiles layout infos.
 
-        val plotOrigin = DoubleVector(paddingLeft, paddingTop)
+        val tilesPaddingLeftTop = DoubleVector(paddingLeft, paddingTop)
 
         // Align geom areas of tiles.
 
@@ -165,6 +165,7 @@ internal class FacetedPlotLayout constructor(
             val geomBounds = geomBoundsList[index]
 
             val newLayoutInfo = TileLayoutInfo(
+                tilesPaddingLeftTop,
                 tileBounds.add(originDelta),
                 geomBounds.add(originDelta),
                 TileLayoutUtil.clipBounds(geomBounds),
@@ -173,7 +174,8 @@ internal class FacetedPlotLayout constructor(
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,
                 trueIndex = facetTile.trueIndex
-            ).withOffset(plotOrigin)
+            )
+//            ).withOffset(tilesPaddingLT)
 
             finalLayoutInfos.add(
                 if (showFacetStrip) {
@@ -186,7 +188,7 @@ internal class FacetedPlotLayout constructor(
 
         val combinedTilesSize = finalLayoutInfos.map { it.bounds }.reduce { b0, b1 -> b0.union(b1) }.dimension
         val plotSize = combinedTilesSize
-            .add(plotOrigin)
+            .add(tilesPaddingLeftTop)
             .add(DoubleVector(paddingRight, paddingBottom))
 
         return PlotLayoutInfo(finalLayoutInfos, plotSize)
