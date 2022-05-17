@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.layout.tile
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayout
@@ -91,8 +91,8 @@ internal class TopDownTileLayout(
         )
 
         // sync axis info with new (may be) geom area size
-        hAxisInfo = hAxisInfo.withAxisLength(geomBounds.width).build()
-        vAxisInfo = vAxisInfo.withAxisLength(geomBounds.height).build()
+        hAxisInfo = hAxisInfo.withAxisLength(geomBounds.width)
+        vAxisInfo = vAxisInfo.withAxisLength(geomBounds.height)
 
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
