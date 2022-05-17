@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.layout.tile
 
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class LiveMapAxisTheme : AxisTheme {
@@ -27,6 +28,10 @@ internal class LiveMapAxisTheme : AxisTheme {
         UNSUPPORTED()
     }
 
+    override fun titleFontFace(): FontFace {
+        UNSUPPORTED()
+    }
+
     override fun lineWidth(): Double {
         UNSUPPORTED()
     }
@@ -40,6 +45,10 @@ internal class LiveMapAxisTheme : AxisTheme {
     }
 
     override fun labelColor(): Color {
+        UNSUPPORTED()
+    }
+
+    override fun labelFontFace(): FontFace {
         UNSUPPORTED()
     }
 
@@ -64,6 +73,10 @@ internal class LiveMapAxisTheme : AxisTheme {
     }
 
     override fun tooltipTextColor(): Color {
+        UNSUPPORTED()
+    }
+
+    override fun tooltipFontFace(): FontFace {
         UNSUPPORTED()
     }
 }

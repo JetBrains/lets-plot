@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
@@ -52,8 +53,16 @@ internal class DefaultLegendTheme(
         return getColor(getElemValue(titleKey), ThemeOption.Elem.COLOR)
     }
 
+    override fun titleFontFace(): FontFace {
+        return getFontFace(getElemValue(titleKey))
+    }
+
     override fun textColor(): Color {
         return getColor(getElemValue(textKey), ThemeOption.Elem.COLOR)
+    }
+
+    override fun textFontFace(): FontFace {
+        return getFontFace(getElemValue(textKey))
     }
 
     override fun showBackground(): Boolean {
