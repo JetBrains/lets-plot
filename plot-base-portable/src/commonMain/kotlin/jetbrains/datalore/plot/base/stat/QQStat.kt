@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.math3.*
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class QQStat(
     private val distribution: Distribution,
@@ -17,16 +18,38 @@ class QQStat(
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X)
+        return listOf(Aes.X, Aes.Y)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, Aes.X)) {
+        if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 
-        val xs = data.getNumeric(TransformVar.X)
-        val statY = xs.filter { it?.isFinite() == true }.map { it!! }.sorted()
+        val ys = data.getNumeric(TransformVar.Y)
+        val statData = if (data.has(TransformVar.X)) {
+            val xs = data.getNumeric(TransformVar.X)
+            val (statX, statY) = (xs zip ys).filter { (x, y) ->
+                SeriesUtil.allFinite(x, y)
+            }.unzip()
+            mutableMapOf(
+                Stats.X to statX.map { it!! }.sorted(),
+                Stats.Y to statY.map { it!! }.sorted()
+            )
+        } else {
+            buildStat(ys)
+        }
+
+        return DataFrame.Builder()
+            .putNumeric(Stats.X, statData[Stats.X]!!)
+            .putNumeric(Stats.Y, statData[Stats.Y]!!)
+            .build()
+    }
+
+    private fun buildStat(
+        ys: List<Double?>
+    ): MutableMap<DataFrame.Variable, List<Double>> {
+        val statY = ys.filter { it?.isFinite() == true }.map { it!! }.sorted()
 
         val t = (1..statY.size).map { (it - 0.5) / statY.size }
         val dist: AbstractRealDistribution = when (distribution) {
@@ -57,10 +80,10 @@ class QQStat(
         }
         val statX = t.map { dist.inverseCumulativeProbability(it) }
 
-        return DataFrame.Builder()
-            .putNumeric(Stats.X, statX)
-            .putNumeric(Stats.Y, statY)
-            .build()
+        return mutableMapOf(
+            Stats.X to statX,
+            Stats.Y to statY
+        )
     }
 
     enum class Distribution {

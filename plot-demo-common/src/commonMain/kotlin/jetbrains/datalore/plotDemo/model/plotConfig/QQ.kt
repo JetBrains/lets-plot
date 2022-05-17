@@ -12,6 +12,7 @@ class QQ {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
+            onlySampleValues(),
         )
     }
 
@@ -19,7 +20,7 @@ class QQ {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
-                "                'x': 'sepal length (cm)'" +
+                "                'y': 'sepal length (cm)'" +
                 "              }," +
                 "   'ggtitle': {" +
                 "                'text': 'Basic demo'" +
@@ -28,6 +29,29 @@ class QQ {
                 "               {" +
                 "                 'geom': 'qq'," +
                 "                 'distribution': 'normal'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun onlySampleValues(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "                'x': 'sepal width (cm)'," +
+                "                'y': 'sepal length (cm)'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Only sample values'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'qq'" +
                 "               }" +
                 "             ]" +
                 "}"
