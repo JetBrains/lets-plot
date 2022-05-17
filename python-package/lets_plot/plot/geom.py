@@ -4024,7 +4024,128 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
 
 def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+            distribution=None,
+            dparams=None,
             **other_args):
+    """
+    Display quantile-quantile plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='qq'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'qq' (compare two probability distributions),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
+        Distribution function to use, if `x` not specified.
+    dparams : list
+        Additional parameters (of float type) passed on to distribution function,
+        if `x` not specified.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The Q-Q plot is used for comparing two probability distributions
+    by plotting their quantiles against each other.
+
+    If `x` and `y` both specified, then a point (`x`, `y`) on the plot corresponds
+    to one of the quantiles of the second distribution (`y`-coordinate)
+    plotted against the same quantile of the first distribution (`x`-coordinate).
+
+    If only `y` aesthetic is specified, Q-Q plot is used to compare
+    a data series to a theoretical distribution.
+
+    If the two distributions being compared are similar, the points in the Q-Q plot
+    will approximately lie on the line `y=x`.
+
+    `geom_qq()` understands the following aesthetics mappings:
+
+    - y : y-axis value (required).
+    - x : x-axis value.
+    - alpha : transparency level of a point. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - shape : shape of the point.
+    - size : size of the point.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        y = np.random.normal(0, 1, n)
+        ggplot({'y': y}, aes(y='y')) + geom_qq()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        y = np.random.exponential(1, n)
+        ggplot({'y': y}, aes(y='y')) + \\
+            geom_qq(distribution='exp')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.normal(1, 2, n)
+        y = np.random.normal(0, 1, n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_qq(aes(color='y'), shape=18, \\
+                    size=5, show_legend=False)
+
+    """
     return _geom('qq',
                  mapping=mapping,
                  data=data,
@@ -4033,6 +4154,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 distribution=distribution,
+                 dparams=dparams,
                  **other_args)
 
 
