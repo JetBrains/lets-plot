@@ -308,15 +308,15 @@ object StatProto {
     private fun configureQQStat(options: OptionsAccessor): QQStat {
         val distribution = options.getString(QQ.DISTRIBUTION)?.let {
             when (it.lowercase()) {
-                "normal" -> QQStat.Distribution.NORMAL
+                "norm" -> QQStat.Distribution.NORMAL
                 "uniform" -> QQStat.Distribution.UNIFORM
                 "t" -> QQStat.Distribution.T
                 "gamma" -> QQStat.Distribution.GAMMA
                 "exp" -> QQStat.Distribution.EXP
-                "chi-squared" -> QQStat.Distribution.CHI_SQUARED
+                "chi2" -> QQStat.Distribution.CHI_SQUARED
                 else -> throw IllegalArgumentException(
                     "Unsupported distribution: '$it'\n" +
-                    "Use one of: normal, uniform, t, gamma, exp, chi-squared."
+                    "Use one of: norm, uniform, t, gamma, exp, chi2."
                 )
             }
         }

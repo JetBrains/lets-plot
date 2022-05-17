@@ -28,7 +28,7 @@ class QQ {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'qq'," +
-                "                 'distribution': 'normal'" +
+                "                 'distribution': 'norm'" +
                 "               }" +
                 "             ]" +
                 "}"
