@@ -16,7 +16,7 @@ import javax.swing.JComponent
 class SvgViewerDemoWindowJfx(
     title: String,
     svgRoots: List<SvgSvgElement>,
-    private val stylesheets: List<String> = listOf(Style.JFX_PLOT_STYLESHEET),
+    private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 2,
 ) : SvgViewerDemoWindowBase(
     title,

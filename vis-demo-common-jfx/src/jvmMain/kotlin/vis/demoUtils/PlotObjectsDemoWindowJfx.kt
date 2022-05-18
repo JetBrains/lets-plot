@@ -17,7 +17,7 @@ import javax.swing.JComponent
 class PlotObjectsDemoWindowJfx(
     title: String,
     plotList: List<PlotSvgComponent>,
-    private val stylesheets: List<String> = listOf(Style.JFX_PLOT_STYLESHEET),
+    private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 2,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotObjectsDemoWindowBase(

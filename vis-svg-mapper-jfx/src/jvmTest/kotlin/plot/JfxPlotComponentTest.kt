@@ -47,7 +47,7 @@ class JfxPlotComponentTest {
         private val COMPONENT_FACTORY = { svg: SvgSvgElement ->
             SceneMapperJfxPanel(
                 svg,
-                listOf(Style.JFX_PLOT_STYLESHEET)
+                stylesheets = emptyList()
             )
         }
 
