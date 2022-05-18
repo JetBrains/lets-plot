@@ -16,7 +16,7 @@ import jetbrains.datalore.base.registration.Registration
 import java.awt.Graphics
 import javax.swing.SwingUtilities
 
-abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPanel() {
+abstract class AbstractJfxPanel : JFXPanel() {
 
     // BEGIN HACK
     private var scaleUpdated = false
@@ -51,15 +51,11 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         myRegFx = CompositeRegistration()
 
         // Create 'transparent' scene to let CSS to compute its background color.
-        // (see: 'resources/svgMapper/jfx/plot.css' in plot-builder)
         // Note: Semi-transparent colors (alpha < 1) only look correct when
         // the background is WHITE (or other non-transparent color).
         // But in the case of live-map we need plot transparency to let
         // the map base layer to be visible.
-        val scene = Scene(createSceneParent(), TRANSPARENT)
-
-        scene.stylesheets.addAll(stylesheets)
-        setScene(scene)
+        scene = Scene(createSceneParent(), TRANSPARENT)
     }
 
     abstract fun createSceneParent(): Parent

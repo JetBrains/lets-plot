@@ -17,7 +17,6 @@ import javax.swing.JComponent
 class PlotSpecsDemoWindowJfx(
     title: String,
     specList: List<MutableMap<String, Any>>,
-    private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 3,
     plotSize: Dimension? = null,
     background: Color = Color.WHITE

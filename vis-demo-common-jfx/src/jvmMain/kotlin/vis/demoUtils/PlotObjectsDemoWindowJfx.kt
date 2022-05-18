@@ -8,7 +8,6 @@ package jetbrains.datalore.vis.demoUtils
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.swing.PlotObjectsDemoWindowBase
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Dimension
@@ -17,7 +16,6 @@ import javax.swing.JComponent
 class PlotObjectsDemoWindowJfx(
     title: String,
     plotList: List<PlotSvgComponent>,
-    private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 2,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotObjectsDemoWindowBase(
@@ -33,6 +31,6 @@ class PlotObjectsDemoWindowJfx(
         )
 
         plotContainer.ensureContentBuilt()
-        return SceneMapperJfxPanel(plotContainer.svg, stylesheets)
+        return SceneMapperJfxPanel(plotContainer.svg)
     }
 }
