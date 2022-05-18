@@ -16,13 +16,7 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.TextStyle
 
-/**
- * Duplicating stylesheet for JavaFX platform is defined in
- * plot-builder/src/jvmMain/resources/svgMapper/jfx/plot.css
- */
 object Style {
-    const val JFX_PLOT_STYLESHEET = "/svgMapper/jfx/plot.css"
-
     // classes
     const val PLOT_CONTAINER = "plt-container"
     const val PLOT = "plt-plot"

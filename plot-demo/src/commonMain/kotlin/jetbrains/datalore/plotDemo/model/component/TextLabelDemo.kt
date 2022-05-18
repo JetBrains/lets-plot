@@ -18,10 +18,8 @@ import jetbrains.datalore.vis.svg.*
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
-    override val cssStyle: String  // not working for JavaFx target (see)
-        get() = "text {" +
-                "font-size: 18px;" +
-                "}"
+    override val cssStyle: String
+        get() = ".$LABEL_CLASS_NAME text { font-size: 18px; }"
 
     fun createModel(): GroupComponent {
         val specs = ArrayList<LabelSpec>()
@@ -76,6 +74,7 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     companion object {
         private val DEMO_BOX_SIZE = DoubleVector(800.0, 1500.0)
+        private const val LABEL_CLASS_NAME = "label"
 
         private fun createLabelExample(
             dim: DoubleVector,
@@ -115,6 +114,7 @@ open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private fun createTextLabel(hAnchor: HorizontalAnchor, vAnchor: VerticalAnchor, angle: Double): TextLabel {
             val text = "Anchor: " + hAnchor.name + "-" + vAnchor.name + " angle: " + angle + "°"
             val label = TextLabel(text)
+            label.addClassName(LABEL_CLASS_NAME)
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)
             label.rotate(angle)

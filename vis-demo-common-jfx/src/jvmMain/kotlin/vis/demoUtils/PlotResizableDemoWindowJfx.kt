@@ -58,10 +58,7 @@ class PlotResizableDemoWindowJfx(
                 plotContainer.resize(DoubleVector(getWidth(), getHeight()))
             }
             plotContainer.ensureContentBuilt()
-            return SceneMapperJfxPanel(
-                plotContainer.svg,
-                listOf(Style.JFX_PLOT_STYLESHEET)
-            )
+            return SceneMapperJfxPanel(plotContainer.svg)
         }
     }
 }

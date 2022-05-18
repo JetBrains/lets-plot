@@ -12,8 +12,7 @@ fun main() {
     with(TextLabelDemo()) {
         SvgViewerDemoWindowJfx(
             "Text label anchor and rotation",
-            createSvgRoots(listOf(createModel())),
-            stylesheets = listOf("/text-label-demo.css")
+            createSvgRoots(listOf(createModel()))
         ).open()
     }
 }

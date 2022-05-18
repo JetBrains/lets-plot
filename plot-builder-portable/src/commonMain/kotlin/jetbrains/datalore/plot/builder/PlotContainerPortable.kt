@@ -88,7 +88,6 @@ open class PlotContainerPortable(
         // 2.
         // Jfx Scene ignores size values set in % (percentage is not supported).
         // Styling of the root <svg>-element can be done in an external css file.
-        // (see: 'resources/svgMapper/jfx/plot.css' in plot-builder)
 
         svg.children().add(plot.rootGroup)
     }
