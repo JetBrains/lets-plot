@@ -9,6 +9,7 @@ import javafx.embed.swing.JFXPanel
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.paint.Color.TRANSPARENT
+import javafx.scene.paint.Paint
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
@@ -28,9 +29,9 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         }
 
         scaleUpdated = true
-        // Fix for HiDPI display. Force JavaFX to repaint scene with a proper scale factor by changing stylesheets.
-        // Other ways to force repaint (like changing size of the scene) can work too, but also can cause artifacts.
-        runOnFxThread { with(scene.stylesheets) { firstOrNull()?.let { remove(it); add(it); } } }
+        // Fix for HiDPI display. Force JavaFX to repaint scene with a proper scale factor by changing fill.
+        // Other ways to force repaint (like changing stylesheets or size of the scene) can work too, but also can cause artifacts.
+        runOnFxThread { scene.fill = Paint.valueOf(scene.fill.toString()) }
     }
     // END HACK
 
