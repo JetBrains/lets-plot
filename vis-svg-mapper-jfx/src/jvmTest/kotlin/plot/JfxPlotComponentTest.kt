@@ -43,7 +43,7 @@ class JfxPlotComponentTest {
     }
 
     companion object {
-        private val COMPONENT_FACTORY = { svg: SvgSvgElement -> SceneMapperJfxPanel(svg) }
+        private val COMPONENT_FACTORY = { svg: SvgSvgElement -> SceneMapperJfxPanel(svg, stylesheets = emptyList()) }
 
         private val AWT_EDT_EXECUTOR = { runnable: () -> Unit ->
             runOnFxThread(runnable)

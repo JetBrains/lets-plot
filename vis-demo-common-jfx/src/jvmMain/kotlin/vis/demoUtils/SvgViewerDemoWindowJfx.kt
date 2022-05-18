@@ -15,6 +15,7 @@ import javax.swing.JComponent
 class SvgViewerDemoWindowJfx(
     title: String,
     svgRoots: List<SvgSvgElement>,
+    private val stylesheets: List<String> = emptyList(),
     maxCol: Int = 2,
 ) : SvgViewerDemoWindowBase(
     title,
@@ -22,7 +23,10 @@ class SvgViewerDemoWindowJfx(
     maxCol = maxCol,
 ) {
     override fun createPlotComponent(svgRoot: SvgSvgElement): JComponent {
-        val component = SceneMapperJfxPanel(svgRoot)
+        val component = SceneMapperJfxPanel(
+            svgRoot,
+            stylesheets
+        )
 
         component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
         return component

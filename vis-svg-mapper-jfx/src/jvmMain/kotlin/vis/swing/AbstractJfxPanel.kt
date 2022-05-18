@@ -16,7 +16,7 @@ import jetbrains.datalore.base.registration.Registration
 import java.awt.Graphics
 import javax.swing.SwingUtilities
 
-abstract class AbstractJfxPanel : JFXPanel() {
+abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPanel() {
 
     // BEGIN HACK
     private var scaleUpdated = false
@@ -31,7 +31,10 @@ abstract class AbstractJfxPanel : JFXPanel() {
         scaleUpdated = true
         // Fix for HiDPI display. Force JavaFX to repaint scene with a proper scale factor by changing fill.
         // Other ways to force repaint (like changing stylesheets or size of the scene) can work too, but also can cause artifacts.
-        runOnFxThread { scene.fill = Paint.valueOf(scene.fill.toString()) }
+        runOnFxThread {
+            // with(scene.stylesheets) { firstOrNull()?.let { remove(it); add(it); } }
+            scene.fill = Paint.valueOf(scene.fill.toString())
+        }
     }
     // END HACK
 
@@ -55,7 +58,10 @@ abstract class AbstractJfxPanel : JFXPanel() {
         // the background is WHITE (or other non-transparent color).
         // But in the case of live-map we need plot transparency to let
         // the map base layer to be visible.
-        scene = Scene(createSceneParent(), TRANSPARENT)
+        val scene = Scene(createSceneParent(), TRANSPARENT)
+
+        scene.stylesheets.addAll(stylesheets)
+        setScene(scene)
     }
 
     abstract fun createSceneParent(): Parent

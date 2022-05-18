@@ -20,8 +20,9 @@ import jetbrains.datalore.vis.svgMapper.jfx.SvgSvgElementMapper
 import java.awt.Dimension
 
 class SceneMapperJfxPanel(
-    private val svg: SvgSvgElement
-) : AbstractJfxPanel(), Disposable {
+    private val svg: SvgSvgElement,
+    stylesheets: List<String>
+) : AbstractJfxPanel(stylesheets), Disposable {
 
     private val nodeContainer = SvgNodeContainer(svg)  // attach root
     private var registrations = CompositeRegistration()
