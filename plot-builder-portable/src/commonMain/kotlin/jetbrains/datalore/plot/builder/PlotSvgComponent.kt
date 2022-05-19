@@ -266,7 +266,7 @@ class PlotSvgComponent constructor(
             val tileLayers = tileLayers(tileIndex)
             val tile = PlotTile(tileLayers, tilesOrigin, tileLayoutInfo, theme, frameOfReference)
 
-            val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.plotOrigin)
+            val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.offset)
             tile.moveTo(plotOriginAbsolute)
 
             add(tile)

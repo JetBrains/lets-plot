@@ -5,132 +5,43 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 
-class AxisLayoutInfo private constructor(b: Builder) {
-    val axisBreaks: ScaleBreaks
-    val axisLength: Double
-    val orientation: Orientation
-    val axisDomain: DoubleSpan
+class AxisLayoutInfo constructor(
+    val axisLength: Double,
+    val axisDomain: DoubleSpan,
+    val orientation: Orientation,
+    val axisBreaks: ScaleBreaks,
 
-    val tickLabelsBounds: DoubleRectangle?
-    val tickLabelRotationAngle: Double
-    val tickLabelHorizontalAnchor: Text.HorizontalAnchor?    // optional
-    val tickLabelVerticalAnchor: Text.VerticalAnchor?        // optional
-    val tickLabelAdditionalOffsets: List<DoubleVector>?           // optional
-    private val tickLabelsBoundsMax: DoubleRectangle?                     // debug
+    val tickLabelsBounds: DoubleRectangle,
+    val tickLabelRotationAngle: Double,
+    val tickLabelHorizontalAnchor: Text.HorizontalAnchor? = null,
+    val tickLabelVerticalAnchor: Text.VerticalAnchor? = null,
+    val tickLabelAdditionalOffsets: List<DoubleVector>? = null,
+    private val tickLabelsBoundsMax: DoubleRectangle? = null                     // debug
+) {
 
-    init {
-        require(b.myAxisBreaks != null)
-        require(b.myOrientation != null)
-        require(b.myTickLabelsBounds != null)
-        require(b.myAxisDomain != null)
-
-        this.axisBreaks = b.myAxisBreaks!!
-        this.axisLength = b.myAxisLength
-        this.orientation = b.myOrientation!!
-        this.axisDomain = b.myAxisDomain!!
-
-        this.tickLabelsBounds = b.myTickLabelsBounds
-        this.tickLabelRotationAngle = b.myTickLabelRotationAngle
-        this.tickLabelHorizontalAnchor = b.myLabelHorizontalAnchor
-        this.tickLabelVerticalAnchor = b.myLabelVerticalAnchor
-        this.tickLabelAdditionalOffsets = b.myLabelAdditionalOffsets
-        this.tickLabelsBoundsMax = b.myMaxTickLabelsBounds
-    }
-
-    fun withAxisLength(axisLength: Double): Builder {
-        //check(axisDomain != null)
-
-        val b = Builder()
-        b.myAxisBreaks = axisBreaks
-        b.myAxisLength = axisLength
-
-        b.myOrientation = this.orientation
-        b.myAxisDomain = this.axisDomain
-
-        b.myTickLabelsBounds = this.tickLabelsBounds
-        b.myTickLabelRotationAngle = this.tickLabelRotationAngle
-        b.myLabelHorizontalAnchor = this.tickLabelHorizontalAnchor
-        b.myLabelVerticalAnchor = this.tickLabelVerticalAnchor
-        b.myLabelAdditionalOffsets = this.tickLabelAdditionalOffsets
-        b.myMaxTickLabelsBounds = this.tickLabelsBoundsMax
-        return b
+    fun withAxisLength(axisLength: Double): AxisLayoutInfo {
+        return AxisLayoutInfo(
+            axisLength = axisLength,
+            axisDomain = axisDomain,
+            orientation = orientation,
+            axisBreaks = axisBreaks,
+            tickLabelsBounds = tickLabelsBounds,
+            tickLabelRotationAngle = tickLabelRotationAngle,
+            tickLabelHorizontalAnchor = tickLabelHorizontalAnchor,
+            tickLabelVerticalAnchor = tickLabelVerticalAnchor,
+            tickLabelAdditionalOffsets = tickLabelAdditionalOffsets,
+            tickLabelsBoundsMax = tickLabelsBoundsMax,
+        )
     }
 
     fun axisBounds(): DoubleRectangle {
-        return tickLabelsBounds!!.union(DoubleRectangle(0.0, 0.0, 0.0, 0.0))
-    }
-
-    class Builder {
-        var myAxisLength: Double = 0.0
-        var myOrientation: Orientation? = null
-        var myAxisDomain: DoubleSpan? = null
-        var myMaxTickLabelsBounds: DoubleRectangle? = null
-        var myLabelAdditionalOffsets: List<DoubleVector>? = null
-        var myLabelHorizontalAnchor: Text.HorizontalAnchor? = null
-        var myLabelVerticalAnchor: Text.VerticalAnchor? = null
-        var myTickLabelRotationAngle = 0.0
-        var myTickLabelsBounds: DoubleRectangle? = null
-        var myAxisBreaks: ScaleBreaks? = null
-
-        fun build(): AxisLayoutInfo {
-            return AxisLayoutInfo(this)
-        }
-
-        fun axisLength(d: Double): Builder {
-            myAxisLength = d
-            return this
-        }
-
-        fun orientation(o: Orientation): Builder {
-            myOrientation = o
-            return this
-        }
-
-        fun axisDomain(r: DoubleSpan): Builder {
-            myAxisDomain = r
-            return this
-        }
-
-        fun tickLabelsBoundsMax(r: DoubleRectangle?): Builder {
-            myMaxTickLabelsBounds = r
-            return this
-        }
-
-        fun tickLabelAdditionalOffsets(labelAdditionalOffsets: List<DoubleVector>?): Builder {
-            myLabelAdditionalOffsets = labelAdditionalOffsets
-            return this
-        }
-
-        fun tickLabelHorizontalAnchor(labelHorizontalAnchor: Text.HorizontalAnchor?): Builder {
-            myLabelHorizontalAnchor = labelHorizontalAnchor
-            return this
-        }
-
-        fun tickLabelVerticalAnchor(labelVerticalAnchor: Text.VerticalAnchor?): Builder {
-            myLabelVerticalAnchor = labelVerticalAnchor
-            return this
-        }
-
-        fun tickLabelRotationAngle(rotationAngle: Double): Builder {
-            myTickLabelRotationAngle = rotationAngle
-            return this
-        }
-
-        fun tickLabelsBounds(rectangle: DoubleRectangle?): Builder {
-            myTickLabelsBounds = rectangle
-            return this
-        }
-
-        fun axisBreaks(breaks: ScaleBreaks?): Builder {
-            myAxisBreaks = breaks
-            return this
-        }
+        return tickLabelsBounds.union(DoubleRectangle(0.0, 0.0, 0.0, 0.0))
     }
 }

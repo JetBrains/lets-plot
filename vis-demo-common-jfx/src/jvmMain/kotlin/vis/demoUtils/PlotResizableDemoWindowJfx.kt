@@ -8,7 +8,6 @@ package jetbrains.datalore.vis.demoUtils
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import jetbrains.datalore.vis.swing.PlotComponentProvider
 import jetbrains.datalore.vis.swing.PlotPanel
@@ -58,10 +57,7 @@ class PlotResizableDemoWindowJfx(
                 plotContainer.resize(DoubleVector(getWidth(), getHeight()))
             }
             plotContainer.ensureContentBuilt()
-            return SceneMapperJfxPanel(
-                plotContainer.svg,
-                listOf(Style.JFX_PLOT_STYLESHEET)
-            )
+            return SceneMapperJfxPanel(plotContainer.svg, stylesheets = emptyList())
         }
     }
 }

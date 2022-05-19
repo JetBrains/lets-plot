@@ -45,7 +45,7 @@ open class DefaultPlotComponentProviderJfx(
         private val LOG = PortableLogging.logger(DefaultPlotComponentProviderJfx::class)
 
         private val SVG_COMPONENT_FACTORY_JFX = { svg: SvgSvgElement ->
-            SceneMapperJfxPanel(svg, listOf(Style.JFX_PLOT_STYLESHEET))
+            SceneMapperJfxPanel(svg, stylesheets = emptyList())
         }
     }
 }

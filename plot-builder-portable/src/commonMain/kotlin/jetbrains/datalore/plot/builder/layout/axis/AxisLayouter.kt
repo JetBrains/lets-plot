@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
@@ -21,22 +21,21 @@ abstract class AxisLayouter(
 
     fun doLayout(axisLength: Double, maxTickLabelsBounds: DoubleRectangle?): AxisLayoutInfo {
         val labelsInfo = labelsLayout.doLayout(axisLength, toAxisMapper(axisLength), maxTickLabelsBounds)
-        val labelsBounds = labelsInfo.bounds
+        val axisBreaks = labelsInfo.breaks!!
+        val labelsBounds = labelsInfo.bounds!!
 
-        val builder = AxisLayoutInfo.Builder()
-            .axisBreaks(labelsInfo.breaks)
-            .axisLength(axisLength)
-            .orientation(orientation)
-            .axisDomain(domainRange)
-            .tickLabelsBoundsMax(maxTickLabelsBounds)
-            // todo: add 1 labels info object
-            .tickLabelAdditionalOffsets(labelsInfo.labelAdditionalOffsets)
-            .tickLabelHorizontalAnchor(labelsInfo.labelHorizontalAnchor)
-            .tickLabelVerticalAnchor(labelsInfo.labelVerticalAnchor)
-            .tickLabelRotationAngle(labelsInfo.labelRotationAngle)
-            .tickLabelsBounds(labelsBounds)
-
-        return builder.build()
+        return AxisLayoutInfo(
+            axisLength = axisLength,
+            axisDomain = domainRange,
+            orientation = orientation,
+            axisBreaks = axisBreaks,
+            tickLabelsBounds = labelsBounds,
+            tickLabelRotationAngle = labelsInfo.labelRotationAngle,
+            tickLabelHorizontalAnchor = labelsInfo.labelHorizontalAnchor,
+            tickLabelVerticalAnchor = labelsInfo.labelVerticalAnchor,
+            tickLabelAdditionalOffsets = labelsInfo.labelAdditionalOffsets,
+            tickLabelsBoundsMax = maxTickLabelsBounds
+        )
     }
 
     protected abstract fun toAxisMapper(axisLength: Double): (Double?) -> Double?

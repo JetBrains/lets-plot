@@ -49,7 +49,7 @@ class BoxplotGeom : GeomBase() {
             aesthetics, pos, coord, ctx,
             rectangleByDataPoint(ctx),
             { colorWithAlpha(it) },
-            defaultTooltipKind = if (ctx.flipped) TipLayoutHint.Kind.CURSOR_TOOLTIP else null
+            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
     }
 

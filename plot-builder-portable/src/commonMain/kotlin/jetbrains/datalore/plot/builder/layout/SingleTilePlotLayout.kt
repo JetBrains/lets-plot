@@ -24,7 +24,8 @@ internal class SingleTilePlotLayout(
             .subtract(paddingLeftTop)
             .subtract(paddingRightBottom)
 
-        val tileInfo = tileLayout.doLayout(tilePreferredSize, coordProvider)
+        val tileInfo = tileLayout
+            .doLayout(tilePreferredSize, coordProvider)
             .withOffset(paddingLeftTop)
 
         val plotSize = tileInfo.bounds.dimension
