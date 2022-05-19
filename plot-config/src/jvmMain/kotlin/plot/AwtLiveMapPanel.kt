@@ -33,7 +33,7 @@ class AwtLiveMapPanel(
     private val registrations: MutableList<Registration> = ArrayList()
 
     init {
-        cursorServiceConfig.defaultSetter { plotOverlayComponent.cursor = Cursor.getDefaultCursor() }
+        cursorServiceConfig.defaultSetter { plotOverlayComponent.cursor = Cursor(Cursor.CROSSHAIR_CURSOR) }
         cursorServiceConfig.pointerSetter { plotOverlayComponent.cursor = Cursor(Cursor.HAND_CURSOR) }
 
 //        background = Color.WHITE
