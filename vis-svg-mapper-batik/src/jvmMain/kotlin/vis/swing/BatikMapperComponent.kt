@@ -9,6 +9,7 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
@@ -28,6 +29,7 @@ class BatikMapperComponent(
         isFocusable = true
 //        background = Color(0, 0, 0, 0)
         isOpaque = false
+        cursor = Cursor(Cursor.CROSSHAIR_CURSOR)
 
         myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 

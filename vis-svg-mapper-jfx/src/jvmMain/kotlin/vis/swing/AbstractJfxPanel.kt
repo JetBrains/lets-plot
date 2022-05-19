@@ -6,6 +6,7 @@
 package jetbrains.datalore.vis.swing
 
 import javafx.embed.swing.JFXPanel
+import javafx.scene.Cursor
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.paint.Color.TRANSPARENT
@@ -59,7 +60,7 @@ abstract class AbstractJfxPanel(private val stylesheets: List<String>) : JFXPane
         // But in the case of live-map we need plot transparency to let
         // the map base layer to be visible.
         val scene = Scene(createSceneParent(), TRANSPARENT)
-
+        scene.cursor = Cursor.CROSSHAIR
         scene.stylesheets.addAll(stylesheets)
         setScene(scene)
     }
