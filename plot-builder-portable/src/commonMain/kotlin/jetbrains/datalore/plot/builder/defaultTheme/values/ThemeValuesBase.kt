@@ -20,6 +20,9 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_LABEL
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
@@ -70,6 +73,19 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
             LEGEND_DIRECTION to LegendDirection.AUTO,
+
+            // Tooltip
+            TOOLTIP_TEXT to mapOf(
+                Elem.COLOR to Color.BLUE,
+                Elem.SIZE to Defaults.FONT_SMALL,
+                Elem.FONT_FACE to FontFace.NORMAL,
+            ),
+            TOOLTIP_TITLE to mapOf(
+                Elem.FONT_FACE to FontFace.BOLD,
+            ),
+            TOOLTIP_LABEL to mapOf(
+                Elem.FONT_FACE to FontFace.BOLD,
+            )
         )
     }
 }

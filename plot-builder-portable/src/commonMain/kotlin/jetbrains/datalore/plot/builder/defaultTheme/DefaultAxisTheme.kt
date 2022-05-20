@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class DefaultAxisTheme(
@@ -42,7 +43,7 @@ internal class DefaultAxisTheme(
     // Inherits from the tooltip rect stroke color.
     internal val tooltipTextColorKey = tooltipTextKey + tooltipKey
 
-    internal val tooltipTextStyleKey = (tooltipTextKey) + /*(tooltipKey - RECT) +*/ TEXT // todo
+    internal val tooltipTextStyleKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT, TOOLTIP_TEXT)
 
     override fun isOntop(): Boolean {
         return getBoolean(ontopKey)

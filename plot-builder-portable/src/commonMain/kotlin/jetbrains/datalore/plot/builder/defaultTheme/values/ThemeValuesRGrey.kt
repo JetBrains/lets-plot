@@ -18,6 +18,10 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKG
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 
 
 class ThemeValuesRGrey : ThemeValues(VALUES) {
@@ -42,15 +46,15 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
                 Elem.COLOR to DARK_GREY
             ),
 
-            ThemeOption.RECT to mapOf(
+            RECT to mapOf(
                 Elem.COLOR to DARK_GREY
             ),
 
-            ThemeOption.TEXT to mapOf(
+            TEXT to mapOf(
                 Elem.COLOR to DARK_GREY
             ),
 
-            ThemeOption.TITLE to mapOf(
+            TITLE to mapOf(
                 Elem.COLOR to BLACK
             ),
 
@@ -90,6 +94,10 @@ class ThemeValuesRGrey : ThemeValues(VALUES) {
             FACET_STRIP_BGR_RECT to mapOf(
                 Elem.FILL to STRIP_BACKGROUND,
                 Elem.SIZE to 0.0,
+            ),
+
+            TOOLTIP_TEXT to mapOf(
+                Elem.COLOR to BLACK,
             ),
         )
     }

@@ -74,6 +74,11 @@ object ThemeOption {
     const val LEGEND_JUSTIFICATION = "legend_justification"
     const val LEGEND_DIRECTION = "legend_direction"
 
+    // Tooltip
+    const val TOOLTIP_TEXT = "tooltip_text"
+    const val TOOLTIP_TITLE = "tooltip_title"
+    const val TOOLTIP_LABEL = "tooltip_label"
+
     // view element
     val ELEMENT_BLANK = mapOf(Elem.BLANK to true)
     const val ELEMENT_BLANK_SHORTHAND = "blank"
@@ -88,7 +93,7 @@ object ThemeOption {
 
         // text
         const val FONT_FAMILY = "family"     // ToDo
-        const val FONT_FACE = "face"         // ToDo
+        const val FONT_FACE = "face"
         const val HJUST = "hjust"       // ToDo
         const val VJUST = "vjust"       // ToDo
         const val ANGLE = "angle"       // ToDo
@@ -148,6 +153,9 @@ object ThemeOption {
             FACET_STRIP_TEXT,
             LEGEND_TEXT,
             LEGEND_TITLE,
+            TOOLTIP_TEXT,
+            TOOLTIP_TITLE,
+            TOOLTIP_LABEL,
         )
         val elemWithFill = listOf(
             PLOT_BKGR_RECT,
@@ -160,6 +168,25 @@ object ThemeOption {
         val numericOptions = listOf(
             AXIS_TICKS_LENGTH_X,
             AXIS_TICKS_LENGTH_Y,
+        )
+
+        //  font_face
+        val elemWithFontOptions = listOf(
+            PLOT_TITLE,
+            PLOT_SUBTITLE,
+            PLOT_CAPTION,
+            AXIS_TITLE_X,
+            AXIS_TITLE_Y,
+            AXIS_TEXT_X,
+            AXIS_TEXT_Y,
+            AXIS_TOOLTIP_TEXT_X,
+            AXIS_TOOLTIP_TEXT_Y,
+            FACET_STRIP_TEXT,
+            LEGEND_TEXT,
+            LEGEND_TITLE,
+            TOOLTIP_TEXT,
+            TOOLTIP_TITLE,
+            TOOLTIP_LABEL,
         )
     }
 }
