@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.shape.Rectangle
 import jetbrains.datalore.vis.svg.SvgRectElement
+import jetbrains.datalore.vis.svg.SvgShape
 
 internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
     override fun setAttribute(target: Rectangle, name: String, value: Any?) {
@@ -22,6 +23,11 @@ internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
                 if (!ignoredSizeValue(value)) {
                     target.height = asDouble(value)
                 }
+            }
+            SvgShape.FILL_OPACITY.name -> {
+                // To fix artifacts on a 100% opaque rectangle
+                val v = if (asDouble(value) == 1.0) 0.99 else asDouble(value)
+                super.setAttribute(target, name, v)
             }
             else -> super.setAttribute(target, name, value)
         }
