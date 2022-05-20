@@ -26,6 +26,7 @@ internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
             }
             SvgShape.FILL_OPACITY.name -> {
                 // To fix artifacts on a 100% opaque rectangle
+                // Issue: https://github.com/JetBrains/lets-plot/issues/539
                 val v = if (asDouble(value) == 1.0) 0.99 else asDouble(value)
                 super.setAttribute(target, name, v)
             }

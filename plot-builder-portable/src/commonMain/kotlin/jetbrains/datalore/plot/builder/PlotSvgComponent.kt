@@ -151,11 +151,6 @@ class PlotSvgComponent constructor(
                 if (containsLiveMap) {
                     // Don't fill rect over livemap figure.
                     fillOpacity().set(0.0)
-                } else {
-                    if (Colors.solid(plotTheme.backgroundFill())) {
-                        // Workaround for JFX: 100% opaque rect blocks 'mouse left' events.
-                        fillOpacity().set(0.99)
-                    }
                 }
             })
         }
