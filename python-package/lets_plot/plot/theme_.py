@@ -60,7 +60,10 @@ def theme(*,
           strip_text=None,  # ToDo: x/y
           # ToDo: strip.placement
 
-          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None
+          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
+          axis_tooltip_text=None, axis_tooltip_text_x=None, axis_tooltip_text_y=None,
+
+          tooltip_text=None
           ):
     """
     Use `theme()` to modify individual components of a theme,
@@ -174,6 +177,15 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_rect()` to specify axes tooltip parameters.
         `axis_tooltip_*` inherits from `axis_tooltip` which inherits from `rect`.
+    axis_tooltip_text, axis_tooltip_text_x, axis_tooltip_text_y : str or dict
+        Axes tooltips.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify axes tooltip parameters.
+        `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
+    tooltip_text : str or dict
+        Tooltips text.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify tooltip parameters.
 
     Returns
     -------
