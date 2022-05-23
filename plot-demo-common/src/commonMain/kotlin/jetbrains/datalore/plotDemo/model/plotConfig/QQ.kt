@@ -13,6 +13,7 @@ class QQ {
         return listOf(
             basic(),
             onlySampleValues(),
+            grouping(),
         )
     }
 
@@ -28,6 +29,10 @@ class QQ {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'qq'," +
+                "                 'distribution': 'norm'" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'qq_line'," +
                 "                 'distribution': 'norm'" +
                 "               }" +
                 "             ]" +
@@ -52,6 +57,9 @@ class QQ {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'qq'" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'qq_line'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -59,6 +67,34 @@ class QQ {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
+
+    }
+
+    private fun grouping(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'y': [-3, -1, 0, 1, 3, -2, 0, 1, 2, 4]," +
+                "             'g': ['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B']" +
+                "            }," +
+                "   'mapping': {" +
+                "                'y': 'y'," +
+                "                'color': 'g'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Grouping'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'qq'" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'qq_line'," +
+                "                 'quantiles': [0.1, 0.9]" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
 
     }
 }

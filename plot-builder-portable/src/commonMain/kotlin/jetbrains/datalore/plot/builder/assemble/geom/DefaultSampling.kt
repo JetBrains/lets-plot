@@ -31,6 +31,7 @@ object DefaultSampling {
     val V_LINE = random(5000, SEED)
     val JITTER = random(5000, SEED)
     val Q_Q = random(5000, SEED)
+    val Q_Q_LINE = random(5000, SEED)
     val RECT = random(5000, SEED)
     val SEGMENT = random(5000, SEED)
     val TEXT = random(500, SEED)

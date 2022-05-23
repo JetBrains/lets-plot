@@ -22,7 +22,8 @@ enum class StatKind {
     DENSITY,
     DENSITY2D,
     DENSITY2DF,
-    QQ;
+    QQ,
+    QQ_LINE;
 
 
     companion object {

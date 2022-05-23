@@ -194,6 +194,7 @@ object GeomInteractionUtil {
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
             GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            GeomKind.Q_Q_LINE,
             GeomKind.PATH -> {
                 return when (statKind) {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> GeomTooltipSetup.bivariateFunction(

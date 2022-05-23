@@ -322,6 +322,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { QQGeom() }.build()
         }
 
+        fun qqline(): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.Q_Q_LINE,
+                AestheticsDefaults.qq_line(),
+                QQLineGeom.HANDLES_GROUPS
+            ) { QQLineGeom() }.build()
+        }
+
         fun freqpoly(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.FREQPOLY,

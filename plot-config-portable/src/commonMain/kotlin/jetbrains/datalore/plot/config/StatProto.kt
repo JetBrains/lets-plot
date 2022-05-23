@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
 import jetbrains.datalore.plot.config.Option.Stat.YDensity
 import jetbrains.datalore.plot.config.Option.Stat.QQ
+import jetbrains.datalore.plot.config.Option.Stat.QQLine
 
 object StatProto {
 
@@ -97,6 +98,8 @@ object StatProto {
             StatKind.DENSITY2DF -> return configureDensity2dStat(options, true)
 
             StatKind.QQ -> return configureQQStat(options)
+
+            StatKind.QQ_LINE -> return configureQQLineStat(options)
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
@@ -323,5 +326,34 @@ object StatProto {
         val distributionParameters = options.getDoubleList(QQ.DISTRIBUTION_PARAMETERS)
 
         return Stats.qq(distribution ?: QQStat.DEF_DISTRIBUTION, distributionParameters)
+    }
+
+    private fun configureQQLineStat(options: OptionsAccessor): QQLineStat {
+        val distribution = options.getString(QQLine.DISTRIBUTION)?.let {
+            when (it.lowercase()) {
+                "norm" -> QQLineStat.Distribution.NORMAL
+                "uniform" -> QQLineStat.Distribution.UNIFORM
+                "t" -> QQLineStat.Distribution.T
+                "gamma" -> QQLineStat.Distribution.GAMMA
+                "exp" -> QQLineStat.Distribution.EXP
+                "chi2" -> QQLineStat.Distribution.CHI_SQUARED
+                else -> throw IllegalArgumentException(
+                    "Unsupported distribution: '$it'\n" +
+                    "Use one of: norm, uniform, t, gamma, exp, chi2."
+                )
+            }
+        }
+        val distributionParameters = options.getDoubleList(QQLine.DISTRIBUTION_PARAMETERS)
+        val lineQuantiles = if (options.has(QQLine.LINE_QUANTILES)) {
+            options.getOrderedBoundedDoubleDistinctPair(QQLine.LINE_QUANTILES, 0.0, 1.0)
+        } else {
+            QQLineStat.DEF_LINE_QUANTILES
+        }
+
+        return Stats.qqline(
+            distribution ?: QQLineStat.DEF_DISTRIBUTION,
+            distributionParameters,
+            lineQuantiles
+        )
     }
 }

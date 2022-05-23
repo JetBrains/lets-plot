@@ -292,6 +292,14 @@ object Stats {
         return QQStat(distribution, distributionParameters)
     }
 
+    fun qqline(
+        distribution: QQLineStat.Distribution,
+        distributionParameters: List<Double>,
+        lineQuantiles: Pair<Double, Double>
+    ): QQLineStat {
+        return QQLineStat(distribution, distributionParameters, lineQuantiles)
+    }
+
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
 
         override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
