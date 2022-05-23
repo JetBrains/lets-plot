@@ -142,7 +142,9 @@ private fun buildSinglePlotComponent(
     val plot = assembler.createPlot()
     val plotContainer = PlotContainer(plot, plotBuildInfo.size)
     val svg = buildPlotSvg(plotContainer, parentElement)
+    svg.style.setCursor(CssCursor.CROSSHAIR)
 
+    // Livemap cursor pointer
     cursorServiceConfig.defaultSetter { svg.style.setCursor(CssCursor.CROSSHAIR) }
     cursorServiceConfig.pointerSetter { svg.style.setCursor(CssCursor.POINTER) }
 

@@ -46,7 +46,6 @@ object Style {
     private val CSS = """
         |.$PLOT_CONTAINER {
         |	font-family: $FONT_FAMILY_NORMAL;
-        |	cursor: crosshair;
         |	user-select: none;
         |	-webkit-user-select: none;
         |	-moz-user-select: none;
@@ -57,9 +56,6 @@ object Style {
         |	fill: $TEXT_COLOR;
         |	
         |	text-rendering: optimizeLegibility;
-        |}
-        |.$AXIS line {
-        |	shape-rendering: crispedges;
         |}
     """.trimMargin()
 
