@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.clipBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.liveMapGeomBounds
 
 internal class LiveMapTileLayout : TileLayout {
@@ -21,7 +20,6 @@ internal class LiveMapTileLayout : TileLayout {
             bounds = geomBounds,
             geomOuterBounds = geomBounds,
             geomInnerBounds = geomBounds,
-            clipBounds = clipBounds(geomBounds),
             null, null,
             hAxisShown = false,
             vAxisShown = false,

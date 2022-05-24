@@ -15,7 +15,6 @@ class TileLayoutInfo constructor(
     val bounds: DoubleRectangle,      // Tile geom area, axis, axis ticks/labels.
     val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins.
     val geomInnerBounds: DoubleRectangle,  // Tile main geom area.
-    private val clipBounds: DoubleRectangle,  // geom shapes outside these bounds will be cut-off
 
     // Params xAxisInfo/yAxisInfo can be NULL.
     // In this case any mapping of positional Aes should be dropped (live map plot).
@@ -39,7 +38,6 @@ class TileLayoutInfo constructor(
             this.bounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
-            this.clipBounds,
             this.hAxisInfo, this.vAxisInfo,
             this.hAxisShown, this.vAxisShown,
             this.facetXLabels, this.facetYLabel,
@@ -53,7 +51,6 @@ class TileLayoutInfo constructor(
             this.bounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
-            this.clipBounds,
             this.hAxisInfo, this.vAxisInfo,
             this.hAxisShown, this.vAxisShown,
             xLabels, yLabel,
@@ -67,7 +64,6 @@ class TileLayoutInfo constructor(
             this.bounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
-            this.clipBounds,
             this.hAxisInfo, this.vAxisInfo,
             hAxisShown, vAxisShown,
             this.facetXLabels, this.facetYLabel,

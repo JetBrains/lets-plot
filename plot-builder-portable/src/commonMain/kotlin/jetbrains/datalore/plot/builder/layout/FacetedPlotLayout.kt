@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsB
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByRow
 import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class FacetedPlotLayout constructor(
@@ -176,7 +175,6 @@ internal class FacetedPlotLayout constructor(
                 bounds = tileBounds.add(originDelta),
                 geomOuterBounds = geomOuterBounds.add(originDelta),
                 geomInnerBounds = geomInnerBounds.add(originDelta),
-                clipBounds = TileLayoutUtil.clipBounds(geomInnerBounds),
                 layoutInfo.hAxisInfo,
                 layoutInfo.vAxisInfo,
                 hAxisShown = facetTile.hasHAxis,

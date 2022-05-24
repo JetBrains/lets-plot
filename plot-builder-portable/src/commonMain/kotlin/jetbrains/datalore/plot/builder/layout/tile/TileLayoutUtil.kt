@@ -16,7 +16,6 @@ import kotlin.math.max
 
 internal object TileLayoutUtil {
     const val GEOM_MARGIN = 0.0          // min space around geom area
-    private const val CLIP_EXTEND = 5.0
     val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
 
     fun liveMapGeomBounds(plotSize: DoubleVector): DoubleRectangle {
@@ -68,21 +67,6 @@ internal object TileLayoutUtil {
             }
         }
         return DoubleRectangle(plottingArea.origin, geomSizeAdjusted)
-    }
-
-    fun clipBounds(geomBounds: DoubleRectangle): DoubleRectangle {
-        return DoubleRectangle(
-            geomBounds.origin.subtract(
-                DoubleVector(
-                    CLIP_EXTEND,
-                    CLIP_EXTEND
-                )
-            ),
-            DoubleVector(
-                geomBounds.dimension.x + 2 * CLIP_EXTEND,
-                geomBounds.dimension.y + 2 * CLIP_EXTEND
-            )
-        )
     }
 
     fun maxHAxisTickLabelsBounds(

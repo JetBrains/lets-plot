@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.clipBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxHAxisTickLabelsBounds
 
@@ -107,10 +106,10 @@ internal class TopDownTileLayout(
         )
 
         val geomInnerBounds = geomOuterBounds.let {
-                when {
-                    MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
-                    else -> it
-                }
+            when {
+                MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
+                else -> it
+            }
         }
 
         // sync axis info with new (maybe) geom area size
@@ -122,7 +121,6 @@ internal class TopDownTileLayout(
             bounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
-            clipBounds = clipBounds(geomInnerBounds),
             hAxisInfo,
             vAxisInfo,
             hAxisShown = true,

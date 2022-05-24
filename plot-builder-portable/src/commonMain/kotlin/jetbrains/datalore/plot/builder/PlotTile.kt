@@ -67,7 +67,7 @@ internal class PlotTile(
 
         // render geoms
 
-        val geomBounds = tileLayoutInfo.geomInnerBounds
+        val geomInnerBounds = tileLayoutInfo.geomInnerBounds
 
         val liveMapGeomLayer = layers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer != null) {
@@ -76,13 +76,13 @@ internal class PlotTile(
 
             liveMapFigure = liveMapData.canvasFigure
             _targetLocators.add(liveMapData.targetLocator)
-            geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
+            geomDrawingBounds = DoubleRectangle(ZERO, geomInnerBounds.dimension)
         } else {
             // Normal plot tiles
 
             frameOfReference.drawBeforeGeomLayer(this)
 
-            geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
+            geomDrawingBounds = DoubleRectangle(ZERO, geomInnerBounds.dimension)
             for (layer in layers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
@@ -92,7 +92,7 @@ internal class PlotTile(
                 _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
-                layerComponent.moveTo(geomBounds.origin)
+                layerComponent.moveTo(geomInnerBounds.origin)
                 layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }

@@ -54,7 +54,6 @@ internal class InsideOutTileLayout constructor(
             bounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
-            clipBounds = TileLayoutUtil.clipBounds(geomInnerBounds),
             hAxisInfo,
             vAxisInfo,
             hAxisShown = true,
