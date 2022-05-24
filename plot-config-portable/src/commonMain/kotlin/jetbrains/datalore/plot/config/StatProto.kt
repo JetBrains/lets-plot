@@ -310,18 +310,7 @@ object StatProto {
 
     private fun configureQQStat(options: OptionsAccessor): QQStat {
         val distribution = options.getString(QQ.DISTRIBUTION)?.let {
-            when (it.lowercase()) {
-                "norm" -> QQStat.Distribution.NORMAL
-                "uniform" -> QQStat.Distribution.UNIFORM
-                "t" -> QQStat.Distribution.T
-                "gamma" -> QQStat.Distribution.GAMMA
-                "exp" -> QQStat.Distribution.EXP
-                "chi2" -> QQStat.Distribution.CHI_SQUARED
-                else -> throw IllegalArgumentException(
-                    "Unsupported distribution: '$it'\n" +
-                    "Use one of: norm, uniform, t, gamma, exp, chi2."
-                )
-            }
+            QQStat.Distribution.safeValueOf(it)
         }
         val distributionParameters = options.getDoubleList(QQ.DISTRIBUTION_PARAMETERS)
 
@@ -330,30 +319,17 @@ object StatProto {
 
     private fun configureQQLineStat(options: OptionsAccessor): QQLineStat {
         val distribution = options.getString(QQLine.DISTRIBUTION)?.let {
-            when (it.lowercase()) {
-                "norm" -> QQLineStat.Distribution.NORMAL
-                "uniform" -> QQLineStat.Distribution.UNIFORM
-                "t" -> QQLineStat.Distribution.T
-                "gamma" -> QQLineStat.Distribution.GAMMA
-                "exp" -> QQLineStat.Distribution.EXP
-                "chi2" -> QQLineStat.Distribution.CHI_SQUARED
-                else -> throw IllegalArgumentException(
-                    "Unsupported distribution: '$it'\n" +
-                    "Use one of: norm, uniform, t, gamma, exp, chi2."
-                )
-            }
+            QQStat.Distribution.safeValueOf(it)
         }
         val distributionParameters = options.getDoubleList(QQLine.DISTRIBUTION_PARAMETERS)
-        val lineQuantiles = if (options.has(QQLine.LINE_QUANTILES)) {
+        val lineQuantiles: Pair<Double, Double>? = options[QQLine.LINE_QUANTILES]?.let {
             options.getOrderedBoundedDoubleDistinctPair(QQLine.LINE_QUANTILES, 0.0, 1.0)
-        } else {
-            QQLineStat.DEF_LINE_QUANTILES
         }
 
         return Stats.qqline(
-            distribution ?: QQLineStat.DEF_DISTRIBUTION,
+            distribution ?: QQStat.DEF_DISTRIBUTION,
             distributionParameters,
-            lineQuantiles
+            lineQuantiles ?: QQLineStat.DEF_LINE_QUANTILES
         )
     }
 }

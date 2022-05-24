@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.stat.math3.*
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class QQStat(
@@ -47,10 +47,12 @@ class QQStat(
         val (finiteX, finiteY) = (xs zip ys).filter { (x, y) ->
             SeriesUtil.allFinite(x, y)
         }.unzip()
+        val statX = finiteX.map { it!! }.sorted()
+        val statY = finiteY.map { it!! }.sorted()
 
         return mutableMapOf(
-            Stats.X to finiteX.map { it!! }.sorted(),
-            Stats.Y to finiteY.map { it!! }.sorted()
+            Stats.X to statX,
+            Stats.Y to statY
         )
     }
 
@@ -58,36 +60,8 @@ class QQStat(
         ys: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
         val statY = ys.filter { it?.isFinite() == true }.map { it!! }.sorted()
-
         val t = (1..statY.size).map { (it - 0.5) / statY.size }
-        val dist: AbstractRealDistribution = when (distribution) {
-            Distribution.NORMAL -> {
-                val mean = distributionParameters.getOrNull(0) ?: DEF_NORMAL_MEAN
-                val standardDeviation = distributionParameters.getOrNull(1) ?: DEF_NORMAL_STD
-                NormalDistribution(mean, standardDeviation)
-            }
-            Distribution.UNIFORM -> {
-                val a = distributionParameters.getOrNull(0) ?: DEF_UNIFORM_A
-                val b = distributionParameters.getOrNull(1) ?: DEF_UNIFORM_B
-                UniformDistribution(a, b)
-            }
-            Distribution.T -> TDistribution(
-                distributionParameters.getOrNull(0) ?: DEF_T_DEGREES_OF_FREEDOM
-            )
-            Distribution.GAMMA -> {
-                val alpha = distributionParameters.getOrNull(0) ?: DEF_GAMMA_ALPHA
-                val beta = distributionParameters.getOrNull(1) ?: DEF_GAMMA_BETA
-                GammaDistribution(alpha, beta)
-            }
-            Distribution.EXP -> {
-                val lambda = distributionParameters.getOrNull(0) ?: DEF_EXP_LAMBDA
-                GammaDistribution(1.0, lambda)
-            }
-            Distribution.CHI_SQUARED -> {
-                val k = distributionParameters.getOrNull(0) ?: DEF_CHI_SQUARED_K
-                GammaDistribution(k / 2.0, 0.5)
-            }
-        }
+        val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
         val statX = t.map { dist.inverseCumulativeProbability(it) }
 
         return mutableMapOf(
@@ -97,25 +71,25 @@ class QQStat(
     }
 
     enum class Distribution {
-        NORMAL,
-        UNIFORM,
-        T,
-        GAMMA,
-        EXP,
-        CHI_SQUARED
+        NORM, UNIFORM, T, GAMMA, EXP, CHI2;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Distribution>()
+
+            fun safeValueOf(v: String): Distribution {
+                return ENUM_INFO.safeValueOf(v) ?:
+                throw IllegalArgumentException(
+                    "Unsupported distribution: '$v'\n" +
+                    "Use one of: norm, uniform, t, gamma, exp, chi2."
+                )
+            }
+        }
     }
 
     companion object {
-        val DEF_DISTRIBUTION = Distribution.NORMAL
-        const val DEF_NORMAL_MEAN = 0.0
-        const val DEF_NORMAL_STD = 1.0
-        const val DEF_UNIFORM_A = 0.0
-        const val DEF_UNIFORM_B = 1.0
-        const val DEF_T_DEGREES_OF_FREEDOM = 1.0
-        const val DEF_GAMMA_ALPHA = 1.0
-        const val DEF_GAMMA_BETA = 1.0
-        const val DEF_EXP_LAMBDA = 1.0
-        const val DEF_CHI_SQUARED_K = 1.0
+        val DEF_DISTRIBUTION = Distribution.NORM
+        val DEF_DISTRIBUTION_PARAMETERS = emptyList<Double>()
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

@@ -286,18 +286,25 @@ object Stats {
     }
 
     fun qq(
-        distribution: QQStat.Distribution,
-        distributionParameters: List<Double>
+        distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
+        distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS
     ): QQStat {
-        return QQStat(distribution, distributionParameters)
+        return QQStat(
+            distribution = distribution,
+            distributionParameters = distributionParameters
+        )
     }
 
     fun qqline(
-        distribution: QQLineStat.Distribution,
-        distributionParameters: List<Double>,
-        lineQuantiles: Pair<Double, Double>
+        distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
+        distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS,
+        lineQuantiles: Pair<Double, Double> = QQLineStat.DEF_LINE_QUANTILES
     ): QQLineStat {
-        return QQLineStat(distribution, distributionParameters, lineQuantiles)
+        return QQLineStat(
+            distribution = distribution,
+            distributionParameters = distributionParameters,
+            lineQuantiles = lineQuantiles
+        )
     }
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
