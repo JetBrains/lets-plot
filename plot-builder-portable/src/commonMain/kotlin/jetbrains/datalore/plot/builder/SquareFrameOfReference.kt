@@ -203,10 +203,6 @@ internal class SquareFrameOfReference(
         )
     }
 
-    override fun applyClientLimits(clientBounds: DoubleRectangle): DoubleRectangle {
-        return geomCoord.applyClientLimits(clientBounds)
-    }
-
 
     companion object {
         private fun buildAxis(

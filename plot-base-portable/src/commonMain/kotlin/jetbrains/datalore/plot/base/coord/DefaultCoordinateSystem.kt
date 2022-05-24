@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.CoordinateSystem
@@ -27,10 +26,6 @@ internal open class DefaultCoordinateSystem(
 
     override fun fromClient(p: DoubleVector): DoubleVector {
         return DoubleVector(fromClientOffsetX(p.x), fromClientOffsetY(p.y))
-    }
-
-    override fun applyClientLimits(clientBounds: DoubleRectangle): DoubleRectangle {
-        return clientBounds
     }
 
     override fun flip(): CoordinateSystem {

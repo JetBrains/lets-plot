@@ -82,7 +82,7 @@ internal class PlotTile(
 
             frameOfReference.drawBeforeGeomLayer(this)
 
-            geomDrawingBounds = frameOfReference.applyClientLimits(DoubleRectangle(ZERO, geomBounds.dimension))
+            geomDrawingBounds = DoubleRectangle(ZERO, geomBounds.dimension)
             for (layer in layers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,

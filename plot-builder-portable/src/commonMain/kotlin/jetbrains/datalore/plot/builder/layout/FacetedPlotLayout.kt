@@ -79,7 +79,6 @@ internal class FacetedPlotLayout constructor(
 
         // Create final plot tiles layout infos.
 
-        val tilesPaddingLeftTop = DoubleVector(paddingLeft, paddingTop)
 
         // Align geom areas of tiles.
 
@@ -157,6 +156,7 @@ internal class FacetedPlotLayout constructor(
 
         // Normalize origin of tilesAreaBounds.
         val originDelta = tilesAreaOrigin.negate()
+        val tilesPaddingLeftTop = DoubleVector(paddingLeft, paddingTop)
 
         val finalLayoutInfos = ArrayList<TileLayoutInfo>()
         for ((index, facetTile) in facetTiles.withIndex()) {
