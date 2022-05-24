@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -60,7 +60,7 @@ object ContourStatUtil {
     fun computeLevels(zRange: DoubleSpan?, binOptions: BinStatUtil.BinOptions): List<Double>? {
         if (zRange == null || SeriesUtil.isBeyondPrecision(zRange)) return null
 
-        val b = BinStatUtil.binCountAndWidth(SeriesUtil.span(zRange), binOptions)
+        val b = BinStatUtil.binCountAndWidth(zRange.length, binOptions)
         val levels = ArrayList<Double>()
         for (i in 0 until b.count) {
             var level = i * b.width + zRange.lowerEnd
@@ -100,8 +100,8 @@ object ContourStatUtil {
         levels: List<Double>
     ): Map<Double, List<List<DoubleVector>>> {
 
-        val xStep = SeriesUtil.span(xRange) / (colCount - 1)
-        val yStep = SeriesUtil.span(yRange) / (rowCount - 1)
+        val xStep = xRange.length / (colCount - 1)
+        val yStep = yRange.length / (rowCount - 1)
         val origin = DoubleVector(xRange.lowerEnd, yRange.lowerEnd)
 
         val pathListByLevel = HashMap<Double, List<List<DoubleVector>>>()

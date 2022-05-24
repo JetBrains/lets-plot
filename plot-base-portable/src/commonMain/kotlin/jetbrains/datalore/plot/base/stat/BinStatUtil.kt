@@ -97,7 +97,7 @@ object BinStatUtil {
         }
 
         // density plot area should be == 1
-        val normalBinWidth = SeriesUtil.span(rangeX) / binCount
+        val normalBinWidth = rangeX.length / binCount
         val densityNormalizingFactor = if (normalBinWidth > 0)
             1.0 / normalBinWidth
         else
@@ -124,7 +124,7 @@ object BinStatUtil {
         valuesX: List<Double?>,
         binOptions: BinOptions
     ): BinsData {
-        val spanX = SeriesUtil.span(rangeX)
+        val spanX = rangeX.length
         val binWidth = if (spanX > 0.0) {
             binCountAndWidth(spanX, binOptions).width
         } else {

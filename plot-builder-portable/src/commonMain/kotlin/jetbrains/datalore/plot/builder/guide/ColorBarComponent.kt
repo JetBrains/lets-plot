@@ -5,14 +5,13 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 import jetbrains.datalore.vis.svg.SvgNode
@@ -103,7 +102,7 @@ class ColorBarComponent(
         reverse: Boolean
     ) {
 
-        val domainSpan = SeriesUtil.span(domain)
+        val domainSpan = domain.length
         val stepCount = max(2, numBins)
         val step = domainSpan / stepCount
         val v = domain.lowerEnd + step / 2

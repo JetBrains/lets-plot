@@ -5,9 +5,8 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.base.interval.DoubleSpan
 
 /**
  * A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.
@@ -35,7 +34,7 @@ internal open class FixedRatioCoordProvider(
         geomSize: DoubleVector
     ): DoubleVector {
         // Adjust geom dimensions ratio.
-        val domainRatio = SeriesUtil.span(hDomain) / SeriesUtil.span(vDomain)
+        val domainRatio = hDomain.length / vDomain.length
 
         // Account for the 'ratio':
         // ratio == 1 -> X-units equal Y-units

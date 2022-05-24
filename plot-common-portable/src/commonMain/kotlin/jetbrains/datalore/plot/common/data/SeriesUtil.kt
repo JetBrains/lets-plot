@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.gcommon.collect.Iterables
 import jetbrains.datalore.base.gcommon.collect.Ordering
+import jetbrains.datalore.base.interval.DoubleSpan
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min
@@ -22,7 +22,7 @@ object SeriesUtil {
     val NEGATIVE_NUMBER = { input: Double -> input < 0 }
 
     fun isBeyondPrecision(range: DoubleSpan): Boolean {
-        val delta = span(range)
+        val delta = range.length
         return delta < TINY ||                       // ??
                 isBeyondPrecision(range.lowerEnd, delta) ||
                 isBeyondPrecision(range.upperEnd, delta)
@@ -190,18 +190,11 @@ object SeriesUtil {
         if (range == null) {
             return preferableNullRange ?: DoubleSpan(-0.5, 0.5)
         }
-//        if (isSubTiny(range)) {
         if (isBeyondPrecision(range)) {
             val median = range.lowerEnd
             return DoubleSpan(median - 0.5, median + 0.5)
         }
         return range
-    }
-
-    // ToDo: replace usages with span.length
-    fun span(range: DoubleSpan): Double {
-        require(isFinite(range)) { "range must be finite: $range" }
-        return range.upperEnd - range.lowerEnd
     }
 
     fun span(range0: DoubleSpan?, range1: DoubleSpan?): DoubleSpan? {
@@ -210,7 +203,7 @@ object SeriesUtil {
     }
 
     fun expand(range: DoubleSpan, newSpan: Double): DoubleSpan {
-        val expand = (newSpan - span(range)) / 2
+        val expand = (newSpan - range.length) / 2
         return expand(range, expand, expand)
     }
 
