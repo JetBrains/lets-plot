@@ -21,7 +21,12 @@ internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<Target
     override fun setAttribute(target: TargetT, name: String, value: Any?) {
         when (name) {
             SvgShape.FILL.name -> setColor(value, fillGet(target), fillSet(target))
-            SvgShape.FILL_OPACITY.name -> setOpacity(asDouble(value), fillGet(target), fillSet(target))
+            SvgShape.FILL_OPACITY.name -> {
+                // To fix artifacts on a 100% opaque shape
+                // Issue: https://github.com/JetBrains/lets-plot/issues/539
+                val v = if (asDouble(value) == 1.0) 0.99 else asDouble(value)
+                setOpacity(v, fillGet(target), fillSet(target))
+            }
             SvgShape.STROKE.name -> setColor(value, strokeGet(target), strokeSet(target))
             SvgShape.STROKE_OPACITY.name -> setOpacity(asDouble(value), strokeGet(target), strokeSet(target))
             SvgShape.STROKE_WIDTH.name -> target.strokeWidth = asDouble(value)
