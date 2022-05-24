@@ -107,7 +107,7 @@ internal class TooltipRenderer(
                     else -> BLACK
                 }
 
-                // Text color is set in JFX mapper and css (for Batik) by element class name,
+                // Text color is set by element class name,
                 // but for outliers the color is not constant - it depends on the fill color
                 val textColor = when {
                     spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isOutlier -> borderColor

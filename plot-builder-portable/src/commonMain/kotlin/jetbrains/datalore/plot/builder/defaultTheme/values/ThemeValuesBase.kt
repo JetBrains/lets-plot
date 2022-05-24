@@ -76,7 +76,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             // Tooltip
             TOOLTIP_TEXT to mapOf(
-                Elem.COLOR to Color.BLUE,
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.FONT_FACE to FontFace.NORMAL,
             ),

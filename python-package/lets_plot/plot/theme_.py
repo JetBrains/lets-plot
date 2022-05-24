@@ -184,7 +184,6 @@ def theme(*,
         `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
     tooltip_text : str or dict
         Tooltips text.
-        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_text()` to specify tooltip parameters.
 
     Returns

@@ -103,7 +103,7 @@ internal class ThemeOptionTest {
                 val hAxis = (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme)
                 when (elemProperty) {
                     COLOR -> hAxis.tooltipTextColorKey
-                    FONT_FACE -> hAxis.tooltipTextStyleKey
+                    FONT_FACE -> hAxis.tooltipTextKey
                     else -> hAxis.tooltipKey
                 }
             }
@@ -116,7 +116,7 @@ internal class ThemeOptionTest {
                 val vAxis = (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme)
                 when (elemProperty) {
                     COLOR -> vAxis.tooltipTextColorKey
-                    FONT_FACE -> vAxis.tooltipTextStyleKey
+                    FONT_FACE -> vAxis.tooltipTextKey
                     else -> vAxis.tooltipKey
                 }
             }
@@ -138,9 +138,30 @@ internal class ThemeOptionTest {
             ThemeOption.LEGEND_TEXT -> (theme.legend() as DefaultLegendTheme).textKey
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey
 
-            ThemeOption.TOOLTIP_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).textKey
-            ThemeOption.TOOLTIP_TITLE -> (theme.tooltips() as DefaultTooltipsTheme).titleKey
-            ThemeOption.TOOLTIP_LABEL -> (theme.tooltips() as DefaultTooltipsTheme).labelKey
+            ThemeOption.TOOLTIP_TEXT -> {
+                with ((theme.tooltips() as DefaultTooltipsTheme)) {
+                    when (elemProperty) {
+                        COLOR -> textColorKey
+                        else -> textKey
+                    }
+                }
+            }
+            ThemeOption.TOOLTIP_TITLE -> {
+                with ((theme.tooltips() as DefaultTooltipsTheme)) {
+                    when (elemProperty) {
+                        COLOR -> titleColorKey
+                        else -> titleKey
+                    }
+                }
+            }
+            ThemeOption.TOOLTIP_LABEL -> {
+                with ((theme.tooltips() as DefaultTooltipsTheme)) {
+                    when (elemProperty) {
+                        COLOR -> labelColorKey
+                        else -> labelKey
+                    }
+                }
+            }
 
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
@@ -148,8 +169,5 @@ internal class ThemeOptionTest {
 
             else -> throw IllegalStateException("Unknown theme option: $option")
         }
-
     }
-
-
 }
