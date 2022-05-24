@@ -275,7 +275,7 @@ class PlotSvgComponent constructor(
                 liveMapFigures = liveMapFigures + listOf(this)
             }
 
-            val geomBoundsAbsolute = tileLayoutInfo.geomBounds.add(plotOriginAbsolute)
+            val geomBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
                 placementArea = geomBoundsAbsolute,
                 handlingArea = tile.geomDrawingBounds.add(geomBoundsAbsolute.origin)

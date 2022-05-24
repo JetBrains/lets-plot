@@ -9,6 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.FeatureSwitch
+import jetbrains.datalore.plot.FeatureSwitch.MARGINAL_LAYERS
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -16,6 +18,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -65,7 +68,7 @@ internal class SquareFrameOfReference(
     }
 
     private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
-        val geomBounds: DoubleRectangle = layoutInfo.geomBounds
+        val geomBounds: DoubleRectangle = layoutInfo.geomInnerBounds
         val panelTheme = theme.panel()
 
         // Flip theme
@@ -106,7 +109,12 @@ internal class SquareFrameOfReference(
                 geomBounds.height,
                 isDebugDrawing
             )
-            hAxis.moveTo(DoubleVector(geomBounds.left, geomBounds.bottom))
+
+            val offset = when {
+                MARGINAL_LAYERS -> FeatureSwitch.toAxisOrigin(geomBounds, Orientation.BOTTOM)
+                else -> DoubleVector(geomBounds.left, geomBounds.bottom)
+            }
+            hAxis.moveTo(offset)
             parent.add(hAxis)
         }
 
@@ -126,7 +134,12 @@ internal class SquareFrameOfReference(
                 geomBounds.width,
                 isDebugDrawing
             )
-            vAxis.moveTo(geomBounds.origin)
+
+            val offset = when {
+                MARGINAL_LAYERS -> FeatureSwitch.toAxisOrigin(geomBounds, Orientation.LEFT)
+                else -> geomBounds.origin
+            }
+            vAxis.moveTo(offset)
             parent.add(vAxis)
         }
 

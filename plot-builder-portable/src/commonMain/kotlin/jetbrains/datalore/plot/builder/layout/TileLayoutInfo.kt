@@ -13,7 +13,8 @@ class TileLayoutInfo constructor(
 
     // Relative bounds.
     val bounds: DoubleRectangle,      // Tile geom area, axis, axis ticks/labels.
-    val geomBounds: DoubleRectangle,  // Tile geom area.
+    val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins.
+    val geomInnerBounds: DoubleRectangle,  // Tile main geom area.
     private val clipBounds: DoubleRectangle,  // geom shapes outside these bounds will be cut-off
 
     // Params xAxisInfo/yAxisInfo can be NULL.
@@ -36,7 +37,8 @@ class TileLayoutInfo constructor(
         return TileLayoutInfo(
             offset = offset,
             this.bounds,
-            this.geomBounds,
+            this.geomOuterBounds,
+            this.geomInnerBounds,
             this.clipBounds,
             this.hAxisInfo, this.vAxisInfo,
             this.hAxisShown, this.vAxisShown,
@@ -49,7 +51,8 @@ class TileLayoutInfo constructor(
         return TileLayoutInfo(
             this.offset,
             this.bounds,
-            this.geomBounds,
+            this.geomOuterBounds,
+            this.geomInnerBounds,
             this.clipBounds,
             this.hAxisInfo, this.vAxisInfo,
             this.hAxisShown, this.vAxisShown,
@@ -62,7 +65,8 @@ class TileLayoutInfo constructor(
         return TileLayoutInfo(
             this.offset,
             this.bounds,
-            this.geomBounds,
+            this.geomOuterBounds,
+            this.geomInnerBounds,
             this.clipBounds,
             this.hAxisInfo, this.vAxisInfo,
             hAxisShown, vAxisShown,
@@ -76,24 +80,24 @@ class TileLayoutInfo constructor(
         return bounds.add(offset)
     }
 
-    fun getAbsoluteGeomBounds(tilesOrigin: DoubleVector): DoubleRectangle {
+    fun getAbsoluteOuterGeomBounds(tilesOrigin: DoubleVector): DoubleRectangle {
         val offset = tilesOrigin.add(this.offset)
-        return geomBounds.add(offset)
+        return geomOuterBounds.add(offset)
     }
 
     fun axisThicknessX(): Double {
-        return bounds.bottom - geomBounds.bottom
+        return bounds.bottom - geomOuterBounds.bottom
     }
 
     fun axisThicknessY(): Double {
-        return geomBounds.left - bounds.left
+        return geomOuterBounds.left - bounds.left
     }
 
-    fun geomWidth(): Double {
-        return geomBounds.width
+    fun geomOuterWidth(): Double {
+        return geomOuterBounds.width
     }
 
-    fun geomHeight(): Double {
-        return geomBounds.height
+    fun geomOuterHeight(): Double {
+        return geomOuterBounds.height
     }
 }

@@ -198,6 +198,7 @@ object SeriesUtil {
         return range
     }
 
+    // ToDo: replace usages with span.length
     fun span(range: DoubleSpan): Double {
         require(isFinite(range)) { "range must be finite: $range" }
         return range.upperEnd - range.lowerEnd

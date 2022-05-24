@@ -14,6 +14,7 @@ class DoubleSpan(
 ) : NumSpan() {
     override val lowerEnd: Double = min(lower, upper)
     override val upperEnd: Double = max(lower, upper)
+    val length : Double = upperEnd - lowerEnd
 
     init {
         check(lower.isFinite() && upper.isFinite()) {

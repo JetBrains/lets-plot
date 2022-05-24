@@ -5,9 +5,11 @@
 
 package jetbrains.datalore.plot.builder.layout.tile
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.plot.FeatureSwitch
+import jetbrains.datalore.plot.FeatureSwitch.MARGINAL_LAYERS
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import kotlin.math.max
@@ -42,6 +44,7 @@ internal object TileLayoutUtil {
         )
     }
 
+    // ToDo: this is the entire tile plotting area - rename
     fun geomBounds(
         hAxisThickness: Double,
         vAxisThickness: Double,
@@ -50,9 +53,21 @@ internal object TileLayoutUtil {
         vDomain: DoubleSpan,
         coordProvider: CoordProvider
     ): DoubleRectangle {
-        val geomBounds = subtractMargins(hAxisThickness, vAxisThickness, plotSize)
-        val geomSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomBounds.dimension)
-        return DoubleRectangle(geomBounds.origin, geomSizeAdjusted)
+        val plottingArea = subtractMargins(hAxisThickness, vAxisThickness, plotSize)
+
+        val geomSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).let {
+            when {
+                MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it.dimension)
+                else -> it.dimension
+            }
+        }
+        val geomSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomSize).let {
+            when {
+                MARGINAL_LAYERS -> FeatureSwitch.addMarginalLayers(it)
+                else -> it
+            }
+        }
+        return DoubleRectangle(plottingArea.origin, geomSizeAdjusted)
     }
 
     fun clipBounds(geomBounds: DoubleRectangle): DoubleRectangle {
@@ -70,33 +85,29 @@ internal object TileLayoutUtil {
         )
     }
 
-    fun maxTickLabelsBounds(
+    fun maxHAxisTickLabelsBounds(
         axisOrientation: Orientation,
         stretch: Double,
-        geomBounds: DoubleRectangle,
+        axisSpan: DoubleSpan,
         plotSize: DoubleVector
     ): DoubleRectangle {
-        val geomPaddung = 10.0          // min space around geom area (labels should not touch geom area).
+        val geomPadding = 10.0          // min space around geom area (labels should not touch geom area).
 
-        val maxGeomBounds = DoubleRectangle(
-            geomPaddung, geomPaddung,
-            plotSize.x - 2 * geomPaddung,
-            plotSize.y - 2 * geomPaddung
-        )
-        return maxTickLabelsBounds(axisOrientation, stretch, geomBounds, maxGeomBounds)
+        val maxHorizontalSpan = DoubleSpan(geomPadding, plotSize.x - 2 * geomPadding)
+        return maxHAxisTickLabelsBounds(axisOrientation, stretch, axisSpan, maxHorizontalSpan)
     }
 
-    fun maxTickLabelsBounds(
+    fun maxHAxisTickLabelsBounds(
         axisOrientation: Orientation,
         stretch: Double,
-        geomBounds: DoubleRectangle,
-        maxGeomBounds: DoubleRectangle,
+        axisSpan: DoubleSpan,
+        maxHorizontalSpan: DoubleSpan
     ): DoubleRectangle {
         when (axisOrientation) {
             Orientation.TOP,
             Orientation.BOTTOM -> {
-                val leftSpace = geomBounds.left - maxGeomBounds.left + stretch
-                val rightSpace = maxGeomBounds.right - geomBounds.right + stretch
+                val leftSpace = axisSpan.lowerEnd - maxHorizontalSpan.lowerEnd + stretch
+                val rightSpace = maxHorizontalSpan.upperEnd - axisSpan.upperEnd + stretch
 
                 val height = 1E42   // just very large number
                 val top = when (axisOrientation) {
@@ -105,7 +116,7 @@ internal object TileLayoutUtil {
                 }
 
                 val left = -leftSpace
-                val width = leftSpace + rightSpace + geomBounds.width
+                val width = leftSpace + rightSpace + axisSpan.length
                 return DoubleRectangle(left, top, width, height)
             }
 

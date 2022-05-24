@@ -11,7 +11,8 @@ import jetbrains.datalore.plotDemo.data.Iris
 class Area {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            sepalLength()
+            sepalLength(),
+            sepalLengthCoordFixed()
         )
     }
 
@@ -39,5 +40,31 @@ class Area {
         plotSpec["data"] = Iris.df
         return plotSpec
 
+    }
+
+    private fun sepalLengthCoordFixed(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "             'x': 'sepal length (cm)'," +
+                "             'group': 'target'," +
+                "             'color': 'sepal width (cm)'," +
+                "             'fill': 'target'" +
+                "           }," +
+
+                "   'layers': [" +
+                "               {" +
+                "                  'geom': 'area'," +
+                "                   'stat': 'density'," +
+                "                   'position' : 'identity'," +
+                "                   'alpha': 0.7" +
+                "               }" +
+                "           ]" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["coord"] = mapOf("name" to "fixed")
+        plotSpec["data"] = Iris.df
+        return plotSpec
     }
 }

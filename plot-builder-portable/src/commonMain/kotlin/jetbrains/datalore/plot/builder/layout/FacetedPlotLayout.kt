@@ -91,7 +91,7 @@ internal class FacetedPlotLayout constructor(
         )
 
         val tileBoundsList = ArrayList<DoubleRectangle>()
-        val geomBoundsList = ArrayList<DoubleRectangle>()
+        val geomOuterBoundsList = ArrayList<DoubleRectangle>()
         for ((index, facetTile) in facetTiles.withIndex()) {
             val layoutInfo = layoutInfos[index]
 
@@ -99,7 +99,7 @@ internal class FacetedPlotLayout constructor(
             val row = facetTile.row
             val geomX = geomOffsetByCol[col]
             val geomY = geomOffsetByRow[row]
-            val geomSize = layoutInfo.geomBounds.dimension
+            val outerGeomSize = layoutInfo.geomOuterBounds.dimension
 
             // Tile width
             val tileLabelWidth = if (facetTile.rowLab != null && showFacetStrip) {
@@ -115,7 +115,7 @@ internal class FacetedPlotLayout constructor(
             }
 
             val tileX = geomX - axisWidth
-            val tileWidth = geomSize.x + axisWidth + tileLabelWidth
+            val tileWidth = outerGeomSize.x + axisWidth + tileLabelWidth
 
             // Tile height
             val tileLabelHeight = if (showFacetStrip) {
@@ -131,7 +131,7 @@ internal class FacetedPlotLayout constructor(
             }
 
             val tileY = geomY - tileLabelHeight
-            val tileHeight = geomSize.y + tileLabelHeight + axisHeight
+            val tileHeight = outerGeomSize.y + tileLabelHeight + axisHeight
 
 //            if (col == 0) {
 //                println("[$row][$tileY] $tileHeight = ${geomSize.y} + $tileLabelHeight + $axisHeight")
@@ -142,13 +142,13 @@ internal class FacetedPlotLayout constructor(
                 DoubleVector(tileX, tileY),
                 DoubleVector(tileWidth, tileHeight)
             )
-            val geomBounds = DoubleRectangle(
+            val geomOuterBounds = DoubleRectangle(
                 DoubleVector(geomX, geomY),
-                layoutInfo.geomBounds.dimension
+                outerGeomSize
             )
 
             tileBoundsList.add(tileBounds)
-            geomBoundsList.add(geomBounds)
+            geomOuterBoundsList.add(geomOuterBounds)
         }
 
         val tilesAreaOrigin = tileBoundsList
@@ -161,21 +161,28 @@ internal class FacetedPlotLayout constructor(
         val finalLayoutInfos = ArrayList<TileLayoutInfo>()
         for ((index, facetTile) in facetTiles.withIndex()) {
             val layoutInfo = layoutInfos[index]
+            val geomInnerBoundsOffset = layoutInfo.geomInnerBounds.origin
+                .subtract(layoutInfo.geomOuterBounds.origin)
+
             val tileBounds = tileBoundsList[index]
-            val geomBounds = geomBoundsList[index]
+            val geomOuterBounds = geomOuterBoundsList[index]
+            val geomInnerBounds = DoubleRectangle(
+                geomOuterBounds.origin.add(geomInnerBoundsOffset),
+                layoutInfo.geomInnerBounds.dimension
+            )
 
             val newLayoutInfo = TileLayoutInfo(
                 tilesPaddingLeftTop,
-                tileBounds.add(originDelta),
-                geomBounds.add(originDelta),
-                TileLayoutUtil.clipBounds(geomBounds),
+                bounds = tileBounds.add(originDelta),
+                geomOuterBounds = geomOuterBounds.add(originDelta),
+                geomInnerBounds = geomInnerBounds.add(originDelta),
+                clipBounds = TileLayoutUtil.clipBounds(geomInnerBounds),
                 layoutInfo.hAxisInfo,
                 layoutInfo.vAxisInfo,
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,
                 trueIndex = facetTile.trueIndex
             )
-//            ).withOffset(tilesPaddingLT)
 
             finalLayoutInfos.add(
                 if (showFacetStrip) {

@@ -79,8 +79,8 @@ internal object FixedScalesTilesLayouter {
         val geomWidthDelta = widthDiff / facets.colCount
         val geomHeightDelta = heightDiff / facets.rowCount
 
-        val tileWidth2 = tileLayoutInfo.geomWidth() + geomWidthDelta + tileLayoutInfo.axisThicknessY()
-        val tileHeight2 = tileLayoutInfo.geomHeight() + geomHeightDelta + tileLayoutInfo.axisThicknessX()
+        val tileWidth2 = tileLayoutInfo.geomOuterWidth() + geomWidthDelta + tileLayoutInfo.axisThicknessY()
+        val tileHeight2 = tileLayoutInfo.geomOuterHeight() + geomHeightDelta + tileLayoutInfo.axisThicknessX()
         val tileLayoutInfo2 = tileLayout.doLayout(
             DoubleVector(tileWidth2, tileHeight2),
             coordProvider

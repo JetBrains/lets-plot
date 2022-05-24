@@ -64,7 +64,7 @@ internal object PlotLayoutUtil {
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
-        return plotLayoutInfo.tiles.map { it.getAbsoluteGeomBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
+        return plotLayoutInfo.tiles.map { it.getAbsoluteOuterGeomBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
             r0.union(r1)
         }
     }

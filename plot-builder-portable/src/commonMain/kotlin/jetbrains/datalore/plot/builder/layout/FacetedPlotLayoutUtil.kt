@@ -41,13 +41,13 @@ internal object FacetedPlotLayoutUtil {
 
         val maxRowWidthGeomOnly = (0 until facets.rowCount).map { row ->
             rowIndices(facetTiles, row).sumOf { ind ->
-                layoutInfos[ind].geomWidth()
+                layoutInfos[ind].geomOuterWidth()
             }
         }.maxOrNull() ?: 0.0
 
         val maxColHeightGeomOnly = (0 until facets.colCount).map { col ->
             colIndices(facetTiles, col).sumOf { ind ->
-                layoutInfos[ind].geomHeight()
+                layoutInfos[ind].geomOuterHeight()
             }
         }.maxOrNull() ?: 0.0
 
@@ -134,7 +134,7 @@ internal object FacetedPlotLayoutUtil {
         for (i in (0 until numCols)) {
             val currOffset = baseOffset + spacesBefore[i] + axisWidths[i]
             offsets.add(currOffset)
-            baseOffset = currOffset + layoutInfos[i].geomWidth()
+            baseOffset = currOffset + layoutInfos[i].geomOuterWidth()
         }
         return offsets
     }
@@ -168,7 +168,7 @@ internal object FacetedPlotLayoutUtil {
         for (i in (0 until numRows)) {
             val currOffset = baseOffset + spacesBefore[i] + tileLabelHights[i]
             offsets.add(currOffset)
-            baseOffset = currOffset + layoutInfos[i].geomHeight() + axisHeights[i]
+            baseOffset = currOffset + layoutInfos[i].geomOuterHeight() + axisHeights[i]
         }
         return offsets
     }

@@ -61,15 +61,17 @@ internal class PlotTile(
     getRootGroup().setPrebuiltSubtree(true);
     */
 
-        val geomBounds = tileLayoutInfo.geomBounds
+        val geomOuterBounds = tileLayoutInfo.geomOuterBounds
 
-        addFacetLabels(geomBounds, theme.facets())
+        addFacetLabels(geomOuterBounds, theme.facets())
 
         // render geoms
 
+        val geomBounds = tileLayoutInfo.geomInnerBounds
+
         val liveMapGeomLayer = layers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer != null) {
-            val realBounds = tileLayoutInfo.getAbsoluteGeomBounds(tilesOrigin)
+            val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
             val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
 
             liveMapFigure = liveMapData.canvasFigure

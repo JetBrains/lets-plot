@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.layout.tile
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayout
@@ -22,29 +23,38 @@ internal class InsideOutTileLayout constructor(
     private val vDomain: DoubleSpan,
 ) : TileLayout {
 
+    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun doLayout(geomSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
+
+        val geomOuterBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
+        val geomInnerBounds = geomOuterBounds.let {
+            when {
+                FeatureSwitch.MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
+                else -> it
+            }
+        }
 
         var (hAxisInfo, vAxisInfo) = computeAxisInfos(
             hAxisLayout,
             vAxisLayout,
-            geomSize,
+            geomSize = geomInnerBounds.dimension,
             hDomain, vDomain,
         )
 
-        val geomBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
-
-        // Combine geom area and x/y axis
+        // Combine geom area and x/y-axis
         val geomWithAxisBounds = tileBounds(
             hAxisInfo.axisBounds(),
             vAxisInfo.axisBounds(),
-            geomBounds
+            geomOuterBounds
         )
+
 
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
-            geomWithAxisBounds,
-            geomBounds,
-            TileLayoutUtil.clipBounds(geomBounds),
+            bounds = geomWithAxisBounds,
+            geomOuterBounds = geomOuterBounds,
+            geomInnerBounds = geomInnerBounds,
+            clipBounds = TileLayoutUtil.clipBounds(geomInnerBounds),
             hAxisInfo,
             vAxisInfo,
             hAxisShown = true,
@@ -103,13 +113,14 @@ internal class InsideOutTileLayout constructor(
             axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
-            val axisLength = geomBounds.dimension.x
+            val axisSpan = geomBounds.xRange()
+            val axisLength = axisSpan.length
             val stretch = axisLength * AXIS_STRETCH_RATIO
-            val maxTickLabelsBounds = TileLayoutUtil.maxTickLabelsBounds(
+            val maxTickLabelsBounds = TileLayoutUtil.maxHAxisTickLabelsBounds(
                 Orientation.BOTTOM,
                 stretch,
-                geomBounds = geomBounds,
-                maxGeomBounds = geomBounds
+                axisSpan = axisSpan,
+                maxHorizontalSpan = axisSpan
             )
             return axisLayout.doLayout(axisDomain, axisLength, maxTickLabelsBounds)
         }

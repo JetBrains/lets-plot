@@ -18,9 +18,10 @@ internal class LiveMapTileLayout : TileLayout {
         val geomBounds = liveMapGeomBounds(preferredSize)
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
-            geomBounds,
-            geomBounds,
-            clipBounds(geomBounds),
+            bounds = geomBounds,
+            geomOuterBounds = geomBounds,
+            geomInnerBounds = geomBounds,
+            clipBounds = clipBounds(geomBounds),
             null, null,
             hAxisShown = false,
             vAxisShown = false,

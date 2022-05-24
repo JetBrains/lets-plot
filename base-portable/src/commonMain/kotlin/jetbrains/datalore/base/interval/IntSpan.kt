@@ -14,6 +14,7 @@ class IntSpan(
 ) : NumSpan() {
     override val lowerEnd: Int = min(lower, upper)
     override val upperEnd: Int = max(lower, upper)
+    val length: Int = upperEnd - lowerEnd
 
     operator fun contains(v: Int): Boolean {
         return v >= lowerEnd && v <= upperEnd
