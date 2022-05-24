@@ -24,6 +24,13 @@ internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<Target
             SvgShape.FILL_OPACITY.name -> {
                 // To fix artifacts on a 100% opaque shape
                 // Issue: https://github.com/JetBrains/lets-plot/issues/539
+                // * The problem occurs on rectangles with 100% opacity.
+                // So it was enough to use this fix in `SvgRectAttrMapping`,
+                // but decided to move the fix higher in hierarchy to `SvgShapeMapping` as a precaution.
+                // * This code will work even when opacity is not explicitly set
+                // (due to `colorAttributeTransform()`)
+                // * See also: https://bugs.openjdk.java.net/browse/JDK-8087752
+
                 val v = if (asDouble(value) == 1.0) 0.99 else asDouble(value)
                 setOpacity(v, fillGet(target), fillSet(target))
             }
