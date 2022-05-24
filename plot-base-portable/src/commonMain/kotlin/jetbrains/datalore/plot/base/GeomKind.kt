@@ -39,6 +39,7 @@ enum class GeomKind {
     Q_Q,
     Q_Q_2,
     Q_Q_LINE,
+    Q_Q_2_LINE,
     FREQPOLY,
     STEP,
     RECT,

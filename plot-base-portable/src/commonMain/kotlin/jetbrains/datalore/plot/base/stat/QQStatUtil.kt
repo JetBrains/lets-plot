@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.plot.base.stat.math3.*
+import kotlin.math.roundToInt
 
 object QQStatUtil {
     fun getDistribution(
@@ -40,6 +41,26 @@ object QQStatUtil {
                 GammaDistribution(k / 2.0, 0.5)
             }
         }
+    }
+
+    fun getQuantiles(
+        sortedSeries: List<Double>,
+        lineQuantiles: Pair<Double, Double>
+    ): Pair<Double, Double> {
+        val i = (lineQuantiles.first * (sortedSeries.size - 1)).roundToInt()
+        val j = (lineQuantiles.second * (sortedSeries.size - 1)).roundToInt()
+
+        return Pair(sortedSeries[i], sortedSeries[j])
+    }
+
+    fun lineByPoints(
+        xCoord: Pair<Double, Double>,
+        yCoord: Pair<Double, Double>
+    ): (Double) -> Double {
+        val slope = (yCoord.second - yCoord.first) / (xCoord.second - xCoord.first)
+        val intercept = yCoord.first - slope * xCoord.first
+
+        return { x -> slope * x + intercept }
     }
 
     private const val DEF_NORMAL_MEAN = 0.0

@@ -57,6 +57,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             Q_Q -> DefaultSampling.Q_Q
             Q_Q_2 -> DefaultSampling.Q_Q
             Q_Q_LINE -> DefaultSampling.Q_Q_LINE
+            Q_Q_2_LINE -> DefaultSampling.Q_Q_LINE
             FREQPOLY -> DefaultSampling.FREQPOLY
             STEP -> DefaultSampling.STEP
             RECT -> DefaultSampling.RECT
@@ -135,6 +136,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 qq2Defaults()
             DEFAULTS[Q_Q_LINE] =
                 qqLineDefaults()
+            DEFAULTS[Q_Q_2_LINE] =
+                qq2LineDefaults()
             DEFAULTS[FREQPOLY] =
                 freqpolyDefaults()
             DEFAULTS[BIN_2D] =
@@ -254,6 +257,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun qqLineDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults["stat"] = "qq_line"
+            return defaults
+        }
+
+        private fun qq2LineDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults["stat"] = "qq2_line"
             return defaults
         }
 

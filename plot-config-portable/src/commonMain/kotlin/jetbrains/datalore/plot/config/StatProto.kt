@@ -103,6 +103,8 @@ object StatProto {
 
             StatKind.QQ_LINE -> return configureQQLineStat(options)
 
+            StatKind.QQ2_LINE -> return configureQQ2LineStat(options)
+
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
     }
@@ -333,5 +335,13 @@ object StatProto {
             distributionParameters,
             lineQuantiles ?: QQLineStat.DEF_LINE_QUANTILES
         )
+    }
+
+    private fun configureQQ2LineStat(options: OptionsAccessor): QQ2LineStat {
+        val lineQuantiles: Pair<Double, Double>? = options[QQLine.LINE_QUANTILES]?.let {
+            options.getOrderedBoundedDoubleDistinctPair(QQLine.LINE_QUANTILES, 0.0, 1.0)
+        }
+
+        return Stats.qq2line(lineQuantiles ?: QQLineStat.DEF_LINE_QUANTILES)
     }
 }

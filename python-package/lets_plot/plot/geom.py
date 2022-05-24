@@ -21,7 +21,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
-           'geom_qq', 'geom_qq2', 'geom_qq_line',
+           'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
            'geom_text']
 
@@ -4187,6 +4187,21 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=tooltips,
                  distribution=distribution,
                  dparams=dparams,
+                 quantiles=quantiles,
+                 **other_args)
+
+
+def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  quantiles=None,
+                  **other_args):
+    return _geom('qq2_line',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  quantiles=quantiles,
                  **other_args)
 

@@ -59,7 +59,7 @@ class QQ {
                 "                 'geom': 'qq2'" +
                 "               }," +
                 "               {" +
-                "                 'geom': 'qq_line'" +
+                "                 'geom': 'qq2_line'" +
                 "               }" +
                 "             ]" +
                 "}"

@@ -264,6 +264,7 @@ object GeomMeta {
             GeomKind.Q_Q -> POINT
             GeomKind.Q_Q_2 -> POINT
             GeomKind.Q_Q_LINE -> PATH
+            GeomKind.Q_Q_2_LINE -> PATH
             GeomKind.FREQPOLY -> PATH
             GeomKind.STEP -> PATH
             GeomKind.RECT -> listOf(

@@ -311,6 +311,12 @@ object Stats {
         )
     }
 
+    fun qq2line(
+        lineQuantiles: Pair<Double, Double> = QQLineStat.DEF_LINE_QUANTILES
+    ): QQ2LineStat {
+        return QQ2LineStat(lineQuantiles = lineQuantiles)
+    }
+
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
 
         override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {

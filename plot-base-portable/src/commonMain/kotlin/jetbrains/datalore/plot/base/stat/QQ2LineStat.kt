@@ -9,24 +9,25 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import kotlin.math.*
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
-class QQLineStat(
-    private val distribution: QQStat.Distribution,
-    private val distributionParameters: List<Double>,
+class QQ2LineStat(
     private val lineQuantiles: Pair<Double, Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.Y)
+        return listOf(Aes.X, Aes.Y)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.X) || !hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.Y))
+        val statData = buildStat(
+            data.getNumeric(TransformVar.X),
+            data.getNumeric(TransformVar.Y)
+        )
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statData.getValue(Stats.X))
@@ -35,34 +36,25 @@ class QQLineStat(
     }
 
     private fun buildStat(
+        xs: List<Double?>,
         ys: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val sortedY = ys
-            .filter { it?.isFinite() == true }
-            .map { it!! }
-            .sorted()
+        val (finiteX, finiteY) = (xs zip ys).filter { (x, y) ->
+            SeriesUtil.allFinite(x, y)
+        }.unzip()
+        val sortedX = finiteX.map { it!! }.sorted()
+        val sortedY = finiteY.map { it!! }.sorted()
+        val quantilesX = QQStatUtil.getQuantiles(sortedX, lineQuantiles)
         val quantilesY = QQStatUtil.getQuantiles(sortedY, lineQuantiles)
-        val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
-        // Use min/max to avoid an infinity
-        val quantilesX = Pair(
-            dist.inverseCumulativeProbability(max(0.5 / sortedY.size, lineQuantiles.first)),
-            dist.inverseCumulativeProbability(min(1.0 - 0.5 / sortedY.size, lineQuantiles.second))
-        )
-        val endpointsX = listOf(
-            dist.inverseCumulativeProbability(0.5 / sortedY.size),
-            dist.inverseCumulativeProbability(1.0 - 0.5 / sortedY.size)
-        )
         val line = QQStatUtil.lineByPoints(quantilesX, quantilesY)
 
         return mutableMapOf(
-            Stats.X to endpointsX,
-            Stats.Y to endpointsX.map { line(it) }
+            Stats.X to listOf(sortedX.first(), sortedX.last()),
+            Stats.Y to listOf(line(sortedX.first()), line(sortedX.last()))
         )
     }
 
     companion object {
-        val DEF_LINE_QUANTILES = Pair(0.25, 0.75)
-
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y

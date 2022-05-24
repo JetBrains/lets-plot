@@ -256,6 +256,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
             PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
             PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()
+            PROVIDER[GeomKind.Q_Q_2_LINE] = GeomProvider.qq2line()
             PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
             // step - special case
             PROVIDER[GeomKind.RECT] = GeomProvider.rect()
