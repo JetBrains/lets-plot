@@ -23,6 +23,7 @@ enum class StatKind {
     DENSITY2D,
     DENSITY2DF,
     QQ,
+    QQ2,
     QQ_LINE;
 
 

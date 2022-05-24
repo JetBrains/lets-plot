@@ -99,6 +99,8 @@ object StatProto {
 
             StatKind.QQ -> return configureQQStat(options)
 
+            StatKind.QQ2 -> return Stats.qq2()
+
             StatKind.QQ_LINE -> return configureQQLineStat(options)
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")

@@ -514,6 +514,7 @@ object Option {
         private const val DENSITY2DF = "density2df"
         private const val JITTER = "jitter"
         private const val Q_Q = "qq"
+        private const val Q_Q_2 = "qq2"
         private const val Q_Q_LINE = "qq_line"
         private const val FREQPOLY = "freqpoly"
         private const val STEP = "step"
@@ -558,6 +559,7 @@ object Option {
             map[DENSITY2DF] = GeomKind.DENSITY2DF
             map[JITTER] = GeomKind.JITTER
             map[Q_Q] = GeomKind.Q_Q
+            map[Q_Q_2] = GeomKind.Q_Q_2
             map[Q_Q_LINE] = GeomKind.Q_Q_LINE
             map[FREQPOLY] = GeomKind.FREQPOLY
             map[STEP] = GeomKind.STEP

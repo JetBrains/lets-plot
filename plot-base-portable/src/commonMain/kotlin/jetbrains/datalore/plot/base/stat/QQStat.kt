@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class QQStat(
     private val distribution: Distribution,
@@ -18,7 +17,7 @@ class QQStat(
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.X, Aes.Y)
+        return listOf(Aes.Y)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -26,37 +25,15 @@ class QQStat(
             return withEmptyStatValues()
         }
 
-        val ys = data.getNumeric(TransformVar.Y)
-        val statData = if (data.has(TransformVar.X)) {
-            val xs = data.getNumeric(TransformVar.X)
-            buildSampleSampleStat(xs, ys)
-        } else {
-            buildSampleTheoreticalStat(ys)
-        }
+        val statData = buildStat(data.getNumeric(TransformVar.Y))
 
         return DataFrame.Builder()
-            .putNumeric(Stats.X, statData[Stats.X]!!)
-            .putNumeric(Stats.Y, statData[Stats.Y]!!)
+            .putNumeric(Stats.X, statData.getValue(Stats.X))
+            .putNumeric(Stats.Y, statData.getValue(Stats.Y))
             .build()
     }
 
-    private fun buildSampleSampleStat(
-        xs: List<Double?>,
-        ys: List<Double?>
-    ): MutableMap<DataFrame.Variable, List<Double>> {
-        val (finiteX, finiteY) = (xs zip ys).filter { (x, y) ->
-            SeriesUtil.allFinite(x, y)
-        }.unzip()
-        val statX = finiteX.map { it!! }.sorted()
-        val statY = finiteY.map { it!! }.sorted()
-
-        return mutableMapOf(
-            Stats.X to statX,
-            Stats.Y to statY
-        )
-    }
-
-    private fun buildSampleTheoreticalStat(
+    private fun buildStat(
         ys: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
         val statY = ys.filter { it?.isFinite() == true }.map { it!! }.sorted()

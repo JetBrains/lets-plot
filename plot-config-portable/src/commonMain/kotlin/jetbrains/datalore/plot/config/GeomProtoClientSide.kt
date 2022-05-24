@@ -254,6 +254,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
             PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
             PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
+            PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
             PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()
             PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
             // step - special case

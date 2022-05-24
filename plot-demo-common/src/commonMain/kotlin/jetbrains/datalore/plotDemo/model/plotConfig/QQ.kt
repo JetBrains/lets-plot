@@ -56,7 +56,7 @@ class QQ {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'qq'" +
+                "                 'geom': 'qq2'" +
                 "               }," +
                 "               {" +
                 "                 'geom': 'qq_line'" +

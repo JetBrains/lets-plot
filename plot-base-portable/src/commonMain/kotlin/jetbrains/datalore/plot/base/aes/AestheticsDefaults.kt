@@ -217,6 +217,10 @@ open class AestheticsDefaults {
             return point()
         }
 
+        fun qq2(): AestheticsDefaults {
+            return point()
+        }
+
         fun qq_line(): AestheticsDefaults {
             return path()
         }

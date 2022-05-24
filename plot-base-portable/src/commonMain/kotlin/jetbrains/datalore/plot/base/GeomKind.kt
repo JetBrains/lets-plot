@@ -37,6 +37,7 @@ enum class GeomKind {
     DENSITY2DF,
     JITTER,
     Q_Q,
+    Q_Q_2,
     Q_Q_LINE,
     FREQPOLY,
     STEP,

@@ -295,6 +295,10 @@ object Stats {
         )
     }
 
+    fun qq2(): QQ2Stat {
+        return QQ2Stat()
+    }
+
     fun qqline(
         distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
         distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS,
