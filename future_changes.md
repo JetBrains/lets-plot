@@ -24,3 +24,4 @@
 - NPE in corr_plot with null coefficients.
 - Outliers are not shown when boxplot' alpha=0.
 - Support for polars.DataFrame [[#526](https://github.com/JetBrains/lets-plot/issues/526)].
+- Jfx: Artifacts on fast cursor moving [[#539](https://github.com/JetBrains/lets-plot/issues/539)].
