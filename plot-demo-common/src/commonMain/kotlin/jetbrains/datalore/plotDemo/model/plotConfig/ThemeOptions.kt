@@ -34,19 +34,34 @@ class ThemeOptions {
     }
 
     private fun setThemeOptions(): MutableMap<String, Any> {
-        fun option(className: String, color: String? = null, face: String? = null): String {
+        fun option(name: String, value: Any?) : String {
+            if (value == null) return ""
+            val vStr = if (value is String) "\"$value\"" else value.toString()
+            return "\"${name}\": $vStr,"
+        }
+        fun text(key: String, color: String? = null, face: String? = null): String {
             return """
-            "$className": {
-                 ${("\"color\": \"$color\",").takeIf { color != null } ?: ""}
-                 ${("\"face\": \"$face\",").takeIf { face != null } ?: ""}
+            "$key": {
+                ${option("color", color)}
+                ${option("face", face)}
                 "blank": false
             }"""
         }
-
+        fun rect(key: String, color: String? = null, fill: String? = null, size: Double? = null): String {
+            return """
+            "$key": {                 
+                ${option("color", color)}
+                ${option("fill", fill)}
+                ${option("size", size)}
+                "blank": false
+            }"""
+        }
         val theme = "'theme': { " +
-                option("tooltip_text", color = "red", face = "italic") +
-                "," + option("tooltip_title_text", color = "blue") +
-
+                text("title", color = "#2a14a8") +
+                "," + text("plot_title", face = "bold.italic") +
+                "," + text("plot_caption", face = "italic") +
+                "," + text("tooltip_text", color = "#b3deff", face = "italic") +
+                "," + rect("tooltip", color = "#2a14a8", fill = "#004d99", size = 2.0) +
                 "}"
 
         return plot(
