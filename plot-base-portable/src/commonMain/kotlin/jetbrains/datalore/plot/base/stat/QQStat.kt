@@ -17,33 +17,33 @@ class QQStat(
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.Y)
+        return listOf(Aes.SAMPLE)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.SAMPLE)) {
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.Y))
+        val statData = buildStat(data.getNumeric(TransformVar.SAMPLE))
 
         return DataFrame.Builder()
-            .putNumeric(Stats.X, statData.getValue(Stats.X))
-            .putNumeric(Stats.Y, statData.getValue(Stats.Y))
+            .putNumeric(Stats.THEORETICAL, statData.getValue(Stats.THEORETICAL))
+            .putNumeric(Stats.SAMPLE, statData.getValue(Stats.SAMPLE))
             .build()
     }
 
     private fun buildStat(
-        ys: List<Double?>
+        sampleSeries: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val statY = ys.filter { it?.isFinite() == true }.map { it!! }.sorted()
-        val t = (1..statY.size).map { (it - 0.5) / statY.size }
+        val statSample = sampleSeries.filter { it?.isFinite() == true }.map { it!! }.sorted()
+        val t = (1..statSample.size).map { (it - 0.5) / statSample.size }
         val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
-        val statX = t.map { dist.inverseCumulativeProbability(it) }
+        val statTheoretical = t.map { dist.inverseCumulativeProbability(it) }
 
         return mutableMapOf(
-            Stats.X to statX,
-            Stats.Y to statY
+            Stats.THEORETICAL to statTheoretical,
+            Stats.SAMPLE to statSample
         )
     }
 
@@ -69,8 +69,8 @@ class QQStat(
         val DEF_DISTRIBUTION_PARAMETERS = emptyList<Double>()
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-            Aes.X to Stats.X,
-            Aes.Y to Stats.Y
+            Aes.X to Stats.THEORETICAL,
+            Aes.Y to Stats.SAMPLE
         )
     }
 }

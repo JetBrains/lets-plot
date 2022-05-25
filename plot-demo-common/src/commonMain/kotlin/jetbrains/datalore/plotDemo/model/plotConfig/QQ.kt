@@ -21,7 +21,7 @@ class QQ {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
-                "                'y': 'sepal length (cm)'" +
+                "                'sample': 'sepal length (cm)'" +
                 "              }," +
                 "   'ggtitle': {" +
                 "                'text': 'Basic demo'" +
@@ -77,7 +77,7 @@ class QQ {
                 "             'g': ['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B']" +
                 "            }," +
                 "   'mapping': {" +
-                "                'y': 'y'," +
+                "                'sample': 'y'," +
                 "                'color': 'g'" +
                 "              }," +
                 "   'ggtitle': {" +

@@ -19,6 +19,8 @@ object Stats {
     val DENSITY = DataFrame.Variable("..density..", STAT, "density")
     val Y_MIN = DataFrame.Variable("..ymin..", STAT, "y min")
     val Y_MAX = DataFrame.Variable("..ymax..", STAT, "y max")
+    val SAMPLE = DataFrame.Variable("..sample..", STAT, "sample")
+    val THEORETICAL = DataFrame.Variable("..theoretical..", STAT, "theoretical")
     val SE = DataFrame.Variable("..se..", STAT, "standard error")
     val LEVEL = DataFrame.Variable("..level..", STAT, "level")
 
@@ -43,6 +45,8 @@ object Stats {
             DENSITY,
             Y_MIN,
             Y_MAX,
+            SAMPLE,
+            THEORETICAL,
             SE,
             LEVEL,
             LOWER,

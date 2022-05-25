@@ -23,6 +23,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -139,6 +140,9 @@ abstract class AesVisitor<T> {
         if (aes == UPPER) {
             return upper()
         }
+        if (aes == SAMPLE) {
+            return sample()
+        }
         if (aes == MAP_ID) {
             return mapId()
         }
@@ -240,6 +244,8 @@ abstract class AesVisitor<T> {
     protected abstract fun middle(): T
 
     protected abstract fun upper(): T
+
+    protected abstract fun sample(): T
 
     protected abstract fun mapId(): T
 

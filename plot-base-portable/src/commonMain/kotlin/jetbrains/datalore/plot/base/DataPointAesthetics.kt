@@ -112,6 +112,10 @@ abstract class DataPointAesthetics {
         return get(Aes.UPPER)
     }
 
+    fun sample(): Double? {
+        return get(Aes.SAMPLE)
+    }
+
     fun mapId(): Any {
         return getNotNull(Aes.MAP_ID)
     }

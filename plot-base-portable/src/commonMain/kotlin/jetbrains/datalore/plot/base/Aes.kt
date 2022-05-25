@@ -50,6 +50,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val LOWER: Aes<Double> = Aes("lower")
         val MIDDLE: Aes<Double> = Aes("middle")
         val UPPER: Aes<Double> = Aes("upper")
+        val SAMPLE: Aes<Double> = Aes("sample")
 
         val XMIN: Aes<Double> = Aes("xmin")
         val XMAX: Aes<Double> = Aes("xmax")
@@ -118,6 +119,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == LOWER ||
                     aes == MIDDLE ||
                     aes == UPPER ||
+                    aes == SAMPLE ||
                     aes == YEND
         }
 

@@ -143,7 +143,11 @@ class LayerConfig(
                 true
             } else if (it is String) {
                 val aes = Option.Mapping.toAes(it)
-                consumedAesSet.contains(aes)
+                when (statKind) {
+                    StatKind.QQ,
+                    StatKind.QQ_LINE -> consumedAesSet.contains(aes) || aes == Aes.SAMPLE
+                    else -> consumedAesSet.contains(aes)
+                }
             } else {
                 false
             }

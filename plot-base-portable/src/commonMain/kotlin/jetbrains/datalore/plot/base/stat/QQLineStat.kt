@@ -18,45 +18,45 @@ class QQLineStat(
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
-        return listOf(Aes.Y)
+        return listOf(Aes.SAMPLE)
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-        if (!hasRequiredValues(data, Aes.Y)) {
+        if (!hasRequiredValues(data, Aes.SAMPLE)) {
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.Y))
+        val statData = buildStat(data.getNumeric(TransformVar.SAMPLE))
 
         return DataFrame.Builder()
-            .putNumeric(Stats.X, statData.getValue(Stats.X))
-            .putNumeric(Stats.Y, statData.getValue(Stats.Y))
+            .putNumeric(Stats.THEORETICAL, statData.getValue(Stats.THEORETICAL))
+            .putNumeric(Stats.SAMPLE, statData.getValue(Stats.SAMPLE))
             .build()
     }
 
     private fun buildStat(
-        ys: List<Double?>
+        sampleSeries: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val sortedY = ys
+        val sortedSample = sampleSeries
             .filter { it?.isFinite() == true }
             .map { it!! }
             .sorted()
-        val quantilesY = QQStatUtil.getQuantiles(sortedY, lineQuantiles)
+        val quantilesSample = QQStatUtil.getQuantiles(sortedSample, lineQuantiles)
         val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
         // Use min/max to avoid an infinity
-        val quantilesX = Pair(
-            dist.inverseCumulativeProbability(max(0.5 / sortedY.size, lineQuantiles.first)),
-            dist.inverseCumulativeProbability(min(1.0 - 0.5 / sortedY.size, lineQuantiles.second))
+        val quantilesTheoretical = Pair(
+            dist.inverseCumulativeProbability(max(0.5 / sortedSample.size, lineQuantiles.first)),
+            dist.inverseCumulativeProbability(min(1.0 - 0.5 / sortedSample.size, lineQuantiles.second))
         )
-        val endpointsX = listOf(
-            dist.inverseCumulativeProbability(0.5 / sortedY.size),
-            dist.inverseCumulativeProbability(1.0 - 0.5 / sortedY.size)
+        val endpointsTheoretical = listOf(
+            dist.inverseCumulativeProbability(0.5 / sortedSample.size),
+            dist.inverseCumulativeProbability(1.0 - 0.5 / sortedSample.size)
         )
-        val line = QQStatUtil.lineByPoints(quantilesX, quantilesY)
+        val line = QQStatUtil.lineByPoints(quantilesTheoretical, quantilesSample)
 
         return mutableMapOf(
-            Stats.X to endpointsX,
-            Stats.Y to endpointsX.map { line(it) }
+            Stats.THEORETICAL to endpointsTheoretical,
+            Stats.SAMPLE to endpointsTheoretical.map { line(it) }
         )
     }
 
@@ -64,8 +64,8 @@ class QQLineStat(
         val DEF_LINE_QUANTILES = Pair(0.25, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-            Aes.X to Stats.X,
-            Aes.Y to Stats.Y
+            Aes.X to Stats.THEORETICAL,
+            Aes.Y to Stats.SAMPLE
         )
     }
 }
