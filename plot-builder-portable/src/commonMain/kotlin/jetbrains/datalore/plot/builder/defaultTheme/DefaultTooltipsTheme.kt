@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
@@ -16,6 +17,8 @@ import jetbrains.datalore.plot.builder.theme.TooltipsTheme
 internal class DefaultTooltipsTheme(
     options: Map<String, Any>
 ) : ThemeValuesAccess(options), TooltipsTheme {
+
+    internal val tooltipKey = listOf(ThemeOption.TOOLTIP_RECT, ThemeOption.RECT)
 
     internal val textKey = listOf(TOOLTIP_TEXT)
     internal val titleTextKey = listOf(TOOLTIP_TITLE_TEXT) + textKey
@@ -46,5 +49,17 @@ internal class DefaultTooltipsTheme(
 
     override fun labelTextFontFace(): FontFace {
         return FontFace.BOLD
+    }
+
+    override fun tooltipColor(): Color {
+        return getColor(getElemValue(tooltipKey), Elem.COLOR)
+    }
+
+    override fun tooltipFill(): Color {
+        return getColor(getElemValue(tooltipKey), Elem.FILL)
+    }
+
+    override fun tooltipStrokeWidth(): Double {
+       return getNumber(getElemValue(tooltipKey), Elem.SIZE)
     }
 }

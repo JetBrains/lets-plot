@@ -15,4 +15,8 @@ interface TooltipsTheme {
     fun titleTextFontFace(): FontFace
     fun labelTextColor(): Color
     fun labelTextFontFace(): FontFace
+
+    fun tooltipColor(): Color
+    fun tooltipFill(): Color
+    fun tooltipStrokeWidth(): Double
 }

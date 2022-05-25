@@ -138,6 +138,7 @@ internal class ThemeOptionTest {
             ThemeOption.LEGEND_TEXT -> (theme.legend() as DefaultLegendTheme).textKey
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey
 
+            ThemeOption.TOOLTIP_RECT -> (theme.tooltips() as DefaultTooltipsTheme).tooltipKey
             ThemeOption.TOOLTIP_TEXT -> {
                 with ((theme.tooltips() as DefaultTooltipsTheme)) {
                     when (elemProperty) {
