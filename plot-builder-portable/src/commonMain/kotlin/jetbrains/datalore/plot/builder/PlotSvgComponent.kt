@@ -152,10 +152,9 @@ class PlotSvgComponent constructor(
                     // Don't fill rect over livemap figure.
                     fillOpacity().set(0.0)
                 } else {
-                    if (Colors.solid(plotTheme.backgroundFill())) {
-                        // Workaround for JFX: 100% opaque rect blocks 'mouse left' events.
-                        fillOpacity().set(0.99)
-                    }
+                    // Previously there was a fix for JFX here:
+                    // if the background color has no transparency - set its opacity to 0.99.
+                    // Now jfx-mapper will fix it in SvgShapeMapping.
                 }
             })
         }
