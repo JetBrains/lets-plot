@@ -48,6 +48,12 @@ interface GeomLayer {
 
     val isYOrientation: Boolean
 
+    val isMarginal: Boolean
+
+    val marginalSide: GeomLayerMargin
+
+    val marginalSize: Double
+
     fun renderedAes(): List<Aes<*>>
 
     fun hasBinding(aes: Aes<*>): Boolean

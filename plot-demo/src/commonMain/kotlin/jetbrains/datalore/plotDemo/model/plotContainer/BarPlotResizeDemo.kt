@@ -62,10 +62,10 @@ class BarPlotResizeDemo private constructor(
             Aes.FILL to fillMapper
         )
 
-        val layerBuilder = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.bar())
-            .pos(PosProvider.dodge())
+        val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, PosProvider.dodge())
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.bar())
+//            .pos(PosProvider.dodge())
             .groupingVar(varCat)
             .addBinding(VarBinding(varX, Aes.X))
             .addBinding(

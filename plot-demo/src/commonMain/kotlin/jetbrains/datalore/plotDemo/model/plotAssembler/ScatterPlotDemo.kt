@@ -8,15 +8,14 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
@@ -50,10 +49,10 @@ open class ScatterPlotDemo : SimpleDemoBase() {
             )
         )
 
-        val layer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varA,

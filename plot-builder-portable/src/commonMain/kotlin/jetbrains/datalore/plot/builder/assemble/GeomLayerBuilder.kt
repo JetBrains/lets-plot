@@ -17,11 +17,13 @@ import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.GeomLayerMargin
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
@@ -31,12 +33,14 @@ import jetbrains.datalore.plot.builder.data.StatInput
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-class GeomLayerBuilder constructor() {
+class GeomLayerBuilder constructor(
+    private val geomProvider: GeomProvider,
+    private val stat: Stat,
+    private val posProvider: PosProvider,
+) {
+
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
-    private lateinit var myStat: Stat
-    private lateinit var myPosProvider: PosProvider
-    private lateinit var myGeomProvider: GeomProvider
     private var myGroupingVarName: String? = null
     private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
@@ -48,20 +52,9 @@ class GeomLayerBuilder constructor() {
     private var myIsLegendDisabled: Boolean = false
     private var isYOrientation: Boolean = false
 
-    fun stat(v: Stat): GeomLayerBuilder {
-        myStat = v
-        return this
-    }
-
-    fun pos(v: PosProvider): GeomLayerBuilder {
-        myPosProvider = v
-        return this
-    }
-
-    fun geom(v: GeomProvider): GeomLayerBuilder {
-        myGeomProvider = v
-        return this
-    }
+    private var isMarginal: Boolean = false
+    private var marginalSide: GeomLayerMargin = GeomLayerMargin.NONE
+    private var marginalSize: Double = Double.NaN
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)
@@ -114,6 +107,17 @@ class GeomLayerBuilder constructor() {
         return this
     }
 
+    fun marginal(
+        isMarginal: Boolean,
+        marginalSide: GeomLayerMargin,
+        marginalSize: Double
+    ): GeomLayerBuilder {
+        this.isMarginal = isMarginal
+        this.marginalSide = marginalSide
+        this.marginalSize = marginalSize
+        return this
+    }
+
     fun build(
         data: DataFrame,
         scaleMap: TypedScaleMap,
@@ -135,14 +139,14 @@ class GeomLayerBuilder constructor() {
         val replacementBindings = HashMap(
             // No 'origin' variables beyond this point.
             // Replace all 'origin' variables in bindings with 'transform' variables
-            myBindings.map {
+            myBindings.associate {
                 it.aes to if (it.variable.isOrigin) {
                     val transformVar = DataFrameUtil.transformVarFor(it.aes)
                     VarBinding(transformVar, it.aes)
                 } else {
                     it
                 }
-            }.toMap()
+            }
         )
 
         // add 'transform' variable for each 'stat' variable
@@ -176,9 +180,9 @@ class GeomLayerBuilder constructor() {
         val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
         return MyGeomLayer(
             data,
-            myGeomProvider,
-            myPosProvider,
-            myGeomProvider.renders(),
+            geomProvider,
+            posProvider,
+            geomProvider.renders(),
             groupingContext.groupMapper,
             replacementBindings.values,
             myConstantByAes,
@@ -188,12 +192,15 @@ class GeomLayerBuilder constructor() {
             myLocatorLookupSpec,
             myContextualMappingProvider.createContextualMapping(dataAccess, data),
             myIsLegendDisabled,
-            isYOrientation = isYOrientation
+            isYOrientation = isYOrientation,
+            isMarginal = isMarginal,
+            marginalSide = marginalSide,
+            marginalSize = marginalSize
         )
     }
 
     private fun handlesGroups(): Boolean {
-        return myGeomProvider.handlesGroups() || myPosProvider.handlesGroups()
+        return geomProvider.handlesGroups() || posProvider.handlesGroups()
     }
 
 
@@ -211,8 +218,12 @@ class GeomLayerBuilder constructor() {
         override val locatorLookupSpec: LookupSpec,
         override val contextualMapping: ContextualMapping,
         override val isLegendDisabled: Boolean,
-        override val isYOrientation: Boolean
-    ) : GeomLayer {
+        override val isYOrientation: Boolean,
+        override val isMarginal: Boolean,
+        override val marginalSide: GeomLayerMargin,
+        override val marginalSize: Double,
+
+        ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind
@@ -292,11 +303,15 @@ class GeomLayerBuilder constructor() {
 
     companion object {
 
-        fun demoAndTest(): GeomLayerBuilder {
-            val builder = GeomLayerBuilder()
+        fun demoAndTest(
+            geomProvider: GeomProvider,
+            stat: Stat,
+            posProvider: PosProvider = PosProvider.wrap(PositionAdjustments.identity()),
+        ): GeomLayerBuilder {
+            val builder = GeomLayerBuilder(geomProvider, stat, posProvider)
             builder.myDataPreprocessor = { data, transformByAes ->
                 val transformedData = DataProcessing.transformOriginals(data, builder.myBindings, transformByAes)
-                when (val stat = builder.myStat) {
+                when (builder.stat) {
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
@@ -320,7 +335,7 @@ class GeomLayerBuilder constructor() {
                         )
                         val dataAndGroupingContext = DataProcessing.buildStatData(
                             statInput,
-                            stat,
+                            builder.stat,
                             groupingCtx,
                             facetVariables = emptyList(),
                             varsWithoutBinding = emptyList(),

@@ -10,15 +10,14 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plotDemo.data.Iris
@@ -65,10 +64,10 @@ open class AreaPlotDemo : SimpleDemoBase() {
             Aes.FILL to filleMapper
         )
 
-        val layer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.density())
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.area())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.area(), Stats.density())
+//            .stat(Stats.density())
+//            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.area())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .groupingVar(varTarget)
             .addBinding(
                 VarBinding(

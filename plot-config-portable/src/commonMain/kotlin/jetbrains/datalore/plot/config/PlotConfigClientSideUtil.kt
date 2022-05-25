@@ -112,11 +112,16 @@ object PlotConfigClientSideUtil {
         val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
 
         val stat = layerConfig.stat
-        val layerBuilder = GeomLayerBuilder()
-            .stat(stat)
-            .geom(geomProvider)
-            .pos(layerConfig.posProvider)
+        val layerBuilder = GeomLayerBuilder(
+            geomProvider = geomProvider,
+            stat = stat,
+            posProvider = layerConfig.posProvider,
+        )
+//            .stat(stat)
+//            .geom(geomProvider)
+//            .pos(layerConfig.posProvider)
             .yOrientation(layerConfig.isYOrientation)
+            .marginal(layerConfig.isMarginal, layerConfig.marginalSide, layerConfig.marginalSize)
 
 
         val constantAesMap = layerConfig.constantsMap

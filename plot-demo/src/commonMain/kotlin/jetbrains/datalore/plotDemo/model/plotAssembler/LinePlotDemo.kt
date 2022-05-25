@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
@@ -19,8 +18,8 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
@@ -62,10 +61,10 @@ open class LinePlotDemo : SimpleDemoBase() {
             )
         )
 
-        val layer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.path())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.path(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.path())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varA,
@@ -145,10 +144,10 @@ open class LinePlotDemo : SimpleDemoBase() {
             Aes.COLOR to colorMapper
         )
 
-        val layer = with(GeomLayerBuilder.demoAndTest()) {
-            stat(Stats.IDENTITY)
-            geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.path())
-            pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val layer = with(GeomLayerBuilder.demoAndTest(GeomProvider.path(), Stats.IDENTITY)) {
+//            stat(Stats.IDENTITY)
+//            geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.path())
+//            pos(PosProvider.wrap(PositionAdjustments.identity()))
             if (grouped) {
                 groupingVar(varC)
             }

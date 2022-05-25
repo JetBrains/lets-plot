@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
@@ -21,7 +20,6 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
@@ -98,10 +96,10 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             Aes.COLOR to colorMapper
         )
 
-        val scatterLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varOrigX,
@@ -125,29 +123,30 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         // Smooth stat (regression)
 
-        val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
-            .geom(GeomProvider.smooth())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(
-                VarBinding(
-                    varOrigX,
-                    Aes.X
+        val regressionLineLayer =
+            GeomLayerBuilder.demoAndTest(GeomProvider.smooth(), Stats.smooth(smoothingMethod = Method.LOESS))
+//            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
+//            .geom(GeomProvider.smooth())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+                .addBinding(
+                    VarBinding(
+                        varOrigX,
+                        Aes.X
+                    )
                 )
-            )
-            .addBinding(
-                VarBinding(
-                    varOrigY,
-                    Aes.Y
+                .addBinding(
+                    VarBinding(
+                        varOrigY,
+                        Aes.Y
+                    )
                 )
-            )
-            .addBinding(
-                VarBinding(
-                    varOrigTarget,
-                    Aes.COLOR
+                .addBinding(
+                    VarBinding(
+                        varOrigTarget,
+                        Aes.COLOR
+                    )
                 )
-            )
-            .build(data, scaleByAes, scaleMappersNP)
+                .build(data, scaleByAes, scaleMappersNP)
 
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
@@ -171,10 +170,10 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             )
         )
 
-        val scatterLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varOrigX,
@@ -192,23 +191,24 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         // Smooth stat (regression)
 
-        val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
-            .geom(GeomProvider.smooth())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(
-                VarBinding(
-                    varOrigX,
-                    Aes.X
+        val regressionLineLayer =
+            GeomLayerBuilder.demoAndTest(GeomProvider.smooth(), Stats.smooth(smoothingMethod = Method.LOESS))
+//            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
+//            .geom(GeomProvider.smooth())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+                .addBinding(
+                    VarBinding(
+                        varOrigX,
+                        Aes.X
+                    )
                 )
-            )
-            .addBinding(
-                VarBinding(
-                    varOrigY,
-                    Aes.Y
+                .addBinding(
+                    VarBinding(
+                        varOrigY,
+                        Aes.Y
+                    )
                 )
-            )
-            .build(data, scaleByAes, emptyMap())
+                .build(data, scaleByAes, emptyMap())
 
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
@@ -251,10 +251,10 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             Aes.COLOR to colorMapper
         )
 
-        val scatterLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varOrigX,
@@ -278,29 +278,30 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
 
         // Smooth stat (regression)
 
-        val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
-            .geom(GeomProvider.smooth())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(
-                VarBinding(
-                    varOrigX,
-                    Aes.X
+        val regressionLineLayer =
+            GeomLayerBuilder.demoAndTest(GeomProvider.smooth(), Stats.smooth(smoothingMethod = Method.LOESS))
+//            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
+//            .geom(GeomProvider.smooth())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+                .addBinding(
+                    VarBinding(
+                        varOrigX,
+                        Aes.X
+                    )
                 )
-            )
-            .addBinding(
-                VarBinding(
-                    varOrigY,
-                    Aes.Y
+                .addBinding(
+                    VarBinding(
+                        varOrigY,
+                        Aes.Y
+                    )
                 )
-            )
-            .addBinding(
-                VarBinding(
-                    varOrigCut,
-                    Aes.COLOR
+                .addBinding(
+                    VarBinding(
+                        varOrigCut,
+                        Aes.COLOR
+                    )
                 )
-            )
-            .build(data, scaleByAes, scaleMappersNP)
+                .build(data, scaleByAes, scaleMappersNP)
 
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
@@ -326,10 +327,10 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             )
         )
 
-        val scatterLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varX,
@@ -345,38 +346,49 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .addConstantAes(Aes.SHAPE, NamedShape.FILLED_CIRCLE)
             .addConstantAes(Aes.FILL, Color.parseHex("#ffffbf"))
             .addConstantAes(Aes.COLOR, Color.LIGHT_GRAY)
-            .build(data, scaleByAes, emptyMap())
+//            .build(data, scaleByAes, emptyMap())
 
 
-        val regressionLayerBuilder = GeomLayerBuilder.demoAndTest()
-            .geom(GeomProvider.smooth())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
-            .addBinding(
-                VarBinding(
-                    varX,
-                    Aes.X
-                )
-            )
-            .addBinding(
-                VarBinding(
-                    varY,
-                    Aes.Y
-                )
-            )
-            .addConstantAes(Aes.SIZE, 2.0)
+//        val regressionLayerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.smooth())
+//            .geom(GeomProvider.smooth())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+//            .addBinding(
+//                VarBinding(
+//                    varX,
+//                    Aes.X
+//                )
+//            )
+//            .addBinding(
+//                VarBinding(
+//                    varY,
+//                    Aes.Y
+//                )
+//            )
+//            .addConstantAes(Aes.SIZE, 2.0)
 
-        val defaultLoessLayer = regressionLayerBuilder
-            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
+        val defaultLoessLayer = GeomLayerBuilder.demoAndTest(
+            GeomProvider.smooth(),
+            Stats.smooth(smoothingMethod = Method.LOESS)
+        )
+//            .stat(Stats.smooth(smoothingMethod = Method.LOESS))
             .addConstantAes(Aes.COLOR, Color.BLUE)
-            .build(data, scaleByAes, emptyMap())
+//            .build(data, scaleByAes, emptyMap())
 
-        val accurateLoessLayer = regressionLayerBuilder
-            .stat(Stats.smooth(smoothingMethod = Method.LOESS, span = 0.3))
+        val accurateLoessLayer = GeomLayerBuilder.demoAndTest(
+            GeomProvider.smooth(),
+            Stats.smooth(smoothingMethod = Method.LOESS, span = 0.3)
+        )
+//            .stat(Stats.smooth(smoothingMethod = Method.LOESS, span = 0.3))
             .addConstantAes(Aes.COLOR, Color.DARK_GREEN)
-            .build(data, scaleByAes, emptyMap())
+//            .build(data, scaleByAes, emptyMap())
 
 
-        val layers = listOf(scatterLayer, defaultLoessLayer, accurateLoessLayer)
+        val layers = listOf(scatterLayer, defaultLoessLayer, accurateLoessLayer).map {
+            it
+                .addBinding(VarBinding(varX, Aes.X))
+                .addBinding(VarBinding(varY, Aes.Y))
+                .build(data, scaleByAes, emptyMap())
+        }
         val assembler = PlotAssembler.singleTile(
 //            scaleByAes,
             layers,

@@ -8,7 +8,6 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
@@ -54,10 +53,10 @@ open class BarPlotDemo : SimpleDemoBase() {
             )
         )
 
-        val layer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.bar())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.bar())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
 //                .groupingVar(null)
             .addBinding(
                 VarBinding(
@@ -133,10 +132,10 @@ open class BarPlotDemo : SimpleDemoBase() {
             )
         )
 
-        val layer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.bar())
-            .pos(pos)
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, pos)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.bar())
+//            .pos(pos)
             .groupingVar(varC)
             .addBinding(
                 VarBinding(

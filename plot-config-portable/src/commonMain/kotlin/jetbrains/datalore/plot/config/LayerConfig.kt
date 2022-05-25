@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.base.util.afterOrientation
+import jetbrains.datalore.plot.builder.GeomLayerMargin
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
@@ -28,6 +29,8 @@ import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
+import jetbrains.datalore.plot.config.Option.Layer.MARGINAL
+import jetbrains.datalore.plot.config.Option.Layer.Marginal
 import jetbrains.datalore.plot.config.Option.Layer.NONE
 import jetbrains.datalore.plot.config.Option.Layer.ORIENTATION
 import jetbrains.datalore.plot.config.Option.Layer.POS
@@ -109,6 +112,22 @@ class LayerConfig(
             false -> false
         }
 
+    // Marginal layers
+    val isMarginal: Boolean = getBoolean(MARGINAL, false)
+    val marginalSide: GeomLayerMargin = if (isMarginal) {
+        when (val side = getStringSafe(Marginal.SIDE).lowercase()) {
+            Marginal.SIDE_LEFT -> GeomLayerMargin.LEFT
+            Marginal.SIDE_RIGHT -> GeomLayerMargin.RIGHT
+            Marginal.SIDE_TOP -> GeomLayerMargin.TOP
+            Marginal.SIDE_BOTTOM -> GeomLayerMargin.BOTTOM
+            else -> throw IllegalArgumentException("${Marginal.SIDE} expected l|r|t|b but was '$side'")
+        }
+    } else {
+        GeomLayerMargin.NONE
+    }
+    val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
+
+
     init {
         val (layerMappings, layerData) = createDataFrame(
             options = this,
@@ -129,10 +148,6 @@ class LayerConfig(
                 false -> it + stat.consumes()
             }
         }.afterOrientation(isYOrientation)
-
-//        if (!clientSide) {
-//            consumedAesSet.addAll(stat.consumes())
-//        }
 
         // mapping (inherit from plot) + 'layer' mapping
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {

@@ -10,14 +10,12 @@ import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
@@ -60,10 +58,10 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             )
         )
 
-        val scatterLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varOrigX,
@@ -91,10 +89,10 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varTLX, valuesX)
             .putNumeric(varTLY, valuesY)
             .build()
-        val trueLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.IDENTITY)
-            .geom(GeomProvider.line())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val trueLineLayer = GeomLayerBuilder.demoAndTest(GeomProvider.line(), Stats.IDENTITY)
+//            .stat(Stats.IDENTITY)
+//            .geom(GeomProvider.line())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varTLX,
@@ -113,10 +111,10 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Smooth stat (regression)
         //
-        val regressionLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth())
-            .geom(GeomProvider.smooth())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val regressionLineLayer = GeomLayerBuilder.demoAndTest(GeomProvider.smooth(), Stats.smooth())
+//            .stat(Stats.smooth())
+//            .geom(GeomProvider.smooth())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varOrigX,
@@ -134,10 +132,10 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Smooth stat - standard error
         //
-        val seLineLayer = GeomLayerBuilder.demoAndTest()
-            .stat(Stats.smooth())
-            .geom(GeomProvider.point())
-            .pos(PosProvider.wrap(PositionAdjustments.identity()))
+        val seLineLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.smooth())
+//            .stat(Stats.smooth())
+//            .geom(GeomProvider.point())
+//            .pos(PosProvider.wrap(PositionAdjustments.identity()))
             .addBinding(
                 VarBinding(
                     varOrigX,

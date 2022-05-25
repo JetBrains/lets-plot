@@ -127,10 +127,10 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             )
 
 
-            val layerBuilder = GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(GeomProvider.errorBar())
-                .pos(pos)
+            val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.errorBar(), Stats.IDENTITY, pos)
+//                .stat(Stats.IDENTITY)
+//                .geom(GeomProvider.errorBar())
+//                .pos(pos)
                 .addBinding(
                     VarBinding(
                         varDose,
@@ -168,10 +168,10 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // lines layer
             //
-            val linesLayer = GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(GeomProvider.line())
-                .pos(pos)
+            val linesLayer = GeomLayerBuilder.demoAndTest(GeomProvider.line(), Stats.IDENTITY, pos)
+//                .stat(Stats.IDENTITY)
+//                .geom(GeomProvider.line())
+//                .pos(pos)
                 .addBinding(
                     VarBinding(
                         varDose,
@@ -190,10 +190,10 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // points layer
             //
-            val pointsLayer = GeomLayerBuilder.demoAndTest()
-                .stat(Stats.IDENTITY)
-                .geom(GeomProvider.point())
-                .pos(pos)
+            val pointsLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY, pos)
+//                .stat(Stats.IDENTITY)
+//                .geom(GeomProvider.point())
+//                .pos(pos)
                 .addBinding(
                     VarBinding(
                         varDose,
