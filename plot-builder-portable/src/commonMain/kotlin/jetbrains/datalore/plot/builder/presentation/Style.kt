@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
+import jetbrains.datalore.vis.StyleSheet.Companion.toCSS
 import jetbrains.datalore.vis.TextStyle
 
 object Style {
@@ -40,22 +41,19 @@ object Style {
 
     const val FACET_STRIP_TEXT = "facet-strip-text"
 
-    private const val TEXT_SIZE = FONT_MEDIUM
-    private const val TEXT_COLOR = Defaults.DARK_GRAY
-
     private val CSS = """
         |.$PLOT_CONTAINER {
-        |	font-family: $FONT_FAMILY_NORMAL;
-        |	user-select: none;
-        |	-webkit-user-select: none;
-        |	-moz-user-select: none;
-        |	-ms-user-select: none;
+        |   font-family: $FONT_FAMILY_NORMAL;
+        |   user-select: none;
+        |   -webkit-user-select: none;
+        |   -moz-user-select: none;
+        |   -ms-user-select: none;
         |}
         |text {
-        |	font-size: ${TEXT_SIZE}px;
-        |	fill: $TEXT_COLOR;
-        |	
-        |	text-rendering: optimizeLegibility;
+        |   fill: ${StyleSheet.UNDEFINED_FONT_COLOR.toHexColor()};
+        |   ${StyleSheet.UNDEFINED_FONT_FACE.toCSS()}   
+        |
+        |   text-rendering: optimizeLegibility;
         |}
     """.trimMargin()
 
@@ -78,7 +76,7 @@ object Style {
 
 
     private val DEFAULT_FAMILY = FontFamily.forName(FONT_FAMILY_NORMAL)
-    private const val DEFAULT_SIZE = TEXT_SIZE.toDouble()
+    private const val DEFAULT_SIZE = FONT_MEDIUM.toDouble()
     private val DEFAULT_FACE = FontFace.NORMAL
     private val DEFAULT_COLOR = Color.BLACK
 

@@ -21,9 +21,9 @@ class StyleSheet(
         return textStyles[className]
             ?: TextStyle(
                 family = FontFamily.forName(defaultFamily),
-                face = FontFace.NORMAL,
+                face = UNDEFINED_FONT_FACE,
                 size = defaultSize,
-                color = Color.BLACK
+                color = UNDEFINED_FONT_COLOR
             )
     }
 
@@ -39,14 +39,20 @@ class StyleSheet(
     }
 
     companion object {
+        val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
+        val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
+
+        fun FontFace.toCSS(): String {
+            return "font-weight: ${if (bold) "bold" else "normal"};" +
+              "\n   font-style: ${if (italic) "italic" else "normal"};"
+        }
 
         private fun TextStyle.toCSS(): String {
             return """
                 |   fill: ${color.toHexColor()};
                 |   font-family: ${family};
                 |   font-size: ${size}px;
-                |   font-weight: ${if (face.bold) "bold" else "normal"};
-                |   font-style: ${if (face.italic) "italic" else "normal"};
+                |   ${face.toCSS()}   
                 """.trimMargin()
         }
 
