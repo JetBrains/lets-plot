@@ -45,7 +45,7 @@ class ThemeOptions {
 
         val theme = "'theme': { " +
                 option("tooltip_text", color = "red", face = "italic") +
-                "," + option("tooltip_title", color = "blue") +
+                "," + option("tooltip_title_text", color = "blue") +
 
                 "}"
 

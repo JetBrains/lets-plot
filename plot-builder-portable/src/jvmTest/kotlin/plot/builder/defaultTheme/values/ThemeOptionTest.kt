@@ -146,22 +146,15 @@ internal class ThemeOptionTest {
                     }
                 }
             }
-            ThemeOption.TOOLTIP_TITLE -> {
+            ThemeOption.TOOLTIP_TITLE_TEXT -> {
                 with ((theme.tooltips() as DefaultTooltipsTheme)) {
                     when (elemProperty) {
-                        COLOR -> titleColorKey
-                        else -> titleKey
+                        COLOR -> titleTextColorKey
+                        else -> titleTextKey
                     }
                 }
             }
-            ThemeOption.TOOLTIP_LABEL -> {
-                with ((theme.tooltips() as DefaultTooltipsTheme)) {
-                    when (elemProperty) {
-                        COLOR -> labelColorKey
-                        else -> labelKey
-                    }
-                }
-            }
+
 
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey

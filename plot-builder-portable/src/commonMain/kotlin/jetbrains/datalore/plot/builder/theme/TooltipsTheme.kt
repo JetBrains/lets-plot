@@ -11,8 +11,8 @@ import jetbrains.datalore.base.values.FontFace
 interface TooltipsTheme {
     fun textColor(): Color
     fun textFontFace(): FontFace
-    fun titleColor(): Color
-    fun titleFontFace(): FontFace
-    fun labelColor(): Color
-    fun labelFontFace(): FontFace
+    fun titleTextColor(): Color
+    fun titleTextFontFace(): FontFace
+    fun labelTextColor(): Color
+    fun labelTextFontFace(): FontFace
 }

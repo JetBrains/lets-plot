@@ -63,7 +63,7 @@ def theme(*,
           axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
           axis_tooltip_text=None, axis_tooltip_text_x=None, axis_tooltip_text_y=None,
 
-          tooltip_text=None
+          tooltip_text=None, tooltip_title_text=None
           ):
     """
     Use `theme()` to modify individual components of a theme,
@@ -183,9 +183,11 @@ def theme(*,
         Set `element_text()` to specify axes tooltip parameters.
         `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
     tooltip_text : str or dict
-        Tooltips text.
+        Tooltip text.
         Set `element_text()` to specify tooltip parameters.
-
+    tooltip_title_text: str or dict
+        Tooltip title text.
+        Set `element_text()` to specify tooltip parameters. Inherits from `tooltip_text`. Bold by default.
     Returns
     -------
     `FeatureSpec`

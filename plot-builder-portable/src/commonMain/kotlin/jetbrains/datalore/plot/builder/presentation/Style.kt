@@ -161,8 +161,8 @@ object Style {
             update("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor(), theme.facets().stripFontFace())
 
             update(TOOLTIP_TEXT, theme.tooltips().textColor(), theme.tooltips().textFontFace())
-            update(TOOLTIP_TITLE, theme.tooltips().titleColor(), theme.tooltips().titleFontFace())
-            update(TOOLTIP_LABEL, theme.tooltips().labelColor(), theme.tooltips().labelFontFace())
+            update(TOOLTIP_TITLE, theme.tooltips().titleTextColor(), theme.tooltips().titleTextFontFace())
+            update(TOOLTIP_LABEL, theme.tooltips().labelTextColor(), theme.tooltips().labelTextFontFace())
         }
         return StyleSheet(
             textStyles,

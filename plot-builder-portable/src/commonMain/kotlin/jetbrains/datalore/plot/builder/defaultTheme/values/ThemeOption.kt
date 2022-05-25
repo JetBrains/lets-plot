@@ -76,8 +76,7 @@ object ThemeOption {
 
     // Tooltip
     const val TOOLTIP_TEXT = "tooltip_text"
-    const val TOOLTIP_TITLE = "tooltip_title"
-    const val TOOLTIP_LABEL = "tooltip_label"
+    const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
 
     // view element
     val ELEMENT_BLANK = mapOf(Elem.BLANK to true)
@@ -154,8 +153,7 @@ object ThemeOption {
             LEGEND_TEXT,
             LEGEND_TITLE,
             TOOLTIP_TEXT,
-            TOOLTIP_TITLE,
-            TOOLTIP_LABEL,
+            TOOLTIP_TITLE_TEXT,
         )
         val elemWithFill = listOf(
             PLOT_BKGR_RECT,
@@ -185,8 +183,7 @@ object ThemeOption {
             LEGEND_TEXT,
             LEGEND_TITLE,
             TOOLTIP_TEXT,
-            TOOLTIP_TITLE,
-            TOOLTIP_LABEL,
+            TOOLTIP_TITLE_TEXT,
         )
     }
 }
