@@ -33,7 +33,7 @@ class PlotConfigTest {
         val opts = parsePlotSpec(spec)
         val plotConfig = PlotConfigClientSide.create(opts) {}
 
-        val scaleConfigs = plotConfig.createScaleConfigs(plotConfig.getList(SCALES))
+        val scaleConfigs = PlotConfigUtil.createScaleConfigs(plotConfig.getList(SCALES))
         assertEquals(1, scaleConfigs.size.toLong())
         assertEquals("name_test", scaleConfigs[0].getString(NAME))
         assertEquals("log10", scaleConfigs[0].getString(CONTINUOUS_TRANSFORM))

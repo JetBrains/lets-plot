@@ -50,7 +50,7 @@ internal object AwtLiveMapFactoryUtil {
         LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
             ?.let {
                 LiveMapProvider.injectLiveMapProvider(
-                    plotAssembler.layersByTile,
+                    plotAssembler.coreLayersByTile,
                     it,
                     cursorServiceConfig
                 )

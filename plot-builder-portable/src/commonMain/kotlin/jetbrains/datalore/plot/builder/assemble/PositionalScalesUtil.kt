@@ -113,9 +113,10 @@ internal object PositionalScalesUtil {
 
         var xDomainOverall: DoubleSpan? = null
         var yDomainOverall: DoubleSpan? = null
-        for (layer in layers) {
-            // use dry-run aesthetics to estimate ranges
-            val aesthetics = positionaDryRunAestheticsByLayer.getValue(layer)
+
+        // Use dry-run aesthetics to estimate ranges.
+        for ((layer, aesthetics) in positionaDryRunAestheticsByLayer) {
+
             // adjust X/Y range with 'pos adjustment' and 'expands'
             val xyRanges = computeLayerDryRunXYRanges(layer, aesthetics)
 

@@ -28,7 +28,8 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class PlotTile(
-    private val layers: List<GeomLayer>,
+    private val coreLayers: List<GeomLayer>,
+    private val marginalLayers: List<GeomLayer>,
     private val tilesOrigin: DoubleVector,
     private val tileLayoutInfo: TileLayoutInfo,
     private val theme: Theme,
@@ -43,7 +44,7 @@ internal class PlotTile(
     val targetLocators: List<GeomTargetLocator>
         get() = _targetLocators
 
-    val layerYOrientations: List<Boolean> = layers.map { it.isYOrientation }
+    val layerYOrientations: List<Boolean> = coreLayers.map { it.isYOrientation }
 
     lateinit var geomDrawingBounds: DoubleRectangle  // the area between axes or x/y limits
         private set
@@ -69,7 +70,7 @@ internal class PlotTile(
 
         val geomInnerBounds = tileLayoutInfo.geomInnerBounds
 
-        val liveMapGeomLayer = layers.firstOrNull { it.isLiveMap }
+        val liveMapGeomLayer = coreLayers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer != null) {
             val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
             val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
@@ -83,7 +84,7 @@ internal class PlotTile(
             frameOfReference.drawBeforeGeomLayer(this)
 
             geomDrawingBounds = DoubleRectangle(ZERO, geomInnerBounds.dimension)
-            for (layer in layers) {
+            for (layer in coreLayers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
                     layer.locatorLookupSpec,
@@ -96,6 +97,11 @@ internal class PlotTile(
                 layerComponent.clipBounds(geomDrawingBounds)
                 add(layerComponent)
             }
+
+            // ToDo
+//            for (marginalLayer in marginalLayers) {
+//
+//            }
 
             frameOfReference.drawAfterGeomLayer(this)
         }

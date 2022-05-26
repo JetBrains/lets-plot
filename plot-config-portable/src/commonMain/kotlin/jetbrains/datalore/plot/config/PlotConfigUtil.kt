@@ -184,4 +184,25 @@ object PlotConfigUtil {
             SeriesUtil.range(filtered)
         }
     }
+
+    internal fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
+        // merge options by 'aes'
+        val mergedOpts = HashMap<Aes<Any>, MutableMap<String, Any>>()
+        for (opts in scaleOptionsList) {
+            @Suppress("UNCHECKED_CAST")
+            val optsMap = opts as Map<String, Any>
+
+            @Suppress("UNCHECKED_CAST")
+            val aes = ScaleConfig.aesOrFail(optsMap) as Aes<Any>
+            if (!mergedOpts.containsKey(aes)) {
+                mergedOpts[aes] = HashMap()
+            }
+
+            mergedOpts[aes]!!.putAll(optsMap)
+        }
+
+        return mergedOpts.map { (aes, options) ->
+            ScaleConfig(aes, options)
+        }
+    }
 }

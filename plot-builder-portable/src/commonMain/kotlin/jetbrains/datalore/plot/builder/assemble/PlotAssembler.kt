@@ -18,7 +18,7 @@ import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.theme.Theme
 
 class PlotAssembler private constructor(
-    val layersByTile: List<List<GeomLayer>>,
+    private val layersByTile: List<List<GeomLayer>>,
     private val scaleXProto: Scale<Double>,
     private val scaleYProto: Scale<Double>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
@@ -26,7 +26,14 @@ class PlotAssembler private constructor(
     private val theme: Theme
 ) {
 
-    val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
+    val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
+        layers.filterNot { it.isMarginal }
+    }
+    private val marginalLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
+        layers.filter { it.isMarginal }.filterNot { it.isLiveMap }
+    }
+
+    val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
     var facets: PlotFacets = PlotFacets.undefined()
     var title: String? = null
@@ -39,12 +46,7 @@ class PlotAssembler private constructor(
 
 
     private fun hasLayers(): Boolean {
-        for (tileLayers in layersByTile) {
-            if (tileLayers.isNotEmpty()) {
-                return true
-            }
-        }
-        return false
+        return coreLayersByTile.any { it.isNotEmpty() }
     }
 
     fun createPlot(): PlotSvgComponent {
@@ -65,7 +67,7 @@ class PlotAssembler private constructor(
             //  - skip X/Y scale training
             //  - ignore coord provider
             //  - plot layout without axes
-            val layoutProviderByTile = layersByTile.map {
+            val layoutProviderByTile = coreLayersByTile.map {
                 LiveMapTileLayoutProvider()
             }
             val plotLayout = PlotAssemblerUtil.createPlotLayout(
@@ -75,14 +77,14 @@ class PlotAssembler private constructor(
                 hAxisTheme = LiveMapAxisTheme(),
                 vAxisTheme = LiveMapAxisTheme(),
             )
-            val frameOfReferenceProviderByTile = layersByTile.map {
+            val frameOfReferenceProviderByTile = coreLayersByTile.map {
                 BogusFrameOfReferenceProvider()
             }
             createPlot(frameOfReferenceProviderByTile, plotLayout, legendsBoxInfos)
         } else {
             val flipAxis = coordProvider.flipAxis
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
-                layersByTile,
+                coreLayersByTile,
                 scaleXProto,
                 scaleYProto,
                 facets
@@ -131,7 +133,8 @@ class PlotAssembler private constructor(
         return PlotSvgComponent(
             title = title,
             subtitle = subtitle,
-            layersByTile = layersByTile,
+            coreLayersByTile = coreLayersByTile,
+            marginalLayersByTile = marginalLayersByTile,
             plotLayout = plotLayout,
             frameOfReferenceProviderByTile = frameOfReferenceProviderByTile,
             coordProvider = coordProvider,

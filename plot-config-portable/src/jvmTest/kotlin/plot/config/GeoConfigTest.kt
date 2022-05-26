@@ -217,7 +217,7 @@ class GeoConfigTest {
 
     private fun singleGeomLayer(spec: String): GeomLayer {
         val config = PlotConfigClientSide.create(parsePlotSpec(spec)) {}
-        return createPlotAssembler(config).layersByTile.single().single()
+        return createPlotAssembler(config).coreLayersByTile.single().single()
     }
 
     @Test

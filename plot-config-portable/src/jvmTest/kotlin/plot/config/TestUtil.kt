@@ -63,7 +63,7 @@ object TestUtil {
         val transformed = BackendSpecTransformUtil.processTransform(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigClientSide.create(transformed) {}
-        return PlotConfigClientSideUtil.createPlotAssembler(config).layersByTile.single()
+        return PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile.single()
     }
 
     internal fun getSingleGeomLayer(plotSpec: MutableMap<String, Any>): GeomLayer {

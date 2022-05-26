@@ -117,9 +117,6 @@ object PlotConfigClientSideUtil {
             stat = stat,
             posProvider = layerConfig.posProvider,
         )
-//            .stat(stat)
-//            .geom(geomProvider)
-//            .pos(layerConfig.posProvider)
             .yOrientation(layerConfig.isYOrientation)
             .marginal(layerConfig.isMarginal, layerConfig.marginalSide, layerConfig.marginalSize)
 

@@ -256,13 +256,11 @@ internal class SquareFrameOfReference(
             )
 
             if (isDebugDrawing) {
-                if (info.tickLabelsBounds != null) {
-                    val rect = SvgRectElement(info.tickLabelsBounds)
-                    rect.strokeColor().set(Color.GREEN)
-                    rect.strokeWidth().set(1.0)
-                    rect.fillOpacity().set(0.0)
-                    axis.add(rect)
-                }
+                val rect = SvgRectElement(info.tickLabelsBounds)
+                rect.strokeColor().set(Color.GREEN)
+                rect.strokeWidth().set(1.0)
+                rect.fillOpacity().set(0.0)
+                axis.add(rect)
             }
             return axis
         }

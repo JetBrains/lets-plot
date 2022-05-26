@@ -12,7 +12,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
@@ -47,7 +46,8 @@ import kotlin.math.max
 class PlotSvgComponent constructor(
     title: String?,
     subtitle: String?,
-    private val layersByTile: List<List<GeomLayer>>,
+    private val coreLayersByTile: List<List<GeomLayer>>,
+    private val marginalLayersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
     private val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
@@ -86,11 +86,7 @@ class PlotSvgComponent constructor(
     // ToDo: remove
     private val axisTitleBottom: String? = frameOfReferenceProviderByTile[0].hAxisLabel
 
-    private val containsLiveMap: Boolean = layersByTile.flatten().any(GeomLayer::isLiveMap)
-
-    private fun tileLayers(tileIndex: Int): List<GeomLayer> {
-        return layersByTile[tileIndex]
-    }
+    private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
     override fun buildComponent() {
         try {
@@ -251,19 +247,18 @@ class PlotSvgComponent constructor(
         for (tileLayoutInfo in plotInfo.tiles) {
             val tileIndex = tileLayoutInfo.trueIndex
 
-//            println("plot offset: " + tileInfo.plotOffset)
-//            println("     bounds: " + tileInfo.bounds)
-//            println("geom bounds: " + tileInfo.geomBounds)
-//            println("clip bounds: " + tileInfo.clipBounds)
-
             // Create a plot tile.
             val frameOfReference = frameOfReferenceProviderByTile[tileIndex].createFrameOfReference(
                 tileLayoutInfo,
                 coordProvider,
                 DEBUG_DRAWING
             )
-            val tileLayers = tileLayers(tileIndex)
-            val tile = PlotTile(tileLayers, tilesOrigin, tileLayoutInfo, theme, frameOfReference)
+
+            val tile = PlotTile(
+                coreLayers = coreLayersByTile[tileIndex],
+                marginalLayers = marginalLayersByTile[tileIndex],
+                tilesOrigin, tileLayoutInfo, theme, frameOfReference
+            )
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.offset)
             tile.moveTo(plotOriginAbsolute)

@@ -159,7 +159,7 @@ private fun injectLivemapProvider(
     LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
         ?.let {
             LiveMapProvider.injectLiveMapProvider(
-                plotAssembler.layersByTile,
+                plotAssembler.coreLayersByTile,
                 it,
                 cursorServiceConfig
             )
