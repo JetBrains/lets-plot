@@ -109,6 +109,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
+                gridLineMargin = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridX()
             )
@@ -126,6 +127,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
+                gridLineMargin = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridY()
             )
@@ -287,6 +289,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
+                gridLineMargin = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridX()
             )
@@ -304,6 +307,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
+                gridLineMargin = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridY()
             )
@@ -407,6 +411,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 orientation = Orientation.BOTTOM,
                 breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), mapperX, coord, horizontal = true),
                 gridLineLength = rangeY,
+                gridLineMargin = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridX()
             )
@@ -424,6 +429,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 orientation = Orientation.LEFT,
                 breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), mapperY, coord, horizontal = false),
                 gridLineLength = rangeX,
+                gridLineMargin = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
                 gridTheme = theme.panel().gridY()
             )

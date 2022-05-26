@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -28,6 +28,7 @@ class AxisComponent(
     private val breaksData: BreaksData,
     private val labelAdjustments: TickLabelAdjustments = TickLabelAdjustments(orientation),
     private val gridLineLength: Double,
+    private val gridLineMargin: Double,
     private val axisTheme: AxisTheme,
     private val gridTheme: PanelGridTheme,
     private val hideAxis: Boolean = false,
@@ -134,11 +135,13 @@ class AxisComponent(
     }
 
     private fun buildGridLine(br: Double, width: Double, color: Color): SvgLineElement {
+        val start = gridLineMargin
+        val end = start + gridLineLength
         val elem = when (orientation) {
-            Orientation.LEFT -> SvgLineElement(0.0, 0.0, gridLineLength, 0.0)
-            Orientation.RIGHT -> SvgLineElement(0.0, 0.0, -gridLineLength, 0.0)
-            Orientation.TOP -> SvgLineElement(0.0, 0.0, 0.0, gridLineLength)
-            Orientation.BOTTOM -> SvgLineElement(0.0, 0.0, 0.0, -gridLineLength)
+            Orientation.LEFT -> SvgLineElement(start, 0.0, end, 0.0)
+            Orientation.RIGHT -> SvgLineElement(-start, 0.0, -end, 0.0)
+            Orientation.TOP -> SvgLineElement(0.0, start, 0.0, end)
+            Orientation.BOTTOM -> SvgLineElement(0.0, -start, 0.0, -end)
         }
         elem.strokeColor().set(color)
         elem.strokeWidth().set(width)

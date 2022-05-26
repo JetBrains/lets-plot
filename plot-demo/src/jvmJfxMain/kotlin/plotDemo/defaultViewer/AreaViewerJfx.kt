@@ -12,17 +12,13 @@ object AreaViewerJfx {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Area()) {
-            @Suppress("UNCHECKED_CAST")
-            val plotSpecList = plotSpecList()
-            for (spec in plotSpecList) {
-                PlotViewerWindowJfx(
-                    "Area plot",
-                    null,
-                    spec,
+            PlotViewerWindowJfx(
+                "Area plot",
+                null,
+                plotSpecList().first(),
 //                    Dimension(900, 700),
-                    preserveAspectRatio = false
-                ).open()
-            }
+                preserveAspectRatio = false
+            ).open()
         }
     }
 }

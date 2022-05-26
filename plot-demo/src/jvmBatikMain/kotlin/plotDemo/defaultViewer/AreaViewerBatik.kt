@@ -7,19 +7,16 @@ package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
 import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
+
 @Suppress("UNUSED_PARAMETER")
 fun main(args: Array<String>) {
     with(Area()) {
-        @Suppress("UNCHECKED_CAST")
-        val plotSpecList = plotSpecList()
-        for (spec in plotSpecList) {
-            PlotViewerWindowBatik(
-                "Area plot",
-                null,
-                spec,
+        PlotViewerWindowBatik(
+            "Area plot",
+            null,
+            plotSpecList().first(),
 //                    Dimension(900, 700),
-                preserveAspectRatio = false
-            ).open()
-        }
+            preserveAspectRatio = false
+        ).open()
     }
 }

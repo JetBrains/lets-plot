@@ -69,6 +69,7 @@ internal class SquareFrameOfReference(
 
     private fun drawPanelAndAxis(parent: SvgComponent, beforeGeomLayer: Boolean) {
         val geomBounds: DoubleRectangle = layoutInfo.geomInnerBounds
+        val geomOuterBounds: DoubleRectangle = layoutInfo.geomOuterBounds
         val panelTheme = theme.panel()
 
         // Flip theme
@@ -96,17 +97,19 @@ internal class SquareFrameOfReference(
 
         if (drawHAxis || drawGridlines) {
             // X-axis
+            val axisInfo = layoutInfo.hAxisInfo!!
             val hAxis = buildAxis(
                 hScale,
                 hScaleMapper,
-                layoutInfo.hAxisInfo!!,
+                axisInfo,
                 hideAxis = !drawHAxis,
                 hideAxisBreaks = !layoutInfo.hAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
                 hAxisTheme,
                 hGridTheme,
-                geomBounds.height,
+                gridLineLength = geomBounds.height,
+                gridLineMargin = gridLineMargin(geomBounds, geomOuterBounds, axisInfo.orientation),
                 isDebugDrawing
             )
 
@@ -121,17 +124,19 @@ internal class SquareFrameOfReference(
 
         if (drawVAxis || drawGridlines) {
             // Y-axis
+            val axisInfo = layoutInfo.vAxisInfo!!
             val vAxis = buildAxis(
                 vScale,
                 vScaleMapper,
-                layoutInfo.vAxisInfo!!,
+                axisInfo,
                 hideAxis = !drawVAxis,
                 hideAxisBreaks = !layoutInfo.vAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
                 vAxisTheme,
                 vGridTheme,
-                geomBounds.width,
+                gridLineLength = geomBounds.width,
+                gridLineMargin = gridLineMargin(geomBounds, geomOuterBounds, axisInfo.orientation),
                 isDebugDrawing
             )
 
@@ -216,6 +221,7 @@ internal class SquareFrameOfReference(
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
+            gridLineMargin: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
             check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis componenmt" }
@@ -241,6 +247,7 @@ internal class SquareFrameOfReference(
                 breaksData = breaksData,
                 labelAdjustments = labelAdjustments,
                 gridLineLength = gridLineLength,
+                gridLineMargin = gridLineMargin,
                 axisTheme = axisTheme,
                 gridTheme = gridTheme,
                 hideAxis = hideAxis,
@@ -324,6 +331,19 @@ internal class SquareFrameOfReference(
             val geom = layer.geom
 
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
+        }
+
+        private fun gridLineMargin(
+            geomInnerBounds: DoubleRectangle,
+            geomOuterBounds: DoubleRectangle,
+            orientation: Orientation
+        ): Double {
+            return when (orientation) {
+                Orientation.LEFT -> geomInnerBounds.left - geomOuterBounds.left
+                Orientation.RIGHT -> geomOuterBounds.right - geomInnerBounds.right
+                Orientation.TOP -> geomInnerBounds.top - geomOuterBounds.top
+                Orientation.BOTTOM -> geomOuterBounds.bottom - geomInnerBounds.bottom
+            }
         }
     }
 }
