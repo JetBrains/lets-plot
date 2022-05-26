@@ -109,7 +109,7 @@ internal class SquareFrameOfReference(
                 hAxisTheme,
                 hGridTheme,
                 gridLineLength = geomBounds.height,
-                gridLineMargin = gridLineMargin(geomBounds, geomOuterBounds, axisInfo.orientation),
+                gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
                 isDebugDrawing
             )
 
@@ -136,7 +136,7 @@ internal class SquareFrameOfReference(
                 vAxisTheme,
                 vGridTheme,
                 gridLineLength = geomBounds.width,
-                gridLineMargin = gridLineMargin(geomBounds, geomOuterBounds, axisInfo.orientation),
+                gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
                 isDebugDrawing
             )
 
@@ -221,7 +221,7 @@ internal class SquareFrameOfReference(
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
-            gridLineMargin: Double,
+            gridLineDistance: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
             check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis componenmt" }
@@ -247,7 +247,7 @@ internal class SquareFrameOfReference(
                 breaksData = breaksData,
                 labelAdjustments = labelAdjustments,
                 gridLineLength = gridLineLength,
-                gridLineMargin = gridLineMargin,
+                gridLineDistance = gridLineDistance,
                 axisTheme = axisTheme,
                 gridTheme = gridTheme,
                 hideAxis = hideAxis,
@@ -333,7 +333,7 @@ internal class SquareFrameOfReference(
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
         }
 
-        private fun gridLineMargin(
+        private fun gridLineDistance(
             geomInnerBounds: DoubleRectangle,
             geomOuterBounds: DoubleRectangle,
             orientation: Orientation

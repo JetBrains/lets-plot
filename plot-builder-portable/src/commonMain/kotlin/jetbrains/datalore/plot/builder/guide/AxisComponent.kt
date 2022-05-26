@@ -28,7 +28,7 @@ class AxisComponent(
     private val breaksData: BreaksData,
     private val labelAdjustments: TickLabelAdjustments = TickLabelAdjustments(orientation),
     private val gridLineLength: Double,
-    private val gridLineMargin: Double,
+    private val gridLineDistance: Double,
     private val axisTheme: AxisTheme,
     private val gridTheme: PanelGridTheme,
     private val hideAxis: Boolean = false,
@@ -135,7 +135,7 @@ class AxisComponent(
     }
 
     private fun buildGridLine(br: Double, width: Double, color: Color): SvgLineElement {
-        val start = gridLineMargin
+        val start = gridLineDistance
         val end = start + gridLineLength
         val elem = when (orientation) {
             Orientation.LEFT -> SvgLineElement(start, 0.0, end, 0.0)
