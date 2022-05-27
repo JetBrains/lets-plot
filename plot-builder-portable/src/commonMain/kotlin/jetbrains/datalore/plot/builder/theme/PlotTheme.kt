@@ -18,4 +18,5 @@ interface PlotTheme {
     fun titleColor(): Color
     fun subtitleColor(): Color
     fun captionColor(): Color
+    fun textColor(): Color
 }

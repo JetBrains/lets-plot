@@ -52,4 +52,8 @@ internal class DefaultPlotTheme(
     override fun captionColor(): Color {
         return getColor(getElemValue(captionKey), Elem.COLOR)
     }
+
+    override fun textColor(): Color {
+        return getColor(getElemValue(listOf(TEXT)), Elem.COLOR)
+    }
 }

@@ -30,6 +30,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
@@ -104,6 +105,11 @@ class PlotSvgComponent constructor(
             var y = plotSize.y / 2 - 8
             for (s in messages) {
                 val errorLabel = TextLabel(s)
+                val textColor = when {
+                    theme.plot().showBackground() -> theme.plot().textColor()
+                    else -> Defaults.TEXT_COLOR
+                }
+                errorLabel.textColor().set(textColor)
                 errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
                 errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
                 errorLabel.moveTo(plotSize.x / 2, y)
