@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.plot.base.stat.math3.*
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 object QQStatUtil {
     fun getDistribution(
@@ -43,20 +43,29 @@ object QQStatUtil {
         }
     }
 
-    fun getQuantiles(
+    // Use "R-8" quantile estimation type from here: https://en.wikipedia.org/wiki/Quantile#Estimating_quantiles_from_a_sample
+    fun getEstimatedQuantile(
         sortedSeries: List<Double>,
-        lineQuantiles: Pair<Double, Double>
-    ): Pair<Double, Double> {
-        val i = (lineQuantiles.first * (sortedSeries.size - 1)).roundToInt()
-        val j = (lineQuantiles.second * (sortedSeries.size - 1)).roundToInt()
-
-        return Pair(sortedSeries[i], sortedSeries[j])
+        p: Double
+    ): Double {
+        require(sortedSeries.any()) { "$sortedSeries should not be empty" }
+        require(p in 0.0..1.0) { "$p should be in [0, 1]" }
+        val n = sortedSeries.size
+        if (n == 1) return sortedSeries.first()
+        if (p < 1.0 / n) return sortedSeries[0] + (n + 1.0) / (3.0 * n) * (sortedSeries[1] - sortedSeries[0])
+        if (p > (n - 1.0) / n) return sortedSeries[n - 2] + (2.0 * n - 1.0) / (3.0 * n) * (sortedSeries[n - 1] - sortedSeries[n - 2])
+        val h = (n + 1.0 / 3.0) * p - 2.0 / 3.0
+        val i = floor(h).toInt()
+        val j = ceil(h).toInt()
+        return sortedSeries[i] + (h - i) * (sortedSeries[j] - sortedSeries[i])
     }
 
     fun lineByPoints(
         xCoord: Pair<Double, Double>,
         yCoord: Pair<Double, Double>
     ): (Double) -> Double {
+        require(xCoord.second != xCoord.first) { "Should be ${xCoord.first} != ${xCoord.second}" }
+
         val slope = (yCoord.second - yCoord.first) / (xCoord.second - xCoord.first)
         val intercept = yCoord.first - slope * xCoord.first
 

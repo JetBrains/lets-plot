@@ -36,7 +36,7 @@ class QQStat(
     private fun buildStat(
         sampleSeries: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val statSample = sampleSeries.filter { it?.isFinite() == true }.map { it!! }.sorted()
+        val statSample = sampleSeries.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
         val t = (1..statSample.size).map { (it - 0.5) / statSample.size }
         val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
         val statTheoretical = t.map { dist.inverseCumulativeProbability(it) }

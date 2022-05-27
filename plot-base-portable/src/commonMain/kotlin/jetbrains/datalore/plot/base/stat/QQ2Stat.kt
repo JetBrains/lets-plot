@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class QQ2Stat : BaseStat(DEF_MAPPING) {
 
@@ -37,16 +36,21 @@ class QQ2Stat : BaseStat(DEF_MAPPING) {
         xs: List<Double?>,
         ys: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val (finiteX, finiteY) = (xs zip ys).filter { (x, y) ->
-            SeriesUtil.allFinite(x, y)
-        }.unzip()
-        val statX = finiteX.map { it!! }.sorted()
-        val statY = finiteY.map { it!! }.sorted()
+        val sortedX = xs.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
+        val sortedY = ys.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
 
-        return mutableMapOf(
-            Stats.X to statX,
-            Stats.Y to statY
-        )
+        return if (!sortedX.any() || !sortedX.any()) {
+            mutableMapOf(
+                Stats.X to emptyList(),
+                Stats.Y to emptyList()
+            )
+        } else {
+            val t = (1..sortedX.size).map { (it - 0.5) / sortedX.size }
+            mutableMapOf(
+                Stats.X to t.map { QQStatUtil.getEstimatedQuantile(sortedX, it) },
+                Stats.Y to t.map { QQStatUtil.getEstimatedQuantile(sortedY, it) }
+            )
+        }
     }
 
     companion object {

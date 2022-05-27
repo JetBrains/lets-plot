@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class QQ2LineStat(
     private val lineQuantiles: Pair<Double, Double>
@@ -39,15 +38,31 @@ class QQ2LineStat(
         xs: List<Double?>,
         ys: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val (finiteX, finiteY) = (xs zip ys).filter { (x, y) ->
-            SeriesUtil.allFinite(x, y)
-        }.unzip()
-        val sortedX = finiteX.map { it!! }.sorted()
-        val sortedY = finiteY.map { it!! }.sorted()
-        val quantilesX = QQStatUtil.getQuantiles(sortedX, lineQuantiles)
-        val quantilesY = QQStatUtil.getQuantiles(sortedY, lineQuantiles)
-        val line = QQStatUtil.lineByPoints(quantilesX, quantilesY)
+        val sortedX = xs.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
+        val sortedY = ys.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
+        if (!sortedX.any() || !sortedY.any()) {
+            return mutableMapOf(
+                Stats.X to emptyList(),
+                Stats.Y to emptyList()
+            )
+        }
 
+        val quantilesX = Pair(
+            QQStatUtil.getEstimatedQuantile(sortedX, lineQuantiles.first),
+            QQStatUtil.getEstimatedQuantile(sortedX, lineQuantiles.second)
+        )
+        val quantilesY = Pair(
+            QQStatUtil.getEstimatedQuantile(sortedY, lineQuantiles.first),
+            QQStatUtil.getEstimatedQuantile(sortedY, lineQuantiles.second)
+        )
+        if (quantilesX.first == quantilesX.second) {
+            return mutableMapOf(
+                Stats.X to listOf(quantilesX.first, quantilesX.second),
+                Stats.Y to listOf(sortedY.first(), sortedY.last())
+            )
+        }
+
+        val line = QQStatUtil.lineByPoints(quantilesX, quantilesY)
         return mutableMapOf(
             Stats.X to listOf(sortedX.first(), sortedX.last()),
             Stats.Y to listOf(line(sortedX.first()), line(sortedX.last()))

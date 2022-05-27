@@ -9,7 +9,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import kotlin.math.*
+import kotlin.math.min
+import kotlin.math.max
 
 class QQLineStat(
     private val distribution: QQStat.Distribution,
@@ -37,11 +38,18 @@ class QQLineStat(
     private fun buildStat(
         sampleSeries: List<Double?>
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val sortedSample = sampleSeries
-            .filter { it?.isFinite() == true }
-            .map { it!! }
-            .sorted()
-        val quantilesSample = QQStatUtil.getQuantiles(sortedSample, lineQuantiles)
+        val sortedSample = sampleSeries.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
+        if (!sortedSample.any()) {
+            return mutableMapOf(
+                Stats.THEORETICAL to emptyList(),
+                Stats.SAMPLE to emptyList()
+            )
+        }
+
+        val quantilesSample = Pair(
+            QQStatUtil.getEstimatedQuantile(sortedSample, lineQuantiles.first),
+            QQStatUtil.getEstimatedQuantile(sortedSample, lineQuantiles.second)
+        )
         val dist = QQStatUtil.getDistribution(distribution, distributionParameters)
         // Use min/max to avoid an infinity
         val quantilesTheoretical = Pair(
@@ -52,8 +60,14 @@ class QQLineStat(
             dist.inverseCumulativeProbability(0.5 / sortedSample.size),
             dist.inverseCumulativeProbability(1.0 - 0.5 / sortedSample.size)
         )
-        val line = QQStatUtil.lineByPoints(quantilesTheoretical, quantilesSample)
+        if (quantilesTheoretical.first == quantilesTheoretical.second) {
+            return mutableMapOf(
+                Stats.THEORETICAL to listOf(quantilesTheoretical.first, quantilesTheoretical.second),
+                Stats.SAMPLE to listOf(sortedSample.first(), sortedSample.last())
+            )
+        }
 
+        val line = QQStatUtil.lineByPoints(quantilesTheoretical, quantilesSample)
         return mutableMapOf(
             Stats.THEORETICAL to endpointsTheoretical,
             Stats.SAMPLE to endpointsTheoretical.map { line(it) }

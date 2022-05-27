@@ -14,6 +14,7 @@ class QQ {
             basic(),
             onlySampleValues(),
             grouping(),
+            withNan(),
         )
     }
 
@@ -90,6 +91,33 @@ class QQ {
                 "               {" +
                 "                 'geom': 'qq_line'," +
                 "                 'quantiles': [0.1, 0.9]" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withNan(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [5, 4, 3, 2, 1]," +
+                "             'y': [null, 2, 1, 4, 3]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'With NaN values'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'qq2'" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'qq2_line'" +
                 "               }" +
                 "             ]" +
                 "}"
