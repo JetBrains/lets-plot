@@ -392,17 +392,17 @@ class TooltipBox: SvgComponent() {
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setX(0.0)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val lineHeight = estimateLineHeight(titleLine) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+            val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
             titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
         }
 
-        private fun estimateLineHeight(line: String?): Double? {
+        private fun estimateLineHeight(line: String?, className: String): Double? {
             return line
                 ?.split("\n")
-                ?.map { it to TextLabel(it) }
+                ?.associateWith { TextLabel(it).apply { addClassName(className) } }
                 ?.mapNotNull { (value, lineTextLabel) ->
                     with(myLinesContainer.children()) {
                         add(lineTextLabel.rootGroup)
@@ -471,8 +471,10 @@ class TooltipBox: SvgComponent() {
 
             // calculate heights of original value lines
             val lineHeights = lines.map { line ->
-                listOfNotNull(estimateLineHeight(line.label), estimateLineHeight(line.value)).maxOrNull()
-                    ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
+                listOfNotNull(
+                    estimateLineHeight(line.label, TOOLTIP_LABEL),
+                    estimateLineHeight(line.value, textClassName)
+                ).maxOrNull() ?: DATA_TOOLTIP_FONT_SIZE.toDouble()
             }
 
             // sef vertical shifts for tspan elements
