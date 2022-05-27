@@ -40,7 +40,7 @@ internal class DefaultTooltipsTheme(
     }
 
     override fun titleTextFontFace(): FontFace {
-        return getFontFace(getElemValue(titleTextKey))
+        return getFontFace(getElemValue(titleTextKey)) + textFontFace()
     }
 
     override fun labelTextColor(): Color {
@@ -48,7 +48,7 @@ internal class DefaultTooltipsTheme(
     }
 
     override fun labelTextFontFace(): FontFace {
-        return FontFace.BOLD
+        return FontFace.BOLD + textFontFace()
     }
 
     override fun tooltipColor(): Color {

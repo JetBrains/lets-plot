@@ -9,6 +9,10 @@ class FontFace(
     val bold: Boolean = false,
     val italic: Boolean = false
 ) {
+    operator fun plus(other: FontFace): FontFace {
+        return FontFace(bold || other.bold, italic || other.italic)
+    }
+
     companion object {
         val NORMAL = FontFace()
         val BOLD = FontFace(bold = true)

@@ -59,7 +59,7 @@ internal class ThemeOptionTest {
 
     private fun checkElemProperty(theme: String, elemKey: List<String>, elemProperty: String) {
         val themeValues = ThemeValues.forName(theme)
-        val acccess = object : ThemeValuesAccess(themeValues.values) {
+        val access = object : ThemeValuesAccess(themeValues.values) {
             fun check() {
                 when (elemProperty) {
                     COLOR, FILL -> this.getColor(getElemValue(elemKey), elemProperty)
@@ -70,7 +70,7 @@ internal class ThemeOptionTest {
             }
         }
         try {
-            acccess.check()
+            access.check()
         } catch (e: Exception) {
             throw RuntimeException("'$elemProperty' failed. Theme: '$theme', elem: $elemKey", e)
         }
