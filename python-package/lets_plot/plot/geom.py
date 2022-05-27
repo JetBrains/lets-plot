@@ -20,7 +20,8 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_abline', 'geom_hline', 'geom_vline',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
            'geom_ribbon', 'geom_area', 'geom_density',
-           'geom_density2d', 'geom_density2df', 'geom_jitter', 'geom_qq',
+           'geom_density2d', 'geom_density2df', 'geom_jitter',
+           'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
            'geom_text']
 
@@ -4024,7 +4025,107 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
 
 
 def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+            distribution=None,
+            dparams=None,
             **other_args):
+    """
+    Display quantile-quantile plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='qq'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'qq' (compare two probability distributions),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
+        Distribution function to use.
+    dparams : list
+        Additional parameters (of float type) passed on to distribution function.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The Q-Q plot is used for comparing two probability distributions
+    (sample and theoretical) by plotting their quantiles against each other.
+
+    If the two distributions being compared are similar, the points in the Q-Q plot
+    will approximately lie on the line `sample=theoretical`.
+
+    Computed variables:
+
+    - ..theoretical.. : theoretical quantiles.
+    - ..sample.. : sample quantiles.
+
+    `geom_qq()` understands the following aesthetics mappings:
+
+    - sample : y-axis value.
+    - alpha : transparency level of a point. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - shape : shape of the point.
+    - size : size of the point.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        y = np.random.normal(0, 1, n)
+        ggplot({'y': y}, aes(sample='y')) + geom_qq()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        y = np.random.exponential(1, n)
+        ggplot({'y': y}, aes(sample='y')) + \\
+            geom_qq(distribution='exp')
+
+    """
     return _geom('qq',
                  mapping=mapping,
                  data=data,
@@ -4033,6 +4134,304 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 distribution=distribution,
+                 dparams=dparams,
+                 **other_args)
+
+
+def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, **other_args):
+    """
+    Display quantile-quantile plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='qq2'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'qq2' (compare two probability distributions),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The Q-Q plot is used for comparing two probability distributions
+    by plotting their quantiles against each other. A point (`x`, `y`)
+    on the plot corresponds to one of the quantiles of the first distribution
+    (`x`-coordinate) plotted against the same quantile of the second distribution
+    (`y`-coordinate).
+
+    If the two distributions being compared are similar, the points in the Q-Q plot
+    will approximately lie on the line `y=x`.
+
+    `geom_qq2()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a point. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - shape : shape of the point.
+    - size : size of the point.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 500
+        np.random.seed(42)
+        x = np.random.normal(0, 1, n)
+        y = np.random.normal(1, 2, n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_qq2()
+
+    """
+    return _geom('qq2',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 **other_args)
+
+
+def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                 distribution=None,
+                 dparams=None,
+                 quantiles=None,
+                 **other_args):
+    """
+    Display quantile-quantile plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='qq_line'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'qq_line' (compare two probability distributions),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
+        Distribution function to use.
+    dparams : list
+        Additional parameters (of float type) passed on to distribution function.
+    quantiles : list, default=[0.25, 0.75]
+        Pair of quantiles to use when fitting the Q-Q line.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The Q-Q line plot is used for comparing two probability distributions
+    (sample and theoretical) by plotting line passed through the pair of corresponding quantiles.
+
+    Computed variables:
+
+    - ..theoretical.. : theoretical quantiles.
+    - ..sample.. : sample quantiles.
+
+    `geom_qq_line()` understands the following aesthetics mappings:
+
+    - sample : y-axis value.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+    - size : line width.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        y = np.random.normal(0, 1, n)
+        ggplot({'y': y}, aes(sample='y')) + geom_qq() + geom_qq_line()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        y = np.random.exponential(1, n)
+        ggplot({'y': y}, aes(sample='y')) + \\
+            geom_qq(distribution='exp') + \\
+            geom_qq_line(distribution='exp', quantiles=[0, 1])
+
+    """
+    return _geom('qq_line',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 distribution=distribution,
+                 dparams=dparams,
+                 quantiles=quantiles,
+                 **other_args)
+
+
+def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  quantiles=None,
+                  **other_args):
+    """
+    Display quantile-quantile plot.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='qq2_line'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'qq2_line' (compare two probability distributions),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    quantiles : list, default=[0.25, 0.75]
+        Pair of quantiles to use when fitting the Q-Q line.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    The Q-Q line plot is used for comparing two probability distributions
+    by plotting line passed through the pair of corresponding quantiles.
+
+    `geom_qq2_line()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+    - size : line width.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 500
+        np.random.seed(42)
+        x = np.random.normal(0, 1, n)
+        y = np.random.normal(1, 2, n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_qq2() + geom_qq2_line()
+
+    """
+    return _geom('qq2_line',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 quantiles=quantiles,
                  **other_args)
 
 

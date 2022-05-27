@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -113,6 +114,7 @@ object DefaultMapperProvider {
             this.put(LOWER, NUMERIC_IDENTITY)
             this.put(MIDDLE, NUMERIC_IDENTITY)
             this.put(UPPER, NUMERIC_IDENTITY)
+            this.put(SAMPLE, NUMERIC_IDENTITY)
 
             this.put(MAP_ID, createObjectIdentity(MAP_ID))
             this.put(FRAME, createStringIdentity(FRAME))

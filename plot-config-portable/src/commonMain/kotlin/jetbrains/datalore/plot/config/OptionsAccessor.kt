@@ -70,10 +70,16 @@ open class OptionsAccessor(
         return list.map { it.toDouble() }
     }
 
+    fun getOrderedBoundedDoubleDistinctPair(option: String, lowerBound: Double, upperBound: Double): Pair<Double, Double> {
+        val pair = pickTwo(option, getBoundedDoubleList(option, lowerBound, upperBound))
+        check(pair.first < pair.second) { "Value ${pair.first} should be lower than ${pair.second}" }
+        return pair
+    }
+
     fun getBoundedDoubleList(option: String, lowerBound: Double, upperBound: Double): List<Double> {
         val list = getDoubleList(option)
         list.forEach {
-            check(it in lowerBound..upperBound) { "Quantile $it is not in range [$lowerBound, $upperBound]" }
+            check(it in lowerBound..upperBound) { "Value $it is not in range [$lowerBound, $upperBound]" }
         }
         return list
     }

@@ -19,6 +19,8 @@ object Stats {
     val DENSITY = DataFrame.Variable("..density..", STAT, "density")
     val Y_MIN = DataFrame.Variable("..ymin..", STAT, "y min")
     val Y_MAX = DataFrame.Variable("..ymax..", STAT, "y max")
+    val SAMPLE = DataFrame.Variable("..sample..", STAT, "sample")
+    val THEORETICAL = DataFrame.Variable("..theoretical..", STAT, "theoretical")
     val SE = DataFrame.Variable("..se..", STAT, "standard error")
     val LEVEL = DataFrame.Variable("..level..", STAT, "level")
 
@@ -43,6 +45,8 @@ object Stats {
             DENSITY,
             Y_MIN,
             Y_MAX,
+            SAMPLE,
+            THEORETICAL,
             SE,
             LEVEL,
             LOWER,
@@ -286,10 +290,35 @@ object Stats {
     }
 
     fun qq(
-        distribution: QQStat.Distribution,
-        distributionParameters: List<Double>
+        distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
+        distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS
     ): QQStat {
-        return QQStat(distribution, distributionParameters)
+        return QQStat(
+            distribution = distribution,
+            distributionParameters = distributionParameters
+        )
+    }
+
+    fun qq2(): QQ2Stat {
+        return QQ2Stat()
+    }
+
+    fun qqline(
+        distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
+        distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS,
+        lineQuantiles: Pair<Double, Double> = QQLineStat.DEF_LINE_QUANTILES
+    ): QQLineStat {
+        return QQLineStat(
+            distribution = distribution,
+            distributionParameters = distributionParameters,
+            lineQuantiles = lineQuantiles
+        )
+    }
+
+    fun qq2line(
+        lineQuantiles: Pair<Double, Double> = QQLineStat.DEF_LINE_QUANTILES
+    ): QQ2LineStat {
+        return QQ2LineStat(lineQuantiles = lineQuantiles)
     }
 
     private class IdentityStat internal constructor() : BaseStat(emptyMap()) {

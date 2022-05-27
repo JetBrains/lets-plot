@@ -115,6 +115,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 geom
             }
+
             GeomKind.Y_DOT_PLOT -> return GeomProvider.ydotplot {
                 val geom = YDotplotGeom()
                 if (opts.hasOwn(YDotplot.DOTSIZE)) {
@@ -253,6 +254,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
             PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
             PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
+            PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
+            PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()
+            PROVIDER[GeomKind.Q_Q_2_LINE] = GeomProvider.qq2line()
             PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
             // step - special case
             PROVIDER[GeomKind.RECT] = GeomProvider.rect()

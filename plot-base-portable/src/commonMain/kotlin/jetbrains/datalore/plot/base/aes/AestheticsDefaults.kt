@@ -217,6 +217,18 @@ open class AestheticsDefaults {
             return point()
         }
 
+        fun qq2(): AestheticsDefaults {
+            return point()
+        }
+
+        fun qq_line(): AestheticsDefaults {
+            return path()
+        }
+
+        fun qq2_line(): AestheticsDefaults {
+            return path()
+        }
+
         fun freqpoly(): AestheticsDefaults {
             return area()
         }

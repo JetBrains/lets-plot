@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
 import jetbrains.datalore.plot.config.Option.Stat.YDensity
 import jetbrains.datalore.plot.config.Option.Stat.QQ
+import jetbrains.datalore.plot.config.Option.Stat.QQLine
 
 object StatProto {
 
@@ -97,6 +98,12 @@ object StatProto {
             StatKind.DENSITY2DF -> return configureDensity2dStat(options, true)
 
             StatKind.QQ -> return configureQQStat(options)
+
+            StatKind.QQ2 -> return Stats.qq2()
+
+            StatKind.QQ_LINE -> return configureQQLineStat(options)
+
+            StatKind.QQ2_LINE -> return configureQQ2LineStat(options)
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
@@ -307,21 +314,34 @@ object StatProto {
 
     private fun configureQQStat(options: OptionsAccessor): QQStat {
         val distribution = options.getString(QQ.DISTRIBUTION)?.let {
-            when (it.lowercase()) {
-                "normal" -> QQStat.Distribution.NORMAL
-                "uniform" -> QQStat.Distribution.UNIFORM
-                "t" -> QQStat.Distribution.T
-                "gamma" -> QQStat.Distribution.GAMMA
-                "exp" -> QQStat.Distribution.EXP
-                "chi-squared" -> QQStat.Distribution.CHI_SQUARED
-                else -> throw IllegalArgumentException(
-                    "Unsupported distribution: '$it'\n" +
-                    "Use one of: normal, uniform, t, gamma, exp, chi-squared."
-                )
-            }
+            QQStat.Distribution.safeValueOf(it)
         }
         val distributionParameters = options.getDoubleList(QQ.DISTRIBUTION_PARAMETERS)
 
         return Stats.qq(distribution ?: QQStat.DEF_DISTRIBUTION, distributionParameters)
+    }
+
+    private fun configureQQLineStat(options: OptionsAccessor): QQLineStat {
+        val distribution = options.getString(QQLine.DISTRIBUTION)?.let {
+            QQStat.Distribution.safeValueOf(it)
+        }
+        val distributionParameters = options.getDoubleList(QQLine.DISTRIBUTION_PARAMETERS)
+        val lineQuantiles: Pair<Double, Double>? = options[QQLine.LINE_QUANTILES]?.let {
+            options.getOrderedBoundedDoubleDistinctPair(QQLine.LINE_QUANTILES, 0.0, 1.0)
+        }
+
+        return Stats.qqline(
+            distribution ?: QQStat.DEF_DISTRIBUTION,
+            distributionParameters,
+            lineQuantiles ?: QQLineStat.DEF_LINE_QUANTILES
+        )
+    }
+
+    private fun configureQQ2LineStat(options: OptionsAccessor): QQ2LineStat {
+        val lineQuantiles: Pair<Double, Double>? = options[QQLine.LINE_QUANTILES]?.let {
+            options.getOrderedBoundedDoubleDistinctPair(QQLine.LINE_QUANTILES, 0.0, 1.0)
+        }
+
+        return Stats.qq2line(lineQuantiles ?: QQLineStat.DEF_LINE_QUANTILES)
     }
 }
