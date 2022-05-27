@@ -5,46 +5,13 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-class DotplotStatTest {
-
-    private fun statContext(d: DataFrame): StatContext {
-        return SimpleStatContext(d)
-    }
-
-    private fun df(dataMap: Map<DataFrame.Variable, List<Double?>>): DataFrame {
-        val builder = DataFrame.Builder()
-        for (key in dataMap.keys) {
-            builder.putNumeric(key, dataMap.getValue(key))
-        }
-        return builder.build()
-    }
-
-    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable, expectedValues: List<Double?>) {
-        assertTrue(statDf.has(variable), "Has var " + variable.name)
-        assertEquals(expectedValues.size, statDf[variable].size, "Size var " + variable.name)
-        for (i in expectedValues.indices)
-            assertEquals(expectedValues[i], statDf[variable][i], "Get var " + variable.name)
-    }
-
+class DotplotStatTest : BaseStatTest() {
     @Test
     fun emptyDataFrame() {
-        val df = df(emptyMap())
-        val stat = Stats.dotplot()
-        val statDf = stat.apply(df, statContext(df))
-
-        for (aes in Aes.values()) {
-            if (stat.hasDefaultMapping(aes)) {
-                checkStatVar(statDf, stat.getDefaultMapping(aes), emptyList())
-            }
-        }
+        testEmptyDataFrame(Stats.dotplot())
     }
 
     @Test

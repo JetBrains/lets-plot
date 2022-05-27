@@ -39,7 +39,7 @@ class QQ2Stat : BaseStat(DEF_MAPPING) {
         val sortedX = xs.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
         val sortedY = ys.filter { it?.isFinite() ?: false }.map { it!! }.sorted()
 
-        return if (!sortedX.any() || !sortedX.any()) {
+        return if (!sortedX.any() || !sortedY.any()) {
             mutableMapOf(
                 Stats.X to emptyList(),
                 Stats.Y to emptyList()
