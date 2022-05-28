@@ -33,17 +33,16 @@ class FlipAxis {
  'kind': 'plot',
  $coordSpec
  'layers': [
-  {'geom': 'smooth' ${if (yOrientation) ", 'orientation': 'y'" else ""}
-   }],
+   {
+       'geom': 'point',
+       'color': 'black',
+       'alpha': 0.6,
+       'size': 5},
+   {'geom': 'smooth' ${if (yOrientation) ", 'orientation': 'y'" else ""}
+    }],
    'ggtitle': {'text': 'Flipped: $flip ${if(yOrientation) ", y-orientation" else ""}'}
  }
          """.trimIndent()
-
-//        {
-//            'geom': 'point',
-//            'color': 'black',
-//            'alpha': 0.6,
-//            'size': 5},
 
         val map = parsePlotSpec(spec)
         map["data"] = data

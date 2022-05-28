@@ -46,9 +46,6 @@ internal class PlotTile(
 
     val layerYOrientations: List<Boolean> = coreLayers.map { it.isYOrientation }
 
-    lateinit var geomDrawingBounds: DoubleRectangle  // the area between axes or x/y limits
-        private set
-
     init {
         moveTo(tileLayoutInfo.getAbsoluteBounds(tilesOrigin).origin)
     }
@@ -77,13 +74,11 @@ internal class PlotTile(
 
             liveMapFigure = liveMapData.canvasFigure
             _targetLocators.add(liveMapData.targetLocator)
-            geomDrawingBounds = DoubleRectangle(ZERO, geomInnerBounds.dimension)
         } else {
             // Normal plot tiles
 
             frameOfReference.drawBeforeGeomLayer(this)
 
-            geomDrawingBounds = DoubleRectangle(ZERO, geomInnerBounds.dimension)
             for (layer in coreLayers) {
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
@@ -94,7 +89,7 @@ internal class PlotTile(
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
                 layerComponent.moveTo(geomInnerBounds.origin)
-                layerComponent.clipBounds(geomDrawingBounds)
+                layerComponent.clipBounds(DoubleRectangle(ZERO, geomInnerBounds.dimension))
                 add(layerComponent)
             }
 
