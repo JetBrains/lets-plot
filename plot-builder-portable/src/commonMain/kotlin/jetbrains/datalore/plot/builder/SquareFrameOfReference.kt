@@ -198,7 +198,7 @@ internal class SquareFrameOfReference(
             )
         )
 
-        return buildGeom(
+        val layerComponent = buildGeom(
             layer,
             geomMapperX, geomMapperY,
             xyAesBounds = aesBounds,
@@ -206,6 +206,11 @@ internal class SquareFrameOfReference(
             flipAxis,
             targetCollector
         )
+
+        val geomBounds = layoutInfo.geomInnerBounds
+        layerComponent.moveTo(geomBounds.origin)
+        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
+        return layerComponent
     }
 
 

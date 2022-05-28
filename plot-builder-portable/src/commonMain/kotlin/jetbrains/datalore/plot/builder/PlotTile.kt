@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
@@ -65,8 +64,6 @@ internal class PlotTile(
 
         // render geoms
 
-        val geomInnerBounds = tileLayoutInfo.geomInnerBounds
-
         val liveMapGeomLayer = coreLayers.firstOrNull { it.isLiveMap }
         if (liveMapGeomLayer != null) {
             val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
@@ -88,8 +85,6 @@ internal class PlotTile(
                 _targetLocators.add(collectorWithLocator)
 
                 val layerComponent = frameOfReference.buildGeomComponent(layer, collectorWithLocator)
-                layerComponent.moveTo(geomInnerBounds.origin)
-                layerComponent.clipBounds(DoubleRectangle(ZERO, geomInnerBounds.dimension))
                 add(layerComponent)
             }
 
