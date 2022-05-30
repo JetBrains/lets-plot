@@ -30,7 +30,6 @@ object DemoModelA {
 
         var text = SvgTextElement(30.0, 85.0, "Slim elements")
         SvgUtils.transformRotate(text, -45.0, 20.0, 100.0)
-        text.addClass("TEXT2")
         svgRoot.children().add(createElementGroup(text, className = "TEXT1"))
 
         svgRoot.children().add(createHLineGroup())
