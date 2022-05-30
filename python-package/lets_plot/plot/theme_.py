@@ -394,7 +394,7 @@ def element_text(
     color : str
         Text color.
     face : str
-        Font face ("plain", "italic", "bold", "bold.italic").
+        Font face ("plain", "italic", "bold", "bold_italic").
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 

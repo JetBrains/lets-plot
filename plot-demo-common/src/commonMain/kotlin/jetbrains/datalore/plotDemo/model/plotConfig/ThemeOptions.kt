@@ -58,7 +58,7 @@ class ThemeOptions {
         }
         val theme = "'theme': { " +
                 text("title", color = "#2a14a8") +
-                "," + text("plot_title", face = "bold.italic") +
+                "," + text("plot_title", face = "bold_italic") +
                 "," + text("plot_caption", face = "italic") +
                 "," + text("tooltip_text", color = "#b3deff", face = "italic") +
                 "," + rect("tooltip", color = "#2a14a8", fill = "#004d99", size = 2.0) +

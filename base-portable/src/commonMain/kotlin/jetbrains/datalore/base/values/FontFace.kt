@@ -23,7 +23,7 @@ class FontFace(
             return when (str) {
                 "bold" -> BOLD
                 "italic" -> ITALIC
-                "bold.italic" -> BOLD_ITALIC
+                "bold_italic" -> BOLD_ITALIC
                 else -> NORMAL
             }
         }
