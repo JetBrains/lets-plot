@@ -223,10 +223,12 @@ open class AestheticsDefaults {
 
         fun qq_line(): AestheticsDefaults {
             return path()
+                .update(Aes.COLOR, Color.BLACK)
         }
 
         fun qq2_line(): AestheticsDefaults {
             return path()
+                .update(Aes.COLOR, Color.BLACK)
         }
 
         fun freqpoly(): AestheticsDefaults {
