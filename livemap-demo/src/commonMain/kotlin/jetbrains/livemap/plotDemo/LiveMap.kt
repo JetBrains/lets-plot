@@ -14,9 +14,9 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            titanic().updateTiles(Tileset.devVector)
-//            airports().updateTiles(Tileset.devVector),
-//            volcanos().updateTiles(Tileset.devVector),
+            titanic()
+//            airports(),
+//            volcanos(),
 //            georeference(),
 //            blankPoint(),
 //            blankMap(),
