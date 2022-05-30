@@ -4063,6 +4063,12 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         Distribution function to use.
     dparams : list
         Additional parameters (of float type) passed on to distribution function.
+        If `distribution` is `'norm'` then `dparams` is a pair [mean, std] (=[0.0, 1.0] by default).
+        If `distribution` is `'uniform'` then `dparams` is a pair [a, b] (=[0.0, 1.0] by default).
+        If `distribution` is `'t'` then `dparams` is an integer number [d] (=[1] by default).
+        If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
+        If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
+        If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4270,6 +4276,12 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         Distribution function to use.
     dparams : list
         Additional parameters (of float type) passed on to distribution function.
+        If `distribution` is `'norm'` then `dparams` is a pair [mean, std] (=[0.0, 1.0] by default).
+        If `distribution` is `'uniform'` then `dparams` is a pair [a, b] (=[0.0, 1.0] by default).
+        If `distribution` is `'t'` then `dparams` is an integer number [d] (=[1] by default).
+        If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
+        If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
+        If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
     other_args
