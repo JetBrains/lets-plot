@@ -15,7 +15,6 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 object DemoModelB {
     fun createModel(): SvgSvgElement {
         val svgRoot = SvgSvgElement(400.0, 200.0)
-        svgRoot.setStyle(CssRes())
 
         val ellipse = SvgEllipseElement(200.0, 80.0, 170.0, 50.0)
 
@@ -23,10 +22,15 @@ object DemoModelB {
         // is later defined via element's attribute
         // because there is no separate `stroke-opacity` attribute.
         // So the color will be just reset to black by SVG -> Scene mapper.
-        ellipse.getAttribute("style").set("stroke:#006600;")
-        ellipse.addClass("ellipse-yellow")
+        // ellipse.getAttribute("style").set("stroke:#006600;")
+        // ellipse.addClass("ellipse-yellow")
 
         // This will reset stroke color to black with JavaFX Scene mapper.
+        // ellipse.strokeOpacity().set(0.6)
+
+        ellipse.fillColor().set(Color.YELLOW)
+        ellipse.strokeColor().set(Color.parseHex("#006600"))
+        ellipse.strokeWidth().set(2.0)
         ellipse.strokeOpacity().set(0.6)
 
         val text = SvgTextElement(20.0, 20.0, "Example Text")

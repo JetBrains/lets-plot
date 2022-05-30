@@ -38,6 +38,14 @@ class StyleSheet(
         return css.toString()
     }
 
+    fun toCSS(): String {
+        val css = StringBuilder()
+        getClasses().forEach { className ->
+            css.append(toCSS(className, id = null))
+        }
+        return css.toString()
+    }
+
     companion object {
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
