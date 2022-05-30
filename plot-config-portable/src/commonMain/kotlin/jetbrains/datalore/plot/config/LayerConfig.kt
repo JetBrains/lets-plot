@@ -123,7 +123,7 @@ class LayerConfig(
             else -> throw IllegalArgumentException("${Marginal.SIDE} expected l|r|t|b but was '$side'")
         }
     } else {
-        GeomLayerMargin.NONE
+        GeomLayerMargin.LEFT
     }
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 

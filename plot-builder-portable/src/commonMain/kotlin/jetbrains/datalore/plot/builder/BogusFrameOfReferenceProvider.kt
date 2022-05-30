@@ -23,7 +23,7 @@ internal class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
         layoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         debugDrawing: Boolean
-    ): TileFrameOfReference {
+    ): FrameOfReference {
         return BogusFrameOfReference()
     }
 }

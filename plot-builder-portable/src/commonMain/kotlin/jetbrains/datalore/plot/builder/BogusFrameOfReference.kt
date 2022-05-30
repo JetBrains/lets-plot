@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 
-internal class BogusFrameOfReference : TileFrameOfReference {
+internal class BogusFrameOfReference : FrameOfReference {
 
     override fun drawBeforeGeomLayer(parent: SvgComponent) {
         throw IllegalStateException("Bogus frame of reference is not supposed to be used.")

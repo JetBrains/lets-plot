@@ -70,7 +70,7 @@ internal class SquareFrameOfReferenceProvider(
         layoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         debugDrawing: Boolean
-    ): TileFrameOfReference {
+    ): FrameOfReference {
         val hAxisLayoutInfo = layoutInfo.hAxisInfo!!
         val vAxisLayoutInfo = layoutInfo.vAxisInfo!!
 

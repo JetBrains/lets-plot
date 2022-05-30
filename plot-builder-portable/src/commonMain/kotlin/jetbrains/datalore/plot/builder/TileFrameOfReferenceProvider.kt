@@ -21,5 +21,5 @@ interface TileFrameOfReferenceProvider {
         layoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         debugDrawing: Boolean = false
-    ): TileFrameOfReference
+    ): FrameOfReference
 }

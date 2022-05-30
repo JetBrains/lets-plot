@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-enum class Orientation(private val myValue: String) {
+enum class Orientation(private val id: String) {
     LEFT("LEFT"),
     RIGHT("RIGHT"),
     TOP("TOP"),
@@ -15,8 +15,6 @@ enum class Orientation(private val myValue: String) {
         get() = this == TOP || this == BOTTOM
 
     override fun toString(): String {
-        return "Orientation{" +
-                "myValue='" + myValue + '\''.toString() +
-                '}'.toString()
+        return "Orientation $id"
     }
 }

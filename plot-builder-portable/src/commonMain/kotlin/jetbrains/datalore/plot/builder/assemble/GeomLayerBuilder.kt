@@ -53,7 +53,7 @@ class GeomLayerBuilder constructor(
     private var isYOrientation: Boolean = false
 
     private var isMarginal: Boolean = false
-    private var marginalSide: GeomLayerMargin = GeomLayerMargin.NONE
+    private var marginalSide: GeomLayerMargin = GeomLayerMargin.LEFT
     private var marginalSize: Double = Double.NaN
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {

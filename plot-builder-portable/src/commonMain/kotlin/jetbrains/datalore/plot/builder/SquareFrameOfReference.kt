@@ -36,7 +36,7 @@ internal class SquareFrameOfReference(
     private val layoutInfo: TileLayoutInfo,
     private val theme: Theme,
     private val flipAxis: Boolean,
-) : TileFrameOfReference {
+) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
 

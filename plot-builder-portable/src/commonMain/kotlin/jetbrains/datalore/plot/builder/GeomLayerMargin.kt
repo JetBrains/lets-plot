@@ -5,10 +5,13 @@
 
 package jetbrains.datalore.plot.builder
 
-enum class GeomLayerMargin(id:String) {
+enum class GeomLayerMargin(private val id: String) {
     LEFT("LEFT"),
     RIGHT("RIGHT"),
     TOP("TOP"),
-    BOTTOM("BOTTOM"),
-    NONE("NONE");
+    BOTTOM("BOTTOM");
+
+    override fun toString(): String {
+        return "GeomLayerMargin $id"
+    }
 }

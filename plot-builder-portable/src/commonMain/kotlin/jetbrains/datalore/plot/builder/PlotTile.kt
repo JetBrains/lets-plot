@@ -32,7 +32,7 @@ internal class PlotTile(
     private val tilesOrigin: DoubleVector,
     private val tileLayoutInfo: TileLayoutInfo,
     private val theme: Theme,
-    private val frameOfReference: TileFrameOfReference,
+    private val frameOfReference: FrameOfReference,
 ) : SvgComponent() {
 
     private val _targetLocators = ArrayList<GeomTargetLocator>()

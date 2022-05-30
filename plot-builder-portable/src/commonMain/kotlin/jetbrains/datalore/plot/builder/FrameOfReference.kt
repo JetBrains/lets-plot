@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 
-interface TileFrameOfReference {
+interface FrameOfReference {
     fun drawBeforeGeomLayer(parent: SvgComponent)
 
     fun drawAfterGeomLayer(parent: SvgComponent)
