@@ -60,8 +60,13 @@ class ThemeOptions {
                 text("title", color = "#2a14a8") +
                 "," + text("plot_title", face = "bold_italic") +
                 "," + text("plot_caption", face = "italic") +
+                "," + text("legend_title", face = "bold_italic") +
                 "," + text("tooltip_text", color = "#b3deff", face = "italic") +
                 "," + rect("tooltip", color = "#2a14a8", fill = "#004d99", size = 2.0) +
+                "," + text("axis_title", color = "#9b2d30", face = "bold") +
+                "," + text("axis_text", color = "pink", face = "italic") +
+                "," + rect("axis_tooltip_x", color = "pink", fill = "#6c4675", size = 2.0) +
+                "," + text("axis_tooltip_text_x", color = "pink") +
                 "}"
 
         return plot(
