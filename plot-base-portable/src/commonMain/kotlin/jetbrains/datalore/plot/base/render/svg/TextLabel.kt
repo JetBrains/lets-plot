@@ -30,6 +30,10 @@ class TextLabel(text: String) : SvgComponent() {
 
     }
 
+    override fun addClassName(className: String) {
+        myText.addClass(className)
+    }
+
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {

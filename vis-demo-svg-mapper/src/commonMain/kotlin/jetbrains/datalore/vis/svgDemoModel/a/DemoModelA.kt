@@ -29,15 +29,17 @@ object DemoModelA {
         svgRoot.children().add(createStyleElement(textStyles))
 
         var text = SvgTextElement(30.0, 85.0, "Slim elements")
+        text.addClass("TEXT1")
         SvgUtils.transformRotate(text, -45.0, 20.0, 100.0)
-        svgRoot.children().add(createElementGroup(text, className = "TEXT1"))
+        svgRoot.children().add(text)
 
         svgRoot.children().add(createHLineGroup())
 
         text = SvgTextElement(20.0, 225.0, "Svg elements")
+        text.addClass("TEXT2")
         text.stroke().set(SvgColors.CORAL)
         text.strokeWidth().set(1.0)
-        svgRoot.children().add(createElementGroup(text, className = "TEXT2"))
+        svgRoot.children().add(text)
 
         val circle = SvgCircleElement(300.0, 260.0, 50.0)
         circle.fillColor().set(Color.LIGHT_PINK)
@@ -81,13 +83,6 @@ object DemoModelA {
                 return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF.toString(), defaultSize = 15.0).toCSS()
             }
         })
-    }
-
-    private fun createElementGroup(element: SvgNode, className: String): SvgGElement {
-        val g = SvgGElement()
-        g.addClass(className)
-        g.children().add(element)
-        return g
     }
 
     private fun createSlimGroup(): SvgNode {

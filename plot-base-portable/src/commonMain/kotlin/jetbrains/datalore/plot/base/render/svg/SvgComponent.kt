@@ -146,7 +146,7 @@ abstract class SvgComponent {
         rootGroup.setAttribute(CLIP_BOUNDS_JFX, rect) // JFX workaround
     }
 
-    fun addClassName(className: String) {
+    open fun addClassName(className: String) {
         myRootGroup.addClass(className)
     }
 

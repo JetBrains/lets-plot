@@ -30,7 +30,7 @@ class StyleSheet(
     fun toCSS(className: String, id: String?): String {
         val css = StringBuilder()
         css.append("""
-            |${id?.let { "#$id " } ?: ""}.$className text {
+            |${id?.let { "#$id " } ?: ""}.$className {
             |${getTextStyle(className).toCSS()}
             |}
             |""".trimMargin()
@@ -68,7 +68,7 @@ class StyleSheet(
         //      property: value;
         //      ....
         // }
-        private const val CSS_REGEX = """\.([\w\-]+)\s+text\s+\{([^\{\}]*)\}"""
+        private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^\{\}]*)\}"""
 
         fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
