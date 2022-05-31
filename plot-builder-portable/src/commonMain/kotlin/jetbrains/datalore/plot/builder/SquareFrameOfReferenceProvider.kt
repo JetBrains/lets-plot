@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -22,7 +24,8 @@ internal class SquareFrameOfReferenceProvider(
     hDomain: DoubleSpan,
     vDomain: DoubleSpan,
     override val flipAxis: Boolean,
-    private val theme: Theme
+    private val theme: Theme,
+    private val marginsLayout: GeomMarginsLayout,
 ) : TileFrameOfReferenceProvider {
 
     private val hAxisSpec: AxisSpec
@@ -63,7 +66,7 @@ internal class SquareFrameOfReferenceProvider(
         val hDomain = hAxisSpec.domainTransformed
         val vDomain = vAxisSpec.domainTransformed
 
-        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, hDomain, vDomain)
+        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
     }
 
     override fun createFrameOfReference(
@@ -107,11 +110,39 @@ internal class SquareFrameOfReferenceProvider(
             hScaleMapper, vScaleMapper,
             coord,
             layoutInfo,
+            marginsLayout,
             theme,
             flipAxis,
         )
         tileFrameOfReference.isDebugDrawing = debugDrawing
         return tileFrameOfReference
+    }
+
+    override fun createMarginalFrames(tileLayoutInfo: TileLayoutInfo): Map<MarginSide, FrameOfReference> {
+        val inner = tileLayoutInfo.geomInnerBounds
+        val outer = tileLayoutInfo.geomOuterBounds
+
+        val origins = mapOf(
+            MarginSide.LEFT to DoubleVector(outer.left, inner.top),
+            MarginSide.TOP to DoubleVector(inner.left, outer.top),
+            MarginSide.RIGHT to DoubleVector(inner.right, inner.top),
+            MarginSide.BOTTOM to DoubleVector(inner.left, inner.bottom),
+        )
+
+        val sizes = mapOf(
+            MarginSide.LEFT to DoubleVector(inner.left - outer.left, inner.height),
+            MarginSide.TOP to DoubleVector(inner.width, inner.top - outer.top),
+            MarginSide.RIGHT to DoubleVector(outer.right - inner.right, inner.height),
+            MarginSide.BOTTOM to DoubleVector(inner.width, outer.bottom - inner.bottom),
+        )
+
+        val boundsByMargin = origins.mapValues { (margin, origin) ->
+            DoubleRectangle(origin, sizes.getValue(margin))
+        }
+
+        return boundsByMargin.mapValues { (_, bounds) ->
+            MarginFrameOfReference(bounds)
+        }
     }
 
 
@@ -127,13 +158,14 @@ internal class SquareFrameOfReferenceProvider(
         private val vAxisLayout: AxisLayout,
         private val hDomain: DoubleSpan, // transformed data ranges.
         private val vDomain: DoubleSpan,
+        private val marginsLayout: GeomMarginsLayout,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
-            return TopDownTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain)
+            return TopDownTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
         }
 
         override fun createInsideOutTileLayout(): TileLayout {
-            return InsideOutTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain)
+            return InsideOutTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
         }
     }
 }

@@ -9,8 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.FeatureSwitch
-import jetbrains.datalore.plot.FeatureSwitch.MARGINAL_LAYERS
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -20,6 +18,7 @@ import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
+import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
@@ -34,6 +33,7 @@ internal class SquareFrameOfReference(
     private val vScaleMapper: ScaleMapper<Double>,
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
+    private val marginsLayout: GeomMarginsLayout,
     private val theme: Theme,
     private val flipAxis: Boolean,
 ) : FrameOfReference {
@@ -113,11 +113,8 @@ internal class SquareFrameOfReference(
                 isDebugDrawing
             )
 
-            val offset = when {
-                MARGINAL_LAYERS -> FeatureSwitch.toAxisOrigin(geomBounds, Orientation.BOTTOM)
-                else -> DoubleVector(geomBounds.left, geomBounds.bottom)
-            }
-            hAxis.moveTo(offset)
+            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.BOTTOM)
+            hAxis.moveTo(axisOrigin)
             parent.add(hAxis)
         }
 
@@ -140,11 +137,8 @@ internal class SquareFrameOfReference(
                 isDebugDrawing
             )
 
-            val offset = when {
-                MARGINAL_LAYERS -> FeatureSwitch.toAxisOrigin(geomBounds, Orientation.LEFT)
-                else -> geomBounds.origin
-            }
-            vAxis.moveTo(offset)
+            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.LEFT)
+            vAxis.moveTo(axisOrigin)
             parent.add(vAxis)
         }
 

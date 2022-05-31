@@ -26,4 +26,8 @@ internal class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
     ): FrameOfReference {
         return BogusFrameOfReference()
     }
+
+    override fun createMarginalFrames(tileLayoutInfo: TileLayoutInfo): Map<MarginSide, FrameOfReference> {
+        return emptyMap()
+    }
 }

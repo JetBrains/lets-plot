@@ -8,10 +8,9 @@ package jetbrains.datalore.plot.builder.layout.tile
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.plot.FeatureSwitch
-import jetbrains.datalore.plot.FeatureSwitch.MARGINAL_LAYERS
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import kotlin.math.max
 
 internal object TileLayoutUtil {
@@ -43,30 +42,36 @@ internal object TileLayoutUtil {
         )
     }
 
-    // ToDo: this is the entire tile plotting area - rename
-    fun geomBounds(
+    fun geomOuterBounds(
         hAxisThickness: Double,
         vAxisThickness: Double,
         plotSize: DoubleVector,
         hDomain: DoubleSpan,
         vDomain: DoubleSpan,
+        marginsLayout: GeomMarginsLayout,
         coordProvider: CoordProvider
     ): DoubleRectangle {
         val plottingArea = subtractMargins(hAxisThickness, vAxisThickness, plotSize)
 
-        val geomSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).let {
-            when {
-                MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it.dimension)
-                else -> it.dimension
-            }
+//        val geomInnerSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).let {
+//            when {
+//                MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it.dimension)
+//                else -> it.dimension
+//            }
+//        }
+
+        val geomInnerSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).dimension.let {
+            marginsLayout.toInnerSize(it)
         }
-        val geomSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomSize).let {
-            when {
-                MARGINAL_LAYERS -> FeatureSwitch.addMarginalLayers(it)
-                else -> it
-            }
+
+        val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomInnerSize).let {
+//            when {
+//                MARGINAL_LAYERS -> FeatureSwitch.addMarginalLayers(it)
+//                else -> it
+//            }
+            marginsLayout.toOuterSize(it)
         }
-        return DoubleRectangle(plottingArea.origin, geomSizeAdjusted)
+        return DoubleRectangle(plottingArea.origin, geomOuterSizeAdjusted)
     }
 
     fun maxHAxisTickLabelsBounds(

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
@@ -94,6 +95,8 @@ class PlotAssembler private constructor(
                 else -> scaleXProto to scaleYProto
             }
 
+            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayersByTile[0])
+
             // Create frame of reference provider for each tile.
             val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider> =
                 domainsXYByTile.map { (xDomain, yDomain) ->
@@ -105,7 +108,8 @@ class PlotAssembler private constructor(
                         hScaleProto, vScaleProto,
                         hDomain, vDomain,
                         flipAxis,
-                        theme
+                        theme,
+                        marginsLayout,
                     )
                 }
 

@@ -22,4 +22,6 @@ interface TileFrameOfReferenceProvider {
         coordProvider: CoordProvider,
         debugDrawing: Boolean = false
     ): FrameOfReference
+
+    fun createMarginalFrames(tileLayoutInfo: TileLayoutInfo): Map<MarginSide, FrameOfReference>
 }

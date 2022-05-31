@@ -254,16 +254,22 @@ class PlotSvgComponent constructor(
             val tileIndex = tileLayoutInfo.trueIndex
 
             // Create a plot tile.
-            val frameOfReference = frameOfReferenceProviderByTile[tileIndex].createFrameOfReference(
+            val tileFrameOfReferenceProvider = frameOfReferenceProviderByTile[tileIndex]
+            val frameOfReference = tileFrameOfReferenceProvider.createFrameOfReference(
                 tileLayoutInfo,
                 coordProvider,
                 DEBUG_DRAWING
             )
 
+            val marginalFrameByMargin: Map<MarginSide, FrameOfReference> = tileFrameOfReferenceProvider
+                .createMarginalFrames(tileLayoutInfo)
+
             val tile = PlotTile(
                 coreLayers = coreLayersByTile[tileIndex],
                 marginalLayers = marginalLayersByTile[tileIndex],
-                tilesOrigin, tileLayoutInfo, theme, frameOfReference
+                tilesOrigin, tileLayoutInfo, theme,
+                frameOfReference,
+                marginalFrameByMargin
             )
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.offset)
@@ -275,13 +281,19 @@ class PlotSvgComponent constructor(
                 liveMapFigures = liveMapFigures + listOf(this)
             }
 
-            val geomBounds = tileLayoutInfo.geomInnerBounds
-            val geomBoundsAbsolute = geomBounds.add(plotOriginAbsolute)
+// ToDo: axis tooltip shoult uppear on 'outer' bounds.
+//            val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
+            val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
-                placementArea = geomBoundsAbsolute,
-                handlingArea = DoubleRectangle(geomBoundsAbsolute.origin, geomBounds.dimension)
+                placementArea = geomInnerBoundsAbsolute,
+                handlingArea = geomInnerBoundsAbsolute
             )
-            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators, tile.layerYOrientations)
+            interactor?.onTileAdded(
+                geomInnerBoundsAbsolute,
+                tooltipBounds,
+                tile.targetLocators,
+                tile.layerYOrientations
+            )
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
