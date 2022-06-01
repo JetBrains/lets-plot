@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JU
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
@@ -61,6 +62,8 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             PLOT_CAPTION to mapOf(
                 Elem.FONT_FACE to FontFace.NORMAL,
             ),
+
+            PANEL_BORDER_RECT to ThemeOption.ELEMENT_BLANK,
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.FILL to Color.WHITE,

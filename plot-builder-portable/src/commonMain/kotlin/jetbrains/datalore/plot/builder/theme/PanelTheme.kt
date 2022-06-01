@@ -16,6 +16,10 @@ interface PanelTheme {
     fun rectFill(): Color
     fun rectStrokeWidth(): Double
 
+    fun showBorder(): Boolean
+    fun borderColor(): Color
+    fun borderWidth(): Double
+
     fun gridX(flipAxis: Boolean = false): PanelGridTheme
     fun gridY(flipAxis: Boolean = false): PanelGridTheme
 }

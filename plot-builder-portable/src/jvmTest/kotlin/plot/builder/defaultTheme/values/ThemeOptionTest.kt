@@ -122,6 +122,7 @@ internal class ThemeOptionTest {
             }
 
             ThemeOption.PANEL_BKGR_RECT -> (theme.panel() as DefaultPanelTheme).rectKey
+            ThemeOption.PANEL_BORDER_RECT -> (theme.panel() as DefaultPanelTheme).borderKey
             ThemeOption.PANEL_GRID_MAJOR_X -> (theme.panel().gridX() as DefaultPanelGridTheme).majorLineKey
             ThemeOption.PANEL_GRID_MINOR_X -> (theme.panel().gridX() as DefaultPanelGridTheme).minorLineKey
             ThemeOption.PANEL_GRID_MAJOR_Y -> (theme.panel().gridY() as DefaultPanelGridTheme).majorLineKey

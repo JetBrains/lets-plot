@@ -41,7 +41,8 @@ def theme(*,
           # ToDo: other legend options...
 
           panel_background=None,
-          # ToDo: panel.border, etc...
+          panel_border=None,
+          # ToDo: other panel options...
 
           panel_grid=None,
           panel_grid_major=None,
@@ -143,6 +144,10 @@ def theme(*,
         Background of plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify plotting area background parameters, inherited from `rect`.
+    panel_border : str or dict
+        Border around plotting area
+        Set 'blank' or result of `element_blank()` to draw nothing.
+        Set `element_rect()` to specify border parameters, inherited from `rect`.
     panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
         Grid lines. Specify major grid lines or minor grid lines separately if needed.
         Set 'blank' or result of `element_blank()` to draw nothing.
