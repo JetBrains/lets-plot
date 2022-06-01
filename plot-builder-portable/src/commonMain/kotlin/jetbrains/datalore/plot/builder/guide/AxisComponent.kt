@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpecs
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
@@ -297,7 +297,7 @@ class AxisComponent(
         fun beforeAddLabel(loc: Double, rotationDegree: Double): Boolean {
             if (!isRelevant(rotationDegree)) return true
 
-            val len = PlotLabelSpec.AXIS_TICK.height()
+            val len = PlotLabelSpecs.get(Style.AXIS_TEXT).height()
 
             // find overlap
             if (filledRanges.any { it.contains(loc) || it.contains(loc + len) }) {

@@ -10,7 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpecs
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
@@ -60,7 +61,7 @@ internal object PlotLayoutUtil {
         }
     }
 
-    private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)
+    private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpecs.get(Style.AXIS_TITLE))
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
@@ -148,15 +149,15 @@ internal object PlotLayoutUtil {
         val titleDelta = titleSizeDelta(titleLines, subtitleLines)
         val axisTitlesDelta = axisTitleSizeDelta(axisTitleLeft, axisTitleBottom, axisEnabled)
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION).y)
+        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpecs.get(Style.PLOT_CAPTION)).y)
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
     fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
-                    titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
+            titleDimensions(titleLines, PlotLabelSpecs.get(Style.PLOT_TITLE)).y +
+                    titleDimensions(subtitleLines, PlotLabelSpecs.get(Style.PLOT_SUBTITLE)).y
         )
     }
 

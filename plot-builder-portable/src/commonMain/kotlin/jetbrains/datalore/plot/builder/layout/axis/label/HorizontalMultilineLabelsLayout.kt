@@ -11,13 +11,13 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class HorizontalMultilineLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: PlotLabelSpec,
+    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme,
     private val myMaxLines: Int

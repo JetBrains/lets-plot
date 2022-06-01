@@ -9,7 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.textDimensions
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpecs
+import jetbrains.datalore.plot.builder.presentation.Style
 
 abstract class LegendBoxLayout(
     private val title: String,
@@ -56,8 +57,8 @@ abstract class LegendBoxLayout(
         }
 
     companion object {
-        private val TITLE_SPEC = PlotLabelSpec.LEGEND_TITLE
-        internal val LABEL_SPEC = PlotLabelSpec.LEGEND_ITEM
+        private val TITLE_SPEC = PlotLabelSpecs.get(Style.LEGEND_TITLE)
+        internal val LABEL_SPEC = PlotLabelSpecs.get(Style.LEGEND_ITEM)
 
         private fun titleSize(s: String): DoubleVector {
             return when {
