@@ -179,19 +179,19 @@ def theme(*,
         Set `element_rect()` to specify axes tooltip parameters.
         `axis_tooltip_*` inherits from `axis_tooltip` which inherits from `rect`.
     axis_tooltip_text, axis_tooltip_text_x, axis_tooltip_text_y : str or dict
-        Axes tooltips.
+        Text in axes tooltips.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
-        Set `element_text()` to specify axes tooltip parameters.
+        Set `element_text()` to specify axes text tooltip parameters.
         `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
     tooltip : str or dict
         General tooltip.
-        Set `element_rect()` to specify tooltip parameters. Inherits from `rect`.
+        Set `element_rect()` to specify tooltip rectangular parameters. Inherits from `rect`.
     tooltip_text : str or dict
-        Tooltip text.
-        Set `element_text()` to specify tooltip parameters.
+        Text in general tooltip.
+        Set `element_text()` to specify tooltip text parameters.
     tooltip_title_text: str or dict
         Tooltip title text.
-        Set `element_text()` to specify tooltip parameters. Inherits from `tooltip_text`. Bold by default.
+        Set `element_text()` to specify tooltip title parameters. Inherits from `tooltip_text`. Bold by default.
     Returns
     -------
     `FeatureSpec`
