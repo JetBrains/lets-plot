@@ -389,7 +389,7 @@ class LayoutManager(
                 measuredTooltip.hintKind == Y_AXIS_TOOLTIP && !canFitLeft -> {
                     // move axis tooltip to the border if it doesn't fit
                     tooltipX = 0.0
-                    stemX = targetCoordX
+                    stemX = targetCoordX - hintSize
                 }
                 !(canFitLeft || canFitRight) -> {
                     when (myPreferredHorizontalAlignment) {
