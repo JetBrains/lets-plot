@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.builder.theme
 import jetbrains.datalore.base.values.Color
 
 interface TooltipsTheme {
-    fun textColor(): Color
-    fun titleTextColor(): Color
-
     fun tooltipColor(): Color
     fun tooltipFill(): Color
     fun tooltipStrokeWidth(): Double
+
+    fun textColor(): Color
+    fun titleTextColor(): Color
 }
