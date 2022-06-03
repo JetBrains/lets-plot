@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgUtils
@@ -43,38 +44,40 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         }
     }
 
-    // todo later should be moved to LabelMetrics.kt
-    fun PlotLabelSpec.width(text: String): Double {
+    private fun PlotLabelSpec.width(text: String): Double {
         return text.map(LetterCategory.Companion::getLetterRatio).sum() * fontSize
     }
 
     ////////
 
     fun createModels(): List<GroupComponent> {
+   //     PlotLabelSpec.initWithStyleSheet(Style.default())
+
         fun titles(charRange: CharRange): List<String> =
             charRange.map { letter -> List(15) { letter }.joinToString("") }
 
         return listOf(
-            createModel(PlotLabelSpec.PLOT_TITLE, titles('A'..'Z')),
-            createModel(PlotLabelSpec.PLOT_TITLE, titles('a'..'z')),
-            createModel(PlotLabelSpec.PLOT_TITLE, titles('!'..'9')),
+            createModel(Style.PLOT_TITLE, titles('A'..'Z')),
+            createModel(Style.PLOT_TITLE, titles('a'..'z')),
+            createModel(Style.PLOT_TITLE, titles('!'..'9')),
 
-            createModel(PlotLabelSpec.AXIS_TITLE, titles('A'..'Z')),
-            createModel(PlotLabelSpec.AXIS_TITLE, titles('a'..'z')),
-            createModel(PlotLabelSpec.AXIS_TITLE, titles('!'..'9')),
+            createModel(Style.AXIS_TITLE, titles('A'..'Z')),
+            createModel(Style.AXIS_TITLE, titles('a'..'z')),
+            createModel(Style.AXIS_TITLE, titles('!'..'9')),
         )
     }
 
-    private fun createModel(plotLabelSpec: PlotLabelSpec, titles: List<String>): GroupComponent {
+    private fun createModel(className: String, titles: List<String>): GroupComponent {
         val groupComponent = GroupComponent()
 
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = TextLabel(labelSpecToString(plotLabelSpec)).rootGroup
+        val nameSpecElement = TextLabel(className).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
+        val plotLabelSpec = PlotLabelSpec.get(className)
         titles
             .map { title -> LabelSpec(title, plotLabelSpec) }
             .forEach { spec ->
@@ -138,10 +141,6 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
 
             return label
-        }
-
-        private fun labelSpecToString(plotLabelSpec: PlotLabelSpec): String {
-            return plotLabelSpec.name
         }
     }
 }

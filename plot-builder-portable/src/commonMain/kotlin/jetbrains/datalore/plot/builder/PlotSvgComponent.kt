@@ -33,7 +33,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLe
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpecs
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
@@ -299,17 +299,17 @@ class PlotSvgComponent constructor(
                 titleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
                 className = Style.PLOT_TITLE,
-                labelSpec = PlotLabelSpecs.get(Style.PLOT_TITLE)
+                labelSpec = PlotLabelSpec.get(Style.PLOT_TITLE)
             )
         }
         // add plot subtitle
         if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecs.get(Style.PLOT_TITLE))
+            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpec.get(Style.PLOT_TITLE))
             addTitle(
                 subtitleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
                 className = Style.PLOT_SUBTITLE,
-                labelSpec = PlotLabelSpecs.get(Style.PLOT_SUBTITLE)
+                labelSpec = PlotLabelSpec.get(Style.PLOT_SUBTITLE)
             )
         }
 
@@ -360,7 +360,7 @@ class PlotSvgComponent constructor(
 
         // add caption
         if (captionLines.isNotEmpty()) {
-            val captionLabelSpec = PlotLabelSpecs.get(Style.PLOT_CAPTION)
+            val captionLabelSpec = PlotLabelSpec.get(Style.PLOT_CAPTION)
             val captionLineHeight = captionLabelSpec.height()
             val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
             captionLabel.addClassName(Style.PLOT_CAPTION)

@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
@@ -27,39 +25,17 @@ internal class DefaultTooltipsTheme(
     internal val textColorKey = textKey + TEXT
     internal val titleTextColorKey = listOf(TOOLTIP_TITLE_TEXT) + textColorKey
 
-    override fun textColor(): Color {
-        return getColor(getElemValue(textColorKey), Elem.COLOR)
-    }
+    override fun tooltipColor() = getColor(getElemValue(tooltipKey), Elem.COLOR)
 
-    override fun textFontFace(): FontFace {
-        return getFontFace(getElemValue(textKey))
-    }
+    override fun tooltipFill() = getColor(getElemValue(tooltipKey), Elem.FILL)
 
-    override fun titleTextColor(): Color {
-        return getColor(getElemValue(titleTextColorKey), Elem.COLOR)
-    }
+    override fun tooltipStrokeWidth() = getNumber(getElemValue(tooltipKey), Elem.SIZE)
 
-    override fun titleTextFontFace(): FontFace {
-        return getFontFace(getElemValue(titleTextKey)) + textFontFace()
-    }
+    override fun textColor() = getColor(getElemValue(textColorKey), Elem.COLOR)
 
-    override fun labelTextColor(): Color {
-        return textColor()
-    }
+    override fun textFontFace() = getFontFace(getElemValue(textKey))
 
-    override fun labelTextFontFace(): FontFace {
-        return FontFace.BOLD + textFontFace()
-    }
+    override fun titleTextColor() = getColor(getElemValue(titleTextColorKey), Elem.COLOR)
 
-    override fun tooltipColor(): Color {
-        return getColor(getElemValue(tooltipKey), Elem.COLOR)
-    }
-
-    override fun tooltipFill(): Color {
-        return getColor(getElemValue(tooltipKey), Elem.FILL)
-    }
-
-    override fun tooltipStrokeWidth(): Double {
-       return getNumber(getElemValue(tooltipKey), Elem.SIZE)
-    }
+    override fun titleTextFontFace() = getFontFace(getElemValue(titleTextKey)) + textFontFace()
 }

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
 import kotlin.math.cos
@@ -22,7 +22,7 @@ import kotlin.math.sin
 internal class HorizontalTiltedLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
+    labelSpec: PlotLabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {

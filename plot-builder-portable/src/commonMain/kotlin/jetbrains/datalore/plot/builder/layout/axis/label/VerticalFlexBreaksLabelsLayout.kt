@@ -9,14 +9,14 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.ceil
 
 internal class VerticalFlexBreaksLabelsLayout(
     orientation: jetbrains.datalore.plot.builder.guide.Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
+    labelSpec: PlotLabelSpec,
     private val myBreaksProvider: AxisBreaksProvider,
     theme: AxisTheme
 ) :

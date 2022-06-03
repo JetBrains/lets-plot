@@ -9,14 +9,12 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 
 interface TooltipsTheme {
+    fun tooltipColor(): Color
+    fun tooltipFill(): Color
+    fun tooltipStrokeWidth(): Double
+
     fun textColor(): Color
     fun textFontFace(): FontFace
     fun titleTextColor(): Color
     fun titleTextFontFace(): FontFace
-    fun labelTextColor(): Color
-    fun labelTextFontFace(): FontFace
-
-    fun tooltipColor(): Color
-    fun tooltipFill(): Color
-    fun tooltipStrokeWidth(): Double
 }

@@ -9,15 +9,14 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpecs
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 abstract class AxisLabelsLayout protected constructor(
     val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
     val axisDomain: DoubleSpan,
-    val labelSpec: LabelSpec,
+    val labelSpec: PlotLabelSpec,
     val theme: AxisTheme
 ) {
 
@@ -51,7 +50,7 @@ abstract class AxisLabelsLayout protected constructor(
     }
 
     companion object {
-        val TICK_LABEL_SPEC = PlotLabelSpecs.get(Style.AXIS_TEXT)
+        val TICK_LABEL_SPEC = PlotLabelSpec.get(Style.AXIS_TEXT)
         const val INITIAL_TICK_LABEL_LENGTH = 4 // symbols
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
 

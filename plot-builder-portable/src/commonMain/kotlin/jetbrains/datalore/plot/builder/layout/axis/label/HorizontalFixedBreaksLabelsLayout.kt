@@ -10,13 +10,13 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
+    labelSpec: PlotLabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
@@ -89,7 +89,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
         )
     }
 
-    private fun verticalLayout(labelSpec: LabelSpec): AxisLabelsLayout {
+    private fun verticalLayout(labelSpec: PlotLabelSpec): AxisLabelsLayout {
         return HorizontalVerticalLabelsLayout(
             orientation,
             axisDomain,
