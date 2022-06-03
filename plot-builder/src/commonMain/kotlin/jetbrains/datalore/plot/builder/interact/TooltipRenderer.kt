@@ -143,7 +143,7 @@ internal class TooltipRenderer(
                         borderRadius = borderRadius,
                         markerColors = spec.markerColors.distinct()
                     )
-                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
+                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
             .also { tooltips -> showCrosshair(tooltips, tooltipBounds.handlingArea) }
