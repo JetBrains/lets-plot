@@ -10,7 +10,6 @@ import jetbrains.datalore.base.values.Color
 interface TooltipsTheme {
     fun textColor(): Color
     fun titleTextColor(): Color
-    fun labelTextColor(): Color
 
     fun tooltipColor(): Color
     fun tooltipFill(): Color

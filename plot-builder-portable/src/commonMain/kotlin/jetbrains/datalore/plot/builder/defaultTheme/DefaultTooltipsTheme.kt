@@ -32,6 +32,4 @@ internal class DefaultTooltipsTheme(
     override fun textColor(): Color = getColor(getElemValue(textKey), Elem.COLOR)
 
     override fun titleTextColor(): Color = getColor(getElemValue(titleTextKey), Elem.COLOR)
-
-    override fun labelTextColor(): Color = textColor()
 }

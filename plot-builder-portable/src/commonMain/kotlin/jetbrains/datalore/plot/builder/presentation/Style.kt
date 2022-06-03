@@ -162,7 +162,7 @@ object Style {
 
             setColor(TOOLTIP_TEXT, theme.tooltips().textColor())
             setColor(TOOLTIP_TITLE, theme.tooltips().titleTextColor())
-            setColor(TOOLTIP_LABEL, theme.tooltips().labelTextColor())
+            setColor(TOOLTIP_LABEL, theme.tooltips().textColor())
         }
         return StyleSheet(
             textStyles,
