@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder
+package jetbrains.datalore.plot.builder.frame
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.builder.FrameOfReference
+import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
+import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.MarginalLayerCoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation

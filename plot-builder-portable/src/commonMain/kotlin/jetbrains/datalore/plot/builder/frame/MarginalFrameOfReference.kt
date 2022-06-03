@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder
+package jetbrains.datalore.plot.builder.frame
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
@@ -13,6 +13,8 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.builder.FrameOfReference
+import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class MarginalFrameOfReference(
@@ -59,20 +61,5 @@ internal class MarginalFrameOfReference(
         layerComponent.moveTo(bounds.origin)
         layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, bounds.dimension))
         return layerComponent
-
-
-//        return object : SvgComponent() {
-//            override fun buildComponent() {
-//                rootGroup.children().add(
-//                    SvgRectElement(bounds).apply {
-//                        strokeColor().set(Color.ORANGE)
-//                        fillColor().set(Color.ORANGE)
-//                        strokeWidth().set(0.0)
-//                        fillOpacity().set(0.3)
-//                    }
-//                )
-//            }
-//        }
-
     }
 }
