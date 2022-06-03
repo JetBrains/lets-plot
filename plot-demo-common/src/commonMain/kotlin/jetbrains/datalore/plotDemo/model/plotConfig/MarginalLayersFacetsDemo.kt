@@ -128,12 +128,14 @@ class MarginalLayersFacetsDemo {
         private fun marginalSpecs(sides: List<String>, sizes: List<Double>): String {
             val l = ArrayList<String>()
             for ((i, side) in sides.withIndex()) {
-                l.add(marginSpec(side, sizes[i]))
+//                l.add(marginalPoints(side, sizes[i]))
+                l.add(marginalHist(side, sizes[i]))
+                l.add(marginalDensity(side, sizes[i]))
             }
             return l.joinToString(",", "", "")
         }
 
-        private fun marginSpec(side: String, size: Double): String {
+        private fun marginalPoints(side: String, size: Double): String {
             return """
                 {
                     'geom': 'point',
@@ -141,6 +143,44 @@ class MarginalLayersFacetsDemo {
                     'margin_side' : '$side',
                     'margin_size' : $size
                 }
+            """.trimIndent()
+        }
+
+        private fun marginalHist(side: String, size: Double): String {
+            val orientation = when (side) {
+                "l", "r" -> "y"
+                else -> "x"
+            }
+            val aesY = when (orientation) {
+                "x" -> "y"
+                else -> "x"
+            }
+
+            return """
+                {
+                    'geom': 'histogram', 'bins' : 10, 'color' : 'white',
+                    'mapping': {'$aesY': '..density..', 'fill': '${AutoMpg.origin.name}'},
+                    'marginal' : true,
+                    'margin_side' : '$side',
+                    'margin_size' : $size,
+                    'orientation' : '$orientation'
+            }
+            """.trimIndent()
+        }
+
+        private fun marginalDensity(side: String, size: Double): String {
+            val orientation = when (side) {
+                "l", "r" -> "y"
+                else -> "x"
+            }
+            return """
+                {
+                    'geom': 'density', 'color' : 'red', 'fill' : 'blue', 'alpha' : 0.1,
+                    'marginal' : true,
+                    'margin_side' : '$side',
+                    'margin_size' : $size,
+                    'orientation' : '$orientation'
+            }
             """.trimIndent()
         }
 

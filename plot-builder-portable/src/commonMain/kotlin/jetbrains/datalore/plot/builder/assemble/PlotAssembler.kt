@@ -95,7 +95,11 @@ class PlotAssembler private constructor(
                 else -> scaleXProto to scaleYProto
             }
 
-            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayersByTile[0])
+            // Marginal layers.
+            // Marginal layers share "marginal domain" and layout across all tiles.
+            val marginalLayers = marginalLayersByTile.flatten()
+            val domainByMargin = MarginalLayerUtil.marginalDomainByMargin(marginalLayers, scaleXProto, scaleYProto)
+            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayers)
 
             // Create frame of reference provider for each tile.
             val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider> =
@@ -110,6 +114,7 @@ class PlotAssembler private constructor(
                         flipAxis,
                         theme,
                         marginsLayout,
+                        domainByMargin,
                     )
                 }
 

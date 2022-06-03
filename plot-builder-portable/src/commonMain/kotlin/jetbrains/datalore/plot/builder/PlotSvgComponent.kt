@@ -262,7 +262,11 @@ class PlotSvgComponent constructor(
             )
 
             val marginalFrameByMargin: Map<MarginSide, FrameOfReference> = tileFrameOfReferenceProvider
-                .createMarginalFrames(tileLayoutInfo)
+                .createMarginalFrames(
+                    tileLayoutInfo,
+                    coordProvider,
+                    DEBUG_DRAWING
+                )
 
             val tile = PlotTile(
                 coreLayers = coreLayersByTile[tileIndex],

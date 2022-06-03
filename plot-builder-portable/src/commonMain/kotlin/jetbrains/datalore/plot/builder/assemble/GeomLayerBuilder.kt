@@ -130,6 +130,7 @@ class GeomLayerBuilder constructor(
         @Suppress("NAME_SHADOWING")
         var data = data
         if (myDataPreprocessor != null) {
+            // Test and Demo
             data = myDataPreprocessor!!(data, transformByAes)
         }
 
@@ -156,8 +157,9 @@ class GeomLayerBuilder constructor(
             if (variable.isStat) {
                 val aes = binding.aes
                 val transform = transformByAes.getValue(aes)
-                data = DataFrameUtil.applyTransform(data, variable, aes, transform)
-                bindingsToPut.add(VarBinding(TransformVar.forAes(aes), aes))
+                val transformVar = TransformVar.forAes(aes)
+                data = DataFrameUtil.applyTransform(data, variable, transformVar, transform)
+                bindingsToPut.add(VarBinding(transformVar, aes))
             }
         }
 

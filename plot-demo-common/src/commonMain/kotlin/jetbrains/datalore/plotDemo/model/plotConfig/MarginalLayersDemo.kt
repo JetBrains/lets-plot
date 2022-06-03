@@ -86,12 +86,49 @@ class MarginalLayersDemo(private val coordFixed: Boolean = false) {
 
         private fun marginSpec(side: String, size: Double): String {
             return """
+                ${marginalHist(side, size)},
+                ${marginalDensity(side, size)}
+            """.trimIndent()
+//            return """
+//                ${marginalHist(side, size)}
+//            """.trimIndent()
+        }
+
+        private fun marginalHist(side: String, size: Double): String {
+            val orientation = when (side) {
+                "l", "r" -> "y"
+                else -> "x"
+            }
+            val aesY = when (orientation) {
+                "x" -> "y"
+                else -> "x"
+            }
+
+            return """
                 {
-                    'geom': 'point',
+                    'geom': 'histogram', 'bins' : 10, 'color' : 'white',
+                    'mapping': {'$aesY': '..density..'},
                     'marginal' : true,
                     'margin_side' : '$side',
-                    'margin_size' : $size
-                }
+                    'margin_size' : $size,
+                    'orientation' : '$orientation'
+            }
+            """.trimIndent()
+        }
+
+        private fun marginalDensity(side: String, size: Double): String {
+            val orientation = when (side) {
+                "l", "r" -> "y"
+                else -> "x"
+            }
+            return """
+                {
+                    'geom': 'density', 'color' : 'red', 'fill' : 'blue', 'alpha' : 0.1,
+                    'marginal' : true,
+                    'margin_side' : '$side',
+                    'margin_size' : $size,
+                    'orientation' : '$orientation'
+            }
             """.trimIndent()
         }
     }
