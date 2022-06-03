@@ -50,7 +50,7 @@ class PlotSvgComponent constructor(
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
-    private val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
+    private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
@@ -64,7 +64,7 @@ class PlotSvgComponent constructor(
     private val subtitleLines: List<String> = splitToLines(subtitle)
     private val captionLines: List<String> = splitToLines(caption)
 
-    val flippedAxis = frameOfReferenceProviderByTile[0].flipAxis
+    val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
     var interactor: PlotInteractor? = null
@@ -82,10 +82,10 @@ class PlotSvgComponent constructor(
     val styleSheet: StyleSheet = Style.fromTheme(theme, flippedAxis)
 
     // ToDo: remove
-    private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel
+    private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
 
     // ToDo: remove
-    private val axisTitleBottom: String? = frameOfReferenceProviderByTile[0].hAxisLabel
+    private val axisTitleBottom: String? = frameProviderByTile[0].hAxisLabel
 
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -254,14 +254,14 @@ class PlotSvgComponent constructor(
             val tileIndex = tileLayoutInfo.trueIndex
 
             // Create a plot tile.
-            val tileFrameOfReferenceProvider = frameOfReferenceProviderByTile[tileIndex]
-            val frameOfReference = tileFrameOfReferenceProvider.createFrameOfReference(
+            val tileFrameProvider = frameProviderByTile[tileIndex]
+            val tileFrame = tileFrameProvider.createTileFrame(
                 tileLayoutInfo,
                 coordProvider,
                 DEBUG_DRAWING
             )
 
-            val marginalFrameByMargin: Map<MarginSide, FrameOfReference> = tileFrameOfReferenceProvider
+            val marginalFrameByMargin: Map<MarginSide, FrameOfReference> = tileFrameProvider
                 .createMarginalFrames(
                     tileLayoutInfo,
                     coordProvider,
@@ -272,7 +272,7 @@ class PlotSvgComponent constructor(
                 coreLayers = coreLayersByTile[tileIndex],
                 marginalLayers = marginalLayersByTile[tileIndex],
                 tilesOrigin, tileLayoutInfo, theme,
-                frameOfReference,
+                tileFrame,
                 marginalFrameByMargin
             )
 

@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 
-internal class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
+internal class BogusFrameOfReferenceProvider : FrameOfReferenceProvider {
     override val hAxisLabel: String? = null
     override val vAxisLabel: String? = null
 
@@ -19,7 +19,7 @@ internal class BogusFrameOfReferenceProvider : TileFrameOfReferenceProvider {
         throw IllegalStateException("Bogus frame of reference provider is not supposed to be used.")
     }
 
-    override fun createFrameOfReference(
+    override fun createTileFrame(
         layoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         debugDrawing: Boolean

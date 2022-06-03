@@ -28,7 +28,7 @@ internal class SquareFrameOfReferenceProvider(
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
     private val domainByMargin: Map<MarginSide, DoubleSpan>,
-) : TileFrameOfReferenceProvider {
+) : FrameOfReferenceProvider {
 
     private val hAxisSpec: AxisSpec
     private val vAxisSpec: AxisSpec
@@ -71,7 +71,7 @@ internal class SquareFrameOfReferenceProvider(
         return MyTileLayoutProvider(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
     }
 
-    override fun createFrameOfReference(
+    override fun createTileFrame(
         layoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         debugDrawing: Boolean
