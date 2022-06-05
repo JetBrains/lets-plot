@@ -128,6 +128,10 @@ internal class SquareFrameOfReferenceProvider(
         coordProvider: CoordProvider,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference> {
+        if (domainByMargin.isEmpty()) {
+            return emptyMap()
+        }
+
         check(!coordProvider.flipAxis) {
             "`flipped` corrdinate system is not supported on plots with marginal layers."
         }
