@@ -115,9 +115,10 @@ internal class TooltipRenderer(
                     else -> null
                 }
 
-                val strokeWidth = when (spec.layoutHint.kind) {
-                    X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
-                    Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+                val strokeWidth = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+                    spec.isOutlier -> 1.0
                     else -> tooltipsTheme.tooltipStrokeWidth()
                 }
 
