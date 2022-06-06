@@ -60,7 +60,11 @@ def theme(*,
           strip_text=None,  # ToDo: x/y
           # ToDo: strip.placement
 
-          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None
+          axis_tooltip=None, axis_tooltip_x=None, axis_tooltip_y=None,
+          axis_tooltip_text=None, axis_tooltip_text_x=None, axis_tooltip_text_y=None,
+
+          tooltip=None,
+          tooltip_text=None, tooltip_title_text=None
           ):
     """
     Use `theme()` to modify individual components of a theme,
@@ -174,7 +178,20 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
         Set `element_rect()` to specify axes tooltip parameters.
         `axis_tooltip_*` inherits from `axis_tooltip` which inherits from `rect`.
-
+    axis_tooltip_text, axis_tooltip_text_x, axis_tooltip_text_y : str or dict
+        Text in axes tooltips.
+        Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
+        Set `element_text()` to specify axes text tooltip parameters.
+        `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
+    tooltip : str or dict
+        General tooltip.
+        Set `element_rect()` to specify tooltip rectangular parameters. Inherits from `rect`.
+    tooltip_text : str or dict
+        Text in general tooltip.
+        Set `element_text()` to specify tooltip text parameters.
+    tooltip_title_text: str or dict
+        Tooltip title text.
+        Set `element_text()` to specify tooltip title parameters. Inherits from `tooltip_text`. Bold by default.
     Returns
     -------
     `FeatureSpec`

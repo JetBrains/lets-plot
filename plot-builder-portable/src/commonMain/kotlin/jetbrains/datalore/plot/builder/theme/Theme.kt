@@ -18,4 +18,6 @@ interface Theme {
     fun plot(): PlotTheme
 
     fun panel(): PanelTheme
+
+    fun tooltips(): TooltipsTheme
 }

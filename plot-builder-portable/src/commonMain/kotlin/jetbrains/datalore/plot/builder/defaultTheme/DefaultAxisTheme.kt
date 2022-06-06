@@ -20,6 +20,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class DefaultAxisTheme(
@@ -36,7 +37,7 @@ internal class DefaultAxisTheme(
     internal val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
     internal val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
     internal val tooltipFillKey = tooltipKey + lineKey
-    internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT)
+    internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT, TOOLTIP_TEXT)
 
     // Inherits from the tooltip rect stroke color.
     internal val tooltipTextColorKey = tooltipTextKey + tooltipKey

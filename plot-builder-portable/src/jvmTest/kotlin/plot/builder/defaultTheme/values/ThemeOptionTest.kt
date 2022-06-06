@@ -51,7 +51,7 @@ internal class ThemeOptionTest {
 
     private fun checkElemProperty(theme: String, elemKey: List<String>, elemProperty: String) {
         val themeValues = ThemeValues.forName(theme)
-        val acccess = object : ThemeValuesAccess(themeValues.values) {
+        val access = object : ThemeValuesAccess(themeValues.values) {
             fun check() {
                 when (elemProperty) {
                     COLOR, FILL -> this.getColor(getElemValue(elemKey), elemProperty)
@@ -61,7 +61,7 @@ internal class ThemeOptionTest {
             }
         }
         try {
-            acccess.check()
+            access.check()
         } catch (e: Exception) {
             throw RuntimeException("'$elemProperty' failed. Theme: '$theme', elem: $elemKey", e)
         }
@@ -115,14 +115,15 @@ internal class ThemeOptionTest {
             ThemeOption.LEGEND_TEXT -> (theme.legend() as DefaultLegendTheme).textKey
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey
 
+            ThemeOption.TOOLTIP_RECT -> (theme.tooltips() as DefaultTooltipsTheme).tooltipKey
+            ThemeOption.TOOLTIP_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).textKey
+            ThemeOption.TOOLTIP_TITLE_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).titleTextKey
+
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
 
             else -> throw IllegalStateException("Unknown theme option: $option")
         }
-
     }
-
-
 }

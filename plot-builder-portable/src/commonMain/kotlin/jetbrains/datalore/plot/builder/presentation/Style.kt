@@ -159,6 +159,10 @@ object Style {
 
             setColor("$FACET_STRIP_TEXT-x", theme.facets().stripTextColor())
             setColor("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor())
+
+            setColor(TOOLTIP_TEXT, theme.tooltips().textColor())
+            setColor(TOOLTIP_TITLE, theme.tooltips().titleTextColor())
+            setColor(TOOLTIP_LABEL, theme.tooltips().textColor())
         }
         return StyleSheet(
             textStyles,

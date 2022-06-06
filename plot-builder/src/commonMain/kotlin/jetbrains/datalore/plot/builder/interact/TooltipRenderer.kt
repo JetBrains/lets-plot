@@ -12,7 +12,6 @@ import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.BLACK
 import jetbrains.datalore.base.values.Color.Companion.WHITE
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.Colors.mimicTransparency
@@ -26,6 +25,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.TooltipsTheme
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
 import jetbrains.datalore.plot.builder.tooltip.RetainableComponents
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
@@ -44,6 +44,7 @@ internal class TooltipRenderer(
     plotSize: DoubleVector,
     private val xAxisTheme: AxisTheme,
     private val yAxisTheme: AxisTheme,
+    private val tooltipsTheme: TooltipsTheme,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -97,17 +98,17 @@ internal class TooltipRenderer(
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
                     spec.isOutlier -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
-                    else -> WHITE
+                    else -> tooltipsTheme.tooltipFill()
                 }
 
                 val borderColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
                     spec.isOutlier -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
-                    else -> BLACK
+                    else -> tooltipsTheme.tooltipColor()
                 }
 
-                // Text color is set in JFX mapper and css (for Batik) by element class name,
+                // Text color is set by element class name,
                 // but for outliers the color is not constant - it depends on the fill color
                 val textColor = when {
                     spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isOutlier -> borderColor
@@ -117,11 +118,12 @@ internal class TooltipRenderer(
                 val strokeWidth = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
-                    else -> 1.0
+                    spec.isOutlier -> 1.0
+                    else -> tooltipsTheme.tooltipStrokeWidth()
                 }
 
-                val borderRadius = when {
-                    spec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) -> 0.0
+                val borderRadius = when (spec.layoutHint.kind) {
+                    X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> 0.0
                     else -> BORDER_RADIUS
                 }
 
@@ -142,7 +144,7 @@ internal class TooltipRenderer(
                         borderRadius = borderRadius,
                         markerColors = spec.markerColors.distinct()
                     )
-                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
+                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
             .also { tooltips -> showCrosshair(tooltips, tooltipBounds.handlingArea) }

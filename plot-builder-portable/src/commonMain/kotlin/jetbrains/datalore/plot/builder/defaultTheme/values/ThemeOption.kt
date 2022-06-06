@@ -74,6 +74,11 @@ object ThemeOption {
     const val LEGEND_JUSTIFICATION = "legend_justification"
     const val LEGEND_DIRECTION = "legend_direction"
 
+    // Tooltip
+    const val TOOLTIP_RECT = "tooltip"
+    const val TOOLTIP_TEXT = "tooltip_text"
+    const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
+
     // view element
     val ELEMENT_BLANK = mapOf(Elem.BLANK to true)
     const val ELEMENT_BLANK_SHORTHAND = "blank"
@@ -132,6 +137,7 @@ object ThemeOption {
             PANEL_GRID_MAJOR_Y,
             PANEL_GRID_MINOR_Y,
             FACET_STRIP_BGR_RECT,
+            TOOLTIP_RECT
         )
 
         // Actually, text sizes are defined in "theme values".
@@ -148,6 +154,8 @@ object ThemeOption {
             FACET_STRIP_TEXT,
             LEGEND_TEXT,
             LEGEND_TITLE,
+            TOOLTIP_TEXT,
+            TOOLTIP_TITLE_TEXT,
         )
         val elemWithFill = listOf(
             PLOT_BKGR_RECT,
@@ -156,6 +164,7 @@ object ThemeOption {
             AXIS_TOOLTIP_Y,
             PANEL_BKGR_RECT,
             FACET_STRIP_BGR_RECT,
+            TOOLTIP_RECT
         )
         val numericOptions = listOf(
             AXIS_TICKS_LENGTH_X,

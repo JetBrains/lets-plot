@@ -18,6 +18,7 @@ class DefaultTheme(
     private val panel = DefaultPanelTheme(options)
     private val facets = DefaultFacetsTheme(options)
     private val plot = DefaultPlotTheme(options)
+    private val tooltips = DefaultTooltipsTheme(options)
 
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
@@ -31,6 +32,8 @@ class DefaultTheme(
     override fun facets(): FacetsTheme = facets
 
     override fun plot(): PlotTheme = plot
+
+    override fun tooltips(): TooltipsTheme = tooltips
 
     companion object {
         fun minimal2() = DefaultTheme(ThemeValuesLPMinimal2().values)

@@ -63,7 +63,8 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
                 isOutlier = true,
                 anchor = myAnchor
             ),
-            mySize!!, TooltipBox())
+            mySize!!, TooltipBox(), strokeWidth = 0.0
+        )
     }
 
     private fun createHint(): TipLayoutHint {
