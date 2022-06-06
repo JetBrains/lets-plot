@@ -8,31 +8,23 @@ package jetbrains.datalore.plot.builder.layout.tile
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.AxisLayout
-import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
-import jetbrains.datalore.plot.builder.layout.TileLayout
-import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.layout.*
 
 internal class InsideOutTileLayout constructor(
     private val hAxisLayout: AxisLayout,
     private val vAxisLayout: AxisLayout,
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
+    private val marginsLayout: GeomMarginsLayout,
 ) : TileLayout {
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun doLayout(geomSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
         val geomOuterBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
-        val geomInnerBounds = geomOuterBounds.let {
-            when {
-                FeatureSwitch.MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
-                else -> it
-            }
-        }
+        val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
 
         var (hAxisInfo, vAxisInfo) = computeAxisInfos(
             hAxisLayout,

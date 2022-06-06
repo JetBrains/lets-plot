@@ -50,7 +50,7 @@ class PlotSvgComponent constructor(
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
-    private val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
+    private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
@@ -65,7 +65,7 @@ class PlotSvgComponent constructor(
     private val subtitleLines: List<String> = splitToLines(subtitle)
     private val captionLines: List<String> = splitToLines(caption)
 
-    val flippedAxis = frameOfReferenceProviderByTile[0].flipAxis
+    val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
     var interactor: PlotInteractor? = null
@@ -81,10 +81,10 @@ class PlotSvgComponent constructor(
         private set
 
     // ToDo: remove
-    private val axisTitleLeft: String? = frameOfReferenceProviderByTile[0].vAxisLabel
+    private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
 
     // ToDo: remove
-    private val axisTitleBottom: String? = frameOfReferenceProviderByTile[0].hAxisLabel
+    private val axisTitleBottom: String? = frameProviderByTile[0].hAxisLabel
 
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -253,16 +253,26 @@ class PlotSvgComponent constructor(
             val tileIndex = tileLayoutInfo.trueIndex
 
             // Create a plot tile.
-            val frameOfReference = frameOfReferenceProviderByTile[tileIndex].createFrameOfReference(
+            val tileFrameProvider = frameProviderByTile[tileIndex]
+            val tileFrame = tileFrameProvider.createTileFrame(
                 tileLayoutInfo,
                 coordProvider,
                 DEBUG_DRAWING
             )
 
+            val marginalFrameByMargin: Map<MarginSide, FrameOfReference> = tileFrameProvider
+                .createMarginalFrames(
+                    tileLayoutInfo,
+                    coordProvider,
+                    DEBUG_DRAWING
+                )
+
             val tile = PlotTile(
                 coreLayers = coreLayersByTile[tileIndex],
                 marginalLayers = marginalLayersByTile[tileIndex],
-                tilesOrigin, tileLayoutInfo, theme, frameOfReference
+                tilesOrigin, tileLayoutInfo, theme,
+                tileFrame,
+                marginalFrameByMargin
             )
 
             val plotOriginAbsolute = tilesOrigin.add(tileLayoutInfo.offset)
@@ -274,13 +284,19 @@ class PlotSvgComponent constructor(
                 liveMapFigures = liveMapFigures + listOf(this)
             }
 
-            val geomBounds = tileLayoutInfo.geomInnerBounds
-            val geomBoundsAbsolute = geomBounds.add(plotOriginAbsolute)
+// ToDo: axis tooltip shoult uppear on 'outer' bounds.
+//            val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
+            val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
-                placementArea = geomBoundsAbsolute,
-                handlingArea = DoubleRectangle(geomBoundsAbsolute.origin, geomBounds.dimension)
+                placementArea = geomInnerBoundsAbsolute,
+                handlingArea = geomInnerBoundsAbsolute
             )
-            interactor?.onTileAdded(geomBoundsAbsolute, tooltipBounds, tile.targetLocators, tile.layerYOrientations)
+            interactor?.onTileAdded(
+                geomInnerBoundsAbsolute,
+                tooltipBounds,
+                tile.targetLocators,
+                tile.layerYOrientations
+            )
 
             @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {

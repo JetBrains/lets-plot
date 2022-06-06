@@ -9,12 +9,11 @@ import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 
-class TypedScaleMap constructor(map: Map<Aes<*>, Scale<*>>) {
-    private var myMap: Map<Aes<*>, Scale<*>> = map.toMap()
-
+// TopDo: Remove as the scale is no longer need to have generic type.
+class TypedScaleMap constructor(val map: Map<Aes<*>, Scale<*>>) {
     operator fun <T> get(aes: Aes<T>): Scale<T> {
         @Suppress("UNCHECKED_CAST")
-        return (myMap[aes] as? Scale<T>) ?: run {
+        return (map[aes] as? Scale<T>) ?: run {
             val message = "No scale found for aes: $aes"
             LOG.error(IllegalStateException(message)) { message }
             error(message)
@@ -22,11 +21,11 @@ class TypedScaleMap constructor(map: Map<Aes<*>, Scale<*>>) {
     }
 
     fun containsKey(aes: Aes<*>): Boolean {
-        return myMap.containsKey(aes)
+        return map.containsKey(aes)
     }
 
     fun keySet(): Set<Aes<*>> {
-        return myMap.keys
+        return map.keys
     }
 
     companion object {

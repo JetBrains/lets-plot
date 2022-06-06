@@ -426,28 +426,38 @@ class LayoutManager(
     private fun calculateCursorTooltipPosition(measuredTooltip: MeasuredTooltip, restrictions: List<DoubleRectangle>): PositionedTooltip {
         val tooltipX = centerInsideRange(myCursorCoord.x, measuredTooltip.size.x, myHorizontalSpace)
 
-        val targetCoordY = myCursorCoord.y
-        val tooltipHeight = measuredTooltip.size.y
-        val verticalMargin = measuredTooltip.stemLength
+        val tooltipY: Double
+        val stemY: Double
+        run {
+            val targetCoordY = myCursorCoord.y
+            val tooltipHeight = measuredTooltip.size.y
+            val stemLength = measuredTooltip.stemLength
 
-        val topTooltipPlacement = leftAligned(targetCoordY, tooltipHeight, verticalMargin)
-        val bottomTooltipPlacement = rightAligned(targetCoordY, tooltipHeight, verticalMargin)
+            val targetTopPoint = targetCoordY - measuredTooltip.hintRadius
+            val targetBottomPoint = targetCoordY + measuredTooltip.hintRadius
 
-        // The tooltip should fit in vertical space and not intersect restrictions,
-        // restrictions are expected to contain only y-axis tooltip.
-        val tooltipY = if (topTooltipPlacement.inside(myVerticalSpace) && restrictions.all {
-                val tooltipRect = DoubleRectangle(
-                    DoubleVector(tooltipX, topTooltipPlacement.start()), measuredTooltip.size
-                )
-                !it.intersects(tooltipRect)
-            }) {
-            topTooltipPlacement.start()
-        } else {
-            bottomTooltipPlacement.start()
+            val topTooltipPlacement = leftAligned(targetTopPoint, tooltipHeight, stemLength)
+            val bottomTooltipPlacement = rightAligned(targetBottomPoint, tooltipHeight, stemLength)
+
+            // The tooltip should fit in vertical space and not intersect restrictions,
+            // restrictions are expected to contain only y-axis tooltip.
+            if (topTooltipPlacement.inside(myVerticalSpace) && restrictions.all {
+                    val tooltipRect = DoubleRectangle(
+                        DoubleVector(tooltipX, topTooltipPlacement.start()), measuredTooltip.size
+                    )
+                    !it.intersects(tooltipRect)
+                }) {
+                tooltipY = topTooltipPlacement.start()
+                stemY = targetTopPoint
+            } else {
+                tooltipY = bottomTooltipPlacement.start()
+                stemY = targetBottomPoint
+            }
         }
 
         val tooltipCoord = DoubleVector(tooltipX, tooltipY)
-        return PositionedTooltip(measuredTooltip, tooltipCoord, myCursorCoord)
+        val stemCoord = DoubleVector(myCursorCoord.x, stemY)
+        return PositionedTooltip(measuredTooltip, tooltipCoord, stemCoord)
     }
 
     private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
@@ -570,14 +580,14 @@ class LayoutManager(
     class MeasuredTooltip(
         internal val tooltipSpec: TooltipSpec,
         internal val size: DoubleVector,
-        internal val tooltipBox: TooltipBox
+        internal val tooltipBox: TooltipBox,
+        private val strokeWidth: Double
     ) {
-        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox)
-                : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox)
-
+        constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox, strokeWidth: Double)
+                : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox, strokeWidth)
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
         internal val hintKind get() = tooltipSpec.layoutHint.kind
-        internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius
+        internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius + strokeWidth
         internal val stemLength get() = tooltipSpec.layoutHint.stemLength.value
     }
 

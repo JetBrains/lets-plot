@@ -23,7 +23,7 @@ object DataFrameUtil {
         return applyTransform(data, variable, transformVar, transform)
     }
 
-    private fun applyTransform(
+    fun applyTransform(
         data: DataFrame,
         variable: DataFrame.Variable,
         transformVar: DataFrame.Variable,

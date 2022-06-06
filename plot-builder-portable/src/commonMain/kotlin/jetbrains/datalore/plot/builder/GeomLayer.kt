@@ -50,7 +50,7 @@ interface GeomLayer {
 
     val isMarginal: Boolean
 
-    val marginalSide: GeomLayerMargin
+    val marginalSide: MarginSide
 
     val marginalSize: Double
 

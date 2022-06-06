@@ -115,9 +115,10 @@ internal class TooltipRenderer(
                     else -> null
                 }
 
-                val strokeWidth = when (spec.layoutHint.kind) {
-                    X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
-                    Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+                val strokeWidth = when {
+                    spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
+                    spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+                    spec.isOutlier -> 1.0
                     else -> tooltipsTheme.tooltipStrokeWidth()
                 }
 
@@ -143,7 +144,7 @@ internal class TooltipRenderer(
                         borderRadius = borderRadius,
                         markerColors = spec.markerColors.distinct()
                     )
-                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox)
+                MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
             .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
             .also { tooltips -> showCrosshair(tooltips, tooltipBounds.handlingArea) }

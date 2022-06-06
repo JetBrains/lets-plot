@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.base.util.afterOrientation
-import jetbrains.datalore.plot.builder.GeomLayerMargin
+import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
@@ -114,16 +114,16 @@ class LayerConfig(
 
     // Marginal layers
     val isMarginal: Boolean = getBoolean(MARGINAL, false)
-    val marginalSide: GeomLayerMargin = if (isMarginal) {
+    val marginalSide: MarginSide = if (isMarginal) {
         when (val side = getStringSafe(Marginal.SIDE).lowercase()) {
-            Marginal.SIDE_LEFT -> GeomLayerMargin.LEFT
-            Marginal.SIDE_RIGHT -> GeomLayerMargin.RIGHT
-            Marginal.SIDE_TOP -> GeomLayerMargin.TOP
-            Marginal.SIDE_BOTTOM -> GeomLayerMargin.BOTTOM
+            Marginal.SIDE_LEFT -> MarginSide.LEFT
+            Marginal.SIDE_RIGHT -> MarginSide.RIGHT
+            Marginal.SIDE_TOP -> MarginSide.TOP
+            Marginal.SIDE_BOTTOM -> MarginSide.BOTTOM
             else -> throw IllegalArgumentException("${Marginal.SIDE} expected l|r|t|b but was '$side'")
         }
     } else {
-        GeomLayerMargin.LEFT
+        MarginSide.LEFT
     }
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 

@@ -199,7 +199,7 @@ class HorizontalTooltipExpanderTest {
             isOutlier = true
         )
         return PositionedTooltip(
-            MeasuredTooltip(spec, size, TooltipBox()),
+            MeasuredTooltip(spec, size, TooltipBox(), strokeWidth = 0.0),
             position,
             pointer
         )

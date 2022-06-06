@@ -11,9 +11,11 @@ import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.MarginalLayerUtil.marginalLayersByMargin
 import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_H_PADDING
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_TAB_HEIGHT
@@ -33,6 +35,7 @@ internal class PlotTile(
     private val tileLayoutInfo: TileLayoutInfo,
     private val theme: Theme,
     private val frameOfReference: FrameOfReference,
+    private val marginalFrameByMargin: Map<MarginSide, FrameOfReference>
 ) : SvgComponent() {
 
     private val _targetLocators = ArrayList<GeomTargetLocator>()
@@ -88,10 +91,16 @@ internal class PlotTile(
                 add(layerComponent)
             }
 
-            // ToDo
-//            for (marginalLayer in marginalLayers) {
-//
-//            }
+            // Marginal layers
+            val marginalLayersByMargin: Map<MarginSide, List<GeomLayer>> = marginalLayersByMargin(marginalLayers)
+
+            for ((margin, layers) in marginalLayersByMargin) {
+                val marginFrame = marginalFrameByMargin.getValue(margin)
+                for (layer in layers) {
+                    val marginComponent = marginFrame.buildGeomComponent(layer, NullGeomTargetCollector())
+                    add(marginComponent)
+                }
+            }
 
             frameOfReference.drawAfterGeomLayer(this)
         }

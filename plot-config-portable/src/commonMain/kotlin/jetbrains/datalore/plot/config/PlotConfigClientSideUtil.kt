@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.MarginalLayerUtil
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -73,16 +74,23 @@ object PlotConfigClientSideUtil {
             for (layerIndex in tileDataByLayer.indices) {
                 check(layerBuilders.size >= layerIndex)
 
+                val layerConfig = plotConfig.layerConfigs[layerIndex]
+                val layerScaleMap = when (layerConfig.isMarginal) {
+                    true -> MarginalLayerUtil.toMarginalScaleMap(plotConfig.scaleMap, layerConfig.marginalSide)
+                    false -> plotConfig.scaleMap
+                }
+
                 if (layerBuilders.size == layerIndex) {
                     val otherLayerWithTooltips = plotConfig.layerConfigs
                         .filterIndexed { index, _ -> index != layerIndex }
                         .any { !it.tooltips.hideTooltips() }
 
-                    val layerConfig = plotConfig.layerConfigs[layerIndex]
+                    // ToDo: marginal layer don't have interactions
+                    // if(layerConfig.isMarginal) ...
                     val geomInteraction =
                         GeomInteractionUtil.configGeomTargets(
                             layerConfig,
-                            plotConfig.scaleMap,
+                            layerScaleMap,
                             otherLayerWithTooltips,
                             isLiveMap,
                             plotConfig.theme
@@ -94,7 +102,7 @@ object PlotConfigClientSideUtil {
                 val layerTileData = tileDataByLayer[layerIndex]
                 val layer = layerBuilders[layerIndex].build(
                     layerTileData,
-                    plotConfig.scaleMap,
+                    layerScaleMap,
                     plotConfig.mappersByAesNP,
                 )
                 panelLayers.add(layer)

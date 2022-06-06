@@ -8,16 +8,11 @@ package jetbrains.datalore.plot.builder.layout.tile
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.plot.FeatureSwitch
-import jetbrains.datalore.plot.FeatureSwitch.MARGINAL_LAYERS
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.AxisLayout
-import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
-import jetbrains.datalore.plot.builder.layout.TileLayout
-import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomBounds
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomOuterBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxHAxisTickLabelsBounds
 
 internal class TopDownTileLayout(
@@ -25,6 +20,7 @@ internal class TopDownTileLayout(
     private val vAxisLayout: AxisLayout,
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
+    private val marginsLayout: GeomMarginsLayout,
 ) : TileLayout {
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
@@ -34,30 +30,26 @@ internal class TopDownTileLayout(
             vAxisLayout,
             preferredSize,
             hDomain, vDomain,
+            marginsLayout,
             coordProvider
         )
 
         val hAxisThickness = hAxisInfo.axisBounds().dimension.y
         val vAxisThickness = vAxisInfo.axisBounds().dimension.x
 
-        // ToDo: this is "plotting area" - rename
-        val geomBoundsAfterLayout = geomBounds(
+        val geomBoundsAfterLayout = geomOuterBounds(
             hAxisThickness,
             vAxisThickness,
             preferredSize,
             hDomain,
             vDomain,
+            marginsLayout,
             coordProvider
         )
 
         // X-axis labels bounds may exceed axis length - adjust
         val geomOuterBounds = geomBoundsAfterLayout.let {
-            val hAxisSpan = it.let {
-                when {
-                    MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
-                    else -> it
-                }
-            }.xRange()
+            val hAxisSpan = marginsLayout.toInnerBounds(it).xRange()
 
             val maxTickLabelsBounds = maxHAxisTickLabelsBounds(
                 Orientation.BOTTOM,
@@ -96,21 +88,10 @@ internal class TopDownTileLayout(
         val geomWithAxisBounds = tileBounds(
             hAxisInfo.axisBounds(),
             vAxisInfo.axisBounds(),
-//            geomBounds.let {
-//                when {
-//                    MARGINAL_LAYERS -> FeatureSwitch.addMarginalLayers(it)
-//                    else -> it
-//                }
-//            }
             geomOuterBounds
         )
 
-        val geomInnerBounds = geomOuterBounds.let {
-            when {
-                MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
-                else -> it
-            }
-        }
+        val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
 
         // sync axis info with new (maybe) geom area size
         hAxisInfo = hAxisInfo.withAxisLength(geomInnerBounds.width)
@@ -157,40 +138,35 @@ internal class TopDownTileLayout(
             plotSize: DoubleVector,
             hDomain: DoubleSpan,
             vDomain: DoubleSpan,
+            marginsLayout: GeomMarginsLayout,
             coordProvider: CoordProvider
         ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
             val hAxisThickness = hAxisLayout.initialThickness()
-            val geomHeightEstim = geomBounds(
+            val geomHeightEstim = geomOuterBounds(
                 hAxisThickness,
                 vAxisLayout.initialThickness(),
                 plotSize,
                 hDomain,
                 vDomain,
+                marginsLayout,
                 coordProvider
-            ).dimension.y.let {
-                when {
-                    MARGINAL_LAYERS -> it - FeatureSwitch.marginToSub(it) * 2
-                    else -> it
-                }
+            ).dimension.let {
+                marginsLayout.toInnerSize(it).y
             }
 
             val vAxisInfoEstim = computeVAxisInfo(vAxisLayout, vDomain, geomHeightEstim)
 
             val vAxisThickness = vAxisInfoEstim.axisBounds().dimension.x
-            val plottingArea = geomBounds(
+            val plottingArea = geomOuterBounds(
                 hAxisThickness,
                 vAxisThickness,
                 plotSize,
                 hDomain,
                 vDomain,
+                marginsLayout,
                 coordProvider
             )
-            val hAxisSpan = plottingArea.let {
-                when {
-                    MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it)
-                    else -> it
-                }
-            }.xRange()
+            val hAxisSpan = marginsLayout.toInnerBounds(plottingArea).xRange()
             val hAxisInfo = computeHAxisInfo(
                 hAxisLayout,
                 hDomain,
@@ -200,18 +176,16 @@ internal class TopDownTileLayout(
 
             // Re-layout y-axis if x-axis became thicker than its 'original thickness'.
             val vAxisInfo = if (hAxisInfo.axisBounds().dimension.y > hAxisThickness) {
-                val geomHeight = geomBounds(
+                val geomHeight = geomOuterBounds(
                     hAxisInfo.axisBounds().dimension.y,
                     vAxisThickness,
                     plotSize,
                     hDomain,
                     vDomain,
+                    marginsLayout,
                     coordProvider
-                ).dimension.y.let {
-                    when {
-                        MARGINAL_LAYERS -> it - FeatureSwitch.marginToSub(it) * 2
-                        else -> it
-                    }
+                ).dimension.let {
+                    marginsLayout.toInnerSize(it).y
                 }
 
                 computeVAxisInfo(vAxisLayout, vDomain, geomHeight)

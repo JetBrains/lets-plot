@@ -23,7 +23,7 @@ import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.GeomLayerMargin
+import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
@@ -53,7 +53,7 @@ class GeomLayerBuilder constructor(
     private var isYOrientation: Boolean = false
 
     private var isMarginal: Boolean = false
-    private var marginalSide: GeomLayerMargin = GeomLayerMargin.LEFT
+    private var marginalSide: MarginSide = MarginSide.LEFT
     private var marginalSize: Double = Double.NaN
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
@@ -109,7 +109,7 @@ class GeomLayerBuilder constructor(
 
     fun marginal(
         isMarginal: Boolean,
-        marginalSide: GeomLayerMargin,
+        marginalSide: MarginSide,
         marginalSize: Double
     ): GeomLayerBuilder {
         this.isMarginal = isMarginal
@@ -130,6 +130,7 @@ class GeomLayerBuilder constructor(
         @Suppress("NAME_SHADOWING")
         var data = data
         if (myDataPreprocessor != null) {
+            // Test and Demo
             data = myDataPreprocessor!!(data, transformByAes)
         }
 
@@ -156,8 +157,9 @@ class GeomLayerBuilder constructor(
             if (variable.isStat) {
                 val aes = binding.aes
                 val transform = transformByAes.getValue(aes)
-                data = DataFrameUtil.applyTransform(data, variable, aes, transform)
-                bindingsToPut.add(VarBinding(TransformVar.forAes(aes), aes))
+                val transformVar = TransformVar.forAes(aes)
+                data = DataFrameUtil.applyTransform(data, variable, transformVar, transform)
+                bindingsToPut.add(VarBinding(transformVar, aes))
             }
         }
 
@@ -220,7 +222,7 @@ class GeomLayerBuilder constructor(
         override val isLegendDisabled: Boolean,
         override val isYOrientation: Boolean,
         override val isMarginal: Boolean,
-        override val marginalSide: GeomLayerMargin,
+        override val marginalSide: MarginSide,
         override val marginalSize: Double,
 
         ) : GeomLayer {
