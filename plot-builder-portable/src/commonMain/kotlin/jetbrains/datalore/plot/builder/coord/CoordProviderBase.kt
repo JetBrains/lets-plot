@@ -60,7 +60,7 @@ internal abstract class CoordProviderBase(
         return buildAxisScaleMapperDefault(domain, axisLength)
     }
 
-    override fun createCoordinateSystem(
+    final override fun createCoordinateSystem(
         xDomain: DoubleSpan,
         xAxisLength: Double,
         yDomain: DoubleSpan,

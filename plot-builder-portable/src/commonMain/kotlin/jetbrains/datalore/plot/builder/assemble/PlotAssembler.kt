@@ -10,6 +10,8 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.frame.BogusFrameOfReferenceProvider
+import jetbrains.datalore.plot.builder.frame.SquareFrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayout
@@ -78,10 +80,10 @@ class PlotAssembler private constructor(
                 hAxisTheme = LiveMapAxisTheme(),
                 vAxisTheme = LiveMapAxisTheme(),
             )
-            val frameOfReferenceProviderByTile = coreLayersByTile.map {
+            val frameProviderByTile = coreLayersByTile.map {
                 BogusFrameOfReferenceProvider()
             }
-            createPlot(frameOfReferenceProviderByTile, plotLayout, legendsBoxInfos)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos)
         } else {
             val flipAxis = coordProvider.flipAxis
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
@@ -95,10 +97,14 @@ class PlotAssembler private constructor(
                 else -> scaleXProto to scaleYProto
             }
 
-            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayersByTile[0])
+            // Marginal layers.
+            // Marginal layers share "marginal domain" and layout across all tiles.
+            val marginalLayers = marginalLayersByTile.flatten()
+            val domainByMargin = MarginalLayerUtil.marginalDomainByMargin(marginalLayers, scaleXProto, scaleYProto)
+            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayers)
 
             // Create frame of reference provider for each tile.
-            val frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider> =
+            val frameProviderByTile: List<FrameOfReferenceProvider> =
                 domainsXYByTile.map { (xDomain, yDomain) ->
                     val (hDomain, vDomain) = coordProvider.adjustDomains(
                         hDomain = if (flipAxis) yDomain else xDomain,
@@ -110,10 +116,11 @@ class PlotAssembler private constructor(
                         flipAxis,
                         theme,
                         marginsLayout,
+                        domainByMargin,
                     )
                 }
 
-            val layoutProviderByTile: List<TileLayoutProvider> = frameOfReferenceProviderByTile.map {
+            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
                 it.createTileLayoutProvider()
             }
             val plotLayout = PlotAssemblerUtil.createPlotLayout(
@@ -124,12 +131,12 @@ class PlotAssembler private constructor(
                 vAxisTheme = theme.verticalAxis(flipAxis),
             )
 
-            createPlot(frameOfReferenceProviderByTile, plotLayout, legendsBoxInfos)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos)
         }
     }
 
     private fun createPlot(
-        frameOfReferenceProviderByTile: List<TileFrameOfReferenceProvider>,
+        frameProviderByTile: List<FrameOfReferenceProvider>,
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>
     ): PlotSvgComponent {
@@ -140,7 +147,7 @@ class PlotAssembler private constructor(
             coreLayersByTile = coreLayersByTile,
             marginalLayersByTile = marginalLayersByTile,
             plotLayout = plotLayout,
-            frameOfReferenceProviderByTile = frameOfReferenceProviderByTile,
+            frameProviderByTile = frameProviderByTile,
             coordProvider = coordProvider,
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,

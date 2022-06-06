@@ -26,8 +26,8 @@ internal object PositionalScalesUtil {
      */
     fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
-        xScaleProto: Scale<Double>,
-        yScaleProto: Scale<Double>,
+        xScaleProto: Scale<*>,
+        yScaleProto: Scale<*>,
         facets: PlotFacets
     ): List<Pair<DoubleSpan, DoubleSpan>> {
         var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(xScaleProto.transform)

@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder
+package jetbrains.datalore.plot.builder.frame
 
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.builder.FrameOfReference
+import jetbrains.datalore.plot.builder.GeomLayer
 
 internal class BogusFrameOfReference : FrameOfReference {
 

@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 
-interface TileFrameOfReferenceProvider {
+interface FrameOfReferenceProvider {
     val hAxisLabel: String?
     val vAxisLabel: String?
 
@@ -17,11 +17,15 @@ interface TileFrameOfReferenceProvider {
 
     fun createTileLayoutProvider(): TileLayoutProvider
 
-    fun createFrameOfReference(
+    fun createTileFrame(
         layoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
         debugDrawing: Boolean = false
     ): FrameOfReference
 
-    fun createMarginalFrames(tileLayoutInfo: TileLayoutInfo): Map<MarginSide, FrameOfReference>
+    fun createMarginalFrames(
+        tileLayoutInfo: TileLayoutInfo,
+        coordProvider: CoordProvider,
+        debugDrawing: Boolean
+    ): Map<MarginSide, FrameOfReference>
 }
