@@ -7,11 +7,10 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal object PlotAxisLayoutUtil {
-    private val TICK_LABEL_SPEC = PlotLabelSpec.get(Style.AXIS_TEXT)
+    private val TICK_LABEL_SPEC = PlotLabelSpec.AXIS_TICK
 
     fun initialThickness(
         orientation: Orientation,

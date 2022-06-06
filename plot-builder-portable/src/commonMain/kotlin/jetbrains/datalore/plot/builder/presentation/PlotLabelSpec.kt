@@ -9,10 +9,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.TextStyle
 
-class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false):
+class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) :
     LabelSpec {
 
-    constructor(textStyle: TextStyle): this(textStyle.size, textStyle.face.bold, monospaced = false)
+    constructor(textStyle: TextStyle) : this(textStyle.size, textStyle.face.bold, monospaced = false)
 
     private val myLabelMetrics: LabelMetrics = LabelMetrics(fontSize, bold, monospaced)
 
@@ -56,6 +56,29 @@ class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean
             putLabelSpec(Style.LEGEND_ITEM)
         }
 
-        fun get(className: String) = labelSpecs[className] ?: PlotLabelSpec(0.0)
+        private fun get(className: String) = labelSpecs[className] ?: PlotLabelSpec(0.0)
+
+        /////////
+
+        val PLOT_TITLE: PlotLabelSpec
+            get() = get(Style.PLOT_TITLE)
+
+        val PLOT_SUBTITLE: PlotLabelSpec
+            get() = get(Style.PLOT_SUBTITLE)
+
+        val PLOT_CAPTION: PlotLabelSpec
+            get() = get(Style.PLOT_CAPTION)
+
+        val AXIS_TICK: PlotLabelSpec
+            get() = get(Style.AXIS_TEXT)
+
+        val AXIS_TITLE: PlotLabelSpec
+            get() = get(Style.AXIS_TITLE)
+
+        val LEGEND_TITLE: PlotLabelSpec
+            get() = get(Style.LEGEND_TITLE)
+
+        val LEGEND_ITEM: PlotLabelSpec
+            get() = get(Style.LEGEND_ITEM)
     }
 }

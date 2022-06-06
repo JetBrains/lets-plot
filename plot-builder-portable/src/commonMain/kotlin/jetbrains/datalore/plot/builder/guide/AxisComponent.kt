@@ -297,7 +297,7 @@ class AxisComponent(
         fun beforeAddLabel(loc: Double, rotationDegree: Double): Boolean {
             if (!isRelevant(rotationDegree)) return true
 
-            val len = PlotLabelSpec.get(Style.AXIS_TEXT).height()
+            val len = PlotLabelSpec.AXIS_TICK.height()
 
             // find overlap
             if (filledRanges.any { it.contains(loc) || it.contains(loc + len) }) {

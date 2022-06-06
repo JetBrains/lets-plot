@@ -31,7 +31,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 return when (letter) {
                     'i', 'j', 'l',
                     '!', '.', ',', '\'',
-                    'I'-> NARROW
+                    'I' -> NARROW
                     'm', 'M', 'W' -> EXTRA_WIDE
                     'w', in 'A'..'Z', in '0'..'9' -> WIDE
                     else -> NORMAL
@@ -51,35 +51,35 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     ////////
 
     fun createModels(): List<GroupComponent> {
-   //     PlotLabelSpec.initWithStyleSheet(Style.default())
+        PlotLabelSpec.initWithStyleSheet(Style.default())
 
         fun titles(charRange: CharRange): List<String> =
             charRange.map { letter -> List(15) { letter }.joinToString("") }
 
         return listOf(
-            createModel(Style.PLOT_TITLE, titles('A'..'Z')),
-            createModel(Style.PLOT_TITLE, titles('a'..'z')),
-            createModel(Style.PLOT_TITLE, titles('!'..'9')),
-
-            createModel(Style.AXIS_TITLE, titles('A'..'Z')),
-            createModel(Style.AXIS_TITLE, titles('a'..'z')),
-            createModel(Style.AXIS_TITLE, titles('!'..'9')),
-        )
+            "PLOT_TITLE" to PlotLabelSpec.PLOT_TITLE,
+            "AXIS_TITLE" to PlotLabelSpec.AXIS_TITLE
+        ).flatMap {
+            listOf(
+                createModel(it, titles('A'..'Z')),
+                createModel(it, titles('a'..'z')),
+                createModel(it, titles('!'..'9'))
+            )
+        }
     }
 
-    private fun createModel(className: String, titles: List<String>): GroupComponent {
+    private fun createModel(plotLabel: Pair<String, PlotLabelSpec>, titles: List<String>): GroupComponent {
         val groupComponent = GroupComponent()
 
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = TextLabel(className).rootGroup
+        val nameSpecElement = TextLabel(plotLabel.first).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
-        val plotLabelSpec = PlotLabelSpec.get(className)
         titles
-            .map { title -> LabelSpec(title, plotLabelSpec) }
+            .map { title -> LabelSpec(title, plotLabel.second) }
             .forEach { spec ->
                 val textLabel = createTextLabel(spec)
 

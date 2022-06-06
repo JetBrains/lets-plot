@@ -379,7 +379,7 @@ def element_line(
 
 def element_text(
         color=None,
-        # ToDo: family, face
+        # ToDo: family
         face=None,
         # ToDo: font_size = None,
         # ToDo: hjust, vjust, angle, lineheight, margin
