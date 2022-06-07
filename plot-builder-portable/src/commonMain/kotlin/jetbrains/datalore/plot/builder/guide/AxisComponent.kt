@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -33,10 +32,9 @@ class AxisComponent(
     private val gridTheme: PanelGridTheme,
     private val hideAxis: Boolean = false,
     private val hideAxisBreaks: Boolean = false,
-    private val hideGridlines: Boolean = false
+    private val hideGridlines: Boolean = false,
+    private val tickLabelSpec: PlotLabelSpec
 ) : SvgComponent() {
-
-    private val tickMarkPadding = Defaults.Plot.Axis.TICK_MARK_PADDING
 
     override fun buildComponent() {
         buildAxis()
@@ -109,7 +107,7 @@ class AxisComponent(
                         val group = buildTick(
                             label,
                             labelOffset,
-                            skipLabel = !labelsCleaner.beforeAddLabel(br, labelAdjustments.rotationDegree),
+                            skipLabel = !labelsCleaner.beforeAddLabel(br, labelAdjustments.rotationDegree, tickLabelSpec.height()),
                             axisTheme
                         )
 
@@ -294,18 +292,16 @@ class AxisComponent(
     private class TickLabelsCleaner(val horizontalAxis: Boolean) {
         private val filledRanges = ArrayList<DoubleSpan>()
 
-        fun beforeAddLabel(loc: Double, rotationDegree: Double): Boolean {
+        fun beforeAddLabel(loc: Double, rotationDegree: Double, tickLabelHeight: Double): Boolean {
             if (!isRelevant(rotationDegree)) return true
 
-            val len = PlotLabelSpec.AXIS_TICK.height()
-
             // find overlap
-            if (filledRanges.any { it.contains(loc) || it.contains(loc + len) }) {
+            if (filledRanges.any { it.contains(loc) || it.contains(loc + tickLabelHeight) }) {
                 // overlap - don't add this label
                 return false
             }
 
-            filledRanges.add(DoubleSpan(loc, loc + len))
+            filledRanges.add(DoubleSpan(loc, loc + tickLabelHeight))
             return true
         }
 

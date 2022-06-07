@@ -11,6 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
 abstract class ColorBarComponentLayout(
     title: String,
@@ -18,10 +19,14 @@ abstract class ColorBarComponentLayout(
     breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
-    reverse: Boolean
+    reverse: Boolean,
+    titleLabelSpec: PlotLabelSpec,
+    itemLabelSpec: PlotLabelSpec
 ) : LegendBoxLayout(
     title,
-    legendDirection
+    legendDirection,
+    titleLabelSpec,
+    itemLabelSpec
 ) {
 
     var barBounds: DoubleRectangle private set
@@ -57,20 +62,24 @@ abstract class ColorBarComponentLayout(
         domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
-        reverse: Boolean
+        reverse: Boolean,
+        titleLabelSpec: PlotLabelSpec,
+        itemLabelSpec: PlotLabelSpec
     ) : ColorBarComponentLayout(
         title, domain, breaks, barSize,
         LegendDirection.HORIZONTAL,
-        reverse
+        reverse,
+        titleLabelSpec,
+        itemLabelSpec
     ) {
 
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = LABEL_SPEC.height() / 3
+        private val labelDistance: Double get() = itemLabelSpec.height() / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {
             // Bar + labels bounds
-            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + LABEL_SPEC.height())
+            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + itemLabelSpec.height())
         }
 
         override fun createBreakInfo(tickLocation: Double): BreakInfo {
@@ -89,21 +98,24 @@ abstract class ColorBarComponentLayout(
         domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
-        reverse: Boolean
+        reverse: Boolean,
+        titleLabelSpec: PlotLabelSpec,
+        itemLabelSpec: PlotLabelSpec
     ) : ColorBarComponentLayout(
         title, domain, breaks, barSize,
         LegendDirection.VERTICAL,
-        reverse
+        reverse,
+        titleLabelSpec,
+        itemLabelSpec
     ) {
-
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = LABEL_SPEC.width(1) / 2
+        private val labelDistance: Double get() = itemLabelSpec.width(1) / 2
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
             check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
             val maxLabelWidth: Double = breaks.labels.map { it.length }
-                .maxOf { LABEL_SPEC.width(it) }
+                .maxOf { itemLabelSpec.width(it) }
 
             // Bar + labels bounds
             graphSize = DoubleVector(guideBarSize.x + labelDistance + maxLabelWidth, guideBarSize.y)
@@ -126,14 +138,18 @@ abstract class ColorBarComponentLayout(
             domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
-            reverse: Boolean
+            reverse: Boolean,
+            titleLabelSpec: PlotLabelSpec,
+            itemLabelSpec: PlotLabelSpec
         ): ColorBarComponentLayout {
             return HorizontalLayout(
                 title,
                 domain,
                 breaks,
                 barSize,
-                reverse
+                reverse,
+                titleLabelSpec,
+                itemLabelSpec
             )
         }
 
@@ -142,14 +158,18 @@ abstract class ColorBarComponentLayout(
             domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
-            reverse: Boolean
+            reverse: Boolean,
+            titleLabelSpec: PlotLabelSpec,
+            itemLabelSpec: PlotLabelSpec
         ): ColorBarComponentLayout {
             return VerticalLayout(
                 title,
                 domain,
                 breaks,
                 barSize,
-                reverse
+                reverse,
+                titleLabelSpec,
+                itemLabelSpec
             )
         }
     }

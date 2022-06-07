@@ -22,6 +22,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -149,7 +151,8 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(
                     flipAxis = false
                 ),
-                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
+                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),
+                tickLabelSpec = PlotLabelSpec(fontSize = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble())
             )
 
             return axis

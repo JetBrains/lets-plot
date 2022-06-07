@@ -10,16 +10,15 @@ import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal object PlotAxisLayoutUtil {
-    private val TICK_LABEL_SPEC = PlotLabelSpec.AXIS_TICK
-
     fun initialThickness(
         orientation: Orientation,
         theme: AxisTheme,
+        tickLabelSpec: PlotLabelSpec
     ): Double {
         if (theme.showTickMarks() || theme.showLabels()) {
             val v = theme.tickLabelDistance()
             return if (theme.showLabels()) {
-                v + initialTickLabelSize(orientation)
+                v + initialTickLabelSize(orientation, tickLabelSpec)
             } else {
                 v
             }
@@ -27,10 +26,10 @@ internal object PlotAxisLayoutUtil {
         return 0.0
     }
 
-    private fun initialTickLabelSize(orientation: Orientation): Double {
+    private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: PlotLabelSpec): Double {
         return if (orientation.isHorizontal)
-            TICK_LABEL_SPEC.height()
+            tickLabelSpec.height()
         else
-            TICK_LABEL_SPEC.width(1)
+            tickLabelSpec.width(1)
     }
 }

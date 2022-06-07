@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.assemble.LegendAssembler
 import jetbrains.datalore.plot.builder.guide.ColorBarComponent
 import jetbrains.datalore.plot.builder.guide.LegendBreak
 import jetbrains.datalore.plot.builder.guide.LegendComponent
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
@@ -50,7 +51,7 @@ open class LegendDemo : SimpleDemoBase() {
             legendBreaks.add(LegendBreak.simple(labelsIterator.next(), aesthetics, keyElementFactory))
         }
 
-        val spec = LegendAssembler.createLegendSpec("Simple legend", legendBreaks, theme.legend())
+        val spec = LegendAssembler.createLegendSpec("Simple legend", legendBreaks, theme.legend(), styleSheet = Style.default())
         val legendComponent = LegendComponent(spec)
         legendComponent.debug = DEBUG_DRAWING
 
@@ -81,7 +82,8 @@ open class LegendDemo : SimpleDemoBase() {
             "Color Bar", domain, scaleBreaks,
 //            scale,
             mapper,
-            theme.legend()
+            theme.legend(),
+            styleSheet = Style.default()
         )
         val legendComponent = ColorBarComponent(spec)
         legendComponent.debug = DEBUG_DRAWING

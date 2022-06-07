@@ -16,7 +16,10 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -25,7 +28,8 @@ class LegendAssembler(
     private val legendTitle: String,
     private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-    private val theme: LegendTheme
+    private val theme: LegendTheme,
+    private val styleSheet: StyleSheet
 ) {
 
     private val legendLayers = ArrayList<LegendLayer>()
@@ -91,8 +95,9 @@ class LegendAssembler(
             createLegendSpec(
                 legendTitle, legendBreaks, theme,
                 LegendOptions.combine(
-                    legendOptionsList
-                )
+                    legendOptionsList,
+                ),
+                styleSheet
             )
 
         return object : LegendBoxInfo(spec.size) {
@@ -150,7 +155,8 @@ class LegendAssembler(
             title: String,
             breaks: List<LegendBreak>,
             theme: LegendTheme,
-            options: LegendOptions = LegendOptions()
+            options: LegendOptions = LegendOptions(),
+            styleSheet: StyleSheet
         ): LegendComponentSpec {
 
             val legendDirection = LegendAssemblerUtil.legendDirection(theme)
@@ -193,6 +199,9 @@ class LegendAssembler(
                 colCount = ceil(breakCount / rowCount.toDouble()).toInt()
             }
 
+            val titleLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_TITLE)
+            val itemLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_ITEM)
+
             val layout: LegendComponentLayout
             @Suppress("LiftReturnOrAssignment")
             if (legendDirection === LegendDirection.HORIZONTAL) {
@@ -200,13 +209,15 @@ class LegendAssembler(
                     layout = LegendComponentLayout.horizontalMultiRow(
                         title,
                         breaks,
-                        keySize
+                        keySize,
+                        titleLabelSpec,
+                        itemLabelSpec
                     )
                 } else {
-                    layout = LegendComponentLayout.horizontal(title, breaks, keySize)
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySize, titleLabelSpec, itemLabelSpec)
                 }
             } else {
-                layout = LegendComponentLayout.vertical(title, breaks, keySize)
+                layout = LegendComponentLayout.vertical(title, breaks, keySize, titleLabelSpec, itemLabelSpec)
             }
 
             layout.colCount = colCount

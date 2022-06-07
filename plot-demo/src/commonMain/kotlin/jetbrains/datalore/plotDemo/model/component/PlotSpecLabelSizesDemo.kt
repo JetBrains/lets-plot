@@ -51,15 +51,10 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     ////////
 
     fun createModels(): List<GroupComponent> {
-        PlotLabelSpec.initWithStyleSheet(Style.default())
-
         fun titles(charRange: CharRange): List<String> =
             charRange.map { letter -> List(15) { letter }.joinToString("") }
 
-        return listOf(
-            "PLOT_TITLE" to PlotLabelSpec.PLOT_TITLE,
-            "AXIS_TITLE" to PlotLabelSpec.AXIS_TITLE
-        ).flatMap {
+        return listOf(Style.PLOT_TITLE, Style.AXIS_TITLE).flatMap {
             listOf(
                 createModel(it, titles('A'..'Z')),
                 createModel(it, titles('a'..'z')),
@@ -68,18 +63,19 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         }
     }
 
-    private fun createModel(plotLabel: Pair<String, PlotLabelSpec>, titles: List<String>): GroupComponent {
+    private fun createModel(className: String, titles: List<String>): GroupComponent {
         val groupComponent = GroupComponent()
 
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = TextLabel(plotLabel.first).rootGroup
+        val nameSpecElement = TextLabel(className).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
+        val plotLabel = PlotLabelSpec(Style.default().getTextStyle(className))
         titles
-            .map { title -> LabelSpec(title, plotLabel.second) }
+            .map { title -> LabelSpec(title, plotLabel) }
             .forEach { spec ->
                 val textLabel = createTextLabel(spec)
 

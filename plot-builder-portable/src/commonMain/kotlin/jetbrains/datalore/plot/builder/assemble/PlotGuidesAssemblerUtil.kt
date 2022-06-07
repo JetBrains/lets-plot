@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.vis.StyleSheet
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
@@ -111,7 +112,8 @@ internal object PlotGuidesAssemblerUtil {
         scale: Scale<Color>,
         scaleMapper: ScaleMapper<Color>,
         options: ColorBarOptions?,
-        theme: LegendTheme
+        theme: LegendTheme,
+        styleSheet: StyleSheet
     ): ColorBarAssembler {
 
         val result = ColorBarAssembler(
@@ -119,7 +121,8 @@ internal object PlotGuidesAssemblerUtil {
             transformedDomain,
             scale,
             scaleMapper,
-            theme
+            theme,
+            styleSheet
         )
         result.setOptions(options)
         return result

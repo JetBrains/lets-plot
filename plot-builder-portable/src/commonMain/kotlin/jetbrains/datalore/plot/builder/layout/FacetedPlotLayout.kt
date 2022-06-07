@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsB
 import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.vis.StyleSheet
 
 internal class FacetedPlotLayout constructor(
     private val facets: PlotFacets,
@@ -31,7 +32,7 @@ internal class FacetedPlotLayout constructor(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, styleSheet: StyleSheet): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (paddingLeft + paddingRight),
             preferredSize.y - (paddingTop + paddingBottom)
@@ -62,6 +63,7 @@ internal class FacetedPlotLayout constructor(
                 coordProvider,
                 hAxisTheme = hAxisTheme,
                 vAxisTheme = vAxisTheme,
+                styleSheet
             )
         } else {
             FixedScalesTilesLayouter.createTileLayoutInfos(
@@ -73,6 +75,7 @@ internal class FacetedPlotLayout constructor(
                 coordProvider,
                 hAxisTheme = hAxisTheme,
                 vAxisTheme = vAxisTheme,
+                styleSheet
             )
         }
 

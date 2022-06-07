@@ -15,14 +15,18 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.vis.StyleSheet
 
 class ColorBarAssembler(
     private val legendTitle: String,
     private val transformedDomain: DoubleSpan,
     private val scale: Scale<Color>,
     private val scaleMapper: ScaleMapper<Color>,
-    private val theme: LegendTheme
+    private val theme: LegendTheme,
+    private val styleSheet: StyleSheet
 ) {
 
     private var colorBarOptions: ColorBarOptions? = null
@@ -44,7 +48,8 @@ class ColorBarAssembler(
             scaleBreaks,
             scaleMapper,
             theme,
-            colorBarOptions
+            colorBarOptions,
+            styleSheet
         )
 
         return object : LegendBoxInfo(spec.size) {
@@ -69,7 +74,8 @@ class ColorBarAssembler(
             breaks: ScaleBreaks,
             scaleMapper: ScaleMapper<Color>,
             theme: LegendTheme,
-            options: ColorBarOptions? = null
+            options: ColorBarOptions? = null,
+            styleSheet: StyleSheet
         ): ColorBarComponentSpec {
 
             val legendDirection = LegendAssemblerUtil.legendDirection(theme)
@@ -86,10 +92,12 @@ class ColorBarAssembler(
             }
 
             val reverse = !horizontal
+            val titleLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_TITLE)
+            val itemLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_ITEM)
 
             val layout = when {
-                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse)
-                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse)
+                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse, titleLabelSpec, itemLabelSpec)
+                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse, titleLabelSpec, itemLabelSpec)
             }
 
             return ColorBarComponentSpec(

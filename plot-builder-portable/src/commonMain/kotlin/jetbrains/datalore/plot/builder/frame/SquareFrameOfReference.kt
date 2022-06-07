@@ -21,10 +21,14 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.theme.PanelTheme
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class SquareFrameOfReference(
@@ -37,6 +41,7 @@ internal class SquareFrameOfReference(
     private val marginsLayout: GeomMarginsLayout,
     private val theme: Theme,
     private val flipAxis: Boolean,
+    private val styleSheet: StyleSheet
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
@@ -111,7 +116,8 @@ internal class SquareFrameOfReference(
                 hGridTheme,
                 gridLineLength = geomBounds.height,
                 gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
-                isDebugDrawing
+                isDebugDrawing,
+                tickLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${hAxisTheme.axis}")
             )
 
             val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.BOTTOM)
@@ -135,7 +141,8 @@ internal class SquareFrameOfReference(
                 vGridTheme,
                 gridLineLength = geomBounds.width,
                 gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
-                isDebugDrawing
+                isDebugDrawing,
+                tickLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${vAxisTheme.axis}")
             )
 
             val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.LEFT)
@@ -222,9 +229,10 @@ internal class SquareFrameOfReference(
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
             gridLineDistance: Double,
-            isDebugDrawing: Boolean
+            isDebugDrawing: Boolean,
+            tickLabelSpec: PlotLabelSpec
         ): AxisComponent {
-            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis componenmt" }
+            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
             val orientation = info.orientation
             val labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation = orientation,
@@ -252,7 +260,8 @@ internal class SquareFrameOfReference(
                 gridTheme = gridTheme,
                 hideAxis = hideAxis,
                 hideAxisBreaks = hideAxisBreaks,
-                hideGridlines = hideGridlines
+                hideGridlines = hideGridlines,
+                tickLabelSpec = tickLabelSpec
             )
 
             if (isDebugDrawing) {

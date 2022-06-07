@@ -31,6 +31,9 @@ import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
@@ -111,7 +114,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX()
+                gridTheme = theme.panel().gridX(),
+                tickLabelSpec = TICK_LABEL_SPEC
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -129,7 +133,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY()
+                gridTheme = theme.panel().gridY(),
+                tickLabelSpec = TICK_LABEL_SPEC
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -291,7 +296,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX()
+                gridTheme = theme.panel().gridX(),
+                tickLabelSpec = TICK_LABEL_SPEC
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -309,7 +315,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY()
+                gridTheme = theme.panel().gridY(),
+                tickLabelSpec = TICK_LABEL_SPEC
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -413,7 +420,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX()
+                gridTheme = theme.panel().gridX(),
+                tickLabelSpec = TICK_LABEL_SPEC
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -431,7 +439,8 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY()
+                gridTheme = theme.panel().gridY(),
+                tickLabelSpec = TICK_LABEL_SPEC
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -480,5 +489,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 .range(colors)
                 .domain(minValue, maxValue)
         }
+
+        private val TICK_LABEL_SPEC = PlotLabelSpec(fontSize = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble())
     }
 }

@@ -11,8 +11,11 @@ import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.max
 
 internal object PlotLayoutUtil {
@@ -60,7 +63,7 @@ internal object PlotLayoutUtil {
         }
     }
 
-    private fun axisTitleDimensions(text: String) = labelDimensions(text, PlotLabelSpec.AXIS_TITLE)
+    private fun axisTitleDimensions(text: String, axisTitleLabelSpec: PlotLabelSpec) = labelDimensions(text, axisTitleLabelSpec)
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
@@ -92,7 +95,9 @@ internal object PlotLayoutUtil {
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
-        captionLines: List<String>
+        captionLines: List<String>,
+        flippedAxis: Boolean,
+        styleSheet: StyleSheet
     ): DoubleVector {
         val delta = titlesAndLegendsSizeDelta(
             titleLines,
@@ -102,7 +107,9 @@ internal object PlotLayoutUtil {
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines
+            captionLines,
+            flippedAxis,
+            styleSheet
         )
         val reduced = baseSize.subtract(delta)
         return DoubleVector(
@@ -120,7 +127,9 @@ internal object PlotLayoutUtil {
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
-        captionLines: List<String>
+        captionLines: List<String>,
+        flippedAxis: Boolean,
+        styleSheet: StyleSheet
     ): DoubleVector {
         val delta = titlesAndLegendsSizeDelta(
             titleLines,
@@ -130,7 +139,9 @@ internal object PlotLayoutUtil {
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines
+            captionLines,
+            flippedAxis,
+            styleSheet
         )
         return base.add(delta)
     }
@@ -144,38 +155,57 @@ internal object PlotLayoutUtil {
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
         captionLines: List<String>,
+        flippedAxis: Boolean,
+        styleSheet: StyleSheet
     ): DoubleVector {
-        val titleDelta = titleSizeDelta(titleLines, subtitleLines)
-        val axisTitlesDelta = axisTitleSizeDelta(axisTitleLeft, axisTitleBottom, axisEnabled)
+        val titleDelta = titleSizeDelta(
+            titleLines,
+            subtitleLines,
+            titleLabelSpec = styleSheet.getPlotLabelSpec(Style.PLOT_TITLE),
+            subtitleLabelSpec = styleSheet.getPlotLabelSpec(Style.PLOT_SUBTITLE)
+        )
+        val axisTitlesDelta = axisTitleSizeDelta(
+            axisTitleLeft,
+            axisTitleBottom,
+            axisEnabled,
+            axisTitleLeftLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"),
+            axisTitleBottomLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}")
+        )
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION).y)
+        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, styleSheet.getPlotLabelSpec(Style.PLOT_CAPTION)).y)
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
-    fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>): DoubleVector {
+    fun titleSizeDelta(
+        titleLines: List<String>,
+        subtitleLines: List<String>,
+        titleLabelSpec: PlotLabelSpec,
+        subtitleLabelSpec: PlotLabelSpec
+    ): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
-                    titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
+            titleDimensions(titleLines, titleLabelSpec).y + titleDimensions(subtitleLines, subtitleLabelSpec).y
         )
     }
 
     fun axisTitleSizeDelta(
         axisTitleLeft: String?,
         axisTitleBottom: String?,
-        axisEnabled: Boolean
+        axisEnabled: Boolean,
+        axisTitleLeftLabelSpec: PlotLabelSpec,
+        axisTitleBottomLabelSpec: PlotLabelSpec
     ): DoubleVector {
         if (!axisEnabled) return DoubleVector.ZERO
 
-        val axisTitleLeftDelta = DoubleVector(axisTitleThickness(axisTitleLeft), 0.0)
-        val axisTitleBottomDelta = DoubleVector(0.0, axisTitleThickness(axisTitleBottom))
+        val axisTitleLeftDelta = DoubleVector(axisTitleThickness(axisTitleLeft, axisTitleLeftLabelSpec), 0.0)
+        val axisTitleBottomDelta = DoubleVector(0.0, axisTitleThickness(axisTitleBottom, axisTitleBottomLabelSpec))
 
         return axisTitleLeftDelta.add(axisTitleBottomDelta)
     }
 
-    private fun axisTitleThickness(title: String?): Double {
+    private fun axisTitleThickness(title: String?, axisTitleLabelSpec: PlotLabelSpec): Double {
         if (title == null) return 0.0
-        val titleSize = axisTitleDimensions(title)
+        val titleSize = axisTitleDimensions(title, axisTitleLabelSpec)
         return titleSize.y + AXIS_TITLE_OUTER_MARGIN + AXIS_TITLE_INNER_MARGIN
     }
 

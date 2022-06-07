@@ -13,7 +13,10 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil
 import jetbrains.datalore.plot.builder.layout.PlotAxisLayoutUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.abs
 
 internal object FreeScalesTilesLayouter {
@@ -26,17 +29,26 @@ internal object FreeScalesTilesLayouter {
         coordProvider: CoordProvider,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
+        styleSheet: StyleSheet
     ): List<TileLayoutInfo> {
 
         val facetTiles = facets.tileInfos()
 
         // rough estimate (without axis. The final size will be smaller)
         val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
-        val vAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.LEFT, vAxisTheme)
+        val vAxisThickness = PlotAxisLayoutUtil.initialThickness(
+            Orientation.LEFT,
+            vAxisTheme,
+            tickLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${vAxisTheme.axis}")
+        )
         val geomWidth = (tilesAreaSize.x - addedHSize - vAxisCount * vAxisThickness) / facets.colCount
 
         val hAxisCount = FacetedPlotLayoutUtil.countHAxisInFirstCol(facetTiles)
-        val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme)
+        val hAxisThickness = PlotAxisLayoutUtil.initialThickness(
+            Orientation.BOTTOM,
+            hAxisTheme,
+            tickLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${vAxisTheme.axis}")
+        )
         val geomHeight = (tilesAreaSize.y - addedVSize - hAxisCount * hAxisThickness) / facets.rowCount
 
         // 1st iteration

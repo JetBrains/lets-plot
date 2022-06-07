@@ -38,47 +38,6 @@ class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean
     }
 
     companion object {
-        private val labelSpecs = HashMap<String, PlotLabelSpec>()
-
-        fun initWithStyleSheet(styleSheet: StyleSheet) {
-            fun putLabelSpec(className: String) {
-                labelSpecs[className] = PlotLabelSpec(styleSheet.getTextStyle(className))
-            }
-
-            putLabelSpec(Style.PLOT_TITLE)
-            putLabelSpec(Style.PLOT_SUBTITLE)
-            putLabelSpec(Style.PLOT_CAPTION)
-
-            putLabelSpec(Style.AXIS_TEXT)
-            putLabelSpec(Style.AXIS_TITLE)
-
-            putLabelSpec(Style.LEGEND_TITLE)
-            putLabelSpec(Style.LEGEND_ITEM)
-        }
-
-        private fun get(className: String) = labelSpecs[className] ?: PlotLabelSpec(0.0)
-
-        /////////
-
-        val PLOT_TITLE: PlotLabelSpec
-            get() = get(Style.PLOT_TITLE)
-
-        val PLOT_SUBTITLE: PlotLabelSpec
-            get() = get(Style.PLOT_SUBTITLE)
-
-        val PLOT_CAPTION: PlotLabelSpec
-            get() = get(Style.PLOT_CAPTION)
-
-        val AXIS_TICK: PlotLabelSpec
-            get() = get(Style.AXIS_TEXT)
-
-        val AXIS_TITLE: PlotLabelSpec
-            get() = get(Style.AXIS_TITLE)
-
-        val LEGEND_TITLE: PlotLabelSpec
-            get() = get(Style.LEGEND_TITLE)
-
-        val LEGEND_ITEM: PlotLabelSpec
-            get() = get(Style.LEGEND_ITEM)
+        internal fun StyleSheet.getPlotLabelSpec(className: String) = PlotLabelSpec(getTextStyle(className))
     }
 }

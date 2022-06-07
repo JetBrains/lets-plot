@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
@@ -59,14 +58,14 @@ class PlotAssembler private constructor(
         require(hasLayers()) { "No layers in plot" }
 
         val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipAxis)
-        PlotLabelSpec.initWithStyleSheet(styleSheet)
 
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
                 scaleMappers,
                 guideOptionsMap,
-                theme.legend()
+                theme.legend(),
+                styleSheet
             )
             else -> emptyList()
         }
@@ -123,6 +122,7 @@ class PlotAssembler private constructor(
                         theme,
                         marginsLayout,
                         domainByMargin,
+                        styleSheet
                     )
                 }
 

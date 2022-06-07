@@ -21,6 +21,7 @@ import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.vis.StyleSheet
 
 internal object PlotAssemblerUtil {
 
@@ -44,7 +45,8 @@ internal object PlotAssemblerUtil {
         layersByPanel: List<List<GeomLayer>>,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
-        theme: LegendTheme
+        theme: LegendTheme,
+        styleSheet: StyleSheet
     ): List<LegendBoxInfo> {
 
         // stitch together layers from all panels
@@ -86,7 +88,8 @@ internal object PlotAssemblerUtil {
             transformedDomainByAes,
             scaleMappers,
             guideOptionsMap,
-            theme
+            theme,
+            styleSheet
         )
     }
 
@@ -95,7 +98,8 @@ internal object PlotAssemblerUtil {
         transformedDomainByAes: Map<Aes<*>, DoubleSpan>,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
-        theme: LegendTheme
+        theme: LegendTheme,
+        styleSheet: StyleSheet
     ): List<LegendBoxInfo> {
 
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
@@ -128,7 +132,8 @@ internal object PlotAssemblerUtil {
                             scale as Scale<Color>,
                             scaleMappers.getValue(aes) as ScaleMapper<Color>,
                             guideOptions,
-                            theme
+                            theme,
+                            styleSheet
                         )
                     }
                 } else if (fitsColorBar(aes, scale)) {
@@ -140,7 +145,8 @@ internal object PlotAssemblerUtil {
                         scale as Scale<Color>,
                         scaleMappers.getValue(aes) as ScaleMapper<Color>,
                         null,
-                        theme
+                        theme,
+                        styleSheet
                     )
                 }
 
@@ -155,7 +161,8 @@ internal object PlotAssemblerUtil {
                         scaleName,
                         guideOptionsMap,
                         scaleMappers,
-                        theme
+                        theme,
+                        styleSheet
                     )
                 }
 
@@ -164,7 +171,7 @@ internal object PlotAssemblerUtil {
                 val aestheticsDefaults = stitchedLayers.aestheticsDefaults
                 legendAssembler.addLayer(
                     legendKeyFactory,
-                    varBindings.map { it.aes },
+                    varBindings.map(VarBinding::aes),
                     layerConstantByAes,
                     aestheticsDefaults,
                     stitchedLayers.getScaleMap(),

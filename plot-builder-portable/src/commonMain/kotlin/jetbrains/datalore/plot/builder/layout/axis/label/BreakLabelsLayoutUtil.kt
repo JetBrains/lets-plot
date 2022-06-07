@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.max
 import kotlin.math.min
@@ -60,7 +61,8 @@ internal object BreakLabelsLayoutUtil {
         breaks: ScaleBreaks,
         axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?,
-        theme: AxisTheme
+        theme: AxisTheme,
+        tickLabelSpec: PlotLabelSpec
     ): AxisLabelsLayoutInfo {
 
         val axisBounds = when {
@@ -68,7 +70,8 @@ internal object BreakLabelsLayoutUtil {
                 val labelsBounds = verticalAxisLabelsBounds(
                     breaks,
                     axisDomain,
-                    axisMapper
+                    axisMapper,
+                    tickLabelSpec
                 )
                 applyLabelsOffset(
                     labelsBounds,
@@ -134,10 +137,11 @@ internal object BreakLabelsLayoutUtil {
     private fun verticalAxisLabelsBounds(
         breaks: ScaleBreaks,
         axisDomain: DoubleSpan,
-        axisMapper: (Double?) -> Double?
+        axisMapper: (Double?) -> Double?,
+        tickLabelSpec: PlotLabelSpec
     ): DoubleRectangle {
         val maxLength = maxLength(breaks.labels)
-        val maxLabelWidth = AxisLabelsLayout.TICK_LABEL_SPEC.width(maxLength)
+        val maxLabelWidth = tickLabelSpec.width(maxLength)
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
@@ -149,8 +153,8 @@ internal object BreakLabelsLayoutUtil {
 
             y1 = min(axisBreaks[0], axisBreaks.last())
             y2 = max(axisBreaks[0], axisBreaks.last())
-            y1 -= AxisLabelsLayout.TICK_LABEL_SPEC.height() / 2
-            y2 += AxisLabelsLayout.TICK_LABEL_SPEC.height() / 2
+            y1 -= tickLabelSpec.height() / 2
+            y2 += tickLabelSpec.height() / 2
         }
 
         val origin = DoubleVector(0.0, y1)
