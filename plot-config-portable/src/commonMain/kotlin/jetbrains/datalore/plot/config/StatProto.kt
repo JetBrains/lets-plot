@@ -233,6 +233,7 @@ object StatProto {
         }
 
         return DensityStat(
+            trim = options.getBoolean(Density.TRIM, DensityStat.DEF_TRIM),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

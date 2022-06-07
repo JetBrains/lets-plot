@@ -3356,6 +3356,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 def geom_density(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  orientation=None,
+                 trim=None,
                  kernel=None,
                  adjust=None,
                  bw=None,
@@ -3395,6 +3396,9 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     orientation : str, default='x'
         Specifies the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
+    trim : bool, default=False
+        If False, each density is computed on the full range of the data.
+        If True, each density is computed over the range of that group.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -3524,7 +3528,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
-                 kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
+                 trim=trim, kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
                  **other_args)
 
 

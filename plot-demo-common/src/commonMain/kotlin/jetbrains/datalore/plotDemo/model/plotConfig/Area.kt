@@ -57,7 +57,8 @@ class Area {
                 "                  'geom': 'area'," +
                 "                   'stat': 'density'," +
                 "                   'position' : 'identity'," +
-                "                   'alpha': 0.7" +
+                "                   'alpha': 0.7," +
+                "                   'trim': true" +
                 "               }" +
                 "           ]" +
                 "}"

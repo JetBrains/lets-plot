@@ -220,6 +220,7 @@ object Stats {
     }
 
     fun density(
+        trim: Boolean = DensityStat.DEF_TRIM,
         bandWidth: Double? = null,
         bandWidthMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW,
         adjust: Double = DensityStat.DEF_ADJUST,
@@ -228,6 +229,7 @@ object Stats {
         fullScanMax: Int = DensityStat.DEF_FULL_SCAN_MAX
     ): DensityStat {
         return DensityStat(
+            trim = trim,
             bandWidth = bandWidth,
             bandWidthMethod = bandWidthMethod,
             adjust = adjust,

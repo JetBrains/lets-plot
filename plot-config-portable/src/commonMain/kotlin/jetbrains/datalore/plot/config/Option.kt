@@ -306,6 +306,7 @@ object Option {
         }
 
         object Density {
+            const val TRIM = "trim"
             const val N = "n"
             const val KERNEL = "kernel"
             const val BAND_WIDTH = "bw"     // number or string (method name)

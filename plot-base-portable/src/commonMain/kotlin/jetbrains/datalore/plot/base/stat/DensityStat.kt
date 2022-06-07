@@ -20,6 +20,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
  * highly inefficient 'full scan' computation.
  */
 class DensityStat(
+    private val trim: Boolean,
     private val bandWidth: Double?,
     private val bandWidthMethod: BandWidthMethod,  // Used is `bandWidth` is not set.
     private val adjust: Double,
@@ -66,7 +67,12 @@ class DensityStat(
 
         if (xs.isEmpty()) return withEmptyStatValues()
 
-        val rangeX = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
+        val rangeX = if (trim) {
+            val xSummary = FiveNumberSummary(xs)
+            DoubleSpan(xSummary.min, xSummary.max)
+        } else {
+            statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
+        }
 
         val statX = DensityStatUtil.createStepValues(rangeX, n)
         val statDensity = ArrayList<Double>()
@@ -113,6 +119,7 @@ class DensityStat(
     }
 
     companion object {
+        const val DEF_TRIM = false
         val DEF_KERNEL = Kernel.GAUSSIAN
         const val DEF_ADJUST = 1.0
         const val DEF_N = 512
