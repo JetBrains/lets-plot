@@ -27,8 +27,6 @@ internal object PlotConfigScaleProviders {
 
         val setup = PlotConfigUtil.createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
-        // All aes used in bindings and x/y aes.
-        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
         val dataByVarBinding = setup.dataByVarBinding
         val variablesByMappedAes = setup.variablesByMappedAes
 
@@ -47,11 +45,15 @@ internal object PlotConfigScaleProviders {
                 scaleProviderByAes[aes] = ScaleProviderHelper.createDateTimeScaleProvider(aes, name)
             }
 
+        // All aes used in bindings and x/y aes.
+        // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+
         // Append all the rest scale providers.
         return aesSet.associateWith { aes ->
             val scaleAes = when {
-                setup.isXAxis(aes) -> Aes.X
-                setup.isYAxis(aes) -> Aes.Y
+                Aes.isPositionalX(aes) -> Aes.X
+                Aes.isPositionalY(aes) -> Aes.Y
                 else -> aes
             }
 

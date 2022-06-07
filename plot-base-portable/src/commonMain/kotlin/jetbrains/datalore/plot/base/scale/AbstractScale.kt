@@ -95,7 +95,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
     }
 
     protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {
-        internal val myName: String = scale.name
+        internal var myName: String = scale.name
 
         internal var myBreaks: List<DomainT>? = scale.definedBreaks
         internal var myLabels: List<String>? = scale.definedLabels
@@ -103,6 +103,11 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
+
+        override fun name(v: String): Scale.Builder<T> {
+            myName = v
+            return this
+        }
 
         override fun breaks(l: List<Any>): Scale.Builder<T> {
             myBreaks = l.map {

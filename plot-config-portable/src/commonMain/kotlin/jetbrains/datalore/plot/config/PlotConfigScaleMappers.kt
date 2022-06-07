@@ -37,8 +37,9 @@ internal object PlotConfigScaleMappers {
         )
 
         // All aes used in bindings and x/y aes.
-        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
-        val dataByVarBinding = setup.dataByVarBinding
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+        val dataByVarBinding = setup.dataByVarBindingWithoutStatPositional()
+
         val variablesByMappedAes = setup.variablesByMappedAes
 
         // Compute domains for 'continuous' data.

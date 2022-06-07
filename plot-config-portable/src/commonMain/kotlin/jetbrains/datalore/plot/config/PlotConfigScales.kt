@@ -29,7 +29,10 @@ internal object PlotConfigScales {
         )
 
         // All aes used in bindings and x/y aes.
-        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
+        // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
+        // See also: PlotConfigClientSideUtil.createScalesForStatPositionalBindings()
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+
         val variablesByMappedAes = setup.variablesByMappedAes
 
         // Create scales for all aes.

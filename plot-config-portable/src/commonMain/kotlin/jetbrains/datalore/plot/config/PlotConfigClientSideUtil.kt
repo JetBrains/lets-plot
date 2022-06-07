@@ -8,12 +8,15 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.MarginalLayerUtil
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 
 object PlotConfigClientSideUtil {
@@ -75,9 +78,19 @@ object PlotConfigClientSideUtil {
                 check(layerBuilders.size >= layerIndex)
 
                 val layerConfig = plotConfig.layerConfigs[layerIndex]
-                val layerScaleMap = when (layerConfig.isMarginal) {
-                    true -> MarginalLayerUtil.toMarginalScaleMap(plotConfig.scaleMap, layerConfig.marginalSide)
-                    false -> plotConfig.scaleMap
+                val layerTileData = tileDataByLayer[layerIndex]
+
+                val commonScaleMap = plotConfig.scaleMap.map
+                val addScales = createScalesForStatPositionalBindings(
+                    layerConfig.varBindings,
+                    layerConfig.isYOrientation,
+                    commonScaleMap
+                )
+                val layerScaleMap = TypedScaleMap(commonScaleMap + addScales).let {
+                    when (layerConfig.isMarginal) {
+                        true -> MarginalLayerUtil.toMarginalScaleMap(it, layerConfig.marginalSide)
+                        false -> it
+                    }
                 }
 
                 if (layerBuilders.size == layerIndex) {
@@ -99,7 +112,6 @@ object PlotConfigClientSideUtil {
                     layerBuilders.add(createLayerBuilder(layerConfig, geomInteraction))
                 }
 
-                val layerTileData = tileDataByLayer[layerIndex]
                 val layer = layerBuilders[layerIndex].build(
                     layerTileData,
                     layerScaleMap,
@@ -111,6 +123,27 @@ object PlotConfigClientSideUtil {
         }
 
         return layersByTile
+    }
+
+    private fun createScalesForStatPositionalBindings(
+        layerVarBindings: List<VarBinding>,
+        isYOrientation: Boolean,
+        commonScaleMap: Map<Aes<*>, Scale<*>>,
+    ): Map<Aes<*>, Scale<*>> {
+        val statPositionalBindings =
+            layerVarBindings.filter { it.variable.isStat }
+                .filterNot { it.aes == Aes.X || it.aes == Aes.Y }
+                .filter { Aes.isPositionalXY(it.aes) }
+
+        return statPositionalBindings.map { binding ->
+            val positionalAes = when (isYOrientation) {
+                true -> if (Aes.isPositionalX(binding.aes)) Aes.Y else Aes.X
+                false -> if (Aes.isPositionalX(binding.aes)) Aes.X else Aes.Y
+            }
+            val scaleProto = commonScaleMap.getValue(positionalAes)
+            val aesScale = scaleProto.with().name(binding.variable.label).build()
+            binding.aes to aesScale
+        }.toMap()
     }
 
     private fun createLayerBuilder(

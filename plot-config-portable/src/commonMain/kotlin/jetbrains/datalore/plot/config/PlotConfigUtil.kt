@@ -78,40 +78,17 @@ object PlotConfigUtil {
         layerConfigs: List<LayerConfig>,
         excludeStatVariables: Boolean
     ): PlotAesBindingSetup {
-        val xAesSet = mutableSetOf<Aes<*>>(Aes.X)
-        val yAesSet = mutableSetOf<Aes<*>>(Aes.Y)
-        layerConfigs.forEach { layer ->
-            layer.varBindings.filter { !(excludeStatVariables && it.variable.isStat) }
-                .map { it.aes }
-                .filterNot { aes -> aes == Aes.X || aes == Aes.Y }
-                .filter { Aes.isPositionalXY(it) }
-                .forEach { aes ->
-                    // See XOR issue: https://youtrack.jetbrains.com/issue/KT-52296/Kotlin-JS-the-xor-operation-sometimes-evaluates-to-int-value-ins
-//                    val b = layer.isYOrientation xor Aes.isPositionalX(aes)
-                    val b = if (layer.isYOrientation) !Aes.isPositionalX(aes) else Aes.isPositionalX(aes)
-                    when (b) {
-                        true -> xAesSet.add(aes)
-                        false -> yAesSet.add(aes)
-                    }
-                }
-        }
 
         val dataByVarBinding = associateVarBindingsWithData(
             layerConfigs, excludeStatVariables
         )
 
-        val aesSet: Set<Aes<*>> = dataByVarBinding.keys.map { it.aes }.toSet()
-
+        val varBindings = getVarBindings(layerConfigs, excludeStatVariables)
         val variablesByMappedAes = associateAesWithMappedVariables(
-            getVarBindings(layerConfigs, excludeStatVariables)
+            varBindings
         )
 
-        val varBindings = getVarBindings(layerConfigs, excludeStatVariables)
-
         return PlotAesBindingSetup(
-            mappedAesSet = aesSet,
-            xAesSet = xAesSet,
-            yAesSet = yAesSet,
             varBindings = varBindings,
             dataByVarBinding = dataByVarBinding,
             variablesByMappedAes = variablesByMappedAes,
