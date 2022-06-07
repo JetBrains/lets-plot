@@ -2821,7 +2821,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
                 draw_quantiles=None,
-                scale=None, trim=None,
+                scale=None, trim=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
@@ -2859,6 +2859,20 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 'width', all violins have the same maximum width.
     trim : bool, default=True
         Trim the tails of the violins to the range of the data.
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float
+        Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
+    n : int, default=512
+        The number of sampled points for plotting the function.
+    fs_max : int, default=500
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2969,8 +2983,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  orientation=orientation,
                  draw_quantiles=draw_quantiles,
-                 scale=scale,
-                 trim=trim,
+                 scale=scale, trim=trim, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
 
 
