@@ -11,9 +11,9 @@ open class BarPlot {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            //fancy(),
-            //fancyWithWidth(0.5),
-            //fancyWithWidth(5.0),
+            fancy(),
+            fancyWithWidth(0.5),
+            fancyWithWidth(5.0),
         )
     }
 
@@ -26,6 +26,7 @@ open class BarPlot {
 
         fun basic(): MutableMap<String, Any> {
             val spec = "{" +
+//                    "'scales': [{'aesthetic': 'y', 'trans': 'reverse'}]," +
                     "   'kind': 'plot'," +
                     "   'data': " + OUR_DATA +
                     "           ," +
