@@ -2821,7 +2821,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
                 draw_quantiles=None,
-                scale=None,
+                scale=None, trim=None,
                 **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
@@ -2857,6 +2857,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 'area', all violins have the same area.
         If 'count', areas are scaled proportionally to the number of observations.
         If 'width', all violins have the same maximum width.
+    trim : bool, default=True
+        Trim the tails of the violins to the range of the data.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2968,6 +2970,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  orientation=orientation,
                  draw_quantiles=draw_quantiles,
                  scale=scale,
+                 trim=trim,
                  **other_args)
 
 

@@ -37,6 +37,7 @@ class YDensityStatTest {
     private fun yDensityStat(scale: YDensityStat.Scale? = null): YDensityStat {
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
+            trim = YDensityStat.DEF_TRIM,
             bandWidth = null,
             bandWidthMethod = DensityStat.DEF_BW,
             adjust = DensityStat.DEF_ADJUST,

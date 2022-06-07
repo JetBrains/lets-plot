@@ -192,6 +192,7 @@ object StatProto {
 
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
+            trim = options.getBoolean(YDensity.TRIM, YDensityStat.DEF_TRIM),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

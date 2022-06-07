@@ -85,7 +85,8 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
-                "                 'draw_quantiles': [0.25, 0.5, 0.75]" +
+                "                 'draw_quantiles': [0.25, 0.5, 0.75]," +
+                "                 'trim': false" +
                 "               }" +
                 "             ]" +
                 "}"

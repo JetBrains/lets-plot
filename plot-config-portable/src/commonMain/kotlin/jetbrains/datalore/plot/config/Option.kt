@@ -325,6 +325,7 @@ object Option {
 
         object YDensity {
             const val SCALE = "scale"
+            const val TRIM = "trim"
         }
 
         object QQ {

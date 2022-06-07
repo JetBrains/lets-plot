@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class YDensityStat(
     private val scale: Scale,
+    private val trim: Boolean,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -111,7 +112,12 @@ class YDensityStat(
                 .unzip()
             if (binY.isEmpty()) continue
             val ySummary = FiveNumberSummary(binY)
-            val rangeY = DoubleSpan(ySummary.min, ySummary.max)
+            val modifier = if (trim) 0.0 else 3.0
+            val bw = bandWidth ?: DensityStatUtil.bandWidth(bandWidthMethod, binY)
+            val rangeY = DoubleSpan(
+                ySummary.min - modifier * bw,
+                ySummary.max + modifier * bw
+            )
             val binStatY = DensityStatUtil.createStepValues(rangeY, n)
             val densityFunction = DensityStatUtil.densityFunction(
                 binY, binW,
@@ -145,6 +151,7 @@ class YDensityStat(
 
     companion object {
         val DEF_SCALE = Scale.AREA
+        const val DEF_TRIM = true
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
