@@ -285,8 +285,7 @@ class PlotSvgComponent constructor(
                 liveMapFigures = liveMapFigures + listOf(this)
             }
 
-// ToDo: axis tooltip shoult uppear on 'outer' bounds.
-//            val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
+            val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
             val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
                 placementArea = geomInnerBoundsAbsolute,
@@ -296,7 +295,9 @@ class PlotSvgComponent constructor(
                 geomInnerBoundsAbsolute,
                 tooltipBounds,
                 tile.targetLocators,
-                tile.layerYOrientations
+                tile.layerYOrientations,
+                // axis tooltip should appear on 'outer' bounds:
+                axisOrigin = DoubleVector(geomOuterBoundsAbsolute.left, geomOuterBoundsAbsolute.bottom)
             )
 
             @Suppress("ConstantConditionIf")

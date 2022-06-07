@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
@@ -22,7 +23,8 @@ interface PlotInteractor : Disposable {
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
-        layerYOrientations: List<Boolean>
+        layerYOrientations: List<Boolean>,
+        axisOrigin: DoubleVector
     )
 
     fun startToolFeedback(toolFeedback: ToolFeedback): Registration

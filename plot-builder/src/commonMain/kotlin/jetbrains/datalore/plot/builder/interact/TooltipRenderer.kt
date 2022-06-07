@@ -194,14 +194,16 @@ internal class TooltipRenderer(
         geomBounds: DoubleRectangle,
         tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
-        layerYOrientations: List<Boolean>
+        layerYOrientations: List<Boolean>,
+        axisOrigin: DoubleVector
     ) {
         val tileInfo = TileInfo(
             geomBounds,
             tooltipBounds,
             targetLocators,
             layerYOrientations,
-            flippedAxis
+            flippedAxis,
+            axisOrigin
         )
         myTileInfos.add(tileInfo)
     }
@@ -234,7 +236,8 @@ internal class TooltipRenderer(
         val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        private val flippedAxis: Boolean
+        private val flippedAxis: Boolean,
+        val axisOrigin: DoubleVector
     ) {
 
         private val transformedLocators = targetLocators.zip(layerYOrientations)
@@ -245,9 +248,6 @@ internal class TooltipRenderer(
                     false -> TileTargetLocator(targetLocator)
                 }
             }
-
-        internal val axisOrigin: DoubleVector
-            get() = DoubleVector(geomBounds.left, geomBounds.bottom)
 
         internal fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
             val targetsPicker = LocatedTargetsPicker(flippedAxis).apply {
