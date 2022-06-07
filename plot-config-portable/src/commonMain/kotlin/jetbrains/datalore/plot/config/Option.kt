@@ -370,6 +370,7 @@ object Option {
         const val MID = "mid"
         const val HIGH = "high"
         const val MIDPOINT = "midpoint"
+        const val COLORS = "colors"
 
         // hue scale
         const val HUE_RANGE = "h"

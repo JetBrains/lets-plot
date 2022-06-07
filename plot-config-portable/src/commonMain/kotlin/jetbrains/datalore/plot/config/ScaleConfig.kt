@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.DATETIME_FORMAT
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
@@ -19,6 +20,7 @@ import jetbrains.datalore.plot.builder.scale.provider.*
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
+import jetbrains.datalore.plot.config.Option.Scale.COLORS
 import jetbrains.datalore.plot.config.Option.Scale.DIRECTION
 import jetbrains.datalore.plot.config.Option.Scale.END
 import jetbrains.datalore.plot.config.Option.Scale.EXPAND
@@ -118,6 +120,11 @@ class ScaleConfig<T> constructor(
                     getColor(MID),
                     getColor(HIGH),
                     getDouble(MIDPOINT), naValue as Color
+                )
+            COLOR_GRADIENTN ->
+                mapperProvider = ColorGradientnMapperProvider(
+                    getStringList(COLORS).map(Colors::parseColor),
+                    naValue as Color
                 )
             COLOR_HUE ->
                 mapperProvider = ColorHueMapperProvider(
@@ -240,6 +247,7 @@ class ScaleConfig<T> constructor(
         const val IDENTITY = "identity"
         private const val COLOR_GRADIENT = "color_gradient"
         const val COLOR_GRADIENT2 = "color_gradient2"
+        const val COLOR_GRADIENTN = "color_gradientn"
         private const val COLOR_HUE = "color_hue"
         private const val COLOR_GREY = "color_grey"
         const val COLOR_BREWER = "color_brewer"
