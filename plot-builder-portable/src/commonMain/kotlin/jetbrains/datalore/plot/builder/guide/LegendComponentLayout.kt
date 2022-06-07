@@ -24,7 +24,7 @@ abstract class LegendComponentLayout(
     private val myKeyLabelBoxes = ArrayList<DoubleRectangle>()
     private val myLabelBoxes = ArrayList<DoubleRectangle>()
 
-    protected val myItemLabelSpec: PlotLabelSpec
+    protected val itemLabelSpec: PlotLabelSpec
         get() = PlotLabelSpec.legendItem(styleSheet)
 
     var isFillByRow = false
@@ -65,7 +65,7 @@ abstract class LegendComponentLayout(
 
     private fun doLayout() {
         val labelHeight = LEGEND_ITEM_HEIGHT
-        val labelLeftMargin = myItemLabelSpec.width(1) / 2
+        val labelLeftMargin = itemLabelSpec.width(1) / 2
         val labelHOffset = keySize.x + labelLeftMargin
         val labelVOffset = (keySize.y - labelHeight) / 2
 
@@ -116,7 +116,7 @@ abstract class LegendComponentLayout(
 
         override fun labelSize(index: Int): DoubleVector {
             val label = breaks[index].label
-            return DoubleVector(myItemLabelSpec.width(label.length), LEGEND_ITEM_HEIGHT)
+            return DoubleVector(itemLabelSpec.width(label.length), LEGEND_ITEM_HEIGHT)
         }
     }
 
@@ -164,7 +164,7 @@ abstract class LegendComponentLayout(
 
         init {
             for (br in breaks) {
-                myMaxLabelWidth = max(myMaxLabelWidth, myItemLabelSpec.width(br.label.length))
+                myMaxLabelWidth = max(myMaxLabelWidth, itemLabelSpec.width(br.label.length))
             }
         }
 

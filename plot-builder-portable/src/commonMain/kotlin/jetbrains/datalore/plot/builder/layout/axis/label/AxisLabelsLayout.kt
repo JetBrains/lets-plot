@@ -57,7 +57,8 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun horizontalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider,
+            axisDomain: DoubleSpan,
+            breaksProvider: AxisBreaksProvider,
             theme: AxisTheme,
             styleSheet: StyleSheet,
         ): AxisLabelsLayout {
