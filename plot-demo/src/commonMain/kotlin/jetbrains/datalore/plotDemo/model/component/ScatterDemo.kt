@@ -114,8 +114,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX(),
-                tickLabelSpec = TICK_LABEL_SPEC
+                gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -133,8 +132,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY(),
-                tickLabelSpec = TICK_LABEL_SPEC
+                gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -296,8 +294,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX(),
-                tickLabelSpec = TICK_LABEL_SPEC
+                gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -315,8 +312,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY(),
-                tickLabelSpec = TICK_LABEL_SPEC
+                gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -420,8 +416,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridX(),
-                tickLabelSpec = TICK_LABEL_SPEC
+                gridTheme = theme.panel().gridX()
             )
 
             val xAxisOrigin = DoubleVector(leftAxisThickness, plotSize.y)
@@ -439,8 +434,7 @@ open class ScatterDemo : SimpleDemoBase() {
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
-                gridTheme = theme.panel().gridY(),
-                tickLabelSpec = TICK_LABEL_SPEC
+                gridTheme = theme.panel().gridY()
             )
 
             val yAxisOrigin = DoubleVector(leftAxisThickness, 0.0)
@@ -489,7 +483,5 @@ open class ScatterDemo : SimpleDemoBase() {
                 .range(colors)
                 .domain(minValue, maxValue)
         }
-
-        private val TICK_LABEL_SPEC = PlotLabelSpec(fontSize = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble())
     }
 }

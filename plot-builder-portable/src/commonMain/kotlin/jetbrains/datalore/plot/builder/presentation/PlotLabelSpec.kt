@@ -38,6 +38,16 @@ class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean
     }
 
     companion object {
-        internal fun StyleSheet.getPlotLabelSpec(className: String) = PlotLabelSpec(getTextStyle(className))
+        private fun StyleSheet.getPlotLabelSpec(className: String) = PlotLabelSpec(getTextStyle(className))
+
+        fun plotTitle(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.PLOT_TITLE)
+        fun plotSubtitle(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.PLOT_SUBTITLE)
+        fun plotCaption(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.PLOT_CAPTION)
+
+        fun axisTick(styleSheet: StyleSheet, axis: String) = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${axis}")
+        fun axisTitle(styleSheet: StyleSheet, axis: String) = styleSheet.getPlotLabelSpec("${Style.AXIS_TITLE}-${axis}")
+
+        fun legendItem(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.LEGEND_ITEM)
+        fun legendTitle(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.LEGEND_TITLE)
     }
 }

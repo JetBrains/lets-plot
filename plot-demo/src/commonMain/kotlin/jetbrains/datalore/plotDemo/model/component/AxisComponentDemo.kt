@@ -151,8 +151,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 axisTheme = if (orientation.isHorizontal) theme.horizontalAxis(flipAxis = false) else theme.verticalAxis(
                     flipAxis = false
                 ),
-                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY(),
-                tickLabelSpec = PlotLabelSpec(fontSize = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble())
+                gridTheme = if (orientation.isHorizontal) theme.panel().gridX() else theme.panel().gridY()
             )
 
             return axis

@@ -11,8 +11,6 @@ import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
@@ -161,30 +159,29 @@ internal object PlotLayoutUtil {
         val titleDelta = titleSizeDelta(
             titleLines,
             subtitleLines,
-            titleLabelSpec = styleSheet.getPlotLabelSpec(Style.PLOT_TITLE),
-            subtitleLabelSpec = styleSheet.getPlotLabelSpec(Style.PLOT_SUBTITLE)
+            styleSheet
         )
         val axisTitlesDelta = axisTitleSizeDelta(
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
-            axisTitleLeftLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"),
-            axisTitleBottomLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}")
+            axisTitleLeftLabelSpec = PlotLabelSpec.axisTitle(styleSheet, theme.verticalAxis(flippedAxis).axis),
+            axisTitleBottomLabelSpec = PlotLabelSpec.axisTitle(styleSheet, theme.horizontalAxis(flippedAxis).axis)
         )
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, styleSheet.getPlotLabelSpec(Style.PLOT_CAPTION)).y)
+        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpec.plotCaption(styleSheet)).y)
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
     fun titleSizeDelta(
         titleLines: List<String>,
         subtitleLines: List<String>,
-        titleLabelSpec: PlotLabelSpec,
-        subtitleLabelSpec: PlotLabelSpec
+        styleSheet: StyleSheet
     ): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(titleLines, titleLabelSpec).y + titleDimensions(subtitleLines, subtitleLabelSpec).y
+            titleDimensions(titleLines, PlotLabelSpec.plotTitle(styleSheet)).y +
+                    titleDimensions(subtitleLines, PlotLabelSpec.plotSubtitle(styleSheet)).y
         )
     }
 

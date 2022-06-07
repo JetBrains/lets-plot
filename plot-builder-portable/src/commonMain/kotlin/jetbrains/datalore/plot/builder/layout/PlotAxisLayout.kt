@@ -10,18 +10,18 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.vis.StyleSheet
 
 internal class PlotAxisLayout constructor(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
     private val theme: AxisTheme,
     private val orientation: Orientation,
-    private val tickLabelSpec: PlotLabelSpec
+    private val styleSheet: StyleSheet
 ) : AxisLayout {
 
     override fun initialThickness(): Double {
-        return PlotAxisLayoutUtil.initialThickness(orientation, theme, tickLabelSpec)
+        return PlotAxisLayoutUtil.initialThickness(orientation, theme, styleSheet)
     }
 
     override fun doLayout(
@@ -30,7 +30,7 @@ internal class PlotAxisLayout constructor(
         maxTickLabelsBoundsStretched: DoubleRectangle?,
     ): AxisLayoutInfo {
         val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
-        val layouter = AxisLayouter.create(orientation, axisDomain, breaksProvider, theme, tickLabelSpec)
+        val layouter = AxisLayouter.create(orientation, axisDomain, breaksProvider, theme, styleSheet)
 
         return layouter.doLayout(axisLength, maxTickLabelsBoundsStretched)
     }

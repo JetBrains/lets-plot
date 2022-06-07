@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.max
 
 abstract class LegendComponentLayout(
@@ -16,13 +17,15 @@ abstract class LegendComponentLayout(
     protected val breaks: List<LegendBreak>,
     val keySize: DoubleVector,
     legendDirection: LegendDirection,
-    titleLabelSpec: PlotLabelSpec,
-    itemLabelSpec: PlotLabelSpec
-) : LegendBoxLayout(title, legendDirection, titleLabelSpec, itemLabelSpec) {
+    styleSheet: StyleSheet
+) : LegendBoxLayout(title, legendDirection, styleSheet) {
 
     private var myContentSize: DoubleVector? = null
     private val myKeyLabelBoxes = ArrayList<DoubleRectangle>()
     private val myLabelBoxes = ArrayList<DoubleRectangle>()
+
+    protected val myItemLabelSpec: PlotLabelSpec
+        get() = PlotLabelSpec.legendItem(styleSheet)
 
     var isFillByRow = false
     var rowCount = 0
@@ -61,8 +64,8 @@ abstract class LegendComponentLayout(
     }
 
     private fun doLayout() {
-        val labelHeight = itemLabelSpec.height()
-        val labelLeftMargin = itemLabelSpec.width(1) / 2
+        val labelHeight = LEGEND_ITEM_HEIGHT
+        val labelLeftMargin = myItemLabelSpec.width(1) / 2
         val labelHOffset = keySize.x + labelLeftMargin
         val labelVOffset = (keySize.y - labelHeight) / 2
 
@@ -96,13 +99,11 @@ abstract class LegendComponentLayout(
         title: String,
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
-        titleLabelSpec: PlotLabelSpec,
-        itemLabelSpec: PlotLabelSpec
+        styleSheet: StyleSheet
     ) : LegendComponentLayout(
             title, breaks, keySize,
             LegendDirection.HORIZONTAL,
-            titleLabelSpec,
-            itemLabelSpec
+            styleSheet
         ) {
         init {
             colCount = breaks.size
@@ -115,7 +116,7 @@ abstract class LegendComponentLayout(
 
         override fun labelSize(index: Int): DoubleVector {
             val label = breaks[index].label
-            return DoubleVector(itemLabelSpec.width(label.length), itemLabelSpec.height())
+            return DoubleVector(myItemLabelSpec.width(label.length), LEGEND_ITEM_HEIGHT)
         }
     }
 
@@ -123,13 +124,11 @@ abstract class LegendComponentLayout(
         title: String,
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
-        titleLabelSpec: PlotLabelSpec,
-        itemLabelSpec: PlotLabelSpec
+        styleSheet: StyleSheet
     ) : MyMultiRow(
         title, breaks, keySize,
         LegendDirection.HORIZONTAL,
-        titleLabelSpec,
-        itemLabelSpec
+        styleSheet
     ) {
         init {
             colCount = breaks.size
@@ -141,14 +140,12 @@ abstract class LegendComponentLayout(
         title: String,
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
-        titleLabelSpec: PlotLabelSpec,
-        itemLabelSpec: PlotLabelSpec
+        styleSheet: StyleSheet
     ) :
         MyMultiRow(
             title, breaks, keySize,
             LegendDirection.VERTICAL,
-            titleLabelSpec,
-            itemLabelSpec
+            styleSheet
         ) {
         init {
             colCount = 1
@@ -161,14 +158,13 @@ abstract class LegendComponentLayout(
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
         legendDirection: LegendDirection,
-        titleLabelSpec: PlotLabelSpec,
-        itemLabelSpec: PlotLabelSpec
-    ) : LegendComponentLayout(title, breaks, keySize, legendDirection, titleLabelSpec, itemLabelSpec) {
+        styleSheet: StyleSheet
+    ) : LegendComponentLayout(title, breaks, keySize, legendDirection, styleSheet) {
         private var myMaxLabelWidth = 0.0
 
         init {
             for (br in breaks) {
-                myMaxLabelWidth = max(myMaxLabelWidth, itemLabelSpec.width(br.label.length))
+                myMaxLabelWidth = max(myMaxLabelWidth, myItemLabelSpec.width(br.label.length))
             }
         }
 
@@ -187,7 +183,7 @@ abstract class LegendComponentLayout(
         }
 
         override fun labelSize(index: Int): DoubleVector {
-            return DoubleVector(myMaxLabelWidth, itemLabelSpec.height())
+            return DoubleVector(myMaxLabelWidth, LEGEND_ITEM_HEIGHT)
         }
     }
 
@@ -196,15 +192,13 @@ abstract class LegendComponentLayout(
             title: String,
             breaks: List<LegendBreak>,
             keySize: DoubleVector,
-            titleLabelSpec: PlotLabelSpec,
-            itemLabelSpec: PlotLabelSpec
+            styleSheet: StyleSheet
         ): LegendComponentLayout {
             return MyHorizontal(
                 title,
                 breaks,
                 keySize,
-                titleLabelSpec,
-                itemLabelSpec
+                styleSheet
             )
         }
 
@@ -212,15 +206,13 @@ abstract class LegendComponentLayout(
             title: String,
             breaks: List<LegendBreak>,
             keySize: DoubleVector,
-            titleLabelSpec: PlotLabelSpec,
-            itemLabelSpec: PlotLabelSpec
+            styleSheet: StyleSheet
         ): LegendComponentLayout {
             return MyHorizontalMultiRow(
                 title,
                 breaks,
                 keySize,
-                titleLabelSpec,
-                itemLabelSpec
+                styleSheet
             )
         }
 
@@ -228,15 +220,13 @@ abstract class LegendComponentLayout(
             title: String,
             breaks: List<LegendBreak>,
             keySize: DoubleVector,
-            titleLabelSpec: PlotLabelSpec,
-            itemLabelSpec: PlotLabelSpec
+            styleSheet: StyleSheet
         ): LegendComponentLayout {
             return MyVertical(
                 title,
                 breaks,
                 keySize,
-                titleLabelSpec,
-                itemLabelSpec
+                styleSheet
             )
         }
     }

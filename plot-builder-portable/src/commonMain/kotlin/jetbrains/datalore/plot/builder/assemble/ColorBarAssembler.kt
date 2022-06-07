@@ -15,8 +15,6 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.StyleSheet
 
@@ -92,12 +90,10 @@ class ColorBarAssembler(
             }
 
             val reverse = !horizontal
-            val titleLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_TITLE)
-            val itemLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_ITEM)
 
             val layout = when {
-                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse, titleLabelSpec, itemLabelSpec)
-                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse, titleLabelSpec, itemLabelSpec)
+                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse, styleSheet)
+                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse, styleSheet)
             }
 
             return ColorBarComponentSpec(

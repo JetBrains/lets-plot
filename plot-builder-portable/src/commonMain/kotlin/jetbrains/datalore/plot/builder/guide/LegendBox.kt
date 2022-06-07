@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.svg.*
@@ -52,8 +52,7 @@ abstract class LegendBox : SvgComponent() {
         if (hasTitle()) {
             val label = createTitleLabel(
                 l.titleBounds.origin,
-                l.titleHorizontalAnchor,
-                l.titleLabelSpec.height()
+                l.titleHorizontalAnchor
             )
             innerGroup.children().add(label.rootGroup)
         }
@@ -88,13 +87,13 @@ abstract class LegendBox : SvgComponent() {
 
     private fun createTitleLabel(
         origin: DoubleVector,
-        horizontalAnchor: Text.HorizontalAnchor,
-        titleHeight: Double
+        horizontalAnchor: Text.HorizontalAnchor
     ): MultilineLabel {
         val label = MultilineLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
         label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
+        val titleHeight = Defaults.Common.Legend.TITLE_FONT_SIZE.toDouble()
         label.setLineHeight(titleHeight)
         label.moveTo(
             // top-align the first line of a multi-line title

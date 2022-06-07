@@ -16,8 +16,6 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.ceil
@@ -199,9 +197,6 @@ class LegendAssembler(
                 colCount = ceil(breakCount / rowCount.toDouble()).toInt()
             }
 
-            val titleLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_TITLE)
-            val itemLabelSpec = styleSheet.getPlotLabelSpec(Style.LEGEND_ITEM)
-
             val layout: LegendComponentLayout
             @Suppress("LiftReturnOrAssignment")
             if (legendDirection === LegendDirection.HORIZONTAL) {
@@ -210,14 +205,13 @@ class LegendAssembler(
                         title,
                         breaks,
                         keySize,
-                        titleLabelSpec,
-                        itemLabelSpec
+                        styleSheet
                     )
                 } else {
-                    layout = LegendComponentLayout.horizontal(title, breaks, keySize, titleLabelSpec, itemLabelSpec)
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySize, styleSheet)
                 }
             } else {
-                layout = LegendComponentLayout.vertical(title, breaks, keySize, titleLabelSpec, itemLabelSpec)
+                layout = LegendComponentLayout.vertical(title, breaks, keySize, styleSheet)
             }
 
             layout.colCount = colCount

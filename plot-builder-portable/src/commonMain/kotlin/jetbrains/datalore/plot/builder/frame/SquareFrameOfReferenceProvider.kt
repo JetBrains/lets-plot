@@ -19,8 +19,6 @@ import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.tile.InsideOutTileLayout
 import jetbrains.datalore.plot.builder.layout.tile.TopDownTileLayout
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec.Companion.getPlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
@@ -64,14 +62,14 @@ internal class SquareFrameOfReferenceProvider(
             hAxisSpec.breaksProviderFactory,
             hAxisSpec.theme,
             Orientation.BOTTOM,
-            tickLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${hAxisSpec.theme.axis}")
+            styleSheet
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
             vAxisSpec.theme,
             Orientation.LEFT,
-            tickLabelSpec = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${vAxisSpec.theme.axis}")
+            styleSheet
         )
 
         val hDomain = hAxisSpec.domainTransformed
@@ -123,8 +121,7 @@ internal class SquareFrameOfReferenceProvider(
             layoutInfo,
             marginsLayout,
             theme,
-            flipAxis,
-            styleSheet
+            flipAxis
         )
         tileFrameOfReference.isDebugDrawing = debugDrawing
         return tileFrameOfReference
