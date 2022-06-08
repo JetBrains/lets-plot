@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.presentation.Defaults
 
 interface AxisTheme {
@@ -24,6 +25,7 @@ interface AxisTheme {
     fun showTooltip(): Boolean
 
     fun titleColor(): Color
+    fun titleFontFace(): FontFace
 
     fun lineWidth(): Double
 
@@ -32,6 +34,7 @@ interface AxisTheme {
     fun tickMarkColor(): Color
 
     fun labelColor(): Color
+    fun labelFontFace(): FontFace
 
     fun tickMarkWidth(): Double
 
@@ -48,5 +51,7 @@ interface AxisTheme {
     fun tooltipFill(): Color
     fun tooltipColor(): Color
     fun tooltipStrokeWidth(): Double
+
     fun tooltipTextColor(): Color
+    fun tooltipFontFace(): FontFace
 }

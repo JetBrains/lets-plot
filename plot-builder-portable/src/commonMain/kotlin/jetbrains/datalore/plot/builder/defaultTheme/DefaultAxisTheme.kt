@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
@@ -70,6 +71,10 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(titleKey), Elem.COLOR)
     }
 
+    override fun titleFontFace(): FontFace {
+        return getFontFace(getElemValue(titleKey))
+    }
+
     override fun lineWidth(): Double {
         return getNumber(getElemValue(lineKey), Elem.SIZE)
     }
@@ -94,6 +99,10 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(textKey), Elem.COLOR)
     }
 
+    override fun labelFontFace(): FontFace {
+        return getFontFace(getElemValue(textKey))
+    }
+
     override fun tooltipFill(): Color {
         return getColor(getElemValue(tooltipFillKey), Elem.FILL)
     }
@@ -108,5 +117,9 @@ internal class DefaultAxisTheme(
 
     override fun tooltipTextColor(): Color {
         return getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
+    }
+
+    override fun tooltipFontFace(): FontFace {
+        return getFontFace(getElemValue(tooltipTextKey))
     }
 }

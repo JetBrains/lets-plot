@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
@@ -42,5 +43,9 @@ internal class DefaultFacetsTheme(
 
     override fun stripTextColor(): Color {
         return getColor(getElemValue(textKey), Elem.COLOR)
+    }
+
+    override fun stripFontFace(): FontFace {
+        return getFontFace(getElemValue(textKey))
     }
 }

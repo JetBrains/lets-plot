@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
@@ -45,12 +46,24 @@ internal class DefaultPlotTheme(
         return getColor(getElemValue(titleKey), Elem.COLOR)
     }
 
+    override fun titleFontFace(): FontFace {
+        return getFontFace(getElemValue(titleKey))
+    }
+
     override fun subtitleColor(): Color {
         return getColor(getElemValue(subtitleKey), Elem.COLOR)
     }
 
+    override fun subtitleFontFace(): FontFace {
+        return getFontFace(getElemValue(subtitleKey))
+    }
+
     override fun captionColor(): Color {
         return getColor(getElemValue(captionKey), Elem.COLOR)
+    }
+
+    override fun captionFontFace(): FontFace {
+        return getFontFace(getElemValue(captionKey))
     }
 
     override fun textColor(): Color {

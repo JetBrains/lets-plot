@@ -188,16 +188,19 @@ class TooltipSkippedAesTest {
             override fun showTitle() = TODO("Not yet implemented")
             override fun showTooltip() = TODO("Not yet implemented")
             override fun titleColor() = TODO("Not yet implemented")
+            override fun titleFontFace() = TODO("Not yet implemented")
             override fun lineWidth() = TODO("Not yet implemented")
             override fun lineColor() = TODO("Not yet implemented")
             override fun tickMarkColor() = TODO("Not yet implemented")
             override fun labelColor() = TODO("Not yet implemented")
+            override fun labelFontFace() = TODO("Not yet implemented")
             override fun tickMarkWidth() = TODO("Not yet implemented")
             override fun tickMarkLength() = TODO("Not yet implemented")
             override fun tooltipFill() = Color.WHITE
             override fun tooltipColor() = Color.BLACK
             override fun tooltipStrokeWidth() = 1.0
             override fun tooltipTextColor() = Color.GRAY
+            override fun tooltipFontFace() = TODO("Not yet implemented")
         }
 
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {

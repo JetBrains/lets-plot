@@ -55,7 +55,8 @@ class PlotSvgComponent constructor(
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
-    caption: String?
+    caption: String?,
+    val styleSheet: StyleSheet
 ) : SvgComponent() {
 
     private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
@@ -78,8 +79,6 @@ class PlotSvgComponent constructor(
 
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
-
-    val styleSheet: StyleSheet = Style.fromTheme(theme, flippedAxis)
 
     // ToDo: remove
     private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
@@ -190,7 +189,8 @@ class PlotSvgComponent constructor(
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines
+            captionLines,
+            flippedAxis
         )
 
         // Layout plot inners
@@ -210,7 +210,8 @@ class PlotSvgComponent constructor(
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines
+            captionLines,
+            flippedAxis
         )
 
         // Position the "entire" plot rect in the center of the "overall" rect.
@@ -242,7 +243,13 @@ class PlotSvgComponent constructor(
         // Inner bounds - all without titles and legends.
         val plotInnerOrigin = plotOuterBoundsWithoutTitle.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
-            .add(axisTitleSizeDelta(axisTitleLeft, null, axisEnabled))
+            .add(
+                axisTitleSizeDelta(
+                    axisTitleLeft to PlotLabelSpec.axisTitle(theme.verticalAxis(flippedAxis).axis),
+                    axisTitleBottom = null to PlotLabelSpec(0.0),
+                    axisEnabled
+                )
+            )
 
         val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotInfo)
             .add(plotInnerOrigin)
@@ -514,7 +521,6 @@ class PlotSvgComponent constructor(
             }
         })
     }
-
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)

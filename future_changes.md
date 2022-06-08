@@ -12,12 +12,16 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/y_orientation.ipynb).
 
-- New parameters in `theme`:
+- New parameters in `theme()`:
   - `tooltip` - tooltip rectangle options;
   - `tooltip_text, tooltip_title_text` - tooltip text options;
   - `axis_tooltip_text, axis_tooltip_text_x, axis_tooltip_text_y` - axis tooltip text options.
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/tooltips_theme.ipynb).
+
+- `face` parameter in `element_text()`.
+    
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/set_font_faces.ipynb).
 
 ### Changed
 

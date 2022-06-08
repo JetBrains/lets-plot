@@ -35,16 +35,19 @@ object TestUtil {
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
         override fun titleColor() = TODO("Not yet implemented")
+        override fun titleFontFace() = TODO("Not yet implemented")
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
         override fun labelColor() = TODO("Not yet implemented")
+        override fun labelFontFace() = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
         override fun tooltipTextColor() = LIGHT_TEXT_COLOR
+        override fun tooltipFontFace() = TODO("Not yet implemented")
     }
 
     private const val VARIABLE_NAME = "A"

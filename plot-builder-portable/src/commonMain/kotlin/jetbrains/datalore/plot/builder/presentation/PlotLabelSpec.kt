@@ -6,21 +6,15 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
+import jetbrains.datalore.vis.StyleSheet
+import jetbrains.datalore.vis.TextStyle
 
-enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) :
+class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) :
     LabelSpec {
-    PLOT_TITLE(Defaults.Common.Title.FONT_SIZE.toDouble(), true),
-    PLOT_SUBTITLE(Defaults.Common.Subtitle.FONT_SIZE.toDouble()),
-    PLOT_CAPTION(Defaults.Common.Caption.FONT_SIZE.toDouble()),
 
-    AXIS_TICK(Plot.Axis.TICK_FONT_SIZE.toDouble()),
-    AXIS_TITLE(Plot.Axis.TITLE_FONT_SIZE.toDouble()),
+    constructor(textStyle: TextStyle) : this(textStyle.size, textStyle.face.bold, monospaced = false)
 
-    LEGEND_TITLE(Defaults.Common.Legend.TITLE_FONT_SIZE.toDouble()),
-    LEGEND_ITEM(Defaults.Common.Legend.ITEM_FONT_SIZE.toDouble());
-
-    private val myLabelMetrics: LabelMetrics
+    private val myLabelMetrics: LabelMetrics = LabelMetrics(fontSize, bold, monospaced)
 
     override val isBold: Boolean
         get() = myLabelMetrics.isBold
@@ -30,11 +24,6 @@ enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Bo
 
     override val fontSize: Double
         get() = myLabelMetrics.fontSize
-
-    init {
-        myLabelMetrics =
-            LabelMetrics(fontSize, bold, monospaced)
-    }
 
     override fun dimensions(labelLength: Int): DoubleVector {
         return myLabelMetrics.dimensions(labelLength)
@@ -47,7 +36,51 @@ enum class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Bo
     override fun height(): Double {
         return myLabelMetrics.height()
     }
+
+    companion object {
+        // ToDo: Temp solution!
+        //  Need to remove this dictionary and getters,
+        //  will get metrics via theme
+
+        private val labelSpecs = HashMap<String, PlotLabelSpec>()
+
+        fun initWithStyleSheet(styleSheet: StyleSheet) {
+            fun putLabelSpec(className: String) {
+                labelSpecs[className] = PlotLabelSpec(styleSheet.getTextStyle(className))
+            }
+
+            putLabelSpec(Style.PLOT_TITLE)
+            putLabelSpec(Style.PLOT_SUBTITLE)
+            putLabelSpec(Style.PLOT_CAPTION)
+
+            putLabelSpec("${Style.AXIS_TEXT}-x")
+            putLabelSpec("${Style.AXIS_TEXT}-y")
+            putLabelSpec("${Style.AXIS_TITLE}-x")
+            putLabelSpec("${Style.AXIS_TITLE}-y")
+
+            putLabelSpec(Style.LEGEND_TITLE)
+            putLabelSpec(Style.LEGEND_ITEM)
+        }
+
+        private fun get(className: String) = labelSpecs[className] ?: PlotLabelSpec(0.0)
+
+        val PLOT_TITLE: PlotLabelSpec
+            get() = get(Style.PLOT_TITLE)
+
+        val PLOT_SUBTITLE: PlotLabelSpec
+            get() = get(Style.PLOT_SUBTITLE)
+
+        val PLOT_CAPTION: PlotLabelSpec
+            get() = get(Style.PLOT_CAPTION)
+
+        val LEGEND_TITLE: PlotLabelSpec
+            get() = get(Style.LEGEND_TITLE)
+
+        val LEGEND_ITEM: PlotLabelSpec
+            get() = get(Style.LEGEND_ITEM)
+
+        fun axisTick(axis: String) = get("${Style.AXIS_TEXT}-$axis")
+
+        fun axisTitle(axis: String) = get("${Style.AXIS_TITLE}-$axis")
+    }
 }
-/**
- * @param fontSize in 'px' (same meaning as in CSS)
- */

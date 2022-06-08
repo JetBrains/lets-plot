@@ -224,7 +224,7 @@ internal class SquareFrameOfReference(
             gridLineDistance: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
-            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis componenmt" }
+            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
             val orientation = info.orientation
             val labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation = orientation,

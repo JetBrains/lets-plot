@@ -379,7 +379,8 @@ def element_line(
 
 def element_text(
         color=None,
-        # ToDo: family, face
+        # ToDo: family
+        face=None,
         # ToDo: font_size = None,
         # ToDo: hjust, vjust, angle, lineheight, margin
         blank=False,
@@ -392,6 +393,8 @@ def element_text(
     ----------
     color : str
         Text color.
+    face : str
+        Font face ("plain", "italic", "bold", "bold_italic").
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
