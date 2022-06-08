@@ -594,6 +594,15 @@ object Option {
             return GEOM_KIND_MAP[geomName]!!
         }
 
+        fun fromGeomKind(geomKind: GeomKind): String {
+            val geomKindReversedMap = GEOM_KIND_MAP.entries.associateBy({ it.value }) { it.key }
+            if (!geomKindReversedMap.containsKey(geomKind)) {
+                throw IllegalArgumentException("Unknown geom: '${geomKind.name.lowercase()}'")
+            }
+
+            return geomKindReversedMap[geomKind]!!
+        }
+
         fun values(): Set<String> {
             return GEOM_KIND_MAP.keys
         }

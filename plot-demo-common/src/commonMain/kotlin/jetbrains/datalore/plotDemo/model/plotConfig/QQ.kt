@@ -15,6 +15,8 @@ class QQ {
             onlySampleValues(),
             grouping(),
             withNan(),
+            bistroBasic(),
+            bistroOnlySampleValues(),
         )
     }
 
@@ -123,6 +125,37 @@ class QQ {
                 "}"
 
         return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun bistroBasic(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'bistro': {" +
+                "               'name': 'qqplot'," +
+                "               'sample': 'sepal length (cm)'" +
+                "             }" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun bistroOnlySampleValues(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'bistro': {" +
+                "               'name': 'qqplot'," +
+                "               'x': 'sepal width (cm)'," +
+                "               'y': 'sepal length (cm)'" +
+                "             }" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
 
     }
 }

@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.config.transform.PlotSpecTransform
 import jetbrains.datalore.plot.config.transform.SpecSelector
 import jetbrains.datalore.plot.config.transform.migration.MoveGeomPropertiesToLayerMigration
 import jetbrains.datalore.plot.server.config.transform.bistro.CorrPlotSpecChange
+import jetbrains.datalore.plot.server.config.transform.bistro.QQPlotSpecChange
 
 object PlotConfigServerSideTransforms {
     fun migrationTransform(): PlotSpecTransform {
@@ -50,6 +51,10 @@ object PlotConfigServerSideTransforms {
             .change(
                 CorrPlotSpecChange.specSelector(),
                 CorrPlotSpecChange()
+            )
+            .change(
+                QQPlotSpecChange.specSelector(),
+                QQPlotSpecChange()
             )
             .build()
     }

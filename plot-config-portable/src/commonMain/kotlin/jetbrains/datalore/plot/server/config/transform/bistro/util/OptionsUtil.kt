@@ -43,7 +43,7 @@ object OptionsUtil {
             is Double -> v
             is Boolean -> v
             is Color -> v.toHexColor()
-            is GeomKind -> v.name.lowercase()
+            is GeomKind -> Option.GeomName.fromGeomKind(v)
             is Aes<*> -> Option.Mapping.toOption(v)
             is Pair<*, *> -> listOf(v.first, v.second)
             else -> v.also {
