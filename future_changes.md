@@ -23,6 +23,10 @@
     
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/set_font_faces.ipynb).
 
+- `panel_border` parameter in `theme()` [[#542](https://github.com/JetBrains/lets-plot/issues/542)].
+  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/panel_border.ipynb).
+
 ### Changed
 
 - New style of tooltip color marker (two sidebars with a stroke color)
