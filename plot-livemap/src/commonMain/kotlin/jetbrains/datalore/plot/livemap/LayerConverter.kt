@@ -21,7 +21,16 @@ object LayerConverter {
         constScalingLimit: Int,
         geodesic: Boolean
     ): List<LayersBuilder.() -> Unit> {
-        return letsPlotLayers.mapIndexed { index, layer ->
+        val liveMapGeom = letsPlotLayers.first().geom as LiveMapGeom
+        val layersToRender =
+            // do not add livemap layer that displays nothing
+            when (liveMapGeom.displayMode) {
+                null -> letsPlotLayers.drop(1)
+                else -> letsPlotLayers
+        }
+
+        return layersToRender
+            .mapIndexed { index, layer ->
             val dataPointsConverter = DataPointsConverter(
                 layerIndex = index,
                 aesthetics = layer.aesthetics,
@@ -43,6 +52,7 @@ object LayerConverter {
                         DisplayMode.POINT -> MapLayerKind.POINT
                         DisplayMode.PIE -> MapLayerKind.PIE
                         DisplayMode.BAR -> MapLayerKind.BAR
+                        else -> error("Unexpected livemap display mode.")
                     }
                     val dataPointLiveMapAesthetics = when (layerKind) {
                         MapLayerKind.PIE -> dataPointsConverter.toPie()

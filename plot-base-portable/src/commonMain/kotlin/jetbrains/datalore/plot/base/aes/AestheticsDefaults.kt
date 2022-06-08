@@ -161,8 +161,9 @@ open class AestheticsDefaults {
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun livemap(displayMode: LivemapConstants.DisplayMode): AestheticsDefaults {
+        fun livemap(displayMode: LivemapConstants.DisplayMode?): AestheticsDefaults {
             return when (displayMode) {
+                null -> base()
                 LivemapConstants.DisplayMode.POINT -> point()
                     .updateInLegend(Aes.SIZE, 5.0)
                 LivemapConstants.DisplayMode.BAR -> base()

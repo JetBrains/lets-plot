@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 
 class LiveMapGeom(
-    val displayMode: DisplayMode
+    val displayMode: DisplayMode?
 ) : Geom {
     private lateinit var myMapProvider: LiveMapProvider
 

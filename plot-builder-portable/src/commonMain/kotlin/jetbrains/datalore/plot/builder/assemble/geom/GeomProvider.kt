@@ -256,7 +256,7 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
         }
 
         fun livemap(
-            displayMode: LivemapConstants.DisplayMode
+            displayMode: LivemapConstants.DisplayMode?
         ): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,

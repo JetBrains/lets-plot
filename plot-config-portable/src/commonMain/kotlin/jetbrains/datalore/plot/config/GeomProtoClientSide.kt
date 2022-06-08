@@ -137,7 +137,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LIVE_MAP -> {
-                return GeomProvider.livemap(opts.mergedOptions.getEnum<DisplayMode>(DISPLAY_MODE) ?: POINT)
+                return GeomProvider.livemap(opts.mergedOptions.getEnum<DisplayMode>(DISPLAY_MODE))
             }
 
             GeomKind.STEP -> return GeomProvider.step {
