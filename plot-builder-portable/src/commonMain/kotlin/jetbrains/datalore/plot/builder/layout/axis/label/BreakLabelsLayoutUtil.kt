@@ -61,8 +61,7 @@ internal object BreakLabelsLayoutUtil {
         breaks: ScaleBreaks,
         axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?,
-        theme: AxisTheme,
-        tickLabelSpec: PlotLabelSpec
+        theme: AxisTheme
     ): AxisLabelsLayoutInfo {
 
         val axisBounds = when {
@@ -71,7 +70,7 @@ internal object BreakLabelsLayoutUtil {
                     breaks,
                     axisDomain,
                     axisMapper,
-                    tickLabelSpec
+                    PlotLabelSpec.axisTick(theme.axis)
                 )
                 applyLabelsOffset(
                     labelsBounds,
@@ -153,8 +152,8 @@ internal object BreakLabelsLayoutUtil {
 
             y1 = min(axisBreaks[0], axisBreaks.last())
             y2 = max(axisBreaks[0], axisBreaks.last())
-            y1 -= AxisLabelsLayout.TICK_LABEL_HEIGHT / 2
-            y2 += AxisLabelsLayout.TICK_LABEL_HEIGHT / 2
+            y1 -= tickLabelSpec.height() / 2
+            y2 += tickLabelSpec.height() / 2
         }
 
         val origin = DoubleVector(0.0, y1)

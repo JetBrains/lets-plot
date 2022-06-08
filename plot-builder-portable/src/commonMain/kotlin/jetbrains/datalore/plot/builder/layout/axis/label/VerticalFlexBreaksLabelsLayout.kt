@@ -23,7 +23,7 @@ internal class VerticalFlexBreaksLabelsLayout(
     AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
     private fun maxTickCount(axisLength: Double): Int {
-        return ceil(axisLength / (TICK_LABEL_HEIGHT + MIN_TICK_LABEL_DISTANCE)).toInt()
+        return ceil(axisLength / (PlotLabelSpec.axisTick(theme.axis).height() + MIN_TICK_LABEL_DISTANCE)).toInt()
     }
 
     init {
@@ -45,8 +45,7 @@ internal class VerticalFlexBreaksLabelsLayout(
             orientation, breaks,
             axisDomain,
             axisMapper,
-            theme,
-            labelSpec
+            theme
         )
     }
 

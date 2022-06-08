@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthet
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -26,8 +25,7 @@ class LegendAssembler(
     private val legendTitle: String,
     private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
     private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-    private val theme: LegendTheme,
-    private val styleSheet: StyleSheet
+    private val theme: LegendTheme
 ) {
 
     private val legendLayers = ArrayList<LegendLayer>()
@@ -93,9 +91,8 @@ class LegendAssembler(
             createLegendSpec(
                 legendTitle, legendBreaks, theme,
                 LegendOptions.combine(
-                    legendOptionsList,
-                ),
-                styleSheet
+                    legendOptionsList
+                )
             )
 
         return object : LegendBoxInfo(spec.size) {
@@ -153,8 +150,7 @@ class LegendAssembler(
             title: String,
             breaks: List<LegendBreak>,
             theme: LegendTheme,
-            options: LegendOptions = LegendOptions(),
-            styleSheet: StyleSheet
+            options: LegendOptions = LegendOptions()
         ): LegendComponentSpec {
 
             val legendDirection = LegendAssemblerUtil.legendDirection(theme)
@@ -204,14 +200,13 @@ class LegendAssembler(
                     layout = LegendComponentLayout.horizontalMultiRow(
                         title,
                         breaks,
-                        keySize,
-                        styleSheet
+                        keySize
                     )
                 } else {
-                    layout = LegendComponentLayout.horizontal(title, breaks, keySize, styleSheet)
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySize)
                 }
             } else {
-                layout = LegendComponentLayout.vertical(title, breaks, keySize, styleSheet)
+                layout = LegendComponentLayout.vertical(title, breaks, keySize)
             }
 
             layout.colCount = colCount

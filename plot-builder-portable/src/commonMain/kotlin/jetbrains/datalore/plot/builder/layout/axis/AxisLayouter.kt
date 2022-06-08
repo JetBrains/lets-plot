@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.StyleSheet
 
 abstract class AxisLayouter(
     val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
@@ -48,10 +47,7 @@ abstract class AxisLayouter(
     companion object {
         fun create(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: DoubleSpan,
-            breaksProvider: AxisBreaksProvider,
-            theme: AxisTheme,
-            styleSheet: StyleSheet
+            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLayouter {
 
             if (orientation.isHorizontal) {
@@ -60,11 +56,10 @@ abstract class AxisLayouter(
                         orientation,
                         axisDomain,
                         breaksProvider.fixedBreaks,
-                        theme,
-                        styleSheet
+                        theme
                     )
                 } else {
-                    AxisLabelsLayout.horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme, styleSheet)
+                    AxisLabelsLayout.horizontalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
                 }
                 return HorizontalAxisLayouter(
                     orientation,
@@ -75,9 +70,9 @@ abstract class AxisLayouter(
 
             // vertical
             val labelsLayout: AxisLabelsLayout = if (breaksProvider.isFixedBreaks) {
-                AxisLabelsLayout.verticalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme, styleSheet)
+                AxisLabelsLayout.verticalFixedBreaks(orientation, axisDomain, breaksProvider.fixedBreaks, theme)
             } else {
-                AxisLabelsLayout.verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme, styleSheet)
+                AxisLabelsLayout.verticalFlexBreaks(orientation, axisDomain, breaksProvider, theme)
             }
             return VerticalAxisLayouter(
                 orientation,

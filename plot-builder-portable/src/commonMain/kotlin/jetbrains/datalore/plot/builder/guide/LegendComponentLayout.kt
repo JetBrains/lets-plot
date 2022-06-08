@@ -8,24 +8,18 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.max
 
 abstract class LegendComponentLayout(
     title: String,
     protected val breaks: List<LegendBreak>,
     val keySize: DoubleVector,
-    legendDirection: LegendDirection,
-    styleSheet: StyleSheet
-) : LegendBoxLayout(title, legendDirection, styleSheet) {
+    legendDirection: LegendDirection
+) : LegendBoxLayout(title, legendDirection) {
 
     private var myContentSize: DoubleVector? = null
     private val myKeyLabelBoxes = ArrayList<DoubleRectangle>()
     private val myLabelBoxes = ArrayList<DoubleRectangle>()
-
-    protected val itemLabelSpec: PlotLabelSpec
-        get() = PlotLabelSpec.legendItem(styleSheet)
 
     var isFillByRow = false
     var rowCount = 0
@@ -64,8 +58,8 @@ abstract class LegendComponentLayout(
     }
 
     private fun doLayout() {
-        val labelHeight = LEGEND_ITEM_HEIGHT
-        val labelLeftMargin = itemLabelSpec.width(1) / 2
+        val labelHeight = LABEL_SPEC.height()
+        val labelLeftMargin = LABEL_SPEC.width(1) / 2
         val labelHOffset = keySize.x + labelLeftMargin
         val labelVOffset = (keySize.y - labelHeight) / 2
 
@@ -95,15 +89,10 @@ abstract class LegendComponentLayout(
 
     protected abstract fun labelSize(index: Int): DoubleVector
 
-    private class MyHorizontal internal constructor(
-        title: String,
-        breaks: List<LegendBreak>,
-        keySize: DoubleVector,
-        styleSheet: StyleSheet
-    ) : LegendComponentLayout(
+    private class MyHorizontal internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) :
+        LegendComponentLayout(
             title, breaks, keySize,
-            LegendDirection.HORIZONTAL,
-            styleSheet
+            LegendDirection.HORIZONTAL
         ) {
         init {
             colCount = breaks.size
@@ -116,19 +105,17 @@ abstract class LegendComponentLayout(
 
         override fun labelSize(index: Int): DoubleVector {
             val label = breaks[index].label
-            return DoubleVector(itemLabelSpec.width(label.length), LEGEND_ITEM_HEIGHT)
+            return DoubleVector(LABEL_SPEC.width(label.length), LABEL_SPEC.height())
         }
     }
 
     private class MyHorizontalMultiRow internal constructor(
         title: String,
         breaks: List<LegendBreak>,
-        keySize: DoubleVector,
-        styleSheet: StyleSheet
+        keySize: DoubleVector
     ) : MyMultiRow(
         title, breaks, keySize,
-        LegendDirection.HORIZONTAL,
-        styleSheet
+        LegendDirection.HORIZONTAL
     ) {
         init {
             colCount = breaks.size
@@ -136,16 +123,10 @@ abstract class LegendComponentLayout(
         }
     }
 
-    private class MyVertical internal constructor(
-        title: String,
-        breaks: List<LegendBreak>,
-        keySize: DoubleVector,
-        styleSheet: StyleSheet
-    ) :
+    private class MyVertical internal constructor(title: String, breaks: List<LegendBreak>, keySize: DoubleVector) :
         MyMultiRow(
             title, breaks, keySize,
-            LegendDirection.VERTICAL,
-            styleSheet
+            LegendDirection.VERTICAL
         ) {
         init {
             colCount = 1
@@ -157,14 +138,13 @@ abstract class LegendComponentLayout(
         title: String,
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
-        legendDirection: LegendDirection,
-        styleSheet: StyleSheet
-    ) : LegendComponentLayout(title, breaks, keySize, legendDirection, styleSheet) {
+        legendDirection: LegendDirection
+    ) : LegendComponentLayout(title, breaks, keySize, legendDirection) {
         private var myMaxLabelWidth = 0.0
 
         init {
             for (br in breaks) {
-                myMaxLabelWidth = max(myMaxLabelWidth, itemLabelSpec.width(br.label.length))
+                myMaxLabelWidth = max(myMaxLabelWidth, LABEL_SPEC.width(br.label.length))
             }
         }
 
@@ -183,50 +163,32 @@ abstract class LegendComponentLayout(
         }
 
         override fun labelSize(index: Int): DoubleVector {
-            return DoubleVector(myMaxLabelWidth, LEGEND_ITEM_HEIGHT)
+            return DoubleVector(myMaxLabelWidth, LABEL_SPEC.height())
         }
     }
 
     companion object {
-        fun horizontal(
-            title: String,
-            breaks: List<LegendBreak>,
-            keySize: DoubleVector,
-            styleSheet: StyleSheet
-        ): LegendComponentLayout {
+        fun horizontal(title: String, breaks: List<LegendBreak>, keySize: DoubleVector): LegendComponentLayout {
             return MyHorizontal(
                 title,
                 breaks,
-                keySize,
-                styleSheet
+                keySize
             )
         }
 
-        fun horizontalMultiRow(
-            title: String,
-            breaks: List<LegendBreak>,
-            keySize: DoubleVector,
-            styleSheet: StyleSheet
-        ): LegendComponentLayout {
+        fun horizontalMultiRow(title: String, breaks: List<LegendBreak>, keySize: DoubleVector): LegendComponentLayout {
             return MyHorizontalMultiRow(
                 title,
                 breaks,
-                keySize,
-                styleSheet
+                keySize
             )
         }
 
-        fun vertical(
-            title: String,
-            breaks: List<LegendBreak>,
-            keySize: DoubleVector,
-            styleSheet: StyleSheet
-        ): LegendComponentLayout {
+        fun vertical(title: String, breaks: List<LegendBreak>, keySize: DoubleVector): LegendComponentLayout {
             return MyVertical(
                 title,
                 breaks,
-                keySize,
-                styleSheet
+                keySize
             )
         }
     }

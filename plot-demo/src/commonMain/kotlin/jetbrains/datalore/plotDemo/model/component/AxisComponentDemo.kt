@@ -22,8 +22,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement

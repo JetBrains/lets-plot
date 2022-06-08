@@ -35,7 +35,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
         var targetBreakCount =
             HorizontalSimpleLabelsLayout.estimateBreakCountInitial(
                 axisLength,
-                tickLabelSpec = labelSpec
+                PlotLabelSpec.axisTick(theme.axis)
             )
         var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
@@ -46,7 +46,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 HorizontalSimpleLabelsLayout.estimateBreakCount(
                     breaks.labels,
                     axisLength,
-                    tickLabelSpec = labelSpec
+                    PlotLabelSpec.axisTick(theme.axis)
                 )
             if (newTargetBreakCount >= targetBreakCount) {
                 // paranoid - highly impossible.

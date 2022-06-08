@@ -11,8 +11,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.vis.StyleSheet
 
 abstract class ColorBarComponentLayout(
     title: String,
@@ -20,12 +18,10 @@ abstract class ColorBarComponentLayout(
     breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
-    reverse: Boolean,
-    styleSheet: StyleSheet
+    reverse: Boolean
 ) : LegendBoxLayout(
     title,
-    legendDirection,
-    styleSheet
+    legendDirection
 ) {
 
     var barBounds: DoubleRectangle private set
@@ -61,22 +57,20 @@ abstract class ColorBarComponentLayout(
         domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
-        reverse: Boolean,
-        styleSheet: StyleSheet
+        reverse: Boolean
     ) : ColorBarComponentLayout(
         title, domain, breaks, barSize,
         LegendDirection.HORIZONTAL,
-        reverse,
-        styleSheet
+        reverse
     ) {
 
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = LEGEND_ITEM_HEIGHT / 3
+        private val labelDistance: Double get() = LABEL_SPEC.height() / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {
             // Bar + labels bounds
-            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + LEGEND_ITEM_HEIGHT)
+            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + LABEL_SPEC.height())
         }
 
         override fun createBreakInfo(tickLocation: Double): BreakInfo {
@@ -95,22 +89,22 @@ abstract class ColorBarComponentLayout(
         domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
-        reverse: Boolean,
-        styleSheet: StyleSheet
+        reverse: Boolean
     ) : ColorBarComponentLayout(
         title, domain, breaks, barSize,
         LegendDirection.VERTICAL,
-        reverse,
-        styleSheet
+        reverse
     ) {
+
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = PlotLabelSpec.legendItem(styleSheet).width(1) / 2
+        private val labelDistance: Double get() = LABEL_SPEC.width(1) / 2
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
             check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
-            val maxLabelWidth: Double = breaks.labels.map(String::length)
-                .maxOf { PlotLabelSpec.legendItem(styleSheet).width(it) }
+            val maxLabelWidth: Double = breaks.labels.map { it.length }
+                .maxOf { LABEL_SPEC.width(it) }
+
             // Bar + labels bounds
             graphSize = DoubleVector(guideBarSize.x + labelDistance + maxLabelWidth, guideBarSize.y)
         }
@@ -132,16 +126,14 @@ abstract class ColorBarComponentLayout(
             domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
-            reverse: Boolean,
-            styleSheet: StyleSheet
+            reverse: Boolean
         ): ColorBarComponentLayout {
             return HorizontalLayout(
                 title,
                 domain,
                 breaks,
                 barSize,
-                reverse,
-                styleSheet
+                reverse
             )
         }
 
@@ -150,16 +142,14 @@ abstract class ColorBarComponentLayout(
             domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
-            reverse: Boolean,
-            styleSheet: StyleSheet
+            reverse: Boolean
         ): ColorBarComponentLayout {
             return VerticalLayout(
                 title,
                 domain,
                 breaks,
                 barSize,
-                reverse,
-                styleSheet
+                reverse
             )
         }
     }

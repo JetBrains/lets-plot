@@ -8,18 +8,17 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.StyleSheet
 
 internal object PlotAxisLayoutUtil {
+
     fun initialThickness(
         orientation: Orientation,
         theme: AxisTheme,
-        styleSheet: StyleSheet
     ): Double {
         if (theme.showTickMarks() || theme.showLabels()) {
             val v = theme.tickLabelDistance()
             return if (theme.showLabels()) {
-                v + initialTickLabelSize(orientation, tickLabelSpec = PlotLabelSpec.axisTick(styleSheet, theme.axis))
+                v + initialTickLabelSize(orientation, PlotLabelSpec.axisTick(theme.axis))
             } else {
                 v
             }

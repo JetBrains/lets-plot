@@ -19,7 +19,7 @@ import jetbrains.datalore.vis.svg.*
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     override val cssStyle: String
-        get() = ".$LABEL_CLASS_NAME text { font-size: 18px; }"
+        get() = ".$LABEL_CLASS_NAME { font-size: 18px; }"
 
     fun createModel(): GroupComponent {
         val specs = ArrayList<LabelSpec>()

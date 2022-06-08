@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.layout.PlotAxisLayoutUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.StyleSheet
 import kotlin.math.abs
 
 internal object FreeScalesTilesLayouter {
@@ -27,18 +26,17 @@ internal object FreeScalesTilesLayouter {
         coordProvider: CoordProvider,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
-        styleSheet: StyleSheet
     ): List<TileLayoutInfo> {
 
         val facetTiles = facets.tileInfos()
 
         // rough estimate (without axis. The final size will be smaller)
         val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
-        val vAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.LEFT, vAxisTheme, styleSheet)
+        val vAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.LEFT, vAxisTheme)
         val geomWidth = (tilesAreaSize.x - addedHSize - vAxisCount * vAxisThickness) / facets.colCount
 
         val hAxisCount = FacetedPlotLayoutUtil.countHAxisInFirstCol(facetTiles)
-        val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme, styleSheet)
+        val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme)
         val geomHeight = (tilesAreaSize.y - addedVSize - hAxisCount * hAxisThickness) / facets.rowCount
 
         // 1st iteration

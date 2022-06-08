@@ -38,16 +38,49 @@ class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean
     }
 
     companion object {
-        private fun StyleSheet.getPlotLabelSpec(className: String) = PlotLabelSpec(getTextStyle(className))
+        // ToDo: Temp solution!
+        //  Need to remove this dictionary and getters,
+        //  will get metrics via theme
 
-        fun plotTitle(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.PLOT_TITLE)
-        fun plotSubtitle(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.PLOT_SUBTITLE)
-        fun plotCaption(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.PLOT_CAPTION)
+        private val labelSpecs = HashMap<String, PlotLabelSpec>()
 
-        fun axisTick(styleSheet: StyleSheet, axis: String) = styleSheet.getPlotLabelSpec("${Style.AXIS_TEXT}-${axis}")
-        fun axisTitle(styleSheet: StyleSheet, axis: String) = styleSheet.getPlotLabelSpec("${Style.AXIS_TITLE}-${axis}")
+        fun initWithStyleSheet(styleSheet: StyleSheet) {
+            fun putLabelSpec(className: String) {
+                labelSpecs[className] = PlotLabelSpec(styleSheet.getTextStyle(className))
+            }
 
-        fun legendItem(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.LEGEND_ITEM)
-        fun legendTitle(styleSheet: StyleSheet) = styleSheet.getPlotLabelSpec(Style.LEGEND_TITLE)
+            putLabelSpec(Style.PLOT_TITLE)
+            putLabelSpec(Style.PLOT_SUBTITLE)
+            putLabelSpec(Style.PLOT_CAPTION)
+
+            putLabelSpec("${Style.AXIS_TEXT}-x")
+            putLabelSpec("${Style.AXIS_TEXT}-y")
+            putLabelSpec("${Style.AXIS_TITLE}-x")
+            putLabelSpec("${Style.AXIS_TITLE}-y")
+
+            putLabelSpec(Style.LEGEND_TITLE)
+            putLabelSpec(Style.LEGEND_ITEM)
+        }
+
+        private fun get(className: String) = labelSpecs[className] ?: PlotLabelSpec(0.0)
+
+        val PLOT_TITLE: PlotLabelSpec
+            get() = get(Style.PLOT_TITLE)
+
+        val PLOT_SUBTITLE: PlotLabelSpec
+            get() = get(Style.PLOT_SUBTITLE)
+
+        val PLOT_CAPTION: PlotLabelSpec
+            get() = get(Style.PLOT_CAPTION)
+
+        val LEGEND_TITLE: PlotLabelSpec
+            get() = get(Style.LEGEND_TITLE)
+
+        val LEGEND_ITEM: PlotLabelSpec
+            get() = get(Style.LEGEND_ITEM)
+
+        fun axisTick(axis: String) = get("${Style.AXIS_TEXT}-$axis")
+
+        fun axisTitle(axis: String) = get("${Style.AXIS_TITLE}-$axis")
     }
 }

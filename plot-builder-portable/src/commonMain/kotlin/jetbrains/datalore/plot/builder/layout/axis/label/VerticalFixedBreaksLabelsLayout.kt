@@ -35,8 +35,7 @@ internal class VerticalFixedBreaksLabelsLayout(
             orientation, breaks,
             axisDomain,
             axisMapper,
-            theme,
-            labelSpec
+            theme
         )
     }
 }

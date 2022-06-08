@@ -21,7 +21,6 @@ import jetbrains.datalore.plot.builder.layout.tile.InsideOutTileLayout
 import jetbrains.datalore.plot.builder.layout.tile.TopDownTileLayout
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.StyleSheet
 
 internal class SquareFrameOfReferenceProvider(
     private val hScaleProto: Scale<Double>,
@@ -32,7 +31,6 @@ internal class SquareFrameOfReferenceProvider(
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
     private val domainByMargin: Map<MarginSide, DoubleSpan>,
-    private val styleSheet: StyleSheet
 ) : FrameOfReferenceProvider {
 
     private val hAxisSpec: AxisSpec
@@ -61,15 +59,13 @@ internal class SquareFrameOfReferenceProvider(
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
             hAxisSpec.theme,
-            Orientation.BOTTOM,
-            styleSheet
+            Orientation.BOTTOM
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
             vAxisSpec.theme,
-            Orientation.LEFT,
-            styleSheet
+            Orientation.LEFT
         )
 
         val hDomain = hAxisSpec.domainTransformed
@@ -121,7 +117,7 @@ internal class SquareFrameOfReferenceProvider(
             layoutInfo,
             marginsLayout,
             theme,
-            flipAxis
+            flipAxis,
         )
         tileFrameOfReference.isDebugDrawing = debugDrawing
         return tileFrameOfReference

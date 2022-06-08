@@ -9,10 +9,8 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.StyleSheet
 
 abstract class AxisLabelsLayout protected constructor(
     val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
@@ -51,16 +49,14 @@ abstract class AxisLabelsLayout protected constructor(
     }
 
     companion object {
-        const val TICK_LABEL_HEIGHT = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble()
         const val INITIAL_TICK_LABEL_LENGTH = 4 // symbols
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
 
+        private fun tickLabelSpec(axis: String) = PlotLabelSpec.axisTick(axis)
+
         fun horizontalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: DoubleSpan,
-            breaksProvider: AxisBreaksProvider,
-            theme: AxisTheme,
-            styleSheet: StyleSheet,
+            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
@@ -68,7 +64,7 @@ abstract class AxisLabelsLayout protected constructor(
             return HorizontalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                PlotLabelSpec.axisTick(styleSheet, theme.axis),
+                tickLabelSpec(theme.axis),
                 breaksProvider,
                 theme
             )
@@ -76,17 +72,14 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun horizontalFixedBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: DoubleSpan,
-            breaks: ScaleBreaks,
-            theme: AxisTheme,
-            styleSheet: StyleSheet
+            axisDomain: DoubleSpan, breaks: ScaleBreaks, theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
             return HorizontalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                PlotLabelSpec.axisTick(styleSheet, theme.axis),
+                tickLabelSpec(theme.axis),
                 breaks,
                 theme
             )
@@ -94,10 +87,7 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun verticalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
-            axisDomain: DoubleSpan,
-            breaksProvider: AxisBreaksProvider,
-            theme: AxisTheme,
-            styleSheet: StyleSheet
+            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(!orientation.isHorizontal) { orientation.toString() }
@@ -105,7 +95,7 @@ abstract class AxisLabelsLayout protected constructor(
             return VerticalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                PlotLabelSpec.axisTick(styleSheet, theme.axis),
+                tickLabelSpec(theme.axis),
                 breaksProvider,
                 theme
             )
@@ -115,14 +105,13 @@ abstract class AxisLabelsLayout protected constructor(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
             axisDomain: DoubleSpan,
             breaks: ScaleBreaks,
-            theme: AxisTheme,
-            styleSheet: StyleSheet
+            theme: AxisTheme
         ): AxisLabelsLayout {
             require(!orientation.isHorizontal) { orientation.toString() }
             return VerticalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                PlotLabelSpec.axisTick(styleSheet, theme.axis),
+                tickLabelSpec(theme.axis),
                 breaks,
                 theme
             )

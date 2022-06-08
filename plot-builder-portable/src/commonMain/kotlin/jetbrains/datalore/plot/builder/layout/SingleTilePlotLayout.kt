@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.vis.StyleSheet
 
 internal class SingleTilePlotLayout(
     private val tileLayout: TileLayout
@@ -17,7 +16,7 @@ internal class SingleTilePlotLayout(
         setPadding(10.0, 10.0, 0.0, 0.0)
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, styleSheet: StyleSheet): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         val paddingLeftTop = DoubleVector(paddingLeft, paddingTop)
         val paddingRightBottom = DoubleVector(paddingRight, paddingBottom)
 

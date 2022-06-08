@@ -31,9 +31,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors

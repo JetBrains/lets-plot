@@ -7,10 +7,9 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.vis.StyleSheet
 
 interface PlotLayout {
-    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, styleSheet: StyleSheet): PlotLayoutInfo
+    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo
 
     fun setPadding(top: Double, right: Double, bottom: Double, left: Double)
 }
