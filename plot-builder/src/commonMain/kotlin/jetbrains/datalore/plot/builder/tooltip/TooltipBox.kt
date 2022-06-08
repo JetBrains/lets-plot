@@ -160,7 +160,7 @@ class TooltipBox: SvgComponent() {
                         fun corner(controlStart: DoubleVector, controlEnd: DoubleVector, to: DoubleVector) {
                             // todo parameters: (x, y, radiusX, radiusY)
                             lineTo(controlStart)
-                            curveTo(controlStart, controlEnd, to)
+                            if (controlStart != to) curveTo(controlStart, controlEnd, to)
                         }
 
                         // start point

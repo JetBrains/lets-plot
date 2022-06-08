@@ -86,12 +86,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
             LEGEND_DIRECTION to LegendDirection.AUTO,
-
-            // Tooltip
-            TOOLTIP_RECT to mapOf(
-                Elem.FILL to Color.WHITE,
-                Elem.COLOR to Color.BLACK,
-            ),
             LEGEND_TITLE to mapOf(
                 Elem.FONT_FACE to FontFace.NORMAL,
             ),
