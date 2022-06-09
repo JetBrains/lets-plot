@@ -10,6 +10,7 @@ import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
@@ -63,7 +64,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.FONT_FACE to FontFace.NORMAL,
             ),
 
-            PANEL_BORDER_RECT to ThemeOption.ELEMENT_BLANK,
+            PANEL_BORDER_RECT to ELEMENT_BLANK,
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.FILL to Color.WHITE,

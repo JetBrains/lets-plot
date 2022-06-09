@@ -39,13 +39,13 @@ internal class DefaultPanelTheme(
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 
-    override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
-
-    override fun gridY(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridX else gridY
-
     override fun showBorder() = !isElemBlank(borderKey)
 
     override fun borderColor() = getColor(getElemValue(borderKey), Elem.COLOR)
 
     override fun borderWidth() = getNumber(getElemValue(borderKey), Elem.SIZE)
+
+    override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
+
+    override fun gridY(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridX else gridY
 }
