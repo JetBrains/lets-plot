@@ -17,6 +17,7 @@ class QQPlotSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val qqPlotSpec = buildQQPlotSpec(spec)
         spec[Option.Plot.LAYERS] = qqPlotSpec.get(Option.Plot.LAYERS) ?: error("Missing layers in Q-Q plot")
+        spec[Option.Plot.SCALES] = qqPlotSpec.get(Option.Plot.SCALES) ?: error("Missing scales in Q-Q plot")
         spec.remove("bistro")
     }
 
@@ -26,7 +27,7 @@ class QQPlotSpecChange : SpecChange {
             sample = bistroSpec.getString(QQ.SAMPLE),
             x = bistroSpec.getString(QQ.X),
             y = bistroSpec.getString(QQ.Y),
-            distribution = bistroSpec.getString(QQ.DISTRIBUTION),
+            distribution = bistroSpec.getString(QQ.DISTRIBUTION) ?: QQPlotOptionsBuilder.DEF_DISTRIBUTION,
             distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS)?.mapNotNull { it as? Double },
             quantiles = bistroSpec.getList(QQ.QUANTILES)?.mapNotNull { it as? Double },
             group = bistroSpec.getString(QQ.GROUP),
