@@ -31,7 +31,7 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/scale_%28color_fill%29_gradientn.ipynb).
          
-- Marginal plots, the `ggmarginal()` function [[#200](https://github.com/JetBrains/lets-plot/issues/200)],
+- Marginal plots: the `ggmarginal()` function [[#200](https://github.com/JetBrains/lets-plot/issues/200)],
 [[#384](https://github.com/JetBrains/lets-plot/issues/384)]. 
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/marginal_layers.ipynb).
