@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.defaultTheme
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.theme.PanelTheme
@@ -20,6 +21,7 @@ internal class DefaultPanelTheme(
     private val gridY = DefaultPanelGridTheme("y", options)
 
     internal val rectKey = listOf(PANEL_BKGR_RECT, RECT)
+    internal val borderKey = listOf(PANEL_BORDER_RECT, RECT)
 
     override fun showRect(): Boolean {
         return !isElemBlank(rectKey)
@@ -36,6 +38,12 @@ internal class DefaultPanelTheme(
     override fun rectStrokeWidth(): Double {
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
+
+    override fun showBorder() = !isElemBlank(borderKey)
+
+    override fun borderColor() = getColor(getElemValue(borderKey), Elem.COLOR)
+
+    override fun borderWidth() = getNumber(getElemValue(borderKey), Elem.SIZE)
 
     override fun gridX(flipAxis: Boolean): PanelGridTheme = if (flipAxis) gridY else gridX
 
