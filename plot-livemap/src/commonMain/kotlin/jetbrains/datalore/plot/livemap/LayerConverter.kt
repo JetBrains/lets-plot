@@ -21,15 +21,7 @@ object LayerConverter {
         constScalingLimit: Int,
         geodesic: Boolean
     ): List<LayersBuilder.() -> Unit> {
-        val liveMapGeom = letsPlotLayers.first().geom as LiveMapGeom
-        val layersToRender =
-            // do not add livemap layer that displays nothing
-            when (liveMapGeom.displayMode) {
-                null -> letsPlotLayers.drop(1)
-                else -> letsPlotLayers
-        }
-
-        return layersToRender
+        return letsPlotLayers
             .mapIndexed { index, layer ->
             val dataPointsConverter = DataPointsConverter(
                 layerIndex = index,
@@ -47,21 +39,11 @@ object LayerConverter {
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT -> MapLayerKind.TEXT to dataPointsConverter.toText()
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
-                LIVE_MAP -> {
-                    val layerKind = when ((layer.geom as LiveMapGeom).displayMode) {
-                        DisplayMode.POINT -> MapLayerKind.POINT
-                        DisplayMode.PIE -> MapLayerKind.PIE
-                        DisplayMode.BAR -> MapLayerKind.BAR
-                        else -> error("Unexpected livemap display mode.")
-                    }
-                    val dataPointLiveMapAesthetics = when (layerKind) {
-                        MapLayerKind.PIE -> dataPointsConverter.toPie()
-                        MapLayerKind.BAR -> dataPointsConverter.toBar()
-                        MapLayerKind.POINT -> dataPointsConverter.toPoint(layer.geom)
-                        else -> error("Unexpected")
-                    }
-
-                    layerKind to dataPointLiveMapAesthetics
+                LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
+                    DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
+                    DisplayMode.PIE -> MapLayerKind.PIE to dataPointsConverter.toPie()
+                    DisplayMode.BAR -> MapLayerKind.BAR to dataPointsConverter.toBar()
+                    else -> error("Unexpected livemap display mode.")
                 }
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }

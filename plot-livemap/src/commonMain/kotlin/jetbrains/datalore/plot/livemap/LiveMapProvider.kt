@@ -12,6 +12,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
@@ -83,9 +84,10 @@ object LiveMapProvider {
         }
 
         override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
-            val plotLayers = when (myLiveMapOptions.getBool(ONTOP) ?: false) {
-                false -> letsPlotLayers
-                true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
+            val plotLayers = when  {
+                letsPlotLayers.first().geom.let { it as LiveMapGeom }.displayMode == null -> letsPlotLayers.drop(1)
+                myLiveMapOptions.getBool(ONTOP) == true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
+                else -> letsPlotLayers
             }
 
             val liveMapBuilder: LiveMapBuilder = LiveMapBuilder().apply {
