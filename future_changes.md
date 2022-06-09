@@ -26,6 +26,11 @@
 - `panel_border` parameter in `theme()` [[#542](https://github.com/JetBrains/lets-plot/issues/542)].
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/panel_border.ipynb).
+  
+- `scale_color_gradientn()` and `scale_fill_gradientn()` functions [[#504](https://github.com/JetBrains/lets-plot/issues/504)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/scale_%28color_fill%29_gradientn.ipynb)
+
 
 ### Changed
 
@@ -39,7 +44,6 @@
 - NPE in corr_plot with null coefficients.
 - Outliers are not shown when boxplot' alpha=0.
 - Support for polars.DataFrame [[#526](https://github.com/JetBrains/lets-plot/issues/526)].
-- Jfx: Artifacts on fast cursor moving [[#539](https://github.com/JetBrains/lets-plot/issues/539)].
+- JFX rendering issue that causes tooltips to stuck [[#539](https://github.com/JetBrains/lets-plot/issues/539)].
 - Support trim parameter in density and ydensity stats [[#62](https://github.com/JetBrains/lets-plot/issues/62)].
-- n-color gradient for scaleColorGradient [[#504](https://github.com/JetBrains/lets-plot/issues/504)].
 - Unexpected point geometries on geom_livemap() [[#547](https://github.com/JetBrains/lets-plot/issues/547)]. 
