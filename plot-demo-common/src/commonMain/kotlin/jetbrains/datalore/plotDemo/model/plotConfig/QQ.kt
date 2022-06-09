@@ -14,9 +14,9 @@ class QQ {
             basic(),
             onlySampleValues(),
             grouping(),
-            withNan(),
             bistroBasic(),
             bistroOnlySampleValues(),
+            bistroGrouping(),
         )
     }
 
@@ -76,8 +76,8 @@ class QQ {
     private fun grouping(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'y': [-3, -1, 0, 1, 3, -2, 0, 1, 2, 4]," +
-                "             'g': ['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B']" +
+                "   'data' : {'y': [-3, -1, 0, 1, 3, null, -4, -2, 0, 1, 2, 4]," +
+                "             'g': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']" +
                 "            }," +
                 "   'mapping': {" +
                 "                'sample': 'y'," +
@@ -101,36 +101,12 @@ class QQ {
 
     }
 
-    private fun withNan(): MutableMap<String, Any> {
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'data' : {'x': [5, 4, 3, 2, 1]," +
-                "             'y': [null, 2, 1, 4, 3]" +
-                "            }," +
-                "   'mapping': {" +
-                "                'x': 'x'," +
-                "                'y': 'y'" +
-                "              }," +
-                "   'ggtitle': {" +
-                "                'text': 'With NaN values'" +
-                "              }," +
-                "   'layers': [" +
-                "               {" +
-                "                 'geom': 'qq2'" +
-                "               }," +
-                "               {" +
-                "                 'geom': 'qq2_line'" +
-                "               }" +
-                "             ]" +
-                "}"
-
-        return HashMap(parsePlotSpec(spec))
-
-    }
-
     private fun bistroBasic(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
+                "   'ggtitle': {" +
+                "                'text': 'Bistro basic demo'" +
+                "              }," +
                 "   'bistro': {" +
                 "               'name': 'qqplot'," +
                 "               'sample': 'sepal length (cm)'" +
@@ -146,6 +122,9 @@ class QQ {
     private fun bistroOnlySampleValues(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
+                "   'ggtitle': {" +
+                "                'text': 'Bistro only sample values'" +
+                "              }," +
                 "   'bistro': {" +
                 "               'name': 'qqplot'," +
                 "               'x': 'sepal width (cm)'," +
@@ -156,6 +135,26 @@ class QQ {
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
         return plotSpec
+
+    }
+
+    private fun bistroGrouping(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'y': [-3, -1, 0, 1, 3, null, -4, -2, 0, 1, 2, 4]," +
+                "             'g': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']" +
+                "            }," +
+                "   'ggtitle': {" +
+                "                'text': 'Bistro grouping'" +
+                "              }," +
+                "   'bistro': {" +
+                "               'name': 'qqplot'," +
+                "               'sample': 'y'," +
+                "               'group': 'g'" +
+                "             }" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
 
     }
 }

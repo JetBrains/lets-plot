@@ -25,7 +25,12 @@ class QQPlotSpecChange : SpecChange {
         val qqPlotOptionsBuilder = QQPlotOptionsBuilder(
             sample = bistroSpec.getString(QQ.SAMPLE),
             x = bistroSpec.getString(QQ.X),
-            y = bistroSpec.getString(QQ.Y)
+            y = bistroSpec.getString(QQ.Y),
+            distribution = bistroSpec.getString(QQ.DISTRIBUTION),
+            distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS)?.mapNotNull { it as? Double },
+            quantiles = bistroSpec.getList(QQ.QUANTILES)?.mapNotNull { it as? Double },
+            group = bistroSpec.getString(QQ.GROUP),
+            showLegend = bistroSpec.getBool(QQ.SHOW_LEGEND)
         )
         val qqPlotOptions = qqPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(qqPlotOptions)

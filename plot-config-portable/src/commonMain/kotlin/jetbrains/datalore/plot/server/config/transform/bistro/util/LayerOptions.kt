@@ -74,6 +74,8 @@ class LayerOptions : Options<PlotOptions>() {
     inline operator fun <reified T> get(aes: Aes<T>): T = properties[toOption(aes)] as T
     operator fun <T> set(aes: Aes<T>, v: T) { properties[toOption(aes)] = v }
 
+    fun <T> setParameter(name: String, v: T) { properties[name] = v }
+
     private inline fun <T, reified TValue> T.map(key: Aes<*>): ReadWriteProperty<T, TValue?> = map(toOption(key))
 }
 

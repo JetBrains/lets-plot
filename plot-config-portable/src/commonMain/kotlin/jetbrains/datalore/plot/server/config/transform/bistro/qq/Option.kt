@@ -11,5 +11,10 @@ object Option {
         const val SAMPLE = "sample"
         const val X = "x"
         const val Y = "y"
+        const val DISTRIBUTION = "distribution"
+        const val DISTRIBUTION_PARAMETERS = "dparams"
+        const val QUANTILES = "quantiles"
+        const val GROUP = "group"
+        const val SHOW_LEGEND = "show_legend"
     }
 }
