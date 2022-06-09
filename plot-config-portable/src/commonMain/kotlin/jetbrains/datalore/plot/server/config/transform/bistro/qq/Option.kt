@@ -16,5 +16,13 @@ object Option {
         const val QUANTILES = "quantiles"
         const val GROUP = "group"
         const val SHOW_LEGEND = "show_legend"
+        const val POINT_COLOR = "color"
+        const val POINT_FILL = "fill"
+        const val POINT_ALPHA = "alpha"
+        const val POINT_SIZE = "size"
+        const val POINT_SHAPE = "shape"
+        const val LINE_COLOR = "line_color"
+        const val LINE_SIZE = "line_size"
+        const val LINE_TYPE = "linetype"
     }
 }

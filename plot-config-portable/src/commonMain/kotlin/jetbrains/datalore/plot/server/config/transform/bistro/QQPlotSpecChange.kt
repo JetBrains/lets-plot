@@ -30,7 +30,15 @@ class QQPlotSpecChange : SpecChange {
             distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS)?.mapNotNull { it as? Double },
             quantiles = bistroSpec.getList(QQ.QUANTILES)?.mapNotNull { it as? Double },
             group = bistroSpec.getString(QQ.GROUP),
-            showLegend = bistroSpec.getBool(QQ.SHOW_LEGEND)
+            showLegend = bistroSpec.getBool(QQ.SHOW_LEGEND),
+            color = bistroSpec.getString(QQ.POINT_COLOR),
+            fill = bistroSpec.getString(QQ.POINT_FILL),
+            alpha = bistroSpec.getDouble(QQ.POINT_ALPHA) ?: QQPlotOptionsBuilder.DEF_POINT_ALPHA,
+            size = bistroSpec.getDouble(QQ.POINT_SIZE) ?: QQPlotOptionsBuilder.DEF_POINT_SIZE,
+            shape = bistroSpec.getInt(QQ.POINT_SHAPE),
+            lineColor = bistroSpec.getString(QQ.LINE_COLOR) ?: QQPlotOptionsBuilder.DEF_LINE_COLOR,
+            lineSize = bistroSpec.getDouble(QQ.LINE_SIZE) ?: QQPlotOptionsBuilder.DEF_LINE_SIZE,
+            lineType = bistroSpec.getInt(QQ.LINE_TYPE)
         )
         val qqPlotOptions = qqPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(qqPlotOptions)

@@ -5,8 +5,11 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro.qq
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.config.aes.LineTypeOptionConverter
+import jetbrains.datalore.plot.config.aes.ShapeOptionConverter
 import jetbrains.datalore.plot.server.config.transform.bistro.qq.Option.QQ
 import jetbrains.datalore.plot.server.config.transform.bistro.util.*
 
@@ -14,30 +17,46 @@ class QQPlotOptionsBuilder(
     private val sample: String?,
     private val x: String?,
     private val y: String?,
-    private val distribution: String? = null,
-    private val distributionParameters: List<Double>? = null,
-    private val quantiles: List<Double>? = null,
-    private val group: String? = null,
-    private val showLegend: Boolean? = null
+    private val distribution: String?,
+    private val distributionParameters: List<Double>?,
+    private val quantiles: List<Double>?,
+    private val group: String?,
+    private val showLegend: Boolean?,
+    private val color: String?,
+    private val fill: String?,
+    private val alpha: Double?,
+    private val size: Double?,
+    private val shape: Int?,
+    private val lineColor: String?,
+    private val lineSize: Double?,
+    private val lineType: Int?
 ) {
     fun build(): PlotOptions {
         val aesthetics = getMappings(sample, x, y, group)
         val layers = listOf(
             LayerOptions().apply {
-                geom = if (Aes.SAMPLE in aesthetics.keys) GeomKind.Q_Q else GeomKind.Q_Q_2
+                geom = if (this@QQPlotOptionsBuilder.sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
                 mappings = aesthetics
                 setParameter(QQ.DISTRIBUTION, distribution)
                 setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
                 setParameter(QQ.QUANTILES, quantiles)
                 showLegend = this@QQPlotOptionsBuilder.showLegend
+                color = if (group == null) this@QQPlotOptionsBuilder.color else null
+                fill = if (group == null) this@QQPlotOptionsBuilder.fill else null
+                alpha = this@QQPlotOptionsBuilder.alpha
+                size = this@QQPlotOptionsBuilder.size
+                shape = ShapeOptionConverter().apply(this@QQPlotOptionsBuilder.shape)
             },
             LayerOptions().apply {
-                geom = if (Aes.SAMPLE in aesthetics.keys) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
+                geom = if (this@QQPlotOptionsBuilder.sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
                 mappings = aesthetics
                 setParameter(QQ.DISTRIBUTION, distribution)
                 setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
                 setParameter(QQ.QUANTILES, quantiles)
                 showLegend = this@QQPlotOptionsBuilder.showLegend
+                color = if (group == null) this@QQPlotOptionsBuilder.lineColor else null
+                size = this@QQPlotOptionsBuilder.lineSize
+                linetype = LineTypeOptionConverter().apply(this@QQPlotOptionsBuilder.lineType)
             }
         )
         return plot {
@@ -45,7 +64,7 @@ class QQPlotOptionsBuilder(
         }
     }
 
-    private fun getMappings(
+    private inline fun getMappings(
         sample: String?,
         x: String?,
         y: String?,
@@ -75,5 +94,12 @@ class QQPlotOptionsBuilder(
         }
 
         return mappings
+    }
+
+    companion object {
+        const val DEF_POINT_ALPHA: Double = 0.5
+        const val DEF_POINT_SIZE: Double = 3.0
+        val DEF_LINE_COLOR: String = Color.RED.toHexColor()
+        const val DEF_LINE_SIZE: Double = 0.75
     }
 }

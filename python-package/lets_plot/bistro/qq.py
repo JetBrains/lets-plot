@@ -9,7 +9,9 @@ __all__ = ['qqplot']
 def qqplot(data=None, sample=None, *, x=None, y=None,
            distribution=None, dparams=None, quantiles=None,
            group=None,
-           show_legend=None) -> PlotSpec:
+           show_legend=None,
+           color=None, fill=None, alpha=None, size=None, shape=None,
+           line_color=None, line_size=None, linetype=None) -> PlotSpec:
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'qqplot',
         'sample': sample,
@@ -20,4 +22,12 @@ def qqplot(data=None, sample=None, *, x=None, y=None,
         'quantiles': quantiles,
         'group': group,
         'show_legend': show_legend,
+        'color': color,
+        'fill': fill,
+        'alpha': alpha,
+        'size': size,
+        'shape': shape,
+        'line_color': line_color,
+        'line_size': line_size,
+        'linetype': linetype,
     })
