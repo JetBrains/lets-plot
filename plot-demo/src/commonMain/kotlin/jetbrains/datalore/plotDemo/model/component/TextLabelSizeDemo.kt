@@ -19,9 +19,10 @@ open class TextLabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         private fun createTextLabel(spec: LabelSpec): TextLabel {
             val label = TextLabel(spec.label)
+            label.addClassName("label")
             label.setFontSize(spec.size)
-            label.setFontWeight(spec.fontWeight)
-            label.setFontStyle(spec.fontStyle)
+            label.setFontWeight(spec.fontWeight ?: "normal")
+            label.setFontStyle(spec.fontStyle ?: "normal")
             label.textColor().set(Color.DARK_BLUE)
             return label
         }
