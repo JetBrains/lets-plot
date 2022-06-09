@@ -81,17 +81,30 @@ object PlotConfigClientSideUtil {
                 val layerTileData = tileDataByLayer[layerIndex]
 
                 val commonScaleMap = plotConfig.scaleMap.map
-                val addScales = createScalesForStatPositionalBindings(
+                val layerAddedScales = createScalesForStatPositionalBindings(
                     layerConfig.varBindings,
                     layerConfig.isYOrientation,
                     commonScaleMap
-                )
-                val layerScaleMap = TypedScaleMap(commonScaleMap + addScales).let {
+                ).let {
                     when (layerConfig.isMarginal) {
-                        true -> MarginalLayerUtil.toMarginalScaleMap(it, layerConfig.marginalSide)
+                        true -> MarginalLayerUtil.toMarginalScaleMap(
+                            it,
+                            layerConfig.marginalSide,
+                            flipOrientation = layerConfig.isYOrientation
+                        )
                         false -> it
                     }
                 }
+                val layerCommonScales = when (layerConfig.isMarginal) {
+                    true -> MarginalLayerUtil.toMarginalScaleMap(
+                        commonScaleMap,
+                        layerConfig.marginalSide,
+                        flipOrientation = false    // Positional aes are already flipped in the "common scale map".
+                    )
+                    false -> commonScaleMap
+                }
+
+                val layerScaleMap = TypedScaleMap(layerCommonScales + layerAddedScales)
 
                 if (layerBuilders.size == layerIndex) {
                     val otherLayerWithTooltips = plotConfig.layerConfigs

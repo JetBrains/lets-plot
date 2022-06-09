@@ -125,7 +125,7 @@ object Option {
 
         object Marginal {
             const val SIZE = "margin_size"
-            const val SIZE_DEFAULT = 0.2
+            const val SIZE_DEFAULT = 0.1
             const val SIDE = "margin_side"
             const val SIDE_LEFT = "l"
             const val SIDE_RIGHT = "r"
