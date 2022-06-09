@@ -63,10 +63,10 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    symbol : str
+    symbol : str, default=None
         The marker used for displaying the data. There are:
         'point' for circles of different size and color; 'pie' for pie charts;
-        'bar' for bar charts.
+        'bar' for bar charts. None for map without markers.
     location : list
         Initial position of the map. If not set, displays the United States.
         There are [lon1, lat1, lon2, lat2,..., lonN, latN]:
@@ -226,6 +226,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     if _display_mode in other_args.keys():
         other_args.pop(_display_mode)
+
+    if mapping is not None and symbol is None:
+        raise ValueError('The `symbol` parameter is required for `geom_livemap()` with mappings.')
+
+    if map is not None and symbol is None:
+        raise ValueError('The `symbol` parameter is required for `geom_livemap()` with `map` parameter.')
 
     return _geom('livemap',
                  mapping=mapping,

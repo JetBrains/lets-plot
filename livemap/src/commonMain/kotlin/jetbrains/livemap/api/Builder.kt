@@ -71,8 +71,11 @@ class LiveMapBuilder {
     var devParams: DevParams = DevParams(HashMap<String, Any>())
 
     fun build(): LiveMap {
+        require(minZoom <= maxZoom) {
+            "minZoom should be less than or equal to maxZoom"
+        }
         require(zoom == null || zoom in IntRange(minZoom, maxZoom)) {
-            error("Zoom must be in range [${minZoom}, ${maxZoom}], but was $zoom")
+            "Zoom must be in range [${minZoom}, ${maxZoom}], but was $zoom"
         }
 
         val mapProjection = createMapProjection(projection)

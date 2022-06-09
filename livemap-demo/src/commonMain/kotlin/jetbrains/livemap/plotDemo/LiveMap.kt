@@ -1658,6 +1658,7 @@ class LiveMap {
         'url': 'https://cartocdn_c.global.ssl.fastly.net/base-antique/{z}/{x}/{y}@2x.png',
         'attribution': '<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a> <a href=\"https://carto.com/attributions#basemaps\">© CARTO</a>, <a href=\"https://carto.com/attributions\">© CARTO</a>'},
         'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'},
+        'display_mode': 'point',
         'size': 7,
         'shape': 21,
         'color': 'black',

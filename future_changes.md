@@ -42,3 +42,4 @@
 - Jfx: Artifacts on fast cursor moving [[#539](https://github.com/JetBrains/lets-plot/issues/539)].
 - Support trim parameter in density and ydensity stats [[#62](https://github.com/JetBrains/lets-plot/issues/62)].
 - n-color gradient for scaleColorGradient [[#504](https://github.com/JetBrains/lets-plot/issues/504)].
+- Unexpected point geometries on geom_livemap() [[#547](https://github.com/JetBrains/lets-plot/issues/547)]. 
