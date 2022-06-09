@@ -8,6 +8,9 @@ package jetbrains.datalore.plot.server.config.transform.bistro.util
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.render.linetype.LineType
+import jetbrains.datalore.plot.base.render.linetype.NamedLineType
+import jetbrains.datalore.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.config.Option
 
 object OptionsUtil {
@@ -46,6 +49,9 @@ object OptionsUtil {
             is GeomKind -> Option.GeomName.fromGeomKind(v)
             is Aes<*> -> Option.Mapping.toOption(v)
             is Pair<*, *> -> listOf(v.first, v.second)
+            is PointShape -> v.code
+            is NamedLineType -> v.code
+            is LineType -> null
             else -> v.also {
                 @Suppress("UNNECESSARY_NOT_NULL_ASSERTION") // analyzer fails to see first check: null -> null
                 println("WARNING: standardising unknown type: '${v!!::class.simpleName}'")

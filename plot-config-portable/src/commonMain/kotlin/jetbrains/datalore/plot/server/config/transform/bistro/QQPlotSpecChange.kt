@@ -36,10 +36,10 @@ class QQPlotSpecChange : SpecChange {
             fill = bistroSpec.getString(QQ.POINT_FILL),
             alpha = bistroSpec.getDouble(QQ.POINT_ALPHA) ?: QQPlotOptionsBuilder.DEF_POINT_ALPHA,
             size = bistroSpec.getDouble(QQ.POINT_SIZE) ?: QQPlotOptionsBuilder.DEF_POINT_SIZE,
-            shape = bistroSpec.getInt(QQ.POINT_SHAPE),
+            shape = bistroSpec.read(QQ.POINT_SHAPE),
             lineColor = bistroSpec.getString(QQ.LINE_COLOR) ?: QQPlotOptionsBuilder.DEF_LINE_COLOR,
             lineSize = bistroSpec.getDouble(QQ.LINE_SIZE) ?: QQPlotOptionsBuilder.DEF_LINE_SIZE,
-            lineType = bistroSpec.getInt(QQ.LINE_TYPE)
+            lineType = bistroSpec.read(QQ.LINE_TYPE)
         )
         val qqPlotOptions = qqPlotOptionsBuilder.build()
         return OptionsUtil.toSpec(qqPlotOptions)

@@ -26,10 +26,10 @@ class QQPlotOptionsBuilder(
     private val fill: String? = null,
     private val alpha: Double? = DEF_POINT_ALPHA,
     private val size: Double? = DEF_POINT_SIZE,
-    private val shape: Int? = null,
+    private val shape: Any? = null,
     private val lineColor: String? = DEF_LINE_COLOR,
     private val lineSize: Double? = DEF_LINE_SIZE,
-    private val lineType: Int? = null
+    private val lineType: Any? = null
 ) {
     fun build(): PlotOptions {
         val aesthetics = getMappings(sample, x, y, group)
