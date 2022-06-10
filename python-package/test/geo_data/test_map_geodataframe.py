@@ -3,7 +3,7 @@
 
 import json
 
-from .geo_data import get_data_meta, get_map_data_meta
+from geo_data_test_util import get_data_meta, get_map_data_meta
 from geopandas import GeoDataFrame
 from shapely.geometry import MultiPolygon, Polygon, LinearRing, Point, mapping
 

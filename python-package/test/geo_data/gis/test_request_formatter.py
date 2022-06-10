@@ -3,7 +3,7 @@
 
 from typing import Optional
 
-from geo_data.gis.assertions import assert_region_query
+from assertions import assert_region_query
 
 from lets_plot.geo_data.gis.geometry import GeoRect, GeoPoint
 from lets_plot.geo_data.gis.json_request import RequestFormatter, RequestParser

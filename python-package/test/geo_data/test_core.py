@@ -8,14 +8,14 @@ from pandas import DataFrame
 
 from lets_plot.geo_data import geocode
 from lets_plot.geo_data.geocoder import _to_scope
-from lets_plot.geo_data.geocodes import _ensure_is_list, Geocodes, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME
+from lets_plot.geo_data.geocodes import _ensure_is_list, Geocodes, DF_COLUMN_ID, DF_COLUMN_FOUND_NAME, DF_COLUMN_CENTROID, DF_COLUMN_POSITION, DF_COLUMN_LIMIT
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, GeocodingRequest, PayloadKind, ExplicitRequest, \
     AmbiguityResolver
 from lets_plot.geo_data.gis.response import LevelKind, FeatureBuilder, GeoPoint, Answer
 from lets_plot.geo_data.livemap_helper import _prepare_location, RegionKind, _prepare_parent, \
     LOCATION_LIST_ERROR_MESSAGE, LOCATION_DATAFRAME_ERROR_MESSAGE
-from .geo_data import make_geocode_region, make_success_response, features_to_answers, features_to_queries, \
+from geo_data_test_util import make_geocode_region, make_success_response, features_to_answers, features_to_queries, \
     COLUMN_NAME_CITY
 
 DATAFRAME_COLUMN_NAME = 'name'
@@ -63,7 +63,7 @@ def test_regions(mock_geocoding):
         pass  # response doesn't contain proper feature with ids - ignore
 
     mock_geocoding.assert_called_with(
-        GeocodingRequest(requested_payload=[],
+        GeocodingRequest(requested_payload=[PayloadKind.limits, PayloadKind.poisitions, PayloadKind.centroids],
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          level=LEVEL_KIND,
@@ -82,7 +82,7 @@ def test_regions_with_highlights(mock_geocoding):
         pass  # response doesn't contain proper feature with ids - ignore
 
     mock_geocoding.assert_called_with(
-        GeocodingRequest(requested_payload=[PayloadKind.highlights],
+        GeocodingRequest(requested_payload=[PayloadKind.limits, PayloadKind.poisitions, PayloadKind.centroids, PayloadKind.highlights],
                          resolution=None,
                          region_queries=[REGION_QUERY_LA, REGION_QUERY_NY],
                          scope=MapRegion.with_name(REGION_NAME),
@@ -301,5 +301,5 @@ def test_ensure_is_list(arg, expected_result):
 def test_regions_to_data_frame_should_skip_highlights():
     regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
     regions_df = regions.to_data_frame()
-    assert [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME] == list(regions_df.columns.values)
+    assert [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_CENTROID, DF_COLUMN_POSITION, DF_COLUMN_LIMIT] == list(regions_df.columns.values)
 

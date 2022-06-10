@@ -190,6 +190,9 @@ def make_answer(name: str, geo_object_id: str, highlights: List[str]) -> Answer:
                   .set_name(name) \
                   .set_id(geo_object_id) \
                   .set_highlights(highlights) \
+                  .set_centroid(GeoPoint(0, 0)) \
+                  .set_position(GeoRect(0, 0, 0, 0)) \
+                  .set_limit(GeoRect(0, 0, 0, 0)) \
                   .build_geocoded()
                    ]
                   )

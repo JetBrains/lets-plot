@@ -1,7 +1,7 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from geo_data.gis.assertions import assert_geocoded, assert_ambiguous
+from assertions import assert_geocoded, assert_ambiguous
 
 from lets_plot.geo_data.gis.fluent_dict import FluentDict, FluentList
 from lets_plot.geo_data.gis.geometry import GeoPoint, GeoRect, Ring, Polygon

@@ -6,7 +6,7 @@ import pytest
 from lets_plot.geo_data.gis.request import RegionQuery, LevelKind
 from lets_plot.geo_data.gis.response import Answer, GeoRect, FeatureBuilder
 from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame
-from .geo_data import NAME, FOUND_NAME, ID, assert_row
+from geo_data_test_util import NAME, FOUND_NAME, ID, assert_row
 
 DEFAULT_LAT_MIN = 20
 DEFAULT_LAT_MAX = 30

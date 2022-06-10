@@ -11,7 +11,7 @@ from lets_plot.geo_data import DF_COLUMN_CITY, DF_COLUMN_STATE, DF_COLUMN_COUNTY
 from lets_plot.geo_data.geocoder import Geocoder
 from lets_plot.plot import ggplot, geom_polygon, geom_point, geom_map, geom_rect, geom_text, geom_path, geom_livemap
 from lets_plot.plot import util
-from .geo_data import get_map_data_meta, assert_error
+from geo_data_test_util import get_map_data_meta, assert_error
 
 
 def geo_data_frame(geometry, columns=[]):
@@ -89,7 +89,7 @@ def test_geom_text_fetches_centroids():
 
 def test_geom_livemap_fetches_centroids():
     geocoder = mock_geocoder()
-    plot_spec = ggplot() + geom_livemap(map=geocoder)
+    plot_spec = ggplot() + geom_livemap(map=geocoder, symbol='point')
 
     assert_map_data_meta(plot_spec)
     assert geocoder.get_test_point_dict() == get_map(plot_spec)
@@ -104,7 +104,7 @@ def test_data_should_call_to_dataframe():
 
 
 def get_layer_spec(plot_spec, spec_name):
-    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0][spec_name]
+    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0].get(spec_name, None)
 
 
 @pytest.mark.parametrize('map_join,map_columns,expected', [

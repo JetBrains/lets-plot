@@ -7,13 +7,13 @@ from shapely.geometry import Point
 
 import lets_plot.geo_data as geodata
 from lets_plot.geo_data import DF_COLUMN_FOUND_NAME
-from .geo_data import run_intergration_tests, assert_row, assert_error, get_request_column_name, \
+from geo_data_test_util import run_intergration_tests, assert_row, assert_error, get_request_column_name, \
     assert_request_and_found_name_are_equal
 
 ShapelyPoint = shapely.geometry.Point
 
-BOSTON_ID = '4631409'
-NYC_ID = '351811'
+BOSTON_ID = '158809705'
+NYC_ID = '61785451'
 
 
 TURN_OFF_INTERACTION_TEST = not run_intergration_tests()
@@ -59,8 +59,8 @@ def test_name_columns(geometry_getter):
 ])
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_empty_request_name_columns(geometry_getter):
-    request = 'Vermont'
-    found_name = 'Vermont'
+    request = 'Maine'
+    found_name = 'Maine'
 
     states = geodata.geocode_states('us-48')
 
@@ -106,7 +106,7 @@ def test_reverse_geocoding_of_nothing():
 
 SEVASTOPOL_LON = 33.5224
 SEVASTOPOL_LAT = 44.58883
-SEVASTOPOL_ID = '6061953'
+SEVASTOPOL_ID = '3030976'
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -118,7 +118,7 @@ def test_only_one_sevastopol():
 
 WARWICK_LON = -71.4332938210472
 WARWICK_LAT = 41.715542525053
-WARWICK_ID = '785807'
+WARWICK_ID = '158863860'
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -174,7 +174,7 @@ def test_ambiguity_allow_ambiguous():
         .get_geocodes()
 
     actual = r[DF_COLUMN_FOUND_NAME].tolist()
-    assert 29 == len(actual)  # 1 New York + 27 Manchester
+    assert 30 == len(actual)  # 1 New York + 27 Manchester
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -367,7 +367,7 @@ def test_duplication_with_us48():
 
     assert 51 == len(df)
     assert_row(df, names='tx', found_name='Texas', index=0)
-    assert_row(df, names='Vermont', found_name='Vermont', index=1)
+    assert_row(df, names='Maine', found_name='Maine', index=1)
     assert_row(df, names='tx', found_name='Texas', index=50)
 
 
@@ -394,12 +394,6 @@ def test_highlights():
     df = r.get_geocodes()
     assert_row(df, found_name='New York')
     assert df['highlights'].tolist() == [['NYC']]
-
-
-@pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
-def test_countries():
-    df = geodata.geocode_countries().get_centroids()
-    assert 217 == len(df)
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')

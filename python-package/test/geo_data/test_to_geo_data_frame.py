@@ -1,19 +1,19 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from geo_data.geo_data import features_to_answers, assert_row, FOUND_NAME, GEO_RECT_MIN_LON, GEO_RECT_MAX_LON, \
+from geo_data_test_util import features_to_answers, assert_row, FOUND_NAME, GEO_RECT_MIN_LON, GEO_RECT_MAX_LON, \
     GEO_RECT_MIN_LAT, GEO_RECT_MAX_LAT
 from pandas import DataFrame
 
 from lets_plot.geo_data.gis.request import RegionQuery, LevelKind
 from lets_plot.geo_data.gis.response import SuccessResponse, FeatureBuilder
 from lets_plot.geo_data.to_geo_data_frame import LimitsGeoDataFrame, CentroidsGeoDataFrame, BoundariesGeoDataFrame
-from .geo_data import CENTROID_LON, CENTROID_LAT, GEO_RECT_MIN_LON, GEO_RECT_MIN_LAT, GEO_RECT_MAX_LON, GEO_RECT_MAX_LAT
-from .geo_data import GJMultipolygon, GJPolygon
-from .geo_data import ID, NAME, FOUND_NAME
-from .geo_data import assert_success_response, assert_row, make_success_response
-from .geo_data import feature_to_answer, features_to_answers, features_to_queries
-from .geo_data import make_limit_rect, make_centroid_point, polygon, ring, point, make_polygon_boundary, multipolygon, \
+from geo_data_test_util import CENTROID_LON, CENTROID_LAT, GEO_RECT_MIN_LON, GEO_RECT_MIN_LAT, GEO_RECT_MAX_LON, GEO_RECT_MAX_LAT
+from geo_data_test_util import GJMultipolygon, GJPolygon
+from geo_data_test_util import ID, NAME, FOUND_NAME
+from geo_data_test_util import assert_success_response, assert_row, make_success_response
+from geo_data_test_util import feature_to_answer, features_to_answers, features_to_queries
+from geo_data_test_util import make_limit_rect, make_centroid_point, polygon, ring, point, make_polygon_boundary, multipolygon, \
     make_multipolygon_boundary, make_single_point_boundary
 
 NAMED_FEATURE_BUILDER = FeatureBuilder() \

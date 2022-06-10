@@ -5,7 +5,7 @@ from typing import List
 
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import GeoJson
-from .geo_data import multipolygon, polygon, ring, point, format_multipolygon, GJPoint, format_polygon
+from geo_data_test_util import multipolygon, polygon, ring, point, format_multipolygon, GJPoint, format_polygon
 
 
 def test_boundaries_polygon_response():

@@ -1,7 +1,7 @@
 #  Copyright (c) 2020. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 import lets_plot.geo_data as geodata
-from .geo_data import assert_error, assert_row, assert_request_and_found_name_are_equal
+from geo_data_test_util import assert_error, assert_row, assert_request_and_found_name_are_equal
 
 
 def test_us48_in_names_with_level():
