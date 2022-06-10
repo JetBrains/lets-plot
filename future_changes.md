@@ -19,10 +19,22 @@
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/tooltips_theme.ipynb).
 
+- New functions for constructing Q-Q plots:
+  - Geometries: 
+    - `geom_qq()`
+    - `geom_qq_line()`
+    - `geom_qq2()`
+    - `geom_qq2_line()`
+  - Function in 'bistro' module:
+    - `qq_plot()`
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/qq_plots.ipynb).
+
 ### Changed
 
 - New style of tooltip color marker (two sidebars with a stroke color)
   and symbols in legend (rectangle with a stroke instead of a slash-line).
+- Default sampling type for `geom_violin` switched from systematic to pick.
 
 ### Fixed
 
@@ -32,4 +44,5 @@
 - Outliers are not shown when boxplot' alpha=0.
 - Support for polars.DataFrame [[#526](https://github.com/JetBrains/lets-plot/issues/526)].
 - Jfx: Artifacts on fast cursor moving [[#539](https://github.com/JetBrains/lets-plot/issues/539)].
-- Support trim parameter in density and ydensity stats [[#62](https://github.com/JetBrains/lets-plot/issues/62)].
+- Support `trim` parameter in density and ydensity stats [[#62](https://github.com/JetBrains/lets-plot/issues/62)].
+- Add parameters `kernel`, `bw`, `adjust`, `n`, `fs_max` to signature and docstring of the `geom_violin`.
