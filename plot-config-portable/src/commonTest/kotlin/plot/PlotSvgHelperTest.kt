@@ -12,18 +12,18 @@ import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class PlotSizeHelperTest {
+internal class PlotSvgHelperTest {
     @Test
     @IgnoreJs
     fun svgSizeFromSinglePlotSvg() {
-        val sizeFromSvg = PlotSizeHelper.fetchPlotSizeFromSvg(EXPECTED_SINGLE_PLOT_SVG)
+        val sizeFromSvg = PlotSvgHelper.fetchPlotSizeFromSvg(EXPECTED_SINGLE_PLOT_SVG)
         assertEquals(DoubleVector(400.0, 300.0), sizeFromSvg)
     }
 
     @Test
     @IgnoreJs
     fun svgSizeFromGGBunchSvg() {
-        val sizeFromSvg = PlotSizeHelper.fetchPlotSizeFromSvg(EXPECTED_BUNCH_SVG)
+        val sizeFromSvg = PlotSvgHelper.fetchPlotSizeFromSvg(EXPECTED_BUNCH_SVG)
         assertEquals(DoubleVector(300.0, 150.0), sizeFromSvg)
     }
 }

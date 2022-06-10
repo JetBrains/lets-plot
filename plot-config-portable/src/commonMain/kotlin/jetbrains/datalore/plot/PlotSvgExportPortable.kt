@@ -8,7 +8,7 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.plot.PlotSizeHelper.fetchPlotSizeFromSvg
+import jetbrains.datalore.plot.PlotSvgHelper.fetchPlotSizeFromSvg
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.vis.svgToString.SvgToString
@@ -102,20 +102,13 @@ object PlotSvgExportPortable {
         val rootGroup = split[1].split("</svg>")[0]
 
         val rootGroupTranslated =
-            """<g transform="translate($x $y)" ${rootGroup.substring(
-                rootGroup.indexOf("<g ") + 3
-            )}"""
+            """<g transform="translate($x $y)" ${
+                rootGroup.substring(
+                    rootGroup.indexOf("<g ") + 3
+                )
+            }"""
 
         val svgSize = fetchPlotSizeFromSvg(svg)
         return Pair(rootGroupTranslated, svgSize)
     }
-
-//    private fun extractDouble(regex: Regex, text: String): Double {
-//        val matchResult = regex.find(text)!!
-//        val values = matchResult.groupValues
-//        return if (values.size < 3)
-//            "${values[1]}".toDouble()
-//        else
-//            "${values[1]}.${values[2]}".toDouble()
-//    }
 }
