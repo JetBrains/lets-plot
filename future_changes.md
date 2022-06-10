@@ -40,6 +40,7 @@
 
 - New style of tooltip color marker (two sidebars with a stroke color)
   and symbols in legend (rectangle with a stroke instead of a slash-line).
+- New type of general tooltip for `geom_boxplot`: displayed under the cursor.
 
 ### Fixed
 
