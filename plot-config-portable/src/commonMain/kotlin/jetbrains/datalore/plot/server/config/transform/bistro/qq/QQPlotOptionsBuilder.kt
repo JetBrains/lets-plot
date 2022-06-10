@@ -72,6 +72,14 @@ class QQPlotOptionsBuilder(
                     aes = Aes.Y
                     name = scaleNames[Aes.Y]
                 },
+                scale {
+                    aes = Aes.COLOR
+                    isDiscrete = true
+                },
+                scale {
+                    aes = Aes.FILL
+                    isDiscrete = true
+                },
             )
         }
     }
