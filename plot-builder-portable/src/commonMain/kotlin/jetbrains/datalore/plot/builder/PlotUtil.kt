@@ -158,8 +158,13 @@ object PlotUtil {
             null
         }
 
-        val lowerEndpoint = continuousTransform?.applyInverse(range.lowerEnd) ?: range.lowerEnd
-        val upperEndpoint = continuousTransform?.applyInverse(range.upperEnd) ?: range.upperEnd
+        // Inverse transform ends and make sure that lowe <= upper
+        val domain = DoubleSpan(
+            continuousTransform?.applyInverse(range.lowerEnd) ?: range.lowerEnd,
+            continuousTransform?.applyInverse(range.upperEnd) ?: range.upperEnd
+        )
+        val lowerEndpoint = domain.lowerEnd
+        val upperEndpoint = domain.upperEnd
 
         val length = upperEndpoint - lowerEndpoint
         var lowerExpand = addExp + length * mulExp

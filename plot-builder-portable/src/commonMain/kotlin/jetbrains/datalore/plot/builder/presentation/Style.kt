@@ -127,42 +127,37 @@ object Style {
     }
 
     fun fromTheme(theme: Theme, flippedAxis: Boolean): StyleSheet {
-        fun MutableMap<String, TextStyle>.setColor(className: String, color: Color) {
-            this[className] = createTextStyle(
-                this[className]?.family ?: DEFAULT_FAMILY,
-                this[className]?.face ?: DEFAULT_FACE,
-                this[className]?.size ?: DEFAULT_SIZE,
-                color
-            )
+        fun MutableMap<String, TextStyle>.put(className: String, color: Color, fontFace: FontFace) {
+            this[className] = (DEFAULT_TEXT_STYLES[className] ?: createTextStyle()).copy(face = fontFace, color = color)
         }
 
-        val textStyles = DEFAULT_TEXT_STYLES.toMutableMap()
+        val textStyles = mutableMapOf<String, TextStyle>()
         with(textStyles) {
-            setColor(PLOT_TITLE, theme.plot().titleColor())
-            setColor(PLOT_SUBTITLE, theme.plot().subtitleColor())
-            setColor(PLOT_CAPTION, theme.plot().captionColor())
+            put(PLOT_TITLE, theme.plot().titleColor(), theme.plot().titleFontFace() )
+            put(PLOT_SUBTITLE, theme.plot().subtitleColor(), theme.plot().subtitleFontFace())
+            put(PLOT_CAPTION, theme.plot().captionColor(), theme.plot().captionFontFace())
 
-            setColor(LEGEND_TITLE, theme.legend().titleColor())
-            setColor(LEGEND_ITEM, theme.legend().textColor())
+            put(LEGEND_TITLE, theme.legend().titleColor(), theme.legend().titleFontFace())
+            put(LEGEND_ITEM, theme.legend().textColor(), theme.legend().textFontFace())
 
             val hAxisTheme = theme.horizontalAxis(flippedAxis)
             val hAxisName = if (flippedAxis) "y" else "x"
-            setColor("$AXIS_TITLE-$hAxisName", hAxisTheme.titleColor())
-            setColor("$AXIS_TEXT-$hAxisName", hAxisTheme.labelColor())
-            setColor("$AXIS_TOOLTIP_TEXT-$hAxisName", hAxisTheme.tooltipTextColor())
+            put("$AXIS_TITLE-$hAxisName", hAxisTheme.titleColor(), hAxisTheme.titleFontFace())
+            put("$AXIS_TEXT-$hAxisName", hAxisTheme.labelColor(), hAxisTheme.labelFontFace())
+            put("$AXIS_TOOLTIP_TEXT-$hAxisName", hAxisTheme.tooltipTextColor(), hAxisTheme.tooltipFontFace())
 
             val vAxisTheme = theme.verticalAxis(flippedAxis)
             val vAxisName = if (flippedAxis) "x" else "y"
-            setColor("$AXIS_TITLE-$vAxisName", vAxisTheme.titleColor())
-            setColor("$AXIS_TEXT-$vAxisName", vAxisTheme.labelColor())
-            setColor("$AXIS_TOOLTIP_TEXT-$vAxisName", vAxisTheme.tooltipTextColor())
+            put("$AXIS_TITLE-$vAxisName", vAxisTheme.titleColor(), vAxisTheme.titleFontFace())
+            put("$AXIS_TEXT-$vAxisName", vAxisTheme.labelColor(), vAxisTheme.labelFontFace())
+            put("$AXIS_TOOLTIP_TEXT-$vAxisName", vAxisTheme.tooltipTextColor(), vAxisTheme.tooltipFontFace())
 
-            setColor("$FACET_STRIP_TEXT-x", theme.facets().stripTextColor())
-            setColor("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor())
+            put("$FACET_STRIP_TEXT-x", theme.facets().stripTextColor(), theme.facets().stripFontFace())
+            put("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor(), theme.facets().stripFontFace())
 
-            setColor(TOOLTIP_TEXT, theme.tooltips().textColor())
-            setColor(TOOLTIP_TITLE, theme.tooltips().titleTextColor())
-            setColor(TOOLTIP_LABEL, theme.tooltips().textColor())
+            put(TOOLTIP_TEXT, theme.tooltips().textColor(), theme.tooltips().textFontFace())
+            put(TOOLTIP_TITLE, theme.tooltips().titleTextColor(), theme.tooltips().titleTextFontFace())
+            put(TOOLTIP_LABEL, theme.tooltips().textColor(), FontFace.BOLD + theme.tooltips().textFontFace())
         }
         return StyleSheet(
             textStyles,

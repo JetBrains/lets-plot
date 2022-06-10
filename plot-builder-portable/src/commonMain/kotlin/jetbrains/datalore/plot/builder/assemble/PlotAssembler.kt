@@ -18,7 +18,10 @@ import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.vis.StyleSheet
 
 class PlotAssembler private constructor(
     private val layersByTile: List<List<GeomLayer>>,
@@ -55,6 +58,10 @@ class PlotAssembler private constructor(
     fun createPlot(): PlotSvgComponent {
         require(hasLayers()) { "No layers in plot" }
 
+        val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipAxis)
+        // ToDo Remove this global label metrics:
+        PlotLabelSpec.initWithStyleSheet(styleSheet)
+
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
@@ -83,7 +90,7 @@ class PlotAssembler private constructor(
             val frameProviderByTile = coreLayersByTile.map {
                 BogusFrameOfReferenceProvider()
             }
-            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet)
         } else {
             val flipAxis = coordProvider.flipAxis
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
@@ -116,7 +123,7 @@ class PlotAssembler private constructor(
                         flipAxis,
                         theme,
                         marginsLayout,
-                        domainByMargin,
+                        domainByMargin
                     )
                 }
 
@@ -131,14 +138,15 @@ class PlotAssembler private constructor(
                 vAxisTheme = theme.verticalAxis(flipAxis),
             )
 
-            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet)
         }
     }
 
     private fun createPlot(
         frameProviderByTile: List<FrameOfReferenceProvider>,
         plotLayout: PlotLayout,
-        legendBoxInfos: List<LegendBoxInfo>
+        legendBoxInfos: List<LegendBoxInfo>,
+        styleSheet: StyleSheet
     ): PlotSvgComponent {
 
         return PlotSvgComponent(
@@ -152,7 +160,8 @@ class PlotAssembler private constructor(
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme,
-            caption = caption
+            caption = caption,
+            styleSheet = styleSheet
         )
     }
 

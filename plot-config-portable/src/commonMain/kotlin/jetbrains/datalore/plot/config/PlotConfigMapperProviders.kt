@@ -19,7 +19,7 @@ internal object PlotConfigMapperProviders {
         val setup = PlotConfigUtil.createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
         // All aes used in bindings and x/y aes.
-        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
 
         val defaultProviders = aesSet.associateWith { DefaultMapperProvider[it] }
         val configuredProviders = scaleConfigs.map {

@@ -52,6 +52,7 @@ object ThemeOption {
 
     // Panel
     const val PANEL_BKGR_RECT = "panel_background"
+    const val PANEL_BORDER_RECT = "panel_border"
 
     // Panel grid
     const val PANEL_GRID = "panel_grid"  // a line
@@ -93,7 +94,7 @@ object ThemeOption {
 
         // text
         const val FONT_FAMILY = "family"     // ToDo
-        const val FONT_FACE = "face"         // ToDo
+        const val FONT_FACE = "face"
         const val HJUST = "hjust"       // ToDo
         const val VJUST = "vjust"       // ToDo
         const val ANGLE = "angle"       // ToDo
@@ -132,6 +133,7 @@ object ThemeOption {
             AXIS_TOOLTIP_X,
             AXIS_TOOLTIP_Y,
             PANEL_BKGR_RECT,
+            PANEL_BORDER_RECT,
             PANEL_GRID_MAJOR_X,
             PANEL_GRID_MINOR_X,
             PANEL_GRID_MAJOR_Y,
@@ -169,6 +171,24 @@ object ThemeOption {
         val numericOptions = listOf(
             AXIS_TICKS_LENGTH_X,
             AXIS_TICKS_LENGTH_Y,
+        )
+
+        //  font_face
+        val elemWithFontOptions = listOf(
+            PLOT_TITLE,
+            PLOT_SUBTITLE,
+            PLOT_CAPTION,
+            AXIS_TITLE_X,
+            AXIS_TITLE_Y,
+            AXIS_TEXT_X,
+            AXIS_TEXT_Y,
+            AXIS_TOOLTIP_TEXT_X,
+            AXIS_TOOLTIP_TEXT_Y,
+            FACET_STRIP_TEXT,
+            LEGEND_TEXT,
+            LEGEND_TITLE,
+            TOOLTIP_TEXT,
+            TOOLTIP_TITLE_TEXT,
         )
     }
 }

@@ -5,16 +5,17 @@ import pytest
 from shapely.geometry import Point, box
 
 import lets_plot.geo_data as geodata
-from lets_plot.geo_data import DF_COLUMN_FOUND_NAME, DF_COLUMN_ID, DF_COLUMN_COUNTRY, DF_COLUMN_STATE, DF_COLUMN_COUNTY
-from .geo_data import assert_row, assert_error, NO_COLUMN, COLUMN_NAME_CITY
-from .test_integration_with_geocoding_serever import TURN_OFF_INTERACTION_TEST
+from lets_plot.geo_data import DF_COLUMN_FOUND_NAME, DF_COLUMN_ID, DF_COLUMN_COUNTRY, DF_COLUMN_STATE, DF_COLUMN_COUNTY, DF_COLUMN_CENTROID, DF_COLUMN_POSITION, DF_COLUMN_LIMIT
+from geo_data_test_util import assert_row, assert_error, NO_COLUMN, COLUMN_NAME_CITY
+from test_integration_with_geocoding_serever import TURN_OFF_INTERACTION_TEST
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_all_columns_order():
     boston = geodata.geocode_cities('boston').counties('suffolk').states('massachusetts').countries('usa')
-    assert boston.get_geocodes().columns.tolist() == [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTY,
-                                                      DF_COLUMN_STATE, DF_COLUMN_COUNTRY]
+    assert boston.get_geocodes().columns.tolist() == \
+           [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTY, DF_COLUMN_STATE, DF_COLUMN_COUNTRY,
+            DF_COLUMN_CENTROID, DF_COLUMN_POSITION, DF_COLUMN_LIMIT]
 
     gdf_columns = [COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTY, DF_COLUMN_STATE, DF_COLUMN_COUNTRY, 'geometry']
     assert boston.get_limits().columns.tolist() == gdf_columns
@@ -26,7 +27,8 @@ def test_all_columns_order():
 def test_do_not_add_unsued_parents_columns():
     moscow = geodata.geocode_cities('moscow').countries('russia')
 
-    assert moscow.get_geocodes().columns.tolist() == [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTRY]
+    assert moscow.get_geocodes().columns.tolist() == [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTRY,
+                                                      DF_COLUMN_CENTROID, DF_COLUMN_POSITION, DF_COLUMN_LIMIT]
 
     gdf_columns = [COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTRY, 'geometry']
     assert moscow.get_limits().columns.tolist() == gdf_columns
@@ -141,7 +143,7 @@ def test_simple_scope():
 def test_where():
     worcester = geodata.geocode_cities('worcester').where('worcester', scope='massachusetts')
 
-    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
+    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='158851900')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -149,7 +151,7 @@ def test_where_closest_to_point():
     worcester = geodata.geocode_cities('worcester').where('worcester', closest_to=Point(-71.00, 42.00))
 
     assert_row(worcester.get_centroids(), lon=-71.8154652712922, lat=42.2678737342358)
-    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
+    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='158851900')
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -157,7 +159,7 @@ def test_where_closest_to_regions():
     boston = geodata.geocode_cities('boston')
     worcester = geodata.geocode_cities('worcester').where('worcester', closest_to=boston)
 
-    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
+    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='158851900')
     assert_row(worcester.get_centroids(), lon=-71.8154652712922, lat=42.2678737342358)
 
 
@@ -165,7 +167,7 @@ def test_where_closest_to_regions():
 def test_where_scope():
     worcester = geodata.geocode_cities('worcester').where('worcester', scope=box(-71.00, 42.00, -72.00, 43.00))
 
-    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='3688419')
+    assert_row(worcester.get_geocodes(), names='worcester', found_name='Worcester', id='158851900')
     assert_row(worcester.get_centroids(), lon=-71.8154652712922, lat=42.2678737342358)
 
 
@@ -173,7 +175,7 @@ def test_where_scope():
 def test_where_west_warwick():
     warwick = geodata.geocode_cities('west warwick').states('rhode island')
 
-    assert_row(warwick.get_geocodes(), names='west warwick', state='rhode island', found_name='West Warwick', id='382429')
+    assert_row(warwick.get_geocodes(), names='west warwick', state='rhode island', found_name='West Warwick', id='158903676')
     assert_row(warwick.get_centroids(), lon=-71.5257788638961, lat=41.6969098895788)
 
 
@@ -240,7 +242,7 @@ def test_scope_with_level_detection_should_work():
 def test_fetch_all_countries():
     countries = geodata.geocode_countries()
     df = countries.get_geocodes()
-    assert len(df) == 217
+    assert len(df) == 218
 
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
@@ -260,7 +262,7 @@ def test_duplications_in_filter_should_preserve_order():
 
 @pytest.mark.skipif(TURN_OFF_INTERACTION_TEST, reason='Need proper server ip')
 def test_select_all_query_with_empty_result_should_return_empty_dataframe():
-    geocoder = geodata.geocode_counties().scope('Norway')
+    geocoder = geodata.geocode_counties().scope('vatican')
 
     geocodes = geocoder.get_geocodes()
     assert 0 == len(geocodes)

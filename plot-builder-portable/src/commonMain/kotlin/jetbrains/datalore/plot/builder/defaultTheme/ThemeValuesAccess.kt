@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 
 internal open class ThemeValuesAccess(
@@ -70,6 +71,14 @@ internal open class ThemeValuesAccess(
         return when (val value = elem.getValue(key)) {
             is Color -> value
             else -> Colors.parseColor(value as String)
+        }
+    }
+
+    protected fun getFontFace(elem: Map<String, Any>): FontFace {
+        return when (val value = elem.getValue(Elem.FONT_FACE)) {
+            is FontFace -> value
+            is String -> FontFace.fromString(value)
+            else -> FontFace.NORMAL
         }
     }
 }

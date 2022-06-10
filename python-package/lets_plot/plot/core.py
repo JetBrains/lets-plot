@@ -449,6 +449,7 @@ class LayerSpec(FeatureSpec):
 
     @classmethod
     def duplicate(cls, other):
+        # A shallow copy!
         return LayerSpec(**other.props())
 
     def __init__(self, **kwargs):

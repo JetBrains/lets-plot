@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.PositionalScalesUtil
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 
 object MarginalLayerUtil {
     private val MARGINAL_SCALE = Scales.continuousDomain<Double>("marginal", true)
@@ -72,14 +71,31 @@ object MarginalLayerUtil {
         )
     }
 
-    fun toMarginalScaleMap(scaleMap: TypedScaleMap, margin: MarginSide): TypedScaleMap {
-        val m = scaleMap.map.mapValues { (aes, scale) ->
-            when (margin) {
-                MarginSide.LEFT, MarginSide.RIGHT -> if (Aes.isPositionalX(aes)) MARGINAL_SCALES.getValue(margin) else scale
-                MarginSide.TOP, MarginSide.BOTTOM -> if (Aes.isPositionalY(aes)) MARGINAL_SCALES.getValue(margin) else scale
+    fun toMarginalScaleMap(
+        scaleMap: Map<Aes<*>, Scale<*>>,
+        margin: MarginSide,
+        flipOrientation: Boolean
+    ): Map<Aes<*>, Scale<*>> {
+
+        fun isXAxis(aes: Aes<*>): Boolean {
+            return when (flipOrientation) {
+                true -> Aes.isPositionalY(aes)
+                false -> Aes.isPositionalX(aes)
             }
         }
-        return TypedScaleMap(m)
-    }
 
+        fun isYAxis(aes: Aes<*>): Boolean {
+            return when (flipOrientation) {
+                true -> Aes.isPositionalX(aes)
+                false -> Aes.isPositionalY(aes)
+            }
+        }
+
+        return scaleMap.mapValues { (aes, scale) ->
+            when (margin) {
+                MarginSide.LEFT, MarginSide.RIGHT -> if (isXAxis(aes)) MARGINAL_SCALES.getValue(margin) else scale
+                MarginSide.TOP, MarginSide.BOTTOM -> if (isYAxis(aes)) MARGINAL_SCALES.getValue(margin) else scale
+            }
+        }
+    }
 }

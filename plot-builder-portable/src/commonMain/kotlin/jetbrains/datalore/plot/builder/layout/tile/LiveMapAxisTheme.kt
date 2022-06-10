@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.builder.layout.tile
 
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class LiveMapAxisTheme : AxisTheme {
@@ -23,47 +24,31 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun showTooltip(): Boolean = false
 
-    override fun titleColor(): Color {
-        UNSUPPORTED()
-    }
+    override fun titleColor() = Defaults.TEXT_COLOR
 
-    override fun lineWidth(): Double {
-        UNSUPPORTED()
-    }
+    override fun titleFontFace() = FontFace.NORMAL
 
-    override fun lineColor(): Color {
-        UNSUPPORTED()
-    }
+    override fun lineWidth() = 1.0
 
-    override fun tickMarkColor(): Color {
-        UNSUPPORTED()
-    }
+    override fun lineColor() = Defaults.Plot.Axis.LINE_COLOR
 
-    override fun labelColor(): Color {
-        UNSUPPORTED()
-    }
+    override fun tickMarkColor() = Defaults.Plot.Axis.LINE_COLOR
 
-    override fun tickMarkWidth(): Double {
-        UNSUPPORTED()
-    }
+    override fun labelColor() = Defaults.TEXT_COLOR
 
-    override fun tickMarkLength(): Double {
-        UNSUPPORTED()
-    }
+    override fun labelFontFace() = FontFace.NORMAL
 
-    override fun tooltipFill(): Color {
-        UNSUPPORTED()
-    }
+    override fun tickMarkWidth() = 1.0
 
-    override fun tooltipColor(): Color {
-        UNSUPPORTED()
-    }
+    override fun tickMarkLength() = 4.0
 
-    override fun tooltipStrokeWidth(): Double {
-        UNSUPPORTED()
-    }
+    override fun tooltipFill() = Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 
-    override fun tooltipTextColor(): Color {
-        UNSUPPORTED()
-    }
+    override fun tooltipColor() = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
+
+    override fun tooltipStrokeWidth() = 1.0
+
+    override fun tooltipTextColor() = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
+
+    override fun tooltipFontFace() = FontFace.NORMAL
 }

@@ -55,7 +55,8 @@ class PlotSvgComponent constructor(
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
-    caption: String?
+    caption: String?,
+    val styleSheet: StyleSheet
 ) : SvgComponent() {
 
     private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
@@ -78,8 +79,6 @@ class PlotSvgComponent constructor(
 
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
-
-    val styleSheet: StyleSheet = Style.fromTheme(theme, flippedAxis)
 
     // ToDo: remove
     private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
@@ -110,6 +109,8 @@ class PlotSvgComponent constructor(
                     else -> Defaults.TEXT_COLOR
                 }
                 errorLabel.textColor().set(textColor)
+                errorLabel.setFontWeight("normal")
+                errorLabel.setFontStyle("normal")
                 errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
                 errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
                 errorLabel.moveTo(plotSize.x / 2, y)
@@ -190,7 +191,8 @@ class PlotSvgComponent constructor(
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines
+            captionLines,
+            flippedAxis
         )
 
         // Layout plot inners
@@ -210,7 +212,8 @@ class PlotSvgComponent constructor(
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines
+            captionLines,
+            flippedAxis
         )
 
         // Position the "entire" plot rect in the center of the "overall" rect.
@@ -242,7 +245,13 @@ class PlotSvgComponent constructor(
         // Inner bounds - all without titles and legends.
         val plotInnerOrigin = plotOuterBoundsWithoutTitle.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
-            .add(axisTitleSizeDelta(axisTitleLeft, null, axisEnabled))
+            .add(
+                axisTitleSizeDelta(
+                    axisTitleLeft to PlotLabelSpec.axisTitle(theme.verticalAxis(flippedAxis).axis),
+                    axisTitleBottom = null to PlotLabelSpec(0.0),
+                    axisEnabled
+                )
+            )
 
         val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotInfo)
             .add(plotInnerOrigin)
@@ -285,8 +294,7 @@ class PlotSvgComponent constructor(
                 liveMapFigures = liveMapFigures + listOf(this)
             }
 
-// ToDo: axis tooltip shoult uppear on 'outer' bounds.
-//            val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
+            val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
             val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
             val tooltipBounds = PlotTooltipBounds(
                 placementArea = geomInnerBoundsAbsolute,
@@ -296,7 +304,9 @@ class PlotSvgComponent constructor(
                 geomInnerBoundsAbsolute,
                 tooltipBounds,
                 tile.targetLocators,
-                tile.layerYOrientations
+                tile.layerYOrientations,
+                // axis tooltip should appear on 'outer' bounds:
+                axisOrigin = DoubleVector(geomOuterBoundsAbsolute.left, geomOuterBoundsAbsolute.bottom)
             )
 
             @Suppress("ConstantConditionIf")
@@ -513,7 +523,6 @@ class PlotSvgComponent constructor(
             }
         })
     }
-
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)

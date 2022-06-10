@@ -30,9 +30,11 @@ internal object PlotConfigTransforms {
         val setup = createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
         // All aes used in bindings and x/y aes.
-        val aesSet: Set<Aes<*>> = setup.mappedAesSet + setOf(Aes.X, Aes.Y)
-        val xAesSet = setup.xAesSet
-        val yAesSet = setup.yAesSet
+        // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+        val xAesSet = aesSet.filter { Aes.isPositionalX(it) }.toSet()
+        val yAesSet = aesSet.filter { Aes.isPositionalY(it) }.toSet()
+
         val dataByVarBinding = setup.dataByVarBinding
         val variablesByMappedAes = setup.variablesByMappedAes
 
@@ -61,8 +63,8 @@ internal object PlotConfigTransforms {
         }
 
         // If axis is 'discrete' then put all 'positional' aes to 'discrete' aes set.
-        val discreteX: Boolean = discreteAesSet.any { setup.isXAxis(it) }
-        val discreteY: Boolean = discreteAesSet.any { setup.isYAxis(it) }
+        val discreteX: Boolean = discreteAesSet.any { it in xAesSet }
+        val discreteY: Boolean = discreteAesSet.any { it in yAesSet }
         if (discreteX) {
             discreteAesSet.addAll(xAesSet)
         }

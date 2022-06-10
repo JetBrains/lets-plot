@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
@@ -31,8 +32,10 @@ interface LegendTheme {
     fun direction(): LegendDirection
 
     fun titleColor(): Color
+    fun titleFontFace(): FontFace
 
     fun textColor(): Color
+    fun textFontFace(): FontFace
 
     fun showBackground(): Boolean
     fun backgroundColor(): Color

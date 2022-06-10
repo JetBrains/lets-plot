@@ -49,9 +49,10 @@ abstract class AxisLabelsLayout protected constructor(
     }
 
     companion object {
-        val TICK_LABEL_SPEC = PlotLabelSpec.AXIS_TICK
         const val INITIAL_TICK_LABEL_LENGTH = 4 // symbols
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
+
+        private fun tickLabelSpec(axis: String) = PlotLabelSpec.axisTick(axis)
 
         fun horizontalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
@@ -63,7 +64,7 @@ abstract class AxisLabelsLayout protected constructor(
             return HorizontalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                TICK_LABEL_SPEC,
+                tickLabelSpec(theme.axis),
                 breaksProvider,
                 theme
             )
@@ -78,7 +79,7 @@ abstract class AxisLabelsLayout protected constructor(
             return HorizontalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                TICK_LABEL_SPEC,
+                tickLabelSpec(theme.axis),
                 breaks,
                 theme
             )
@@ -94,7 +95,7 @@ abstract class AxisLabelsLayout protected constructor(
             return VerticalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                TICK_LABEL_SPEC,
+                tickLabelSpec(theme.axis),
                 breaksProvider,
                 theme
             )
@@ -110,7 +111,7 @@ abstract class AxisLabelsLayout protected constructor(
             return VerticalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                TICK_LABEL_SPEC,
+                tickLabelSpec(theme.axis),
                 breaks,
                 theme
             )

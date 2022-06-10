@@ -48,6 +48,7 @@ interface Scale<T> {   // ToDo: remove <T>: it only make sense for mapper.
     fun with(): Builder<T>
 
     interface Builder<T> {
+        fun name(v: String): Builder<T>
 
         fun breaks(l: List<Any>): Builder<T>
 

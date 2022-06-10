@@ -13,8 +13,8 @@ from lets_plot.geo_data.gis.request import MapRegion, AmbiguityResolver, Geocodi
     IgnoringStrategyKind
 from lets_plot.geo_data.geocoder import NamesGeocoder
 from lets_plot.geo_data.geocodes import Geocodes
-from .geo_data import make_answer, assert_row
-from .request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \
+from geo_data_test_util import make_answer, assert_row
+from request_assertion import GeocodingRequestAssertion, QueryMatcher, ScopeMatcher, ValueMatcher, eq, empty, \
     eq_map_region_with_name, eq_map_region_with_id
 
 
@@ -195,9 +195,9 @@ def test_select_all_query_with_empty_result_should_return_empty_dataframe():
     answers=[
         Answer(
             features=[
-                GeocodedFeature(id='foo_id', name='foo'),
-                GeocodedFeature(id='bar_id', name='bar'),
-                GeocodedFeature(id='baz_id', name='baz'),
+                GeocodedFeature(id='foo_id', name='foo', centroid=GeoPoint(0, 0), position=GeoRect(0, 0, 0, 0), limit=GeoRect(0, 0, 0, 0)),
+                GeocodedFeature(id='bar_id', name='bar', centroid=GeoPoint(0, 0), position=GeoRect(0, 0, 0, 0), limit=GeoRect(0, 0, 0, 0)),
+                GeocodedFeature(id='baz_id', name='baz', centroid=GeoPoint(0, 0), position=GeoRect(0, 0, 0, 0), limit=GeoRect(0, 0, 0, 0)),
             ]
         )
     ]
@@ -218,9 +218,9 @@ def test_for_us48_request_should_contain_feature_name():
     answers=[
         Answer(
             features=[
-                GeocodedFeature(id='foo1_id', name='Foo'),
-                GeocodedFeature(id='foo2_id', name='Foo'),
-                GeocodedFeature(id='foo3_id', name='Fooo'),
+                GeocodedFeature(id='foo1_id', name='Foo', centroid=GeoPoint(0, 0), position=GeoRect(0, 0, 0, 0), limit=GeoRect(0, 0, 0, 0)),
+                GeocodedFeature(id='foo2_id', name='Foo', centroid=GeoPoint(0, 0), position=GeoRect(0, 0, 0, 0), limit=GeoRect(0, 0, 0, 0)),
+                GeocodedFeature(id='foo3_id', name='Fooo', centroid=GeoPoint(0, 0), position=GeoRect(0, 0, 0, 0), limit=GeoRect(0, 0, 0, 0)),
             ]
         )
     ]

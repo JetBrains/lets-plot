@@ -11,6 +11,7 @@ from .geom_image_ import *
 from .geom_livemap_ import *
 from .guide import *
 from .label import *
+from .marginal_layer import *
 from .plot import *
 from .pos import *
 from .sampling import *
@@ -38,4 +39,6 @@ __all__ = (coord.__all__ +
            scale_identity.__all__ +
            theme_.__all__ +
            theme_set.__all__ +
-           tooltip.__all__)
+           tooltip.__all__ +
+           marginal_layer.__all__
+           )

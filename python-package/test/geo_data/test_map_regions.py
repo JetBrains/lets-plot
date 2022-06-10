@@ -10,8 +10,8 @@ from lets_plot.geo_data.geocodes import _parse_resolution, Geocodes, Resolution
 from lets_plot.geo_data.gis.geocoding_service import GeocodingService
 from lets_plot.geo_data.gis.request import ExplicitRequest, PayloadKind, LevelKind, RequestBuilder, RequestKind, \
     RegionQuery
-from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint
-from .geo_data import make_success_response, features_to_queries, features_to_answers, assert_row, \
+from lets_plot.geo_data.gis.response import Answer, FeatureBuilder, GeoPoint, GeoRect
+from geo_data_test_util import make_success_response, features_to_queries, features_to_answers, assert_row, \
     assert_request_and_found_name_are_equal
 
 USA_REQUEST = 'united states'
@@ -37,17 +37,20 @@ class TestMapRegions:
         self.foo_id = 'foo_id'
         self.foo_query = 'foo'
         self.foo_name = 'Foo'
-        self.foo: FeatureBuilder = FeatureBuilder().set_query(self.foo_query).set_id(self.foo_id).set_name(self.foo_name)
+        self.foo: FeatureBuilder = FeatureBuilder().set_query(self.foo_query).set_id(self.foo_id).set_name(self.foo_name)\
+            .set_centroid(GeoPoint(1, 2)).set_position(GeoRect(1, 2, 3, 4)).set_limit(GeoRect(51, 52, 53, 54))
 
         self.bar_id = 'bar_id'
         self.bar_query = 'bar'
         self.bar_name = 'Bar'
-        self.bar: FeatureBuilder = FeatureBuilder().set_query(self.bar_query).set_id(self.bar_id).set_name(self.bar_name)
+        self.bar: FeatureBuilder = FeatureBuilder().set_query(self.bar_query).set_id(self.bar_id).set_name(self.bar_name)\
+            .set_centroid(GeoPoint(3, 4)).set_position(GeoRect(5, 6, 7, 8)).set_limit(GeoRect(55, 56, 57, 58))
 
         self.baz_id = 'baz_id'
         self.baz_query = 'baz'
         self.baz_name = 'Baz'
-        self.baz: FeatureBuilder = FeatureBuilder().set_query(self.baz_query).set_id(self.baz_id).set_name(self.baz_name)
+        self.baz: FeatureBuilder = FeatureBuilder().set_query(self.baz_query).set_id(self.baz_id).set_name(self.baz_name)\
+            .set_centroid(GeoPoint(5, 6)).set_position(GeoRect(9, 10, 11, 12)).set_limit(GeoRect(59, 60, 61, 62))
 
     @mock.patch.object(GeocodingService, 'do_request')
     def test_boundaries(self, mock_request):

@@ -7,25 +7,28 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 
-class MarginalLayersDemo(private val coordFixed: Boolean = false) {
+class MarginalLayersDemo(
+    private val coordFixed: Boolean = false,
+    private val boxplot: Boolean = false,
+) {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            marginalPlot(listOf("l"), listOf(0.1)),
-            marginalPlot(listOf("r"), listOf(0.2)),
-            marginalPlot(listOf("l", "r"), listOf(0.1, 0.2)),
+            marginalPlot(listOf("l"), listOf(0.1), boxplot),
+            marginalPlot(listOf("r"), listOf(0.2), boxplot),
+            marginalPlot(listOf("l", "r"), listOf(0.1, 0.2), boxplot),
 
-            marginalPlot(listOf("t"), listOf(0.1)),
-            marginalPlot(listOf("b"), listOf(0.2)),
-            marginalPlot(listOf("t", "b"), listOf(0.1, 0.2)),
+            marginalPlot(listOf("t"), listOf(0.1), boxplot),
+            marginalPlot(listOf("b"), listOf(0.2), boxplot),
+            marginalPlot(listOf("t", "b"), listOf(0.1, 0.2), boxplot),
 
-            marginalPlot(listOf("t", "r"), listOf(0.1, 0.2)),
-            marginalPlot(listOf("b", "l"), listOf(0.2, 0.1)),
-            marginalPlot(listOf("t", "r", "b", "l"), listOf(0.1, 0.2, 0.2, 0.1)),
+            marginalPlot(listOf("t", "r"), listOf(0.1, 0.2), boxplot),
+            marginalPlot(listOf("b", "l"), listOf(0.2, 0.1), boxplot),
+            marginalPlot(listOf("t", "r", "b", "l"), listOf(0.1, 0.2, 0.2, 0.1), boxplot),
         )
     }
 
-    private fun marginalPlot(sides: List<String>, sizes: List<Double>): MutableMap<String, Any> {
-        val spec = plotSpec(sides, sizes)
+    private fun marginalPlot(sides: List<String>, sizes: List<Double>, boxplot: Boolean): MutableMap<String, Any> {
+        val spec = plotSpec(sides, sizes, boxplot)
         val map = parsePlotSpec(spec)
         map["data"] = data
         if (coordFixed) {
@@ -57,7 +60,7 @@ class MarginalLayersDemo(private val coordFixed: Boolean = false) {
         private val yLim = Pair(-0.4, 0.2)
 
 
-        private fun plotSpec(marginSides: List<String>, marginSizes: List<Double>): String {
+        private fun plotSpec(marginSides: List<String>, marginSizes: List<Double>, boxplot: Boolean): String {
             return """
             {
                 'mapping': {'x': 'x', 'y': 'y'},
@@ -69,28 +72,38 @@ class MarginalLayersDemo(private val coordFixed: Boolean = false) {
                         'alpha': 0.6,
                         'size': 5
                     },
-                    ${marginalSpecs(marginSides, marginSizes)}
+                    ${marginalSpecs(marginSides, marginSizes, boxplot)}
                 ],
                 'ggtitle': {'text': 'Margins: $marginSides'}
             }
          """.trimIndent()
         }
 
-        private fun marginalSpecs(sides: List<String>, sizes: List<Double>): String {
+        private fun marginalSpecs(sides: List<String>, sizes: List<Double>, boxplot: Boolean): String {
             val l = ArrayList<String>()
             for ((i, side) in sides.withIndex()) {
-                l.add(marginSpec(side, sizes[i]))
+                l.add(marginSpec(side, sizes[i], boxplot))
             }
             return l.joinToString(",", "", "")
         }
 
-        private fun marginSpec(side: String, size: Double): String {
-            return """
-                ${marginalHist(side, size)},
-                ${marginalDensity(side, size)}
-            """.trimIndent()
+        private fun marginSpec(side: String, size: Double, boxplot: Boolean): String {
+            return when (boxplot) {
+                true -> """
+                             ${marginalBoxplot(side, size)}
+                        """
+                false -> """
+                            ${marginalHist(side, size)},
+                            ${marginalDensity(side, size)}
+                        """
+            }.trimIndent()
+
 //            return """
-//                ${marginalHist(side, size)}
+//                ${marginalHist(side, size)},
+//                ${marginalDensity(side, size)}
+//            """.trimIndent()
+//            return """
+//                ${marginalBoxplot(side, size)}
 //            """.trimIndent()
         }
 
@@ -131,5 +144,28 @@ class MarginalLayersDemo(private val coordFixed: Boolean = false) {
             }
             """.trimIndent()
         }
+
+        private fun marginalBoxplot(side: String, size: Double): String {
+            val orientation = when (side) {
+                "l", "r" -> "x"
+                else -> "y"
+            }
+
+            val fixed = when (orientation) {
+                "x" -> "x"
+                else -> "y"
+            }
+
+            return """
+                {
+                    'geom': 'boxplot', '$fixed' : 0.0,
+                    'marginal' : true,
+                    'margin_side' : '$side',
+                    'margin_size' : $size,
+                    'orientation' : '$orientation'
+            }
+            """.trimIndent()
+        }
+
     }
 }

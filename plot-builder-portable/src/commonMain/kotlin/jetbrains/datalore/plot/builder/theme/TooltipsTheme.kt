@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 
 interface TooltipsTheme {
     fun tooltipColor(): Color
@@ -13,5 +14,7 @@ interface TooltipsTheme {
     fun tooltipStrokeWidth(): Double
 
     fun textColor(): Color
+    fun textFontFace(): FontFace
     fun titleTextColor(): Color
+    fun titleTextFontFace(): FontFace
 }

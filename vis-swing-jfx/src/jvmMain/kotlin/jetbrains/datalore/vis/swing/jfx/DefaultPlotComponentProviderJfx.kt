@@ -6,7 +6,6 @@
 package jetbrains.datalore.vis.swing.jfx
 
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.PlotSpecComponentProvider
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel

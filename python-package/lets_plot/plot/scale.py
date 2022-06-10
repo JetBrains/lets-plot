@@ -19,6 +19,7 @@ __all__ = ['scale_shape',
            'scale_shape_manual', 'scale_linetype_manual', 'scale_alpha_manual',
            'scale_fill_gradient', 'scale_fill_continuous', 'scale_color_gradient', 'scale_color_continuous',
            'scale_fill_gradient2', 'scale_color_gradient2',
+           'scale_color_gradientn', 'scale_fill_gradientn',
            'scale_fill_hue', 'scale_fill_discrete', 'scale_color_hue', 'scale_color_discrete',
            'scale_fill_grey', 'scale_color_grey',
            'scale_fill_brewer', 'scale_color_brewer',
@@ -1553,6 +1554,153 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
                   #
                   low=low, mid=mid, high=high,
                   midpoint=midpoint, scale_mapper_kind='color_gradient2')
+
+
+def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
+                           na_value=None, guide=None, trans=None, format=None):
+    """
+    Define smooth color gradient between multiple colors for color aesthetic.
+
+    Parameters
+    ----------
+    colors : list
+        Gradient colors list.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Define smooth color gradient between multiple colors for color aesthetic.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + \\
+            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
+            scale_color_gradientn(colors=['#1a9641', 'blue', '#d7191c'], guide='legend')
+
+    """
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  colors=colors,
+                  scale_mapper_kind='color_gradientn')
+
+
+def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
+                         na_value=None, guide=None, trans=None, format=None):
+    """
+    Define smooth color gradient between multiple colors for fill aesthetic.
+
+    Parameters
+    ----------
+    colors : list
+        Gradient colors list.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Define smooth color gradient between multiple colors for fill aesthetic.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'x': list(range(-16, 16))}
+        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
+            scale_fill_gradientn(colors=['#2b83ba', 'green', '#d7191c'])
+
+    """
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  colors=colors,
+                  scale_mapper_kind='color_gradientn')
 
 
 def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,

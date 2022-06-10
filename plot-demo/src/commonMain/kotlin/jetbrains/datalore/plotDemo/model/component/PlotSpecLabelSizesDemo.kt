@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgUtils
@@ -30,7 +31,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 return when (letter) {
                     'i', 'j', 'l',
                     '!', '.', ',', '\'',
-                    'I'-> NARROW
+                    'I' -> NARROW
                     'm', 'M', 'W' -> EXTRA_WIDE
                     'w', in 'A'..'Z', in '0'..'9' -> WIDE
                     else -> NORMAL
@@ -43,42 +44,44 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         }
     }
 
-    // todo later should be moved to LabelMetrics.kt
-    fun PlotLabelSpec.width(text: String): Double {
+    private fun PlotLabelSpec.width(text: String): Double {
         return text.map(LetterCategory.Companion::getLetterRatio).sum() * fontSize
     }
 
     ////////
 
     fun createModels(): List<GroupComponent> {
+        PlotLabelSpec.initWithStyleSheet(Style.default())
+
         fun titles(charRange: CharRange): List<String> =
             charRange.map { letter -> List(15) { letter }.joinToString("") }
 
         return listOf(
-            createModel(PlotLabelSpec.PLOT_TITLE, titles('A'..'Z')),
-            createModel(PlotLabelSpec.PLOT_TITLE, titles('a'..'z')),
-            createModel(PlotLabelSpec.PLOT_TITLE, titles('!'..'9')),
-
-            createModel(PlotLabelSpec.AXIS_TITLE, titles('A'..'Z')),
-            createModel(PlotLabelSpec.AXIS_TITLE, titles('a'..'z')),
-            createModel(PlotLabelSpec.AXIS_TITLE, titles('!'..'9')),
-        )
+            Style.PLOT_TITLE to PlotLabelSpec.PLOT_TITLE,
+            "${Style.AXIS_TITLE}-x" to PlotLabelSpec.axisTitle("x")
+        ).flatMap {
+            listOf(
+                createModel(it, titles('A'..'Z')),
+                createModel(it, titles('a'..'z')),
+                createModel(it, titles('!'..'9'))
+            )
+        }
     }
 
-    private fun createModel(plotLabelSpec: PlotLabelSpec, titles: List<String>): GroupComponent {
+    private fun createModel(plotLabel: Pair<String, PlotLabelSpec>, titles: List<String>): GroupComponent {
         val groupComponent = GroupComponent()
 
         val x = 120.0
         var y = 20.0
 
-        val nameSpecElement = TextLabel(labelSpecToString(plotLabelSpec)).rootGroup
+        val nameSpecElement = TextLabel(plotLabel.first).rootGroup
         SvgUtils.transformTranslate(nameSpecElement, 10.0, y)
         groupComponent.add(nameSpecElement)
 
         titles
-            .map { title -> LabelSpec(title, plotLabelSpec) }
-            .forEach { spec ->
-                val textLabel = createTextLabel(spec)
+            .forEach { title ->
+                val spec = LabelSpec(title, plotLabel.second)
+                val textLabel = createTextLabel(spec, plotLabel.first)
 
                 val element = textLabel.rootGroup
                 SvgUtils.transformTranslate(element, x, y)
@@ -125,23 +128,13 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val plotLabelSpec: PlotLabelSpec
         )
 
-        private fun createTextLabel(spec: LabelSpec): TextLabel {
+        private fun createTextLabel(spec: LabelSpec, className: String): TextLabel {
             val label = TextLabel(spec.text)
-
-            label.setFontSize(spec.plotLabelSpec.fontSize)
-            if (spec.plotLabelSpec.isBold) {
-                label.setFontWeight("bold")
-            }
+            label.addClassName(className)
             label.textColor().set(Color.DARK_BLUE)
-
             label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
             label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-
             return label
-        }
-
-        private fun labelSpecToString(plotLabelSpec: PlotLabelSpec): String {
-            return plotLabelSpec.name
         }
     }
 }

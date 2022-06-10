@@ -81,6 +81,7 @@ internal class SquareFrameOfReference(
         val vGridTheme = panelTheme.gridY(flipAxis)
 
         val drawPanel = panelTheme.showRect() && beforeGeomLayer
+        val drawPanelBorder = panelTheme.showBorder() && !beforeGeomLayer
         val drawGridlines = beforeGeomLayer
         val drawHAxis = when {
             beforeGeomLayer -> !hAxisTheme.isOntop()
@@ -141,6 +142,11 @@ internal class SquareFrameOfReference(
             val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.LEFT)
             vAxis.moveTo(axisOrigin)
             parent.add(vAxis)
+        }
+
+        if (drawPanelBorder) {
+            val panelBorder = buildPanelBorderComponent(geomBounds, panelTheme)
+            parent.add(panelBorder)
         }
 
         if (isDebugDrawing && !beforeGeomLayer) {
@@ -224,7 +230,7 @@ internal class SquareFrameOfReference(
             gridLineDistance: Double,
             isDebugDrawing: Boolean
         ): AxisComponent {
-            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis componenmt" }
+            check(!(hideAxis && hideGridlines)) { "Trying to build an empty axis component" }
             val orientation = info.orientation
             val labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation = orientation,
@@ -270,6 +276,14 @@ internal class SquareFrameOfReference(
                 strokeColor().set(theme.rectColor())
                 strokeWidth().set(theme.rectStrokeWidth())
                 fillColor().set(theme.rectFill())
+            }
+        }
+
+        private fun buildPanelBorderComponent(bounds: DoubleRectangle, theme: PanelTheme): SvgRectElement {
+            return SvgRectElement(bounds).apply {
+                strokeColor().set(theme.borderColor())
+                strokeWidth().set(theme.borderWidth())
+                fillOpacity().set(0.0)
             }
         }
 

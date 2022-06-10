@@ -8,8 +8,8 @@ from .json_request import RequestFormatter
 from .json_response import ResponseParser
 from .request import Request
 from .response import Response
-from ..._global_settings import has_global_value, get_global_str, GEOCODING_ROUTE
-from ...settings_utils import GEOCODING_PROVIDER_URL
+from lets_plot._global_settings import has_global_value, get_global_str, GEOCODING_ROUTE
+from lets_plot.settings_utils import GEOCODING_PROVIDER_URL
 
 
 class GeocodingService:
