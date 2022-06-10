@@ -77,7 +77,7 @@ class QQ {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'y': [-3, -1, 0, 1, 3, null, -4, -2, 0, 1, 2, 4]," +
-                "             'g': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']" +
+                "             'g': ['A', 'A', 'A', 'A', 'A', 'A', null, 'B', 'B', 'B', 'B', 'B']" +
                 "            }," +
                 "   'mapping': {" +
                 "                'sample': 'y'," +
@@ -142,7 +142,7 @@ class QQ {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'y': [-3, -1, 0, 1, 3, null, -4, -2, 0, 1, 2, 4]," +
-                "             'g': ['A', 'A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'B']" +
+                "             'g': ['A', 'A', 'A', 'A', 'A', 'A', null, 'B', 'B', 'B', 'B', 'B']" +
                 "            }," +
                 "   'ggtitle': {" +
                 "                'text': 'Bistro grouping'" +
