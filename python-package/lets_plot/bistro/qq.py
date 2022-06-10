@@ -12,6 +12,147 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
             show_legend=None,
             color=None, fill=None, alpha=None, size=None, shape=None,
             line_color=None, line_size=None, linetype=None) -> PlotSpec:
+    """
+    This function is intended to draw Q-Q plot.
+
+    Parameters
+    ----------
+    data : dict or `DataFrame`
+        The data to be displayed.
+    sample : str
+        y-axis value. Should be specified if `x` and `y` aren't.
+    x : str
+        x-axis value. Should be specified as well as `y`, if `sample` isn't.
+    y : str
+        y-axis value. Should be specified as well as `x`, if `sample` isn't.
+    distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
+        Distribution function to use. Could be specified if `sample` is.
+    dparams : list
+        Additional parameters (of float type) passed on to distribution function.
+        Could be specified if `sample` is.
+        If `distribution` is `'norm'` then `dparams` is a pair [mean, std] (=[0.0, 1.0] by default).
+        If `distribution` is `'uniform'` then `dparams` is a pair [a, b] (=[0.0, 1.0] by default).
+        If `distribution` is `'t'` then `dparams` is an integer number [d] (=[1] by default).
+        If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
+        If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
+        If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
+    quantiles : list, default=[0.25, 0.75]
+        Pair of quantiles to use when fitting the Q-Q line.
+    group : str
+        Grouping parameter.
+        If it is specified and color-parameters isn't then different groups will has different colors.
+    show_legend : bool, default=True
+        False - do not show legend.
+    color : str
+        Color of a points.
+    fill : str
+        Color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    alpha : float, default=0.5
+        Transparency level of a points. Understands numbers between 0 and 1.
+    size : float, default=3.0
+        Size of the points.
+    shape : int
+        Shape of the points.
+    line_color : str, default='#FF0000'
+        Color of the fitting line.
+    line_size : float, default=0.75
+        Width of the fitting line.
+    linetype : int or str
+        Type of the fitting line.
+        Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed',
+        3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+
+    Returns
+    -------
+    `PlotSpec`
+        Plot object specification.
+
+    Notes
+    -----
+    The Q-Q plot is used for comparing two probability distributions
+    (sample and theoretical or two sample) by plotting their quantiles against each other.
+
+    If the two distributions being compared are similar, the points in the Q-Q plot
+    will approximately lie on the straight line.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8
+
+        import numpy as np
+        from lets_plot.bistro.qq import qq_plot
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        sample = np.random.normal(0, 1, n)
+        qq_plot(data={'sample': sample}, sample='sample')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8-10
+
+        import numpy as np
+        from lets_plot.bistro.qq import qq_plot
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        sample = np.random.exponential(1, n)
+        qq_plot({'sample': sample}, 'sample', \\
+                distribution='exp', quantiles=[0, .9], \\
+                color='black', line_size=.25)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12-13
+
+        import numpy as np
+        from lets_plot.bistro.qq import qq_plot
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        data = {
+            'x': np.random.normal(0, 1, n),
+            'y': np.random.normal(1, 2, n),
+            'g': np.random.choice(['a', 'b'], n),
+        }
+        qq_plot(data, x='x', y='y', group='g', \\
+                shape=21, alpha=.2, size=5, linetype=5)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 11-12
+
+        import numpy as np
+        from lets_plot.bistro.qq import qq_plot
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 150
+        np.random.seed(42)
+        data = {
+            'sample': np.random.normal(0, 5, n),
+            'group': np.random.choice(['a', 'b', 'c'], n),
+        }
+        qq_plot(data, 'sample', dparams=[0, 5], group='group', \\
+                line_color='black', line_size=.5) + \\
+            scale_color_brewer(type='qual', palette='Set1') + \\
+            facet_grid(x='group') + \\
+            coord_fixed() + \\
+            xlab("Norm distribution quantiles") + \\
+            ggtitle("Interaction of the qq_plot() with other layers") + \\
+            theme_classic()
+
+    """
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'qqplot',
         'sample': sample,

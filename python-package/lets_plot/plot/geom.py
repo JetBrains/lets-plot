@@ -4106,7 +4106,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     (sample and theoretical) by plotting their quantiles against each other.
 
     If the two distributions being compared are similar, the points in the Q-Q plot
-    will approximately lie on the line `sample=theoretical`.
+    will approximately lie on the straight line.
 
     Computed variables:
 
@@ -4133,8 +4133,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        y = np.random.normal(0, 1, n)
-        ggplot({'y': y}, aes(sample='y')) + geom_qq()
+        sample = np.random.normal(0, 1, n)
+        ggplot({'sample': sample}, aes(sample='sample')) + geom_qq()
 
     |
 
@@ -4147,8 +4147,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        y = np.random.exponential(1, n)
-        ggplot({'y': y}, aes(sample='y')) + \\
+        sample = np.random.exponential(1, n)
+        ggplot({'sample': sample}, aes(sample='sample')) + \\
             geom_qq(distribution='exp')
 
     """
@@ -4217,7 +4217,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     (`y`-coordinate).
 
     If the two distributions being compared are similar, the points in the Q-Q plot
-    will approximately lie on the line `y=x`.
+    will approximately lie on the straight line.
 
     `geom_qq2()` understands the following aesthetics mappings:
 
@@ -4262,7 +4262,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  quantiles=None,
                  **other_args):
     """
-    Display quantile-quantile plot.
+    Display quantile-quantile fitting line.
 
     Parameters
     ----------
@@ -4344,8 +4344,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        y = np.random.normal(0, 1, n)
-        ggplot({'y': y}, aes(sample='y')) + geom_qq() + geom_qq_line()
+        sample = np.random.normal(0, 1, n)
+        ggplot({'sample': sample}, aes(sample='sample')) + geom_qq() + geom_qq_line()
 
     |
 
@@ -4358,8 +4358,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        y = np.random.exponential(1, n)
-        ggplot({'y': y}, aes(sample='y')) + \\
+        sample = np.random.exponential(1, n)
+        ggplot({'sample': sample}, aes(sample='sample')) + \\
             geom_qq(distribution='exp') + \\
             geom_qq_line(distribution='exp', quantiles=[0, 1])
 
@@ -4382,7 +4382,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                   quantiles=None,
                   **other_args):
     """
-    Display quantile-quantile plot.
+    Display quantile-quantile fitting line.
 
     Parameters
     ----------
