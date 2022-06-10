@@ -111,9 +111,10 @@ object PlotConfigClientSideUtil {
                         .filterIndexed { index, _ -> index != layerIndex }
                         .any { !it.tooltips.hideTooltips() }
 
-                    // ToDo: marginal layer don't have interactions
-                    // if(layerConfig.isMarginal) ...
-                    val geomInteraction =
+                    val geomInteraction = if (layerConfig.isMarginal) {
+                        // marginal layer doesn't have interactions
+                        null
+                    } else {
                         GeomInteractionUtil.configGeomTargets(
                             layerConfig,
                             layerScaleMap,
@@ -121,6 +122,7 @@ object PlotConfigClientSideUtil {
                             isLiveMap,
                             plotConfig.theme
                         )
+                    }
 
                     layerBuilders.add(createLayerBuilder(layerConfig, geomInteraction))
                 }
@@ -161,7 +163,7 @@ object PlotConfigClientSideUtil {
 
     private fun createLayerBuilder(
         layerConfig: LayerConfig,
-        geomInteraction: GeomInteraction
+        geomInteraction: GeomInteraction?
     ): GeomLayerBuilder {
         val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
 
@@ -198,9 +200,11 @@ object PlotConfigClientSideUtil {
 
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)
 
-        layerBuilder
-            .locatorLookupSpec(geomInteraction.createLookupSpec())
-            .contextualMappingProvider(geomInteraction)
+        geomInteraction?.let {
+            layerBuilder
+                .locatorLookupSpec(it.createLookupSpec())
+                .contextualMappingProvider(it)
+        }
 
         return layerBuilder
     }
