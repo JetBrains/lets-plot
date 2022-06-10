@@ -150,8 +150,29 @@ class QQ {
                 "   'bistro': {" +
                 "               'name': 'qqplot'," +
                 "               'sample': 'y'," +
-                "               'group': 'g'" +
-                "             }" +
+                "               'group': 'g'," +
+                "               'alpha': 0.8," +
+                "               'color': 'black'," +
+                "               'shape': 21" +
+                "             }," +
+                "   'scales': [" +
+                "               {" +
+                "                 'aesthetic': 'x'," +
+                "                 'name': 'Normal distribution quantiles'" +
+                "               }," +
+                "               {" +
+                "                 'aesthetic': 'color'," +
+                "                 'type': 'qual'," +
+                "                 'palette': 'Set1'," +
+                "                 'scale_mapper_kind': 'color_brewer'" +
+                "               }," +
+                "               {" +
+                "                 'aesthetic': 'fill'," +
+                "                 'type': 'qual'," +
+                "                 'palette': 'Set1'," +
+                "                 'scale_mapper_kind': 'color_brewer'" +
+                "               }" +
+                "             ]" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))

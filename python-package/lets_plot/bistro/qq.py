@@ -3,15 +3,15 @@
 
 from lets_plot.plot.core import PlotSpec
 
-__all__ = ['qqplot']
+__all__ = ['qq_plot']
 
 
-def qqplot(data=None, sample=None, *, x=None, y=None,
-           distribution=None, dparams=None, quantiles=None,
-           group=None,
-           show_legend=None,
-           color=None, fill=None, alpha=None, size=None, shape=None,
-           line_color=None, line_size=None, linetype=None) -> PlotSpec:
+def qq_plot(data=None, sample=None, *, x=None, y=None,
+            distribution=None, dparams=None, quantiles=None,
+            group=None,
+            show_legend=None,
+            color=None, fill=None, alpha=None, size=None, shape=None,
+            line_color=None, line_size=None, linetype=None) -> PlotSpec:
     return PlotSpec(data=data, mapping=None, scales=[], layers=[], bistro={
         'name': 'qqplot',
         'sample': sample,

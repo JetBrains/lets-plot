@@ -16,8 +16,15 @@ import jetbrains.datalore.plot.server.config.transform.bistro.util.OptionsUtil
 class QQPlotSpecChange : SpecChange {
     override fun apply(spec: MutableMap<String, Any>, ctx: SpecChangeContext) {
         val qqPlotSpec = buildQQPlotSpec(spec)
+
+        // Set layers
         spec[Option.Plot.LAYERS] = qqPlotSpec.get(Option.Plot.LAYERS) ?: error("Missing layers in Q-Q plot")
-        spec[Option.Plot.SCALES] = qqPlotSpec.get(Option.Plot.SCALES) ?: error("Missing scales in Q-Q plot")
+
+        // Merge scales
+        val qqScales = qqPlotSpec.getList(Option.Plot.SCALES) ?: error("Missing scales in Q-Q plot")
+        val plotScales = spec.getList(Option.Plot.SCALES) ?: emptyList<Any>()
+        spec[Option.Plot.SCALES] = (qqScales + plotScales).toMutableList()
+
         spec.remove("bistro")
     }
 
@@ -28,8 +35,8 @@ class QQPlotSpecChange : SpecChange {
             x = bistroSpec.getString(QQ.X),
             y = bistroSpec.getString(QQ.Y),
             distribution = bistroSpec.getString(QQ.DISTRIBUTION) ?: QQPlotOptionsBuilder.DEF_DISTRIBUTION,
-            distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS)?.mapNotNull { it as? Double },
-            quantiles = bistroSpec.getList(QQ.QUANTILES)?.mapNotNull { it as? Double },
+            distributionParameters = bistroSpec.getList(QQ.DISTRIBUTION_PARAMETERS),
+            quantiles = bistroSpec.getList(QQ.QUANTILES),
             group = bistroSpec.getString(QQ.GROUP),
             showLegend = bistroSpec.getBool(QQ.SHOW_LEGEND),
             color = bistroSpec.getString(QQ.POINT_COLOR),
@@ -37,7 +44,7 @@ class QQPlotSpecChange : SpecChange {
             alpha = bistroSpec.getDouble(QQ.POINT_ALPHA) ?: QQPlotOptionsBuilder.DEF_POINT_ALPHA,
             size = bistroSpec.getDouble(QQ.POINT_SIZE) ?: QQPlotOptionsBuilder.DEF_POINT_SIZE,
             shape = bistroSpec.read(QQ.POINT_SHAPE),
-            lineColor = bistroSpec.getString(QQ.LINE_COLOR) ?: QQPlotOptionsBuilder.DEF_LINE_COLOR,
+            lineColor = bistroSpec.getString(QQ.LINE_COLOR),
             lineSize = bistroSpec.getDouble(QQ.LINE_SIZE) ?: QQPlotOptionsBuilder.DEF_LINE_SIZE,
             lineType = bistroSpec.read(QQ.LINE_TYPE)
         )

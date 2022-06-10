@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.qq
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.aes.LineTypeOptionConverter
 import jetbrains.datalore.plot.config.aes.ShapeOptionConverter
 import jetbrains.datalore.plot.server.config.transform.bistro.qq.Option.QQ
@@ -18,8 +19,8 @@ class QQPlotOptionsBuilder(
     private val x: String? = null,
     private val y: String? = null,
     private val distribution: String? = DEF_DISTRIBUTION,
-    private val distributionParameters: List<Double>? = null,
-    private val quantiles: List<Double>? = null,
+    private val distributionParameters: List<*>? = null,
+    private val quantiles: List<*>? = null,
     private val group: String? = null,
     private val showLegend: Boolean? = null,
     private val color: String? = null,
@@ -27,36 +28,37 @@ class QQPlotOptionsBuilder(
     private val alpha: Double? = DEF_POINT_ALPHA,
     private val size: Double? = DEF_POINT_SIZE,
     private val shape: Any? = null,
-    private val lineColor: String? = DEF_LINE_COLOR,
+    private val lineColor: String? = null,
     private val lineSize: Double? = DEF_LINE_SIZE,
     private val lineType: Any? = null
 ) {
     fun build(): PlotOptions {
-        val aesthetics = getMappings(sample, x, y, group)
+        val mappings = getMappings(sample, x, y, group)
         val scaleNames = getScaleNames(sample, x, y, distribution)
         return plot {
             layerOptions = listOf(
                 LayerOptions().apply {
                     geom = if (this@QQPlotOptionsBuilder.sample != null) GeomKind.Q_Q else GeomKind.Q_Q_2
-                    mappings = aesthetics
+                    setParameter(Option.PlotBase.MAPPING, mappings)
                     setParameter(QQ.DISTRIBUTION, distribution)
                     setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
                     setParameter(QQ.QUANTILES, quantiles)
                     showLegend = this@QQPlotOptionsBuilder.showLegend
-                    color = if (group == null) this@QQPlotOptionsBuilder.color else null
-                    fill = if (group == null) this@QQPlotOptionsBuilder.fill else null
+                    color = this@QQPlotOptionsBuilder.color
+                    fill = this@QQPlotOptionsBuilder.fill
                     alpha = this@QQPlotOptionsBuilder.alpha
                     size = this@QQPlotOptionsBuilder.size
                     shape = ShapeOptionConverter().apply(this@QQPlotOptionsBuilder.shape)
                 },
                 LayerOptions().apply {
                     geom = if (this@QQPlotOptionsBuilder.sample != null) GeomKind.Q_Q_LINE else GeomKind.Q_Q_2_LINE
-                    mappings = aesthetics
+                    setParameter(Option.PlotBase.MAPPING, mappings)
                     setParameter(QQ.DISTRIBUTION, distribution)
                     setParameter(QQ.DISTRIBUTION_PARAMETERS, distributionParameters)
                     setParameter(QQ.QUANTILES, quantiles)
                     showLegend = this@QQPlotOptionsBuilder.showLegend
-                    color = if (group == null) this@QQPlotOptionsBuilder.lineColor else null
+                    color = this@QQPlotOptionsBuilder.lineColor ?:
+                        if (this@QQPlotOptionsBuilder.group == null) DEF_LINE_COLOR else null
                     size = this@QQPlotOptionsBuilder.lineSize
                     linetype = LineTypeOptionConverter().apply(this@QQPlotOptionsBuilder.lineType)
                 }
@@ -74,39 +76,40 @@ class QQPlotOptionsBuilder(
         }
     }
 
-    private inline fun getMappings(
+    private fun getMappings(
         sample: String?,
         x: String?,
         y: String?,
         group: String?
-    ): Map<Aes<*>, String> {
-        val mappings: MutableMap<Aes<*>, String> = if (sample != null) {
+    ): HashMap<String, String> {
+        val mappings: HashMap<String, String> = if (sample != null) {
             require(x == null)
                 { "Parameter x shouldn't be specified when parameter sample is." }
             require(y == null)
                 { "Parameter y shouldn't be specified when parameter sample is." }
-            mutableMapOf(
-                Aes.SAMPLE to sample
+            hashMapOf(
+                Pair(QQ.SAMPLE, sample)
             )
         } else {
             require(x != null)
                 { "Parameter x should be specified when parameter sample isn't." }
             require(y != null)
                 { "Parameter y should be specified when parameter sample isn't." }
-            mutableMapOf(
-                Aes.X to x,
-                Aes.Y to y
+            hashMapOf(
+                Pair(QQ.X, x),
+                Pair(QQ.Y, y)
             )
         }
         if (group != null) {
-            mappings[Aes.COLOR] = group
-            mappings[Aes.FILL] = group
+            mappings[QQ.GROUP] = group
+            mappings[QQ.POINT_COLOR] = group
+            mappings[QQ.POINT_FILL] = group
         }
 
         return mappings
     }
 
-    private inline fun getScaleNames(
+    private fun getScaleNames(
         sample: String?,
         x: String?,
         y: String?,
