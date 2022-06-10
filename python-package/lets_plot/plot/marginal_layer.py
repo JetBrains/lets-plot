@@ -13,6 +13,36 @@ __all__ = ["ggmarginal"]
 
 
 def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
+    """
+    Converts a given geometry layer to a marginal layer.
+    You can add one or more marginal layers to a plot to create a marginal plot.
+
+    Parameters
+    ----------
+    sides : str
+        A string specifying which sides of the plot the marginal layer will appear on.
+        It should be set to a string containing any of "trbl", for top, right, bottom, and left.
+    size : float, default=0.1
+        Size of marginal geometry (width or height, depending on the margin side) as a fraction of the entire
+        plotting area of the plot.
+        The value should be in range [0.01..0.95].
+    layer : `LayerSpec`
+        A marginal geometry layer.
+        The result of calling of the `geom_xxx()` / `stat_xxx()` function.
+        Marginal plot works best with `density`,`histogram`,`boxplot`,`violin` ans `freqpoly` geometry layers.
+
+    Returns
+    -------
+    `FeatureSpec`
+        An object specifying a marginal geometry layer or a list of marginal geometry layers.
+
+    Notes
+    -----
+    A marginal plot is a scatterplot (sometimes a density plot or other bivariate plot) that has histograms,
+    boxplots, or other distribution visualization layers in the margins of the x- and y-axes.
+
+    """
+
     if not isinstance(sides, str):
         raise TypeError("'sides' must be a string.")
     if not 0 < len(sides) <= 4:
