@@ -5,9 +5,10 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -52,7 +53,7 @@ abstract class AxisLabelsLayout protected constructor(
         const val INITIAL_TICK_LABEL_LENGTH = 4 // symbols
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
 
-        private fun tickLabelSpec(axis: String) = PlotLabelSpec.axisTick(axis)
+        private fun tickLabelSpec(theme: AxisTheme) = PlotLabelSpecFactory.axisTick(theme)
 
         fun horizontalFlexBreaks(
             orientation: jetbrains.datalore.plot.builder.guide.Orientation,
@@ -64,7 +65,7 @@ abstract class AxisLabelsLayout protected constructor(
             return HorizontalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme.axis),
+                tickLabelSpec(theme),
                 breaksProvider,
                 theme
             )
@@ -79,7 +80,7 @@ abstract class AxisLabelsLayout protected constructor(
             return HorizontalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme.axis),
+                tickLabelSpec(theme),
                 breaks,
                 theme
             )
@@ -95,7 +96,7 @@ abstract class AxisLabelsLayout protected constructor(
             return VerticalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme.axis),
+                tickLabelSpec(theme),
                 breaksProvider,
                 theme
             )
@@ -111,7 +112,7 @@ abstract class AxisLabelsLayout protected constructor(
             return VerticalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme.axis),
+                tickLabelSpec(theme),
                 breaks,
                 theme
             )

@@ -11,6 +11,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -51,14 +53,14 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     ////////
 
     fun createModels(): List<GroupComponent> {
-        PlotLabelSpec.initWithStyleSheet(Style.default())
-
         fun titles(charRange: CharRange): List<String> =
             charRange.map { letter -> List(15) { letter }.joinToString("") }
 
+        val theme = DefaultTheme.minimal2()
+
         return listOf(
-            Style.PLOT_TITLE to PlotLabelSpec.PLOT_TITLE,
-            "${Style.AXIS_TITLE}-x" to PlotLabelSpec.axisTitle("x")
+            Style.PLOT_TITLE to PlotLabelSpecFactory.plotTitle(theme.plot()),
+            "${Style.AXIS_TITLE}-x" to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(false))
         ).flatMap {
             listOf(
                 createModel(it, titles('A'..'Z')),

@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
 
@@ -151,22 +152,22 @@ internal object PlotLayoutUtil {
         captionLines: List<String>,
         flippedAxis: Boolean
     ): DoubleVector {
-        val titleDelta = titleSizeDelta(titleLines, subtitleLines)
+        val titleDelta = titleSizeDelta(titleLines, subtitleLines, theme.plot())
         val axisTitlesDelta = axisTitleSizeDelta(
-            axisTitleLeft to PlotLabelSpec.axisTitle(theme.verticalAxis(flippedAxis).axis),
-            axisTitleBottom to PlotLabelSpec.axisTitle(theme.horizontalAxis(flippedAxis).axis),
+            axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
+            axisTitleBottom to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
             axisEnabled
         )
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION).y)
+        val captionDelta = DoubleVector(0.0, titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(theme.plot())).y)
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
-    fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>): DoubleVector {
+    fun titleSizeDelta(titleLines: List<String>, subtitleLines: List<String>, theme: PlotTheme): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE).y +
-                    titleDimensions(subtitleLines, PlotLabelSpec.PLOT_SUBTITLE).y
+            titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(theme)).y +
+                    titleDimensions(subtitleLines, PlotLabelSpecFactory.plotSubtitle(theme)).y
         )
     }
 

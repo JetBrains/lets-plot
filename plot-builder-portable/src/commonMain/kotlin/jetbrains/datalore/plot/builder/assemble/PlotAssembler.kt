@@ -8,7 +8,10 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.builder.*
+import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
+import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.MarginalLayerUtil
+import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.frame.BogusFrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.frame.SquareFrameOfReferenceProvider
@@ -18,7 +21,6 @@ import jetbrains.datalore.plot.builder.layout.PlotLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
@@ -59,8 +61,6 @@ class PlotAssembler private constructor(
         require(hasLayers()) { "No layers in plot" }
 
         val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipAxis)
-        // ToDo Remove this global label metrics:
-        PlotLabelSpec.initWithStyleSheet(styleSheet)
 
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(

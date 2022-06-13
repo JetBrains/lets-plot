@@ -5,9 +5,10 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -35,7 +36,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
         var targetBreakCount =
             HorizontalSimpleLabelsLayout.estimateBreakCountInitial(
                 axisLength,
-                PlotLabelSpec.axisTick(theme.axis)
+                PlotLabelSpecFactory.axisTick(theme)
             )
         var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
@@ -46,7 +47,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 HorizontalSimpleLabelsLayout.estimateBreakCount(
                     breaks.labels,
                     axisLength,
-                    PlotLabelSpec.axisTick(theme.axis)
+                    PlotLabelSpecFactory.axisTick(theme)
                 )
             if (newTargetBreakCount >= targetBreakCount) {
                 // paranoid - highly impossible.

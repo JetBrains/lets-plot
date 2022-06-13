@@ -5,12 +5,13 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.*
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -70,7 +71,7 @@ internal object BreakLabelsLayoutUtil {
                     breaks,
                     axisDomain,
                     axisMapper,
-                    PlotLabelSpec.axisTick(theme.axis)
+                    PlotLabelSpecFactory.axisTick(theme)
                 )
                 applyLabelsOffset(
                     labelsBounds,

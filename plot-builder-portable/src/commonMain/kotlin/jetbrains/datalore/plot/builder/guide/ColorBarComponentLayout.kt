@@ -5,12 +5,14 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 abstract class ColorBarComponentLayout(
     title: String,
@@ -18,10 +20,12 @@ abstract class ColorBarComponentLayout(
     breaks: ScaleBreaks,
     protected val guideBarSize: DoubleVector,
     legendDirection: LegendDirection,
-    reverse: Boolean
+    reverse: Boolean,
+    theme: LegendTheme
 ) : LegendBoxLayout(
     title,
-    legendDirection
+    legendDirection,
+    theme
 ) {
 
     var barBounds: DoubleRectangle private set
@@ -57,20 +61,22 @@ abstract class ColorBarComponentLayout(
         domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
-        reverse: Boolean
+        reverse: Boolean,
+        theme: LegendTheme
     ) : ColorBarComponentLayout(
         title, domain, breaks, barSize,
         LegendDirection.HORIZONTAL,
-        reverse
+        reverse,
+        theme
     ) {
 
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = LABEL_SPEC.height() / 3
+        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).height() / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {
             // Bar + labels bounds
-            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + LABEL_SPEC.height())
+            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + PlotLabelSpecFactory.legendItem(theme).height())
         }
 
         override fun createBreakInfo(tickLocation: Double): BreakInfo {
@@ -89,21 +95,23 @@ abstract class ColorBarComponentLayout(
         domain: DoubleSpan,
         breaks: ScaleBreaks,
         barSize: DoubleVector,
-        reverse: Boolean
+        reverse: Boolean,
+        theme: LegendTheme
     ) : ColorBarComponentLayout(
         title, domain, breaks, barSize,
         LegendDirection.VERTICAL,
-        reverse
+        reverse,
+        theme
     ) {
 
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = LABEL_SPEC.width(1) / 2
+        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).width(1) / 2
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
             check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
             val maxLabelWidth: Double = breaks.labels.map { it.length }
-                .maxOf { LABEL_SPEC.width(it) }
+                .maxOf { PlotLabelSpecFactory.legendItem(theme).width(it) }
 
             // Bar + labels bounds
             graphSize = DoubleVector(guideBarSize.x + labelDistance + maxLabelWidth, guideBarSize.y)
@@ -126,14 +134,16 @@ abstract class ColorBarComponentLayout(
             domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
-            reverse: Boolean
+            reverse: Boolean,
+            theme: LegendTheme
         ): ColorBarComponentLayout {
             return HorizontalLayout(
                 title,
                 domain,
                 breaks,
                 barSize,
-                reverse
+                reverse,
+                theme
             )
         }
 
@@ -142,14 +152,16 @@ abstract class ColorBarComponentLayout(
             domain: DoubleSpan,
             breaks: ScaleBreaks,
             barSize: DoubleVector,
-            reverse: Boolean
+            reverse: Boolean,
+            theme: LegendTheme
         ): ColorBarComponentLayout {
             return VerticalLayout(
                 title,
                 domain,
                 breaks,
                 barSize,
-                reverse
+                reverse,
+                theme
             )
         }
     }

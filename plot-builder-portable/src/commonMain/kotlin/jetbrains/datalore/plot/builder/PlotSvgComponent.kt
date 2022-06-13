@@ -231,7 +231,7 @@ class PlotSvgComponent constructor(
         }
 
         val plotOuterBoundsWithoutTitle = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(titleLines, subtitleLines)
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(titleLines, subtitleLines, theme.plot())
             DoubleRectangle(
                 plotOuterBounds.origin.add(titleSizeDelta),
                 plotOuterBounds.dimension.subtract(titleSizeDelta)
@@ -247,7 +247,7 @@ class PlotSvgComponent constructor(
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(
                 axisTitleSizeDelta(
-                    axisTitleLeft to PlotLabelSpec.axisTitle(theme.verticalAxis(flippedAxis).axis),
+                    axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     axisTitleBottom = null to PlotLabelSpec(0.0),
                     axisEnabled
                 )
@@ -326,17 +326,17 @@ class PlotSvgComponent constructor(
                 titleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
                 className = Style.PLOT_TITLE,
-                labelSpec = PlotLabelSpec.PLOT_TITLE
+                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme)
             )
         }
         // add plot subtitle
         if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpec.PLOT_TITLE)
+            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(plotTheme))
             addTitle(
                 subtitleLines,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
                 className = Style.PLOT_SUBTITLE,
-                labelSpec = PlotLabelSpec.PLOT_SUBTITLE
+                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme)
             )
         }
 
@@ -387,14 +387,14 @@ class PlotSvgComponent constructor(
 
         // add caption
         if (captionLines.isNotEmpty()) {
-            val captionLineHeight = PlotLabelSpec.PLOT_CAPTION.height()
+            val captionLineHeight = PlotLabelSpecFactory.plotCaption(plotTheme).height()
             val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
             captionLabel.addClassName(Style.PLOT_CAPTION)
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
             captionLabel.setX(0.0)
             captionLabel.setLineHeight(captionLineHeight)
 
-            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpec.PLOT_CAPTION)
+            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(plotTheme))
             val captionBounds = DoubleRectangle(
                 geomAreaBounds.right - captionSize.x,
                 plotOuterBounds.bottom - captionSize.y,

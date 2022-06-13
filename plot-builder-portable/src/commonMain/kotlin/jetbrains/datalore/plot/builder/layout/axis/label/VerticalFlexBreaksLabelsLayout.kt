@@ -5,9 +5,10 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -23,7 +24,7 @@ internal class VerticalFlexBreaksLabelsLayout(
     AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
     private fun maxTickCount(axisLength: Double): Int {
-        return ceil(axisLength / (PlotLabelSpec.axisTick(theme.axis).height() + MIN_TICK_LABEL_DISTANCE)).toInt()
+        return ceil(axisLength / (PlotLabelSpecFactory.axisTick(theme).height() + MIN_TICK_LABEL_DISTANCE)).toInt()
     }
 
     init {

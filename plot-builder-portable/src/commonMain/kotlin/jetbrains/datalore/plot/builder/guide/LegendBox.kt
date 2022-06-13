@@ -11,10 +11,12 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgRectElement
 
 abstract class LegendBox : SvgComponent() {
 
@@ -93,10 +95,10 @@ abstract class LegendBox : SvgComponent() {
         label.addClassName(Style.LEGEND_TITLE)
         label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
-        label.setLineHeight(PlotLabelSpec.LEGEND_TITLE.height())
+        label.setLineHeight(PlotLabelSpecFactory.legendTitle(theme).height())
         label.moveTo(
             // top-align the first line of a multi-line title
-            origin.add(DoubleVector(0.0, PlotLabelSpec.LEGEND_TITLE.height()*0.8))
+            origin.add(DoubleVector(0.0, PlotLabelSpecFactory.legendTitle(theme).height()*0.8))
         )
         return label
     }

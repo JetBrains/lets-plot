@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
@@ -109,7 +109,7 @@ class AxisComponent(
                             skipLabel = !labelsCleaner.beforeAddLabel(
                                 br,
                                 labelAdjustments.rotationDegree,
-                                PlotLabelSpec.axisTick(axisTheme.axis).height()
+                                PlotLabelSpecFactory.axisTick(axisTheme).height()
                             ),
                             axisTheme
                         )

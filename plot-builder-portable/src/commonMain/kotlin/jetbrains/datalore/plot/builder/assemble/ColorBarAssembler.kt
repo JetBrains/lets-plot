@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -88,8 +88,8 @@ class ColorBarAssembler(
             val reverse = !horizontal
 
             val layout = when {
-                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse)
-                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse)
+                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse, theme)
+                else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse, theme)
             }
 
             return ColorBarComponentSpec(

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -200,13 +200,14 @@ class LegendAssembler(
                     layout = LegendComponentLayout.horizontalMultiRow(
                         title,
                         breaks,
-                        keySize
+                        keySize,
+                        theme
                     )
                 } else {
-                    layout = LegendComponentLayout.horizontal(title, breaks, keySize)
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySize, theme)
                 }
             } else {
-                layout = LegendComponentLayout.vertical(title, breaks, keySize)
+                layout = LegendComponentLayout.vertical(title, breaks, keySize, theme)
             }
 
             layout.colCount = colCount

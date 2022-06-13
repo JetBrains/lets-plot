@@ -8,12 +8,14 @@ package jetbrains.datalore.plot.builder.guide
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.textDimensions
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 abstract class LegendBoxLayout(
     private val title: String,
-    legendDirection: LegendDirection
+    legendDirection: LegendDirection,
+    protected val theme: LegendTheme
 ) {
     // legend keys/colorbar + labels.
     abstract val graphSize: DoubleVector
@@ -41,7 +43,7 @@ abstract class LegendBoxLayout(
             }
             else -> {
                 // make some space between title and the rest of the content.
-                val y = titleSize(title).y + TITLE_SPEC.height() / 2
+                val y = titleSize(title).y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
                 DoubleVector(0.0, y)
             }
         }
@@ -55,15 +57,10 @@ abstract class LegendBoxLayout(
             return titleAndContent.dimension
         }
 
-    companion object {
-        private val TITLE_SPEC = PlotLabelSpec.LEGEND_TITLE
-        internal val LABEL_SPEC = PlotLabelSpec.LEGEND_ITEM
-
-        private fun titleSize(s: String): DoubleVector {
-            return when {
-                s.isBlank() -> DoubleVector.ZERO
-                else -> textDimensions(s.split('\n'), TITLE_SPEC)
-            }
+    private fun titleSize(s: String): DoubleVector {
+        return when {
+            s.isBlank() -> DoubleVector.ZERO
+            else -> textDimensions(s.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
         }
     }
 }
