@@ -35,9 +35,13 @@ import mu.KotlinLogging
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
+import org.w3c.dom.get
 import org.w3c.dom.svg.SVGSVGElement
 
 private val LOG = KotlinLogging.logger {}
+
+// key for data attibute <body data-lets-plot-preferred-width='700'>
+private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 
 /**
  * The entry point to call in JS
@@ -80,8 +84,14 @@ private fun buildPlotFromProcessedSpecsIntern(
     parentElement: HTMLElement
 ) {
     val plotSize = if (width > 0 && height > 0) DoubleVector(width, height) else null
-    val maxWidth = parentElement.clientWidth.toDouble()
-    val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(plotSpec, plotSize, maxWidth)
+    val preferredWidth: Double? = parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
+    val maxWidth = if (preferredWidth == null) parentElement.clientWidth.toDouble() else null
+    val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
+        plotSpec,
+        plotSize,
+        maxWidth,
+        preferredWidth,
+    )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
         showError(errorMessage, parentElement)

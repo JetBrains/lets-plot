@@ -16,9 +16,46 @@ import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.max
 
 object PlotSizeHelper {
+
+    /**
+     * Semi-open API.
+     * Used in Lets-Plot-Kotlin, IDEA Plugin(?)
+     */
+    fun scaledFigureSize(
+        figureSpec: Map<String, Any>,
+        containerWidth: Int,
+        containerHeight: Int
+    ): Pair<Int, Int> {
+        return when {
+            PlotConfig.isGGBunchSpec(figureSpec) -> {
+                // don't scale GGBunch size
+                val bunchSize = plotBunchSize(figureSpec)
+                Pair(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
+            }
+            PlotConfig.isPlotSpec(figureSpec) -> {
+                // for single plot: scale component to fit in requested size
+                val aspectRatio = figureAspectRatio(figureSpec)
+                if (aspectRatio >= 1.0) {
+                    val plotHeight = containerWidth / aspectRatio
+                    val scaling = if (plotHeight > containerHeight) containerHeight / plotHeight else 1.0
+                    Pair(floor(containerWidth * scaling).toInt(), floor(plotHeight * scaling).toInt())
+                } else {
+                    val plotWidth = containerHeight * aspectRatio
+                    val scaling = if (plotWidth > containerWidth) containerWidth / plotWidth else 1.0
+                    Pair(floor(plotWidth * scaling).toInt(), floor(containerHeight * scaling).toInt())
+                }
+            }
+            else ->
+                // was failure - just keep given size
+                Pair(containerWidth, containerHeight)
+        }
+    }
+
     /**
      * Plot spec can be either raw or processed
      */
@@ -26,18 +63,23 @@ object PlotSizeHelper {
         plotSpec: Map<*, *>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
+        plotPreferredWidth: Double?,
         facets: PlotFacets,
         containsLiveMap: Boolean
     ): DoubleVector {
-        return if (plotSize != null) {
-            plotSize
+        if (plotSize != null) {
+            return plotSize
+        }
+
+        val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
+        val scaledSize = plotPreferredWidth?.let { w ->
+            defaultSize.mul(max(MIN_PLOT_WIDTH, w) / defaultSize.x)
+        } ?: defaultSize
+
+        return if (plotMaxWidth != null && plotMaxWidth < scaledSize.x) {
+            scaledSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / scaledSize.x)
         } else {
-            val preferredSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
-            if (plotMaxWidth != null && plotMaxWidth < preferredSize.x) {
-                preferredSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / preferredSize.x)
-            } else {
-                preferredSize
-            }
+            scaledSize
         }
     }
 
@@ -68,7 +110,7 @@ object PlotSizeHelper {
         } else {
             singlePlotSize(
                 bunchItem.featureSpec,
-                null, null,
+                null, null, null,
                 PlotFacets.undefined(), false
             )
         }
@@ -136,5 +178,4 @@ object PlotSizeHelper {
             }
             .dimension
     }
-
 }

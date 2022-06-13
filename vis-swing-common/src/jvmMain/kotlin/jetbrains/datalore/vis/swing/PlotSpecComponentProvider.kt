@@ -91,7 +91,8 @@ abstract class PlotSpecComponentProvider(
 
                     val config = PlotConfigClientSide.create(figureSpec) { /*ignore messages*/ }
                     val defaultSize = PlotSizeHelper.singlePlotSize(
-                        figureSpec, null, null,
+                        figureSpec,
+                        plotSize = null, plotMaxWidth = null, plotPreferredWidth = null,
                         config.facets, config.containsLiveMap
                     )
 

@@ -85,7 +85,9 @@ object PlotHtmlExport {
                 PlotConfig.isPlotSpec(plotSpec) -> {
                     val config = PlotConfigClientSide.create(plotSpec) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSize(
-                        plotSpec, plotSize, null,
+                        plotSpec, plotSize,
+                        plotMaxWidth = null,
+                        plotPreferredWidth = null,
                         config.facets, config.containsLiveMap
                     )
                 }

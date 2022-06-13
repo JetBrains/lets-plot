@@ -32,7 +32,7 @@ object MonolithicCommon {
     ): List<String> {
         @Suppress("NAME_SHADOWING")
         val plotSpec = processRawSpecs(plotSpec, frontendOnly = false)
-        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, plotSize, plotMaxWidth = null)
+        val buildResult = buildPlotsFromProcessedSpecs(plotSpec, plotSize)
         if (buildResult.isError) {
             val errorMessage = (buildResult as PlotsBuildResult.Error).error
             throw RuntimeException(errorMessage)
@@ -59,7 +59,8 @@ object MonolithicCommon {
     fun buildPlotsFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        plotMaxWidth: Double?
+        plotMaxWidth: Double? = null,
+        plotPreferredWidth: Double? = null
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
@@ -75,30 +76,46 @@ object MonolithicCommon {
                         buildSinglePlotFromProcessedSpecs(
                             plotSpec,
                             plotSize,
-                            plotMaxWidth
+                            plotMaxWidth,
+                            plotPreferredWidth
                         )
                     )
                 )
             }
-            PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(plotSpec, plotMaxWidth)
+            PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(
+                plotSpec,
+                plotMaxWidth,
+                plotPreferredWidth
+            )
             else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
         }
     }
 
     private fun buildGGBunchFromProcessedSpecs(
         bunchSpec: MutableMap<String, Any>,
-        bunchMaxWidth: Double?
+        maxWidth: Double?,
+        preferredWidth: Double?
     ): PlotsBuildResult {
 
-        val scalingCoef = bunchMaxWidth?.let {
-            val naturalBunchSize = PlotSizeHelper.plotBunchSize(bunchSpec)
-            if (it < naturalBunchSize.x) {
-                max(Defaults.MIN_PLOT_WIDTH, it) / naturalBunchSize.x
-            } else {
-                1.0
-            }
+        val naturalSize = PlotSizeHelper.plotBunchSize(bunchSpec)
+        val scaledSize = preferredWidth?.let { w ->
+            naturalSize.mul(max(Defaults.MIN_PLOT_WIDTH, w) / naturalSize.x)
+        } ?: naturalSize
+        val neededSize = if (maxWidth != null && maxWidth < scaledSize.x) {
+            scaledSize.mul(max(Defaults.MIN_PLOT_WIDTH, maxWidth) / scaledSize.x)
+        } else {
+            scaledSize
+        }
 
-        } ?: 1.0
+        val scalingCoef = neededSize.x / naturalSize.x
+//        val scalingCoef = maxWidth?.let {
+//            if (it < naturalBunchSize.x) {
+//                max(Defaults.MIN_PLOT_WIDTH, it) / naturalBunchSize.x
+//            } else {
+//                1.0
+//            }
+//
+//        } ?: 1.0
 
 
         val bunchConfig = BunchConfig(bunchSpec)
@@ -112,7 +129,8 @@ object MonolithicCommon {
             val itemBuildInfoRaw = buildSinglePlotFromProcessedSpecs(
                 plotSpec,
                 PlotSizeHelper.bunchItemSize(bunchItem),
-                plotMaxWidth = null
+                plotMaxWidth = null,
+                plotPreferredWidth = null
             )
 
             val itemBounds = DoubleRectangle(
@@ -123,8 +141,6 @@ object MonolithicCommon {
             val itemBuildInfo = PlotBuildInfo(
                 itemBuildInfoRaw.plotAssembler,
                 itemBuildInfoRaw.processedPlotSpec,
-//                DoubleVector(bunchItem.x, bunchItem.y),  // true origin
-//                itemBuildInfoRaw.size,
                 itemBounds.origin,
                 itemBounds.dimension,
                 itemBuildInfoRaw.computationMessages
@@ -139,7 +155,8 @@ object MonolithicCommon {
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        plotMaxWidth: Double?
+        plotMaxWidth: Double?,
+        plotPreferredWidth: Double?
     ): PlotBuildInfo {
 
         val computationMessages = ArrayList<String>()
@@ -151,6 +168,7 @@ object MonolithicCommon {
             plotSpec,
             plotSize,
             plotMaxWidth,
+            plotPreferredWidth,
             config.facets,
             config.containsLiveMap
         )

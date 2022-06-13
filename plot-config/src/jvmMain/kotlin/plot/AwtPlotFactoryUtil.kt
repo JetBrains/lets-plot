@@ -87,7 +87,8 @@ internal object AwtPlotFactoryUtil {
             val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
                 plotSpec,
                 plotSize,
-                plotMaxWidth
+                plotMaxWidth,
+                plotPreferredWidth = null
             )
             if (buildResult.isError) {
                 val errorMessage = (buildResult as MonolithicCommon.PlotsBuildResult.Error).error
