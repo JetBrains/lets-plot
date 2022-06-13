@@ -41,6 +41,37 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
     A marginal plot is a scatterplot (sometimes a density plot or other bivariate plot) that has histograms,
     boxplots, or other distribution visualization layers in the margins of the x- and y-axes.
 
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 24
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.mapping import as_discrete
+        LetsPlot.setup_html()
+        LetsPlot.set_theme(theme_light())
+
+        np.random.seed(0)
+
+        cov0=[[1, -.8],
+             [-.8, 1]]
+        cov1=[[ 10, .1],
+               [.1, .1]]
+
+        x0, y0 = np.random.multivariate_normal(mean=[-2,0], cov=cov0, size=200).T
+        x1, y1 = np.random.multivariate_normal(mean=[0,1], cov=cov1, size=200).T
+
+        data = dict(
+            x = np.concatenate((x0,x1)),
+            y = np.concatenate((y0,y1)),
+            c = ["A"]*200 + ["B"]*200
+        )
+
+        p = ggplot(data, aes("x", "y", color="c", fill="c")) + geom_point()
+        p + ggmarginal("tr", layer=geom_density(alpha=0.3, show_legend=False))
+
     """
 
     if not isinstance(sides, str):
