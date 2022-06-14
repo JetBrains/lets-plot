@@ -1182,13 +1182,16 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
-            scale_fill_gradient(low='#1a9641', high='#d7191c')
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_gradient(low='#1a9641', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans, format)
@@ -1243,13 +1246,16 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
-            scale_fill_continuous(low='#1a9641', high='#d7191c')
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_continuous(low='#1a9641', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('fill',
@@ -1322,10 +1328,12 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + \\
-            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
-            scale_color_gradient(low='#1a9641', high='#d7191c', guide='legend')
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x'), fill='white', size=3) + \\
+            scale_color_gradient(low='#1a9641', high='#d7191c', guide='legend') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans, format)
@@ -1454,13 +1462,16 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
-            scale_fill_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c')
+        x = list(range(-25, 26))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('fill',
@@ -1535,10 +1546,12 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + \\
-            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
-            scale_color_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c')
+        x = list(range(-25, 26))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x'), fill='white', size=3) + \\
+            scale_color_gradient2(low='#2b83ba', mid='#ffffbf', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('color',
@@ -1758,13 +1771,16 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
-            scale_fill_hue(c=50, l=80, h=[0, 50])
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_hue(c=50, l=80, h=[0, 50]) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('fill',
@@ -1841,10 +1857,12 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + \\
-            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
-            scale_color_hue(c=20, l=90)
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x'), fill='white', size=3) + \\
+            scale_color_hue(c=20, l=90) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('color',
@@ -2064,13 +2082,16 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
-            scale_fill_grey(start=.9, end=.1)
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_grey(start=.9, end=.1) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     start, end = _greyscale_check_parameters(start, end)
@@ -2147,10 +2168,12 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
 
         from lets_plot import *
         LetsPlot.setup_html()
-        x = list(range(10))
-        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
-            geom_point(aes(color='x'), shape=15, size=5) + \\
-            scale_color_grey(start=.7, end=.2)
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x'), fill='white', size=3) + \\
+            scale_color_grey(start=.7, end=.2) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     start, end = _greyscale_check_parameters(start, end)
@@ -2260,13 +2283,16 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 6
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x'), color='white') + \\
-            scale_fill_brewer(type='seq', palette='YlGnBu')
+        x = list(range(9))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_brewer(type='seq', palette='YlGnBu') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('fill',
