@@ -13,18 +13,24 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
             color=None, fill=None, alpha=None, size=None, shape=None,
             line_color=None, line_size=None, linetype=None) -> PlotSpec:
     """
-    This function is intended to draw Q-Q plot.
+    Produces a Q-Q plot (quantile-quantile plot).
+
+    Supply the `sample` parameter to compare distribution of observations with a theoretical distribution
+    ('normal' or as otherwise specified by the `distribution` parameter).
+
+    Alternatively, supply `x` and `y` parameters to compare the distribution of `x` with the distribution of `y`.
 
     Parameters
     ----------
     data : dict or `DataFrame`
         The data to be displayed.
     sample : str
-        y-axis value. Should be specified if `x` and `y` aren't.
-    x : str
-        x-axis value. Should be specified as well as `y`, if `sample` isn't.
-    y : str
-        y-axis value. Should be specified as well as `x`, if `sample` isn't.
+        Name of variable. Specifies a vector of observations used for computing of "sample quantiles".
+        Use this parameter to produce a "sample vs. theoretical" Q-Q plot.
+    x, y : str
+        Names of variables specifying two vectors of observations used for computing of
+        x and y "sample quantiles".
+        Use these two parameters to produce a "sample X vs. sample Y" Q-Q plot.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use. Could be specified if `sample` is.
     dparams : list
