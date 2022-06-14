@@ -6,7 +6,7 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/default_theme.ipynb).
 
-- `geom_livemap`: support of the `arrow` parameter in `geom_segment` [[#525](https://github.com/JetBrains/lets-plot/issues/131)].
+- `geom_livemap`: support of the `arrow` parameter in `geom_segment` [[#131](https://github.com/JetBrains/lets-plot/issues/131)].
       
 - Parameter `orientation` in geoms: `bar, boxplot, density, histogram, freqpoly, smooth, violin`.
 
