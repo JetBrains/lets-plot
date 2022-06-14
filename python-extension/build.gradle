@@ -17,11 +17,16 @@ kotlin {
     if (project.buildSettings.build_python_extension) {
         def target
         if (currentOs.isMacOsX()) {
-            target = macosX64("native")
-        } else if (currentOs.isLinux()) {
-            target = linuxX64("native")
-        } else if (currentOs.isWindows()) {
-            target = mingwX64("native")
+            def currentArch = DefaultNativePlatform.getCurrentArchitecture()
+            if (currentArch.displayName.contains("arm-v8")) {
+                target = macosArm64("native")
+            } else {
+                target = macosX64("native")
+            }
+        } else if (currentOs.isLinux("native")) {
+            target = linuxX64()
+        } else if (currentOs.isWindows("native")) {
+            target = mingwX64()
         } else {
             throw "Unsupported platform " + currentOs.displayName
         }
@@ -37,6 +42,8 @@ kotlin {
                 compilerOpts "-I${project.buildSettings.python.include_path}"
             }
         }
+    } else {
+        jvm() // at least one target is required by MPP - dummy jvm target will work just fine
     }
 
     sourceSets {
