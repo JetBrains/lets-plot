@@ -1,6 +1,8 @@
 ## [2.4.0] - 2022-06-??
 
 ### Added
+               
+- Python 3.10 support.
 
 - `LetsPlot.set_theme()` - configuring a default plot theme.
 

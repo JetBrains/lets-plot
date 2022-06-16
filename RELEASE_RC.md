@@ -26,7 +26,10 @@ Upgrade `Lets-Plot` version to just released RC version:
 `conda install jupyter`
 
 ##### 3. Open and evaluate the example notebooks.
+                                                   
+Note: all demo notebooks has been moved to the "lets-plot-docs" Github repository: 
 
+https://github.com/JetBrains/lets-plot-docs/tree/master/source/examples
 
 ### Prepare demos for release
 
