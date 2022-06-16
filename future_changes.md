@@ -4,6 +4,8 @@
                
 - Python 3.10 support.
 
+- Python 3.9: A Python wheel for macOS arm64 architecture (Apple Silicon).
+
 - `LetsPlot.set_theme()` - configuring a default plot theme.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/default_theme.ipynb).
