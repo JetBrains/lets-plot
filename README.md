@@ -59,62 +59,52 @@ Also read:
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
 
-## What is new in 2.3.0
+## What is new in 2.4.0
 
-- ### Geometries
+- ### Python versions
 
-  - `geom_violin()`
+  Added Python 3.10 wheels as well as new Apple Silicon wheel for Python 3.9.
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_violin.ipynb).
+- ### New Plot Types
 
-  - `geom_dotplot()`
+  - #### Quantile-Quantile (Q-Q) plot.
+    - geometries:
+      - `geom_qq()`
+      - `geom_qq_line()`
+      - `geom_qq2()`
+      - `geom_qq2_line()`
+    - quick Q-Q : the `qq_plot()` function in the `bistro` module.
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_dotplot.ipynb).
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/qq_plots.ipynb).
 
-  - `geom_ydotplot()`
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/geom_ydotplot.ipynb).
-
-- ### Labels and Legends
-
-  - Plot **subtitle** and **caption** are now supported.
+  - #### Marginal plots.
   
-    You can use parameter `subtitle`in `ggtitle()` and `labs()` to add a subtitle below the plot' title, and 
-    parameter `caption` in `labs()` to add a caption below plot.
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22b/images/marginal_layers.png" alt="f-22b/images/marginal_layers.png" width="360" height="276">
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/marginal_layers.ipynb).
+
+- ### Plot Theme
+
+  - `face` parameter in `element_text()`.
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/set_font_faces.ipynb).
+
+  - `panel_border` parameter in `theme()`.
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/panel_border.ipynb).
+
+  - New options for configuring tooltip appearance.
   
-  - Multi-line labels.
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22b/images/tooltip_theme.png" alt="f-22b/images/tooltip_theme.png" width="150" height="114">
 
-    The 'newline' character (`\n`) now works as `line break` in plot title, subtitle and caption, in legend's title and in tooltips.
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/tooltips_theme.ipynb).
+ 
+- ### Color Scales
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/title_subtitle_caption.ipynb).
-
-- ### Tooltips
-
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22a/images/tooltip.png" alt="f-22a/images/tooltip.png" width="362" height="310">
-
-  - Improved appearance
-  - Automatic word wrap makes long text values look better
-  - Tooltip title 
+  `scale_color_gradientn()` and `scale_fill_gradientn()` functions.
   
-    You can use new method `title()` in the [Tooltip castomization API](https://lets-plot.org/pages/tooltips.html) to add a title to tooltip.
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/scale_%28color_fill%29_gradientn.ipynb).
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/tooltip_title.ipynb).
-                                         
-- ### Maps
-
-  Our interactive map widget now supports automatic size adjustment for markers on map (i.e. the radius of points and the width of lines) when zooming.
-  You can control this behavior using new parameters `data_size_zoomin, const_size_zoomin` in `geom_livemap()`.
-
-  Also note new "reset" tool-button.                        
-
-<img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22a/images/map_airports_zoomin.gif" alt="f-22a/images/map_airports_zoomin.gif">
-
-
-- ### Facets
-
-  "Free" scales are now supported on faceted plots. 
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22a/notebooks/facets_free_scales.ipynb).
 
 
 ## Change Log
