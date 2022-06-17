@@ -121,7 +121,6 @@ class PlotSvgComponent constructor(
     }
 
     private fun buildPlot() {
-        rootGroup.addClass(Style.PLOT)
         buildPlotComponents()
 
         reg(object : Registration() {

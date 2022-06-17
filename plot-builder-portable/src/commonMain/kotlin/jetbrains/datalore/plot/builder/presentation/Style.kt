@@ -20,17 +20,13 @@ import jetbrains.datalore.vis.TextStyle
 object Style {
     // classes
     const val PLOT_CONTAINER = "plt-container"
-    const val PLOT = "plt-plot"
     const val PLOT_TITLE = "plot-title"
     const val PLOT_SUBTITLE = "plot-subtitle"
     const val PLOT_CAPTION = "plot-caption"
 
-    const val AXIS = "plt-axis"
     const val AXIS_TITLE = "axis-title"
     const val AXIS_TEXT = "axis-text"
-    const val TICK = "tick"
 
-    const val LEGEND = "legend"
     const val LEGEND_TITLE = "legend-title"
     const val LEGEND_ITEM = "legend-item"
 

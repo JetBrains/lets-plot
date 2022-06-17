@@ -37,8 +37,6 @@ abstract class LegendBox : SvgComponent() {
     }
 
     override fun buildComponent() {
-        addClassName(Style.LEGEND)
-
         if (theme.showBackground()) {
             add(SvgRectElement(spec.innerBounds).apply {
                 strokeColor().set(theme.backgroundColor())

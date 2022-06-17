@@ -41,9 +41,6 @@ class AxisComponent(
 
     private fun buildAxis() {
         val rootElement = rootGroup
-        if (!hideAxis) {
-            rootElement.addClass(Style.AXIS)
-        }
 
         val x1: Double
         val y1: Double
@@ -220,8 +217,6 @@ class AxisComponent(
             tickLabel.rotate(labelAdjustments.rotationDegree)
             g.children().add(tickLabel.rootGroup)
         }
-
-        g.addClass(Style.TICK)
         return g
     }
 
