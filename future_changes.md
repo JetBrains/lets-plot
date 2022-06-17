@@ -60,6 +60,10 @@
 
 ### Changed
 
+- `geom_livemap` [**breaking change**] : `symbol="point"` now should be specified explicitly 
+  to enable the "livemap" layer to handle provided
+  "point" aesthetics directly. This change doesn't affect "points" layers added via 
+  the `geom_point()` geometry layer.
 - New style of tooltip color marker (two sidebars with a stroke color)
   and symbols in legend (rectangle with a stroke instead of a slash-line).
 - New type of general tooltip for `geom_boxplot`: displayed under the cursor.
