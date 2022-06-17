@@ -65,8 +65,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Second value in pair - column/columns in `map`.
     symbol : str, default=None
         The marker used for displaying the data. There are:
-        'point' for circles of different size and color; 'pie' for pie charts;
-        'bar' for bar charts. None for map without markers.
+        'point' for circles of different size and color;
+        None for map without markers.
     location : list
         Initial position of the map. If not set, displays the United States.
         There are [lon1, lat1, lon2, lat2,..., lonN, latN]:
