@@ -15,11 +15,11 @@ class TreeListTest {
         val random = Random(239)
         val maxValue = 1000
 
-        for (i in 0..99) {
+        for (i in 0..29) {
             val arrayList = ArrayList<Int>()
             val treeList = TreeList<Int>()
 
-            for (j in 0..499) {
+            for (j in 0..149) {
                 val op = random.nextInt(3)
 
                 if (op == 0) {

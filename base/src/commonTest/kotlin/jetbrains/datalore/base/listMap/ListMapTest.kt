@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 class ListMapTest {
 
     companion object {
-        private val RANDOM_STEPS = 50_000 // test with 100_000 steps causes timout and failure in JS
+        private val RANDOM_STEPS = 5_000 // test with 100_000 steps causes timout and failure in JS
     }
 
     private val list = ListMap<String?, String>()
