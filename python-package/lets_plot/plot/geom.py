@@ -1612,7 +1612,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     fatten : float, default=5.0
-        A multiplicative factor applied to size of the middle bar.
+        A multiplicative factor applied to size of the middle point.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
