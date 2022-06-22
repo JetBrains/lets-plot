@@ -1,12 +1,6 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-#  Copyright (c) 2022. JetBrains s.r.o.
-#  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-
-#  Copyright (c) 2022. JetBrains s.r.o.
-#  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-
 from .core import FeatureSpec, LayerSpec, DummySpec
 
 __all__ = ["ggmarginal"]
