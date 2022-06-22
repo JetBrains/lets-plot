@@ -22,7 +22,7 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
     sides : str
         A string specifying which sides of the plot the marginal layer will appear on.
         It should be set to a string containing any of "trbl", for top, right, bottom, and left.
-    size : float, default=0.1
+    size : number or list of numbers, default=0.1
         Size of marginal geometry (width or height, depending on the margin side) as a fraction of the entire
         plotting area of the plot.
         The value should be in range [0.01..0.95].
