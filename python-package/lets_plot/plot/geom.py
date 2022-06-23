@@ -2867,7 +2867,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float.
     adjust : float
-        Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
     n : int, default=512
         The number of sampled points for plotting the function.
     fs_max : int, default=500
@@ -3420,7 +3420,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float.
     adjust : float
-        Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
     n : int, default=512
         The number of sampled points for plotting the function.
     fs_max : int, default=500
@@ -3586,7 +3586,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
     adjust : float
-        Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
     n : list of int
         The number of sampled points for plotting the function
         (on x and y direction correspondingly).
@@ -3778,7 +3778,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
     adjust : float
-        Adjust the value of bandwidth my multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
     n : list of int
         The number of sampled points for plotting the function
         (on x and y direction correspondingly).
