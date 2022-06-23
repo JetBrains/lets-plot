@@ -1692,7 +1692,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 5
 
         from lets_plot import *
         LetsPlot.setup_html()
