@@ -43,6 +43,7 @@ object OptionsUtil {
             null -> null
             is String -> v
             is Int -> v
+            is Long -> v
             is Double -> v
             is Boolean -> v
             is Color -> v.toHexColor()
