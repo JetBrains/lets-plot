@@ -93,8 +93,8 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        sample = np.random.normal(0, 1, n)
-        qq_plot(data={'sample': sample}, sample='sample')
+        x = np.random.normal(0, 1, n)
+        qq_plot(data={'x': x}, sample='x')
 
     |
 
@@ -108,8 +108,8 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         LetsPlot.setup_html()
         n = 100
         np.random.seed(42)
-        sample = np.random.exponential(1, n)
-        qq_plot({'sample': sample}, 'sample', \\
+        x = np.random.exponential(1, n)
+        qq_plot({'x': x}, 'x', \\
                 distribution='exp', quantiles=[0, .9], \\
                 color='black', line_size=.25)
 
@@ -146,13 +146,13 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
         n = 150
         np.random.seed(42)
         data = {
-            'sample': np.random.normal(0, 5, n),
-            'group': np.random.choice(['a', 'b', 'c'], n),
+            'x': np.random.normal(0, 5, n),
+            'g': np.random.choice(['a', 'b', 'c'], n),
         }
-        qq_plot(data, 'sample', dparams=[0, 5], group='group', \\
+        qq_plot(data, 'x', dparams=[0, 5], group='g', \\
                 line_color='black', line_size=.5) + \\
             scale_color_brewer(type='qual', palette='Set1') + \\
-            facet_grid(x='group') + \\
+            facet_grid(x='g') + \\
             coord_fixed() + \\
             xlab("Norm distribution quantiles") + \\
             ggtitle("Interaction of the qq_plot() with other layers") + \\

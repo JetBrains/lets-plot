@@ -1618,14 +1618,17 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 6
+        :emphasize-lines: 7
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + \\
-            geom_tile(aes(x='x', color='x'), size=1.5, fill='white', width=.6, height=.6) + \\
-            scale_color_gradientn(colors=['#1a9641', 'blue', '#d7191c'], guide='legend')
+        x = list(range(-25, 26))
+        colors = ["#e41a1c", "#e41a1c", "#e41a1c", "#4daf4a", "#377eb8"]
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x'), fill='white', size=3) + \\
+            scale_color_gradientn(colors=colors) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('color',
@@ -1692,13 +1695,17 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5
+        :emphasize-lines: 7
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'x': list(range(-16, 16))}
-        ggplot(data) + geom_tile(aes(x='x', fill='x')) + \\
-            scale_fill_gradientn(colors=['#2b83ba', 'green', '#d7191c'])
+        x = list(range(-25, 26))
+        colors = ["#e41a1c", "#e41a1c", "#e41a1c", "#4daf4a", "#377eb8"]
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x'), size=3) + \\
+            scale_fill_gradientn(colors=colors) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
 
     """
     return _scale('fill',
