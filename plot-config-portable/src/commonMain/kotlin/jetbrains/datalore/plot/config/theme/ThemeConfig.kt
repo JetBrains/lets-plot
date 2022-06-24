@@ -32,7 +32,7 @@ class ThemeConfig constructor(
             LegendThemeConfig.convertValue(key, value)
         }
        val effectiveOptions =  (baselineValues + userOptions).let {
-           val flavorName = themeSettings.getString(ThemeOption.FLAVOR)
+           val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
            if (flavorName != null) {
                ThemeFlavor.forName(flavorName).updateColors(it)
            } else {

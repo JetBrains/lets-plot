@@ -13,7 +13,6 @@ __all__ = [
     'theme_none',
     'theme_bw',
     'flavor_darcula',
-    'flavor_intellij',
     'flavor_solarized_light',
     'flavor_solarized_dark',
     'flavor_high_contrast_light',
@@ -212,10 +211,6 @@ def theme_bw():
 
 def flavor_darcula():
     return FeatureSpec('theme', name=None, flavor="darcula")
-
-
-def flavor_intellij():
-    return FeatureSpec('theme', name=None, flavor="intellij")
 
 
 def flavor_solarized_light():

@@ -115,10 +115,8 @@ object ThemeOption {
         const val LP_NONE = "none"
     }
 
-    const val FLAVOR = "flavor"
     object Flavor {
         const val DARCULA = "darcula"
-        const val INTELLIJ = "intellij"
         const val SOLARIZED_LIGHT = "solarized_light"
         const val SOLARIZED_DARK = "solarized_dark"
         const val HIGH_CONTRAST_LIGHT = "high_contrast_light"

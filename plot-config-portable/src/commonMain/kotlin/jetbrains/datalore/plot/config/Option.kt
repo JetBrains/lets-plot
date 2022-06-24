@@ -489,7 +489,9 @@ object Option {
     }
 
     object Theme {
-        // All options were moved to
+        const val FLAVOR = "flavor"
+
+        // All other options were moved to
         // jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 
         // view element
