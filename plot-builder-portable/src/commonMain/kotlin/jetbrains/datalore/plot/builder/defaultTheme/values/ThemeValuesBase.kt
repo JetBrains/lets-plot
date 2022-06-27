@@ -52,7 +52,9 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_MEDIUM,
             ),
 
-            PANEL_BORDER_RECT to ELEMENT_BLANK,
+            PANEL_BORDER_RECT to mapOf(
+                Elem.SIZE to 0.0,
+            ),
 
             PLOT_BKGR_RECT to mapOf(
                 Elem.FILL to Color.WHITE,

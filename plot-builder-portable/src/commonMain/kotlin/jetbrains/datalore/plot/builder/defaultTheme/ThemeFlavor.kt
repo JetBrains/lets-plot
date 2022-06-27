@@ -13,15 +13,18 @@ class ThemeFlavor(
     private val fill: Color,
     private val color: Color,
     private val tooltipBackground: Color? = null,
+    private val panelBackground: Color? = null,
 ) {
     constructor(
         fillHex: String,
         colorHex: String,
         tooltipHexColor: String? = null,
+        panelBackgroundHex: String? = null,
     ) : this(
         parseHex(fillHex),
         parseHex(colorHex),
-        tooltipHexColor?.let(::parseHex)
+        tooltipHexColor?.let(::parseHex),
+        panelBackgroundHex?.let(::parseHex)
     )
 
     fun updateColors(options: Map<String, Any>): Map<String, Any> {
@@ -37,6 +40,11 @@ class ThemeFlavor(
                 if (key == ThemeOption.TOOLTIP_RECT && tooltipBackground != null) {
                     updated[ThemeOption.Elem.FILL] = tooltipBackground
                 }
+                if (key in listOf(ThemeOption.PANEL_BKGR_RECT, ThemeOption.FACET_STRIP_BGR_RECT) &&
+                    panelBackground != null
+                ) {
+                    updated[ThemeOption.Elem.FILL] = panelBackground
+                }
                 updated
             } else {
                 value
@@ -48,10 +56,13 @@ class ThemeFlavor(
         private val ELEM_TO_UPDATE_COLOR = listOf(
             ThemeOption.LINE,
             ThemeOption.RECT,
-            ThemeOption.AXIS,
-            ThemeOption.AXIS_TICKS,
+
             ThemeOption.PANEL_GRID,
             ThemeOption.PANEL_BKGR_RECT,
+            ThemeOption.PANEL_BORDER_RECT,
+
+            ThemeOption.AXIS,
+            ThemeOption.AXIS_TICKS,
 
             ThemeOption.AXIS_TOOLTIP,
             ThemeOption.TOOLTIP_RECT,
@@ -63,6 +74,8 @@ class ThemeFlavor(
         private val ELEM_TO_UPDATE_FILL = listOf(
             ThemeOption.RECT,
             ThemeOption.PLOT_BKGR_RECT,
+            ThemeOption.PANEL_BKGR_RECT,
+            ThemeOption.FACET_STRIP_BGR_RECT,
             ThemeOption.LEGEND_BKGR_RECT,
             ThemeOption.AXIS_TOOLTIP,
             ThemeOption.TOOLTIP_RECT,
@@ -74,17 +87,20 @@ class ThemeFlavor(
                 ThemeOption.Flavor.DARCULA -> ThemeFlavor(
                     fillHex = "#303030",
                     colorHex = "#BBBBBB",
-                    tooltipHexColor = "#141414"
+                    tooltipHexColor = "#141414",
+                    panelBackgroundHex = "#3B3B3B"
                 )
                 ThemeOption.Flavor.SOLARIZED_LIGHT -> ThemeFlavor(
                     fillHex = "#EEE8D5",
                     colorHex = "#2E4E58",
-                    tooltipHexColor = "#FDF6E3"
+                    tooltipHexColor = "#F5F2E7",
+                    panelBackgroundHex = "#FDF6E3"
                 )
                 ThemeOption.Flavor.SOLARIZED_DARK -> ThemeFlavor(
                     fillHex = "#0E3C4A",
                     colorHex = "#A7B6BA",
-                    tooltipHexColor = "#003841"
+                    tooltipHexColor = "#0B2F3A",
+                    panelBackgroundHex = "#1B4854"
                 )
                 ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> ThemeFlavor(fillHex = "#FFFFFF", colorHex = "#000000")
                 ThemeOption.Flavor.HIGH_CONTRAST_DARK -> ThemeFlavor(
