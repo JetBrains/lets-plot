@@ -24,7 +24,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
@@ -88,10 +87,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to 1.0,
             ),
 
-            TOOLTIP_TEXT to mapOf(
-                Elem.SIZE to Defaults.FONT_SMALL,
-                Elem.FONT_FACE to FontFace.NORMAL,
-            ),
             TOOLTIP_TITLE_TEXT to mapOf(
                 Elem.FONT_FACE to FontFace.BOLD,
             )

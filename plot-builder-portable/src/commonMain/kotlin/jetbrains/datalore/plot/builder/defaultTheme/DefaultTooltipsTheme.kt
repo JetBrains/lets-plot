@@ -19,7 +19,7 @@ internal class DefaultTooltipsTheme(
 
     internal val tooltipKey = listOf(TOOLTIP_RECT, RECT)
 
-    internal val textKey = listOf(TOOLTIP_TEXT)
+    internal val textKey = listOf(TOOLTIP_TEXT, TEXT)
     internal val titleTextKey = listOf(TOOLTIP_TITLE_TEXT) + textKey
 
     // Inherits from the 'text' color.
