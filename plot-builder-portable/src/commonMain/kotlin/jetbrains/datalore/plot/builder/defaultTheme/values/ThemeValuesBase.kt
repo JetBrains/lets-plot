@@ -52,9 +52,6 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
             ),
-            PLOT_TITLE to mapOf(
-                Elem.FONT_FACE to FontFace.BOLD,
-            ),
 
             PANEL_BORDER_RECT to ELEMENT_BLANK,
 
