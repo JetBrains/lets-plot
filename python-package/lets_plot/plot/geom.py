@@ -2820,6 +2820,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
+                ridge_direction=None,
                 draw_quantiles=None,
                 scale=None, trim=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
@@ -2851,6 +2852,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     orientation : str, default='x'
         Specifies the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
+    ridge_direction : {'negative', 'positive', 'both'}, default='both'
+        If 'negative' it's drawing only half of each violin.
+        If 'positive' it's drawing other half.
+        If 'both' violins looking as usual.
     draw_quantiles : list of float
         Draw horizontal lines at the given quantiles of the density estimate.
     scale : {'area', 'count', 'width'}, default='area'
@@ -3001,6 +3006,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
+                 ridge_direction=ridge_direction,
                  draw_quantiles=draw_quantiles,
                  scale=scale, trim=trim, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
