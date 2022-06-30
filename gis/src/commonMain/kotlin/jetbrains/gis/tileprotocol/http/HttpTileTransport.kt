@@ -5,9 +5,10 @@
 
 package jetbrains.gis.tileprotocol.http
 
-import io.ktor.client.HttpClient
-import io.ktor.client.features.ResponseException
-import io.ktor.client.request.get
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.ThreadSafeAsync
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class HttpTileTransport {
 
         myClient.launch {
             try {
-                val response = myClient.get<ByteArray>(url)
+                val response = myClient.get(url).readBytes()
                 async.success(response)
             } catch (c: ResponseException) {
                 async.failure(Exception(c.response.status.toString()))

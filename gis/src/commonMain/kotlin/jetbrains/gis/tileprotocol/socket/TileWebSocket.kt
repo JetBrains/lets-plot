@@ -5,9 +5,9 @@
 
 package jetbrains.gis.tileprotocol.socket
 
-import io.ktor.client.HttpClient
-import io.ktor.client.features.websocket.webSocket
-import io.ktor.http.cio.websocket.*
+import io.ktor.client.*
+import io.ktor.client.plugins.websocket.*
+import io.ktor.websocket.*
 import kotlinx.coroutines.launch
 
 class TileWebSocket(
@@ -30,6 +30,7 @@ class TileWebSocket(
                         when (frame) {
                             is Frame.Text -> myHandler.onTextMessage(frame.readText())
                             is Frame.Binary -> myHandler.onBinaryMessage(frame.readBytes())
+                            else -> {} // ignore
                         }
                     }
                 }

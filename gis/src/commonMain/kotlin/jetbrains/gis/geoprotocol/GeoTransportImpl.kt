@@ -6,6 +6,7 @@
 package jetbrains.gis.geoprotocol
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.ThreadSafeAsync
@@ -24,13 +25,15 @@ class GeoTransportImpl(
 
         myClient.launch {
             try {
-                val response = myClient.post<String>(myUrl) {
-                    body = request
+                val response = myClient.post(myUrl) {
+                    setBody(request
                         .let(RequestJsonFormatter::format)
                         .let(JsonSupport::formatJson)
+                    )
                 }
 
                 response
+                    .body<String>()
                     .let(JsonSupport::parseJson)
                     .let(ResponseJsonParser::parse)
                     .let(async::success)
