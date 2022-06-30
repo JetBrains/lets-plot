@@ -8,42 +8,43 @@ package jetbrains.datalore.plot.builder.defaultTheme
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Color.Companion.parseHex
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 
 class ThemeFlavor(
     private val fill: Color,
     private val color: Color,
-    private val tooltipBackground: Color? = null,
-    private val panelBackground: Color? = null,
+    private val specialColors: Map<String, Map<String, Color>> = emptyMap(),
 ) {
-    constructor(
-        fillHex: String,
-        colorHex: String,
-        tooltipHexColor: String? = null,
-        panelBackgroundHex: String? = null,
-    ) : this(
-        parseHex(fillHex),
-        parseHex(colorHex),
-        tooltipHexColor?.let(::parseHex),
-        panelBackgroundHex?.let(::parseHex)
-    )
-
     fun updateColors(options: Map<String, Any>): Map<String, Any> {
+        val plotBackgroundColor = options[ThemeOption.PLOT_BKGR_RECT]?.let {
+            if (it is Map<*, *>) it[Elem.FILL] else null
+        }
+
+        fun chooseNewColor(
+            elementName: String,
+            elementColor: Any?,
+            type: String,
+        ): Color {
+            // If the element has the same color as the plot background, use the 'fill' color for both.
+            // Otherwise - use the own special element's color.
+            if (elementColor == plotBackgroundColor) {
+                return fill
+            }
+            return specialColors[elementName]?.get(type)
+                ?: if (type == Elem.COLOR) color else fill
+        }
+
         return options.mapValues { (key, value) ->
-            if (value is Map<*, *> && value != ThemeOption.ELEMENT_BLANK) {
+            if (value is Map<*, *>) {
                 val updated = value.toMutableMap()
                 if (key in ELEM_TO_UPDATE_COLOR) {
-                    updated[ThemeOption.Elem.COLOR] = color
+                    updated[Elem.COLOR] = chooseNewColor(key, value[Elem.COLOR], Elem.COLOR)
                 }
                 if (key in ELEM_TO_UPDATE_FILL) {
-                    updated[ThemeOption.Elem.FILL] = fill
+                    updated[Elem.FILL] = chooseNewColor(key, value[Elem.FILL], Elem.FILL)
                 }
-                if (key == ThemeOption.TOOLTIP_RECT && tooltipBackground != null) {
-                    updated[ThemeOption.Elem.FILL] = tooltipBackground
-                }
-                if (key in listOf(ThemeOption.PANEL_BKGR_RECT, ThemeOption.FACET_STRIP_BGR_RECT) &&
-                    panelBackground != null
-                ) {
-                    updated[ThemeOption.Elem.FILL] = panelBackground
+                if (key == ThemeOption.TOOLTIP_RECT) {
+                    specialColors[key]?.get(Elem.FILL)?.let { updated[Elem.FILL] = it }
                 }
                 updated
             } else {
@@ -62,7 +63,6 @@ class ThemeFlavor(
             ThemeOption.PANEL_BORDER_RECT,
 
             ThemeOption.AXIS,
-            ThemeOption.AXIS_TICKS,
 
             ThemeOption.AXIS_TOOLTIP,
             ThemeOption.TOOLTIP_RECT,
@@ -81,32 +81,60 @@ class ThemeFlavor(
             ThemeOption.TOOLTIP_RECT,
         )
 
-
         fun forName(flavor: String): ThemeFlavor {
             return when (flavor) {
                 ThemeOption.Flavor.DARCULA -> ThemeFlavor(
-                    fillHex = "#303030",
-                    colorHex = "#BBBBBB",
-                    tooltipHexColor = "#141414",
-                    panelBackgroundHex = "#3B3B3B"
+                    fill = parseHex("#303030"),
+                    color = parseHex("#BBBBBB"),
+                    specialColors = mapOf(
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#3B3B3B")),
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#363636")),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#808080")),
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#141414")),
+                        ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#BBBBBB")),
+                    ),
                 )
                 ThemeOption.Flavor.SOLARIZED_LIGHT -> ThemeFlavor(
-                    fillHex = "#EEE8D5",
-                    colorHex = "#2E4E58",
-                    tooltipHexColor = "#F5F2E7",
-                    panelBackgroundHex = "#FDF6E3"
+                    fill = parseHex("#EEE8D5"),
+                    color = parseHex("#2E4E58"),
+                    specialColors = mapOf(
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#FDF6E3")),
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#E8E0C7")),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#A4A7B0")), //"#B9BCC2"
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#F5F2E7")), // #F4F0E3
+                        ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#2E4E58")),
+                    ),
                 )
                 ThemeOption.Flavor.SOLARIZED_DARK -> ThemeFlavor(
-                    fillHex = "#0E3C4A",
-                    colorHex = "#A7B6BA",
-                    tooltipHexColor = "#0B2F3A",
-                    panelBackgroundHex = "#1B4854"
+                    fill = parseHex("#0E3C4A"),
+                    color = parseHex("#A7B6BA"),
+                    specialColors = mapOf(
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#1B4854")),
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#1F4650")),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#455458")),
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#0B2F3A")),
+                        ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#A7B6BA")),
+                    ),
                 )
-                ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> ThemeFlavor(fillHex = "#FFFFFF", colorHex = "#000000")
+                ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> ThemeFlavor(
+                    fill = Color.WHITE,
+                    color = Color.BLACK,
+                    specialColors = mapOf(
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to Color.BLACK),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#E9E9E9")),
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to Color.WHITE),
+                        ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.BLACK),
+                    ),
+                )
                 ThemeOption.Flavor.HIGH_CONTRAST_DARK -> ThemeFlavor(
-                    fillHex = "#000000",
-                    colorHex = "#FFFFFF",
-                    tooltipHexColor = "#460073"
+                    fill = Color.BLACK,
+                    color = Color.WHITE,
+                    specialColors = mapOf(
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to Color.WHITE),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#474747")),
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#460073")),
+                        ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.WHITE),
+                    ),
                 )
                 else -> throw IllegalArgumentException("Unsupported theme flavor: '$flavor'")
             }
