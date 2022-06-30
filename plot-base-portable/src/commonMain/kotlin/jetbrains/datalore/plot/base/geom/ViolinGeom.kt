@@ -47,7 +47,13 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
+        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH).let { dataPoints ->
+            when (ridgeDirection) {
+                RidgeDirection.POSITIVE -> dataPoints.sortedByDescending(DataPointAesthetics::x)
+                RidgeDirection.NEGATIVE -> dataPoints.sortedBy(DataPointAesthetics::x)
+                RidgeDirection.BOTH -> dataPoints
+            }
+        }
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }

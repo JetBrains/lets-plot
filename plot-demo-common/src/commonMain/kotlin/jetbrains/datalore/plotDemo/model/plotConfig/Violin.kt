@@ -110,6 +110,7 @@ class Violin {
                 "               {" +
                 "                 'geom': 'violin'," +
                 "                 'ridge_direction': 'positive'," +
+                "                 'width': 3," +
                 "                 'trim': false" +
                 "               }" +
                 "             ]," +

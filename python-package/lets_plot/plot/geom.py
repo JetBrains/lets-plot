@@ -2972,6 +2972,25 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                         size=2, alpha=.5, scale='width') + \\
             geom_boxplot(aes(fill='variable'), width=.2)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        np.random.seed(42)
+        x = np.random.choice(weekdays, size=n)
+        y = np.random.normal(size=n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y', fill='x')) + \\
+            geom_violin(ridge_direction='positive', width=4, trim=False) + \\
+            scale_x_continuous(breaks=weekdays) + \\
+            coord_flip()
+
     """
     return _geom('violin',
                  mapping=mapping,
