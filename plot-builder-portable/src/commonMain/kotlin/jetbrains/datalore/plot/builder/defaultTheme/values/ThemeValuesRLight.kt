@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKG
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
 class ThemeValuesRLight : ThemeValues(VALUES) {
 
@@ -49,10 +48,6 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
 
             TEXT to mapOf(
                 Elem.COLOR to DARK_GREY
-            ),
-
-            TITLE to mapOf(
-                Elem.COLOR to BLACK
             ),
 
             PANEL_BKGR_RECT to mapOf(
