@@ -174,6 +174,7 @@ object Option {
 
         object Violin {
             const val DRAW_QUANTILES = "draw_quantiles"
+            const val RIDGE_DIRECTION = "ridge_direction"
         }
 
         object YDotplot {

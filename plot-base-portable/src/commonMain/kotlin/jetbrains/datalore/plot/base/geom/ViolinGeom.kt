@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
@@ -15,9 +16,18 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 class ViolinGeom : GeomBase() {
     private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
+    private var ridgeDirection: RidgeDirection = DEF_RIDGE_DIRECTION
+    private val negativeSign: Double
+        get() = if (ridgeDirection == RidgeDirection.POSITIVE) 0.0 else -1.0
+    private val positiveSign: Double
+        get() = if (ridgeDirection == RidgeDirection.NEGATIVE) 0.0 else 1.0
 
     fun setDrawQuantiles(quantiles: List<Double>) {
         drawQuantiles = quantiles
+    }
+
+    fun setRidgeDirection(direction: String) {
+        ridgeDirection = RidgeDirection.safeValueOf(direction)
     }
 
     override fun buildIntern(
@@ -51,8 +61,8 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val leftBoundTransform = toLocationBound(-1.0, ctx)
-        val rightBoundTransform = toLocationBound(1.0, ctx)
+        val leftBoundTransform = toLocationBound(negativeSign, ctx)
+        val rightBoundTransform = toLocationBound(positiveSign, ctx)
 
         val paths = helper.createBands(dataPoints, leftBoundTransform, rightBoundTransform)
         appendNodes(paths, root)
@@ -80,8 +90,8 @@ class ViolinGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         for ((group, dataPointsGroup) in dataPoints.groupBy { it.group() }) {
             for (p in calculateQuantiles(dataPointsGroup, group)) {
-                val xmin = toLocationBound(-1.0, ctx)(p).x
-                val xmax = toLocationBound(1.0, ctx)(p).x
+                val xmin = toLocationBound(negativeSign, ctx)(p).x
+                val xmax = toLocationBound(positiveSign, ctx)(p).x
                 val start = DoubleVector(xmin, p.y()!!)
                 val end = DoubleVector(xmax, p.y()!!)
                 val line = helper.createLine(start, end, p)
@@ -170,8 +180,26 @@ class ViolinGeom : GeomBase() {
         }
     }
 
+    enum class RidgeDirection {
+        NEGATIVE, POSITIVE, BOTH;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<RidgeDirection>()
+
+            fun safeValueOf(v: String): RidgeDirection {
+                return ENUM_INFO.safeValueOf(v) ?:
+                throw IllegalArgumentException(
+                    "Unsupported ridge direction: '$v'\n" +
+                    "Use one of: negative, positive, both."
+                )
+            }
+        }
+    }
+
     companion object {
         val DEF_DRAW_QUANTILES = emptyList<Double>()
+        val DEF_RIDGE_DIRECTION = RidgeDirection.BOTH
 
         const val HANDLES_GROUPS = true
     }

@@ -14,6 +14,7 @@ class Violin {
             basic(),
             withNan(),
             withGroups(),
+            ridgeline(),
         )
     }
 
@@ -85,13 +86,45 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
-                "                 'draw_quantiles': [0.25, 0.5, 0.75]," +
-                "                 'trim': false" +
+                "                 'draw_quantiles': [0.25, 0.5, 0.75]" +
                 "               }" +
                 "             ]" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun ridgeline(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "                'x': 'target'," +
+                "                'y': 'sepal length (cm)'," +
+                "                'fill': 'target'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Ridgeline'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'ridge_direction': 'positive'," +
+                "                 'trim': false" +
+                "               }" +
+                "             ]," +
+                "   'coord': {" +
+                "              'name': 'flip'," +
+                "              'flip': true" +
+                "            }," +
+                "   'theme': {" +
+                "              'name': 'classic'" +
+                "            }" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
 
     }
 }
