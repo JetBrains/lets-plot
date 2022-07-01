@@ -23,25 +23,25 @@ class ThemeFlavor(
         fun chooseNewColor(
             elementName: String,
             elementColor: Any?,
-            type: String,
+            isFillColor: Boolean,
         ): Color {
             // If the element has the same color as the plot background, use the 'fill' color for both.
             // Otherwise - use the own special element's color.
             if (elementColor == plotBackgroundColor) {
                 return fill
             }
-            return specialColors[elementName]?.get(type)
-                ?: if (type == Elem.COLOR) color else fill
+            return specialColors[elementName]?.get(if (isFillColor) Elem.FILL else Elem.COLOR)
+                ?: if (isFillColor) fill else color
         }
 
         return options.mapValues { (key, value) ->
             if (value is Map<*, *>) {
                 val updated = value.toMutableMap()
                 if (key in ELEM_TO_UPDATE_COLOR) {
-                    updated[Elem.COLOR] = chooseNewColor(key, value[Elem.COLOR], Elem.COLOR)
+                    updated[Elem.COLOR] = chooseNewColor(key, value[Elem.COLOR], isFillColor = false)
                 }
                 if (key in ELEM_TO_UPDATE_FILL) {
-                    updated[Elem.FILL] = chooseNewColor(key, value[Elem.FILL], Elem.FILL)
+                    updated[Elem.FILL] = chooseNewColor(key, value[Elem.FILL], isFillColor = true)
                 }
                 if (key == ThemeOption.TOOLTIP_RECT) {
                     specialColors[key]?.get(Elem.FILL)?.let { updated[Elem.FILL] = it }
@@ -89,19 +89,19 @@ class ThemeFlavor(
                     specialColors = mapOf(
                         ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#3B3B3B")),
                         ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#363636")),
-                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#808080")),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#474747")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#141414")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#BBBBBB")),
                     ),
                 )
                 ThemeOption.Flavor.SOLARIZED_LIGHT -> ThemeFlavor(
-                    fill = parseHex("#EEE8D5"),
+                    fill = parseHex("#FDF6E3"),
                     color = parseHex("#2E4E58"),
                     specialColors = mapOf(
-                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#FDF6E3")),
-                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#E8E0C7")),
-                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#A4A7B0")), //"#B9BCC2"
-                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#F5F2E7")), // #F4F0E3
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#EEE8D5")),
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#E6DFCA")),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#BDB8AA")),
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#F5F2E7")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#2E4E58")),
                     ),
                 )
@@ -120,7 +120,8 @@ class ThemeFlavor(
                     fill = Color.WHITE,
                     color = Color.BLACK,
                     specialColors = mapOf(
-                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to Color.BLACK),
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#EBEBEB")),
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#D9D9D9")),
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#E9E9E9")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to Color.WHITE),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.BLACK),
@@ -130,7 +131,8 @@ class ThemeFlavor(
                     fill = Color.BLACK,
                     color = Color.WHITE,
                     specialColors = mapOf(
-                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to Color.WHITE),
+                        ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#3B3B3B")),
+                        ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#363636")),
                         ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#474747")),
                         ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#460073")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to Color.WHITE),

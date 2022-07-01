@@ -9,9 +9,8 @@ import jetbrains.datalore.plot.parsePlotSpec
 
 class ThemeFlavors {
     fun plotSpecList(): List<MutableMap<String, Any>> {
-        return allFlavorsWithTheme(
-            themeName = "grey"
-        )
+        return allThemesWithFlavor("solarized_light")
+        // return allFlavorsWithTheme(themeName = "grey", facets = true)
     }
 
     private fun allFlavorsWithTheme(themeName: String?, facets: Boolean = false) = listOf(
@@ -23,6 +22,15 @@ class ThemeFlavors {
         withTheme(themeName, flavor = "high_contrast_dark", facets),
     )
 
+    private fun allThemesWithFlavor(flavorName: String, facets: Boolean = false) = listOf(
+        withTheme(null, flavorName, facets),
+        withTheme("classic", flavorName, facets),
+        withTheme("light", flavorName, facets),
+        withTheme("grey", flavorName, facets),
+        withTheme("minimal", flavorName, facets),
+        withTheme("minimal2", flavorName, facets),
+        withTheme("none", flavorName, facets),
+    )
 
     private fun theme(name: String?, flavor: String?): String {
         var result ="'theme': {"
