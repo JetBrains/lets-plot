@@ -100,8 +100,8 @@ class ThemeFlavor(
                     specialColors = mapOf(
                         ThemeOption.PANEL_BKGR_RECT to mapOf(Elem.FILL to parseHex("#EEE8D5")),
                         ThemeOption.FACET_STRIP_BGR_RECT to mapOf(Elem.FILL to parseHex("#E6DFCA")),
-                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#BDB8AA")),
-                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#F5F2E7")),
+                        ThemeOption.PANEL_GRID to mapOf(Elem.COLOR to parseHex("#D7D4CB")),
+                        ThemeOption.TOOLTIP_RECT to mapOf(Elem.FILL to parseHex("#FDF6E3")),
                         ThemeOption.AXIS_TOOLTIP to mapOf(Elem.FILL to parseHex("#2E4E58")),
                     ),
                 )
