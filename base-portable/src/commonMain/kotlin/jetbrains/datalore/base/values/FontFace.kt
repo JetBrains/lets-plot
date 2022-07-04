@@ -27,7 +27,7 @@ class FontFace(
                     else -> NORMAL
                 }
             }
-            return str.split(" ", "_")
+            return str.split(' ', '_', '.', '-')
                 .filter(String::isNotEmpty)
                 .map(::fromValue)
                 .fold(FontFace(), FontFace::plus)
