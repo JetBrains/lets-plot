@@ -9,7 +9,6 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -113,8 +112,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
                     geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
                 }
-                if (opts.hasOwn(Violin.RIDGE_DIRECTION)) {
-                    geom.setRidgeDirection(opts.getString(Violin.RIDGE_DIRECTION)!!)
+                if (opts.hasOwn(Violin.SHOW_HALF)) {
+                    geom.showHalf = opts.getDouble(Violin.SHOW_HALF)!!
                 }
                 geom
             }

@@ -14,7 +14,7 @@ class Violin {
             basic(),
             withNan(),
             withGroups(),
-            ridgeline(),
+            halfViolins(),
         )
     }
 
@@ -95,7 +95,7 @@ class Violin {
 
     }
 
-    private fun ridgeline(): MutableMap<String, Any> {
+    private fun halfViolins(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'mapping': {" +
@@ -109,18 +109,16 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
-                "                 'ridge_direction': 'positive'," +
-                "                 'width': 3," +
+                "                 'show_half': -1," +
+                "                 'trim': false" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'show_half': 1," +
+                "                 'fill': '#ffffb2'," +
                 "                 'trim': false" +
                 "               }" +
-                "             ]," +
-                "   'coord': {" +
-                "              'name': 'flip'," +
-                "              'flip': true" +
-                "            }," +
-                "   'theme': {" +
-                "              'name': 'classic'" +
-                "            }" +
+                "             ]" +
                 "}"
 
         val plotSpec = HashMap(parsePlotSpec(spec))

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
@@ -15,19 +14,15 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 class ViolinGeom : GeomBase() {
+    var showHalf: Double = DEF_SHOW_HALF
     private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
-    private var ridgeDirection: RidgeDirection = DEF_RIDGE_DIRECTION
     private val negativeSign: Double
-        get() = if (ridgeDirection == RidgeDirection.POSITIVE) 0.0 else -1.0
+        get() = if (showHalf > 0.0) 0.0 else -1.0
     private val positiveSign: Double
-        get() = if (ridgeDirection == RidgeDirection.NEGATIVE) 0.0 else 1.0
+        get() = if (showHalf < 0.0) 0.0 else 1.0
 
     fun setDrawQuantiles(quantiles: List<Double>) {
         drawQuantiles = quantiles
-    }
-
-    fun setRidgeDirection(direction: String) {
-        ridgeDirection = RidgeDirection.safeValueOf(direction)
     }
 
     override fun buildIntern(
@@ -47,13 +42,7 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH).let { dataPoints ->
-            when (ridgeDirection) {
-                RidgeDirection.POSITIVE -> dataPoints.sortedByDescending(DataPointAesthetics::x)
-                RidgeDirection.NEGATIVE -> dataPoints.sortedBy(DataPointAesthetics::x)
-                RidgeDirection.BOTH -> dataPoints
-            }
-        }
+        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }
@@ -186,26 +175,9 @@ class ViolinGeom : GeomBase() {
         }
     }
 
-    enum class RidgeDirection {
-        NEGATIVE, POSITIVE, BOTH;
-
-        companion object {
-
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<RidgeDirection>()
-
-            fun safeValueOf(v: String): RidgeDirection {
-                return ENUM_INFO.safeValueOf(v) ?:
-                throw IllegalArgumentException(
-                    "Unsupported ridge direction: '$v'\n" +
-                    "Use one of: negative, positive, both."
-                )
-            }
-        }
-    }
-
     companion object {
         val DEF_DRAW_QUANTILES = emptyList<Double>()
-        val DEF_RIDGE_DIRECTION = RidgeDirection.BOTH
+        const val DEF_SHOW_HALF = 0.0
 
         const val HANDLES_GROUPS = true
     }

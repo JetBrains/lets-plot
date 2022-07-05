@@ -2981,20 +2981,21 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 10-13
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
         n = 100
-        weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         np.random.seed(42)
-        x = np.random.choice(weekdays, size=n)
-        y = np.random.normal(size=n)
-        ggplot({'x': x, 'y': y}, aes('x', 'y', fill='x')) + \\
-            geom_violin(ridge_direction='positive', width=4, trim=False) + \\
-            scale_x_continuous(breaks=weekdays) + \\
-            coord_flip()
+        x = np.random.choice(["a", "b", "c", "d"], size=n)
+        y1 = np.random.normal(size=n)
+        y2 = np.random.normal(size=n)
+        ggplot({'x': x, 'y1': y1, 'y2': y2}) + \\
+            geom_violin(aes('x', 'y1'), show_half=-1, \\
+                        trim=False, fill='#ffffb2') + \\
+            geom_violin(aes('x', 'y2'), show_half=1, \\
+                        trim=False, fill='#74c476')
 
     """
     return _geom('violin',
