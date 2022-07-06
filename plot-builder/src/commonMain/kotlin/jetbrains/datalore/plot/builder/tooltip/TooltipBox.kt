@@ -101,7 +101,7 @@ class TooltipBox: SvgComponent() {
         myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
     }
 
-    internal fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
+    fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
         myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
         moveTo(tooltipCoord.x, tooltipCoord.y)
 
