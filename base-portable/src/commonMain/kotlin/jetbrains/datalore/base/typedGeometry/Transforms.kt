@@ -49,7 +49,7 @@ object Transforms {
         transform: (Vec<InT>) -> Vec<OutT>?,
         epsilon: Double
     ): List<Vec<OutT>> {
-        return AdaptiveResampling(transform, epsilon).resample(path)
+        return VecResampler(transform, epsilon).resample(path)
     }
 
     fun <InT, OutT> transform(

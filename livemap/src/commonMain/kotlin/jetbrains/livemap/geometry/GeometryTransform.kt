@@ -5,7 +5,6 @@
 
 package jetbrains.livemap.geometry
 
-import jetbrains.datalore.base.typedGeometry.AdaptiveResampling
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiLineString
 import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPoint
@@ -13,6 +12,7 @@ import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPolyg
 import jetbrains.datalore.base.typedGeometry.GeometryType.*
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.VecResampler
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
 
@@ -69,27 +69,23 @@ object GeometryTransform {
     internal class IterativeResampler<InT, OutT>(
         private val myTransform: (Vec<InT>) -> Vec<OutT>?
     ) {
-        private val myAdaptiveResampling = AdaptiveResampling(myTransform, SAMPLING_EPSILON)
+        private val myAdaptiveResampler = VecResampler(myTransform, SAMPLING_EPSILON)
         private var myPrevPoint: Vec<InT>? = null
         private var myRing: MutableCollection<Vec<OutT>>? = null
 
         fun next(p: Vec<InT>, ring: MutableCollection<Vec<OutT>>) {
             if (myRing == null || // first call
-                ring !== myRing) { // next ring
+                ring !== myRing
+            ) { // next ring
                 myRing = ring
                 myPrevPoint = null
             }
 
-            resample(p).forEach { newPoint -> myTransform(newPoint)?.let { myRing!!.add(it) } }
-        }
-
-        private fun resample(p: Vec<InT>): List<Vec<InT>> {
             val prev = myPrevPoint
             myPrevPoint = p
-
-            return when {
-                prev != null -> myAdaptiveResampling.resample(prev, p).run { subList(1, size) }
-                else -> listOf(p)
+            when {
+                prev != null -> myAdaptiveResampler.resample(prev, p).drop(1).forEach(myRing!!::add)
+                else -> myTransform(p)?.let(myRing!!::add)
             }
         }
     }
