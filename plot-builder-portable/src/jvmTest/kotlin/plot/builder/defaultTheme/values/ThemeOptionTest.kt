@@ -140,23 +140,8 @@ internal class ThemeOptionTest {
             ThemeOption.LEGEND_TITLE -> (theme.legend() as DefaultLegendTheme).titleKey
 
             ThemeOption.TOOLTIP_RECT -> (theme.tooltips() as DefaultTooltipsTheme).tooltipKey
-            ThemeOption.TOOLTIP_TEXT -> {
-                with ((theme.tooltips() as DefaultTooltipsTheme)) {
-                    when (elemProperty) {
-                        COLOR -> textColorKey
-                        else -> textKey
-                    }
-                }
-            }
-            ThemeOption.TOOLTIP_TITLE_TEXT -> {
-                with ((theme.tooltips() as DefaultTooltipsTheme)) {
-                    when (elemProperty) {
-                        COLOR -> titleTextColorKey
-                        else -> titleTextKey
-                    }
-                }
-            }
-
+            ThemeOption.TOOLTIP_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).textKey
+            ThemeOption.TOOLTIP_TITLE_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).titleTextKey
 
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey

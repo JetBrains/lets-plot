@@ -19,12 +19,8 @@ internal class DefaultTooltipsTheme(
 
     internal val tooltipKey = listOf(TOOLTIP_RECT, RECT)
 
-    internal val textKey = listOf(TOOLTIP_TEXT)
-    internal val titleTextKey = listOf(TOOLTIP_TITLE_TEXT) + textKey
-
-    // Inherits from the 'text' color.
-    internal val textColorKey = textKey + TEXT
-    internal val titleTextColorKey = listOf(TOOLTIP_TITLE_TEXT) + textColorKey
+    internal val textKey = listOf(TOOLTIP_TEXT, TEXT)
+    internal val titleTextKey = listOf(TOOLTIP_TITLE_TEXT, TOOLTIP_TEXT, TEXT)
 
     override fun tooltipColor() = getColor(getElemValue(tooltipKey), Elem.COLOR)
 
@@ -32,11 +28,11 @@ internal class DefaultTooltipsTheme(
 
     override fun tooltipStrokeWidth() = getNumber(getElemValue(tooltipKey), Elem.SIZE)
 
-    override fun textColor() = getColor(getElemValue(textColorKey), Elem.COLOR)
+    override fun textColor() = getColor(getElemValue(textKey), Elem.COLOR)
 
     override fun textFontFace() = getFontFace(getElemValue(textKey))
 
-    override fun titleTextColor() = getColor(getElemValue(titleTextColorKey), Elem.COLOR)
+    override fun titleTextColor() = getColor(getElemValue(titleTextKey), Elem.COLOR)
 
     override fun titleTextFontFace() = getFontFace(getElemValue(titleTextKey)) + textFontFace()
 }

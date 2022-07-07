@@ -20,12 +20,17 @@ class FontFace(
         val BOLD_ITALIC = FontFace(bold = true, italic = true)
 
         fun fromString(str: String): FontFace {
-            return when (str) {
-                "bold" -> BOLD
-                "italic" -> ITALIC
-                "bold_italic" -> BOLD_ITALIC
-                else -> NORMAL
+            fun fromValue(str: String): FontFace {
+                return when (str) {
+                    "bold" -> BOLD
+                    "italic" -> ITALIC
+                    else -> NORMAL
+                }
             }
+            return str.split(' ', '_', '.', '-')
+                .filter(String::isNotEmpty)
+                .map(::fromValue)
+                .fold(FontFace(), FontFace::plus)
         }
     }
 }

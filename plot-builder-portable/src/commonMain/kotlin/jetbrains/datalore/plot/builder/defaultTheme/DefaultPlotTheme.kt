@@ -23,7 +23,7 @@ internal class DefaultPlotTheme(
 
     internal val backgroundKey = listOf(PLOT_BKGR_RECT, RECT)
     internal val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)
-    internal val subtitleKey = listOf(PLOT_SUBTITLE, PLOT_TITLE, TITLE, TEXT)
+    internal val subtitleKey = listOf(PLOT_SUBTITLE, TITLE, TEXT)
     internal val captionKey = listOf(PLOT_CAPTION, TITLE, TEXT)
 
     override fun showBackground(): Boolean {
