@@ -332,10 +332,10 @@ internal abstract class CoordinatesCollector(
 
             fun insert(bbox: Rect<LonLat>) = insert(listOf(bbox))
 
-            onMultiPoint = { insert(it.boundingBox()) }
-            onLineString = { insert(it.boundingBox()) }
-            onMultiLineString = { insert(it.flatten().boundingBox()) }
-            onPolygon = { insert(it.limit()) }
+            onMultiPoint = { it.boundingBox()?.let(::insert) }
+            onLineString = { it.boundingBox()?.let(::insert) }
+            onMultiLineString = { it.flatten().boundingBox()?.let(::insert) }
+            onPolygon = { it.limit()?.let(::insert) }
             onMultiPolygon = { insert(it.limit()) }
         }
     }

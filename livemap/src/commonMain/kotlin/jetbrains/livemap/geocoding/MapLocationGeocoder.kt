@@ -41,7 +41,7 @@ class MapLocationGeocoder(
                     calculateExtendedRectangleWithCenter(
                         myMapRuler,
                         calculateBBoxOfGeoRect(feature.position!!),
-                        myMapProjection.project(feature.centroid!!.reinterpret())
+                        myMapProjection.project(feature.centroid!!.reinterpret()) ?: Vec(0, 0) // TODO: remove this class as map_location doesn't support geocoding anymore
                     )
                 } else {
                     features
@@ -111,7 +111,7 @@ class MapLocationGeocoder(
 
     companion object {
         fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
-            return splitByAntiMeridian().map { rect -> transformBBox(rect, mapProjection::project) }
+            return splitByAntiMeridian().mapNotNull { rect -> transformBBox(rect, mapProjection::project) }
         }
     }
 }

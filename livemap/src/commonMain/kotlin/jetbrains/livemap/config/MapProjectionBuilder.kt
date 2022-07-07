@@ -11,10 +11,7 @@ import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
-import jetbrains.livemap.core.projections.GeoProjection
-import jetbrains.livemap.core.projections.Geographic
-import jetbrains.livemap.core.projections.Projection
-import jetbrains.livemap.core.projections.Projections
+import jetbrains.livemap.core.projections.*
 import jetbrains.livemap.mapengine.MapProjection
 import kotlin.math.min
 
@@ -33,6 +30,26 @@ internal class MapProjectionBuilder(
     }
 
     private fun <InT, InterT, OutT> composite(
+        t1: UnsafeProjection<InT, InterT>,
+        t2: UnsafeProjection<InterT, OutT>
+    ): UnsafeProjection<InT, OutT> {
+        return object : UnsafeProjection<InT, OutT> {
+            override fun project(v: InT): OutT? = v.run(t1::project)?.run(t2::project)
+            override fun invert(v: OutT): InT? = v.run(t2::invert)?.run(t1::invert)
+        }
+    }
+
+    private fun <InT, InterT, OutT> composite(
+        t1: UnsafeProjection<InT, InterT>,
+        t2: Projection<InterT, OutT>
+    ): UnsafeProjection<InT, OutT> {
+        return object : UnsafeProjection<InT, OutT> {
+            override fun project(v: InT): OutT? = v.run(t1::project)?.run(t2::project)
+            override fun invert(v: OutT): InT? = v.run(t2::invert)?.run(t1::invert)
+        }
+    }
+
+    private fun <InT, InterT, OutT> composite(
         t1: Projection<InT, InterT>,
         t2: Projection<InterT, OutT>
     ): Projection<InT, OutT> {
@@ -47,7 +64,7 @@ internal class MapProjectionBuilder(
     }
 
     fun create(): MapProjection {
-        val rect = transformBBox(geoProjection.validRect(), geoProjection::project)
+        val rect = transformBBox(geoProjection.validRect(), geoProjection::project) ?: error("Unable to transform projection valid rect")
         val scale = min(mapRect.width / rect.width, mapRect.height / rect.height)
 
         @Suppress("UNCHECKED_CAST")
@@ -68,8 +85,8 @@ internal class MapProjectionBuilder(
         val proj = composite(geoProjection, linearProjection)
 
         return object : MapProjection {
-            override fun project(v: LonLatPoint): WorldPoint = proj.project(v)
-            override fun invert(v: WorldPoint): LonLatPoint = proj.invert(v)
+            override fun project(v: LonLatPoint): WorldPoint? = proj.project(v)
+            override fun invert(v: WorldPoint): LonLatPoint? = proj.invert(v)
 
             override val mapRect: WorldRectangle
                 get() = this@MapProjectionBuilder.mapRect

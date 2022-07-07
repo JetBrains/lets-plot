@@ -18,7 +18,7 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
 
     override val cylindrical: Boolean = false
 
-    override fun project(v: LonLatPoint): GeographicPoint {
+    override fun project(v: LonLatPoint): GeographicPoint? {
 
         val x = toRadians(v.x)
         val y = toRadians(v.y)
@@ -29,10 +29,10 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
         val px = k * cy * sin(x)
         val py = k * sin(y)
 
-        return safePoint(px, py)
+        return finitePointOrNull(px, py)
     }
 
-    override fun invert(v: GeographicPoint): LonLatPoint {
+    override fun invert(v: GeographicPoint): LonLatPoint? {
 
         val x = v.x
         val y = v.y
@@ -44,7 +44,7 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
         val ix = toDegrees(atan2(x * sc, z * cc))
         val iy = toDegrees(if (z == 0.0) 0.0 else asin(y * sc / z))
 
-        return safePoint(ix, iy)
+        return finitePointOrNull(ix, iy)
     }
 
     protected abstract fun scale(cxcy: Double): Double

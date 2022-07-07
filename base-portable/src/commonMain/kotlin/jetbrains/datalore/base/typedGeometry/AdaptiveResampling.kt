@@ -6,7 +6,7 @@
 package jetbrains.datalore.base.typedGeometry
 
 class AdaptiveResampling<InT, OutT>(
-    private val transform: (Vec<InT>) -> Vec<OutT>,
+    private val transform: (Vec<InT>) -> Vec<OutT>?,
     epsilon: Double
 ) {
     private val epsilonSqr: Double = epsilon * epsilon
@@ -16,7 +16,7 @@ class AdaptiveResampling<InT, OutT>(
     }
 
     fun resample(points: List<Vec<InT>>): List<Vec<OutT>> {
-        val result = ArrayList<Vec<OutT>>(points.size)
+        val result = ArrayList<Vec<OutT>?>(points.size)
 
         for (i in 1 until points.size) {
             val sample = resample(points[i - 1], points[i])
@@ -28,7 +28,7 @@ class AdaptiveResampling<InT, OutT>(
             sample.forEach { p -> result.add(transform(p)) }
         }
 
-        return result
+        return result.filterNotNull()
     }
 
     fun resample(p1: Vec<InT>, p2: Vec<InT>): List<Vec<InT>> {
@@ -51,9 +51,9 @@ class AdaptiveResampling<InT, OutT>(
 
     private fun getSamplePoint(p1: Vec<InT>, p2: Vec<InT>): Vec<InT>? {
         val pc = (p1 + p2) / 2.0
-        val q1 = transform(p1)
-        val q2 = transform(p2)
-        val qc = transform(pc)
+        val q1 = transform(p1) ?: return null
+        val q2 = transform(p2) ?: return null
+        val qc = transform(pc) ?: return null
 
         val distance = if (q1 == q2) {
             length(q1, qc)

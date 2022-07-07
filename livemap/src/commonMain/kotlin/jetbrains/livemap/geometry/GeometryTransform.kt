@@ -21,33 +21,33 @@ private const val SAMPLING_EPSILON = 0.001
 object GeometryTransform {
     fun <InT, OutT> resampling(
         geometry: Geometry<InT>,
-        transform: (Vec<InT>) -> Vec<OutT>
+        transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<Geometry<OutT>> {
         return createTransformer(geometry, resampling(transform))
     }
 
     fun <InT, OutT> simple(
         geometry: MultiPolygon<InT>,
-        transform: (Vec<InT>) -> Vec<OutT>
+        transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, simple(transform))
     }
 
     fun <InT, OutT> resampling(
         geometry: MultiPolygon<InT>,
-        transform: (Vec<InT>) -> Vec<OutT>
+        transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<MultiPolygon<OutT>> {
         return MultiPolygonTransform(geometry, resampling(transform))
     }
 
     private fun <InT, OutT> simple(
-        transform: (Vec<InT>) -> Vec<OutT>
+        transform: (Vec<InT>) -> Vec<OutT>?
     ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
-        return { p, ring -> ring.add(transform(p)) }
+        return { p, ring -> transform(p)?.let { ring.add(it) } }
     }
 
     private fun <InT, OutT> resampling(
-        transform: (Vec<InT>) -> Vec<OutT>
+        transform: (Vec<InT>) -> Vec<OutT>?
     ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
         return IterativeResampler(transform)::next
     }
@@ -67,7 +67,7 @@ object GeometryTransform {
     }
 
     internal class IterativeResampler<InT, OutT>(
-        private val myTransform: (Vec<InT>) -> Vec<OutT>
+        private val myTransform: (Vec<InT>) -> Vec<OutT>?
     ) {
         private val myAdaptiveResampling = AdaptiveResampling(myTransform, SAMPLING_EPSILON)
         private var myPrevPoint: Vec<InT>? = null
@@ -80,7 +80,7 @@ object GeometryTransform {
                 myPrevPoint = null
             }
 
-            resample(p).forEach { newPoint -> myRing!!.add(myTransform(newPoint)) }
+            resample(p).forEach { newPoint -> myTransform(newPoint)?.let { myRing!!.add(it) } }
         }
 
         private fun resample(p: Vec<InT>): List<Vec<InT>> {

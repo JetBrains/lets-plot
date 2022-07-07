@@ -141,7 +141,7 @@ class LiveMapUiSystem(
                 name = "get_map_position",
                 enabledVisualKey = KEY_GET_CENTER
             ) { _, _ ->
-                myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
+                myLiveMapLocation.viewLonLatRect?.let { myMapLocationConsumer(it) }
             }
 
             myMakeGeometryButton = newButton(

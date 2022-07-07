@@ -14,7 +14,7 @@ interface Geographic
 
 typealias GeographicPoint = Vec<Geographic>
 
-interface GeoProjection : Projection<LonLatPoint, GeographicPoint> {
+interface GeoProjection : UnsafeProjection<LonLatPoint, GeographicPoint> {
     fun validRect(): Rect<LonLat>
     val cylindrical: Boolean
 }

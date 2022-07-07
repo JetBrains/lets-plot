@@ -76,7 +76,7 @@ fun <TypeT> newSpanRectangle(leftTop: Vec<TypeT>, rightBottom: Vec<TypeT>): Rect
     return Rect(leftTop, rightBottom - leftTop)
 }
 
-fun <TypeT> Polygon<TypeT>.limit(): Rect<TypeT> {
+fun <TypeT> Polygon<TypeT>.limit(): Rect<TypeT>? {
     return asSequence().flatten().asIterable().boundingBox()
 }
 
@@ -96,13 +96,11 @@ fun Rect<*>.xRange() = DoubleSpan(origin.x, origin.x + dimension.x)
 fun Rect<*>.yRange() = DoubleSpan(origin.y, origin.y + dimension.y)
 
 fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> {
-    return map { polygon -> polygon.limit() }
+    return mapNotNull { polygon -> polygon.limit() }
 }
 
-fun <TypeT> safePoint(x: Double, y: Double): Vec<TypeT> {
-    return if (x.isNaN() || y.isNaN()) {
-        error("Value for DoubleVector isNaN x = $x and y = $y")
-    } else {
-        explicitVec(x, y)
-    }
+fun <TypeT> finitePointOrNull(x: Double, y: Double): Vec<TypeT>?  = when {
+    x.isFinite() && y.isFinite() -> explicitVec(x, y)
+    else -> null
 }
+

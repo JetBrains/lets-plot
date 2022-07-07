@@ -6,6 +6,7 @@
 package jetbrains.livemap.mapengine.basemap.vector
 
 import jetbrains.datalore.base.async.Async
+import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.TileLayer
@@ -19,13 +20,13 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
 
     override fun fetch(cellKey: CellKey): Async<List<TileLayer>> {
         val quadKeys = convertCellKeyToQuadKeys(myMapProjection, cellKey)
-        val bbox = calculateBBox(quadKeys)
+        val bbox = calculateBBox(quadKeys) ?: return Asyncs.constant(emptyList())
 
         val zoom = cellKey.length
         return myTileService.getTileData(bbox, zoom)
     }
 
-    private fun calculateBBox(quadKeys: Set<QuadKey<LonLat>>): Rect<LonLat> = // TODO: add tests for antimeridians
+    private fun calculateBBox(quadKeys: Set<QuadKey<LonLat>>): Rect<LonLat>? = // TODO: add tests for antimeridians
         BBOX_CALCULATOR
             .geoRectsBBox(
                 quadKeys.map { convertToGeoRectangle(it.computeRect()) }

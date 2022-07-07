@@ -5,6 +5,11 @@
 
 package jetbrains.livemap.core.projections
 
+interface UnsafeProjection<InT, OutT> {
+    fun project(v: InT): OutT?
+    fun invert(v: OutT): InT?
+}
+
 interface Projection<InT, OutT> {
     fun project(v: InT): OutT
     fun invert(v: OutT): InT

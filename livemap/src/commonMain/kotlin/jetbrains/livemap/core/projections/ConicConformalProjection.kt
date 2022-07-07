@@ -11,8 +11,8 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.finitePointOrNull
 import jetbrains.datalore.base.typedGeometry.newSpanRectangle
-import jetbrains.datalore.base.typedGeometry.safePoint
 import kotlin.math.*
 
 internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection {
@@ -31,7 +31,7 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
     override val cylindrical: Boolean = false
 
-    override fun project(v: LonLatPoint): GeographicPoint {
+    override fun project(v: LonLatPoint): GeographicPoint? {
         val x = toRadians(v.x)
         var y = toRadians(v.y)
 
@@ -49,10 +49,10 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
         val px = r * sin(n * x)
         val py = f - r * cos(n * x)
-        return safePoint(px, py)
+        return finitePointOrNull(px, py)
     }
 
-    override fun invert(v: GeographicPoint): LonLatPoint {
+    override fun invert(v: GeographicPoint): LonLatPoint? {
         val x = v.x
         val y = v.y
         val fy = f - y
@@ -60,7 +60,7 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
         val ix = toDegrees(atan2(x, abs(fy)) / n * fy.sign)
         val iy = toDegrees(2 * atan((f / r).pow(1 / n)) - PI / 2)
-        return safePoint(ix, iy)
+        return finitePointOrNull(ix, iy)
     }
 
     companion object {
