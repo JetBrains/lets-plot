@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
@@ -16,6 +15,7 @@ import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import jetbrains.datalore.vis.TextStyle
 
 internal class DefaultLegendTheme(
     options: Map<String, Any>
@@ -49,20 +49,12 @@ internal class DefaultLegendTheme(
         return getValue(ThemeOption.LEGEND_DIRECTION) as LegendDirection
     }
 
-    override fun titleColor(): Color {
-        return getColor(getElemValue(titleKey), ThemeOption.Elem.COLOR)
+    override fun titleTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(titleKey))
     }
 
-    override fun titleFontFace(): FontFace {
-        return getFontFace(getElemValue(titleKey))
-    }
-
-    override fun textColor(): Color {
-        return getColor(getElemValue(textKey), ThemeOption.Elem.COLOR)
-    }
-
-    override fun textFontFace(): FontFace {
-        return getFontFace(getElemValue(textKey))
+    override fun textTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(textKey))
     }
 
     override fun showBackground(): Boolean {

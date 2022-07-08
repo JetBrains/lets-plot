@@ -12,8 +12,7 @@ import jetbrains.datalore.base.values.FontFamily
 
 class StyleSheet(
     private val textStyles: Map<String, TextStyle>,
-    private val defaultFamily: String,
-    private val defaultSize: Double
+    private val defaultFamily: String
 ) {
     fun getClasses(): List<String> = textStyles.keys.toList()
 
@@ -22,7 +21,7 @@ class StyleSheet(
             ?: TextStyle(
                 family = FontFamily.forName(defaultFamily),
                 face = UNDEFINED_FONT_FACE,
-                size = defaultSize,
+                size = DEFAULT_FONT_SIZE,
                 color = UNDEFINED_FONT_COLOR
             )
     }
@@ -49,6 +48,7 @@ class StyleSheet(
     companion object {
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
+        const val DEFAULT_FONT_SIZE = 15.0
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +
@@ -82,7 +82,7 @@ class StyleSheet(
                 .forEach { matched ->
                     val (className, styleProperties) = matched.destructured
 
-                    val fontFamily = defaultFamily // todo: parseProperty(styleProperties, "font-family")
+                    val fontFamily = parseProperty(styleProperties, "font-family") ?: defaultFamily
                     val fontWeight = parseProperty(styleProperties, "font-weight")
                     val fontStyle = parseProperty(styleProperties, "font-style")
                     val fontSize = parseProperty(styleProperties, "font-size")?.removeSuffix("px")?.toDoubleOrNull()
@@ -97,7 +97,7 @@ class StyleSheet(
                     )
                 }
 
-            return StyleSheet(classes, defaultFamily, defaultSize)
+            return StyleSheet(classes, defaultFamily)
         }
     }
 }

@@ -6,18 +6,15 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.vis.TextStyle
 
 interface PlotTheme {
     fun showBackground(): Boolean
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
-    fun titleColor(): Color
-    fun titleFontFace(): FontFace
-    fun subtitleColor(): Color
-    fun subtitleFontFace(): FontFace
-    fun captionColor(): Color
-    fun captionFontFace(): FontFace
+    fun titleTextStyle(): TextStyle
+    fun subtitleTextStyle(): TextStyle
+    fun captionTextStyle(): TextStyle
     fun textColor(): Color
 }

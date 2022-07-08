@@ -5,13 +5,7 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.plot.builder.presentation.Defaults.Common.*
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
-import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_MEDIUM
-import jetbrains.datalore.plot.builder.presentation.Defaults.Plot
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.StyleSheet.Companion.toCSS
@@ -70,95 +64,43 @@ object Style {
         return css.toString()
     }
 
-
-    private val DEFAULT_FAMILY = FontFamily.forName(FONT_FAMILY_NORMAL)
-    private const val DEFAULT_SIZE = FONT_MEDIUM.toDouble()
-    private val DEFAULT_FACE = FontFace.NORMAL
-    private val DEFAULT_COLOR = Color.BLACK
-
-    private fun createTextStyle(
-        family: FontFamily = DEFAULT_FAMILY,
-        face: FontFace = DEFAULT_FACE,
-        size: Double = DEFAULT_SIZE,
-        color: Color = DEFAULT_COLOR
-    ) = TextStyle(family, face, size, color)
-
-    private val DEFAULT_TEXT_STYLES = mapOf(
-        PLOT_TITLE to createTextStyle(size = Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
-        PLOT_SUBTITLE to createTextStyle(size = Subtitle.FONT_SIZE.toDouble()),
-        PLOT_CAPTION to createTextStyle(size = Caption.FONT_SIZE.toDouble()),
-        LEGEND_TITLE to createTextStyle(size = Legend.TITLE_FONT_SIZE.toDouble()),
-        LEGEND_ITEM to createTextStyle(size = Legend.ITEM_FONT_SIZE.toDouble()),
-        TOOLTIP_TEXT to createTextStyle(size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
-        TOOLTIP_TITLE to createTextStyle(
-            size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(),
-            face = FontFace.BOLD
-        ),
-        TOOLTIP_LABEL to createTextStyle(
-            size = Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(),
-            face = FontFace.BOLD
-        ),
-        "$AXIS_TITLE-x" to createTextStyle(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
-        "$AXIS_TITLE-y" to createTextStyle(size = Plot.Axis.TITLE_FONT_SIZE.toDouble()),
-        "$AXIS_TEXT-x" to createTextStyle(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
-        "$AXIS_TEXT-y" to createTextStyle(size = Plot.Axis.TICK_FONT_SIZE.toDouble()),
-        "$AXIS_TOOLTIP_TEXT-x" to createTextStyle(
-            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
-            color = Color.WHITE
-        ),
-        "$AXIS_TOOLTIP_TEXT-y" to createTextStyle(
-            size = Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
-            color = Color.WHITE
-        ),
-        "$FACET_STRIP_TEXT-x" to createTextStyle(size = FONT_MEDIUM.toDouble()),
-        "$FACET_STRIP_TEXT-y" to createTextStyle(size = FONT_MEDIUM.toDouble())
-    )
-
     fun default(): StyleSheet {
         return StyleSheet(
-            DEFAULT_TEXT_STYLES,
-            defaultFamily = FONT_FAMILY_NORMAL,
-            defaultSize = DEFAULT_SIZE
+            Defaults.DEFAULT_TEXT_STYLES,
+            defaultFamily = FONT_FAMILY_NORMAL
         )
     }
 
     fun fromTheme(theme: Theme, flippedAxis: Boolean): StyleSheet {
-        fun MutableMap<String, TextStyle>.put(className: String, color: Color, fontFace: FontFace) {
-            this[className] = (DEFAULT_TEXT_STYLES[className] ?: createTextStyle()).copy(face = fontFace, color = color)
-        }
+        val hAxisTheme = theme.horizontalAxis(flippedAxis)
+        val hAxisName = if (flippedAxis) "y" else "x"
+        val vAxisTheme = theme.verticalAxis(flippedAxis)
+        val vAxisName = if (flippedAxis) "x" else "y"
 
-        val textStyles = mutableMapOf<String, TextStyle>()
-        with(textStyles) {
-            put(PLOT_TITLE, theme.plot().titleColor(), theme.plot().titleFontFace() )
-            put(PLOT_SUBTITLE, theme.plot().subtitleColor(), theme.plot().subtitleFontFace())
-            put(PLOT_CAPTION, theme.plot().captionColor(), theme.plot().captionFontFace())
+        val textStyles = mapOf(
+            PLOT_TITLE to theme.plot().titleTextStyle(),
+            PLOT_SUBTITLE to theme.plot().subtitleTextStyle(),
+            PLOT_CAPTION to theme.plot().captionTextStyle(),
 
-            put(LEGEND_TITLE, theme.legend().titleColor(), theme.legend().titleFontFace())
-            put(LEGEND_ITEM, theme.legend().textColor(), theme.legend().textFontFace())
+            LEGEND_TITLE to theme.legend().titleTextStyle(),
+            LEGEND_ITEM to theme.legend().textTextStyle(),
 
-            val hAxisTheme = theme.horizontalAxis(flippedAxis)
-            val hAxisName = if (flippedAxis) "y" else "x"
-            put("$AXIS_TITLE-$hAxisName", hAxisTheme.titleColor(), hAxisTheme.titleFontFace())
-            put("$AXIS_TEXT-$hAxisName", hAxisTheme.labelColor(), hAxisTheme.labelFontFace())
-            put("$AXIS_TOOLTIP_TEXT-$hAxisName", hAxisTheme.tooltipTextColor(), hAxisTheme.tooltipFontFace())
+            "$AXIS_TITLE-$hAxisName" to hAxisTheme.titleTextStyle(),
+            "$AXIS_TEXT-$hAxisName" to hAxisTheme.labelTextStyle(),
+            "$AXIS_TOOLTIP_TEXT-$hAxisName" to hAxisTheme.tooltipTextStyle(),
 
-            val vAxisTheme = theme.verticalAxis(flippedAxis)
-            val vAxisName = if (flippedAxis) "x" else "y"
-            put("$AXIS_TITLE-$vAxisName", vAxisTheme.titleColor(), vAxisTheme.titleFontFace())
-            put("$AXIS_TEXT-$vAxisName", vAxisTheme.labelColor(), vAxisTheme.labelFontFace())
-            put("$AXIS_TOOLTIP_TEXT-$vAxisName", vAxisTheme.tooltipTextColor(), vAxisTheme.tooltipFontFace())
+            "$AXIS_TITLE-$vAxisName" to vAxisTheme.titleTextStyle(),
+            "$AXIS_TEXT-$vAxisName" to vAxisTheme.labelTextStyle(),
+            "$AXIS_TOOLTIP_TEXT-$vAxisName" to vAxisTheme.tooltipTextStyle(),
 
-            put("$FACET_STRIP_TEXT-x", theme.facets().stripTextColor(), theme.facets().stripFontFace())
-            put("$FACET_STRIP_TEXT-y", theme.facets().stripTextColor(), theme.facets().stripFontFace())
+            "$FACET_STRIP_TEXT-x" to theme.facets().stripTextStyle(),
+            "$FACET_STRIP_TEXT-y" to theme.facets().stripTextStyle(),
 
-            put(TOOLTIP_TEXT, theme.tooltips().textColor(), theme.tooltips().textFontFace())
-            put(TOOLTIP_TITLE, theme.tooltips().titleTextColor(), theme.tooltips().titleTextFontFace())
-            put(TOOLTIP_LABEL, theme.tooltips().textColor(), FontFace.BOLD + theme.tooltips().textFontFace())
-        }
-        return StyleSheet(
-            textStyles,
-            defaultFamily = FONT_FAMILY_NORMAL,
-            defaultSize = DEFAULT_SIZE
+            TOOLTIP_TEXT to theme.tooltips().textStyle(),
+            TOOLTIP_TITLE to theme.tooltips().titleTextStyle(),
+            TOOLTIP_LABEL to theme.tooltips().labelTextStyle(),
         )
+
+        return StyleSheet(textStyles, defaultFamily = FONT_FAMILY_NORMAL)
     }
 }

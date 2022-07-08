@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
@@ -23,6 +22,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.vis.TextStyle
 
 internal class DefaultAxisTheme(
     override val axis: String,
@@ -67,12 +67,8 @@ internal class DefaultAxisTheme(
         return !isElemBlank(tooltipKey)
     }
 
-    override fun titleColor(): Color {
-        return getColor(getElemValue(titleKey), Elem.COLOR)
-    }
-
-    override fun titleFontFace(): FontFace {
-        return getFontFace(getElemValue(titleKey))
+    override fun titleTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(titleKey))
     }
 
     override fun lineWidth(): Double {
@@ -95,12 +91,8 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
-    override fun labelColor(): Color {
-        return getColor(getElemValue(textKey), Elem.COLOR)
-    }
-
-    override fun labelFontFace(): FontFace {
-        return getFontFace(getElemValue(textKey))
+    override fun labelTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(textKey))
     }
 
     override fun tooltipFill(): Color {
@@ -115,11 +107,9 @@ internal class DefaultAxisTheme(
         return getNumber(getElemValue(tooltipKey), Elem.SIZE)
     }
 
-    override fun tooltipTextColor(): Color {
-        return getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
-    }
-
-    override fun tooltipFontFace(): FontFace {
-        return getFontFace(getElemValue(tooltipTextKey))
+    override fun tooltipTextStyle(): TextStyle {
+        val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
+        val textStyle = getTextStyle(getElemValue(tooltipTextKey))
+        return textStyle.copy(color = tooltipTextColor)
     }
 }

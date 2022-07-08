@@ -5,45 +5,26 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.PlotTheme
+import jetbrains.datalore.vis.TextStyle
 
 object PlotLabelSpecFactory {
-    fun plotTitle(theme: PlotTheme) = PlotLabelSpec(
-        Defaults.Common.Title.FONT_SIZE.toDouble(),
-        theme.titleFontFace().bold
-    )
+    fun plotTitle(theme: PlotTheme) = plotLabelSpec(theme.titleTextStyle())
 
-    fun plotSubtitle(theme: PlotTheme) = PlotLabelSpec(
-        Defaults.Common.Subtitle.FONT_SIZE.toDouble(),
-        theme.subtitleFontFace().bold
-    )
+    fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleTextStyle())
 
-    fun plotCaption(theme: PlotTheme) = PlotLabelSpec(
-        Defaults.Common.Caption.FONT_SIZE.toDouble(),
-        theme.captionFontFace().bold
-    )
+    fun plotCaption(theme: PlotTheme) = plotLabelSpec(theme.captionTextStyle())
 
-    fun legendTitle(theme: LegendTheme) = PlotLabelSpec(
-        Defaults.Common.Legend.TITLE_FONT_SIZE.toDouble(),
-        theme.titleFontFace().bold
-    )
+    fun legendTitle(theme: LegendTheme) = plotLabelSpec(theme.titleTextStyle())
 
-    fun legendItem(theme: LegendTheme) = PlotLabelSpec(
-        Defaults.Common.Legend.ITEM_FONT_SIZE.toDouble(),
-        theme.textFontFace().bold
-    )
+    fun legendItem(theme: LegendTheme) = plotLabelSpec(theme.textTextStyle())
 
-    fun axisTick(theme: AxisTheme) = PlotLabelSpec(
-        Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble(),
-        theme.labelFontFace().bold
-    )
+    fun axisTick(theme: AxisTheme) = plotLabelSpec(theme.labelTextStyle())
 
-    fun axisTitle(theme: AxisTheme) = PlotLabelSpec(
-        Defaults.Plot.Axis.TITLE_FONT_SIZE.toDouble(),
-        theme.titleFontFace().bold
-    )
+    fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleTextStyle())
+
+    private fun plotLabelSpec(textStyle: TextStyle) = PlotLabelSpec(textStyle.size, textStyle.face.bold)
 }

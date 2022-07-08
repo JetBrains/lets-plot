@@ -47,6 +47,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.COLOR to Color.BLUE,
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.FONT_FACE to FontFace.NORMAL,
+                Elem.FONT_FAMILY to Defaults.FONT_FAMILY_NORMAL,
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,

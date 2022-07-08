@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.vis.TextStyle
 
 interface AxisTheme {
     val axis: String
@@ -24,8 +24,7 @@ interface AxisTheme {
 
     fun showTooltip(): Boolean
 
-    fun titleColor(): Color
-    fun titleFontFace(): FontFace
+    fun titleTextStyle(): TextStyle
 
     fun lineWidth(): Double
 
@@ -33,8 +32,7 @@ interface AxisTheme {
 
     fun tickMarkColor(): Color
 
-    fun labelColor(): Color
-    fun labelFontFace(): FontFace
+    fun labelTextStyle(): TextStyle
 
     fun tickMarkWidth(): Double
 
@@ -52,6 +50,5 @@ interface AxisTheme {
     fun tooltipColor(): Color
     fun tooltipStrokeWidth(): Double
 
-    fun tooltipTextColor(): Color
-    fun tooltipFontFace(): FontFace
+    fun tooltipTextStyle(): TextStyle
 }

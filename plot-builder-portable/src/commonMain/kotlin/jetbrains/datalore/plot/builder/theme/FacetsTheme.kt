@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.vis.TextStyle
 
 interface FacetsTheme {
     fun showStrip(): Boolean
@@ -15,6 +15,5 @@ interface FacetsTheme {
     fun stripFill(): Color
     fun stripColor(): Color
     fun stripStrokeWidth(): Double
-    fun stripTextColor(): Color
-    fun stripFontFace(): FontFace
+    fun stripTextStyle(): TextStyle
 }

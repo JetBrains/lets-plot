@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
@@ -16,6 +15,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.theme.PlotTheme
+import jetbrains.datalore.vis.TextStyle
 
 internal class DefaultPlotTheme(
     options: Map<String, Any>
@@ -42,28 +42,16 @@ internal class DefaultPlotTheme(
         return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
 
-    override fun titleColor(): Color {
-        return getColor(getElemValue(titleKey), Elem.COLOR)
+    override fun titleTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(titleKey))
     }
 
-    override fun titleFontFace(): FontFace {
-        return getFontFace(getElemValue(titleKey))
+    override fun subtitleTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(subtitleKey))
     }
 
-    override fun subtitleColor(): Color {
-        return getColor(getElemValue(subtitleKey), Elem.COLOR)
-    }
-
-    override fun subtitleFontFace(): FontFace {
-        return getFontFace(getElemValue(subtitleKey))
-    }
-
-    override fun captionColor(): Color {
-        return getColor(getElemValue(captionKey), Elem.COLOR)
-    }
-
-    override fun captionFontFace(): FontFace {
-        return getFontFace(getElemValue(captionKey))
+    override fun captionTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(captionKey))
     }
 
     override fun textColor(): Color {

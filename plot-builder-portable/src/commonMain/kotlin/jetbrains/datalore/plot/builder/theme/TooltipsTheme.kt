@@ -6,15 +6,14 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.vis.TextStyle
 
 interface TooltipsTheme {
     fun tooltipColor(): Color
     fun tooltipFill(): Color
     fun tooltipStrokeWidth(): Double
 
-    fun textColor(): Color
-    fun textFontFace(): FontFace
-    fun titleTextColor(): Color
-    fun titleTextFontFace(): FontFace
+    fun textStyle(): TextStyle
+    fun titleTextStyle(): TextStyle
+    fun labelTextStyle(): TextStyle
 }
