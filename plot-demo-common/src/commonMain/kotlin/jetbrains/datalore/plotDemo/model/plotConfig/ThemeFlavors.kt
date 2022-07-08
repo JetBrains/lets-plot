@@ -23,13 +23,13 @@ class ThemeFlavors {
     )
 
     private fun allThemesWithFlavor(flavorName: String, facets: Boolean = false) = listOf(
-        withTheme(null, flavorName, facets),
         withTheme("classic", flavorName, facets),
         withTheme("light", flavorName, facets),
         withTheme("grey", flavorName, facets),
         withTheme("minimal", flavorName, facets),
         withTheme("minimal2", flavorName, facets),
         withTheme("none", flavorName, facets),
+        withTheme("bw", flavorName, facets),
     )
 
     private fun theme(name: String?, flavor: String?): String {

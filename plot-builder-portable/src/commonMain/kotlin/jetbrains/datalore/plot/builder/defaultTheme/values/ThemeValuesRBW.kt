@@ -60,11 +60,8 @@ class ThemeValuesRBW : ThemeValues(VALUES) {
             ),
 
             AXIS_LINE to ELEMENT_BLANK,
-            AXIS_TICKS to mapOf(
-                Elem.COLOR to PANEL_BORDER
-            ),
             AXIS to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to PANEL_BORDER
             ),
 
             AXIS_TOOLTIP to mapOf(
