@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SAMPLING
@@ -17,13 +16,23 @@ import jetbrains.datalore.plot.config.aes.AesOptionConversion
 
 internal object LayerConfigUtil {
 
-    fun initPositionAdjustments(opts: OptionsAccessor, defaultPos: PosProvider): PosProvider {
-        if (opts.has(POS)) {
-            val posConfig = PosConfig.create(opts[POS]!!)
-            return posConfig.pos
+    fun positionAdjustmentOptions(layerOptions: OptionsAccessor, geomProto: GeomProto): Map<String, Any> {
+        val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
+        val specifiedPosOptions: Map<String, Any> = when (val v = layerOptions[POS]) {
+            null -> preferredPosOptions
+            is Map<*, *> ->
+                @Suppress("UNCHECKED_CAST")
+                v as Map<String, Any>
+            else ->
+                mapOf(Option.Meta.NAME to v.toString())
         }
 
-        return defaultPos
+        return if (specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME]) {
+            // Merge
+            preferredPosOptions + specifiedPosOptions
+        } else {
+            specifiedPosOptions
+        }
     }
 
     fun initConstants(layerConfig: OptionsAccessor, consumedAesSet: Set<Aes<*>>): Map<Aes<*>, Any> {
