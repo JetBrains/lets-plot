@@ -61,6 +61,7 @@ class ThemeFlavor(
             ThemeOption.PANEL_GRID,
             ThemeOption.PANEL_BKGR_RECT,
             ThemeOption.PANEL_BORDER_RECT,
+            ThemeOption.FACET_STRIP_BGR_RECT,
 
             ThemeOption.AXIS,
 
