@@ -11,6 +11,7 @@ __all__ = [
     'theme_minimal',
     'theme_minimal2',
     'theme_none',
+    'theme_bw',
 ]
 
 
@@ -174,3 +175,30 @@ def theme_none():
 
     """
     return FeatureSpec('theme', name="none")
+
+
+def theme_bw():
+    """
+    Grey lines on white backgrounds with black plot border.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Theme specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme_bw()
+
+    """
+    return FeatureSpec('theme', name="bw")
