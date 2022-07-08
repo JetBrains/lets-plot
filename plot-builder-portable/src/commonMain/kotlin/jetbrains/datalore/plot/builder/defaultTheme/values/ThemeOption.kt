@@ -108,6 +108,7 @@ object ThemeOption {
         const val R_LIGHT = "light"
         const val R_CLASSIC = "classic"
         const val R_MINIMAL = "minimal"
+        const val R_BW = "bw"
 
         // lets-plot themes
         const val LP_MINIMAL = "minimal2"
@@ -120,6 +121,7 @@ object ThemeOption {
             Name.R_LIGHT,
             Name.R_CLASSIC,
             Name.R_MINIMAL,
+            Name.R_BW,
             Name.LP_MINIMAL,
             Name.LP_NONE,
         )

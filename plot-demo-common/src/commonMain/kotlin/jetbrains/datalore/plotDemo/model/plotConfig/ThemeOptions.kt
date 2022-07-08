@@ -11,13 +11,13 @@ class ThemeOptions {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             // use predefined themes
-            withTheme(null),
             withTheme("classic"),
             withTheme("light"),
             withTheme("grey"),
             withTheme("minimal"),
             withTheme("minimal2"),
             withTheme("none"),
+            withTheme("bw"),
 
             setThemeOptions()
         )
