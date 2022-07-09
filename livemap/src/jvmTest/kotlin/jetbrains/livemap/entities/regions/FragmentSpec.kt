@@ -7,7 +7,7 @@ package jetbrains.datalore.jetbrains.livemap.entities.regions
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -15,7 +15,7 @@ import jetbrains.livemap.fragment.FragmentKey
 import jetbrains.livemap.fragment.Utils.entityName
 
 class FragmentSpec (private var myKey: FragmentKey) {
-    private lateinit var myGeometries: Boundary<Generic>
+    private lateinit var myGeometries: Boundary<Untyped>
     private var myEntity: EcsEntity? = null
 
     internal constructor(regionId: String, quad: QuadKey<LonLat>) : this(FragmentKey(regionId, quad))
@@ -37,11 +37,11 @@ class FragmentSpec (private var myKey: FragmentKey) {
     }
 
 
-    fun geometries(): Boundary<Generic> {
+    fun geometries(): Boundary<Untyped> {
         return myGeometries
     }
 
-    internal fun setGeometries(geometries: Boundary<Generic>): FragmentSpec {
+    internal fun setGeometries(geometries: Boundary<Untyped>): FragmentSpec {
         myGeometries = geometries
         return this
     }

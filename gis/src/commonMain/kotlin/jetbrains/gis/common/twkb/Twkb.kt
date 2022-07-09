@@ -6,26 +6,26 @@
 package jetbrains.gis.common.twkb
 
 import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.gis.common.twkb.VarInt.decodeZigZag
 import kotlin.math.pow
 
 object Twkb {
 
-    fun parse(data: ByteArray, geometryConsumer: SimpleFeature.GeometryConsumer<Generic>) {
+    fun parse(data: ByteArray, geometryConsumer: SimpleFeature.GeometryConsumer<Untyped>) {
         val parser = Parser(data, geometryConsumer)
         while (parser.next()) {
             continue // parse all untill the end
         }
     }
 
-    fun parser(data: ByteArray, geometryConsumer: SimpleFeature.GeometryConsumer<Generic>): Parser {
+    fun parser(data: ByteArray, geometryConsumer: SimpleFeature.GeometryConsumer<Untyped>): Parser {
         return Parser(data, geometryConsumer)
     }
 
     class Parser internal constructor(
         data: ByteArray,
-        private val myGeometryConsumer: SimpleFeature.GeometryConsumer<Generic>
+        private val myGeometryConsumer: SimpleFeature.GeometryConsumer<Untyped>
     ) {
         private val myInputBuffer: InputBuffer = InputBuffer(data)
         private var myFeatureParser: SimpleFeatureParser? = null

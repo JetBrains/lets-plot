@@ -10,6 +10,9 @@ import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 
+/*
+ Map projection, like mercator, WSG89, Albers and so on, configured to be used by LiveMap.
+ */
 interface Geographic
 
 typealias GeographicPoint = Vec<Geographic>

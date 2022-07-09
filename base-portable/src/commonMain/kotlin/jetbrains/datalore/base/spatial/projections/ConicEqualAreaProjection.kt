@@ -1,21 +1,17 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.projections
+package jetbrains.datalore.base.spatial.projections
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.math.toRadians
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.typedGeometry.finitePointOrNull
-import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 import kotlin.math.*
 
-internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection {
+internal class ConicEqualAreaProjection(y0: Double, y1: Double) : Projection {
     private val n: Double
     private val c: Double
     private val r0: Double
@@ -31,10 +27,10 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
         r0 = sqrt(c) / n
     }
 
-    override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
     override val cylindrical: Boolean = false
 
-    override fun project(v: LonLatPoint): GeographicPoint? {
+    override fun project(v: DoubleVector): DoubleVector? {
         var x = toRadians(v.x)
         val y = toRadians(v.y)
 
@@ -43,10 +39,10 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
 
         val px = r * sin(x)
         val py = r0 - r * cos(x)
-        return finitePointOrNull(px, py)
+        return finiteDoubleVectorOrNull(px, py)
     }
 
-    override fun invert(v: GeographicPoint): LonLatPoint? {
+    override fun invert(v: DoubleVector): DoubleVector? {
         val x = v.x
         val y = v.y
         val r0y = r0 - y
@@ -54,13 +50,10 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : GeoProjection 
         val ix = toDegrees(atan2(x, abs(r0y)) / n * r0y.sign)
         val iy = toDegrees(asin((c - (x * x + r0y * r0y) * n * n) / (2 * n)))
 
-        return finitePointOrNull(ix, iy)
+        return finiteDoubleVectorOrNull(ix, iy)
     }
 
     companion object {
-        private val VALID_RECTANGLE = newSpanRectangle(
-            explicitVec<LonLat>(-180.0, -90.0),
-            explicitVec<LonLat>(+180.0, +90.0)
-        )
+        private val VALID_RECTANGLE = DoubleRectangle.LTRB(-180.0, -90.0, +180.0, +90.0)
     }
 }

@@ -5,12 +5,29 @@
 
 package jetbrains.datalore.base.algorithms
 
+import jetbrains.datalore.base.geometry.DoubleVector
 
-class AdaptiveResampler<T>(
+
+class AdaptiveResampler<T> private constructor(
     private val transform: (T) -> T?,
-    val delegate: PointDelegate<T>,
-    precision: Double
+    precision: Double,
+    private val dataAdapter: DataAdapter<T>
 ) {
+    companion object {
+        private val DOUBLE_VECTOR_ADAPTER = object : DataAdapter<DoubleVector> {
+            override fun x(p: DoubleVector) = p.x
+            override fun y(p: DoubleVector) = p.y
+            override fun create(x: Double, y: Double) = DoubleVector(x, y)
+        }
+
+        fun forDoubleVector(transform: (DoubleVector) -> DoubleVector?, precision: Double): AdaptiveResampler<DoubleVector> {
+            return AdaptiveResampler(transform, precision, DOUBLE_VECTOR_ADAPTER)
+        }
+
+        fun <T> generic(transform: (T) -> T?, precision: Double, adapter: DataAdapter<T>): AdaptiveResampler<T> {
+            return AdaptiveResampler(transform, precision, adapter)
+        }
+    }
     private val precisionSqr: Double = precision * precision
 
     fun resample(points: List<T>): List<T> {
@@ -73,15 +90,18 @@ class AdaptiveResampler<T>(
         return dot * dot / len
     }
 
-    inline val T.x get() = delegate.x(this)
-    inline val T.y get() = delegate.y(this)
-    private operator fun T.plus(other: T): T = delegate.newObj(x + other.x, y + other.y)
-    private operator fun T.div(other: T): T = delegate.newObj(x / other.x, y / other.y)
-    private operator fun T.div(v: Double): T = delegate.newObj(x / v, y / v)
+    val T.x get() = dataAdapter.x(this)
+    val T.y get() = dataAdapter.y(this)
+    private operator fun T.plus(other: T): T = dataAdapter.create(x + other.x, y + other.y)
+    private operator fun T.div(other: T): T = dataAdapter.create(x / other.x, y / other.y)
+    private operator fun T.div(v: Double): T = dataAdapter.create(x / v, y / v)
 
-    interface PointDelegate<T> {
-        fun x(obj: T): Double
-        fun y(obj: T): Double
-        fun newObj(x: Double, y: Double): T
+    interface DataAdapter<T> {
+        fun x(p: T): Double
+        fun y(p: T): Double
+        fun create(x: Double, y: Double): T
+
+        val T.x get() = x(this)
+        val T.y get() = y(this)
     }
 }

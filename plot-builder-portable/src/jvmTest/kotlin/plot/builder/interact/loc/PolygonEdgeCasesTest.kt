@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.interact.loc
 import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
@@ -225,9 +225,9 @@ class PolygonEdgeCasesTest {
 
     @Test
     fun geomUtilCreateMultipolygon_fromThreeRing() {
-        fun vec(x: Double, y: Double) = explicitVec<Generic>(x, y)
+        fun vec(x: Double, y: Double) = explicitVec<Untyped>(x, y)
 
-        val points = ArrayList<Vec<Generic>>()
+        val points = ArrayList<Vec<Untyped>>()
         points.addAll(
             listOf(
                 vec(0.0, 0.0),

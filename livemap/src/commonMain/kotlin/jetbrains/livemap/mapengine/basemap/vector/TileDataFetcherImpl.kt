@@ -29,6 +29,6 @@ internal class TileDataFetcherImpl(private val myMapProjection: MapProjection, p
     private fun calculateBBox(quadKeys: Set<QuadKey<LonLat>>): Rect<LonLat>? = // TODO: add tests for antimeridians
         BBOX_CALCULATOR
             .geoRectsBBox(
-                quadKeys.map { convertToGeoRectangle(it.computeRect()) }
+                quadKeys.map(QuadKey<LonLat>::computeRect).map(::convertToGeoRectangle)
             )
 }

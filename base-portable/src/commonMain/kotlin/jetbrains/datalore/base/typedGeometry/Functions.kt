@@ -5,27 +5,29 @@
 
 package jetbrains.datalore.base.typedGeometry
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 
-class Generic
+class Untyped
 
 @Suppress("UNCHECKED_CAST")
-fun <TypeT> Vec<Generic>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
+fun <TypeT> Vec<Untyped>.reinterpret(): Vec<TypeT> = this as Vec<TypeT>
 
 @Suppress("UNCHECKED_CAST")
-fun <TypeT> MultiPoint<Generic>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>
+fun <TypeT> MultiPoint<Untyped>.reinterpret(): MultiPoint<TypeT> = this as MultiPoint<TypeT>
 
 @Suppress("UNCHECKED_CAST")
-fun <TypeT> LineString<Generic>.reinterpret(): LineString<TypeT> = this as LineString<TypeT>
+fun <TypeT> LineString<Untyped>.reinterpret(): LineString<TypeT> = this as LineString<TypeT>
 
 @Suppress("UNCHECKED_CAST")
-fun <TypeT> MultiLineString<Generic>.reinterpret(): MultiLineString<TypeT> = this as MultiLineString<TypeT>
+fun <TypeT> MultiLineString<Untyped>.reinterpret(): MultiLineString<TypeT> = this as MultiLineString<TypeT>
 
 @Suppress("UNCHECKED_CAST")
-fun <TypeT> Polygon<Generic>.reinterpret(): Polygon<TypeT> = this as Polygon<TypeT>
+fun <TypeT> Polygon<Untyped>.reinterpret(): Polygon<TypeT> = this as Polygon<TypeT>
 
 @Suppress("UNCHECKED_CAST")
-fun <TypeT> MultiPolygon<Generic>.reinterpret(): MultiPolygon<TypeT> = this as MultiPolygon<TypeT>
+fun <TypeT> MultiPolygon<Untyped>.reinterpret(): MultiPolygon<TypeT> = this as MultiPolygon<TypeT>
 
 val Rect<*>.bottom: Double get() = origin.y + dimension.y
 val Rect<*>.right: Double get() = origin.x + dimension.x
@@ -99,8 +101,12 @@ fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> {
     return mapNotNull { polygon -> polygon.limit() }
 }
 
-fun <TypeT> finitePointOrNull(x: Double, y: Double): Vec<TypeT>?  = when {
+fun <TypeT> finiteVecOrNull(x: Double, y: Double): Vec<TypeT>?  = when {
     x.isFinite() && y.isFinite() -> explicitVec(x, y)
     else -> null
 }
 
+fun Vec<*>.toDoubleVector() = DoubleVector(x, y)
+fun <T> DoubleVector.toVec() = Vec<T>(x, y)
+fun <T> DoubleRectangle.toRect() = Rect<T>(left, top, width, height)
+fun <T> Rect<T>.toDoubleRectangle() = DoubleRectangle(left, top, width, height)

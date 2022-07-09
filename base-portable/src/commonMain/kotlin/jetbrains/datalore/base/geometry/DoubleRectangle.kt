@@ -145,5 +145,9 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         fun span(leftTop: DoubleVector, rightBottom: DoubleVector): DoubleRectangle {
             return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
         }
+
+        fun LTRB(left: Double, top: Double, right: Double, bottom: Double): DoubleRectangle {
+            return DoubleRectangle(left, top, right - left, bottom - top)
+        }
     }
 }

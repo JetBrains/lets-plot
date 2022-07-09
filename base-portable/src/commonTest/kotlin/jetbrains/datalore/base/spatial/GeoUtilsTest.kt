@@ -35,7 +35,7 @@ class GeoUtilsTest {
         val rect = QuadKey<LonLat>(
             "0"
         ).computeRect()
-        val expectedRect = Rect<Generic>(
+        val expectedRect = Rect<Untyped>(
                 EARTH_RECT.left,
                 EARTH_RECT.center.x,
                 EARTH_RECT.width / 2,

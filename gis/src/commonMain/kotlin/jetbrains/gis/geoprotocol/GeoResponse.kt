@@ -6,7 +6,7 @@
 package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
 
 interface GeoResponse {
@@ -23,10 +23,10 @@ interface GeoResponse {
         data class GeocodedFeature internal constructor(
             val id: String,
             val name: String,
-            val centroid: Vec<Generic>?,
+            val centroid: Vec<Untyped>?,
             val position: GeoRectangle?,
             val limit: GeoRectangle?,
-            val boundary: Boundary<Generic>?,
+            val boundary: Boundary<Untyped>?,
             val highlights: List<String>?,
             val fragments: List<Fragment>?,
             val parents: List<GeoParent>?

@@ -48,9 +48,7 @@ object GeometryTransform {
 
     private fun <InT, OutT> resampling(
         transform: (Vec<InT>) -> Vec<OutT>?
-    ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
-        return IterativeResampler(transform)::next
-    }
+    ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit = IterativeResampler(transform)::next
 
     private fun <InT, OutT> createTransformer(
         geometry: Geometry<InT>,
@@ -69,7 +67,7 @@ object GeometryTransform {
     internal class IterativeResampler<InT, OutT>(
         private val myTransform: (Vec<InT>) -> Vec<OutT>?
     ) {
-        private val myAdaptiveResampler = VecResampler(myTransform, SAMPLING_EPSILON)
+        private val myAdaptiveResampling = VecResampler(myTransform, SAMPLING_EPSILON)
         private var myPrevPoint: Vec<InT>? = null
         private var myRing: MutableCollection<Vec<OutT>>? = null
 
@@ -83,9 +81,10 @@ object GeometryTransform {
 
             val prev = myPrevPoint
             myPrevPoint = p
-            when {
-                prev != null -> myAdaptiveResampler.resample(prev, p).drop(1).forEach(myRing!!::add)
-                else -> myTransform(p)?.let(myRing!!::add)
+
+            when (prev) {
+                null -> myTransform(p)?.let(myRing!!::add)
+                else -> myAdaptiveResampling.resample(prev, p).drop(1).forEach(myRing!!::add)
             }
         }
     }

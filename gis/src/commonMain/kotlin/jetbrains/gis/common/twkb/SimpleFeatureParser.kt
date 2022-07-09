@@ -16,17 +16,17 @@ import jetbrains.datalore.base.typedGeometry.*
 internal class SimpleFeatureParser(
     private val myPrecision: Double,
     private val myInputBuffer: InputBuffer,
-    private val myGeometryConsumer: SimpleFeature.GeometryConsumer<Generic>
+    private val myGeometryConsumer: SimpleFeature.GeometryConsumer<Untyped>
 ) {
 
     private val myParsers = Stack<GeometryParser>()
     private var x = 0
     private var y = 0
 
-    internal fun readPoint(): Vec<Generic> {
+    internal fun readPoint(): Vec<Untyped> {
         x += myInputBuffer.readVarInt()
         y += myInputBuffer.readVarInt()
-        return explicitVec<Generic>(x / myPrecision, y / myPrecision)
+        return explicitVec<Untyped>(x / myPrecision, y / myPrecision)
     }
 
     fun parsingObject(): Boolean  = !myParsers.empty()
@@ -126,10 +126,10 @@ internal class SimpleFeatureParser(
     }
 
     private class PointParser(
-        private val myParsingResultConsumer: Consumer<Vec<Generic>>,
+        private val myParsingResultConsumer: Consumer<Vec<Untyped>>,
         ctx: SimpleFeatureParser
     ) : GeometryParser(ctx) {
-        private lateinit var myP: Vec<Generic>
+        private lateinit var myP: Vec<Untyped>
 
         override fun parseNext() {
             myP = readPoint()
@@ -162,9 +162,9 @@ internal class SimpleFeatureParser(
     }
 
     private class PointsParser(
-        parsingResultConsumer: Consumer<List<Vec<Generic>>>,
+        parsingResultConsumer: Consumer<List<Vec<Untyped>>>,
         ctx: SimpleFeatureParser
-    ) : GeometryListParser<Vec<Generic>>(ctx.readCount(), parsingResultConsumer, ctx) {
+    ) : GeometryListParser<Vec<Untyped>>(ctx.readCount(), parsingResultConsumer, ctx) {
 
         override fun parseNext() {
             addGeometry(readPoint())
@@ -197,10 +197,10 @@ internal class SimpleFeatureParser(
     }
 
     private class PolygonParser(
-        parsingResultConsumer: Consumer<List<Ring<Generic>>>,
+        parsingResultConsumer: Consumer<List<Ring<Untyped>>>,
         ctx: SimpleFeatureParser
     ) :
-        NestedGeometryParser<List<Vec<Generic>>, Ring<Generic>>(
+        NestedGeometryParser<List<Vec<Untyped>>, Ring<Untyped>>(
             ctx.readCount(),
             funcOf { points -> PointsParser(points, ctx) },
             funcOf(::Ring),
@@ -210,9 +210,9 @@ internal class SimpleFeatureParser(
 
     private class MultiPointParser(
         nGeometries: Int,
-        parsingResultConsumer: Consumer<List<Vec<Generic>>>,
+        parsingResultConsumer: Consumer<List<Vec<Untyped>>>,
         ctx: SimpleFeatureParser
-    ) : NestedGeometryParser<Vec<Generic>, Vec<Generic>>(
+    ) : NestedGeometryParser<Vec<Untyped>, Vec<Untyped>>(
         nGeometries,
         funcOf { point -> PointParser(point, ctx) },
         funcOf(Functions.identity()),
@@ -222,9 +222,9 @@ internal class SimpleFeatureParser(
 
     private class MultiLineStringParser(
         nGeometries: Int,
-        parsingResultConsumer: Consumer<List<LineString<Generic>>>,
+        parsingResultConsumer: Consumer<List<LineString<Untyped>>>,
         ctx: SimpleFeatureParser
-    ) : NestedGeometryParser<List<Vec<Generic>>, LineString<Generic>>(
+    ) : NestedGeometryParser<List<Vec<Untyped>>, LineString<Untyped>>(
         nGeometries,
         funcOf { points -> PointsParser(points, ctx) },
         funcOf(::LineString),
@@ -234,9 +234,9 @@ internal class SimpleFeatureParser(
 
     private class MultiPolygonParser(
         nGeometries: Int,
-        parsingResultConsumer: Consumer<List<Polygon<Generic>>>,
+        parsingResultConsumer: Consumer<List<Polygon<Untyped>>>,
         ctx: SimpleFeatureParser
-    ) : NestedGeometryParser<List<Ring<Generic>>, Polygon<Generic>>(
+    ) : NestedGeometryParser<List<Ring<Untyped>>, Polygon<Untyped>>(
         nGeometries,
         funcOf { ringsConsumer -> PolygonParser(ringsConsumer, ctx) },
         funcOf(::Polygon),

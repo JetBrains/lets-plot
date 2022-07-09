@@ -1,24 +1,23 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.projections
+package jetbrains.datalore.base.spatial.projections
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.math.toRadians
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.*
 import kotlin.math.*
 
-internal abstract class AzimuthalBaseProjection : GeoProjection {
+internal abstract class AzimuthalBaseProjection : Projection {
 
-    override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
 
     override val cylindrical: Boolean = false
 
-    override fun project(v: LonLatPoint): GeographicPoint? {
+    override fun project(v: DoubleVector): DoubleVector? {
 
         val x = toRadians(v.x)
         val y = toRadians(v.y)
@@ -29,10 +28,10 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
         val px = k * cy * sin(x)
         val py = k * sin(y)
 
-        return finitePointOrNull(px, py)
+        return finiteDoubleVectorOrNull(px, py)
     }
 
-    override fun invert(v: GeographicPoint): LonLatPoint? {
+    override fun invert(v: DoubleVector): DoubleVector? {
 
         val x = v.x
         val y = v.y
@@ -44,7 +43,7 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
         val ix = toDegrees(atan2(x * sc, z * cc))
         val iy = toDegrees(if (z == 0.0) 0.0 else asin(y * sc / z))
 
-        return finitePointOrNull(ix, iy)
+        return finiteDoubleVectorOrNull(ix, iy)
     }
 
     protected abstract fun scale(cxcy: Double): Double
@@ -53,12 +52,9 @@ internal abstract class AzimuthalBaseProjection : GeoProjection {
 
     companion object {
 
-        private val LON_LIMIT = Scalar<LonLat>(180.0 - 1e-3)
-        private val LAT_LIMIT = Scalar<LonLat>(90.0)
+        private const val LON_LIMIT = 180.0 - 1e-3
+        private const val LAT_LIMIT = 90.0
 
-        private val VALID_RECTANGLE = newSpanRectangle(
-            newVec(-LON_LIMIT, -LAT_LIMIT),
-            newVec(LON_LIMIT, LAT_LIMIT)
-        )
+        private val VALID_RECTANGLE = DoubleRectangle.LTRB(-LON_LIMIT, -LAT_LIMIT, LON_LIMIT, LAT_LIMIT)
     }
 }

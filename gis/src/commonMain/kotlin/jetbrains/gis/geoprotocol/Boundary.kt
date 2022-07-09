@@ -8,9 +8,9 @@ package jetbrains.gis.geoprotocol
 import jetbrains.datalore.base.encoding.Base64
 import jetbrains.datalore.base.spatial.GeoJson
 import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Polygon
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.gis.common.twkb.Twkb
 
 interface Boundary<TypeT> {
@@ -30,10 +30,10 @@ interface Boundary<TypeT> {
 
 object Boundaries {
 
-    fun fromTwkb(boundary: String): Boundary<Generic> = TinyBoundary(boundary)
-    fun fromGeoJson(boundary: String): Boundary<Generic> = GeoJsonBoundary(boundary)
+    fun fromTwkb(boundary: String): Boundary<Untyped> = TinyBoundary(boundary)
+    fun fromGeoJson(boundary: String): Boundary<Untyped> = GeoJsonBoundary(boundary)
 
-    internal fun getRawData(boundary: Boundary<Generic>): String {
+    internal fun getRawData(boundary: Boundary<Untyped>): String {
         return (boundary as StringBoundary).rawData
     }
 
@@ -47,12 +47,12 @@ object Boundaries {
 // should know about this optimization.
     private abstract class StringBoundary internal constructor(
         internal val rawData: String
-    ) : Boundary<Generic> {
-        private val myMultipolygon: MultiPolygon<Generic> by lazy { parse(rawData) }
+    ) : Boundary<Untyped> {
+        private val myMultipolygon: MultiPolygon<Untyped> by lazy { parse(rawData) }
 
-        override fun asMultipolygon(): MultiPolygon<Generic> = myMultipolygon
+        override fun asMultipolygon(): MultiPolygon<Untyped> = myMultipolygon
 
-        internal abstract fun parse(boundary: String): MultiPolygon<Generic>
+        internal abstract fun parse(boundary: String): MultiPolygon<Untyped>
 
         override fun hashCode(): Int = rawData.hashCode()
         override fun equals(other: Any?): Boolean {
@@ -72,15 +72,15 @@ object Boundaries {
         boundary: String
     ) : StringBoundary(boundary) {
 
-        override fun parse(boundary: String): MultiPolygon<Generic> {
-            val polygons = ArrayList<Polygon<Generic>>()
+        override fun parse(boundary: String): MultiPolygon<Untyped> {
+            val polygons = ArrayList<Polygon<Untyped>>()
 
-            Twkb.parse(Base64.decode(boundary), object : SimpleFeature.GeometryConsumer<Generic> {
-                override fun onPolygon(polygon: Polygon<Generic>) {
+            Twkb.parse(Base64.decode(boundary), object : SimpleFeature.GeometryConsumer<Untyped> {
+                override fun onPolygon(polygon: Polygon<Untyped>) {
                     polygons.add(polygon)
                 }
 
-                override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>) {
+                override fun onMultiPolygon(multipolygon: MultiPolygon<Untyped>) {
                     polygons.addAll(multipolygon)
                 }
             }
@@ -94,10 +94,10 @@ object Boundaries {
         boundary: String
     ) : StringBoundary(boundary) {
 
-        override fun parse(boundary: String): MultiPolygon<Generic> {
-            var boundaryPolygon: MultiPolygon<Generic>? = null
+        override fun parse(boundary: String): MultiPolygon<Untyped> {
+            var boundaryPolygon: MultiPolygon<Untyped>? = null
 
-            GeoJson.parse<Generic>(boundary) {
+            GeoJson.parse<Untyped>(boundary) {
                 onPolygon = { require(boundaryPolygon == null); boundaryPolygon = MultiPolygon(listOf(it)) }
                 onMultiPolygon = { require(boundaryPolygon == null); boundaryPolygon = it }
             }

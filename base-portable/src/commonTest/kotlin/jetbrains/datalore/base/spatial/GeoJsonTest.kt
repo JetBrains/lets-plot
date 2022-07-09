@@ -9,7 +9,7 @@ import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-typealias GeomTag = Generic
+typealias GeomTag = Untyped
 
 class GeoJsonTest {
 

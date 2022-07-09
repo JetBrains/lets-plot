@@ -12,11 +12,7 @@ class VecResampler<InT, OutT>(
     private val transform: (Vec<InT>) -> Vec<OutT>?,
     precision: Double
 ) {
-    private val resampler = AdaptiveResampler(
-        this::tranformWrapper,
-        VEC_DELEGATE,
-        precision
-    )
+    private val resampler = AdaptiveResampler.generic(this::tranformWrapper, precision, VEC_ADAPTER)
 
     private fun tranformWrapper(v: Vec<*>): Vec<*>? {
         @Suppress("UNCHECKED_CAST")
@@ -34,10 +30,10 @@ class VecResampler<InT, OutT>(
     }
 
     private companion object {
-        val VEC_DELEGATE = object : AdaptiveResampler.PointDelegate<Vec<*>> {
-            override fun x(obj: Vec<*>): Double = obj.x
-            override fun y(obj: Vec<*>): Double = obj.y
-            override fun newObj(x: Double, y: Double): Vec<*> = Vec<Generic>(x, y)
+        val VEC_ADAPTER = object : AdaptiveResampler.DataAdapter<Vec<*>> {
+            override fun x(p: Vec<*>): Double = p.x
+            override fun y(p: Vec<*>): Double = p.y
+            override fun create(x: Double, y: Double): Vec<*> = Vec<Untyped>(x, y)
         }
     }
 }

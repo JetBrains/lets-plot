@@ -6,7 +6,7 @@
 package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.*
@@ -47,18 +47,18 @@ object GeoResponseBuilder {
     class GeocodedFeatureBuilder() {
         private lateinit var id: String
         private lateinit var name: String
-        private var centroid: Vec<Generic>? = null
+        private var centroid: Vec<Untyped>? = null
         private var limit: GeoRectangle? = null
         private var position: GeoRectangle? = null
-        private var boundary: Boundary<Generic>? = null
+        private var boundary: Boundary<Untyped>? = null
         private var highlights: MutableList<String> = ArrayList()
         private var fragments: MutableList<Fragment> = ArrayList()
         private val parents: MutableList<GeoParent> = ArrayList()
 
         fun setId(v: String) = apply { id = v }
         fun setName(v: String) = apply { name = v }
-        fun setBoundary(v: Boundary<Generic>) = apply { boundary = v }
-        fun setCentroid(v: Vec<Generic>) = apply { centroid = v }
+        fun setBoundary(v: Boundary<Untyped>) = apply { boundary = v }
+        fun setCentroid(v: Vec<Untyped>) = apply { centroid = v }
         fun setLimit(v: GeoRectangle) = apply { limit = v }
         fun setPosition(v: GeoRectangle) = apply { position = v }
         fun addHighlight(v: String) = apply { highlights.add(v) }

@@ -1,22 +1,17 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2022. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.projections
+package jetbrains.datalore.base.spatial.projections
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.math.toRadians
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.typedGeometry.finitePointOrNull
-import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 import kotlin.math.*
 
-internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection {
-
+internal class ConicConformalProjection(y0: Double, y1: Double) : Projection {
     private val n: Double
     private val f: Double
 
@@ -27,11 +22,11 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
     }
 
 
-    override fun validRect(): Rect<LonLat> = VALID_RECTANGLE
+    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
 
     override val cylindrical: Boolean = false
 
-    override fun project(v: LonLatPoint): GeographicPoint? {
+    override fun project(v: DoubleVector): DoubleVector? {
         val x = toRadians(v.x)
         var y = toRadians(v.y)
 
@@ -49,10 +44,10 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
         val px = r * sin(n * x)
         val py = f - r * cos(n * x)
-        return finitePointOrNull(px, py)
+        return finiteDoubleVectorOrNull(px, py)
     }
 
-    override fun invert(v: GeographicPoint): LonLatPoint? {
+    override fun invert(v: DoubleVector): DoubleVector? {
         val x = v.x
         val y = v.y
         val fy = f - y
@@ -60,14 +55,11 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : GeoProjection 
 
         val ix = toDegrees(atan2(x, abs(fy)) / n * fy.sign)
         val iy = toDegrees(2 * atan((f / r).pow(1 / n)) - PI / 2)
-        return finitePointOrNull(ix, iy)
+        return finiteDoubleVectorOrNull(ix, iy)
     }
 
     companion object {
-        private val VALID_RECTANGLE = newSpanRectangle(
-            explicitVec<LonLat>(-180.0, -65.0),
-            explicitVec<LonLat>(+180.0, +90.0)
-        )
+        private val VALID_RECTANGLE = DoubleRectangle.LTRB(-180.0, -65.0, +180.0, +90.0)
         private const val EPSILON = 0.001
 
         private fun tany(y: Double): Double {
