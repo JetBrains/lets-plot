@@ -2,7 +2,7 @@
 
 ### Added
 
-- New pre-configured theme: `theme_bw()`. 
+- New pre-configured theme: `theme_bw()` [[#554](https://github.com/JetBrains/lets-plot/issues/554)]. 
     
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_bw.ipynb).
   
