@@ -12,6 +12,11 @@ __all__ = [
     'theme_minimal2',
     'theme_none',
     'theme_bw',
+    'flavor_darcula',
+    'flavor_solarized_light',
+    'flavor_solarized_dark',
+    'flavor_high_contrast_light',
+    'flavor_high_contrast_dark'
 ]
 
 
@@ -202,3 +207,23 @@ def theme_bw():
 
     """
     return FeatureSpec('theme', name="bw")
+
+
+def flavor_darcula():
+    return FeatureSpec('theme', name=None, flavor="darcula")
+
+
+def flavor_solarized_light():
+    return FeatureSpec('theme', name=None, flavor="solarized_light")
+
+
+def flavor_solarized_dark():
+    return FeatureSpec('theme', name=None, flavor="solarized_dark")
+
+
+def flavor_high_contrast_light():
+    return FeatureSpec('theme', name=None, flavor="high_contrast_light")
+
+
+def flavor_high_contrast_dark():
+    return FeatureSpec('theme', name=None, flavor="high_contrast_dark")
