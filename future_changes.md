@@ -13,7 +13,7 @@
   - `flavor_high_contrast_light()`;
   - `flavor_high_contrast_dark()`.
   
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22с/theme_flavors.ipynb).
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_flavors.ipynb).
 
 ### Changed
 
