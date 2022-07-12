@@ -69,7 +69,8 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.BLANK to true,
+                Elem.FILL to PANEL_BORDER,
+                Elem.SIZE to 0.0,
             ),
         )
     }
