@@ -107,8 +107,12 @@ internal class SvgTextElementMapper(
         private fun TextStyle.createFont(): Font {
             val posture = if (face.italic) FontPosture.ITALIC else null
             val weight = if (face.bold) FontWeight.BOLD else null
+            val family = family.toString()
+                .split(",")
+                .map { it.trim(' ', '\"') }
+                .firstOrNull { it in Font.getFamilies() }
             return Font.font(
-                family.toString(),
+                family,
                 weight,
                 posture,
                 size

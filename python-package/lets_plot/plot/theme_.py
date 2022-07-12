@@ -384,7 +384,7 @@ def element_line(
 
 def element_text(
         color=None,
-        # ToDo: family
+        family=None,
         face=None,
         size=None,
         # ToDo: hjust, vjust, angle, lineheight, margin
@@ -398,6 +398,8 @@ def element_text(
     ----------
     color : str
         Text color.
+    family : str
+        Font family.
     face : str
         Font face ("plain", "italic", "bold", "bold_italic").
     size : int
