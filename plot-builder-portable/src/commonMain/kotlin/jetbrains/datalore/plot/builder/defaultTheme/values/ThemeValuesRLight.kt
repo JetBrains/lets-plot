@@ -26,6 +26,7 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
         private val PLOT_BACKGROUND = Color.WHITE
 
         private val PANEL_BORDER: Color = Color.parseHex("#C9C9C9")
+        private val STRIP_BACKGROUND: Color = Color.parseHex("#D9D9D9")
 
         private val BLACK: Color = Color.parseHex("#171717")
         private val DARK_GREY: Color = Color.parseHex("#474747")
@@ -69,7 +70,7 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.FILL to PANEL_BORDER,
+                Elem.FILL to STRIP_BACKGROUND,
                 Elem.SIZE to 0.0,
             ),
         )
