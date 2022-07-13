@@ -61,8 +61,6 @@ class TooltipBox: SvgComponent() {
     private var myVerticalContentPadding = V_CONTENT_PADDING
     private val myYPositionsBetweenLines = mutableListOf<Double>()
 
-    private val myTooltipTextFontSize = 0.0 // todo: use theme's size value
-
     // draw tooltip content rectangles in DEBUG_DRAWING mode
     private val myDebugRectangles = RetainableComponents(
         itemFactory = ::RectangleComponent,
@@ -473,7 +471,7 @@ class TooltipBox: SvgComponent() {
                 listOfNotNull(
                     estimateLineHeight(line.label, TOOLTIP_LABEL),
                     estimateLineHeight(line.value, textClassName)
-                ).maxOrNull() ?: myTooltipTextFontSize
+                ).maxOrNull() ?: 0.0
             }
 
             // sef vertical shifts for tspan elements
@@ -495,7 +493,7 @@ class TooltipBox: SvgComponent() {
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
-            val defaultLineHeight = lineHeights.maxOrNull() ?: myTooltipTextFontSize
+            val defaultLineHeight = lineHeights.maxOrNull() ?: 0.0
 
             val labelWidths = lines.zip(components).map { (line, component) ->
                 when {
