@@ -23,7 +23,7 @@ open class LinearNormalizingMapperProvider(
     }
 
     override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Double> {
-        val dataRange = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
+        val dataRange = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
         return GuideMappers.continuousToContinuous(dataRange, outputRange, naValue)
     }
 }

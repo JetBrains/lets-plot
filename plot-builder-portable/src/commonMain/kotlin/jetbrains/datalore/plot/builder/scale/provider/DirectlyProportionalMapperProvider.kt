@@ -20,7 +20,7 @@ open class DirectlyProportionalMapperProvider(
     naValue: Double
 ) : ContinuousOnlyMapperProvider<Double>(naValue) {
     override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Double> {
-        val dataMax = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans).upperEnd
+        val dataMax = MapperUtil.rangeWithLimitsAfterTransform(domain, trans).upperEnd
         return GuideMappers.continuousToContinuous(DoubleSpan(0.0, dataMax), DoubleSpan(0.0, max), naValue)
     }
 }

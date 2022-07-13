@@ -70,7 +70,7 @@ class ColorHueMapperProvider(
 
     override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
         return createContinuousMapper(domain, myHSVIntervals)
     }
 

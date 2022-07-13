@@ -48,7 +48,7 @@ object DefaultMapperProviderUtil {
                 trans: ContinuousTransform
             ): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(
-                    MapperUtil.rangeWithLimitsAfterTransform2(domain, trans),
+                    MapperUtil.rangeWithLimitsAfterTransform(domain, trans),
                     outputValues, naValue
                 )
             }

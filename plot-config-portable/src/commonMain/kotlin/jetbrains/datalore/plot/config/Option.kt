@@ -394,6 +394,14 @@ object Option {
         const val MAX_SIZE = "max_size"
 
         const val SCALE_MAPPER_KIND = "scale_mapper_kind"
+
+        object Viridis {
+            const val CMAP_NAME = "option"
+            const val ALPHA = "alpha"
+            const val BEGIN = "begin"
+            const val END = "end"
+            const val DIRECTION = "direction"
+        }
     }
 
     object Facet {

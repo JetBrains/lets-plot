@@ -39,7 +39,7 @@ class ColorGradient2MapperProvider(
         trans: ContinuousTransform
     ): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
 
         val lowDomain = DoubleSpan(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
         val highDomain = DoubleSpan(min(myMidpoint, domain.upperEnd), domain.upperEnd)

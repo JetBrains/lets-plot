@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.config.Option.Scale.HUE_RANGE
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
 import jetbrains.datalore.plot.parsePlotSpec
 
-open class AllColorScales {
+open class ColorScales {
 
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(

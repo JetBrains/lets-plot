@@ -45,6 +45,7 @@ import jetbrains.datalore.plot.config.Option.Scale.SCALE_MAPPER_KIND
 import jetbrains.datalore.plot.config.Option.Scale.SHAPE_SOLID
 import jetbrains.datalore.plot.config.Option.Scale.START
 import jetbrains.datalore.plot.config.Option.Scale.START_HUE
+import jetbrains.datalore.plot.config.Option.Scale.Viridis
 import jetbrains.datalore.plot.config.Option.TransformName
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 import jetbrains.datalore.plot.config.aes.TypedContinuousIdentityMappers
@@ -145,6 +146,15 @@ class ScaleConfig<T> constructor(
                     getString(PALETTE_TYPE),
                     get(PALETTE),
                     getDouble(DIRECTION),
+                    naValue as Color
+                )
+            COLOR_CMAP ->
+                mapperProvider = ColormapMapperProvider(
+                    getString(Viridis.CMAP_NAME),
+                    getDouble(Viridis.ALPHA),
+                    getDouble(Viridis.BEGIN),
+                    getDouble(Viridis.END),
+                    getDouble(Viridis.DIRECTION),
                     naValue as Color
                 )
             SIZE_AREA ->
@@ -251,6 +261,7 @@ class ScaleConfig<T> constructor(
         private const val COLOR_HUE = "color_hue"
         private const val COLOR_GREY = "color_grey"
         const val COLOR_BREWER = "color_brewer"
+        const val COLOR_CMAP = "color_cmap"
         private const val SIZE_AREA = "size_area"
 
         fun aesOrFail(options: Map<String, Any>): Aes<*> {

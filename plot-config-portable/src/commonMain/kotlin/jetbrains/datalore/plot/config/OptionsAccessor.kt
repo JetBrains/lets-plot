@@ -46,6 +46,7 @@ open class OptionsAccessor(
             defaultOptions[option]
         }
     }
+
     fun getSafe(option: String): Any {
         return get(option) ?: throw IllegalStateException("Option `$option` not found.")
     }
@@ -70,7 +71,11 @@ open class OptionsAccessor(
         return list.map { it.toDouble() }
     }
 
-    fun getOrderedBoundedDoubleDistinctPair(option: String, lowerBound: Double, upperBound: Double): Pair<Double, Double> {
+    fun getOrderedBoundedDoubleDistinctPair(
+        option: String,
+        lowerBound: Double,
+        upperBound: Double
+    ): Pair<Double, Double> {
         val pair = pickTwo(option, getBoundedDoubleList(option, lowerBound, upperBound))
         check(pair.first < pair.second) { "Value ${pair.first} should be lower than ${pair.second}" }
         return pair

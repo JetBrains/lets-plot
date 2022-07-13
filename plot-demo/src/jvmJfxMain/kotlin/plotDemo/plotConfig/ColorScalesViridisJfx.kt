@@ -5,16 +5,16 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.AllColorScales
+import jetbrains.datalore.plotDemo.model.plotConfig.ColorScalesViridis
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 import java.awt.Dimension
 
 fun main() {
-    with(AllColorScales()) {
+    with(ColorScalesViridis()) {
         PlotSpecsDemoWindowJfx(
-            "Color Scales",
+            "Color Scales 'Viridis'",
             plotSpecList(),
-            plotSize = Dimension(600, 150),
+            plotSize = Dimension(600, 100),
             maxCol = 2
         ).open()
     }
