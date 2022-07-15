@@ -116,10 +116,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     Notes
     -----
-    `geom_livemap()` draws map, which can be moved and zoomed.
+    `geom_livemap()` draws a map, which can be dragged and zoomed.
 
     `geom_livemap()` understands the following aesthetics mappings:
 
+    - x : x-axis value, i.e. longitude in this context.
+    - y : y-axis value, i.e. latitude in this context.
     - alpha : transparency level of the point. Understands numbers between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
@@ -177,10 +179,10 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         LetsPlot.setup_html()
         data = {
             'city': ['New York City', 'Singapore'],
-            'lat': [-73.7997, 104.0012],
-            'lon': [40.6408, 1.3256],
+            'lon': [-73.7997, 104.0012],
+            'lat': [40.6408, 1.3256],
         }
-        ggplot(data, aes('lat', 'lon')) + \\
+        ggplot(data, aes(x='lon', y='lat')) + \\
             geom_livemap(geodesic=False, projection='epsg4326', \\
                          symbol='point', color='white', \\
                          tiles=maptiles_lets_plot(theme='dark'), \\
