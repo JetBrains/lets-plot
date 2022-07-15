@@ -24,17 +24,27 @@ object ColorMapper {
             domain,
             DEF_GRADIENT_LOW,
             DEF_GRADIENT_HIGH,
-            NA_VALUE
+            NA_VALUE,
+            alpha = 1.0
         )
     }
 
-    fun gradient(domain: DoubleSpan, low: Color, high: Color, naColor: Color): (Double?) -> Color {
+    /**
+     * Alpha channel [0..1] (0 - transparent and 1 - opaque).
+     */
+    fun gradient(
+        domain: DoubleSpan,
+        low: Color,
+        high: Color,
+        naColor: Color,
+        alpha: Double = 1.0
+    ): (Double?) -> Color {
         return gradientHSV(
             domain,
             Colors.hsvFromRgb(low),
             Colors.hsvFromRgb(high),
             true,
-            naColor
+            naColor, alpha
         )
     }
 
@@ -46,14 +56,16 @@ object ColorMapper {
         lowHSV: DoubleArray,
         highHSV: DoubleArray,
         autoHueDirection: Boolean,
-        naColor: Color
+        naColor: Color,
+        alpha: Double = 1.0
     ): (Double?) -> Color {
         return gradientHSV(
             domain,
             HSV(lowHSV[0], lowHSV[1], lowHSV[2]),
             HSV(highHSV[0], highHSV[1], highHSV[2]),
             autoHueDirection,
-            naColor
+            naColor,
+            alpha
         )
     }
 
@@ -62,7 +74,8 @@ object ColorMapper {
         lowHSV: HSV,
         highHSV: HSV,
         autoHueDirection: Boolean,
-        naColor: Color
+        naColor: Color,
+        alpha: Double
     ): (Double?) -> Color {
 
         var lowHue = lowHSV.h
@@ -102,7 +115,7 @@ object ColorMapper {
                 val H = if (hue >= 0) hue else 360 + hue
                 val S = mapperS(input)!!
                 val V = mapperV(input)!!
-                Colors.rgbFromHsv(H, S, V)
+                Colors.rgbFromHsv(H, S, V, alpha = alpha)
             }
         }
     }

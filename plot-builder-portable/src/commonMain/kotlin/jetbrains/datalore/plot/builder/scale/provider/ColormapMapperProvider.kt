@@ -29,7 +29,7 @@ import jetbrains.datalore.plot.common.colormap.ColorMaps.VIRIDIS
  *      - "twilight"
  *
  * @param alpha Alpha transparency channel. (0 means transparent and 1 means opaque).
- * @param begin Corresponds to a color hue to start from.
+ * @param begin Corresponds to a color hue to start at.
  * @param end Corresponds to a color hue to end with.
  * @param direction Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
  * If -1, the order of colors is reversed
@@ -67,7 +67,9 @@ class ColormapMapperProvider(
 
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
-        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
+//        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
+        val gradient = ColorGradientnMapperProvider.createGradient(domain, colors, naValue, alpha)
+        return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
     private fun colors(n: Int? = null): List<Color> {

@@ -23,6 +23,7 @@ __all__ = ['scale_shape',
            'scale_fill_hue', 'scale_fill_discrete', 'scale_color_hue', 'scale_color_discrete',
            'scale_fill_grey', 'scale_color_grey',
            'scale_fill_brewer', 'scale_color_brewer',
+           'scale_fill_viridis', 'scale_color_viridis',
            'scale_x_datetime', 'scale_y_datetime', 'scale_x_time', 'scale_y_time',
            'scale_alpha', 'scale_size', 'scale_size_area'
            ]
@@ -101,7 +102,8 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 # Continuous Scales
 #
 
-def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
+def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
+                       format=None):
     """
     Continuous position scale x.
 
@@ -165,7 +167,8 @@ def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=
                   format=format)
 
 
-def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None, format=None):
+def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
+                       format=None):
     """
     Continuous position scale y.
 
@@ -437,7 +440,8 @@ def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=Non
 # Discrete Scales
 #
 
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
+def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
+                     format=None):
     """
     Discrete position scale x.
 
@@ -504,7 +508,8 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   discrete=True, reverse=reverse)
 
 
-def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
+def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
+                              format=None):
     """
     Reversed discrete position scale x.
 
@@ -558,7 +563,8 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
 
 
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None, format=None):
+def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
+                     format=None):
     """
     Discrete position scale y.
 
@@ -625,7 +631,8 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
                   discrete=True, reverse=reverse)
 
 
-def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
+def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
+                              format=None):
     """
     Reversed discrete position scale y.
 
@@ -1570,7 +1577,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
 
 def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
-                           na_value=None, guide=None, trans=None, format=None):
+                          na_value=None, guide=None, trans=None, format=None):
     """
     Define smooth color gradient between multiple colors for color aesthetic.
 
@@ -2297,7 +2304,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         x = list(range(9))
         ggplot({'x': x}, aes(x='x')) + \\
             geom_tile(aes(fill='x')) + \\
-            scale_fill_brewer(type='seq', palette='YlGnBu') + \\
+            scale_fill_brewer(palette='YlGnBu') + \\
             coord_cartesian() + \\
             ggsize(600, 200)
 
@@ -2394,7 +2401,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         x = list(range(10))
         ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
             geom_point(aes(color='x'), shape=13, size=5) + \\
-            scale_color_brewer(type='qual', palette='Dark2', direction=-1)
+            scale_color_brewer(palette='Dark2', direction=-1)
 
     """
     return _scale('color',
@@ -2414,9 +2421,214 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                   scale_mapper_kind='color_brewer')
 
 
+def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
+                       name=None, breaks=None, labels=None, limits=None,
+                       na_value=None, guide=None, trans=None, format=None):
+    """
+    The `viridis` color maps are designed to be perceptually-uniform,
+    both in regular form and also when converted to black-and-white.
+
+    The `viridis` color scales are suitable for viewers with common forms of colour blindness.
+    See also https://bids.github.io/colormap/.
+
+
+    Parameters
+    ----------
+    alpha : float, default=1.0
+        Alpha transparency channel. (0 means transparent and 1 means opaque).
+    begin : float, default=0.0
+        Corresponds to a color hue to start at.
+    end : float, default=1.0
+        Corresponds to a color hue to end with.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale.
+        If -1, the order of colors is reversed.
+    option : str, default="D" (or "viridis")
+        The colormap to use:
+            - "magma" (or "A"),
+            - "inferno" (or "B")
+            - "plasma" (or "C")
+            - "viridis" (or "D")
+            - "cividis" (or "E")
+            - "turbo"
+            - "twilight"
+
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of strings
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Can be used for both, contituous and discrete data.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(9))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(fill='x')) + \\
+            scale_fill_viridis(option='twilight') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
+    return _scale('fill',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  alpha=alpha,
+                  begin=begin,
+                  end=end,
+                  direction=direction,
+                  option=option,
+                  scale_mapper_kind='color_cmap')
+
+
+def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
+                        name=None, breaks=None, labels=None, limits=None,
+                        na_value=None, guide=None, trans=None, format=None):
+    """
+    The `viridis` color maps are designed to be perceptually-uniform,
+    both in regular form and also when converted to black-and-white.
+
+    The `viridis` color scales are suitable for viewers with common forms of colour blindness.
+    See also https://bids.github.io/colormap/.
+
+
+    Parameters
+    ----------
+    alpha : float, default=1.0
+        Alpha transparency channel. (0 means transparent and 1 means opaque).
+    begin : float, default=0.0
+        Corresponds to a color hue to start at.
+    end : float, default=1.0
+        Corresponds to a color hue to end with.
+    direction : {1, -1}, default=1
+        Sets the order of colors in the scale.
+        If -1, the order of colors is reversed.
+    option : str, default="D" (or "viridis")
+        The colormap to use:
+            - "magma" (or "A"),
+            - "inferno" (or "B")
+            - "plasma" (or "C")
+            - "viridis" (or "D")
+            - "cividis" (or "E")
+            - "turbo"
+            - "twilight"
+
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of strings
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Defines the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Can be used for both, contituous and discrete data.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(10))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x'), shape=13, size=5) + \\
+            scale_color_viridis(option='cividis', direction=-1)
+
+    """
+    return _scale('color',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  alpha=alpha,
+                  begin=begin,
+                  end=end,
+                  direction=direction,
+                  option=option,
+                  scale_mapper_kind='color_cmap')
+
+
 #
 # Date-time
 #
+
 
 def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
     """
@@ -2899,7 +3111,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   scale_mapper_kind='size_area')
 
 
-def _scale(aesthetic, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
+def _scale(aesthetic, *, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
            trans=None, format=None, **other):
     """
     Create a scale (discrete or continuous)

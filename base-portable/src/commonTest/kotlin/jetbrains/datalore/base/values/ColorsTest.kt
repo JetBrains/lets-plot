@@ -68,13 +68,13 @@ class ColorsTest {
         assertEquals(Color.CYAN, Colors.rgbFromHsv(180.0, 1.0, 1.0), "CYAN")
         assertEquals(Color.MAGENTA, Colors.rgbFromHsv(300.0, 1.0, 1.0), "MAGENTA")
         assertEquals(Color(191, 191, 191), Colors.rgbFromHsv(0.0, 0.0, 0.75), "SILVER")
-        assertEquals(Color(127, 127, 127), Colors.rgbFromHsv(0.0, 0.0, 0.5), "GRAY")
-        assertEquals(Color(127, 0, 0), Colors.rgbFromHsv(0.0, 1.0, 0.5), "MAROON")
-        assertEquals(Color(127, 127, 0), Colors.rgbFromHsv(60.0, 1.0, 0.5), "OLIVE")
-        assertEquals(Color(0, 127, 0), Colors.rgbFromHsv(120.0, 1.0, 0.5), "GREEN")
-        assertEquals(Color(127, 0, 127), Colors.rgbFromHsv(300.0, 1.0, 0.5), "PURPLE")
-        assertEquals(Color(0, 127, 127), Colors.rgbFromHsv(180.0, 1.0, 0.5), "TEAL")
-        assertEquals(Color(0, 0, 127), Colors.rgbFromHsv(240.0, 1.0, 0.5), "NAVY")
+        assertEquals(Color(128, 128, 128), Colors.rgbFromHsv(0.0, 0.0, 0.5), "GRAY")
+        assertEquals(Color(128, 0, 0), Colors.rgbFromHsv(0.0, 1.0, 0.5), "MAROON")
+        assertEquals(Color(128, 128, 0), Colors.rgbFromHsv(60.0, 1.0, 0.5), "OLIVE")
+        assertEquals(Color(0, 128, 0), Colors.rgbFromHsv(120.0, 1.0, 0.5), "GREEN")
+        assertEquals(Color(128, 0, 128), Colors.rgbFromHsv(300.0, 1.0, 0.5), "PURPLE")
+        assertEquals(Color(0, 128, 128), Colors.rgbFromHsv(180.0, 1.0, 0.5), "TEAL")
+        assertEquals(Color(0, 0, 128), Colors.rgbFromHsv(240.0, 1.0, 0.5), "NAVY")
     }
 
     @Test

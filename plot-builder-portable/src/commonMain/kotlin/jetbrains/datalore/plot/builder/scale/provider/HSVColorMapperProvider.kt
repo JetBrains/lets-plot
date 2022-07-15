@@ -42,7 +42,7 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
             mapperDomain,
             HSV(newFromHue, fromHSV.s, fromHSV.v),
             HSV(newToHue, toHSV.s, toHSV.v),
-            false, naValue
+            false, naValue, alpha = 1.0
         )
         return GuideMappers.asNotContinuous(ScaleMapper.wrap(gradient))
     }
@@ -53,7 +53,14 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
     ): GuideMapper<Color> {
         val gradientMapper = when (hsvIntervals.size) {
             0 -> throw IllegalArgumentException("Empty HSV intervals.")
-            1 -> ColorMapper.gradientHSV(domain, hsvIntervals[0].first, hsvIntervals[0].second, false, naValue)
+            1 -> ColorMapper.gradientHSV(
+                domain,
+                hsvIntervals[0].first,
+                hsvIntervals[0].second,
+                false,
+                naValue,
+                alpha = 1.0
+            )
             else -> createCompositeColorMapper(domain, hsvIntervals, false, naValue)
         }
 
@@ -95,7 +102,14 @@ abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color
                 val hsvInterval = it.second
                 Pair(
                     domain,
-                    ColorMapper.gradientHSV(domain, hsvInterval.first, hsvInterval.second, autoHueDirection, naColor)
+                    ColorMapper.gradientHSV(
+                        domain,
+                        hsvInterval.first,
+                        hsvInterval.second,
+                        autoHueDirection,
+                        naColor,
+                        alpha = 1.0
+                    )
                 )
             }
         }

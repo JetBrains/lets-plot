@@ -84,9 +84,10 @@ object Colors {
      * @param h hue, [0, 360] degree
      * @param s saturation, [0, 1]
      * @param v value, [0, 1]
+     * @param alpha [0, 1], 0 - transparent and 1 - opaque.
      */
     @JvmOverloads
-    fun rgbFromHsv(h: Double, s: Double, v: Double = 1.0): Color {
+    fun rgbFromHsv(h: Double, s: Double, v: Double = 1.0, alpha: Double = 1.0): Color {
         val hd = h / 60
         val c = v * s
         val x = c * (1 - abs(hd % 2 - 1))
@@ -123,7 +124,12 @@ object Colors {
         }
 
         val m = v - c
-        return Color((255 * (r + m)).toInt(), (255 * (g + m)).toInt(), (255 * (b + m)).toInt())
+        return Color(
+            (255 * (r + m)).roundToInt(),
+            (255 * (g + m)).roundToInt(),
+            (255 * (b + m)).roundToInt(),
+            (255 * alpha).roundToInt(),
+        )
     }
 
     fun hsvFromRgb(color: Color): DoubleArray {

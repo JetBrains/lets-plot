@@ -31,7 +31,7 @@ class ColorGradientnMapperProviderTest {
 
         Assertions.assertThat(mapper.invoke(0.0)).isEqualTo(Color.BLUE)
         Assertions.assertThat(mapper.invoke(1.0)).isEqualTo(Color.YELLOW)
-        Assertions.assertThat(mapper.invoke(1.99)).isEqualTo(Color.ORANGE)
+        Assertions.assertThat(mapper.invoke(2.0)).isEqualTo(Color.ORANGE)
         Assertions.assertThat(mapper.invoke(3.0)).isEqualTo(Color.RED)
     }
 
@@ -41,7 +41,7 @@ class ColorGradientnMapperProviderTest {
             ColorGradientnMapperProvider(listOf(Color.BLACK, Color.WHITE), Color.RED)
                 .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
 
-        Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color(127, 127, 127))
+        Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color(128, 128, 128))
     }
 
     @Test
