@@ -10,6 +10,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class ColorGradientnMapperProviderTest {
 
@@ -51,5 +52,29 @@ class ColorGradientnMapperProviderTest {
                 .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
 
         Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color.BLACK)
+    }
+
+    @Test
+    fun `NA color`() {
+        val naColor = Color.BLACK
+        val mapper =
+            ColorGradientnMapperProvider(listOf(Color.BLUE, Color.RED), naColor)
+                .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
+
+        fun check(v: Double?) {
+            val actual = try {
+                mapper.invoke(v)
+            } catch (t: Throwable) {
+                throw AssertionError("was value: $v", t)
+            }
+            assertEquals(naColor, actual)
+        }
+
+        check(-0.01)
+        check(1.01)
+        check(null)
+        check(Double.NaN)
+        check(Double.NEGATIVE_INFINITY)
+        check(Double.POSITIVE_INFINITY)
     }
 }

@@ -76,7 +76,7 @@ class ColorGradientnMapperProvider(
         internal fun createGradient(
             domain: DoubleSpan,
             colors: List<Color>,
-            naValue: Color,
+            naColor: Color,
             alpha: Double = 1.0
         ): (Double?) -> Color {
             val subdomainsCount = colors.size - 1
@@ -89,23 +89,22 @@ class ColorGradientnMapperProvider(
                     val (lowValue, lowColor) = low
                     val (highValue, highColor) = high
                     val subdomain = DoubleSpan(lowValue, highValue)
-                    ColorMapper.gradient(subdomain, lowColor, highColor, naValue, alpha)
+                    ColorMapper.gradient(subdomain, lowColor, highColor, naColor, alpha)
                 }
 
             return { value ->
-                value?.let {
-                    when {
-                        value < subdomainEnds.first() || value > subdomainEnds.last() -> naValue
-                        else -> {
-                            val i = subdomainEnds.binarySearch(value)
-                            val subdomainIndex = when {
-                                i < 0 -> abs(i + 1) - 1
-                                else -> min(i, mappers.lastIndex)
-                            }
-                            mappers[subdomainIndex](value)
+                when {
+                    value == null || !value.isFinite() -> naColor
+                    value < subdomainEnds.first() || value > subdomainEnds.last() -> naColor
+                    else -> {
+                        val i = subdomainEnds.binarySearch(value)
+                        val subdomainIndex = when {
+                            i < 0 -> abs(i + 1) - 1
+                            else -> min(i, mappers.lastIndex)
                         }
+                        mappers[subdomainIndex](value)
                     }
-                } ?: naValue
+                }
             }
         }
     }
