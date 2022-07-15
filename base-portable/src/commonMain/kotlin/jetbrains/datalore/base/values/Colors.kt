@@ -132,8 +132,8 @@ object Colors {
         )
     }
 
-    fun hsvFromRgb(color: Color): DoubleArray {
-        val scale = (1f / 255).toDouble()
+    fun hsvFromRgb(color: Color): HSV {
+        val scale = 1.0 / 255
         val r = color.red * scale
         val g = color.green * scale
         val b = color.blue * scale
@@ -154,7 +154,11 @@ object Colors {
             2f / 3 + (r - g) * div
         }
 
-        return doubleArrayOf(360 * h, v, max)
+        return HSV(
+            hue = 360 * h,
+            saturation = v,
+            value = max
+        )
     }
 
     @JvmOverloads

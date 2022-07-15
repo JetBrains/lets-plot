@@ -48,34 +48,13 @@ object ColorMapper {
         )
     }
 
-    /**
-     * @deprecated
-     */
-    fun gradientHSV(
-        domain: DoubleSpan,
-        lowHSV: DoubleArray,
-        highHSV: DoubleArray,
-        autoHueDirection: Boolean,
-        naColor: Color,
-        alpha: Double = 1.0
-    ): (Double?) -> Color {
-        return gradientHSV(
-            domain,
-            HSV(lowHSV[0], lowHSV[1], lowHSV[2]),
-            HSV(highHSV[0], highHSV[1], highHSV[2]),
-            autoHueDirection,
-            naColor,
-            alpha
-        )
-    }
-
     fun gradientHSV(
         domain: DoubleSpan,
         lowHSV: HSV,
         highHSV: HSV,
         autoHueDirection: Boolean,
         naColor: Color,
-        alpha: Double
+        alpha: Double = 1.0
     ): (Double?) -> Color {
 
         var lowHue = lowHSV.h

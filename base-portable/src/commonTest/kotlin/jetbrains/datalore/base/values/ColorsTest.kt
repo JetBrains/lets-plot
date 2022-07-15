@@ -79,22 +79,22 @@ class ColorsTest {
 
     @Test
     fun hsvFromRgb() {
-        assertContentEquals(doubleArrayOf(0.0, 0.0, 0.0), Colors.hsvFromRgb(Color.BLACK))
-        assertContentEquals(doubleArrayOf(0.0, 0.0, 1.0), Colors.hsvFromRgb(Color.WHITE))
-        assertContentEquals(doubleArrayOf(0.0, 1.0, 1.0), Colors.hsvFromRgb(Color.RED))
-        assertContentEquals(doubleArrayOf(120.0, 1.0, 1.0), Colors.hsvFromRgb(Color.GREEN))
-        assertContentEquals(doubleArrayOf(240.0, 1.0, 1.0), Colors.hsvFromRgb(Color.BLUE))
-        assertContentEquals(doubleArrayOf(60.0, 1.0, 1.0), Colors.hsvFromRgb(Color.YELLOW), "YELLOW")
-        assertContentEquals(doubleArrayOf(180.0, 1.0, 1.0), Colors.hsvFromRgb(Color.CYAN), "CYAN")
-        assertContentEquals(doubleArrayOf(300.0, 1.0, 1.0), Colors.hsvFromRgb(Color.MAGENTA), "MAGENTA")
-        assertContentEquals(doubleArrayOf(0.0, 0.0, 0.75), Colors.hsvFromRgb(Color(191, 191, 191)), "SILVER")
-        assertContentEquals(doubleArrayOf(0.0, 0.0, 0.5), Colors.hsvFromRgb(Color(127, 127, 127)), "GRAY")
-        assertContentEquals(doubleArrayOf(0.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 0, 0)), "MAROON")
-        assertContentEquals(doubleArrayOf(60.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 127, 0)), "OLIVE")
-        assertContentEquals(doubleArrayOf(120.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 127, 0)), "GREEN")
-        assertContentEquals(doubleArrayOf(300.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 0, 127)), "PURPLE")
-        assertContentEquals(doubleArrayOf(180.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 127, 127)), "TEAL")
-        assertContentEquals(doubleArrayOf(240.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 0, 127)), "NAVY")
+        assertEquals(HSV(0.0, 0.0, 0.0), Colors.hsvFromRgb(Color.BLACK))
+        assertEquals(HSV(0.0, 0.0, 1.0), Colors.hsvFromRgb(Color.WHITE))
+        assertEquals(HSV(0.0, 1.0, 1.0), Colors.hsvFromRgb(Color.RED))
+        assertEquals(HSV(120.0, 1.0, 1.0), Colors.hsvFromRgb(Color.GREEN))
+        assertEquals(HSV(240.0, 1.0, 1.0), Colors.hsvFromRgb(Color.BLUE))
+        assertEquals(HSV(60.0, 1.0, 1.0), Colors.hsvFromRgb(Color.YELLOW), "YELLOW")
+        assertEquals(HSV(180.0, 1.0, 1.0), Colors.hsvFromRgb(Color.CYAN), "CYAN")
+        assertEquals(HSV(300.0, 1.0, 1.0), Colors.hsvFromRgb(Color.MAGENTA), "MAGENTA")
+        assertEquals(HSV(0.0, 0.0, 0.75), Colors.hsvFromRgb(Color(191, 191, 191)), "SILVER")
+        assertEquals(HSV(0.0, 0.0, 0.5), Colors.hsvFromRgb(Color(127, 127, 127)), "GRAY")
+        assertEquals(HSV(0.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 0, 0)), "MAROON")
+        assertEquals(HSV(60.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 127, 0)), "OLIVE")
+        assertEquals(HSV(120.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 127, 0)), "GREEN")
+        assertEquals(HSV(300.0, 1.0, 0.5), Colors.hsvFromRgb(Color(127, 0, 127)), "PURPLE")
+        assertEquals(HSV(180.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 127, 127)), "TEAL")
+        assertEquals(HSV(240.0, 1.0, 0.5), Colors.hsvFromRgb(Color(0, 0, 127)), "NAVY")
     }
 
     private fun assertContentEquals(expected: DoubleArray, actual: DoubleArray, message: String = "") {
