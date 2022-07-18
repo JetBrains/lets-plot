@@ -39,11 +39,13 @@ class ThemeOptions {
             val vStr = if (value is String) "\"$value\"" else value.toString()
             return "\"${name}\": $vStr,"
         }
-        fun text(key: String, color: String? = null, face: String? = null): String {
+        fun text(key: String, color: String? = null, face: String? = null, size: Double? = null, family: String? = null): String {
             return """
             "$key": {
                 ${option("color", color)}
                 ${option("face", face)}
+                ${option("size", size)}
+                ${option("family", family)}
                 "blank": false
             }"""
         }

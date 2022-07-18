@@ -145,7 +145,7 @@ def theme(*,
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify plotting area background parameters, inherited from `rect`.
     panel_border : str or dict
-        Border around plotting area
+        Border around plotting area.
         Set 'blank' or result of `element_blank()` to draw nothing.
         Set `element_rect()` to specify border parameters, inherited from `rect`.
     panel_grid, panel_grid_major, panel_grid_minor, panel_grid_major_x, panel_grid_major_y, panel_grid_minor_x, panel_grid_minor_y : str or dict
@@ -384,9 +384,9 @@ def element_line(
 
 def element_text(
         color=None,
-        # ToDo: family
+        family=None,
         face=None,
-        # ToDo: font_size = None,
+        size=None,
         # ToDo: hjust, vjust, angle, lineheight, margin
         blank=False,
 ) -> dict:
@@ -398,8 +398,12 @@ def element_text(
     ----------
     color : str
         Text color.
+    family : str
+        Font family.
     face : str
         Font face ("plain", "italic", "bold", "bold_italic").
+    size : int
+        Text size.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 

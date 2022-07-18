@@ -6,13 +6,13 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
+import jetbrains.datalore.vis.TextStyle
 
 internal class DefaultFacetsTheme(
     options: Map<String, Any>
@@ -41,11 +41,7 @@ internal class DefaultFacetsTheme(
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 
-    override fun stripTextColor(): Color {
-        return getColor(getElemValue(textKey), Elem.COLOR)
-    }
-
-    override fun stripFontFace(): FontFace {
-        return getFontFace(getElemValue(textKey))
+    override fun stripTextStyle(): TextStyle {
+        return getTextStyle(getElemValue(textKey))
     }
 }
