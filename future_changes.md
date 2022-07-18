@@ -6,7 +6,7 @@
     
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_bw.ipynb).
   
-* Color schemes (flavors) applicable to existing themes:
+- Color schemes (flavors) applicable to existing themes:
   - `flavor_darcula()`;
   - `flavor_solarized_light()`;
   - `flavor_solarized_dark()`;
@@ -18,6 +18,11 @@
 - Viridis color scales: `scale_fill_viridis()`, `scale_fill_viridis()`.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
+
+- Parameters `size, family` in `element_text()`
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb).
+
 
 ### Changed
 
