@@ -24,7 +24,7 @@ interface AxisTheme {
 
     fun showTooltip(): Boolean
 
-    fun titleTextStyle(): TextStyle
+    fun titleStyle(): TextStyle
 
     fun lineWidth(): Double
 
@@ -32,7 +32,7 @@ interface AxisTheme {
 
     fun tickMarkColor(): Color
 
-    fun labelTextStyle(): TextStyle
+    fun labelStyle(): TextStyle
 
     fun tickMarkWidth(): Double
 

@@ -42,15 +42,15 @@ internal class DefaultPlotTheme(
         return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
 
-    override fun titleTextStyle(): TextStyle {
+    override fun titleStyle(): TextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
-    override fun subtitleTextStyle(): TextStyle {
+    override fun subtitleStyle(): TextStyle {
         return getTextStyle(getElemValue(subtitleKey))
     }
 
-    override fun captionTextStyle(): TextStyle {
+    override fun captionStyle(): TextStyle {
         return getTextStyle(getElemValue(captionKey))
     }
 

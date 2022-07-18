@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.StyleSheet.Companion.toCSS
-import jetbrains.datalore.vis.TextStyle
 
 object Style {
     // classes
@@ -78,27 +77,27 @@ object Style {
         val vAxisName = if (flippedAxis) "x" else "y"
 
         val textStyles = mapOf(
-            PLOT_TITLE to theme.plot().titleTextStyle(),
-            PLOT_SUBTITLE to theme.plot().subtitleTextStyle(),
-            PLOT_CAPTION to theme.plot().captionTextStyle(),
+            PLOT_TITLE to theme.plot().titleStyle(),
+            PLOT_SUBTITLE to theme.plot().subtitleStyle(),
+            PLOT_CAPTION to theme.plot().captionStyle(),
 
-            LEGEND_TITLE to theme.legend().titleTextStyle(),
-            LEGEND_ITEM to theme.legend().textTextStyle(),
+            LEGEND_TITLE to theme.legend().titleStyle(),
+            LEGEND_ITEM to theme.legend().textStyle(),
 
-            "$AXIS_TITLE-$hAxisName" to hAxisTheme.titleTextStyle(),
-            "$AXIS_TEXT-$hAxisName" to hAxisTheme.labelTextStyle(),
+            "$AXIS_TITLE-$hAxisName" to hAxisTheme.titleStyle(),
+            "$AXIS_TEXT-$hAxisName" to hAxisTheme.labelStyle(),
             "$AXIS_TOOLTIP_TEXT-$hAxisName" to hAxisTheme.tooltipTextStyle(),
 
-            "$AXIS_TITLE-$vAxisName" to vAxisTheme.titleTextStyle(),
-            "$AXIS_TEXT-$vAxisName" to vAxisTheme.labelTextStyle(),
+            "$AXIS_TITLE-$vAxisName" to vAxisTheme.titleStyle(),
+            "$AXIS_TEXT-$vAxisName" to vAxisTheme.labelStyle(),
             "$AXIS_TOOLTIP_TEXT-$vAxisName" to vAxisTheme.tooltipTextStyle(),
 
             "$FACET_STRIP_TEXT-x" to theme.facets().stripTextStyle(),
             "$FACET_STRIP_TEXT-y" to theme.facets().stripTextStyle(),
 
             TOOLTIP_TEXT to theme.tooltips().textStyle(),
-            TOOLTIP_TITLE to theme.tooltips().titleTextStyle(),
-            TOOLTIP_LABEL to theme.tooltips().labelTextStyle(),
+            TOOLTIP_TITLE to theme.tooltips().titleStyle(),
+            TOOLTIP_LABEL to theme.tooltips().labelStyle(),
         )
 
         return StyleSheet(textStyles, defaultFamily = FONT_FAMILY_NORMAL)

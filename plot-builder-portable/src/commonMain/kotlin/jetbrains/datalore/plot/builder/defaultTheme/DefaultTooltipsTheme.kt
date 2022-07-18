@@ -32,13 +32,13 @@ internal class DefaultTooltipsTheme(
 
     override fun textStyle(): TextStyle = getTextStyle(getElemValue(textKey))
 
-    override fun titleTextStyle(): TextStyle {
+    override fun titleStyle(): TextStyle {
         val titleStyle = getTextStyle(getElemValue(titleTextKey))
         val textFontFace = getFontFace(getElemValue(textKey))
         return titleStyle.copy(face = titleStyle.face + textFontFace)
     }
 
-    override fun labelTextStyle(): TextStyle {
+    override fun labelStyle(): TextStyle {
         return with (textStyle()) {
             TextStyle(family, FontFace.BOLD + face, size, color)
         }

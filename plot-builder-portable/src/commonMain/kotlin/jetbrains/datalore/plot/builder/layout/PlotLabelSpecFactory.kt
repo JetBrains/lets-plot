@@ -12,19 +12,19 @@ import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.vis.TextStyle
 
 object PlotLabelSpecFactory {
-    fun plotTitle(theme: PlotTheme) = plotLabelSpec(theme.titleTextStyle())
+    fun plotTitle(theme: PlotTheme) = plotLabelSpec(theme.titleStyle())
 
-    fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleTextStyle())
+    fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleStyle())
 
-    fun plotCaption(theme: PlotTheme) = plotLabelSpec(theme.captionTextStyle())
+    fun plotCaption(theme: PlotTheme) = plotLabelSpec(theme.captionStyle())
 
-    fun legendTitle(theme: LegendTheme) = plotLabelSpec(theme.titleTextStyle())
+    fun legendTitle(theme: LegendTheme) = plotLabelSpec(theme.titleStyle())
 
-    fun legendItem(theme: LegendTheme) = plotLabelSpec(theme.textTextStyle())
+    fun legendItem(theme: LegendTheme) = plotLabelSpec(theme.textStyle())
 
-    fun axisTick(theme: AxisTheme) = plotLabelSpec(theme.labelTextStyle())
+    fun axisTick(theme: AxisTheme) = plotLabelSpec(theme.labelStyle())
 
-    fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleTextStyle())
+    fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle())
 
     private fun plotLabelSpec(textStyle: TextStyle) = PlotLabelSpec(textStyle.size, textStyle.face.bold)
 }

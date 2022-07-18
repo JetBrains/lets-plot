@@ -14,6 +14,6 @@ interface TooltipsTheme {
     fun tooltipStrokeWidth(): Double
 
     fun textStyle(): TextStyle
-    fun titleTextStyle(): TextStyle
-    fun labelTextStyle(): TextStyle
+    fun titleStyle(): TextStyle
+    fun labelStyle(): TextStyle
 }

@@ -26,7 +26,7 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun showTooltip(): Boolean = false
 
-    override fun titleTextStyle() = TextStyle(
+    override fun titleStyle() = TextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TITLE_FONT_SIZE.toDouble(),
@@ -39,7 +39,7 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tickMarkColor() = Defaults.Plot.Axis.LINE_COLOR
 
-    override fun labelTextStyle() = TextStyle(
+    override fun labelStyle() = TextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble(),

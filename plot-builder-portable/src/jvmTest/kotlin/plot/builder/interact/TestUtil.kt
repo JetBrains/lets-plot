@@ -37,11 +37,11 @@ object TestUtil {
         override fun showLabels() = TODO("Not yet implemented")
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
-        override fun titleTextStyle() = TODO("Not yet implemented")
+        override fun titleStyle() = TODO("Not yet implemented")
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
-        override fun labelTextStyle() = TODO("Not yet implemented")
+        override fun labelStyle() = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR

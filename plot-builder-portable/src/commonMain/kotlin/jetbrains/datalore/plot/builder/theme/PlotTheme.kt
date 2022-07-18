@@ -13,8 +13,8 @@ interface PlotTheme {
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
-    fun titleTextStyle(): TextStyle
-    fun subtitleTextStyle(): TextStyle
-    fun captionTextStyle(): TextStyle
+    fun titleStyle(): TextStyle
+    fun subtitleStyle(): TextStyle
+    fun captionStyle(): TextStyle
     fun textColor(): Color
 }

@@ -49,11 +49,11 @@ internal class DefaultLegendTheme(
         return getValue(ThemeOption.LEGEND_DIRECTION) as LegendDirection
     }
 
-    override fun titleTextStyle(): TextStyle {
+    override fun titleStyle(): TextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
-    override fun textTextStyle(): TextStyle {
+    override fun textStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))
     }
 

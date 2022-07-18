@@ -67,7 +67,7 @@ internal class DefaultAxisTheme(
         return !isElemBlank(tooltipKey)
     }
 
-    override fun titleTextStyle(): TextStyle {
+    override fun titleStyle(): TextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
@@ -91,7 +91,7 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
-    override fun labelTextStyle(): TextStyle {
+    override fun labelStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))
     }
 
