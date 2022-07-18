@@ -48,7 +48,7 @@ class StyleSheet(
     companion object {
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
-        const val DEFAULT_FONT_SIZE = 15.0
+        private const val DEFAULT_FONT_SIZE = 15.0
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +
