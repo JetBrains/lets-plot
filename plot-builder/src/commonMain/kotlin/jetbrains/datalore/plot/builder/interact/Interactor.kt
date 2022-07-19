@@ -52,12 +52,11 @@ internal class Interactor(
 
     override fun onTileAdded(
         geomBounds: DoubleRectangle,
-        tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, tooltipBounds, targetLocators, layerYOrientations, axisOrigin)
+        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin)
         geomBoundsList.add(geomBounds)
     }
 

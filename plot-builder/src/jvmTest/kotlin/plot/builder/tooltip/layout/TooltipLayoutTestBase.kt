@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.builder.interact.PlotTooltipBounds
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
@@ -226,7 +225,7 @@ internal open class TooltipLayoutTestBase {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
                     LayoutManager(myViewport, myHorizontalAlignment)
-                        .arrange(myTooltipData, myCursor, tooltipBounds = PlotTooltipBounds(VIEWPORT, myTooltipBounds))
+                        .arrange(myTooltipData, myCursor, geomBounds = myTooltipBounds)
             }
         }
 
