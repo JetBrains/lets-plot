@@ -384,7 +384,6 @@ class PlotSvgComponent constructor(
             val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
             captionLabel.addClassName(Style.PLOT_CAPTION)
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
-            captionLabel.setX(0.0)
             captionLabel.setLineHeight(captionLineHeight)
 
             val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(plotTheme))
@@ -413,7 +412,6 @@ class PlotSvgComponent constructor(
         val titleLabel = MultilineLabel(titleLines.joinToString("\n"))
         titleLabel.addClassName(className)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
-        titleLabel.setX(0.0)
         titleLabel.setLineHeight(titleLineHeight)
 
         val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)

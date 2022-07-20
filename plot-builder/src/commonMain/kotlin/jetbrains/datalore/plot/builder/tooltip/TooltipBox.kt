@@ -396,7 +396,6 @@ class TooltipBox: SvgComponent() {
         private fun initTitleComponent(titleLine: String): MultilineLabel {
             val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
             titleComponent.addClassName(TOOLTIP_TITLE)
-            titleComponent.setX(0.0)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
             titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
@@ -454,7 +453,6 @@ class TooltipBox: SvgComponent() {
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
                     labelComponent.addClassName(TOOLTIP_LABEL)
-                    labelComponent.setX(0.0)
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
             }
@@ -462,7 +460,6 @@ class TooltipBox: SvgComponent() {
             components.onEach { (_, valueComponent) ->
                 valueComponent.addClassName(textClassName)
                 valueTextColor?.let(valueComponent.textColor()::set)
-                valueComponent.setX(0.0)
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
