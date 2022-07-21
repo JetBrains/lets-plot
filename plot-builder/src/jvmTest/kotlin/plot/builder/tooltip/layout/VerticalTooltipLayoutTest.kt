@@ -124,6 +124,26 @@ internal class VerticalTooltipLayoutTest : TooltipLayoutTestBase() {
         assertNoTooltips()
     }
 
+    @Test
+    fun `top stem coordinate is out of visibility - should move tooltip to bottom position`() {
+        // the top coordinate (pointed to by the tooltip) is outside the area,
+        // so tooltip will be moved to bottom position
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(DEFAULT_TOOLTIP_SIZE)
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(tooltipBuilder.vertical(VERTICAL_TIP_KEY, coord(100.0, 100.0)).buildTooltip())
+            .geomBounds(LIMIT_RECT)
+            .build()
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect()
+                .tooltipY(expectedAroundPointY(VERTICAL_TIP_KEY, BOTTOM))
+        )
+    }
+
     companion object {
         private const val VERTICAL_TIP_KEY = "vertical"
         private const val HORIZONTAL_TIP_KEY = "horizontal"

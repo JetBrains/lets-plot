@@ -29,3 +29,5 @@
 ### Fixed
 
 - boxplot, violin, crossbar: position dodge width=0.95 should be used by default [[#553](https://github.com/JetBrains/lets-plot/issues/553)].
+- Tooltip is shown not for the nearest object [[#574](https://github.com/JetBrains/lets-plot/issues/574)].
+- Tooltip is not displayed for the object on the border of the plot [[#575](https://github.com/JetBrains/lets-plot/issues/575)].
