@@ -19,6 +19,8 @@ internal object PosProto {
     const val JITTER = "jitter"
     const val JITTER_DODGE = "jitterdodge"
 
+    // ToDo: move option names to the plot.config.Option to make them available in LPK and to remove
+    //  duplicates in org.jetbrains.letsPlot.pos.
     // option names
     const val DODGE_WIDTH = "width"
     const val JITTER_WIDTH = "width"
