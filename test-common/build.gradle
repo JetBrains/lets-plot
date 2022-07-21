@@ -26,10 +26,10 @@ kotlin {
             } else {
                 macosX64("native")
             }
-        } else if (currentOs.isLinux("native")) {
-            linuxX64()
-        } else if (currentOs.isWindows("native")) {
-            mingwX64()
+        } else if (currentOs.isLinux()) {
+            linuxX64("native")
+        } else if (currentOs.isWindows()) {
+            mingwX64("native")
         }
     }
 
