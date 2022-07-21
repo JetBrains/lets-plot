@@ -32,15 +32,13 @@ class LayoutManager(
     fun arrange(
         tooltips: List<MeasuredTooltip>,
         cursorCoord: DoubleVector,
-        geomBounds: DoubleRectangle?
+        geomBounds: DoubleRectangle
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
         myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
-        if (geomBounds != null) {
-            myHorizontalTooltipSpace = DoubleRange.withStartAndLength(geomBounds.left, geomBounds.width)
-            myVerticalTooltipSpace = DoubleRange.withStartAndLength(geomBounds.top, geomBounds.height)
-        }
+        myHorizontalTooltipSpace = DoubleRange.withStartAndLength(geomBounds.left, geomBounds.width)
+        myVerticalTooltipSpace = DoubleRange.withStartAndLength(geomBounds.top, geomBounds.height)
 
         val desiredPosition = ArrayList<PositionedTooltip>()
 
@@ -75,7 +73,7 @@ class LayoutManager(
             }
 
         // add corner tooltips - if the cursor is located within the visible boundaries
-        if (geomBounds?.contains(cursorCoord) != false) {
+        if (geomBounds.contains(cursorCoord)) {
             desiredPosition += calculateCornerTooltipsPosition(tooltips)
         }
 
@@ -98,10 +96,7 @@ class LayoutManager(
         return rearrangeWithoutOverlapping(desiredPosition)
     }
 
-    private fun isTooltipWithinBounds(tooltip: PositionedTooltip, bounds: DoubleRectangle?): Boolean {
-        if (bounds == null) {
-            return true
-        }
+    private fun isTooltipWithinBounds(tooltip: PositionedTooltip, bounds: DoubleRectangle): Boolean {
         return when (tooltip.hintKind) {
             X_AXIS_TOOLTIP -> bounds.xRange().contains(tooltip.stemCoord.x)
             Y_AXIS_TOOLTIP -> bounds.yRange().contains(tooltip.stemCoord.y)
@@ -333,7 +328,8 @@ class LayoutManager(
             else
                 EMPTY_DOUBLE_RANGE
 
-            if (myVerticalAlignmentResolver.resolve(
+            if (myVerticalTooltipSpace.contains(targetTopPoint) &&
+                myVerticalAlignmentResolver.resolve(
                     topTooltipRange,
                     bottomTooltipRange,
                     alignment,
@@ -370,30 +366,34 @@ class LayoutManager(
             val stemLength = measuredTooltip.stemLength
             val margin = hintSize + stemLength
 
+            val targetLeftPoint = targetCoordX - hintSize
             val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
             val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
 
             // The tooltip should fit in horizontal space and not intersect restrictions,
             // restrictions are expected to contain only y-axis tooltip.
+            // Also the coordinate pointed to by the tooltip should be inside the geometry space.
             // Don't change canFitRight as it is not affected by restrictions (as long as y-axis is on the left side).
-            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace) && restrictions.all {
-                val tooltipRect = DoubleRectangle(
-                    DoubleVector(leftTooltipPlacement.start(), tooltipY), measuredTooltip.size
-                )
-                !it.intersects(tooltipRect)
-            }
+            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace) &&
+                    (measuredTooltip.hintKind == Y_AXIS_TOOLTIP || myHorizontalTooltipSpace.contains(targetLeftPoint)) &&
+                    restrictions.all {
+                        val tooltipRect = DoubleRectangle(
+                            DoubleVector(leftTooltipPlacement.start(), tooltipY), measuredTooltip.size
+                        )
+                        !it.intersects(tooltipRect)
+                    }
             val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
 
             when {
                 measuredTooltip.hintKind == Y_AXIS_TOOLTIP && !canFitLeft -> {
                     // move axis tooltip to the border if it doesn't fit
                     tooltipX = 0.0
-                    stemX = targetCoordX - hintSize
+                    stemX = targetLeftPoint
                 }
                 !(canFitLeft || canFitRight) -> {
                     when (myPreferredHorizontalAlignment) {
                         HorizontalAlignment.LEFT -> {
-                            stemX = targetCoordX - hintSize
+                            stemX = targetLeftPoint
                             tooltipX = stemX + stemLength
                         }
                         HorizontalAlignment.RIGHT -> {
@@ -408,7 +408,7 @@ class LayoutManager(
                 }
                 myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight -> {
                     tooltipX = leftTooltipPlacement.start()
-                    stemX = targetCoordX - hintSize
+                    stemX = targetLeftPoint
                 }
                 else -> {
                     tooltipX = rightTooltipPlacement.start()
