@@ -191,32 +191,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
             ggtitle('SQ23 - the longest scheduled airline flight '
                     'by great circle distance since 2020')
 
-    |
-
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 13-19
-
-        import numpy as np
-        from lets_plot import *
-        from lets_plot import tilesets
-        from lets_plot.geo_data import *
-        LetsPlot.setup_html()
-        data = {
-            'state': np.repeat(['NY', 'MA', 'PA'], 4),
-            'spoken_lang': np.tile(['English', 'Spanish', 'Chinese', 'Other'], 3),
-            'lang_order': np.tile(np.arange(4), 3),
-            'percentage_2020': [69.6, 15.2, 3.1, 12.1, 77.7, 8.6, 2.1, 11.6, 90.2, 4.1, 0.5, 5.2],
-        }
-        centroids = geocode_states(data['state']).scope('US').get_centroids()
-        ggplot() + geom_livemap(aes(fill='spoken_lang', sym_x='lang_order', sym_y='percentage_2020'), \\
-                                data=data, map=centroids, map_join='state', symbol='pie', \\
-                                tiles=tilesets.STAMEN_DESIGN_TERRAIN, zoom=6, \\
-                                location=[-76.09990, 42.86217], show_legend=False, color='black', \\
-                                tooltips=layer_tooltips().line('Spoken language in @{found name}')\\
-                                                         .format('percentage_2020', '{}%')\\
-                                                         .line('@spoken_lang @percentage_2020'))
-
     """
     if location is not None:
         location = _prepare_location(location)
