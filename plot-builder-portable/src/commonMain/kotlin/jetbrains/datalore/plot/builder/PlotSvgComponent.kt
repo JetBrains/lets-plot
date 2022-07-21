@@ -18,6 +18,8 @@ import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.TextJustification
+import jetbrains.datalore.plot.base.render.svg.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
@@ -315,21 +317,31 @@ class PlotSvgComponent constructor(
 
         // add plot title
         if (titleLines.isNotEmpty()) {
+            val titleHeight = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(plotTheme)).y
             addTitle(
                 titleLines,
-                leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
                 className = Style.PLOT_TITLE,
-                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme)
+                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
+                justification = plotTheme.titleJustification(),
+                boundRect = DoubleRectangle(
+                    DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
+                    DoubleVector(geomAreaBounds.width, titleHeight)
+                )
             )
         }
         // add plot subtitle
         if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(plotTheme))
+            val titleHeight = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(plotTheme)).y
+            val subtitleHeight = PlotLayoutUtil.titleDimensions(subtitleLines, PlotLabelSpecFactory.plotSubtitle(plotTheme)).y
             addTitle(
                 subtitleLines,
-                leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
                 className = Style.PLOT_SUBTITLE,
-                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme)
+                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                justification = plotTheme.subtitleJustification(),
+                boundRect = DoubleRectangle(
+                    DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleHeight),
+                    DoubleVector(geomAreaBounds.width, subtitleHeight)
+                )
             )
         }
 
@@ -382,57 +394,39 @@ class PlotSvgComponent constructor(
 
         // add caption
         if (captionLines.isNotEmpty()) {
-            val captionLineHeight = PlotLabelSpecFactory.plotCaption(plotTheme).height()
-            val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
-            captionLabel.addClassName(Style.PLOT_CAPTION)
-            captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
-            captionLabel.setLineHeight(captionLineHeight)
-
-            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(plotTheme))
-            val captionBounds = DoubleRectangle(
-                geomAreaBounds.right - captionSize.x,
-                plotOuterBounds.bottom - captionSize.y,
-                captionSize.x,
-                captionSize.y
+            val captionHeight = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(plotTheme)).y
+            addTitle(
+                titleLines = captionLines,
+                className = Style.PLOT_CAPTION,
+                labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
+                justification = plotTheme.captionJustification(),
+                boundRect = DoubleRectangle(
+                    DoubleVector(geomAreaBounds.left, plotOuterBounds.bottom - captionHeight),
+                    DoubleVector(geomAreaBounds.width, captionHeight)
+                )
             )
-            captionLabel.moveTo(captionBounds.right, captionBounds.top + captionLineHeight)
-            add(captionLabel)
-
-            if (DEBUG_DRAWING) {
-                drawDebugRect(captionBounds, Color.BLUE)
-            }
         }
     }
 
     private fun addTitle(
         titleLines: List<String>,
-        leftTop: DoubleVector,
         className: String,
-        labelSpec: LabelSpec
+        labelSpec: LabelSpec,
+        justification: TextJustification,
+        boundRect: DoubleRectangle
     ) {
-        val titleLineHeight = labelSpec.height()
         val titleLabel = MultilineLabel(titleLines.joinToString("\n"))
         titleLabel.addClassName(className)
-        titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
-        titleLabel.setLineHeight(titleLineHeight)
-
-        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
-        val titleBounds = DoubleRectangle(leftTop, titleSize)
-
-        titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
+        titleLabel.applyJustification(
+            boundRect,
+            textSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec),
+            lineHeight = labelSpec.height(),
+            justification = justification
+        )
         add(titleLabel)
 
         if (DEBUG_DRAWING) {
-            var h = 0.0
-            PlotLayoutUtil.textLinesDimensions(titleLines, labelSpec).forEach { sz ->
-                val bounds = DoubleRectangle(
-                    leftTop.add(DoubleVector(0.0, h)),
-                    sz
-                )
-                h += sz.y
-                drawDebugRect(bounds, Color.LIGHT_BLUE)
-            }
-            drawDebugRect(titleBounds, Color.BLUE)
+            drawDebugRect(boundRect, Color.BLUE)
         }
     }
 

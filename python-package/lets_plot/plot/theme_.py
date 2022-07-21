@@ -388,6 +388,8 @@ def element_text(
         face=None,
         size=None,
         # ToDo: hjust, vjust, angle, lineheight, margin
+        hjust=None,
+        vjust=None,
         blank=False,
 ) -> dict:
     """
@@ -404,6 +406,10 @@ def element_text(
         Font face ("plain", "italic", "bold", "bold_italic").
     size : int
         Text size.
+    hjust : float
+        Horizontal justification (in [0, 1]).
+    vjust : float
+        Vertical justification (in [0, 1]).
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 

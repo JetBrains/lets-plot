@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
@@ -48,11 +49,15 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.FONT_FACE to FontFace.NORMAL,
                 Elem.FONT_FAMILY to Defaults.FONT_FAMILY_NORMAL,
+                Elem.HJUST to 0.0,
+                Elem.VJUST to 1.0,
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
             ),
-
+            PLOT_CAPTION to mapOf(
+                Elem.HJUST to 1.0,
+            ),
             PANEL_BORDER_RECT to ELEMENT_BLANK,
 
             PLOT_BKGR_RECT to mapOf(

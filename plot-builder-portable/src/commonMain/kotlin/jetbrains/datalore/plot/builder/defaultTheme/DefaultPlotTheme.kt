@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.render.svg.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
@@ -56,5 +57,17 @@ internal class DefaultPlotTheme(
 
     override fun textColor(): Color {
         return getColor(getElemValue(listOf(TEXT)), Elem.COLOR)
+    }
+
+    override fun titleJustification(): TextJustification {
+        return getTextJustification(getElemValue(titleKey))
+    }
+
+    override fun subtitleJustification(): TextJustification {
+        return getTextJustification(getElemValue(subtitleKey))
+    }
+
+    override fun captionJustification(): TextJustification {
+        return getTextJustification(getElemValue(captionKey))
     }
 }

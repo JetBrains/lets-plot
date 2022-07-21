@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
+import jetbrains.datalore.plot.base.render.svg.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.vis.TextStyle
 
@@ -98,5 +99,11 @@ internal open class ThemeValuesAccess(
             size = getNumber(elem, Elem.SIZE),
             color = getColor(elem, Elem.COLOR)
         )
+    }
+
+    protected fun getTextJustification(elem: Map<String, Any>): TextJustification {
+        val hjust = getNumber(elem, Elem.HJUST)
+        val vjust = getNumber(elem, Elem.VJUST)
+        return TextJustification(hjust, vjust)
     }
 }
