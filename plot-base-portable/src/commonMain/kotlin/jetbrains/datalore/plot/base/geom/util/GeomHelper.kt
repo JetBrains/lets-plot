@@ -26,7 +26,7 @@ open class GeomHelper(
     coord: CoordinateSystem,
     internal val ctx: GeomContext
 ) {
-    private val myGeomCoord: GeomCoord = GeomCoord(coord)
+    private val myGeomCoord: GeomCoord = GeomCoord(coord, ctx.isYOrientation)
 
     fun toClient(location: DoubleVector, p: DataPointAesthetics): DoubleVector {
         return myGeomCoord.toClient(adjust(location, p, myPos, ctx))
@@ -38,8 +38,9 @@ open class GeomHelper(
         return myGeomCoord.toClient(adjust(location, p, myPos, ctx))
     }
 
-    fun toClient(r: DoubleRectangle, p: DataPointAesthetics): DoubleRectangle {
-        var clientRect = myGeomCoord.toClient(adjust(r, p, myPos, ctx))
+    fun toClient(r: DoubleRectangle, p: DataPointAesthetics, xResolution: Double? = null, yResolution: Double? = null): DoubleRectangle {
+        var clientRect = myGeomCoord.toClient(adjust(r, p, myPos, ctx), xResolution, yResolution)
+
         // do not allow zero height or width (shape becomes invisible)
         if (clientRect.width == 0.0) {
             clientRect = DoubleRectangle(clientRect.origin.x, clientRect.origin.y, 0.1, clientRect.height)
@@ -48,10 +49,6 @@ open class GeomHelper(
             clientRect = DoubleRectangle(clientRect.origin.x, clientRect.origin.y, clientRect.width, 0.1)
         }
         return clientRect
-    }
-
-    fun fromClient(location: DoubleVector): DoubleVector {
-        return myGeomCoord.fromClient(location)
     }
 
     private fun adjust(
@@ -65,10 +62,12 @@ open class GeomHelper(
 
     internal fun toClientRect(
         p: DataPointAesthetics,
+        xResolution: Double? = null,
+        yResolution: Double? = null,
         aesMapper: (DataPointAesthetics) -> DoubleRectangle?
     ): DoubleRectangle? {
         val r = aesMapper(p) ?: return null
-        return toClient(r, p)
+        return toClient(r, p, xResolution, yResolution)
     }
 
     private fun adjust(

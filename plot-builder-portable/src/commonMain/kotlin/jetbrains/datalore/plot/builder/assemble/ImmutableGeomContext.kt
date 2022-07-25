@@ -17,6 +17,8 @@ interface ImmutableGeomContext : GeomContext {
     fun with(): Builder
 
     interface Builder {
+        fun isYOrientation(isYOrientation: Boolean): Builder
+
         fun flipped(flipped: Boolean): Builder
 
         fun aesthetics(aesthetics: Aesthetics): Builder

@@ -5,7 +5,10 @@
 
 package jetbrains.datalore.plot.builder.coord
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -33,6 +36,7 @@ internal abstract class CoordProviderBase(
     override fun buildAxisScaleX(
         scaleProto: Scale<Double>,
         domain: DoubleSpan,
+        yDomain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double> {
         return buildAxisScaleDefault(
@@ -44,6 +48,7 @@ internal abstract class CoordProviderBase(
     override fun buildAxisScaleY(
         scaleProto: Scale<Double>,
         domain: DoubleSpan,
+        xDomain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double> {
         return buildAxisScaleDefault(
@@ -52,11 +57,19 @@ internal abstract class CoordProviderBase(
         )
     }
 
-    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisXScaleMapper(
+        domain: DoubleSpan,
+        axisLength: Double,
+        yDomain: DoubleSpan
+    ): ScaleMapper<Double> {
         return buildAxisScaleMapperDefault(domain, axisLength)
     }
 
-    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisYScaleMapper(
+        domain: DoubleSpan,
+        axisLength: Double,
+        xDomain: DoubleSpan
+    ): ScaleMapper<Double> {
         return buildAxisScaleMapperDefault(domain, axisLength)
     }
 
@@ -64,19 +77,37 @@ internal abstract class CoordProviderBase(
         xDomain: DoubleSpan,
         xAxisLength: Double,
         yDomain: DoubleSpan,
-        yAxisLength: Double
+        yAxisLength: Double,
+        hScaleMapper: ScaleMapper<Double>,
+        vScaleMapper: ScaleMapper<Double>
     ): CoordinateSystem {
         val mapperX = linearMapper(xDomain, xAxisLength)
         val mapperY = linearMapper(yDomain, yAxisLength)
+
+        val projection = object : Projection {
+            override fun project(v: DoubleVector): DoubleVector? {
+                if (flipAxis) {
+                    val x = vScaleMapper.invoke(v.x) ?: return null
+                    val y = hScaleMapper.invoke(v.y) ?: return null
+
+                    return DoubleVector(x, y)
+                } else {
+                    val x = hScaleMapper.invoke(v.x) ?: return null
+                    val y = vScaleMapper.invoke(v.y) ?: return null
+                    return DoubleVector(x, y)
+                }
+            }
+
+            override fun invert(v: DoubleVector): DoubleVector? = TODO("Not yet implemented")
+            override fun validRect(): DoubleRectangle = TODO("Not yet implemented")
+            override val cylindrical: Boolean
+                get() = TODO("Not yet implemented")
+        }
+
         return Coords.create(
-            MapperUtil.map(
-                xDomain,
-                mapperX
-            ),
-            MapperUtil.map(
-                yDomain,
-                mapperY
-            ),
+            MapperUtil.map(xDomain, mapperX),
+            MapperUtil.map(yDomain, mapperY),
+            projection,
             hLim?.let { MapperUtil.map(it, mapperX) },
             vLim?.let { MapperUtil.map(it, mapperY) }
         )

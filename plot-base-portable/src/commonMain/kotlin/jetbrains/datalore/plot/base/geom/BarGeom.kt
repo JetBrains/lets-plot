@@ -9,8 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.widthPx
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -51,12 +49,20 @@ open class BarGeom : GeomBase() {
                 if (!SeriesUtil.allFinite(x, y, w)) {
                     null
                 } else if (isHintRect) {
-                    val width = widthPx(p, ctx, 2.0)
-                    val origin = DoubleVector(x!! - width / 2, y!!)
-                    val dimension = DoubleVector(width, 0.0)
+                    val origin = DoubleVector(x!! - w!! / 2, y!!)
+                    val dimension = DoubleVector(w, 0.0)
                     DoubleRectangle(origin, dimension)
                 } else {
-                    GeomUtil.rectangleByDataPoint(p, ctx)
+                    val origin: DoubleVector
+                    val dimensions: DoubleVector
+                    if (y!! >= 0) {
+                        origin = DoubleVector(x!! - w!! / 2, 0.0)
+                        dimensions = DoubleVector(w, y)
+                    } else {
+                        origin = DoubleVector(x!! - w!! / 2, y)
+                        dimensions = DoubleVector(w, -y)
+                    }
+                    DoubleRectangle(origin, dimensions)
                 }
             }
         }

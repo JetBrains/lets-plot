@@ -82,7 +82,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
             .alpha(constant(0.5))
             .build()
         val coord = CoordProviders.map()
-            .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
+            .createCoordinateSystem(domainX, lengthX, domainY, lengthY, mapper, mapper)
         val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
             aes,
             PolygonGeom(),

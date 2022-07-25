@@ -86,20 +86,24 @@ internal class SquareFrameOfReferenceProvider(
         val hScaleMapper = coordProvider.buildAxisXScaleMapper(
             hAxisLayoutInfo.axisDomain,
             hAxisLayoutInfo.axisLength,
+            vAxisLayoutInfo.axisDomain,
         )
         val vScaleMapper = coordProvider.buildAxisYScaleMapper(
             vAxisLayoutInfo.axisDomain,
             vAxisLayoutInfo.axisLength,
+            hAxisLayoutInfo.axisDomain
         )
 
         val hScale = coordProvider.buildAxisScaleX(
             hScaleProto,
             hAxisLayoutInfo.axisDomain,
+            vAxisLayoutInfo.axisDomain,
             hAxisLayoutInfo.axisBreaks
         )
         val vScale = coordProvider.buildAxisScaleY(
             vScaleProto,
             vAxisLayoutInfo.axisDomain,
+            hAxisLayoutInfo.axisDomain,
             vAxisLayoutInfo.axisBreaks
         )
 
@@ -107,7 +111,8 @@ internal class SquareFrameOfReferenceProvider(
             hAxisLayoutInfo.axisDomain,
             hAxisLayoutInfo.axisLength,
             vAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisLength
+            vAxisLayoutInfo.axisLength,
+            hScaleMapper, vScaleMapper,
         )
 
         val tileFrameOfReference = SquareFrameOfReference(
@@ -173,13 +178,13 @@ internal class SquareFrameOfReferenceProvider(
             val ySize = sizes.getValue(side).y
 
             val marginCoordProvider = MarginalLayerCoordProvider(side, coordProvider)
-            val marginHMapper = marginCoordProvider.buildAxisXScaleMapper(xDomain, xSize)
-            val marginVMapper = marginCoordProvider.buildAxisYScaleMapper(yDomain, ySize)
+            val marginHMapper = marginCoordProvider.buildAxisXScaleMapper(xDomain, xSize, yDomain)
+            val marginVMapper = marginCoordProvider.buildAxisYScaleMapper(yDomain, ySize, xDomain)
 
             MarginalFrameOfReference(
                 boundsByMargin.getValue(side),
                 marginHMapper, marginVMapper,
-                marginCoordProvider.createCoordinateSystem(xDomain, xSize, yDomain, ySize),
+                marginCoordProvider.createCoordinateSystem(xDomain, xSize, yDomain, ySize, marginHMapper, marginVMapper),
                 debugDrawing,
             )
         }

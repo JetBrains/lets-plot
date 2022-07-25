@@ -60,8 +60,8 @@ internal open class CoordTestBase {
 //        val scaleX = scaleX(provider, domainX, displaySize.x)
 //        val scaleY = scaleY(provider, domainY, displaySize.y)
 
-        val scaleXMapper = provider.buildAxisXScaleMapper(domainX, displaySize.x)
-        val scaleYMapper = provider.buildAxisYScaleMapper(domainY, displaySize.y)
+        val scaleXMapper = provider.buildAxisXScaleMapper(domainX, displaySize.x, domainY)
+        val scaleYMapper = provider.buildAxisYScaleMapper(domainY, displaySize.y, domainX)
 
         // adapts to display size
         val actualMin = DoubleVector(scaleXMapper(dataBounds.origin.x)!!, scaleYMapper(dataBounds.origin.y)!!)

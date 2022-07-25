@@ -60,7 +60,7 @@ class CrossBarGeom : GeomBase() {
                     val x = p.x()!!
                     val ymin = p.ymin()!!
                     val ymax = p.ymax()!!
-                    val width = GeomUtil.widthPx(p, ctx, 2.0)
+                    val width = p.width()!!
 
                     val origin = DoubleVector(x - width / 2, ymin)
                     val dimensions = DoubleVector(width, ymax - ymin)
@@ -71,7 +71,7 @@ class CrossBarGeom : GeomBase() {
                 ) {
                     val x = p.x()!!
                     val middle = p.middle()!!
-                    val width = GeomUtil.widthPx(p, ctx, 2.0)
+                    val width = p.width()!!
 
                     val origin = DoubleVector(x - width / 2, middle)
                     val dimensions = DoubleVector(width, 0.0)

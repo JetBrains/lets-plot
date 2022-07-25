@@ -149,5 +149,9 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         fun LTRB(left: Double, top: Double, right: Double, bottom: Double): DoubleRectangle {
             return DoubleRectangle(left, top, right - left, bottom - top)
         }
+
+        fun XYWH(x: Double, y: Double, width: Double, height: Double): DoubleRectangle {
+            return DoubleRectangle(x, y, width, height)
+        }
     }
 }

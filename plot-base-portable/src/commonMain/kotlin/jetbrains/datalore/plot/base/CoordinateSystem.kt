@@ -6,8 +6,11 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.projections.Projection
 
 interface CoordinateSystem {
+
+    val projection: Projection
 
     fun toClient(p: DoubleVector): DoubleVector
 

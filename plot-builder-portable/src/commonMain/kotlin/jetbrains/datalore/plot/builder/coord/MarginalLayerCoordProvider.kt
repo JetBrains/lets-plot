@@ -31,25 +31,43 @@ internal class MarginalLayerCoordProvider(
         UNSUPPORTED("MarginalLayerCoordProvider.with()")
     }
 
-    override fun buildAxisScaleX(scaleProto: Scale<Double>, domain: DoubleSpan, breaks: ScaleBreaks): Scale<Double> {
+    override fun buildAxisScaleX(
+        scaleProto: Scale<Double>,
+        domain: DoubleSpan,
+        yDomain: DoubleSpan,
+        breaks: ScaleBreaks
+    ): Scale<Double> {
         UNSUPPORTED("MarginalLayerCoordProvider.buildAxisScaleX()")
     }
 
-    override fun buildAxisScaleY(scaleProto: Scale<Double>, domain: DoubleSpan, breaks: ScaleBreaks): Scale<Double> {
+    override fun buildAxisScaleY(
+        scaleProto: Scale<Double>,
+        domain: DoubleSpan,
+        xDomain: DoubleSpan,
+        breaks: ScaleBreaks
+    ): Scale<Double> {
         UNSUPPORTED("MarginalLayerCoordProvider.buildAxisScaleY()")
     }
 
-    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double, yDomain: DoubleSpan): ScaleMapper<Double> {
         return when (margin) {
-            MarginSide.LEFT, MarginSide.RIGHT -> super.buildAxisXScaleMapper(domain, axisLength)
-            MarginSide.TOP, MarginSide.BOTTOM -> coreCoordProvider.buildAxisXScaleMapper(domain, axisLength)
+            MarginSide.LEFT, MarginSide.RIGHT -> super.buildAxisXScaleMapper(
+                domain,
+                axisLength,
+                yDomain
+            )
+            MarginSide.TOP, MarginSide.BOTTOM -> coreCoordProvider.buildAxisXScaleMapper(
+                domain,
+                axisLength,
+                yDomain
+            )
         }
     }
 
-    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
+    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double, xDomain: DoubleSpan): ScaleMapper<Double> {
         return when (margin) {
-            MarginSide.LEFT, MarginSide.RIGHT -> coreCoordProvider.buildAxisYScaleMapper(domain, axisLength)
-            MarginSide.TOP, MarginSide.BOTTOM -> super.buildAxisYScaleMapper(domain, axisLength)
+            MarginSide.LEFT, MarginSide.RIGHT -> coreCoordProvider.buildAxisYScaleMapper(domain, axisLength, xDomain)
+            MarginSide.TOP, MarginSide.BOTTOM -> super.buildAxisYScaleMapper(domain, axisLength, xDomain)
         }
     }
 

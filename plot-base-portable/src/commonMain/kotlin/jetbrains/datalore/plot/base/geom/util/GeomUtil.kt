@@ -151,24 +151,6 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
-    fun rectangleByDataPoint(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
-        val x = p.x()!!
-        val y = p.y()!!
-        val width = widthPx(p, ctx, 2.0)
-
-        val origin: DoubleVector
-        val dimensions: DoubleVector
-        if (y >= 0) {
-            origin = DoubleVector(x - width / 2, 0.0)
-            dimensions = DoubleVector(width, y)
-        } else {
-            origin = DoubleVector(x - width / 2, y)
-            dimensions = DoubleVector(width, -y)
-        }
-
-        return DoubleRectangle(origin, dimensions)
-    }
-
     fun createGroups(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<DataPointAesthetics>> {
         val pointsByGroup = HashMap<Int, MutableList<DataPointAesthetics>>()
         for (p in dataPoints) {

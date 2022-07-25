@@ -28,7 +28,10 @@ internal object CoordProto {
         return when (coordName) {
             CARTESIAN -> CoordProviders.cartesian(xLim, yLim, flipped)
             FIXED -> CoordProviders.fixed(options.getDouble(RATIO) ?: 1.0, xLim, yLim, flipped)
-            MAP -> CoordProviders.map(xLim, yLim, flipped)
+            MAP -> {
+                val projection = options.getString(Option.Coord.PROJECTION) ?: "mercator"
+                CoordProviders.map(xLim, yLim, flipped, projection)
+            }
             FLIP -> throw IllegalStateException("Don't try to instantiate coord FLIP, it's only a flag.")
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")
         }

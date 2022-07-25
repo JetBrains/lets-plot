@@ -25,29 +25,35 @@ interface CoordProvider {
         xDomain: DoubleSpan,
         xAxisLength: Double,
         yDomain: DoubleSpan,
-        yAxisLength: Double
+        yAxisLength: Double,
+        hScaleMapper: ScaleMapper<Double>,
+        vScaleMapper: ScaleMapper<Double>
     ): CoordinateSystem
 
     fun buildAxisScaleX(
         scaleProto: Scale<Double>,
         domain: DoubleSpan,
+        yDomain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double>
 
     fun buildAxisScaleY(
         scaleProto: Scale<Double>,
         domain: DoubleSpan,
+        xDomain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double>
 
     fun buildAxisXScaleMapper(
         domain: DoubleSpan,
         axisLength: Double,
+        yDomain: DoubleSpan,
     ): ScaleMapper<Double>
 
     fun buildAxisYScaleMapper(
         domain: DoubleSpan,
         axisLength: Double,
+        xDomain: DoubleSpan,
     ): ScaleMapper<Double>
 
     fun adjustDomains(

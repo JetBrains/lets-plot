@@ -38,16 +38,17 @@ class BoxplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx)
+            rectangleByDataPoint(ctx, geomHelper)
         )
         buildLines(root, aesthetics, pos, coord, ctx)
         buildOutliers(root, aesthetics, pos, coord, ctx)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx),
+            rectangleByDataPoint(ctx, geomHelper),
             { colorWithAlpha(it) },
             defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
@@ -166,9 +167,9 @@ class BoxplotGeom : GeomBase() {
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
-        private fun rectangleByDataPoint(ctx: GeomContext): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                if (p.defined(Aes.X) &&
+                val clientRect = if (p.defined(Aes.X) &&
                     p.defined(Aes.LOWER) &&
                     p.defined(Aes.UPPER) &&
                     p.defined(Aes.WIDTH)
@@ -176,14 +177,14 @@ class BoxplotGeom : GeomBase() {
                     val x = p.x()!!
                     val lower = p.lower()!!
                     val upper = p.upper()!!
-                    val width = GeomUtil.widthPx(p, ctx, 2.0)
+                    val width = p.width()!!
 
-                    val origin = DoubleVector(x - width / 2, lower)
-                    val dimensions = DoubleVector(width, upper - lower)
-                    DoubleRectangle(origin, dimensions)
+                    DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower)
                 } else {
                     null
                 }
+
+                clientRect
             }
         }
     }
