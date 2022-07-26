@@ -41,13 +41,13 @@ class ErrorBarGeom : GeomBase() {
             aesthetics.dataPoints(),
             Aes.X,
             Aes.YMIN,
-            Aes.YMAX
+            Aes.YMAX,
+            Aes.WIDTH
         )) {
             val x = p.x()!!
             val ymin = p.ymin()!!
             val ymax = p.ymax()!!
-            var width = p.width()!!
-            width *= ctx.getResolution(Aes.X)
+            val width = p.width()!! * ctx.getResolution(Aes.X)
             val height = ymax - ymin
 
             val r = DoubleRectangle(x - width / 2, ymin, width, height)

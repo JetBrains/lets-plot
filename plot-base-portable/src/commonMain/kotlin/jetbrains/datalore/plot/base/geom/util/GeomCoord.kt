@@ -34,13 +34,12 @@ class GeomCoord(
     }
 
     private fun project(r: DoubleRectangle, xResolution: Double? = null, yResolution: Double? = null): DoubleRectangle {
-        val resolution = project(DoubleVector(xResolution ?: 0.0, yResolution ?: 0.0))
-        val origin = project(r.origin)
-        val dim = project(DoubleVector(r.width, r.height))
 
-        val width = if (xResolution != null) resolution.x * r.width else dim.x
-        val height = if (yResolution != null) resolution.y * r.height else dim.y
-        return DoubleRectangle.XYWH(origin.x, origin.y, width, height)
+        // "Rectangular" projections only.
+
+        val leftTop = project(r.origin)
+        val rightBottom = project(r.origin.add(r.dimension))
+        return DoubleRectangle.span(leftTop, rightBottom)
     }
 
     fun toClient(r: DoubleRectangle, xResolution: Double? = null, yResolution: Double? = null): DoubleRectangle {

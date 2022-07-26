@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 import jetbrains.datalore.vis.svg.SvgRectElement
+import kotlin.math.max
 
 object CrossBarHelper {
     fun buildBoxes(
@@ -49,7 +50,7 @@ object CrossBarHelper {
         )) {
             val x = p.x()!!
             val middle = p.middle()!!
-            val width = p.width()!!//GeomUtil.widthPx(p, ctx, 2.0)
+            val width = max(2.0, p.width()!! * ctx.getResolution(Aes.X))
 
             val line = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),

@@ -41,28 +41,35 @@ open class BarGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun rectangleByDataPoint(ctx: GeomContext, isHintRect: Boolean): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(
+            ctx: GeomContext,
+            isHintRect: Boolean
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val x = p.x()
                 val y = p.y()
-                val w = p.width()
-                if (!SeriesUtil.allFinite(x, y, w)) {
-                    null
-                } else if (isHintRect) {
-                    val origin = DoubleVector(x!! - w!! / 2, y!!)
-                    val dimension = DoubleVector(w, 0.0)
-                    DoubleRectangle(origin, dimension)
-                } else {
-                    val origin: DoubleVector
-                    val dimensions: DoubleVector
-                    if (y!! >= 0) {
-                        origin = DoubleVector(x!! - w!! / 2, 0.0)
-                        dimensions = DoubleVector(w, y)
+                val width = p.width()
+                if (SeriesUtil.allFinite(x, y, width)) {
+                    x!!; y!!
+                    val w = width!! * ctx.getResolution(Aes.X)
+                    if (isHintRect) {
+                        val origin = DoubleVector(x - w / 2, y)
+                        val dimension = DoubleVector(w, 0.0)
+                        DoubleRectangle(origin, dimension)
                     } else {
-                        origin = DoubleVector(x!! - w!! / 2, y)
-                        dimensions = DoubleVector(w, -y)
+                        val origin: DoubleVector
+                        val dimensions: DoubleVector
+                        if (y >= 0) {
+                            origin = DoubleVector(x - w / 2, 0.0)
+                            dimensions = DoubleVector(w, y)
+                        } else {
+                            origin = DoubleVector(x - w / 2, y)
+                            dimensions = DoubleVector(w, -y)
+                        }
+                        DoubleRectangle(origin, dimensions)
                     }
-                    DoubleRectangle(origin, dimensions)
+                } else {
+                    null
                 }
             }
         }

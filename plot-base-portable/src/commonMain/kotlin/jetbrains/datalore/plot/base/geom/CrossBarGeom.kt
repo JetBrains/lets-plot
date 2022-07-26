@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.CrossBarHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -60,18 +59,19 @@ class CrossBarGeom : GeomBase() {
                     val x = p.x()!!
                     val ymin = p.ymin()!!
                     val ymax = p.ymax()!!
-                    val width = p.width()!!
+                    val width = p.width()!! * ctx.getResolution(Aes.X)
 
                     val origin = DoubleVector(x - width / 2, ymin)
                     val dimensions = DoubleVector(width, ymax - ymin)
                     DoubleRectangle(origin, dimensions)
                 } else if (isHintRect &&
                     p.defined(Aes.X) &&
-                    p.defined(Aes.MIDDLE)
+                    p.defined(Aes.MIDDLE) &&
+                    p.defined(Aes.WIDTH)
                 ) {
                     val x = p.x()!!
                     val middle = p.middle()!!
-                    val width = p.width()!!
+                    val width = p.width()!! * ctx.getResolution(Aes.X)
 
                     val origin = DoubleVector(x - width / 2, middle)
                     val dimensions = DoubleVector(width, 0.0)

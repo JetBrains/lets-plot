@@ -177,7 +177,7 @@ class BoxplotGeom : GeomBase() {
                     val x = p.x()!!
                     val lower = p.lower()!!
                     val upper = p.upper()!!
-                    val width = p.width()!!
+                    val width = p.width()!! * ctx.getResolution(Aes.X)
 
                     DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower)
                 } else {
