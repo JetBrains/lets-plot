@@ -456,7 +456,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
@@ -524,7 +524,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
@@ -579,7 +579,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
@@ -647,7 +647,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A vector specifying the data range for the scale. and the default order of their display in guides.
+        A vector specifying the data range for the scale and the default order of their display in guides.
     expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
@@ -747,8 +747,8 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         x = list(range(9))
         ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
             geom_point(aes(color='x'), shape=1, size=5) + \\
-            scale_color_manual(values=['red', 'green', 'blue'], \\
-                               name='color', labels=['red', 'green', 'blue'])
+            scale_color_manual(values=['red', 'green', 'blue'], name='color', \\
+                               breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
 
     """
     return _scale('color',
@@ -821,8 +821,8 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         x = list(range(9))
         ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
             geom_point(aes(fill='x'), shape=21, size=5, color='black') + \\
-            scale_fill_manual(values=['green', 'yellow', 'red'], \\
-                              name='color', labels=['green', 'yellow', 'red'])
+            scale_fill_manual(values=['green', 'yellow', 'red'], name='color', \\
+                              breaks=[2, 4, 7], labels=['green', 'yellow', 'red'])
 
     """
     return _scale('fill',
@@ -1043,7 +1043,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         LetsPlot.setup_html()
         x = [-.3, -.1, .1, .3]
         ggplot() + geom_hline(aes(yintercept=x, linetype=x), size=1) + \\
-            scale_linetype_manual(values=[3, 4, 5, 6],
+            scale_linetype_manual(values=[3, 4, 5, 6], breaks=[-0.3, -0.1, 0.1, 0.3],
                                   labels=['dotted', 'dotdash', 'longdash', 'twodash'])
 
     """
