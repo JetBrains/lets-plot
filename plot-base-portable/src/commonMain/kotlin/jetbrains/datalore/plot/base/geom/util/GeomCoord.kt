@@ -19,32 +19,29 @@ class GeomCoord(
     fun toClient(p: DoubleVector): DoubleVector {
         // Can't move projection application to CoordSystem - AxisUtil draws grid using toClient()
         // See: jetbrains/datalore/plot/builder/AxisUtil.kt:45
-
-        val projected = project(p)
-
-        return myCoord.toClient(projected)
+        val transformed = transform(p)
+        return myCoord.toClient(transformed)
     }
 
-    private fun project(p: DoubleVector): DoubleVector {
-        val projected = when (yOrientation) {
-            true -> myCoord.projection.project(p.flip())?.flip()
-            false -> myCoord.projection.project(p)
-        } ?: error("CoordinateSystem.toClient() - projected point is null")
-        return projected
+    fun toClient(r: DoubleRectangle): DoubleRectangle {
+        val transformed = transform(r)
+        return translateRect(transformed)
     }
 
-    private fun project(r: DoubleRectangle, xResolution: Double? = null, yResolution: Double? = null): DoubleRectangle {
+    private fun transform(p: DoubleVector): DoubleVector {
+        return when (yOrientation) {
+            true -> myCoord.transform(p.flip())?.flip()
+            false -> myCoord.transform(p)
+        } ?: error("GeomCoord.transform($p) - result is null")
+    }
+
+    private fun transform(r: DoubleRectangle): DoubleRectangle {
 
         // "Rectangular" projections only.
 
-        val leftTop = project(r.origin)
-        val rightBottom = project(r.origin.add(r.dimension))
+        val leftTop = transform(r.origin)
+        val rightBottom = transform(r.origin.add(r.dimension))
         return DoubleRectangle.span(leftTop, rightBottom)
-    }
-
-    fun toClient(r: DoubleRectangle, xResolution: Double? = null, yResolution: Double? = null): DoubleRectangle {
-        val projected = project(r, xResolution, yResolution)
-        return translateRect(projected)
     }
 
     private fun translateRect(r: DoubleRectangle): DoubleRectangle {

@@ -19,8 +19,11 @@ internal open class DefaultCoordinateSystem(
     val fromClientOffsetY: (Double) -> Double,
     val clientLimitsX: DoubleSpan?,
     val clientLimitsY: DoubleSpan?,
-    override val projection: Projection,
+    val projection: Projection,
 ) : CoordinateSystem {
+    override fun transform(p: DoubleVector): DoubleVector? {
+        return projection.project(p)
+    }
 
     override fun toClient(p: DoubleVector): DoubleVector {
         return DoubleVector(toClientOffsetX(p.x), toClientOffsetY(p.y))

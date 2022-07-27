@@ -68,8 +68,4 @@ class RectanglesHelper(
 
         return group
     }
-
-    private fun toClientRect(p: DataPointAesthetics, aesMapper: (DataPointAesthetics) -> DoubleRectangle?): DoubleRectangle? {
-        return toClientRect(p, myAesthetics.resolution(Aes.X, 0.0), null, aesMapper)
-    }
 }
