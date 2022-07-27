@@ -129,8 +129,8 @@ class TooltipAxisConfigTest {
                 scaleFormat = null,
                 tooltipFormat = "tooltip = {} %"     // todo should use the scale's default formatter -> 0.34
             )
-            assertGeneralTooltip(geomLayer, "tooltip = 0.34447 %")  // todo "tooltip = 0.34 %"
-            assertYAxisTooltip(geomLayer, "tooltip = 0.34447 %")    // todo "tooltip = 0.34 %"
+            assertGeneralTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484)  // now is "tooltip = 0.34447 %"
+            assertYAxisTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484)    // now is "tooltip = 0.34447 %"
             assertEquals("0.3", getYTick(geomLayer))
         }
         run {
@@ -151,8 +151,8 @@ class TooltipAxisConfigTest {
     fun `scale(format) + tooltip format() - the tooltip formatting is applied to the axis tooltip`() {
         run {
             val geomLayer = geomLayer(scaleFormat = "scale = {} %", tooltipFormat = "tooltip = {} %")
-            assertGeneralTooltip(geomLayer, "tooltip = 0.34447 %")  // todo "tooltip = 0.34 %"
-            assertYAxisTooltip(geomLayer, "tooltip = 0.34447 %")    // todo "tooltip = 0.34 %"
+            assertGeneralTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484)  // now is "tooltip = 0.34447 %"
+            assertYAxisTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484)    // now is "tooltip = 0.34447 %"
             // todo assertEquals("scale = 0.3 %", getYTick(geomLayer))
         }
         run {
@@ -174,8 +174,8 @@ class TooltipAxisConfigTest {
         run {
             val geomLayer =
                 geomLayer(scaleFormat = null, tooltipFormat = "tooltip = {} %", useTooltipFormatForVarName = true)
-            assertGeneralTooltip(geomLayer, "tooltip = 0.34447 %") // todo "tooltip = 0.34 %"
-            assertYAxisTooltip(geomLayer, "tooltip = 0.34447 %")   // todo "tooltip = 0.34 %"
+            assertGeneralTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484) // now is "tooltip = 0.34447 %"
+            assertYAxisTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484)   // now is "tooltip = 0.34447 %"
             assertEquals("0.3", getYTick(geomLayer))
         }
         run {
@@ -194,7 +194,7 @@ class TooltipAxisConfigTest {
                 useTooltipFormatForVarName = true
             )
             assertGeneralTooltip(geomLayer, "tooltip = 0.34447 %")
-            assertYAxisTooltip(geomLayer, "tooltip = 0.34447 %")  // todo "tooltip = 0.34 %"
+            assertYAxisTooltip(geomLayer, "tooltip = 0.34 %", ::print_issue484)  // now is "tooltip = 0.34447 %"
             assertEquals("0.3", getYTick(geomLayer))
         }
     }
@@ -220,9 +220,9 @@ class TooltipAxisConfigTest {
                 scaleFormat = "scale = {} %",     // todo substitute with the default -> 0.32
                 tooltipFormat = "tooltip = {} %"  // todo substitute with the default -> 0.344
             )
-            assertGeneralTooltip(geomLayer, "tooltip = 0.34447 %")  // todo "tooltip = 0.344 %"
-            assertYAxisTooltip(geomLayer, "tooltip = 0.34447 %")    // todo "tooltip = 0.344 %"
-            assertEquals("scale = 0.31622776601683794 %", getYTick(geomLayer, closedRange)) // todo "scale = 0.32 %"
+            assertGeneralTooltip(geomLayer, "tooltip = 0.344 %", ::print_issue484)  // now is "tooltip = 0.34447 %"
+            assertYAxisTooltip(geomLayer, "tooltip = 0.344 %", ::print_issue484)    // now is "tooltip = 0.34447 %"
+            print_issue484("scale = 0.32 %", getYTick(geomLayer, closedRange), "y tick") // now is "scale = 0.31622776601683794 %"
         }
         run {
             val geomLayer = log10(scaleFormat = "scale = {.3f} %", tooltipFormat = "tooltip = {.4f} %")
@@ -329,23 +329,31 @@ class TooltipAxisConfigTest {
     }
 
     companion object {
-        private fun assertGeneralTooltip(geomLayer: GeomLayer, expected: String) {
+        private fun assert(expected: String, actual: String?, tooltip: String) =
+            assertEquals(expected, actual, "Wrong $tooltip")
+
+
+        // https://github.com/JetBrains/lets-plot/issues/484: '{}' in format pattern ignores the default formatting
+        private fun print_issue484(expected: String, actual: String?, tooltip: String) =
+            println("$tooltip:\n\texpected (issue #484): \"$expected\";\n\tactual: \"$actual\"")
+
+        private fun assertGeneralTooltip(geomLayer: GeomLayer, expected: String, method: (String, String?, String) -> Unit = ::assert) {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
             val generalTooltip = dataPoints
                 .filterNot(TooltipLineSpec.DataPoint::isOutlier)
                 .map(TooltipLineSpec.DataPoint::value)
                 .firstOrNull()
-            assertEquals(expected, generalTooltip, "Wrong general tooltip")
+            method(expected, generalTooltip, "general tooltip")
         }
 
-        private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String) {
+        private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String, String?, String) -> Unit = ::assert) {
             val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
             val yAxisTooltip = dataPoints
                 .filter(TooltipLineSpec.DataPoint::isAxis)
                 .filter { it.aes == Aes.Y }
                 .map(TooltipLineSpec.DataPoint::value)
                 .firstOrNull()
-            assertEquals(expected, yAxisTooltip, "Wrong axis tooltip")
+            method(expected, yAxisTooltip, "axis tooltip")
         }
 
         private fun getYTick(geomLayer: GeomLayer, closedRange: DoubleSpan = DoubleSpan(0.3,0.4)): String  {
