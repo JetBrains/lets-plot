@@ -22,6 +22,7 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 class BoxplotGeom : GeomBase() {
 
     var fattenMidline: Double = 1.0
+    var whiskerWidth: Double = 0.0
 
     var outlierColor: Color? = null
     var outlierFill: Color? = null
@@ -66,6 +67,9 @@ class BoxplotGeom : GeomBase() {
         val elementHelper = helper.createSvgElementHelper()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
+            val halfWidth = if (p.defined(Aes.WIDTH)) GeomUtil.widthPx(p, ctx, 2.0) / 2  else 0.0
+            val halfFenceWidth = halfWidth * whiskerWidth
+
             val lines = ArrayList<SvgLineElement>()
 
             // lower whisker
@@ -81,12 +85,13 @@ class BoxplotGeom : GeomBase() {
                     )
                 )
                 // fence line
-                /*
-        lines.add(elementHelper.createLine(
-            new DoubleVector(x - halfFenceWidth, fence),
-            new DoubleVector(x + halfFenceWidth, fence),
-            p));
-        */
+                lines.add(
+                    elementHelper.createLine(
+                        DoubleVector(x - halfFenceWidth, fence),
+                        DoubleVector(x + halfFenceWidth, fence),
+                        p
+                    )
+                )
             }
 
             // upper whisker
@@ -102,12 +107,13 @@ class BoxplotGeom : GeomBase() {
                     )
                 )
                 // fence line
-                /*
-        lines.add(elementHelper.createLine(
-            new DoubleVector(x - halfFenceWidth, fence),
-            new DoubleVector(x + halfFenceWidth, fence),
-            p));
-        */
+                lines.add(
+                    elementHelper.createLine(
+                        DoubleVector(x - halfFenceWidth, fence),
+                        DoubleVector(x + halfFenceWidth, fence),
+                        p
+                    )
+                )
 
                 lines.forEach { root.add(it) }
             }

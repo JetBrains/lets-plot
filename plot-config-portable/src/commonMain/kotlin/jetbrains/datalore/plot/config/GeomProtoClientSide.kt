@@ -9,7 +9,6 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode.POINT
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -96,6 +95,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 val geom = BoxplotGeom()
                 if (opts.hasOwn(Boxplot.FATTEN)) {
                     geom.fattenMidline = opts.getDouble(Boxplot.FATTEN)!!
+                }
+                if (opts.hasOwn(Boxplot.WHISKER_WIDTH)) {
+                    geom.whiskerWidth = opts.getDouble(Boxplot.WHISKER_WIDTH)!!
                 }
                 if (opts.hasOwn(BoxplotOutlier.COLOR)) {
                     geom.outlierColor = opts.getColor(BoxplotOutlier.COLOR)!!
