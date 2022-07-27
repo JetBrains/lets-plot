@@ -2642,6 +2642,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  fatten=None,
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
                  varwidth=None,
+                 whisker_width=None,
                  **other_args):
     """
     Display the distribution of data based on a five number summary
@@ -2687,6 +2688,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         If False make a standard box plot.
         If True, boxes are drawn with widths proportional to the square-roots
         of the number of observations in the groups.
+    whisker_width : float, default=0.0
+        A multiplicative factor applied to the box width to draw horizontal segments on whiskers.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2815,6 +2818,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_shape=outlier_shape,
                  outlier_size=outlier_size,
                  varwidth=varwidth,
+                 whisker_width=whisker_width,
                  **other_args)
 
 
