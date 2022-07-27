@@ -163,6 +163,7 @@ object Option {
 
         object Boxplot {
             const val FATTEN = "fatten"
+            const val WHISKER_WIDTH = "whisker_width"
         }
 
         object BoxplotOutlier {
