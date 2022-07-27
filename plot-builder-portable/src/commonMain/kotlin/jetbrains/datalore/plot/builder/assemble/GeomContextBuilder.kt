@@ -91,8 +91,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         }
 
         override fun getUnitResolution(aes: Aes<Double>): Double {
-            val mapper = aestheticMappers?.get(aes) ?: Mappers.IDENTITY
-            return mapper(1.0) as Double
+            return 1.0
         }
 
         override fun isMappedAes(aes: Aes<*>): Boolean {

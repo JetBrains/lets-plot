@@ -50,7 +50,7 @@ object CrossBarHelper {
         )) {
             val x = p.x()!!
             val middle = p.middle()!!
-            val width = max(2.0, p.width()!! * ctx.getResolution(Aes.X))
+            val width = p.width()!! * ctx.getResolution(Aes.X)
 
             val line = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),
