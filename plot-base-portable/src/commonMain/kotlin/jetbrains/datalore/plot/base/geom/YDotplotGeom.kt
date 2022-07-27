@@ -9,6 +9,7 @@ import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.GeomCoord
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
@@ -16,7 +17,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import kotlin.math.max
+import kotlin.math.abs
 
 class YDotplotGeom : DotplotGeom() {
     var yStackDir: YStackdir = DEF_YSTACKDIR
@@ -31,10 +32,25 @@ class YDotplotGeom : DotplotGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val pointsWithBinWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.BINWIDTH)
+        val pointsWithBinWidth = GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.BINWIDTH, Aes.X, Aes.Y
+        )
         if (!pointsWithBinWidth.any()) return
 
-        val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y), 2.0)
+//        val binWidthPx = pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y)
+        val binWidthPx = pointsWithBinWidth.first().let {
+            val x = it.x()!!
+            val y = it.y()!!
+            val bw = it.binwidth()!!
+            val geomCoord = GeomCoord(coord, ctx.isYOrientation)
+            val p0 = geomCoord.toClient(DoubleVector(x, y))
+            val p1 = geomCoord.toClient(DoubleVector(x, y + bw))
+            when (ctx.flipped) {
+                false -> abs(p0.y - p1.y)
+                true -> abs(p0.x - p1.x)
+            }
+        }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointGroup) ->
