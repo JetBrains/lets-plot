@@ -13,7 +13,6 @@ import kotlin.math.min
 
 class GeomCoord constructor(
     private val myCoord: CoordinateSystem,
-    private val yOrientation: Boolean
 ) {
 
     fun toClient(p: DoubleVector): DoubleVector {

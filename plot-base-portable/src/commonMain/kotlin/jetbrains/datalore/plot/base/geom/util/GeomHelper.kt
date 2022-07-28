@@ -26,7 +26,7 @@ open class GeomHelper(
     coord: CoordinateSystem,
     internal val ctx: GeomContext
 ) {
-    private val myGeomCoord: GeomCoord = GeomCoord(coord, ctx.isYOrientation)
+    private val myGeomCoord: GeomCoord = GeomCoord(coord)
 
     fun toClient(location: DoubleVector, p: DataPointAesthetics): DoubleVector {
         return myGeomCoord.toClient(adjust(location, p, myPos, ctx))

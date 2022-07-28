@@ -43,7 +43,7 @@ class YDotplotGeom : DotplotGeom() {
             val x = it.x()!!
             val y = it.y()!!
             val bw = it.binwidth()!!
-            val geomCoord = GeomCoord(coord, ctx.isYOrientation)
+            val geomCoord = GeomCoord(coord)
             val p0 = geomCoord.toClient(DoubleVector(x, y))
             val p1 = geomCoord.toClient(DoubleVector(x, y + bw))
             when (ctx.flipped) {
