@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import kotlin.math.max
 import kotlin.math.min
 
-class GeomCoord(
+class GeomCoord constructor(
     private val myCoord: CoordinateSystem,
     private val yOrientation: Boolean
 ) {
@@ -29,10 +29,7 @@ class GeomCoord(
     }
 
     private fun transform(p: DoubleVector): DoubleVector {
-        return when (yOrientation) {
-            true -> myCoord.transform(p.flip())?.flip()
-            false -> myCoord.transform(p)
-        } ?: error("GeomCoord.transform($p) - result is null")
+        return myCoord.transform(p) ?: error("GeomCoord.transform($p) - result is null")
     }
 
     private fun transform(r: DoubleRectangle): DoubleRectangle {

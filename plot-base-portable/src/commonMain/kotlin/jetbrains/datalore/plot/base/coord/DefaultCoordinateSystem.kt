@@ -9,8 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
-import kotlin.math.max
-import kotlin.math.min
 
 internal open class DefaultCoordinateSystem(
     val toClientOffsetX: (Double) -> Double,
@@ -35,17 +33,5 @@ internal open class DefaultCoordinateSystem(
 
     override fun flip(): CoordinateSystem {
         return FlippedCoordinateSystem(this)
-    }
-
-
-    companion object {
-        private fun convertRange(range: DoubleSpan, offset: (Double) -> Double): DoubleSpan {
-            val l = offset(range.lowerEnd)
-            val u = offset(range.upperEnd)
-            return DoubleSpan(
-                min(l, u),
-                max(l, u),
-            )
-        }
     }
 }

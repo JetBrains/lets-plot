@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.plot.base.coord
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 internal class FlippedCoordinateSystem(
@@ -17,18 +19,31 @@ internal class FlippedCoordinateSystem(
     actual.fromClientOffsetY,
     clientLimitsX = actual.clientLimitsX,
     clientLimitsY = actual.clientLimitsY,
-    actual.projection
+    projection = FlippedProjection(actual.projection)
 ) {
     override fun toClient(p: DoubleVector): DoubleVector {
-        return actual.toClient(p.flip())
+        return super.toClient(p.flip())
     }
 
     override fun fromClient(p: DoubleVector): DoubleVector {
-        return actual.fromClient(p).flip()
+        return super.fromClient(p).flip()
     }
 
     override fun flip(): CoordinateSystem {
-//        throw IllegalStateException("'flip()' is not applicable to FlippedCoordinateSystem")
         return actual
+    }
+
+    private class FlippedProjection(private val orig: Projection) : Projection {
+        override fun project(v: DoubleVector): DoubleVector? {
+            return orig.project(v.flip())?.flip()
+        }
+
+        override fun invert(v: DoubleVector): DoubleVector? {
+            return orig.invert(v.flip())?.flip()
+        }
+
+        override fun validRect(): DoubleRectangle = orig.validRect()
+
+        override val cylindrical: Boolean = orig.cylindrical
     }
 }

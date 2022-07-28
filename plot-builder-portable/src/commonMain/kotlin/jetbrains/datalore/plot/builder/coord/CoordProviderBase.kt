@@ -86,22 +86,14 @@ internal abstract class CoordProviderBase(
 
         val projection = object : Projection {
             override fun project(v: DoubleVector): DoubleVector? {
-                if (flipAxis) {
-                    val x = vScaleMapper.invoke(v.x) ?: return null
-                    val y = hScaleMapper.invoke(v.y) ?: return null
-
-                    return DoubleVector(x, y)
-                } else {
-                    val x = hScaleMapper.invoke(v.x) ?: return null
-                    val y = vScaleMapper.invoke(v.y) ?: return null
-                    return DoubleVector(x, y)
-                }
+                val x = mapperX.invoke(v.x) ?: return null
+                val y = mapperY.invoke(v.y) ?: return null
+                return DoubleVector(x, y)
             }
 
             override fun invert(v: DoubleVector): DoubleVector? = TODO("Not yet implemented")
             override fun validRect(): DoubleRectangle = TODO("Not yet implemented")
-            override val cylindrical: Boolean
-                get() = TODO("Not yet implemented")
+            override val cylindrical: Boolean = false
         }
 
         return Coords.create(
