@@ -10,7 +10,6 @@ import jetbrains.datalore.base.datetime.DateTime
 import jetbrains.datalore.base.datetime.Duration
 import jetbrains.datalore.base.datetime.Month
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -20,8 +19,6 @@ import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
 import jetbrains.datalore.plot.config.Option.Scale
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
 import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
-import kotlin.Double.Companion.NaN
-import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -289,56 +286,65 @@ class TooltipAxisConfigTest {
     }
 
     @Test
-    fun `tooltip value is formatted using the default scale formatter`() {
-        // Strange value for the 'middle' tooltip - it's formatted in exponential notation:
-        //   the scale's default formatter  is used (NumericBreakFormatter -> NumberFormat(".4e") ).
+    fun `tooltip value is formatted using the default scale formatter (possible exponential notation)`() {
+        // Some tooltip values are formatted in exponential notation:
+        //   the scale's default formatter is used (NumericBreakFormatter -> NumberFormat(".5e"))
 
-        fun gauss(count: Int): List<Double> {
-            val r = RandomGaussian(Random(1))
-            return List(count) { r.nextGaussian() }
-        }
-        val data = let {
-            val count1 = 50
-            val count2 = 100
-
-            val ratingA = gauss(count1)
-            val ratingB = gauss(count2)
-            val rating = ratingA + ratingB
-            val cond = List(count1) { "a" } + List(count2) { "b" }
-
-            val map = HashMap<String, List<*>>()
-            map["cond"] = cond
-            map["rating"] = rating
-            map
-        }
-
+        val data = mapOf(
+            "alphabet" to listOf(
+                "a",
+                "a",
+                "b",
+                "a",
+                "a",
+                "a",
+                "b",
+                "b",
+                "b",
+                "a",
+                "a",
+                "a"
+            ),
+            "coeff" to listOf(
+                0.9898989898989898,
+                0.98989898989899,
+                0.9871794871794872,
+                0.9916666666666667,
+                0.9882352941176471,
+                0.9947368421052631,
+                0.9916666666666667,
+                0.9882352941176471,
+                0.9947368421052631,
+                0.9916666666666667,
+                0.9882352941176471,
+                0.9947368421052631
+            )
+        )
         val geomLayer = TestUtil.buildGeomLayer(
             geom = "boxplot",
             data = data,
             mapping = mapOf(
-                Aes.X.name to "cond",
-                Aes.Y.name to "rating"
+                Aes.X.name to "alphabet",
+                Aes.Y.name to "coeff"
             )
         )
 
-        val middleAes: List<Double> = listOf(NaN, NaN, -0.04994021389622469, NaN, -0.054588882023040186)
-        val expectedFormatted = listOf("NaN", "NaN", "-4.9940e-2", "NaN", "-5.4589e-2")
-
-        expectedFormatted.forEachIndexed { index, expected ->
-            val values = geomLayer.contextualMapping.getDataPoints(index)
-                .filter { it.isOutlier && it.aes == Aes.MIDDLE }.map(TooltipLineSpec.DataPoint::value)
-            assertEquals(1, values.size)
-            assertEquals(expected, values[0])
+        val expected = mapOf(
+            Aes.YMAX to "0.99",
+            Aes.UPPER to "0.99",
+            Aes.MIDDLE to "9.90783e-1",
+            Aes.LOWER to "9.89067e-1",
+            Aes.YMIN to "9.88235e-1",
+        )
+        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
 
     companion object {
-        private fun message(expected: String, actual: String?, name: String) =
-            "$name:\n\texpected: \"$expected\";\n\tactual: \"$actual\""
-
-        private fun areEqual(expected: String, actual: String?, value: String, method: (String) -> Unit) {
+        private fun areEqual(expected: String, actual: String?, name: String, method: (String) -> Unit) {
             if (expected != actual) {
-                method(message(expected, actual, value))
+                method("$name:\n\texpected: \"$expected\";\n\tactual: \"$actual\"")
             }
         }
 
