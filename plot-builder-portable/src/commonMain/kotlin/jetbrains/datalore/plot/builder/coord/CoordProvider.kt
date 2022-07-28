@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -23,11 +23,9 @@ interface CoordProvider {
 
     fun createCoordinateSystem(
         xDomain: DoubleSpan,
-        xAxisLength: Double,
+        xMapper: ScaleMapper<Double>,
         yDomain: DoubleSpan,
-        yAxisLength: Double,
-        hScaleMapper: ScaleMapper<Double>,
-        vScaleMapper: ScaleMapper<Double>
+        yMapper: ScaleMapper<Double>,
     ): CoordinateSystem
 
     fun buildAxisScaleX(

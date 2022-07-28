@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.geom.PolygonGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -73,6 +74,8 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         }
         val lengthX = spanX / ratio
         val lengthY = spanY / ratio
+        val mapperX = Mappers.mul(domainX, lengthX)
+        val mapperY = Mappers.mul(domainY, lengthY)
         val aes = AestheticsBuilder(KANSAS_X.size)
             .x(listMapper(coordsX, mapper))
             .y(listMapper(coordsY, mapper))
@@ -82,8 +85,8 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
             .alpha(constant(0.5))
             .build()
         val coord = CoordProviders.map()
-            .createCoordinateSystem(domainX, lengthX, domainY, lengthY, mapper, mapper)
-        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+            .createCoordinateSystem(domainX, mapperX, domainY, mapperY)
+        val layer = SvgLayerRenderer(
             aes,
             PolygonGeom(),
             PositionAdjustments.identity(),

@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.builder.FrameOfReference
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviderBase
 import jetbrains.datalore.plot.builder.coord.MarginalLayerCoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.*
@@ -107,12 +108,21 @@ internal class SquareFrameOfReferenceProvider(
             vAxisLayoutInfo.axisBreaks
         )
 
-        val coord = coordProvider.createCoordinateSystem(
+        // ToDo: use hScaleMapper, vScaleMapper.
+        //       First have to get rid of `twistScaleMapper()` in ProjectionCoordProvider.
+        val xMapper = CoordProviderBase.linearMapper(
             hAxisLayoutInfo.axisDomain,
-            hAxisLayoutInfo.axisLength,
+            hAxisLayoutInfo.axisLength
+        )
+        val yMapper = CoordProviderBase.linearMapper(
             vAxisLayoutInfo.axisDomain,
             vAxisLayoutInfo.axisLength,
-            hScaleMapper, vScaleMapper,
+        )
+        val coord = coordProvider.createCoordinateSystem(
+            hAxisLayoutInfo.axisDomain,
+            xMapper,
+            vAxisLayoutInfo.axisDomain,
+            yMapper
         )
 
         val tileFrameOfReference = SquareFrameOfReference(
@@ -181,10 +191,19 @@ internal class SquareFrameOfReferenceProvider(
             val marginHMapper = marginCoordProvider.buildAxisXScaleMapper(xDomain, xSize, yDomain)
             val marginVMapper = marginCoordProvider.buildAxisYScaleMapper(yDomain, ySize, xDomain)
 
+            // ToDo: use marginHMapper, marginVMapper.
+            //       First have to get rid of `twistScaleMapper()` in ProjectionCoordProvider.
+            val xMapper = CoordProviderBase.linearMapper(xDomain, xSize)
+            val yMapper = CoordProviderBase.linearMapper(yDomain, ySize)
             MarginalFrameOfReference(
                 boundsByMargin.getValue(side),
                 marginHMapper, marginVMapper,
-                marginCoordProvider.createCoordinateSystem(xDomain, xSize, yDomain, ySize, marginHMapper, marginVMapper),
+                marginCoordProvider.createCoordinateSystem(
+                    xDomain,
+                    xMapper,
+                    yDomain,
+                    yMapper
+                ),
                 debugDrawing,
             )
         }

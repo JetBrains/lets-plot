@@ -75,19 +75,17 @@ internal abstract class CoordProviderBase(
 
     final override fun createCoordinateSystem(
         xDomain: DoubleSpan,
-        xAxisLength: Double,
+        xMapper: ScaleMapper<Double>,
         yDomain: DoubleSpan,
-        yAxisLength: Double,
-        hScaleMapper: ScaleMapper<Double>,
-        vScaleMapper: ScaleMapper<Double>
+        yMapper: ScaleMapper<Double>,
     ): CoordinateSystem {
-        val mapperX = linearMapper(xDomain, xAxisLength)
-        val mapperY = linearMapper(yDomain, yAxisLength)
+//        val mapperX = linearMapper(xDomain, xAxisLength)
+//        val mapperY = linearMapper(yDomain, yAxisLength)
 
         val projection = object : Projection {
             override fun project(v: DoubleVector): DoubleVector? {
-                val x = mapperX.invoke(v.x) ?: return null
-                val y = mapperY.invoke(v.y) ?: return null
+                val x = xMapper.invoke(v.x) ?: return null
+                val y = yMapper.invoke(v.y) ?: return null
                 return DoubleVector(x, y)
             }
 
@@ -97,11 +95,11 @@ internal abstract class CoordProviderBase(
         }
 
         return Coords.create(
-            MapperUtil.map(xDomain, mapperX),
-            MapperUtil.map(yDomain, mapperY),
+            MapperUtil.map(xDomain, xMapper),
+            MapperUtil.map(yDomain, yMapper),
             projection,
-            hLim?.let { MapperUtil.map(it, mapperX) },
-            vLim?.let { MapperUtil.map(it, mapperY) }
+            hLim?.let { MapperUtil.map(it, xMapper) },
+            vLim?.let { MapperUtil.map(it, yMapper) }
         )
     }
 

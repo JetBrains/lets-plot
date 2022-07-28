@@ -8,7 +8,6 @@ package jetbrains.datalore.plot;
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.random.RandomGaussian
-import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
@@ -58,8 +57,8 @@ class YOrientationGeomBuildingTest {
             yAesMapper = yAesMapper,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
             coord = CoordProviders.cartesian().createCoordinateSystem(
-                xDomain, xAxisLength,
-                yDomain, yAxisLength, xAesMapper, yAesMapper,
+                xDomain, xAesMapper,
+                yDomain, yAesMapper
             ),
             flippedAxis = false,
             targetCollector = NullGeomTargetCollector()
