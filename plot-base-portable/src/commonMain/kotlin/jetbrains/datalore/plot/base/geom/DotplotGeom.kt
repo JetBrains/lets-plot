@@ -97,6 +97,7 @@ open class DotplotGeom : GeomBase() {
         for (p in dataPoints) {
             val groupStackSize = boundedStackSize(
                 builtStackSize + p.stacksize()!!.toInt(),
+                coord,
                 ctx,
                 binWidthPx,
                 ctx.flipped
@@ -201,19 +202,22 @@ open class DotplotGeom : GeomBase() {
 
     protected fun boundedStackSize(
         stackSize: Int,
+        coord: CoordinateSystem,
         ctx: GeomContext,
         binWidthPx: Double,
         stacksAreVertical: Boolean
     ): Int {
-        val stackCapacity = when (stacksAreVertical) {
-            true -> ctx.getAesBounds().width
-            false -> ctx.getAesBounds().height
+        val bounds = ctx.getAesBounds()
+        val boundsPx = GeomCoord(coord).toClient(bounds)
+        val stackCapacityPx = when (stacksAreVertical) {
+            true -> boundsPx.width
+            false -> boundsPx.height
         }.let {
             ceil(it / (dotSize * stackRatio * binWidthPx)).toInt() + 1
         }
-        val parityCorrectionTerm = if (stackSize % 2 == stackCapacity % 2) 0 else 1
+        val parityCorrectionTerm = if (stackSize % 2 == stackCapacityPx % 2) 0 else 1
 
-        return min(stackSize, stackCapacity + parityCorrectionTerm)
+        return min(stackSize, stackCapacityPx + parityCorrectionTerm)
     }
 
     enum class Stackdir {

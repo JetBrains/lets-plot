@@ -35,10 +35,7 @@ class VLineGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
 
-        val viewPort = when {
-            ctx.flipped -> ctx.getAesBounds().flip()
-            else -> ctx.getAesBounds()
-        }
+        val viewPort = overallAesBounds(ctx)
         val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.V_LINE, ctx)
 
         val lines = ArrayList<SvgLineElement>()

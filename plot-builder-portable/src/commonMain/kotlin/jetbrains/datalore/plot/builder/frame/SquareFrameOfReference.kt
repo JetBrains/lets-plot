@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.frame
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
@@ -183,21 +182,23 @@ internal class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val hAxisMapper = hScaleMapper
-        val vAxisMapper = vScaleMapper
+//        val hAxisMapper = hScaleMapper
+//        val vAxisMapper = vScaleMapper
 
         val hAxisDomain = layoutInfo.hAxisInfo!!.axisDomain
         val vAxisDomain = layoutInfo.vAxisInfo!!.axisDomain
-        val aesBounds = DoubleRectangle(
-            xRange = DoubleSpan(
-                hAxisMapper(hAxisDomain.lowerEnd) as Double,
-                hAxisMapper(hAxisDomain.upperEnd) as Double
-            ),
-            yRange = DoubleSpan(
-                vAxisMapper(vAxisDomain.lowerEnd) as Double,
-                vAxisMapper(vAxisDomain.upperEnd) as Double
-            )
-        )
+//        val aesBounds = DoubleRectangle(
+//            xRange = DoubleSpan(
+//                hAxisMapper(hAxisDomain.lowerEnd) as Double,
+//                hAxisMapper(hAxisDomain.upperEnd) as Double
+//            ),
+//            yRange = DoubleSpan(
+//                vAxisMapper(vAxisDomain.lowerEnd) as Double,
+//                vAxisMapper(vAxisDomain.upperEnd) as Double
+//            )
+//        )
+        // We no longer map x/y
+        val aesBounds = DoubleRectangle(hAxisDomain, vAxisDomain)
 
         val layerComponent = buildGeom(
             layer,

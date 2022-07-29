@@ -17,9 +17,8 @@ interface GeomContext {
     fun getUnitResolution(aes: Aes<Double>): Double
 
     /**
-     * @return 'geom' area in pixels.
-     *          A rectangle which origin and size is computed based on
-     *          the overall ranges of X,Y aesthetics.
+     * @return  A rectangle which origin and size are computed basing on
+     *          the overall ranges of X,Y (and other positional) aesthetics.
      */
     fun getAesBounds(): DoubleRectangle
 

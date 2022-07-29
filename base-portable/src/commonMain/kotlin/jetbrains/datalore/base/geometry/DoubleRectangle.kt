@@ -51,7 +51,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     constructor(xRange: DoubleSpan, yRange: DoubleSpan) : this(
         xRange.lowerEnd, yRange.lowerEnd,
-        xRange.upperEnd - xRange.lowerEnd, yRange.upperEnd - yRange.lowerEnd
+        xRange.length, yRange.length
     )
 
     fun xRange(): DoubleSpan {

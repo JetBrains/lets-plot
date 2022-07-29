@@ -73,11 +73,12 @@ class YDotplotGeom : DotplotGeom() {
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val fullStackSize = dataPoints.map { it.stacksize()!! }.sum().toInt()
-        val stackSize = boundedStackSize(fullStackSize, ctx, binWidthPx, !ctx.flipped)
+        val stackSize = boundedStackSize(fullStackSize, coord, ctx, binWidthPx, !ctx.flipped)
         var builtStackSize = 0
         for (p in dataPoints) {
             val groupStackSize = boundedStackSize(
                 builtStackSize + p.stacksize()!!.toInt(),
+                coord,
                 ctx,
                 binWidthPx,
                 !ctx.flipped

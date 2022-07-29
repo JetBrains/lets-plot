@@ -36,10 +36,7 @@ class HLineGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
 
-        val viewPort = when {
-            ctx.flipped -> ctx.getAesBounds().flip()
-            else -> ctx.getAesBounds()
-        }
+        val viewPort = overallAesBounds(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.H_LINE, ctx)
 
         val lines = ArrayList<SvgLineElement>()
