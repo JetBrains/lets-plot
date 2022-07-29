@@ -25,10 +25,6 @@ internal class FlippedCoordinateSystem(
         return super.toClient(p.flip())
     }
 
-    override fun fromClient(p: DoubleVector): DoubleVector {
-        return super.fromClient(p).flip()
-    }
-
     override fun flip(): CoordinateSystem {
         return actual
     }

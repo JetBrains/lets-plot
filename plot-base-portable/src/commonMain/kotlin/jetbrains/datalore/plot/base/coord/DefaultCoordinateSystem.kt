@@ -27,10 +27,6 @@ internal open class DefaultCoordinateSystem(
         return DoubleVector(toClientOffsetX(p.x), toClientOffsetY(p.y))
     }
 
-    override fun fromClient(p: DoubleVector): DoubleVector {
-        return DoubleVector(fromClientOffsetX(p.x), fromClientOffsetY(p.y))
-    }
-
     override fun flip(): CoordinateSystem {
         return FlippedCoordinateSystem(this)
     }
