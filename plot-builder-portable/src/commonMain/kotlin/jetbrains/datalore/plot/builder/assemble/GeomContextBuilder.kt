@@ -12,11 +12,9 @@ import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
-    private var isYOrientation: Boolean = false
     private var flipped: Boolean = false
     private var aesthetics: Aesthetics? = null
     private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
@@ -26,17 +24,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     constructor()
 
     private constructor(ctx: MyGeomContext) {
-        isYOrientation = ctx.isYOrientation
         flipped = ctx.flipped
         aesthetics = ctx.aesthetics
         aestheticMappers = ctx.aestheticMappers
         aesBounds = ctx._aesBounds
         geomTargetCollector = ctx.targetCollector
-    }
-
-    override fun isYOrientation(isYOrientation: Boolean): ImmutableGeomContext.Builder {
-        this.isYOrientation = isYOrientation
-        return this
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
@@ -74,7 +66,6 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val aestheticMappers = b.aestheticMappers
         val _aesBounds: DoubleRectangle? = b.aesBounds
 
-        override val isYOrientation: Boolean = b.isYOrientation
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
 

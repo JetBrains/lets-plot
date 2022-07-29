@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 
 interface GeomContext {
-    val isYOrientation: Boolean
     val flipped: Boolean
     val targetCollector: GeomTargetCollector
 

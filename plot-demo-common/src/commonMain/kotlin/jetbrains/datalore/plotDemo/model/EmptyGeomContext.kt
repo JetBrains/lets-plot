@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 
 class EmptyGeomContext : GeomContext {
-    override val isYOrientation: Boolean = false
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
 

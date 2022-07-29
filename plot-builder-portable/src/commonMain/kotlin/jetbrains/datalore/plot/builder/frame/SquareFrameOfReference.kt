@@ -332,7 +332,6 @@ internal class SquareFrameOfReference(
             }
 
             val ctx = GeomContextBuilder()
-                .isYOrientation(layer.isYOrientation)
                 .flipped(flippedAxis)
                 .aesthetics(aesthetics)
                 .aestheticMappers(aestheticMappers)
