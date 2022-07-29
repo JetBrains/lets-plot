@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.geom.PolygonGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
@@ -64,28 +63,30 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         val ratioX = spanX / clientW
         val ratioY = spanY / clientH
         val mapper: ScaleMapper<Double>
-        val ratio: Double
+//        val ratio: Double
         if (ratioX >= ratioY) {
             mapper = Mappers.mul(domainX, clientW)
-            ratio = ratioX
+//            ratio = ratioX
         } else {
             mapper = Mappers.mul(domainY, clientH)
-            ratio = ratioY
+//            ratio = ratioY
         }
-        val lengthX = spanX / ratio
-        val lengthY = spanY / ratio
-        val mapperX = Mappers.mul(domainX, lengthX)
-        val mapperY = Mappers.mul(domainY, lengthY)
+//        val lengthX = spanX / ratio
+//        val lengthY = spanY / ratio
+//        val mapperX = Mappers.mul(domainX, lengthX)
+//        val mapperY = Mappers.mul(domainY, lengthY)
         val aes = AestheticsBuilder(KANSAS_X.size)
-            .x(listMapper(coordsX, mapper))
-            .y(listMapper(coordsY, mapper))
+//            .x(listMapper(coordsX, mapper))
+//            .y(listMapper(coordsY, mapper))
+            .x(list(coordsX))
+            .y(list(coordsY))
             .fill(list(toColors(values.toList())))
             .group(array(groups))
             .color(constant(Color.DARK_MAGENTA))
             .alpha(constant(0.5))
             .build()
         val coord = CoordProviders.map()
-            .createCoordinateSystem(domainX, mapperX, domainY, mapperY)
+            .createCoordinateSystem(domainX, mapper, domainY, mapper)
         val layer = SvgLayerRenderer(
             aes,
             PolygonGeom(),
