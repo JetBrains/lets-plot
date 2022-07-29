@@ -11,9 +11,10 @@ import kotlin.math.min
 
 class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
-    init {
-        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimentions should be positive: $dimension" }
-    }
+    // ToDo: this breaks TooltipBox
+//    init {
+//        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimentions should be positive: $dimension" }
+//    }
 
     val center: DoubleVector
         get() = origin.add(dimension.mul(0.5))
