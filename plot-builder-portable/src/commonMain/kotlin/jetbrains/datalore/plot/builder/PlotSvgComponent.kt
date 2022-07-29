@@ -80,10 +80,10 @@ class PlotSvgComponent constructor(
         private set
 
     // ToDo: remove
-    private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
+    private val axisTitleLeft: List<String> = splitToLines(frameProviderByTile[0].vAxisLabel)
 
     // ToDo: remove
-    private val axisTitleBottom: String? = frameProviderByTile[0].hAxisLabel
+    private val axisTitleBottom: List<String> = splitToLines(frameProviderByTile[0].hAxisLabel)
 
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -246,7 +246,7 @@ class PlotSvgComponent constructor(
             .add(
                 axisTitleSizeDelta(
                     axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    axisTitleBottom = null to PlotLabelSpec(0.0),
+                    axisTitleBottom = emptyList<String>() to PlotLabelSpec(0.0),
                     axisEnabled
                 )
             )
@@ -343,22 +343,24 @@ class PlotSvgComponent constructor(
 
         // add axis titles
         if (axisEnabled) {
-            if (axisTitleLeft != null) {
+            if (axisTitleLeft.isNotEmpty()) {
                 addAxisTitle(
                     axisTitleLeft,
                     Orientation.LEFT,
                     overallTileBounds,
                     geomAreaBounds,
-                    "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
+                    "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}",
+                    PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis))
                 )
             }
-            if (axisTitleBottom != null) {
+            if (axisTitleBottom.isNotEmpty()) {
                 addAxisTitle(
                     axisTitleBottom,
                     Orientation.BOTTOM,
                     overallTileBounds,
                     geomAreaBounds,
-                    "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
+                    "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}",
+                    PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis))
                 )
             }
         }
@@ -435,11 +437,12 @@ class PlotSvgComponent constructor(
     }
 
     private fun addAxisTitle(
-        text: String,
+        text: List<String>,
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
-        className: String
+        className: String,
+        labelSpec: PlotLabelSpec
     ) {
         val referenceRect = when (orientation) {
             Orientation.LEFT,
@@ -457,38 +460,63 @@ class PlotSvgComponent constructor(
         }
 
         val horizontalAnchor = HorizontalAnchor.MIDDLE
-        val verticalAnchor = when (orientation) {
-            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> VerticalAnchor.BOTTOM
-            Orientation.BOTTOM -> VerticalAnchor.TOP
-        }
-
         val rotation = when (orientation) {
             Orientation.LEFT -> -90.0
             Orientation.RIGHT -> -90.0
             else -> 0.0
         }
 
+        val textSize = PlotLayoutUtil.textDimensions(text, labelSpec)
+        val titleLineHeight = labelSpec.height()
+
         val titleLocation = when (orientation) {
             Orientation.LEFT ->
-                // Add 2 pix to the margin for better uppearence.
-                DoubleVector(referenceRect.left - (PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN + 2), referenceRect.center.y)
+                // Add 2 pix to the margin for better appearance.
+                DoubleVector(
+                    referenceRect.left - textSize.y - (PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN + 2),
+                    referenceRect.center.y
+                )
             Orientation.RIGHT ->
                 DoubleVector(referenceRect.right + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, referenceRect.center.y)
             Orientation.TOP ->
-                DoubleVector(referenceRect.center.x, referenceRect.top - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
+                DoubleVector(
+                    referenceRect.center.x,
+                    referenceRect.top - textSize.y - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
+                )
             Orientation.BOTTOM ->
-                DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
-        }
+                DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
+                )
+        }.add(
+            if (orientation.isHorizontal) DoubleVector(0.0, titleLineHeight) else DoubleVector(titleLineHeight, 0.0)
+        )
 
-        val titleLabel = TextLabel(text)
+        val titleLabel = MultilineLabel(text.joinToString("\n"))
         titleLabel.addClassName(className)
         titleLabel.setHorizontalAnchor(horizontalAnchor)
-        titleLabel.setVerticalAnchor(verticalAnchor)
+        titleLabel.setLineHeight(titleLineHeight)
         titleLabel.moveTo(titleLocation)
         titleLabel.rotate(rotation)
         add(titleLabel)
-    }
 
+        if (DEBUG_DRAWING) {
+            val axisTitleBounds = if (orientation.isHorizontal) {
+                DoubleRectangle(
+                    referenceRect.left,
+                    titleLocation.y - titleLineHeight,
+                    referenceRect.width,
+                    textSize.y
+                )
+            } else {
+                DoubleRectangle(
+                    titleLocation.x - titleLineHeight,
+                    referenceRect.top,
+                    textSize.y,
+                    referenceRect.height
+                )
+            }
+            drawDebugRect(axisTitleBounds, Color.DARK_GREEN)
+        }
+    }
 
     private fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
         val rect = SvgRectElement(r)
