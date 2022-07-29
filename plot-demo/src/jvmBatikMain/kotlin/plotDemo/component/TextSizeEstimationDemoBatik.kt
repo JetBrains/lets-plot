@@ -8,7 +8,6 @@ package jetbrains.datalore.plotDemo.component
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
-import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoCharCategories
 import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
@@ -27,28 +26,21 @@ fun main() {
         }
         val svgRoot = TextSizeEstimationDemo.createSvgElement(
             DoubleVector(demoInnerSize.width.toDouble(), demoInnerSize.height.toDouble()),
-            settings.lines,
+            settings.textLines,
             settings.fontName,
             settings.fontSize,
             settings.isBold,
             settings.isItalic,
-            settings.fontWidthRatio,
-            settings.categoryRatio,
-            settings.boldRatio,
-            settings.lineBounds
+            settings.actualTextDimensions
         )
         return svgRoot?.let(::createPlotComponent)
     }
 
     SwingUtilities.invokeLater {
         TextSizeDemoWindow(
-            "Text size estimation",
-            Dimension(1600, 1200),
-            ::buildPlotComponent,
-            categoryNames = TextSizeDemoCharCategories.getCategoryNamesForDemo(),
-            categoryToChars = TextSizeDemoCharCategories::getCharsForCategory,
-            fontToDefaultRatio = TextSizeDemoCharCategories::getFontRatio,
-            categoryToDefaultRatio = TextSizeDemoCharCategories::getDefaultRatioForCategory
+            "Text size estimation (Batik)",
+            Dimension(1200, 600),
+            ::buildPlotComponent
         ).run()
     }
 }

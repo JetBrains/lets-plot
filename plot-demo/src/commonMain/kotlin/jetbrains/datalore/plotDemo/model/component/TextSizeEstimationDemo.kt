@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
-import jetbrains.datalore.base.gcommon.collect.Comparables.max
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -14,52 +13,22 @@ import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.presentation.CharCategory.Companion.getCharRatio
-import jetbrains.datalore.plot.builder.presentation.getOptionsForFont
+import jetbrains.datalore.plot.builder.presentation.ClusteringModel
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgUtils
-import kotlin.math.roundToInt
+import kotlin.math.max
+import kotlin.math.pow
+
 
 class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
 
-    fun width(text: String, font: Font, fontRatio: Double?, categoryRatio: Double?, boldRatio: Double?): Double {
-        val options = getOptionsForFont(font.family.toString())
-        val width = text.map {
-            categoryRatio ?: getCharRatio(it, options)
-        }.sum() *
-                font.size *
-                (fontRatio ?: options.fontRatio)
-        return if (font.isBold) {
-            width * (boldRatio ?: options.fontBoldRatio)
-        } else {
-            width
-        }
-    }
-
-    private fun titleDimensions(
-        spec: LabelSpec,
-        widthRatio: Double?,
-        categoryRatio: Double?,
-        boldRatio: Double?
-    ): DoubleVector {
-        if (spec.text.isEmpty()) {
-            return DoubleVector.ZERO
-        }
-        return DoubleVector(
-            width(spec.text, spec.font, widthRatio, categoryRatio, boldRatio),
-            spec.font.size.toDouble()
-        )
-    }
-
     fun createModel(
-        lines: List<String>,
+        textLines: List<String>,
         font: Font,
-        fontWidthRatio: Double?,
-        categoryRatio: Double?,
-        boldRatio: Double?,
-        lineBounds: List<DoubleVector>
+        actualTextDimensions: List<DoubleVector>
     ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
@@ -67,36 +36,48 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         val lineInterval = 10.0
         val rowsCount = (demoInnerSize.y / (font.size + lineInterval)).toInt() - 1
 
-        lines
-            .map { line -> LabelSpec(line, font) }
-            .forEachIndexed { index, spec ->
-                val estimatedSize = titleDimensions(spec, fontWidthRatio, categoryRatio, boldRatio)
-                val estimatedRect =
-                    DoubleRectangle(x, y - estimatedSize.y / 2, estimatedSize.x, estimatedSize.y)
-                groupComponent.add(svgRect(estimatedRect, Color.MAGENTA, strokeWidth = 1.5))
+        fun createRect(size: DoubleVector) = DoubleRectangle(x, y - size.y / 2, size.x, size.y)
+        fun Double.round(d: Int = 3): Double {
+            val factor = 10.0.pow(d)
+            return kotlin.math.round(this * factor) / factor
+        }
+
+        textLines
+            .forEachIndexed { index, text ->
+                // old estimation
+                val oldSize = PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length)
+                groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
+
+                // new estimation
+                val estimatedSize = ClusteringModel.textDimension(text, font)
+                groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
-                val bounds = lineBounds[index]
-                val rect = DoubleRectangle(x, y - bounds.y / 2, bounds.x, bounds.y)
-                groupComponent.add(svgRect(rect, Color.BLUE, strokeWidth = 1.0))
+                val actualSize = actualTextDimensions[index]
+                groupComponent.add(svgRect(createRect(actualSize), Color.DARK_BLUE, strokeWidth = 1.0))
 
                 // label
-                val textLabel = createTextLabel(spec)
+                val textLabel = createTextLabel(text, font)
                 val element = textLabel.rootGroup
                 SvgUtils.transformTranslate(element, x, y)
                 groupComponent.add(element)
 
                 // delta
-                val delta = estimatedSize.x - bounds.x
-                val deltaStr = "∆=${(delta * 10000).roundToInt().toDouble() / 10000}"
-                val deltaLabel = createTextLabel(LabelSpec(deltaStr, Font(FontFamily.MONOSPACED, 10)))
+                val delta = estimatedSize.x - actualSize.x
+
+                val deltaStr = "w=${actualSize.x.round()}, new=${estimatedSize.x.round()}, ∆=${delta.round()}"
+                val deltaLabel = createTextLabel(deltaStr, Font(FontFamily.MONOSPACED, 10))
                 val deltaElement = deltaLabel.rootGroup
-                SvgUtils.transformTranslate(deltaElement, x + max(estimatedSize.x, bounds.x) + 10.0, y)
+                SvgUtils.transformTranslate(
+                    deltaElement,
+                    x + (listOf(oldSize.x, estimatedSize.x, actualSize.x).maxOrNull() ?: 0.0 ) + 10.0,
+                    y
+                )
                 groupComponent.add(deltaElement)
 
                 y += estimatedSize.y + lineInterval
                 if ((index + 1) % rowsCount == 0) {
-                    x += max(estimatedSize.x, bounds.x) + 200.0
+                    x += max(estimatedSize.x, actualSize.x) + 200.0
                     y = 20.0
                 }
             }
@@ -113,20 +94,15 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
 
     companion object {
 
-        private class LabelSpec(
-            val text: String,
-            val font: Font
-        )
+        private fun createTextLabel(text: String, font: Font): TextLabel {
+            val label = TextLabel(text)
 
-        private fun createTextLabel(spec: LabelSpec): TextLabel {
-            val label = TextLabel(spec.text)
-
-            label.setFontFamily("\"${spec.font.family}\"")
-            if (spec.font.isItalic) {
+            label.setFontFamily("\"${font.family}\"")
+            if (font.isItalic) {
                 label.setFontStyle("italic")
             }
-            label.setFontSize(spec.font.size.toDouble())
-            if (spec.font.isBold) {
+            label.setFontSize(font.size.toDouble())
+            if (font.isBold) {
                 label.setFontWeight("bold")
             }
             label.textColor().set(Color.DARK_BLUE)
@@ -139,31 +115,25 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
 
         fun createSvgElement(
             demoInnerSize: DoubleVector,
-            lines: List<String>,
+            textLines: List<String>,
             fontName: String,
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
-            fontWidthRatio: Double?,
-            categoryRatio: Double?,
-            boldRatio: Double?,
-            lineBounds: List<DoubleVector>
+            actualTextDimensions: List<DoubleVector>
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
                     listOf(
                         createModel(
-                            lines,
+                            textLines,
                             Font(
                                 FontFamily.forName(fontName),
                                 fontSize,
                                 isBold,
                                 isItalic
                             ),
-                            fontWidthRatio,
-                            categoryRatio,
-                            boldRatio,
-                            lineBounds
+                            actualTextDimensions
                         )
                     )
                 ).firstOrNull()
