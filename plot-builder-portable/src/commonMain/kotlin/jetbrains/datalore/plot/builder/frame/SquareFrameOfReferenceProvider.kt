@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.builder.layout.tile.InsideOutTileLayout
 import jetbrains.datalore.plot.builder.layout.tile.TopDownTileLayout
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
+import kotlin.math.max
 
 internal class SquareFrameOfReferenceProvider(
     private val hScaleProto: Scale<Double>,
@@ -162,10 +163,10 @@ internal class SquareFrameOfReferenceProvider(
         )
 
         val sizes = mapOf(
-            MarginSide.LEFT to DoubleVector(inner.left - outer.left, inner.height),
-            MarginSide.TOP to DoubleVector(inner.width, inner.top - outer.top),
-            MarginSide.RIGHT to DoubleVector(outer.right - inner.right, inner.height),
-            MarginSide.BOTTOM to DoubleVector(inner.width, outer.bottom - inner.bottom),
+            MarginSide.LEFT to DoubleVector(max(0.0, inner.left - outer.left), inner.height),
+            MarginSide.TOP to DoubleVector(inner.width, max(0.0, inner.top - outer.top)),
+            MarginSide.RIGHT to DoubleVector(max(0.0, outer.right - inner.right), inner.height),
+            MarginSide.BOTTOM to DoubleVector(inner.width, max(0.0, outer.bottom - inner.bottom)),
         )
 
         val boundsByMargin = origins.mapValues { (margin, origin) ->

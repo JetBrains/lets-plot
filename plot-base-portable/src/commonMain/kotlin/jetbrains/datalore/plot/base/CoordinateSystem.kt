@@ -8,8 +8,6 @@ package jetbrains.datalore.plot.base
 import jetbrains.datalore.base.geometry.DoubleVector
 
 interface CoordinateSystem {
-    fun transform(p: DoubleVector): DoubleVector?
-
     fun toClient(p: DoubleVector): DoubleVector
 
     fun flip(): CoordinateSystem

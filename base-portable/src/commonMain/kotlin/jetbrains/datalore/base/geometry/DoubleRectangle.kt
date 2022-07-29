@@ -6,8 +6,14 @@
 package jetbrains.datalore.base.geometry
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import kotlin.math.max
+import kotlin.math.min
 
 class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
+
+    init {
+        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimentions should be positive: $dimension" }
+    }
 
     val center: DoubleVector
         get() = origin.add(dimension.mul(0.5))
@@ -143,7 +149,11 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     companion object {
         fun span(leftTop: DoubleVector, rightBottom: DoubleVector): DoubleRectangle {
-            return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
+            val x0 = min(leftTop.x, rightBottom.x)
+            val x1 = max(leftTop.x, rightBottom.x)
+            val y0 = min(leftTop.y, rightBottom.y)
+            val y1 = max(leftTop.y, rightBottom.y)
+            return DoubleRectangle(x0, y0, x1 - x0, y1 - y0)
         }
 
         fun LTRB(left: Double, top: Double, right: Double, bottom: Double): DoubleRectangle {

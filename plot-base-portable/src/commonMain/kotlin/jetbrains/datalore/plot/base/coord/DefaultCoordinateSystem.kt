@@ -19,12 +19,13 @@ internal open class DefaultCoordinateSystem(
     val clientLimitsY: DoubleSpan?,
     val projection: Projection,
 ) : CoordinateSystem {
-    override fun transform(p: DoubleVector): DoubleVector? {
-        return projection.project(p)
-    }
-
     override fun toClient(p: DoubleVector): DoubleVector {
-        return DoubleVector(toClientOffsetX(p.x), toClientOffsetY(p.y))
+        val projected = projection.project(p)
+            ?: throw IllegalArgumentException("Can't poject $p using projection ${projection::class.simpleName}")
+        return DoubleVector(
+            toClientOffsetX(projected.x),
+            toClientOffsetY(projected.y)
+        )
     }
 
     override fun flip(): CoordinateSystem {
