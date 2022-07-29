@@ -468,6 +468,10 @@ class PlotSvgComponent constructor(
 
         val textSize = PlotLayoutUtil.textDimensions(text, labelSpec)
         val titleLineHeight = labelSpec.height()
+        val offset = titleLineHeight * when (orientation) {
+            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> 1.0
+            Orientation.BOTTOM -> 0.7 // like verticalAnchor = TOP
+        }
 
         val titleLocation = when (orientation) {
             Orientation.LEFT ->
@@ -487,7 +491,7 @@ class PlotSvgComponent constructor(
                 DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
                 )
         }.add(
-            if (orientation.isHorizontal) DoubleVector(0.0, titleLineHeight) else DoubleVector(titleLineHeight, 0.0)
+            if (orientation.isHorizontal) DoubleVector(0.0, offset) else DoubleVector(offset, 0.0)
         )
 
         val titleLabel = MultilineLabel(text.joinToString("\n"))
@@ -502,13 +506,13 @@ class PlotSvgComponent constructor(
             val axisTitleBounds = if (orientation.isHorizontal) {
                 DoubleRectangle(
                     referenceRect.left,
-                    titleLocation.y - titleLineHeight,
+                    titleLocation.y - offset,
                     referenceRect.width,
                     textSize.y
                 )
             } else {
                 DoubleRectangle(
-                    titleLocation.x - titleLineHeight,
+                    titleLocation.x - offset,
                     referenceRect.top,
                     textSize.y,
                     referenceRect.height
