@@ -15,8 +15,6 @@ internal class FlippedCoordinateSystem(
     actual.toClientOffsetY,
     actual.fromClientOffsetX,
     actual.fromClientOffsetY,
-    clientLimitsX = actual.clientLimitsX,
-    clientLimitsY = actual.clientLimitsY,
     projection = actual.projection
 ) {
     override fun toClient(p: DoubleVector): DoubleVector {

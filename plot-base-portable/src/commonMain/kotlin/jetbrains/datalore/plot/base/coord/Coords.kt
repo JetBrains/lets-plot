@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.plot.base.CoordinateSystem
@@ -16,20 +16,16 @@ object Coords {
         xRange: DoubleSpan,
         yRange: DoubleSpan,
         projection: Projection = identity(),
-        xLim: DoubleSpan? = null,
-        yLim: DoubleSpan? = null,
     ): CoordinateSystem {
         val origin = DoubleVector(
             originX(xRange),
             originY(yRange)
         )
-        return create(origin, xLim, yLim, projection)
+        return create(origin, projection)
     }
 
     fun create(
         origin: DoubleVector,
-        xLim: DoubleSpan? = null,
-        yLim: DoubleSpan? = null,
         projection: Projection = identity()
     ): CoordinateSystem {
         return DefaultCoordinateSystem(
@@ -37,8 +33,6 @@ object Coords {
             toClientOffsetY(origin.y),
             fromClientOffsetX(origin.x),
             fromClientOffsetY(origin.y),
-            xLim,
-            yLim,
             projection
         )
     }

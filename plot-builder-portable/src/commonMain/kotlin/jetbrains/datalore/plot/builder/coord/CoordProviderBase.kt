@@ -97,9 +97,7 @@ internal abstract class CoordProviderBase(
         return Coords.create(
             MapperUtil.map(xDomain, xMapper),
             MapperUtil.map(yDomain, yMapper),
-            projection,
-            hLim?.let { MapperUtil.map(it, xMapper) },
-            vLim?.let { MapperUtil.map(it, yMapper) }
+            projection
         )
     }
 
