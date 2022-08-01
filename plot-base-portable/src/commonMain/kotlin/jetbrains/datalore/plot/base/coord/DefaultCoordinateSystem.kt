@@ -12,8 +12,6 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 internal open class DefaultCoordinateSystem(
     val toClientOffsetX: (Double) -> Double,
     val toClientOffsetY: (Double) -> Double,
-    val fromClientOffsetX: (Double) -> Double,
-    val fromClientOffsetY: (Double) -> Double,
     val projection: Projection,
 ) : CoordinateSystem {
     override fun toClient(p: DoubleVector): DoubleVector {

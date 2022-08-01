@@ -31,8 +31,6 @@ object Coords {
         return DefaultCoordinateSystem(
             toClientOffsetX(origin.x),
             toClientOffsetY(origin.y),
-            fromClientOffsetX(origin.x),
-            fromClientOffsetY(origin.y),
             projection
         )
     }
@@ -65,16 +63,7 @@ object Coords {
         return { x -> originX + x }
     }
 
-    private fun fromClientOffsetX(originX: Double): (Double) -> Double {
-        return { x -> x - originX }
-    }
-
     private fun toClientOffsetY(originY: Double): (Double) -> Double {
-        // y-axis is inverted
-        return { y -> originY - y }
-    }
-
-    private fun fromClientOffsetY(originY: Double): (Double) -> Double {
         // y-axis is inverted
         return { y -> originY - y }
     }

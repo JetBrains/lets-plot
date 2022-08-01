@@ -13,8 +13,6 @@ internal class FlippedCoordinateSystem(
 ) : DefaultCoordinateSystem(
     actual.toClientOffsetX,
     actual.toClientOffsetY,
-    actual.fromClientOffsetX,
-    actual.fromClientOffsetY,
     projection = actual.projection
 ) {
     override fun toClient(p: DoubleVector): DoubleVector {
