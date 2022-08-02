@@ -11,11 +11,8 @@ import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
 fun main() {
     with(TextJustificationDemo()) {
         SvgViewerDemoWindowBatik(
-            "Text justifications",
-            createSvgRoots(listOf(
-                createModel(changeHJust = true, changeVJust = false),
-                createModel(changeHJust = false, changeVJust = true)
-            ))
+            "Text justifications (Batik)",
+            createSvgRoots(listOf(createModel()))
         ).open()
     }
 }

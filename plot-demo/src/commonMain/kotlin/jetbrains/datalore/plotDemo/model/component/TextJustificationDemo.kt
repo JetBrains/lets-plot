@@ -22,15 +22,11 @@ import jetbrains.datalore.vis.svg.SvgUtils
 class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     override val cssStyle: String
-        get() = "text {" +
-                "font-size: ${FONT_SIZE}px;" +
-                "}"
+        get() = ".$LABEL_CLASS_NAME { font-size: ${FONT_SIZE}px; }"
 
-    fun createModel(changeHJust: Boolean, changeVJust: Boolean): GroupComponent {
+    fun createModel(): GroupComponent {
         val specs = List(11) { it.toDouble() / 10 }.map {
-            val hjust = if (changeHJust) it else 0.0
-            val vjust = if (changeVJust) it else 1.0
-            TextJustification(hjust, vjust)
+            TextJustification(it, it)
         }
         val rect = DoubleRectangle(
             DoubleVector(10.0, 10.0),
@@ -38,35 +34,57 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         )
 
         val groupComponent = GroupComponent()
-        var y = 10.0
-        specs.forEach { spec ->
-            val labelExample = createLabelExample(rect, spec)
-            SvgUtils.transformTranslate(labelExample, 50.0, y)
-            groupComponent.add(labelExample)
-            y += rect.height + 20.0
+
+        fun place(angle: Double, startPos: DoubleVector) {
+            var y = startPos.x
+            var x = startPos.y
+            specs.forEach { spec ->
+                val labelExample = createLabelExample(rect, spec, angle)
+                SvgUtils.transformTranslate(labelExample, x, y)
+                groupComponent.add(labelExample)
+                if (angle != 0.0) {
+                    x += 80.0
+                }
+                else {
+                    y += rect.height + 20.0
+                }
+            }
         }
+
+        place(angle = 0.0, startPos = DoubleVector(10.0, 10.0))
+        place(angle = 90.0, startPos = DoubleVector(10.0, 600.0))
+        place(angle = -90.0, startPos = DoubleVector(590.0, 600.0))
+
         return groupComponent
     }
 
     companion object {
-        private val DEMO_BOX_SIZE = DoubleVector(600.0, 1200.0)
+        private val DEMO_BOX_SIZE = DoubleVector(1600.0, 1200.0)
         private const val FONT_SIZE = 20.0
+        private const val LABEL_CLASS_NAME = "label"
 
         class TextJustification(val x: Double, val y: Double) {
             companion object {
-                fun MultilineLabel.applyJustification(
+                fun applyJustification(
                     boundRect: DoubleRectangle,
                     textSize: DoubleVector,
                     lineHeight: Double, // todo can be specified in element_text
                     justification: TextJustification,
-                ) {
-                    val (x, hAnchor) = xPosition(boundRect, textSize, justification.x)
-                    val y = yPosition(boundRect, textSize, lineHeight, justification.y)
+                    angle: Double = 0.0
+                ): Pair<DoubleVector, Text.HorizontalAnchor> {
+                    require(angle in listOf(0.0, 90.0, -90.0))
 
-                    val position = DoubleVector(x, y)
-                    setLineHeight(lineHeight)
-                    setHorizontalAnchor(hAnchor)
-                    moveTo(position)
+                    val rect = if (angle != 0.0) boundRect.flip() else boundRect
+
+                    val (x, hAnchor) = xPosition(rect, textSize, justification.x)
+                    val y = yPosition(rect, textSize, lineHeight, justification.y)
+
+                    val position = when {
+                        angle == 0.0 -> DoubleVector(x, y)
+                        angle < 0.0 -> DoubleVector(y, rect.left + rect.right - x)
+                        else -> DoubleVector(rect.top + rect.bottom -  y, x)
+                    }
+                    return position to hAnchor
                 }
 
                 private fun xPosition(
@@ -74,9 +92,9 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                     textSize: DoubleVector,
                     hjust: Double,
                 ): Pair<Double, Text.HorizontalAnchor> {
-                    val textWidth = 0.0  // todo textWidth = textSize.x
+                    val textWidth = 0.0  // todo val textWidth = textSize.x
                     val x = boundRect.left + (boundRect.width - textWidth) * hjust
-                    // todo: anchor = LEFT
+                    // todo: val anchor = Text.HorizontalAnchor.LEFT
                     val anchor = when {
                         hjust < 0.5 -> Text.HorizontalAnchor.LEFT
                         hjust == 0.5 -> Text.HorizontalAnchor.MIDDLE
@@ -92,7 +110,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                     vjust: Double,
                 ): Double {
                     val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
-                    return y - textSize.y + lineHeight
+                    return y - textSize.y + lineHeight * 0.7 // like vertical_anchor = 'top' (dy="0.7em")
                 }
             }
         }
@@ -100,10 +118,12 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private fun createLabelExample(
             rect: DoubleRectangle,
             justification: TextJustification,
+            angle: Double
         ): SvgGElement {
-            val textLabel = createTextLabel(rect, justification)
+            val r = if (angle != 0.0) rect.flip() else rect
+            val textLabel = createTextLabel(r, justification, angle)
             val g = SvgGElement()
-            g.children().add(createRect(rect))
+            g.children().add(createRect(r))
             g.children().add(textLabel.rootGroup)
             return g
         }
@@ -118,25 +138,31 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createTextLabel(rect: DoubleRectangle, justification: TextJustification): MultilineLabel {
+        private fun createTextLabel(boundRect: DoubleRectangle, justification: TextJustification, angle: Double): MultilineLabel {
             val text = "Horizontal justification:" + justification.x + "\n" +
                     "Vertical justification:" + justification.y
 
             val label = MultilineLabel(text)
-            label.setX(0.0)
+            label.addClassName(LABEL_CLASS_NAME)
             label.textColor().set(Color.DARK_BLUE)
 
             // todo textSize
+            val lineHeight = FONT_SIZE
             val textSize = DoubleVector(
                 PlotLabelSpec(FONT_SIZE).width(text.length),
-                FONT_SIZE * label.linesCount()
+                lineHeight * label.linesCount()
             )
-            label.applyJustification(
-                boundRect = rect,
-                textSize = textSize,
-                lineHeight = FONT_SIZE,
-                justification = justification
+            val (position, hAnchor) = applyJustification(
+                boundRect,
+                textSize,
+                lineHeight,
+                justification,
+                angle
             )
+            label.setLineHeight(lineHeight)
+            label.setHorizontalAnchor(hAnchor)
+            label.rotate(angle)
+            label.moveTo(position)
             return label
         }
     }
