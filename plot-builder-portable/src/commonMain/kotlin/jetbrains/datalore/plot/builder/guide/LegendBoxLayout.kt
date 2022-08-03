@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.textDimensions
 import jetbrains.datalore.plot.builder.theme.LegendTheme

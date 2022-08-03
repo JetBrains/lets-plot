@@ -50,13 +50,21 @@ abstract class LegendBox : SvgComponent() {
         innerGroup.transform().set(buildTransform(spec.contentOrigin, 0.0))
 
         val l = spec.layout
-        if (hasTitle()) {
-            val bounds = DoubleRectangle(
+
+        fun titleBoundingRect(): DoubleRectangle {
+            val titleRectWidth = when {
+                l.isHorizontal -> spec.contentBounds.width - l.graphSize.x
+                else -> spec.contentBounds.width
+            }
+            return DoubleRectangle(
                 l.titleBounds.origin,
-                DoubleVector(spec.contentBounds.width, l.titleBounds.height)
+                DoubleVector(titleRectWidth, l.titleBounds.height)
             )
+        }
+
+        if (hasTitle()) {
             val label = createTitleLabel(
-                bounds,
+                titleBoundingRect(),
                 l.titleSize(title),
                 theme.titleJustification()
             )
@@ -83,10 +91,7 @@ abstract class LegendBox : SvgComponent() {
             // content bounds
             add(createTransparentRect(spec.contentBounds, Color.RED, 1.0))
             // title bounds
-            val rect = DoubleRectangle(
-                l.titleBounds.origin.add(spec.contentOrigin),
-                DoubleVector(spec.contentBounds.width, l.titleBounds.height)
-            )
+            val rect = titleBoundingRect().add(spec.contentOrigin)
             add(createTransparentRect(rect, Color.BLUE, 1.0))
         }
 
