@@ -12,6 +12,7 @@ import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.builder.presentation.Defaults
@@ -192,6 +193,7 @@ class TooltipSkippedAesTest {
             override fun showTitle() = TODO("Not yet implemented")
             override fun showTooltip() = TODO("Not yet implemented")
             override fun titleStyle() = TODO("Not yet implemented")
+            override fun titleJustification() = TextJustification(0.5, 1.0)
             override fun lineWidth() = TODO("Not yet implemented")
             override fun lineColor() = TODO("Not yet implemented")
             override fun tickMarkColor() = TODO("Not yet implemented")

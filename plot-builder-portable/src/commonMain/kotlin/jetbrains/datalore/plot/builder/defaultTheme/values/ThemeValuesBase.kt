@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
@@ -72,6 +73,10 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_ONTOP to false,
             AXIS_TICKS_LENGTH to 4.0,
+
+            AXIS_TITLE to mapOf(
+                Elem.HJUST to 0.5,
+            ),
 
             PANEL_GRID_MINOR to mapOf(
                 Elem.SIZE to 0.5,

@@ -17,9 +17,9 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
 
 internal object PlotLayoutUtil {
-    private const val AXIS_TITLE_OUTER_MARGIN = 4.0
-    const val AXIS_TITLE_INNER_MARGIN = 4.0
-    private const val TITLE_V_MARGIN = 4.0
+    internal const val AXIS_TITLE_OUTER_MARGIN = 4.0
+    internal const val AXIS_TITLE_INNER_MARGIN = 4.0
+    internal const val TITLE_V_MARGIN = 4.0
     private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 

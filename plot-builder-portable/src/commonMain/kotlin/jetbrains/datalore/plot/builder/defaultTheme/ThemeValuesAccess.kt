@@ -9,7 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.plot.base.render.svg.TextJustification
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.vis.TextStyle
 
