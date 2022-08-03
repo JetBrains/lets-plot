@@ -21,7 +21,6 @@ abstract class LegendBoxLayout(
     abstract val graphSize: DoubleVector
 
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
-    val titleHorizontalAnchor = Text.HorizontalAnchor.LEFT
 
     val titleBounds: DoubleRectangle
         get() {
@@ -57,7 +56,7 @@ abstract class LegendBoxLayout(
             return titleAndContent.dimension
         }
 
-    private fun titleSize(s: String): DoubleVector {
+    internal fun titleSize(s: String): DoubleVector {
         return when {
             s.isBlank() -> DoubleVector.ZERO
             else -> textDimensions(s.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
