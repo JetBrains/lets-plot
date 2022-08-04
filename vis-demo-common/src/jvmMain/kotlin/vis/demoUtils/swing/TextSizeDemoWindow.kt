@@ -20,7 +20,11 @@ data class TextSettings(
     val fontSize: Int,
     val isBold: Boolean,
     val isItalic: Boolean,
-    val actualTextDimensions: List<DoubleVector>
+    val actualTextDimensions: List<DoubleVector>,
+    val sizeRatio: Double,
+    val boldRatio: Double,
+    val italicRatio: Double,
+    val fontAdditiveError: Double
 )
 
 class TextSizeDemoWindow(
@@ -42,8 +46,23 @@ class TextSizeDemoWindow(
     )
 
     private val myFontSize = JSpinner()
+    private val mySizeRatio = JSpinner(
+        SpinnerNumberModel(1.0, 0.01, 1.5, 0.01)
+    )
+
     private val myIsBold = JCheckBox("bold")
+    private val myBoldRatio = JSpinner(
+        SpinnerNumberModel(1.075, 0.1, 2.0, 0.01)
+    )
+
     private val myIsItalic = JCheckBox("italic")
+    private val myItalicRatio = JSpinner(
+        SpinnerNumberModel(1.0, 0.1, 2.0, 0.01)
+    )
+
+    private val myFontAdditiveError = JSpinner(
+        SpinnerNumberModel(0.0, -20.0, 20.0, 0.1)
+    )
 
     private val myInputPanel = JPanel()
     private val myOutputPanel = JPanel()
@@ -87,7 +106,11 @@ class TextSizeDemoWindow(
                 fontSize = fontSize,
                 isBold = myIsBold.isSelected,
                 isItalic = myIsItalic.isSelected,
-                actualTextDimensions = lineSizes
+                actualTextDimensions = lineSizes,
+                sizeRatio = mySizeRatio.value.toString().toDouble(),
+                boldRatio = myBoldRatio.value.toString().toDouble(),
+                italicRatio = myItalicRatio.value.toString().toDouble(),
+                fontAdditiveError = myFontAdditiveError.value.toString().toDouble(),
             )
         )
         mySplitPane.rightComponent = plotComponent
@@ -97,9 +120,19 @@ class TextSizeDemoWindow(
         myTextArea.text = "Type your text here..."
         myFontSize.addChangeListener { rebuild() }
         myFontComboBox.addActionListener { rebuild() }
-        myIsBold.addChangeListener { rebuild() }
-        myIsItalic.addChangeListener { rebuild() }
+        myIsBold.addChangeListener {
+            myBoldRatio.isEnabled = myIsBold.isSelected
+            rebuild()
+        }
+        myIsItalic.addChangeListener {
+            myItalicRatio.isEnabled = myIsItalic.isSelected
+            rebuild()
+        }
         myTextArea.addCaretListener { rebuild() }
+        mySizeRatio.addChangeListener { rebuild() }
+        myBoldRatio.addChangeListener { rebuild() }
+        myItalicRatio.addChangeListener { rebuild() }
+        myFontAdditiveError.addChangeListener { rebuild() }
 
         contentPane.add(mySplitPane, BorderLayout.CENTER)
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -128,8 +161,19 @@ class TextSizeDemoWindow(
         myFontSize.value = 14
         grid.add(myFontSize)
 
+        grid.add(JLabel("Font size ratio:"))
+        grid.add(mySizeRatio)
+
+        grid.add(JLabel("Non base font additive error:"))
+        grid.add(myFontAdditiveError)
+
         grid.add(myIsBold)
+        myBoldRatio.isEnabled = myIsBold.isSelected
+        grid.add(myBoldRatio)
+
         grid.add(myIsItalic)
+        myItalicRatio.isEnabled = myIsItalic.isSelected
+        grid.add(myItalicRatio)
 
         myInputPanel.add(grid)
     }

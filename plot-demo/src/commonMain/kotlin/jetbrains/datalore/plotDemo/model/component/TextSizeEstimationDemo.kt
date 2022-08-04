@@ -28,7 +28,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
     fun createModel(
         textLines: List<String>,
         font: Font,
-        actualTextDimensions: List<DoubleVector>
+        actualTextDimensions: List<DoubleVector>,
+        sizeRatio: Double,
+        boldRatio: Double,
+        italicRatio: Double,
+        fontAdditiveError: Double
     ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
@@ -49,7 +53,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                 groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
 
                 // new estimation
-                val estimatedSize = fixEstimation(ClusteringModel.textDimension(text, font))
+                val estimatedSize = fixEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, fontAdditiveError))
                 groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
@@ -125,7 +129,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
-            actualTextDimensions: List<DoubleVector>
+            actualTextDimensions: List<DoubleVector>,
+            sizeRatio: Double,
+            boldRatio: Double,
+            italicRatio: Double,
+            fontAdditiveError: Double,
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
@@ -138,7 +146,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                                 isBold,
                                 isItalic
                             ),
-                            actualTextDimensions
+                            actualTextDimensions,
+                            sizeRatio,
+                            boldRatio,
+                            italicRatio,
+                            fontAdditiveError,
                         )
                     )
                 ).firstOrNull()

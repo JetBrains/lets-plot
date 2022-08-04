@@ -185,7 +185,13 @@ object ClusteringModel {
         6 to 16.106983655274888
     )
 
-    private fun estimateTextWidth(text: String): Double {
+    private const val BASIC_FONT_SIZE = 14.0
+    private fun isBaseFont(font: Font): Boolean {
+        return font.family.toString() == "Lucida Grande" && font.size.toDouble() == BASIC_FONT_SIZE
+    }
+
+
+    private fun sumClusters(text: String): Double {
         return text.map {
             val cluster = CLUSTERS[it]
             if (!CLUSTER_WIDTH.containsKey(cluster)) println("No width for cluster $cluster; symbol: '$it'")
@@ -193,13 +199,26 @@ object ClusteringModel {
         }.sum()
     }
 
-    fun textDimension(text: String, font: Font): DoubleVector {
+    fun textDimension(
+        text: String,
+        font: Font,
+        sizeRatio: Double,
+        boldRatio: Double,
+        italicRatio: Double,
+        nonBaseFontAdditiveError: Double,
+    ): DoubleVector {
         if (text.isEmpty()) {
             return DoubleVector.ZERO
         }
-        return DoubleVector(
-            estimateTextWidth(text),
-            font.size.toDouble()
-        )
+
+        val width = sumClusters(text).let {
+            var w = it * font.size / BASIC_FONT_SIZE * sizeRatio
+            if (font.isBold) w *= boldRatio
+            if (font.isItalic) w *= italicRatio
+            if (!isBaseFont(font)) w += nonBaseFontAdditiveError
+            w
+        }
+
+        return DoubleVector(width, font.size.toDouble())
     }
 }
