@@ -23,7 +23,7 @@ import kotlin.math.max
 import kotlin.math.pow
 
 
-class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoInnerSize) {
+class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingEngineCoeff: Double) : SimpleDemoBase(demoInnerSize) {
 
     fun createModel(
         textLines: List<String>,
@@ -97,8 +97,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
     }
 
     private fun fixEstimation(estimatedSize: DoubleVector): DoubleVector {
-        val batikCoeff = 0.75
-        return DoubleVector(batikCoeff * estimatedSize.x, estimatedSize.y)
+        return DoubleVector(renderingEngineCoeff * estimatedSize.x, estimatedSize.y)
     }
 
     companion object {
@@ -124,6 +123,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
 
         fun createSvgElement(
             demoInnerSize: DoubleVector,
+            renderingEngineCoeff: Double,
             textLines: List<String>,
             fontName: String,
             fontSize: Int,
@@ -135,7 +135,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             italicRatio: Double,
             fontAdditiveError: Double,
         ): SvgSvgElement? {
-            return with(TextSizeEstimationDemo(demoInnerSize)) {
+            return with(TextSizeEstimationDemo(demoInnerSize, renderingEngineCoeff)) {
                 createSvgRoots(
                     listOf(
                         createModel(

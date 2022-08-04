@@ -27,6 +27,7 @@ fun main() {
 
         val svgRoot = TextSizeEstimationDemo.createSvgElement(
             DoubleVector(demoInnerSize.width.toDouble(), demoInnerSize.height.toDouble()),
+            0.75,
             settings.textLines,
             settings.fontName,
             settings.fontSize,
