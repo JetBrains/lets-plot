@@ -28,7 +28,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
     fun createModel(
         textLines: List<String>,
         font: Font,
-        actualTextDimensions: List<DoubleVector>
+        actualTextDimensions: List<DoubleVector>,
+        sizeRatio: Double,
+        boldRatio: Double,
+        italicRatio: Double,
+        fontRatio: Double
     ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
@@ -49,7 +53,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                 groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
 
                 // new estimation
-                val estimatedSize = ClusteringModel.textDimension(text, font)
+                val estimatedSize = ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, fontRatio)
                 groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
@@ -120,7 +124,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
             fontSize: Int,
             isBold: Boolean,
             isItalic: Boolean,
-            actualTextDimensions: List<DoubleVector>
+            actualTextDimensions: List<DoubleVector>,
+            sizeRatio: Double,
+            boldRatio: Double,
+            italicRatio: Double,
+            fontRatio: Double,
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize)) {
                 createSvgRoots(
@@ -133,7 +141,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                                 isBold,
                                 isItalic
                             ),
-                            actualTextDimensions
+                            actualTextDimensions,
+                            sizeRatio,
+                            boldRatio,
+                            italicRatio,
+                            fontRatio,
                         )
                     )
                 ).firstOrNull()

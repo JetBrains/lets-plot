@@ -31,7 +31,11 @@ fun main() {
             settings.fontSize,
             settings.isBold,
             settings.isItalic,
-            settings.actualTextDimensions
+            settings.actualTextDimensions,
+            settings.sizeRatio,
+            settings.boldRatio,
+            settings.italicRatio,
+            settings.fontRatio
         )
         return svgRoot?.let(::createPlotComponent)
     }
