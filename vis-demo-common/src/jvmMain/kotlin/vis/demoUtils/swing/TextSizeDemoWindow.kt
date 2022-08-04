@@ -24,7 +24,7 @@ data class TextSettings(
     val sizeRatio: Double,
     val boldRatio: Double,
     val italicRatio: Double,
-    val fontRatio: Double
+    val fontAdditiveError: Double
 )
 
 class TextSizeDemoWindow(
@@ -47,7 +47,7 @@ class TextSizeDemoWindow(
 
     private val myFontSize = JSpinner()
     private val mySizeRatio = JSpinner(
-        SpinnerNumberModel(0.06, 0.01, 2.0, 0.01)
+        SpinnerNumberModel(1.0, 0.01, 1.5, 0.01)
     )
 
     private val myIsBold = JCheckBox("bold")
@@ -60,8 +60,8 @@ class TextSizeDemoWindow(
         SpinnerNumberModel(1.0, 0.1, 2.0, 0.01)
     )
 
-    private val myFontRatio = JSpinner(
-        SpinnerNumberModel(0.67, 0.1, 2.0, 0.01)
+    private val myFontAdditiveError = JSpinner(
+        SpinnerNumberModel(0.0, -20.0, 20.0, 0.1)
     )
 
     private val myInputPanel = JPanel()
@@ -110,7 +110,7 @@ class TextSizeDemoWindow(
                 sizeRatio = mySizeRatio.value.toString().toDouble(),
                 boldRatio = myBoldRatio.value.toString().toDouble(),
                 italicRatio = myItalicRatio.value.toString().toDouble(),
-                fontRatio = myFontRatio.value.toString().toDouble(),
+                fontAdditiveError = myFontAdditiveError.value.toString().toDouble(),
             )
         )
         mySplitPane.rightComponent = plotComponent
@@ -132,7 +132,7 @@ class TextSizeDemoWindow(
         mySizeRatio.addChangeListener { rebuild() }
         myBoldRatio.addChangeListener { rebuild() }
         myItalicRatio.addChangeListener { rebuild() }
-        myFontRatio.addChangeListener { rebuild() }
+        myFontAdditiveError.addChangeListener { rebuild() }
 
         contentPane.add(mySplitPane, BorderLayout.CENTER)
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -164,8 +164,8 @@ class TextSizeDemoWindow(
         grid.add(JLabel("Font size ratio:"))
         grid.add(mySizeRatio)
 
-        grid.add(JLabel("Non base font (additive error):"))
-        grid.add(myFontRatio)
+        grid.add(JLabel("Non base font additive error:"))
+        grid.add(myFontAdditiveError)
 
         grid.add(myIsBold)
         myBoldRatio.isEnabled = myIsBold.isSelected

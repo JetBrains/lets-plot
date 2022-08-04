@@ -180,9 +180,11 @@ object ClusteringModel {
         2 to 14.060676238999537
     )
 
+    private const val BASIC_FONT_SIZE = 14.0
     private fun isBaseFont(font: Font): Boolean {
-        return font.family.toString() == "Lucida Grande"
+        return font.family.toString() == "Lucida Grande" && font.size.toDouble() == BASIC_FONT_SIZE
     }
+
 
     private fun sumClusters(text: String): Double {
         return text.map {
@@ -198,21 +200,17 @@ object ClusteringModel {
         sizeRatio: Double,
         boldRatio: Double,
         italicRatio: Double,
-        nonBaseFontRatio: Double,
+        nonBaseFontAdditiveError: Double,
     ): DoubleVector {
         if (text.isEmpty()) {
             return DoubleVector.ZERO
         }
 
-        // BaseFontWidth = sum(cluster) * fontsize_coeff * style_coeff
-        // NonBaseFont = BaseFontWidth * FontFamilyAdditiveError
-
         val width = sumClusters(text).let {
-            var w = it
-            w *= font.size * sizeRatio
+            var w = it * font.size / BASIC_FONT_SIZE * sizeRatio
             if (font.isBold) w *= boldRatio
             if (font.isItalic) w *= italicRatio
-            if (!isBaseFont(font)) w *= nonBaseFontRatio
+            if (!isBaseFont(font)) w += nonBaseFontAdditiveError
             w
         }
 

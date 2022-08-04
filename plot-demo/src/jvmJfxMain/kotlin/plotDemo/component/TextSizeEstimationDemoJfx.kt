@@ -10,7 +10,7 @@ import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
 import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
 import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.swing.BatikMapperComponent
+import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.BorderFactory
@@ -20,10 +20,11 @@ import javax.swing.SwingUtilities
 fun main() {
     fun buildPlotComponent(demoInnerSize: Dimension, settings: TextSettings): JComponent? {
         fun createPlotComponent(svgRoot: SvgSvgElement): JComponent {
-            val component = BatikMapperComponent(svgRoot, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
+            val component = SceneMapperJfxPanel(svgRoot, stylesheets = emptyList())
             component.border = BorderFactory.createLineBorder(Color.ORANGE, 1)
             return component
         }
+
         val svgRoot = TextSizeEstimationDemo.createSvgElement(
             DoubleVector(demoInnerSize.width.toDouble(), demoInnerSize.height.toDouble()),
             settings.textLines,
@@ -42,7 +43,7 @@ fun main() {
 
     SwingUtilities.invokeLater {
         TextSizeDemoWindow(
-            "Text size estimation (Batik)",
+            "Text size estimation (JFX)",
             Dimension(1200, 600),
             ::buildPlotComponent
         ).run()
