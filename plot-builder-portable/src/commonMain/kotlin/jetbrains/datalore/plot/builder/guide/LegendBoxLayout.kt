@@ -21,27 +21,21 @@ abstract class LegendBoxLayout(
 
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
 
-    val titleBounds: DoubleRectangle
+    private val titleBounds: DoubleRectangle
         get() {
-            var origin = DoubleVector.ZERO
-            if (isHorizontal) {
-                val titleHeight = titleSize(title).y
-                val y = if (graphSize.y > titleHeight) (graphSize.y - titleHeight) / 2 else origin.y
-                origin = DoubleVector(origin.x, y)
-            }
-            return DoubleRectangle(origin, titleSize(title))
+            return DoubleRectangle(DoubleVector.ZERO, titleSize)
         }
 
     val graphOrigin: DoubleVector
         get() = when {
             isHorizontal -> {
-                val titleSize = titleSize(title)
+                val titleSize = titleSize
                 val y = if (titleSize.y > graphSize.y) (titleSize.y - graphSize.y) / 2 else 0.0
                 DoubleVector(titleSize.x, y)
             }
             else -> {
                 // make some space between title and the rest of the content.
-                val y = titleSize(title).y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
+                val y = titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
                 DoubleVector(0.0, y)
             }
         }
@@ -55,10 +49,11 @@ abstract class LegendBoxLayout(
             return titleAndContent.dimension
         }
 
-    internal fun titleSize(s: String): DoubleVector {
-        return when {
-            s.isBlank() -> DoubleVector.ZERO
-            else -> textDimensions(s.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
+    internal val titleSize: DoubleVector
+        get() {
+            return when {
+                title.isBlank() -> DoubleVector.ZERO
+                else -> textDimensions(title.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
+            }
         }
-    }
 }

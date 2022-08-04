@@ -10,9 +10,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
-import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -51,21 +51,24 @@ abstract class LegendBox : SvgComponent() {
 
         val l = spec.layout
 
-        fun titleBoundingRect(): DoubleRectangle {
-            val titleRectWidth = when {
-                l.isHorizontal -> spec.contentBounds.width - l.graphSize.x
-                else -> spec.contentBounds.width
+        val titleBoundingRect = let {
+            if (!hasTitle()) return@let DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+
+            val titleRectSize = when {
+                l.isHorizontal -> {
+                    spec.contentBounds.dimension.subtract(DoubleVector(l.graphSize.x, 0.0))
+                }
+                else -> {
+                    DoubleVector(spec.contentBounds.width, l.titleSize.y)
+                }
             }
-            return DoubleRectangle(
-                l.titleBounds.origin,
-                DoubleVector(titleRectWidth, l.titleBounds.height)
-            )
+            DoubleRectangle(DoubleVector.ZERO, titleRectSize)
         }
 
         if (hasTitle()) {
             val label = createTitleLabel(
-                titleBoundingRect(),
-                l.titleSize(title),
+                titleBoundingRect,
+                l.titleSize,
                 theme.titleJustification()
             )
             innerGroup.children().add(label.rootGroup)
@@ -91,7 +94,7 @@ abstract class LegendBox : SvgComponent() {
             // content bounds
             add(createTransparentRect(spec.contentBounds, Color.RED, 1.0))
             // title bounds
-            val rect = titleBoundingRect().add(spec.contentOrigin)
+            val rect = titleBoundingRect.add(spec.contentOrigin)
             add(createTransparentRect(rect, Color.BLUE, 1.0))
         }
 
