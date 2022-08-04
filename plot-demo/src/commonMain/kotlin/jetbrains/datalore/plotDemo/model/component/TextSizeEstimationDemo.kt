@@ -49,7 +49,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                 groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
 
                 // new estimation
-                val estimatedSize = ClusteringModel.textDimension(text, font)
+                val estimatedSize = fixEstimation(ClusteringModel.textDimension(text, font))
                 groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
@@ -65,7 +65,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
                 // delta
                 val delta = estimatedSize.x - actualSize.x
 
-                val deltaStr = "w=${actualSize.x.round()}, new=${estimatedSize.x.round()}, ∆=${delta.round()}"
+                val deltaStr = "actual=${actualSize.x.round()}, estimated=${estimatedSize.x.round()}, ∆=${delta.round()}"
                 val deltaLabel = createTextLabel(deltaStr, Font(FontFamily.MONOSPACED, 10))
                 val deltaElement = deltaLabel.rootGroup
                 SvgUtils.transformTranslate(
@@ -90,6 +90,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector) : SimpleDemoBase(demoI
         rect.strokeWidth().set(strokeWidth)
         rect.fillOpacity().set(0.0)
         return rect
+    }
+
+    private fun fixEstimation(estimatedSize: DoubleVector): DoubleVector {
+        val batikCoeff = 0.75
+        return DoubleVector(batikCoeff * estimatedSize.x, estimatedSize.y)
     }
 
     companion object {
