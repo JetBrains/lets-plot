@@ -496,13 +496,13 @@ class PlotSvgComponent constructor(
             else -> 0.0
         }
 
-        val textHeight = PlotLayoutUtil.textDimensions(text, labelSpec).y
         val textSize = PlotLayoutUtil.textDimensions(text, labelSpec)
+        val textHeight = textSize.y
 
         val axisTitleBounds = when (orientation) {
             Orientation.LEFT ->
                 DoubleRectangle(
-                    referenceRect.left - textSize.y - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN,  // right margin
+                    referenceRect.left - textHeight - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN,  // right margin
                     referenceRect.top,
                     textHeight,
                     referenceRect.height
@@ -517,7 +517,7 @@ class PlotSvgComponent constructor(
             Orientation.TOP ->
                 DoubleRectangle(
                     referenceRect.left,
-                    referenceRect.top - textSize.y - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, // bottom margin
+                    referenceRect.top - textHeight - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, // bottom margin
                     referenceRect.width,
                     textHeight
                 )
@@ -560,7 +560,7 @@ class PlotSvgComponent constructor(
                 }
                 Orientation.RIGHT -> {
                     DoubleRectangle(
-                        referenceRect.right + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN,
+                        referenceRect.right,
                         referenceRect.top,
                         textHeightWithMargins,
                         referenceRect.height
@@ -569,7 +569,7 @@ class PlotSvgComponent constructor(
                 Orientation.TOP -> {
                     DoubleRectangle(
                         referenceRect.left,
-                        referenceRect.top - textHeightWithMargins, // bottom margin
+                        referenceRect.top - textHeightWithMargins,
                         referenceRect.width,
                         textHeightWithMargins
                     )
