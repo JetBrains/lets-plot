@@ -15,6 +15,8 @@ import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.abs
+import kotlin.math.min
 
 class ColorGradientnMapperProvider(
     private val colors: List<Color>,
@@ -28,39 +30,82 @@ class ColorGradientnMapperProvider(
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         val transformedDomain = discreteTransform.effectiveDomainTransformed
         val mapperDomain = SeriesUtil.range(transformedDomain)!!
-        val gradient = createGradient(mapperDomain)
+        val gradient = createGradient(mapperDomain, colors, naValue)
         return GuideMappers.asNotContinuous(ScaleMapper.wrap(gradient))
     }
 
     override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
-        val gradient = createGradient(domain)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
+        val gradient = createGradient(domain, colors, naValue)
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
-    private fun createGradient(domain: DoubleSpan): (Double?) -> Color {
-        val subdomainsCount = colors.size - 1
-        val subdomainLength = domain.length / subdomainsCount
 
-        val mappers = (0..subdomainsCount)
-            .map { domain.lowerEnd + subdomainLength * it }
-            .zip(colors)
-            .windowed(2)
-            .map { (low, high) ->
-                val (lowValue, lowColor) = low
-                val (highValue, highColor) = high
-                val subdomain = DoubleSpan(lowValue, highValue)
-                subdomain to ColorMapper.gradient(subdomain, lowColor, highColor, naValue)
+    companion object {
+//        internal fun createGradient(
+//            domain: DoubleSpan,
+//            colors: List<Color>,
+//            naValue: Color,
+//            alpha: Double = 1.0
+//        ): (Double?) -> Color {
+//            val subdomainsCount = colors.size - 1
+//            val subdomainLength = domain.length / subdomainsCount
+//
+//            val mappers = (0..subdomainsCount)
+//                .map { domain.lowerEnd + subdomainLength * it }
+//                .zip(colors)
+//                .windowed(2)
+//                .map { (low, high) ->
+//                    val (lowValue, lowColor) = low
+//                    val (highValue, highColor) = high
+//                    val subdomain = DoubleSpan(lowValue, highValue)
+//                    subdomain to ColorMapper.gradient(subdomain, lowColor, highColor, naValue, alpha)
+//                }
+//
+//            return { value ->
+//                value?.let {
+//                    mappers
+//                        .firstOrNull { (subdomain, _) -> value in subdomain }
+//                        ?.let { (_, gradient) -> gradient(value) }
+//                        ?: naValue
+//                } ?: naValue
+//            }
+//        }
+
+        internal fun createGradient(
+            domain: DoubleSpan,
+            colors: List<Color>,
+            naColor: Color,
+            alpha: Double = 1.0
+        ): (Double?) -> Color {
+            val subdomainsCount = colors.size - 1
+            val subdomainLength = domain.length / subdomainsCount
+
+            val subdomainEnds = (0..subdomainsCount).map { domain.lowerEnd + subdomainLength * it }
+            val mappers = subdomainEnds.zip(colors)
+                .windowed(2)
+                .map { (low, high) ->
+                    val (lowValue, lowColor) = low
+                    val (highValue, highColor) = high
+                    val subdomain = DoubleSpan(lowValue, highValue)
+                    ColorMapper.gradient(subdomain, lowColor, highColor, naColor, alpha)
+                }
+
+            return { value ->
+                when {
+                    value == null || !value.isFinite() -> naColor
+                    value < subdomainEnds.first() || value > subdomainEnds.last() -> naColor
+                    else -> {
+                        val i = subdomainEnds.binarySearch(value)
+                        val subdomainIndex = when {
+                            i < 0 -> abs(i + 1) - 1
+                            else -> min(i, mappers.lastIndex)
+                        }
+                        mappers[subdomainIndex](value)
+                    }
+                }
             }
-
-        return { value ->
-            value?.let {
-                mappers
-                    .firstOrNull { (subdomain, _) -> value in subdomain }
-                    ?.let { (_, gradient) -> gradient(value) }
-                    ?: naValue
-            } ?: naValue
         }
     }
 }

@@ -80,7 +80,7 @@ object DemoModelA {
     private fun createStyleElement(textStyles: Map<String, TextStyle>): SvgStyleElement {
         return SvgStyleElement(object : SvgCssResource {
             override fun css(): String {
-                return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF.toString(), defaultSize = 15.0).toCSS()
+                return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF.toString()).toCSS()
             }
         })
     }

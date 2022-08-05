@@ -18,7 +18,7 @@ typealias CellKey = QuadKey<World>
 
 fun convertCellKeyToQuadKeys(mapProjection: MapProjection, cellKey: CellKey): Set<QuadKey<LonLat>> {
     val cellRect = cellKey.computeRect(mapProjection.mapRect)
-    val geoRect = transformBBox(cellRect, mapProjection::invert)
+    val geoRect = transformBBox(cellRect, mapProjection::invert) ?: return emptySet()
     return calculateQuadKeys(geoRect, cellKey.length)
 }
 

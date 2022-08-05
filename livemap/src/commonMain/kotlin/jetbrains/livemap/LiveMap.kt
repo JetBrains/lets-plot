@@ -17,6 +17,7 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.plus
+import jetbrains.datalore.base.typedGeometry.toDoubleVector
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler

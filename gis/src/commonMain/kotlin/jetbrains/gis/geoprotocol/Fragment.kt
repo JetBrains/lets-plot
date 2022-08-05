@@ -7,19 +7,19 @@ package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Polygon
+import jetbrains.datalore.base.typedGeometry.Untyped
 
 
 class Fragment(
     val key: QuadKey<LonLat>,
-    boundaries: List<Boundary<Generic>>
+    boundaries: List<Boundary<Untyped>>
 ) {
-    val multiPolygon: MultiPolygon<Generic>
+    val multiPolygon: MultiPolygon<Untyped>
 
     init {
-        val xyMultipolygon = ArrayList<Polygon<Generic>>()
+        val xyMultipolygon = ArrayList<Polygon<Untyped>>()
         for (boundary in boundaries) {
             val xyBoundary = boundary.asMultipolygon()
             for (xyPolygon in xyBoundary) {

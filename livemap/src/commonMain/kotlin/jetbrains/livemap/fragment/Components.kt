@@ -8,8 +8,8 @@ package jetbrains.livemap.fragment
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.livemap.containers.LruCache
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -100,7 +100,7 @@ class ChangedFragmentsComponent : EcsComponent {
 class DownloadingFragmentsComponent : EcsComponent {
     val queue = HashMap<Int, MutableSet<FragmentKey>>()
     val downloading = HashSet<FragmentKey>()
-    var downloaded: MutableMap<FragmentKey, MultiPolygon<Generic>> = HashMap()
+    var downloaded: MutableMap<FragmentKey, MultiPolygon<Untyped>> = HashMap()
         set(fragments) {
             downloaded.clear()
             downloaded.putAll(fragments)

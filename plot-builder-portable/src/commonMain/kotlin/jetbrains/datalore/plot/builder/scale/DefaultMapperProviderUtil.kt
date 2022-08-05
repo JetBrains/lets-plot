@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -48,15 +47,14 @@ object DefaultMapperProviderUtil {
                 trans: ContinuousTransform
             ): GuideMapper<T> {
                 return GuideMappers.continuousToDiscrete(
-                    MapperUtil.rangeWithLimitsAfterTransform2(domain, trans),
+                    MapperUtil.rangeWithLimitsAfterTransform(domain, trans),
                     outputValues, naValue
                 )
             }
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    internal fun createObjectIdentity(aes: Aes<Any>): MapperProvider<Any> {
+    internal fun createObjectIdentity(): MapperProvider<Any> {
         val converter: (Any?) -> Any? = { it }
         val discreteMapperProvider = IdentityDiscreteMapperProvider<Any>(converter)
         val continuousMapper = object : ScaleMapper<Any> {
@@ -65,7 +63,7 @@ object DefaultMapperProviderUtil {
         return IdentityMapperProvider<Any>(discreteMapperProvider, continuousMapper)
     }
 
-    internal fun createStringIdentity(aes: Aes<String>): MapperProvider<String> {
+    internal fun createStringIdentity(): MapperProvider<String> {
         val converter = { it: Any? -> it?.toString() }
         return IdentityDiscreteMapperProvider<String>(converter)
     }

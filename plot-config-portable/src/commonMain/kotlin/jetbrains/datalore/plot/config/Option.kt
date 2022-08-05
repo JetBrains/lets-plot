@@ -163,6 +163,7 @@ object Option {
 
         object Boxplot {
             const val FATTEN = "fatten"
+            const val WHISKER_WIDTH = "whisker_width"
         }
 
         object BoxplotOutlier {
@@ -395,6 +396,14 @@ object Option {
         const val MAX_SIZE = "max_size"
 
         const val SCALE_MAPPER_KIND = "scale_mapper_kind"
+
+        object Viridis {
+            const val CMAP_NAME = "option"
+            const val ALPHA = "alpha"
+            const val BEGIN = "begin"
+            const val END = "end"
+            const val DIRECTION = "direction"
+        }
     }
 
     object Facet {
@@ -490,7 +499,9 @@ object Option {
     }
 
     object Theme {
-        // All options were moved to
+        const val FLAVOR = "flavor"
+
+        // All other options were moved to
         // jetbrains.datalore.plot.builder.theme2.values.ThemeOption
 
         // view element
@@ -515,9 +526,9 @@ object Option {
         private const val AB_LINE = "abline"
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
-        private const val BOX_PLOT = "boxplot"
+        const val BOX_PLOT = "boxplot"
         private const val VIOLIN = "violin"
-        private const val Y_DOT_PLOT = "ydotplot"
+        const val Y_DOT_PLOT = "ydotplot"
         const val LIVE_MAP = "livemap"
         const val POINT = "point"
         private const val RIBBON = "ribbon"
@@ -527,7 +538,7 @@ object Option {
         private const val CONTOURF = "contourf"
         private const val DENSITY2D = "density2d"
         private const val DENSITY2DF = "density2df"
-        private const val JITTER = "jitter"
+        const val JITTER = "jitter"
         private const val Q_Q = "qq"
         private const val Q_Q_2 = "qq2"
         private const val Q_Q_LINE = "qq_line"

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
@@ -158,12 +159,6 @@ open class GeomHelper(
             0.5 to Text.VerticalAnchor.CENTER,
             1.0 to Text.VerticalAnchor.TOP
         )
-        private val FONT_WEIGHT_SET = setOf(
-            "bold", "bolder", "lighter"     // 'normal' is default
-        )
-        private val FONT_STYLE_SET = setOf(
-            "italic", "oblique"                 // 'normal' is default
-        )
         private val FONT_FAMILY_MAP = mapOf(
             "sans" to "sans-serif",
             "serif" to "serif",
@@ -185,15 +180,9 @@ open class GeomHelper(
 
             // fontface
             // ignore 'plain' / 'normal' as it is default values
-            val fontface = p.fontface()
-            if (fontface.isNotBlank()) {
-                for (s in fontface.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
-                    if (FONT_WEIGHT_SET.contains(s)) {
-                        label.setFontWeight(s)
-                    } else if (FONT_STYLE_SET.contains(s)) {
-                        label.setFontStyle(s)
-                    }
-                }
+            with(FontFace.fromString(p.fontface())) {
+                if (bold) label.setFontWeight("bold")
+                if (italic) label.setFontStyle("italic")
             }
 
             // text justification

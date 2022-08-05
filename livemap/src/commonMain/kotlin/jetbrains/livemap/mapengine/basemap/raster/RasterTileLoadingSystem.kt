@@ -7,8 +7,8 @@ package jetbrains.livemap.mapengine.basemap.raster
 
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.spatial.projectOrigin
-import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.Rect
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.config.TILE_PIXEL_SIZE
@@ -113,7 +113,7 @@ class RasterTileLoadingSystem(
     companion object {
         fun replacePlaceholders(cellKey: CellKey, domain: String): String {
             return 2.0.pow(cellKey.length)
-                .let { Rect<Generic>(0.0, 0.0, it, it) }
+                .let { Rect<Untyped>(0.0, 0.0, it, it) }
                 .let { cellKey.projectOrigin(it) }
                 .let {
                     domain

@@ -109,8 +109,7 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
                     continue
                 }
 
-
-                val bbox = boundingBox(ring)
+                val bbox = boundingBox(ring) ?: error("bbox should be not null - ring is not empty")
                 val area = calculateArea(ring)
 
                 val simplifiedRing: List<DoubleVector>

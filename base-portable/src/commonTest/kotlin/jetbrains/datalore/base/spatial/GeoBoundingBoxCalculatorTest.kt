@@ -7,17 +7,13 @@ package jetbrains.datalore.base.spatial
 
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
-import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.assertDoubleEquals
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle
 import jetbrains.datalore.base.typedGeometry.Rect
-import kotlin.test.Test
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 interface World
 
@@ -86,10 +82,10 @@ class GeoBoundingBoxCalculatorTest {
     @Test
     fun simpleCalculateLatitudesForPoints() {
         checkLocationsWhichCalculatedFromPoints(
-                latitudeLimitEqualsChecker(
-                    THIRD_POINT,
-                    FOURTH_POINT
-                ),
+            latitudeLimitEqualsChecker(
+                THIRD_POINT,
+                FOURTH_POINT
+            ),
             FIRST_POINT,
             SECOND_POINT,
             THIRD_POINT,
@@ -100,10 +96,10 @@ class GeoBoundingBoxCalculatorTest {
     @Test
     fun simpleCalculateLatitudesForRectangles() {
         checkLocationsWhichCalculatedFromRectangles(
-                latitudeLimitEqualsChecker(
-                    FIRST_RECTANGLE,
-                    THIRD_RECTANGLE
-                ),
+            latitudeLimitEqualsChecker(
+                FIRST_RECTANGLE,
+                THIRD_RECTANGLE
+            ),
             FIRST_RECTANGLE,
             SECOND_RECTANGLE,
             THIRD_RECTANGLE
@@ -113,7 +109,7 @@ class GeoBoundingBoxCalculatorTest {
     @Test
     fun simpleCalculateLocationForEqualPoints() {
         checkLocationsWhichCalculatedFromPoints(
-                boundingBoxEqualsChecker(FIRST_POINT),
+            boundingBoxEqualsChecker(FIRST_POINT),
             FIRST_POINT,
             FIRST_POINT
         )
@@ -122,7 +118,7 @@ class GeoBoundingBoxCalculatorTest {
     @Test
     fun simpleCalculateLocationForEqualRectangles() {
         checkLocationsWhichCalculatedFromRectangles(
-                boundingBoxEqualsChecker(FIRST_RECTANGLE),
+            boundingBoxEqualsChecker(FIRST_RECTANGLE),
             FIRST_RECTANGLE,
             FIRST_RECTANGLE
         )
@@ -131,7 +127,7 @@ class GeoBoundingBoxCalculatorTest {
     @Test
     fun simpleCalculateLocationForZeroRectangle() {
         checkLocationsWhichCalculatedFromRectangles(
-                boundingBoxEqualsChecker(SECOND_POINT),
+            boundingBoxEqualsChecker(SECOND_POINT),
             emptyRectangle(
                 SECOND_POINT
             )
@@ -164,8 +160,8 @@ class GeoBoundingBoxCalculatorTest {
         )
 
         val limitRange = calculateLoopLimitRange(segments, mapRange)
-        assertDoubleEquals(range.lowerEnd, limitRange.lowerEnd)
-        assertDoubleEquals(range.upperEnd, limitRange.upperEnd)
+        assertEquals(range.lowerEnd, limitRange.lowerEnd)
+        assertEquals(range.upperEnd, limitRange.upperEnd)
     }
 
     private fun expectNoCoordinatesException(block: () -> Unit) {
@@ -197,19 +193,25 @@ class GeoBoundingBoxCalculatorTest {
 
         private fun longitudeLimitEqualsChecker(expectedLeft: Double, expectedRight: Double): Consumer<GeoRectangle> {
             return { location: GeoRectangle ->
-                assertDoubleEquals(expectedLeft, location.startLongitude())
-                assertDoubleEquals(expectedRight, location.endLongitude())
+                assertEquals(expectedLeft, location.startLongitude())
+                assertEquals(expectedRight, location.endLongitude())
             }
         }
 
-        private fun longitudeLimitEqualsChecker(expectedLeft: DoubleVector, expectedRight: DoubleVector): Consumer<GeoRectangle> {
+        private fun longitudeLimitEqualsChecker(
+            expectedLeft: DoubleVector,
+            expectedRight: DoubleVector
+        ): Consumer<GeoRectangle> {
             return longitudeLimitEqualsChecker(
                 expectedLeft.x,
                 expectedRight.x
             )
         }
 
-        private fun longitudeLimitEqualsChecker(expectedLeft: GeoRectangle, expectedRight: GeoRectangle): Consumer<GeoRectangle> {
+        private fun longitudeLimitEqualsChecker(
+            expectedLeft: GeoRectangle,
+            expectedRight: GeoRectangle
+        ): Consumer<GeoRectangle> {
             return longitudeLimitEqualsChecker(
                 expectedLeft.startLongitude(),
                 expectedRight.endLongitude()
@@ -218,20 +220,26 @@ class GeoBoundingBoxCalculatorTest {
 
         private fun latitudeLimitEqualsChecker(expectedBottom: Double, expectedTop: Double): Consumer<GeoRectangle> {
             return { location: GeoRectangle ->
-                assertDoubleEquals(expectedBottom, location.minLatitude())
-                assertDoubleEquals(expectedTop, location.maxLatitude())
+                assertEquals(expectedBottom, location.minLatitude())
+                assertEquals(expectedTop, location.maxLatitude())
             }
         }
     }
 
-    private fun latitudeLimitEqualsChecker(expectedBottom: DoubleVector, expectedTop: DoubleVector): Consumer<GeoRectangle> {
+    private fun latitudeLimitEqualsChecker(
+        expectedBottom: DoubleVector,
+        expectedTop: DoubleVector
+    ): Consumer<GeoRectangle> {
         return latitudeLimitEqualsChecker(
             expectedBottom.y,
             expectedTop.y
         )
     }
 
-    private fun latitudeLimitEqualsChecker(expectedBottom: GeoRectangle, expectedTop: GeoRectangle): Consumer<GeoRectangle> {
+    private fun latitudeLimitEqualsChecker(
+        expectedBottom: GeoRectangle,
+        expectedTop: GeoRectangle
+    ): Consumer<GeoRectangle> {
         return latitudeLimitEqualsChecker(
             expectedBottom.minLatitude(),
             expectedTop.maxLatitude()
@@ -282,19 +290,21 @@ class GeoBoundingBoxCalculatorTest {
         )
     }
 
-    private fun calculateLocationFromBoundingBoxArrays(vararg rectangles: GeoRectangle): GeoRectangle {
-        return convertToGeoRectangle(
-            BBOX_CALCULATOR.geoRectsBBox(
-                listOf(*rectangles)
-            )
-        )
+    private fun calculateLocationFromBoundingBoxArrays(vararg rectangles: GeoRectangle): GeoRectangle? {
+        return BBOX_CALCULATOR.geoRectsBBox(listOf(*rectangles))?.let { convertToGeoRectangle(it) }
     }
 
-    private fun checkLocationsWhichCalculatedFromPoints(locationChecker: Consumer<GeoRectangle>, vararg points: DoubleVector) {
+    private fun checkLocationsWhichCalculatedFromPoints(
+        locationChecker: Consumer<GeoRectangle>,
+        vararg points: DoubleVector
+    ) {
         locationChecker(calculateLocationFromCoordinateArray(*points))
     }
 
-    private fun checkLocationsWhichCalculatedFromRectangles(locationChecker: Consumer<GeoRectangle>, vararg rectangles: GeoRectangle) {
-        locationChecker(calculateLocationFromBoundingBoxArrays(*rectangles))
+    private fun checkLocationsWhichCalculatedFromRectangles(
+        locationChecker: Consumer<GeoRectangle>,
+        vararg rectangles: GeoRectangle
+    ) {
+        locationChecker(calculateLocationFromBoundingBoxArrays(*rectangles) ?: error("This check expects non-null result"))
     }
 }

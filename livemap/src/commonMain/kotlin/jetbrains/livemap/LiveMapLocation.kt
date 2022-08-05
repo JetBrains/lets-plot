@@ -20,17 +20,17 @@ class LiveMapLocation(
     private val myMapProjection: MapProjection
 ) {
 
-    val viewLonLatRect: DoubleRectangle
+    val viewLonLatRect: DoubleRectangle?
         get() {
             val viewRect = myViewport.window
 
-            val nw = worldToLonLat(viewRect.origin)
-            val se = worldToLonLat(viewRect.origin + viewRect.dimension)
+            val nw = worldToLonLat(viewRect.origin) ?: return null
+            val se = worldToLonLat(viewRect.origin + viewRect.dimension) ?: return null
 
             return DoubleRectangle(nw.x, se.y, se.x - nw.x, nw.y - se.y)
         }
 
-    private fun worldToLonLat(worldCoord: WorldPoint): LonLatPoint {
+    private fun worldToLonLat(worldCoord: WorldPoint): LonLatPoint? {
         val coord: Vec<World>
         val shift: LonLatPoint
         val worldSize = myMapProjection.mapRect.dimension
@@ -50,7 +50,8 @@ class LiveMapLocation(
             }
         }
 
-        return shift + myMapProjection.invert(coord)
+        val lonLatVec = myMapProjection.invert(coord) ?: return null
+        return shift + lonLatVec
     }
 
     companion object {

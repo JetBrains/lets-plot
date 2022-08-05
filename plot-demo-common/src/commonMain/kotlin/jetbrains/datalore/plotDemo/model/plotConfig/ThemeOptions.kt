@@ -11,13 +11,13 @@ class ThemeOptions {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             // use predefined themes
-            withTheme(null),
             withTheme("classic"),
             withTheme("light"),
             withTheme("grey"),
             withTheme("minimal"),
             withTheme("minimal2"),
             withTheme("none"),
+            withTheme("bw"),
 
             setThemeOptions()
         )
@@ -39,11 +39,13 @@ class ThemeOptions {
             val vStr = if (value is String) "\"$value\"" else value.toString()
             return "\"${name}\": $vStr,"
         }
-        fun text(key: String, color: String? = null, face: String? = null): String {
+        fun text(key: String, color: String? = null, face: String? = null, size: Double? = null, family: String? = null): String {
             return """
             "$key": {
                 ${option("color", color)}
                 ${option("face", face)}
+                ${option("size", size)}
+                ${option("family", family)}
                 "blank": false
             }"""
         }

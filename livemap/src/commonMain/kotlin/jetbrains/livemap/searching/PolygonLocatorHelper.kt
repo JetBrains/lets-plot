@@ -44,7 +44,7 @@ class PolygonLocatorHelper : LocatorHelper {
 
     private fun isCoordinateInPolygon(coord: Vec<Client>, multiPolygon: MultiPolygon<Client>): Boolean {
         for (polygon in multiPolygon) {
-            if (!polygon.limit().contains(coord)) {
+            if (polygon.limit()?.contains(coord) == false) {
                 continue
             }
             var count = 0

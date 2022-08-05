@@ -116,10 +116,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     Notes
     -----
-    `geom_livemap()` draws map, which can be moved and zoomed.
+    `geom_livemap()` draws a map, which can be dragged and zoomed.
 
     `geom_livemap()` understands the following aesthetics mappings:
 
+    - x : x-axis value, i.e. longitude in this context.
+    - y : y-axis value, i.e. latitude in this context.
     - alpha : transparency level of the point. Understands numbers between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
@@ -177,10 +179,10 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         LetsPlot.setup_html()
         data = {
             'city': ['New York City', 'Singapore'],
-            'lat': [-73.7997, 104.0012],
-            'lon': [40.6408, 1.3256],
+            'lon': [-73.7997, 104.0012],
+            'lat': [40.6408, 1.3256],
         }
-        ggplot(data, aes('lat', 'lon')) + \\
+        ggplot(data, aes(x='lon', y='lat')) + \\
             geom_livemap(geodesic=False, projection='epsg4326', \\
                          symbol='point', color='white', \\
                          tiles=maptiles_lets_plot(theme='dark'), \\
@@ -188,32 +190,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
             geom_path(color='white') + \\
             ggtitle('SQ23 - the longest scheduled airline flight '
                     'by great circle distance since 2020')
-
-    |
-
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 13-19
-
-        import numpy as np
-        from lets_plot import *
-        from lets_plot import tilesets
-        from lets_plot.geo_data import *
-        LetsPlot.setup_html()
-        data = {
-            'state': np.repeat(['NY', 'MA', 'PA'], 4),
-            'spoken_lang': np.tile(['English', 'Spanish', 'Chinese', 'Other'], 3),
-            'lang_order': np.tile(np.arange(4), 3),
-            'percentage_2020': [69.6, 15.2, 3.1, 12.1, 77.7, 8.6, 2.1, 11.6, 90.2, 4.1, 0.5, 5.2],
-        }
-        centroids = geocode_states(data['state']).scope('US').get_centroids()
-        ggplot() + geom_livemap(aes(fill='spoken_lang', sym_x='lang_order', sym_y='percentage_2020'), \\
-                                data=data, map=centroids, map_join='state', symbol='pie', \\
-                                tiles=tilesets.STAMEN_DESIGN_TERRAIN, zoom=6, \\
-                                location=[-76.09990, 42.86217], show_legend=False, color='black', \\
-                                tooltips=layer_tooltips().line('Spoken language in @{found name}')\\
-                                                         .format('percentage_2020', '{}%')\\
-                                                         .line('@spoken_lang @percentage_2020'))
 
     """
     if location is not None:

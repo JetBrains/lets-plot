@@ -86,7 +86,7 @@ internal class TooltipRenderer(
         }
 
         val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin)
-        val tooltipBounds = tileInfo.tooltipBounds
+        val geomBounds = tileInfo.geomBounds
         val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
         tooltipSpecs
@@ -146,8 +146,8 @@ internal class TooltipRenderer(
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, tooltipBounds) }
-            .also { tooltips -> showCrosshair(tooltips, tooltipBounds.handlingArea) }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds) }
+            .also { tooltips -> showCrosshair(tooltips, geomBounds) }
             .forEach { arranged ->
                 arranged.tooltipBox.apply {
                     rootGroup.visibility().set(Visibility.VISIBLE) // show only tooltips that got their position
@@ -192,14 +192,12 @@ internal class TooltipRenderer(
 
     fun addTileInfo(
         geomBounds: DoubleRectangle,
-        tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector
     ) {
         val tileInfo = TileInfo(
             geomBounds,
-            tooltipBounds,
             targetLocators,
             layerYOrientations,
             flippedAxis,
@@ -233,7 +231,6 @@ internal class TooltipRenderer(
 
     private class TileInfo(
         val geomBounds: DoubleRectangle,
-        val tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean,

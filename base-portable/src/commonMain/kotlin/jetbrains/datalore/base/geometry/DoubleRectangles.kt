@@ -10,7 +10,10 @@ import kotlin.math.min
 
 object DoubleRectangles {
 
-    fun boundingBox(points: Iterable<DoubleVector>): DoubleRectangle {
+    /*
+    Returns null if point collection is empty
+    */
+    fun boundingBox(points: Iterable<DoubleVector>): DoubleRectangle? {
         return calculateBoundingBox(points, DoubleVector::x, DoubleVector::y)
         { minX, minY, maxX, maxY ->
             DoubleRectangle.span(
@@ -25,7 +28,10 @@ object DoubleRectangles {
         getX: (PointT) -> Double,
         getY: (PointT) -> Double,
         factory: (minX: Double, minY: Double, maxX: Double, maxY: Double) -> BoxT
-    ): BoxT {
+    ): BoxT? {
+        if (!points.iterator().hasNext()) {
+            return null
+        }
         val first = points.iterator().next()
         var minLon = getX(first)
         var minLat = getY(first)

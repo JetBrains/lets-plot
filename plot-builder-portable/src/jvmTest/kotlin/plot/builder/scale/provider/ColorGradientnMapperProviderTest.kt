@@ -10,6 +10,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import org.assertj.core.api.Assertions
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class ColorGradientnMapperProviderTest {
 
@@ -31,7 +32,7 @@ class ColorGradientnMapperProviderTest {
 
         Assertions.assertThat(mapper.invoke(0.0)).isEqualTo(Color.BLUE)
         Assertions.assertThat(mapper.invoke(1.0)).isEqualTo(Color.YELLOW)
-        Assertions.assertThat(mapper.invoke(1.99)).isEqualTo(Color.ORANGE)
+        Assertions.assertThat(mapper.invoke(2.0)).isEqualTo(Color.ORANGE)
         Assertions.assertThat(mapper.invoke(3.0)).isEqualTo(Color.RED)
     }
 
@@ -41,7 +42,7 @@ class ColorGradientnMapperProviderTest {
             ColorGradientnMapperProvider(listOf(Color.BLACK, Color.WHITE), Color.RED)
                 .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
 
-        Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color(127, 127, 127))
+        Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color(128, 128, 128))
     }
 
     @Test
@@ -51,5 +52,29 @@ class ColorGradientnMapperProviderTest {
                 .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
 
         Assertions.assertThat(mapper.invoke(0.5)).isEqualTo(Color.BLACK)
+    }
+
+    @Test
+    fun `NA color`() {
+        val naColor = Color.BLACK
+        val mapper =
+            ColorGradientnMapperProvider(listOf(Color.BLUE, Color.RED), naColor)
+                .createContinuousMapper(DoubleSpan(0.0, 1.0), Transforms.IDENTITY)
+
+        fun check(v: Double?) {
+            val actual = try {
+                mapper.invoke(v)
+            } catch (t: Throwable) {
+                throw AssertionError("was value: $v", t)
+            }
+            assertEquals(naColor, actual)
+        }
+
+        check(-0.01)
+        check(1.01)
+        check(null)
+        check(Double.NaN)
+        check(Double.NEGATIVE_INFINITY)
+        check(Double.POSITIVE_INFINITY)
     }
 }

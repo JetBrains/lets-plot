@@ -38,7 +38,7 @@ class MakeGeometryWidgetSystem(
                         .toClientPoint()
                         .run(myViewport::getMapCoord)
                         .run(myMapProjection::invert)
-                        .let { point ->
+                        ?.let { point ->
                             createVisualEntities(point, widgetLayer)
                             widgetLayer.add(point)
                         }

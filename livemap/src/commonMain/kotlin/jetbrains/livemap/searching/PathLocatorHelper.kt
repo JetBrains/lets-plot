@@ -34,7 +34,9 @@ class PathLocatorHelper : LocatorHelper {
     private fun isCoordinateInPath(coord: Vec<Client>, strokeRadius: Double, multiPath: MultiPolygon<Client>): Boolean {
 
         for (path in multiPath) {
-            if (!LocatorUtil.coordInExtendedRect(coord, path.limit(), strokeRadius)) {
+            val bbox = path.limit() ?: continue
+
+            if (!LocatorUtil.coordInExtendedRect(coord, bbox, strokeRadius)) {
                 continue
             }
             for (ring in path) {

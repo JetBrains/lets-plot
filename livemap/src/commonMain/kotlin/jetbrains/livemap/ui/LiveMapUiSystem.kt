@@ -7,6 +7,7 @@ package jetbrains.livemap.ui
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.typedGeometry.toDoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.core.BusyStateComponent
@@ -27,7 +28,6 @@ import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.Camera
 import jetbrains.livemap.mapengine.viewport.Viewport
-import jetbrains.livemap.toDoubleVector
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_GET_CENTER
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MAKE_GEOMETRY
 import jetbrains.livemap.ui.ResourceManager.Companion.KEY_MAKE_GEOMETRY_ACTIVE
@@ -141,7 +141,7 @@ class LiveMapUiSystem(
                 name = "get_map_position",
                 enabledVisualKey = KEY_GET_CENTER
             ) { _, _ ->
-                myMapLocationConsumer(myLiveMapLocation.viewLonLatRect)
+                myLiveMapLocation.viewLonLatRect?.let { myMapLocationConsumer(it) }
             }
 
             myMakeGeometryButton = newButton(

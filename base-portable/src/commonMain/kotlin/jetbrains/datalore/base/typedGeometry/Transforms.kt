@@ -8,7 +8,7 @@ package jetbrains.datalore.base.typedGeometry
 object Transforms {
     private const val SAMPLING_EPSILON = 0.001
 
-    fun <InT, OutT> transformBBox(bbox: Rect<InT>, transform: (Vec<InT>) -> Vec<OutT>): Rect<OutT> {
+    fun <InT, OutT> transformBBox(bbox: Rect<InT>, transform: (Vec<InT>) -> Vec<OutT>?): Rect<OutT>? {
         return bbox
             .let(::rectToPolygon)
             .let { transformRing(it, transform, SAMPLING_EPSILON) }
@@ -17,7 +17,7 @@ object Transforms {
 
     fun <InT, OutT> transformMultiPolygon(
         multiPolygon: MultiPolygon<InT>,
-        transform: (Vec<InT>) -> Vec<OutT>
+        transform: (Vec<InT>) -> Vec<OutT>?
     ): MultiPolygon<OutT> {
         val xyMultipolygon = ArrayList<Polygon<OutT>>(multiPolygon.size)
         multiPolygon.forEach { xyMultipolygon.add(transformPolygon(it, transform, SAMPLING_EPSILON)) }
@@ -26,7 +26,7 @@ object Transforms {
 
     private fun <InT, OutT> transformPolygon(
         polygon: Polygon<InT>,
-        transform: (Vec<InT>) -> Vec<OutT>,
+        transform: (Vec<InT>) -> Vec<OutT>?,
         epsilon: Double
     ): Polygon<OutT> {
         val xyPolygon = ArrayList<Ring<OutT>>(polygon.size)
@@ -46,10 +46,10 @@ object Transforms {
 
     private fun <InT, OutT> transformRing(
         path: List<Vec<InT>>,
-        transform: (Vec<InT>) -> Vec<OutT>,
+        transform: (Vec<InT>) -> Vec<OutT>?,
         epsilon: Double
     ): List<Vec<OutT>> {
-        return AdaptiveResampling(transform, epsilon).resample(path)
+        return VecResampler(transform, epsilon).resample(path)
     }
 
     fun <InT, OutT> transform(

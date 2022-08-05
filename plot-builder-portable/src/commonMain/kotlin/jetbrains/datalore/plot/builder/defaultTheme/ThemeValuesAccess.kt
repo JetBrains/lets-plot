@@ -8,7 +8,9 @@ package jetbrains.datalore.plot.builder.defaultTheme
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.vis.TextStyle
 
 internal open class ThemeValuesAccess(
     private val values: Map<String, Any>
@@ -80,5 +82,21 @@ internal open class ThemeValuesAccess(
             is String -> FontFace.fromString(value)
             else -> FontFace.NORMAL
         }
+    }
+
+    private fun getFontFamily(elem: Map<String, Any>): FontFamily {
+        val value = elem.getValue(Elem.FONT_FAMILY) as? String
+        return value?.let { FontFamily.forName(it) }
+            ?: throw IllegalStateException("Theme value is not string: $value. Key : $elem.")
+    }
+
+    // element_text(family, face, size, color)
+    protected fun getTextStyle(elem: Map<String, Any>): TextStyle {
+        return TextStyle(
+            family = getFontFamily(elem),
+            face = getFontFace(elem),
+            size = getNumber(elem, Elem.SIZE),
+            color = getColor(elem, Elem.COLOR)
+        )
     }
 }

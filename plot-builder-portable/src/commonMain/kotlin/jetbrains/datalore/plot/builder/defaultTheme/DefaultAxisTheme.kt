@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
@@ -23,6 +22,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.vis.TextStyle
 
 internal class DefaultAxisTheme(
     override val axis: String,
@@ -32,16 +32,16 @@ internal class DefaultAxisTheme(
     private val suffix = "_$axis"
     internal val ontopKey = listOf(AXIS_ONTOP + suffix, AXIS_ONTOP)
     internal val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
-    internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, AXIS + suffix, AXIS, TEXT)
-    internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, AXIS + suffix, AXIS, TITLE, TEXT)
+    internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, TEXT, AXIS + suffix, AXIS)
+    internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, TITLE, TEXT, AXIS + suffix, AXIS)
     internal val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
     internal val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
     internal val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
     internal val tooltipFillKey = tooltipKey + lineKey
-    internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT, TOOLTIP_TEXT)
+    internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT, TOOLTIP_TEXT, TEXT)
 
     // Inherits from the tooltip rect stroke color.
-    internal val tooltipTextColorKey = tooltipTextKey + tooltipKey
+    internal val tooltipTextColorKey = (tooltipTextKey - TEXT) + tooltipKey
 
     override fun isOntop(): Boolean {
         return getBoolean(ontopKey)
@@ -67,12 +67,8 @@ internal class DefaultAxisTheme(
         return !isElemBlank(tooltipKey)
     }
 
-    override fun titleColor(): Color {
-        return getColor(getElemValue(titleKey), Elem.COLOR)
-    }
-
-    override fun titleFontFace(): FontFace {
-        return getFontFace(getElemValue(titleKey))
+    override fun titleStyle(): TextStyle {
+        return getTextStyle(getElemValue(titleKey))
     }
 
     override fun lineWidth(): Double {
@@ -95,12 +91,8 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
-    override fun labelColor(): Color {
-        return getColor(getElemValue(textKey), Elem.COLOR)
-    }
-
-    override fun labelFontFace(): FontFace {
-        return getFontFace(getElemValue(textKey))
+    override fun labelStyle(): TextStyle {
+        return getTextStyle(getElemValue(textKey))
     }
 
     override fun tooltipFill(): Color {
@@ -115,11 +107,9 @@ internal class DefaultAxisTheme(
         return getNumber(getElemValue(tooltipKey), Elem.SIZE)
     }
 
-    override fun tooltipTextColor(): Color {
-        return getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
-    }
-
-    override fun tooltipFontFace(): FontFace {
-        return getFontFace(getElemValue(tooltipTextKey))
+    override fun tooltipTextStyle(): TextStyle {
+        val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
+        val textStyle = getTextStyle(getElemValue(tooltipTextKey))
+        return textStyle.copy(color = tooltipTextColor)
     }
 }

@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKG
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 
 class ThemeValuesRLight : ThemeValues(VALUES) {
 
@@ -27,6 +26,7 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
         private val PLOT_BACKGROUND = Color.WHITE
 
         private val PANEL_BORDER: Color = Color.parseHex("#C9C9C9")
+        private val STRIP_BACKGROUND: Color = Color.parseHex("#D9D9D9")
 
         private val BLACK: Color = Color.parseHex("#171717")
         private val DARK_GREY: Color = Color.parseHex("#474747")
@@ -51,10 +51,6 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
                 Elem.COLOR to DARK_GREY
             ),
 
-            TITLE to mapOf(
-                Elem.COLOR to BLACK
-            ),
-
             PANEL_BKGR_RECT to mapOf(
                 Elem.FILL to PLOT_BACKGROUND,
                 Elem.COLOR to PANEL_BORDER
@@ -64,11 +60,8 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
             ),
 
             AXIS_LINE to ELEMENT_BLANK,
-            AXIS_TICKS to mapOf(
-                Elem.COLOR to PANEL_BORDER
-            ),
             AXIS to mapOf(
-                Elem.COLOR to DARK_GREY
+                Elem.COLOR to PANEL_BORDER
             ),
 
             AXIS_TOOLTIP to mapOf(
@@ -77,7 +70,8 @@ class ThemeValuesRLight : ThemeValues(VALUES) {
             ),
 
             FACET_STRIP_BGR_RECT to mapOf(
-                Elem.BLANK to true,
+                Elem.FILL to STRIP_BACKGROUND,
+                Elem.SIZE to 0.0,
             ),
         )
     }

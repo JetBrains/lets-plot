@@ -35,7 +35,7 @@ fun <T> createMultiPolygon(points: List<Vec<T>>): MultiPolygon<T> {
     return MultiPolygon(polygons)
 }
 
-fun <TypeT> Iterable<Vec<TypeT>>.boundingBox(): Rect<TypeT> {
+fun <TypeT> Iterable<Vec<TypeT>>.boundingBox(): Rect<TypeT>? {
     return DoubleRectangles.calculateBoundingBox(this,
         Vec<*>::x,
         Vec<*>::y

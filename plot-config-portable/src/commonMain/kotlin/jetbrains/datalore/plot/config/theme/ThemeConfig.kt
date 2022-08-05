@@ -6,11 +6,13 @@
 package jetbrains.datalore.plot.config.theme
 
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
+import jetbrains.datalore.plot.builder.defaultTheme.ThemeFlavor
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.getString
 
 class ThemeConfig constructor(
     themeSettings: Map<String, Any> = emptyMap()
@@ -29,8 +31,14 @@ class ThemeConfig constructor(
             val value = convertElementBlank(value)
             LegendThemeConfig.convertValue(key, value)
         }
-
-        val effectiveOptions: Map<String, Any> = baselineValues + userOptions
+       val effectiveOptions =  (baselineValues + userOptions).let {
+           val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
+           if (flavorName != null) {
+               ThemeFlavor.forName(flavorName).updateColors(it)
+           } else {
+               it
+           }
+        }
         theme = DefaultTheme(effectiveOptions)
     }
 

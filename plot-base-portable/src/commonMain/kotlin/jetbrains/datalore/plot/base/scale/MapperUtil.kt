@@ -18,7 +18,7 @@ object MapperUtil {
         return DoubleSpan(min(a, b), max(a, b))
     }
 
-    fun rangeWithLimitsAfterTransform2(
+    fun rangeWithLimitsAfterTransform(
         dataRange: DoubleSpan,
         trans: ContinuousTransform
     ): DoubleSpan {

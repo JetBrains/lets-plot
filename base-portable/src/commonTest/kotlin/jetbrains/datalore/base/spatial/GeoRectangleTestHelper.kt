@@ -20,13 +20,8 @@ internal object GeoRectangleTestHelper {
         return GeoRectangle(minLon, minLat, maxLon, maxLat)
     }
 
-    fun assertDoubleEquals(expected: Double, actual: Double) {
-//        assertEquals(expected, actual, DOUBLE_INACCURACY)
-        assertEquals(expected, actual)
-    }
-
     private fun <T> assertDoubleParameterEquals(expected: T, actual: T, getter: (T) -> Double) {
-        assertDoubleEquals(
+        assertEquals(
             getter(expected),
             getter(actual)
         )

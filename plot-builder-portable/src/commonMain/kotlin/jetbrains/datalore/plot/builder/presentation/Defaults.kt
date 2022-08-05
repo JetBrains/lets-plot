@@ -7,7 +7,10 @@ package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis
+import jetbrains.datalore.vis.TextStyle
 
 object Defaults {
     // Plot size
@@ -80,8 +83,6 @@ object Defaults {
             const val COLOR_BAR_WIDTH = 4.0
             const val COLOR_BAR_STROKE_WIDTH = 1.5
 
-            const val BORDER_WIDTH = 4.0
-
             val DARK_TEXT_COLOR = Color.BLACK
             val LIGHT_TEXT_COLOR = Color.WHITE
 
@@ -100,4 +101,41 @@ object Defaults {
             const val TICK_MARK_PADDING = 3.0
         }
     }
+
+    private fun createTextStyle(
+        face: FontFace = FontFace.NORMAL,
+        size: Double = FONT_MEDIUM.toDouble(),
+        color: Color = Color.BLACK
+    ) = TextStyle(family = FontFamily.forName(FONT_FAMILY_NORMAL), face, size, color)
+
+    internal val DEFAULT_TEXT_STYLES = mapOf(
+        Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
+        Style.PLOT_SUBTITLE to createTextStyle(size = Common.Subtitle.FONT_SIZE.toDouble()),
+        Style.PLOT_CAPTION to createTextStyle(size = Common.Caption.FONT_SIZE.toDouble()),
+        Style.LEGEND_TITLE to createTextStyle(size = Common.Legend.TITLE_FONT_SIZE.toDouble()),
+        Style.LEGEND_ITEM to createTextStyle(size = Common.Legend.ITEM_FONT_SIZE.toDouble()),
+        Style.TOOLTIP_TEXT to createTextStyle(size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
+        Style.TOOLTIP_TITLE to createTextStyle(
+            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(),
+            face = FontFace.BOLD
+        ),
+        Style.TOOLTIP_LABEL to createTextStyle(
+            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(),
+            face = FontFace.BOLD
+        ),
+        "${Style.AXIS_TITLE}-x" to createTextStyle(size = Axis.TITLE_FONT_SIZE.toDouble()),
+        "${Style.AXIS_TITLE}-y" to createTextStyle(size = Axis.TITLE_FONT_SIZE.toDouble()),
+        "${Style.AXIS_TEXT}-x" to createTextStyle(size = Axis.TICK_FONT_SIZE.toDouble()),
+        "${Style.AXIS_TEXT}-y" to createTextStyle(size = Axis.TICK_FONT_SIZE.toDouble()),
+        "${Style.AXIS_TOOLTIP_TEXT}-x" to createTextStyle(
+            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            color = Color.WHITE
+        ),
+        "${Style.AXIS_TOOLTIP_TEXT}-y" to createTextStyle(
+            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            color = Color.WHITE
+        ),
+        "${Style.FACET_STRIP_TEXT}-x" to createTextStyle(size = FONT_MEDIUM.toDouble()),
+        "${Style.FACET_STRIP_TEXT}-y" to createTextStyle(size = FONT_MEDIUM.toDouble())
+    )
 }

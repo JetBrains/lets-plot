@@ -20,7 +20,12 @@ kotlin {
         def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
         if (currentOs.isMacOsX()) {
-            macosX64("native")
+            def currentArch = DefaultNativePlatform.getCurrentArchitecture()
+            if (currentArch.displayName.contains("arm-v8")) {
+                macosArm64("native")
+            } else {
+                macosX64("native")
+            }
         } else if (currentOs.isLinux()) {
             linuxX64("native")
         } else if (currentOs.isWindows()) {

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.json.FluentObject
 import jetbrains.datalore.base.json.Obj
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Generic
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.gis.geoprotocol.*
@@ -119,18 +119,18 @@ object ResponseJsonParser {
         return ErrorGeoResponse(responseJson.getString(MESSAGE))
     }
 
-    private fun parseCentroid(centroid: FluentObject): Vec<Generic> {
-        return explicitVec<Generic>(
+    private fun parseCentroid(centroid: FluentObject): Vec<Untyped> {
+        return explicitVec<Untyped>(
             centroid.getDouble(LON),
             centroid.getDouble(LAT)
         )
     }
 
-    private fun readGeometry(geoJson: String): Boundary<Generic> {
+    private fun readGeometry(geoJson: String): Boundary<Untyped> {
         return Boundaries.fromGeoJson(geoJson)
     }
 
-    private fun readBoundary(boundary: String): Boundary<Generic> {
+    private fun readBoundary(boundary: String): Boundary<Untyped> {
         return Boundaries.fromTwkb(boundary)
     }
 

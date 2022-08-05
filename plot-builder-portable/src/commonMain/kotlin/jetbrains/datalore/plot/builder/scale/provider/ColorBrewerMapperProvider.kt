@@ -61,7 +61,7 @@ class ColorBrewerMapperProvider(
         val colors = colors(colorScheme, colorScheme.maxColors)
 
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
         return GuideMappers.continuousToDiscrete(domain, colors, naValue)
     }
 

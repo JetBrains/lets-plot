@@ -91,7 +91,6 @@ abstract class LegendBox : SvgComponent() {
     ): MultilineLabel {
         val label = MultilineLabel(title)
         label.addClassName(Style.LEGEND_TITLE)
-        label.setX(0.0)
         label.setHorizontalAnchor(horizontalAnchor)
         label.setLineHeight(PlotLabelSpecFactory.legendTitle(theme).height())
         label.moveTo(

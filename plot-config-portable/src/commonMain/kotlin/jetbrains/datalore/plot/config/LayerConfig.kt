@@ -40,7 +40,7 @@ import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
-class LayerConfig(
+class LayerConfig constructor(
     layerOptions: Map<String, Any>,
     sharedData: DataFrame,
     plotMappings: Map<*, *>,
@@ -228,10 +228,7 @@ class LayerConfig(
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappingOptions)
 
-        posProvider = LayerConfigUtil.initPositionAdjustments(
-            this,
-            geomProto.preferredPositionAdjustments(this)
-        )
+        posProvider = PosProto.createPosProvider(LayerConfigUtil.positionAdjustmentOptions(this, geomProto))
 
         varBindings = LayerConfigUtil.createBindings(
             combinedData,

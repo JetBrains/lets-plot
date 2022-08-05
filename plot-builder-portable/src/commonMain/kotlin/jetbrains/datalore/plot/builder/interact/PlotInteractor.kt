@@ -12,16 +12,9 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
 
-
-class PlotTooltipBounds(
-    val placementArea: DoubleRectangle,
-    val handlingArea: DoubleRectangle
-)
-
 interface PlotInteractor : Disposable {
     fun onTileAdded(
         geomBounds: DoubleRectangle,
-        tooltipBounds: PlotTooltipBounds,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector

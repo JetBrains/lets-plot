@@ -107,7 +107,9 @@ fun makeSegments(start: (Int) -> Double, end: (Int) -> Double, size: Int): Seque
     return (0 until size).asSequence().map { Segment(start(it), end(it)) }
 }
 
-fun <T> GeoBoundingBoxCalculator<T>.geoRectsBBox(rectangles: List<GeoRectangle>): Rect<T> {
+fun <T> GeoBoundingBoxCalculator<T>.geoRectsBBox(rectangles: List<GeoRectangle>): Rect<T>? {
+    if (rectangles.isEmpty()) return null
+
     return calculateBoundingBox(
         makeSegments(
             { rectangles[it].startLongitude() },

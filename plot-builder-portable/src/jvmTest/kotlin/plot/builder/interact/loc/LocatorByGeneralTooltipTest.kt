@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -152,6 +153,107 @@ class LocatorByGeneralTooltipTest {
         }
     }
 
+    @Test
+    fun `between objects with both tooltip types, locator should choose the closest`() {
+        // Objects have general and axis tooltips => locator will choose the closest last added object
+        val target1 = TestUtil.pointTarget(
+            FIRST_POINT_KEY,
+            COORD.add(DoubleVector(2.0, 0.0))
+        )
+        val target2 = TestUtil.pointTarget(
+            SECOND_POINT_KEY,
+            COORD.add(DoubleVector(2.0, 0.0))
+        )
+        val target3 = TestUtil.pointTarget(
+            THIRD_PATH_KEY,
+            COORD.add(DoubleVector(5.0, 0.0))
+        )
+
+        val targets = listOf(
+            // closest with axis and general tooltips
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also {
+                        it.add(TestUtil.continuous(Aes.X))
+                        it.add(TestUtil.continuous(Aes.FILL))
+                    },
+                    axisTooltips = true
+                ),
+                targetPrototypes = listOf(target1)
+            ),
+            // closest with axis tooltip only
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                    axisTooltips = true
+                ),
+                targetPrototypes = listOf(target2)
+            ),
+            // all types of tooltips but it's not the closest
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also {
+                        it.add(TestUtil.continuous(Aes.X))
+                        it.add(TestUtil.continuous(Aes.FILL))
+                    },
+                    axisTooltips = true
+                ),
+                targetPrototypes = listOf(target3)
+            )
+        )
+        val results = findTargets(targets)
+        assertLookupResults(results, FIRST_POINT_KEY)
+    }
+
+    @Test
+    fun `between closest objects with different tooltip type, locator should choose both`() {
+        val target1 = TestUtil.pointTarget(
+            FIRST_POINT_KEY,
+            COORD.add(DoubleVector(2.0, 0.0))
+        )
+        val target2 = TestUtil.pointTarget(
+            SECOND_POINT_KEY,
+            COORD.add(DoubleVector(2.0, 0.0))
+        )
+        val target3 = TestUtil.pointTarget(
+            THIRD_PATH_KEY,
+            COORD.add(DoubleVector(5.0, 0.0))
+        )
+
+        val targets = listOf(
+            // closest with general tooltip only
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                ),
+                targetPrototypes = listOf(target1)
+            ),
+            // closest with axis tooltip only
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                    axisTooltips = true
+                ),
+                targetPrototypes = listOf(target2)
+            ),
+            // it's not the closest
+            createLocator(
+                lookupSpec = lookupSpec,
+                contextualMapping = createContextualMapping(
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                ),
+                targetPrototypes = listOf(target3)
+            )
+        )
+        val results = findTargets(targets)
+        assertLookupResults(results, FIRST_POINT_KEY, SECOND_POINT_KEY)
+    }
+
     private fun createContextualMapping(
         mappedDataAccessMock: MappedDataAccessMock,
         axisTooltips: Boolean = false
@@ -191,6 +293,7 @@ class LocatorByGeneralTooltipTest {
         private val COORD = TestUtil.point(10.0, 10.0)
         private const val FIRST_POINT_KEY = 0
         private const val SECOND_POINT_KEY = 1
+        private const val THIRD_PATH_KEY = 2
         private val FIRST_TARGET = TestUtil.pointTarget(
             FIRST_POINT_KEY,
             COORD

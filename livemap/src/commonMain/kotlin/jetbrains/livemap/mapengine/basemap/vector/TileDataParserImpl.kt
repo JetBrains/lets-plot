@@ -38,17 +38,17 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
         return MicroTaskUtil.join(microThreads).map { result }
     }
 
-    private fun calculateTransform(cellKey: CellKey): (Vec<LonLat>) -> Vec<Client> {
+    private fun calculateTransform(cellKey: CellKey): (Vec<LonLat>) -> Vec<Client>? {
         val zoomProjection = Projections.zoom<World, Client>(cellKey::length)
         val cellMapRect = cellKey.computeRect(myMapProjection.mapRect)
         val cellViewOrigin = zoomProjection.project(cellMapRect.origin)
 
-        return { zoomProjection.project(myMapProjection.project(it)) - cellViewOrigin }
+        return { lonLatVec -> myMapProjection.project(lonLatVec)?.let { zoomProjection.project(it) - cellViewOrigin } }
     }
 
     private fun parseTileLayer(
         tileLayer: TileLayer,
-        transform: (Vec<LonLat>) -> Vec<Client>
+        transform: (Vec<LonLat>) -> Vec<Client>?
     ): MicroTask<List<TileFeature>> {
         return createMicroThread(TileGeometryParser(tileLayer.geometryCollection))
             .flatMap { tileGeometries ->

@@ -108,10 +108,19 @@ object ThemeOption {
         const val R_LIGHT = "light"
         const val R_CLASSIC = "classic"
         const val R_MINIMAL = "minimal"
+        const val R_BW = "bw"
 
         // lets-plot themes
         const val LP_MINIMAL = "minimal2"
         const val LP_NONE = "none"
+    }
+
+    object Flavor {
+        const val DARCULA = "darcula"
+        const val SOLARIZED_LIGHT = "solarized_light"
+        const val SOLARIZED_DARK = "solarized_dark"
+        const val HIGH_CONTRAST_LIGHT = "high_contrast_light"
+        const val HIGH_CONTRAST_DARK = "high_contrast_dark"
     }
 
     internal object ForTest {
@@ -120,6 +129,7 @@ object ThemeOption {
             Name.R_LIGHT,
             Name.R_CLASSIC,
             Name.R_MINIMAL,
+            Name.R_BW,
             Name.LP_MINIMAL,
             Name.LP_NONE,
         )

@@ -107,12 +107,22 @@ internal class SvgTextElementMapper(
         private fun TextStyle.createFont(): Font {
             val posture = if (face.italic) FontPosture.ITALIC else null
             val weight = if (face.bold) FontWeight.BOLD else null
-            return Font.font(
-                family.toString(),
-                weight,
-                posture,
-                size
-            )
+            // todo Need to choose an available font:
+            //   'TextStyle.family' string may contain a comma-separated list of families
+            val familyList = family.toString().split(",").map { it.trim(' ', '\"') }
+            return familyList
+                .map { Font.font(it, weight, posture, size) }
+                .firstOrNull {
+                    // todo choose a font with a supported style ('bold' or/and 'italic')
+                    (if (face.italic) it.style.contains("italic", ignoreCase = true) else true) &&
+                            (if (face.bold) it.style.contains("bold", ignoreCase = true) else true)
+                }
+                ?: Font.font(
+                    familyList.firstOrNull(),
+                    weight,
+                    posture,
+                    size
+                )
         }
     }
 

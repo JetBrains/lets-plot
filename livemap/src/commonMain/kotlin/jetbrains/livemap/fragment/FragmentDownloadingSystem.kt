@@ -9,8 +9,8 @@ import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Generic
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -59,7 +59,7 @@ class FragmentDownloadingSystem(
             }
         }
 
-        val downloadedFragments = HashMap<FragmentKey, MultiPolygon<Generic>>()
+        val downloadedFragments = HashMap<FragmentKey, MultiPolygon<Untyped>>()
         run {
             // process downloadedFragments fragments
             var responses = emptyMap<String, List<Fragment>>()

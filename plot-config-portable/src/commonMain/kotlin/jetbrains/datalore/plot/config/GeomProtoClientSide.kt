@@ -96,6 +96,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Boxplot.FATTEN)) {
                     geom.fattenMidline = opts.getDouble(Boxplot.FATTEN)!!
                 }
+                if (opts.hasOwn(Boxplot.WHISKER_WIDTH)) {
+                    geom.whiskerWidth = opts.getDouble(Boxplot.WHISKER_WIDTH)!!
+                }
                 if (opts.hasOwn(BoxplotOutlier.COLOR)) {
                     geom.outlierColor = opts.getColor(BoxplotOutlier.COLOR)!!
                 }

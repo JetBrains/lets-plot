@@ -64,12 +64,19 @@ class LocatedTargetsPicker(
             myPicked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> myPicked
             myAllLookupResults.none(::hasGeneralTooltip) -> myPicked
             myAllLookupResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
-                listOf(myAllLookupResults.last { hasGeneralTooltip(it) && hasAxisTooltip(it) })
+                listOf(
+                    myAllLookupResults
+                        .sortedByDescending(LookupResult::distance)
+                        .last { hasGeneralTooltip(it) && hasAxisTooltip(it) }
+                )
             }
             else -> {
-                val withGeneralTooltip = myAllLookupResults.lastOrNull(::hasGeneralTooltip)
-                val withAxisTooltip = myAllLookupResults.lastOrNull(::hasAxisTooltip)
-                listOfNotNull(withGeneralTooltip, withAxisTooltip)
+                with(myAllLookupResults.sortedByDescending(LookupResult::distance)) {
+                    listOfNotNull(
+                        lastOrNull(::hasGeneralTooltip),
+                        lastOrNull(::hasAxisTooltip)
+                    )
+                }
             }
         }
     }

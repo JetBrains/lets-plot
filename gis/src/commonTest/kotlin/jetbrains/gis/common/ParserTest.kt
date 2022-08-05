@@ -14,7 +14,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ParserTest {
-    private fun p(x: Double, y: Double): Vec<Generic> {
+    private fun p(x: Double, y: Double): Vec<Untyped> {
         return explicitVec(x, y)
     }
     
@@ -184,7 +184,7 @@ class ParserTest {
         val c = SimpleGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<Vec<Generic>>?>?>?>(
+        assertEquals<List<List<List<Vec<Untyped>>?>?>?>(
             optionalListOf( // polygons
                 optionalListOf( // polygon
                     optionalListOf( // ring
@@ -327,7 +327,7 @@ class ParserTest {
         val c = CollectedGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<Vec<Generic>>?>?>?>(
+        assertEquals<List<List<List<Vec<Untyped>>?>?>?>(
             optionalListOf( // polygons
                 optionalListOf( // 1 ring
                     optionalListOf(
@@ -397,7 +397,7 @@ class ParserTest {
         val c = CollectedGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<Vec<Generic>>?>?>?>(
+        assertEquals<List<List<List<Vec<Untyped>>?>?>?>(
             optionalListOf( // multi lines
                 optionalListOf( // lines
                     optionalListOf(
@@ -436,7 +436,7 @@ class ParserTest {
         val c = CollectedGeometryConsumer()
         Twkb.parse(data, c)
 
-        assertEquals<List<List<List<List<Vec<Generic>>?>?>?>?>(
+        assertEquals<List<List<List<List<Vec<Untyped>>?>?>?>?>(
             optionalListOf( //
                 optionalListOf( // multi1
                     optionalListOf( // poly1
@@ -494,92 +494,92 @@ class ParserTest {
     }
 
 
-    internal class CollectedGeometryConsumer : SimpleFeature.GeometryConsumer<Generic> {
-        private val myPoints = ArrayList<Vec<Generic>>()
-        private val myLineStrings = ArrayList<LineString<Generic>>()
-        private val myPolygons = ArrayList<Polygon<Generic>>()
-        private val myMultiPoints = ArrayList<MultiPoint<Generic>>()
-        private val myMultiLineStrings = ArrayList<MultiLineString<Generic>>()
-        private val myMultiPolygons = ArrayList<MultiPolygon<Generic>>()
+    internal class CollectedGeometryConsumer : SimpleFeature.GeometryConsumer<Untyped> {
+        private val myPoints = ArrayList<Vec<Untyped>>()
+        private val myLineStrings = ArrayList<LineString<Untyped>>()
+        private val myPolygons = ArrayList<Polygon<Untyped>>()
+        private val myMultiPoints = ArrayList<MultiPoint<Untyped>>()
+        private val myMultiLineStrings = ArrayList<MultiLineString<Untyped>>()
+        private val myMultiPolygons = ArrayList<MultiPolygon<Untyped>>()
 
-        val points: List<Vec<Generic>>
+        val points: List<Vec<Untyped>>
             get() = myPoints
 
-        val lineStrings: List<LineString<Generic>>
+        val lineStrings: List<LineString<Untyped>>
             get() = myLineStrings
 
-        val polygons: List<Polygon<Generic>>
+        val polygons: List<Polygon<Untyped>>
             get() = myPolygons
 
-        val multiPoints: List<MultiPoint<Generic>>
+        val multiPoints: List<MultiPoint<Untyped>>
             get() = myMultiPoints
 
-        val multiLineStrings: List<MultiLineString<Generic>>
+        val multiLineStrings: List<MultiLineString<Untyped>>
             get() = myMultiLineStrings
 
-        val multiPolygons: List<MultiPolygon<Generic>>
+        val multiPolygons: List<MultiPolygon<Untyped>>
             get() = myMultiPolygons
 
-        override fun onPoint(point: Vec<Generic>) {
+        override fun onPoint(point: Vec<Untyped>) {
             myPoints.add(point)
         }
 
-        override fun onLineString(lineString: LineString<Generic>) {
+        override fun onLineString(lineString: LineString<Untyped>) {
             myLineStrings.add(lineString)
         }
 
-        override fun onPolygon(polygon: Polygon<Generic>) {
+        override fun onPolygon(polygon: Polygon<Untyped>) {
             myPolygons.add(polygon)
         }
 
-        override fun onMultiPoint(multiPoint: MultiPoint<Generic>) {
+        override fun onMultiPoint(multiPoint: MultiPoint<Untyped>) {
             myMultiPoints.add(multiPoint)
         }
 
-        override fun onMultiLineString(multiLineString: MultiLineString<Generic>) {
+        override fun onMultiLineString(multiLineString: MultiLineString<Untyped>) {
             myMultiLineStrings.add(multiLineString)
         }
 
-        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>) {
+        override fun onMultiPolygon(multipolygon: MultiPolygon<Untyped>) {
             myMultiPolygons.add(multipolygon)
         }
     }
 
-    internal class SimpleGeometryConsumer : SimpleFeature.GeometryConsumer<Generic> {
-        var point: Vec<Generic>? = null
+    internal class SimpleGeometryConsumer : SimpleFeature.GeometryConsumer<Untyped> {
+        var point: Vec<Untyped>? = null
             private set
-        var lineString: LineString<Generic>? = null
+        var lineString: LineString<Untyped>? = null
             private set
-        var polygon: Polygon<Generic>? = null
+        var polygon: Polygon<Untyped>? = null
             private set
-        var multiPoint: MultiPoint<Generic>? = null
+        var multiPoint: MultiPoint<Untyped>? = null
             private set
-        var multiLineString: MultiLineString<Generic>? = null
+        var multiLineString: MultiLineString<Untyped>? = null
             private set
-        var multiPolygon: MultiPolygon<Generic>? = null
+        var multiPolygon: MultiPolygon<Untyped>? = null
             private set
 
-        override fun onPoint(point: Vec<Generic>) {
+        override fun onPoint(point: Vec<Untyped>) {
             this.point = point
         }
 
-        override fun onLineString(lineString: LineString<Generic>) {
+        override fun onLineString(lineString: LineString<Untyped>) {
             this.lineString = lineString
         }
 
-        override fun onPolygon(polygon: Polygon<Generic>) {
+        override fun onPolygon(polygon: Polygon<Untyped>) {
             this.polygon = polygon
         }
 
-        override fun onMultiPoint(multiPoint: MultiPoint<Generic>) {
+        override fun onMultiPoint(multiPoint: MultiPoint<Untyped>) {
             this.multiPoint = multiPoint
         }
 
-        override fun onMultiLineString(multiLineString: MultiLineString<Generic>) {
+        override fun onMultiLineString(multiLineString: MultiLineString<Untyped>) {
             this.multiLineString = multiLineString
         }
 
-        override fun onMultiPolygon(multipolygon: MultiPolygon<Generic>) {
+        override fun onMultiPolygon(multipolygon: MultiPolygon<Untyped>) {
             this.multiPolygon = multipolygon
         }
     }

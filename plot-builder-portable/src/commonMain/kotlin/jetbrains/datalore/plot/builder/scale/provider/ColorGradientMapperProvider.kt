@@ -31,7 +31,7 @@ class ColorGradientMapperProvider(low: Color?, high: Color?, naValue: Color) : M
 
     override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
-        val domain = MapperUtil.rangeWithLimitsAfterTransform2(domain, trans)
+        val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
         val gradient = ColorMapper.gradient(domain, low, high, naValue)
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }

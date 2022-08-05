@@ -9,6 +9,7 @@ import jetbrains.datalore.base.assertion.assertEquals
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
+import jetbrains.datalore.base.values.HSV
 import kotlin.test.Test
 
 class ColorMapperTest {
@@ -21,15 +22,18 @@ class ColorMapperTest {
 
         val f = ColorMapper.gradientHSV(
                 DoubleSpan(0.0, 1.0),
-                doubleArrayOf(lowHue, saturation, value),
-                doubleArrayOf(highHue, saturation, value),
+                HSV(lowHue, saturation, value),
+                HSV(highHue, saturation, value),
                 false,
                 Color.GRAY
         )
 
-        val hue0 = Colors.hsvFromRgb(f(0.0))[0]
-        val hue1 = Colors.hsvFromRgb(f(0.5))[0]
-        val hue2 = Colors.hsvFromRgb(f(1.0))[0]
+//        val hue0 = Colors.hsvFromRgb(f(0.0))[0]
+//        val hue1 = Colors.hsvFromRgb(f(0.5))[0]
+//        val hue2 = Colors.hsvFromRgb(f(1.0))[0]
+        val hue0 = Colors.hsvFromRgb(f(0.0)).h
+        val hue1 = Colors.hsvFromRgb(f(0.5)).h
+        val hue2 = Colors.hsvFromRgb(f(1.0)).h
 
         val accuracy = .001
         assertEquals(0.0, hue0, accuracy)

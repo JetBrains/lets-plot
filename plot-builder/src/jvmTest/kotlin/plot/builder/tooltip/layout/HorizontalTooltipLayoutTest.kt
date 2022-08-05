@@ -259,6 +259,25 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
         assertNoTooltips()
     }
 
+    @Test
+    fun `left stem coordinate is out of visibility - move tooltip to right position`() {
+        // the left coordinate (pointed to by the tooltip) is outside the area,
+        // so tooltip will be moved to right position
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(20.0)
+            .defaultTipSize(DoubleVector(40.0, 40.0))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(tooltipBuilder.horizontal(TOOLTIP_KEY, coord(110.0,100.0)).buildTooltip())
+            .geomBounds(LIMIT_RECT)
+            .build()
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect().tooltipX(expectedSideTipX(TOOLTIP_KEY, RIGHT))
+        )
+    }
+
     companion object {
         private const val IGNORED_KEY = "ignored"
         private const val TOOLTIP_KEY = "tooltip"
