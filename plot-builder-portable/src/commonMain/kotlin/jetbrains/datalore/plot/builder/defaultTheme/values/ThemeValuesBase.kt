@@ -76,6 +76,12 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_TITLE to mapOf(
                 Elem.HJUST to 0.5,
+                Elem.MARGIN to mapOf(
+                    Elem.Margin.SIDE_TOP to 4.0,
+                    Elem.Margin.SIDE_RIGHT to 4.0,
+                    Elem.Margin.SIDE_BOTTOM to 4.0,
+                    Elem.Margin.SIDE_LEFT to 4.0
+                )
             ),
 
             PANEL_GRID_MINOR to mapOf(

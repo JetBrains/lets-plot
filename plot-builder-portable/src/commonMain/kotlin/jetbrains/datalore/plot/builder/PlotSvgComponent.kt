@@ -243,7 +243,8 @@ class PlotSvgComponent constructor(
                 axisTitleSizeDelta(
                     axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     axisTitleBottom = null to PlotLabelSpec(0.0),
-                    axisEnabled
+                    axisEnabled,
+                    marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
             )
 
@@ -378,6 +379,7 @@ class PlotSvgComponent constructor(
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     justification = theme.verticalAxis(flippedAxis).titleJustification(),
+                    margins = theme.verticalAxis(flippedAxis).titleMargins(),
                     className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
@@ -389,6 +391,7 @@ class PlotSvgComponent constructor(
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     justification = theme.horizontalAxis(flippedAxis).titleJustification(),
+                    margins = theme.horizontalAxis(flippedAxis).titleMargins(),
                     className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
@@ -468,6 +471,8 @@ class PlotSvgComponent constructor(
         overallGeomBounds: DoubleRectangle,  // geom bounds union
         labelSpec: PlotLabelSpec,
         justification: TextJustification,
+        justification: TextJustification,
+        margins: Margins,
         className: String
     ) {
         val referenceRect = when (orientation) {
@@ -497,14 +502,14 @@ class PlotSvgComponent constructor(
         val axisTitleBounds = when (orientation) {
             Orientation.LEFT ->
                 DoubleRectangle(
-                    referenceRect.left - textHeight - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN,  // right margin
+                    referenceRect.left - textHeight - margins.right,
                     referenceRect.top,
                     textHeight,
                     referenceRect.height
                 )
             Orientation.RIGHT ->
                 DoubleRectangle(
-                    referenceRect.right + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, // left margin
+                    referenceRect.right + margins.left,
                     referenceRect.top,
                     textHeight,
                     referenceRect.height
@@ -512,14 +517,14 @@ class PlotSvgComponent constructor(
             Orientation.TOP ->
                 DoubleRectangle(
                     referenceRect.left,
-                    referenceRect.top - textHeight - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, // bottom margin
+                    referenceRect.top - textHeight - margins.bottom,
                     referenceRect.width,
                     textHeight
                 )
             Orientation.BOTTOM ->
                 DoubleRectangle(
                     referenceRect.left,
-                    referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, // top margin
+                    referenceRect.bottom + margins.top,
                     referenceRect.width,
                     textHeight
                 )
@@ -543,38 +548,17 @@ class PlotSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             drawDebugRect(axisTitleBounds, Color.LIGHT_BLUE)
-            val textHeightWithMargins = textHeight + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN + PlotLayoutUtil.AXIS_TITLE_OUTER_MARGIN
-            val rectWithMargins = when (orientation) {
-                Orientation.LEFT -> {
+            val rectWithMargins = when {
+                orientation.isHorizontal -> {
                     DoubleRectangle(
-                        referenceRect.left - textHeightWithMargins,
-                        referenceRect.top,
-                        textHeightWithMargins,
-                        referenceRect.height
+                        axisTitleBounds.origin.subtract(DoubleVector(0.0, margins.top)),
+                        axisTitleBounds.dimension.add(DoubleVector(0.0, margins.height()))
                     )
                 }
-                Orientation.RIGHT -> {
+                else -> {
                     DoubleRectangle(
-                        referenceRect.right,
-                        referenceRect.top,
-                        textHeightWithMargins,
-                        referenceRect.height
-                    )
-                }
-                Orientation.TOP -> {
-                    DoubleRectangle(
-                        referenceRect.left,
-                        referenceRect.top - textHeightWithMargins,
-                        referenceRect.width,
-                        textHeightWithMargins
-                    )
-                }
-                Orientation.BOTTOM -> {
-                    DoubleRectangle(
-                        referenceRect.left,
-                        referenceRect.bottom,
-                        referenceRect.width,
-                        textHeightWithMargins
+                        axisTitleBounds.origin.subtract(DoubleVector(margins.left, 0.0)),
+                        axisTitleBounds.dimension.add(DoubleVector(margins.width(), 0.0))
                     )
                 }
             }

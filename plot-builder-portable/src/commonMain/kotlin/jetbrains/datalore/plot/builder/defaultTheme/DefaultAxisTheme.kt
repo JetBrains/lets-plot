@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.vis.TextStyle
 
@@ -116,5 +117,9 @@ internal class DefaultAxisTheme(
         val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
         val textStyle = getTextStyle(getElemValue(tooltipTextKey))
         return textStyle.copy(color = tooltipTextColor)
+    }
+
+    override fun titleMargins(): Margins {
+        return getMargins(getElemValue(titleKey))
     }
 }

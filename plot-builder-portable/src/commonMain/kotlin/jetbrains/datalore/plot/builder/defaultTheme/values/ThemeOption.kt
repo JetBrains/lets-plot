@@ -100,6 +100,13 @@ object ThemeOption {
         const val ANGLE = "angle"       // ToDo
         const val LINEHEIGHT = "lineheight" // ToDo
         const val MARGIN = "margin"     // ToDo
+
+        object Margin {
+            const val SIDE_TOP = "t"
+            const val SIDE_RIGHT = "r"
+            const val SIDE_BOTTOM = "b"
+            const val SIDE_LEFT = "l"
+        }
     }
 
     object Name {
