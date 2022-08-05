@@ -388,7 +388,7 @@ def element_text(
         family=None,
         face=None,
         size=None,
-        # ToDo: angle, lineheight, margin
+        # ToDo: angle, lineheight
         hjust=None,
         vjust=None,
         margin=None,
@@ -412,7 +412,7 @@ def element_text(
         Horizontal justification (in [0, 1]).
     vjust : float
         Vertical justification (in [0, 1]).
-    margin :
+    margin : `margin`
         Margins around the text. See `margin()` for more details.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
@@ -475,4 +475,7 @@ def margin(t=None, r=None, b=None, l=None) -> dict:
             theme(axis_title=element_text(margin=margin(t=10,r=10,b=4,l=4)))
 
     """
+    if None in (t, r, b, l):
+        raise ValueError("Please specify all parameters in `margin(t, r, b, l)`")
+
     return locals()
