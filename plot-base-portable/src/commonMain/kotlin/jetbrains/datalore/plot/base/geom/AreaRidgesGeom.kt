@@ -34,7 +34,24 @@ class AreaRidgesGeom : GeomBase() {
             .sortedByDescending(DataPointAesthetics::y)
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
-            .forEach { (_, dataPoints) -> buildRidge(root, dataPoints, pos, coord, ctx) }
+            .forEach { (_, dataPoints) ->
+                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
+            }
+    }
+
+    private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>): MutableList<Iterable<DataPointAesthetics>> {
+        val minHeight = 0.0
+        val result = mutableListOf<Iterable<DataPointAesthetics>>()
+        var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
+        for (p in dataPoints)
+            if (p.height()!! >= minHeight)
+                dataPointsBunch.add(p)
+            else {
+                if (dataPointsBunch.any()) result.add(dataPointsBunch)
+                dataPointsBunch = mutableListOf()
+            }
+        if (dataPointsBunch.any()) result.add(dataPointsBunch)
+        return result
     }
 
     private fun buildRidge(

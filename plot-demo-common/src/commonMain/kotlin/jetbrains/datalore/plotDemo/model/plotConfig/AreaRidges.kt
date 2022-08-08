@@ -13,6 +13,7 @@ class AreaRidges {
             basic(),
             withGroups(),
             flipCoord(),
+            withNegativeHeight(),
         )
     }
 
@@ -97,6 +98,32 @@ class AreaRidges {
                 "              'name': 'flip'," +
                 "              'flip': true" +
                 "            }" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withNegativeHeight(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [0, 1, 1.5, 2, 3, 4, 5, 6, 7, 8]," +
+                "             'y': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]," +
+                "             'h': [0.6, 1.5, -1.0, 0.9, 1.2, -0.1, -1.2, 1.2, 0.1, 1.2]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'," +
+                "                'height': 'h'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Negative height'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'area_ridges'" +
+                "               }" +
+                "             ]" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))
