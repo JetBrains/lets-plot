@@ -19,6 +19,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
+           'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
@@ -3179,6 +3180,19 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stackgroups=stackgroups,
                  center=center,
                  boundary=boundary,
+                 **other_args)
+
+
+def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                     **other_args):
+    return _geom('area_ridges',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
                  **other_args)
 
 

@@ -149,6 +149,10 @@ open class AestheticsDefaults {
             return crossBar()
         }
 
+        fun areaRidges(): AestheticsDefaults {
+            return base()
+        }
+
         fun violin(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.BLACK)

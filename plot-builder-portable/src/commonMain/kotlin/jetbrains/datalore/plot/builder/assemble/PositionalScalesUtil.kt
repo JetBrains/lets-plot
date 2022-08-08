@@ -276,14 +276,17 @@ internal object PositionalScalesUtil {
                 layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
                 else -> null
             }?.let { widthAes ->
-                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx)
+                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx.getResolution(widthAxis))
             },
             heightAxis to when {
                 Aes.HEIGHT in renderedAes -> Aes.HEIGHT
                 layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
                 else -> null
             }?.let { heightAes ->
-                computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx)
+                when (layer.geomKind) {
+                    GeomKind.AREA_RIDGES -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getUnitResolution(heightAes), 0.0)
+                    else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
+                }
             }
         )
 
@@ -291,12 +294,11 @@ internal object PositionalScalesUtil {
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
-        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext
+        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, resolution: Double, expandShift: Double = -0.5
     ): DoubleSpan? {
         val locations = aesthetics.numericValues(locationAes).iterator()
         val sizes = aesthetics.numericValues(sizeAes).iterator()
 
-        val resolution = geomCtx.getResolution(locationAes)
         val minMax = doubleArrayOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)
 
         for (i in 0 until aesthetics.dataPointCount()) {
@@ -309,8 +311,8 @@ internal object PositionalScalesUtil {
             val loc = locations.next()
             val size = sizes.next()
             if (SeriesUtil.isFinite(loc) && SeriesUtil.isFinite(size)) {
-                val expand = resolution * (size!! / 2)
-                updateExpandedMinMax(loc!!, expand, minMax)
+                val expand = resolution * size!!
+                updateExpandedMinMax(loc!!, expand, expandShift, minMax)
             }
         }
 
@@ -320,9 +322,9 @@ internal object PositionalScalesUtil {
             null
     }
 
-    private fun updateExpandedMinMax(value: Double, expand: Double, expandedMinMax: DoubleArray) {
-        expandedMinMax[0] = min(value - expand, expandedMinMax[0])
-        expandedMinMax[1] = max(value + expand, expandedMinMax[1])
+    private fun updateExpandedMinMax(value: Double, expand: Double, expandShift: Double, expandedMinMax: DoubleArray) {
+        expandedMinMax[0] = min(value + expandShift * expand, expandedMinMax[0])
+        expandedMinMax[1] = max(value + (1.0 + expandShift) * expand, expandedMinMax[1])
     }
 
 
