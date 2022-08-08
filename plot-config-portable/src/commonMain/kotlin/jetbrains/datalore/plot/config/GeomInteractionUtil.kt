@@ -194,6 +194,7 @@ object GeomInteractionUtil {
             GeomKind.Q_Q_2,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
+            GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,
@@ -247,6 +248,7 @@ object GeomInteractionUtil {
     ): List<Aes<*>> {
         return when {
             !isAxisTooltipEnabled -> emptyList()
+            geomKind == GeomKind.AREA_RIDGES ||
             geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
             else -> axisAesFromFunctionKind
         }
