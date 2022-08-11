@@ -32,14 +32,13 @@ open class AreaGeom : GeomBase() {
 
         val helper = LinesHelper(pos, coord, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
-        paths.reverse()
         // If you want to retain the side edges of area: comment out the following codes,
         // and switch decorate method in LinesHelper.createBands
         helper.setAlphaEnabled(false)
         val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        lines.reverse()
-        for ((path, line) in paths zip lines)
+        paths.zip(lines).asReversed().forEach { (path, line) ->
             appendNodes(listOf(path, line), root)
+        }
 
         buildHints(aesthetics, pos, coord, ctx)
     }
