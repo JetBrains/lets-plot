@@ -63,10 +63,14 @@ object BrowserDemoUtil {
 
     fun getRootPath(): String {
         // works when launching from IDEA
-        val projectRoot = System.getenv()["PWD"] ?: throw IllegalStateException("'PWD' env variable is not defined")
+        val projectRoot = if ("Windows" in System.getProperty("os.name")) {
+            System.getProperty("user.dir") ?: throw IllegalStateException("System property 'user.dir' is not defined")
+        } else {
+            System.getenv()["PWD"] ?: throw IllegalStateException("'PWD' env variable is not defined")
+        }
 
         if (!projectRoot.contains(ROOT_PROJECT)) {
-            throw IllegalStateException("'PWD' is not pointing to $ROOT_PROJECT : $projectRoot")
+            throw IllegalStateException("Project root is not pointing to $ROOT_PROJECT : $projectRoot")
         }
         return projectRoot
     }

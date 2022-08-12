@@ -19,6 +19,7 @@ kotlin {
             dceTask {
                 keep.addAll(
                         "lets-plot-plot-demo.jetbrains.datalore.plotDemo.component.axisComponentDemo",
+                        "lets-plot-plot-demo.jetbrains.datalore.plotDemo.component.textSizeEstimationDemo",
                         "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.linearRegressionDemo",
                         "lets-plot-plot-demo.jetbrains.datalore.plotDemo.plotAssembler.loessRegressionDemo",
                 )
