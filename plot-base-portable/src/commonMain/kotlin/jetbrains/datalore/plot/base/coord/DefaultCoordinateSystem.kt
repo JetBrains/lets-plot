@@ -6,21 +6,24 @@
 package jetbrains.datalore.plot.base.coord
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 internal open class DefaultCoordinateSystem(
     val toClientOffsetX: (Double) -> Double,
     val toClientOffsetY: (Double) -> Double,
-    val projection: Projection,
+    val coordMapper: CoordinatesMapper,
 ) : CoordinateSystem {
     override fun toClient(p: DoubleVector): DoubleVector {
-        val projected = projection.project(p)
-            ?: throw IllegalArgumentException("Can't poject $p using projection ${projection::class.simpleName}")
-        return DoubleVector(
-            toClientOffsetX(projected.x),
-            toClientOffsetY(projected.y)
-        )
+        val mapped = coordMapper.toClient(p)
+        return if (mapped == null) {
+            // ToDo: male `toClient` nullable
+            throw IllegalStateException("Can't poject $p using projection ${coordMapper.projection::class.simpleName}")
+        } else {
+            DoubleVector(
+                toClientOffsetX(mapped.x),
+                toClientOffsetY(mapped.y)
+            )
+        }
     }
 
     override fun flip(): CoordinateSystem {

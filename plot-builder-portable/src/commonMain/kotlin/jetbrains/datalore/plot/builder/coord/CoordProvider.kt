@@ -5,8 +5,10 @@
 
 package jetbrains.datalore.plot.builder.coord
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -14,6 +16,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
     val flipAxis: Boolean
+    val projection: Projection
 
     fun with(
         xLim: DoubleSpan?,
@@ -21,11 +24,16 @@ interface CoordProvider {
         flipped: Boolean
     ): CoordProvider
 
+//    fun createCoordinateSystem(
+//        xDomain: DoubleSpan,
+//        xMapper: ScaleMapper<Double>,
+//        yDomain: DoubleSpan,
+//        yMapper: ScaleMapper<Double>,
+//    ): CoordinateSystem
+
     fun createCoordinateSystem(
-        xDomain: DoubleSpan,
-        xMapper: ScaleMapper<Double>,
-        yDomain: DoubleSpan,
-        yMapper: ScaleMapper<Double>,
+        domain: DoubleRectangle,
+        clientSize: DoubleVector,
     ): CoordinateSystem
 
     fun buildAxisScaleX(

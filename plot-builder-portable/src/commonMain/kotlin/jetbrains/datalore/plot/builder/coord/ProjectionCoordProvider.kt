@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ProjectionCoordProvider(
-    val projection: Projection,
+    override val projection: Projection,
     xLim: DoubleSpan?,
     yLim: DoubleSpan?,
     flipped: Boolean
@@ -48,12 +48,14 @@ internal class ProjectionCoordProvider(
         geomSize: DoubleVector
     ): DoubleVector {
         // Adjust geom dimensions ratio.
-        val bbox = boundingBox(listOf(
-            DoubleVector(hDomain.lowerEnd, vDomain.lowerEnd),
-            DoubleVector(hDomain.lowerEnd, vDomain.upperEnd),
-            DoubleVector(hDomain.upperEnd, vDomain.lowerEnd),
-            DoubleVector(hDomain.upperEnd, vDomain.upperEnd)
-        ).mapNotNull(projection::project))
+        val bbox = boundingBox(
+            listOf(
+                DoubleVector(hDomain.lowerEnd, vDomain.lowerEnd),
+                DoubleVector(hDomain.lowerEnd, vDomain.upperEnd),
+                DoubleVector(hDomain.upperEnd, vDomain.lowerEnd),
+                DoubleVector(hDomain.upperEnd, vDomain.upperEnd)
+            ).mapNotNull(projection::project)
+        )
             ?: error("adjustGeomSize() - can't compute bbox")
 
         val domainRatio = bbox.width / bbox.height
@@ -97,7 +99,11 @@ internal class ProjectionCoordProvider(
         }
     }
 
-    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double, yDomain: DoubleSpan): ScaleMapper<Double> {
+    override fun buildAxisXScaleMapper(
+        domain: DoubleSpan,
+        axisLength: Double,
+        yDomain: DoubleSpan
+    ): ScaleMapper<Double> {
         return if (projection.nonlinear) {
             val validDomain = toValidDomain(projection.validRect().xRange(), domain)
             buildAxisScaleMapperWithProjection(
@@ -111,7 +117,11 @@ internal class ProjectionCoordProvider(
         }
     }
 
-    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double, xDomain: DoubleSpan): ScaleMapper<Double> {
+    override fun buildAxisYScaleMapper(
+        domain: DoubleSpan,
+        axisLength: Double,
+        xDomain: DoubleSpan
+    ): ScaleMapper<Double> {
         return if (projection.nonlinear) {
             val validDomain = toValidDomain(projection.validRect().yRange(), domain)
             buildAxisScaleMapperWithProjection(

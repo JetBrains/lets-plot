@@ -51,7 +51,7 @@ internal class MarginalFrameOfReference(
 
         val layerComponent = SquareFrameOfReference.buildGeom(
             layer,
-            hScaleMapper, vScaleMapper,
+//            hScaleMapper, vScaleMapper,
             xyAesBounds = aesBounds,
             coord,
             flippedAxis = false,

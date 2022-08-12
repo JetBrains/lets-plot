@@ -7,18 +7,17 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 
 object AxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
-        scaleMapper: ScaleMapper<Double>,
+//        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): AxisComponent.BreaksData {
-        val mappedBreaks = toAxisCoord(scaleBreaks, scaleMapper, coord, horizontal)
+        val mappedBreaks = toAxisCoord(scaleBreaks, /*scaleMapper,*/ coord, horizontal)
         return AxisComponent.BreaksData(
             majorBreaks = mappedBreaks,
             majorLabels = scaleBreaks.labels
@@ -27,7 +26,7 @@ object AxisUtil {
 
     private fun toAxisCoord(
         scaleBreaks: ScaleBreaks,
-        scaleMapper: ScaleMapper<Double>,
+//        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): List<Double> {

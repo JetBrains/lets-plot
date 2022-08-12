@@ -7,31 +7,30 @@ package jetbrains.datalore.plot.base.coord
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.spatial.projections.Projection
-import jetbrains.datalore.base.spatial.projections.identity
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
         xRange: DoubleSpan,
         yRange: DoubleSpan,
-        projection: Projection = identity(),
+        coordMapper: CoordinatesMapper,
     ): CoordinateSystem {
         val origin = DoubleVector(
             originX(xRange),
             originY(yRange)
         )
-        return create(origin, projection)
+        return create(origin, coordMapper)
     }
 
     fun create(
         origin: DoubleVector,
-        projection: Projection = identity()
+        coordMapper: CoordinatesMapper
     ): CoordinateSystem {
         return DefaultCoordinateSystem(
             toClientOffsetX(origin.x),
             toClientOffsetY(origin.y),
-            projection
+            coordMapper
         )
     }
 
@@ -67,4 +66,21 @@ object Coords {
         // y-axis is inverted
         return { y -> originY - y }
     }
+
+
+    // ToDo: Old signature used in demos: ned to update demos.
+    fun create(
+        xRange: DoubleSpan,
+        yRange: DoubleSpan,
+    ): CoordinateSystem {
+        UNSUPPORTED()
+    }
+
+    // ToDo: Old signature used in demos: ned to update demos.
+    fun create(
+        origin: DoubleVector,
+    ): CoordinateSystem {
+        UNSUPPORTED()
+    }
+
 }

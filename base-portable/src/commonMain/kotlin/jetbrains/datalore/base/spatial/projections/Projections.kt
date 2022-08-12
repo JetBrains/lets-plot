@@ -25,7 +25,11 @@ fun identity(): Projection = object : Projection {
     override fun invert(v: DoubleVector): DoubleVector? = v
 
     override fun validRect(): DoubleRectangle {
-        TODO("Not yet implemented")
+        // ToDo: infinite rect
+        val dim: Double = Double.MAX_VALUE / 1000
+        val orig = DoubleVector(-dim / 2, -dim / 2)
+        val size = DoubleVector(dim, dim)
+        return DoubleRectangle(orig, size)
     }
 
     override val cylindrical: Boolean

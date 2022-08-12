@@ -57,8 +57,8 @@ class YOrientationGeomBuildingTest {
             yAesMapper = yAesMapper,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
             coord = CoordProviders.cartesian().createCoordinateSystem(
-                xDomain, xAesMapper,
-                yDomain, yAesMapper
+                domain = DoubleRectangle(xDomain, yDomain),
+                clientSize = DoubleVector(xAxisLength, yAxisLength)
             ),
             flippedAxis = false,
             targetCollector = NullGeomTargetCollector()

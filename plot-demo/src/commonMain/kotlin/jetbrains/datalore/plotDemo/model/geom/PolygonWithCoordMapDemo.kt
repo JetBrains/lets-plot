@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.geom
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -86,7 +87,11 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
             .alpha(constant(0.5))
             .build()
         val coord = CoordProviders.map()
-            .createCoordinateSystem(domainX, mapper, domainY, mapper)
+//            .createCoordinateSystem(domainX, mapper, domainY, mapper)
+            .createCoordinateSystem(
+                domain = DoubleRectangle(domainX, domainY),
+                clientSize = demoInnerSize
+            )
         val layer = SvgLayerRenderer(
             aes,
             PolygonGeom(),

@@ -24,8 +24,8 @@ object DemoAndTest {
     ): SvgComponent {
         return SquareFrameOfReference.buildGeom(
             layer = layer,
-            xAesMapper = xAesMapper,
-            yAesMapper = yAesMapper,
+//            xAesMapper = xAesMapper,
+//            yAesMapper = yAesMapper,
             xyAesBounds = xyAesBounds,
             coord = coord,
             flippedAxis = flippedAxis,
