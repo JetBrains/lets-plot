@@ -24,6 +24,7 @@ data class TextSettings(
     val sizeRatio: Double,
     val boldRatio: Double,
     val italicRatio: Double,
+    val fontRatio: Double,
     val fontAdditiveError: Double
 )
 
@@ -43,7 +44,9 @@ class TextSizeDemoWindow(
     private val myFontComboBox = JComboBox(
        // arrayOf("Lucida Grande", "Helvetica", "Verdana", "Geneva", "Times New Roman", "Georgia", "Courier")
         GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
-    )
+    ).apply {
+        selectedItem = "Arial"
+    }
 
     private val myFontSize = JSpinner()
     private val mySizeRatio = JSpinner(
@@ -58,6 +61,10 @@ class TextSizeDemoWindow(
     private val myIsItalic = JCheckBox("italic")
     private val myItalicRatio = JSpinner(
         SpinnerNumberModel(1.0, 0.1, 2.0, 0.01)
+    )
+
+    private val myFontRatio = JSpinner(
+        SpinnerNumberModel(1.0, 0.01, 2.0, 0.01)
     )
 
     private val myFontAdditiveError = JSpinner(
@@ -110,6 +117,7 @@ class TextSizeDemoWindow(
                 sizeRatio = mySizeRatio.value.toString().toDouble(),
                 boldRatio = myBoldRatio.value.toString().toDouble(),
                 italicRatio = myItalicRatio.value.toString().toDouble(),
+                fontRatio = myFontRatio.value.toString().toDouble(),
                 fontAdditiveError = myFontAdditiveError.value.toString().toDouble(),
             )
         )
@@ -132,6 +140,7 @@ class TextSizeDemoWindow(
         mySizeRatio.addChangeListener { rebuild() }
         myBoldRatio.addChangeListener { rebuild() }
         myItalicRatio.addChangeListener { rebuild() }
+        myFontRatio.addChangeListener { rebuild() }
         myFontAdditiveError.addChangeListener { rebuild() }
 
         contentPane.add(mySplitPane, BorderLayout.CENTER)
@@ -163,6 +172,9 @@ class TextSizeDemoWindow(
 
         grid.add(JLabel("Font size ratio:"))
         grid.add(mySizeRatio)
+
+        grid.add(JLabel("Non base font ratio:"))
+        grid.add(myFontRatio)
 
         grid.add(JLabel("Non base font additive error:"))
         grid.add(myFontAdditiveError)

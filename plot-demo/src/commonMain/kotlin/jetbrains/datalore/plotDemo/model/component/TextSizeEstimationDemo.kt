@@ -32,6 +32,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
         sizeRatio: Double,
         boldRatio: Double,
         italicRatio: Double,
+        fontRatio: Double,
         fontAdditiveError: Double
     ): GroupComponent {
         val groupComponent = GroupComponent()
@@ -53,7 +54,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
                 groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
 
                 // new estimation
-                val estimatedSize = fixEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, fontAdditiveError))
+                val estimatedSize = fixEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, fontRatio, fontAdditiveError))
                 groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
@@ -133,6 +134,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
             sizeRatio: Double,
             boldRatio: Double,
             italicRatio: Double,
+            fontRatio: Double,
             fontAdditiveError: Double,
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize, renderingEngineCoeff)) {
@@ -150,6 +152,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
                             sizeRatio,
                             boldRatio,
                             italicRatio,
+                            fontRatio,
                             fontAdditiveError,
                         )
                     )

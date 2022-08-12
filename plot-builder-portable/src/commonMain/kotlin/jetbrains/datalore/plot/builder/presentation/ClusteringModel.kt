@@ -205,6 +205,7 @@ object ClusteringModel {
         sizeRatio: Double,
         boldRatio: Double,
         italicRatio: Double,
+        nonBaseFontRatio: Double,
         nonBaseFontAdditiveError: Double,
     ): DoubleVector {
         if (text.isEmpty()) {
@@ -215,7 +216,7 @@ object ClusteringModel {
             var w = it * font.size / BASIC_FONT_SIZE * sizeRatio
             if (font.isBold) w *= boldRatio
             if (font.isItalic) w *= italicRatio
-            if (!isBaseFont(font)) w += nonBaseFontAdditiveError
+            if (!isBaseFont(font)) w = nonBaseFontRatio * w + nonBaseFontAdditiveError
             w
         }
 
