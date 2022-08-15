@@ -53,7 +53,7 @@ abstract class LegendBoxLayout(
         get() {
             return when {
                 title.isBlank() -> DoubleVector.ZERO
-                else -> textDimensions(title.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
+                else -> textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
             }
         }
 }
