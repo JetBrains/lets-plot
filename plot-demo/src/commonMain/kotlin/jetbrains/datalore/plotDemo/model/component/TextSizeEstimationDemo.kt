@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.component
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
@@ -22,11 +23,28 @@ import jetbrains.datalore.vis.svg.SvgUtils
 import kotlin.math.max
 import kotlin.math.pow
 
+enum class Model {
+    ORIGINAL, CLUSTERING;
+
+    companion object {
+
+        private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Model>()
+
+        fun safeValueOf(v: String): Model {
+            return ENUM_INFO.safeValueOf(v) ?:
+            throw IllegalArgumentException(
+                "Unsupported method: '$v'\n" +
+                "Use one of: original, clustering."
+            )
+        }
+    }
+}
 
 class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingEngineCoeff: Double) : SimpleDemoBase(demoInnerSize) {
 
     fun createModel(
         textLines: List<String>,
+        model: Model,
         font: Font,
         actualTextDimensions: List<DoubleVector>,
         sizeRatio: Double,
@@ -47,14 +65,13 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
             return kotlin.math.round(this * factor) / factor
         }
 
+        val deltas = mutableListOf<Double>()
         textLines
             .forEachIndexed { index, text ->
-                // old estimation
-                val oldSize = correctEstimation(correctEstimation(PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length), multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
-                groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
-
-                // new estimation
-                val estimatedSize = correctEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
+                val estimatedSize = when (model) {
+                    Model.ORIGINAL -> correctEstimation(PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length), multiplicativeCoefficient, additiveCoefficient)
+                    Model.CLUSTERING -> correctEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
+                }
                 groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
@@ -69,13 +86,14 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
 
                 // delta
                 val delta = estimatedSize.x - actualSize.x
+                deltas.add(delta)
 
                 val deltaStr = "actual=${actualSize.x.round()}, estimated=${estimatedSize.x.round()}, ∆=${delta.round()}"
                 val deltaLabel = createTextLabel(deltaStr, Font(FontFamily.MONOSPACED, 10))
                 val deltaElement = deltaLabel.rootGroup
                 SvgUtils.transformTranslate(
                     deltaElement,
-                    x + (listOf(oldSize.x, estimatedSize.x, actualSize.x).maxOrNull() ?: 0.0 ) + 10.0,
+                    x + (listOf(estimatedSize.x, actualSize.x).maxOrNull() ?: 0.0 ) + 10.0,
                     y
                 )
                 groupComponent.add(deltaElement)
@@ -86,6 +104,19 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
                     y = 20.0
                 }
             }
+
+        val meanDelta = deltas.sum() / deltas.size
+        val stdDelta = (deltas.sumOf { (it - meanDelta).pow(2) } / deltas.size).pow(0.5)
+        val accDeltaStr = "Mean ∆ = ${meanDelta.round()}, Std ∆ = ${stdDelta.round()}"
+        val accDeltaLabel = createTextLabel(accDeltaStr, Font(FontFamily.MONOSPACED, 10))
+        val accDeltaElement = accDeltaLabel.rootGroup
+        SvgUtils.transformTranslate(
+            accDeltaElement,
+            x + 10.0,
+            y
+        )
+        groupComponent.add(accDeltaElement)
+
         return groupComponent
     }
 
@@ -130,6 +161,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
             demoInnerSize: DoubleVector,
             renderingEngineCoeff: Double,
             textLines: List<String>,
+            model: String,
             fontName: String,
             fontSize: Int,
             isBold: Boolean,
@@ -146,6 +178,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
                     listOf(
                         createModel(
                             textLines,
+                            Model.safeValueOf(model),
                             Font(
                                 FontFamily.forName(fontName),
                                 fontSize,

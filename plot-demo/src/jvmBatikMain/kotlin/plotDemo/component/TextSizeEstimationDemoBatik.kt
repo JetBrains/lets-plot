@@ -6,6 +6,7 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plotDemo.data.PlotTitles
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
 import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
@@ -28,6 +29,7 @@ fun main() {
             DoubleVector(demoInnerSize.width.toDouble(), demoInnerSize.height.toDouble()),
             0.75,
             settings.textLines,
+            settings.model,
             settings.fontName,
             settings.fontSize,
             settings.isBold,
@@ -46,6 +48,7 @@ fun main() {
         TextSizeDemoWindow(
             "Text size estimation (Batik)",
             Dimension(1200, 600),
+            PlotTitles.TITLES.joinToString("\n"),
             ::buildPlotComponent
         ).run()
     }

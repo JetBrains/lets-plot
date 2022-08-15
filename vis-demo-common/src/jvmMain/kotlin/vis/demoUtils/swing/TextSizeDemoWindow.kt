@@ -16,6 +16,7 @@ import javax.swing.*
 
 data class TextSettings(
     val textLines: List<String>,
+    val model: String,
     val fontName: String,
     val fontSize: Int,
     val isBold: Boolean,
@@ -31,7 +32,8 @@ data class TextSettings(
 class TextSizeDemoWindow(
     title: String,
     windowSize: Dimension,
-    private val svgComponentFactory: (Dimension, TextSettings) -> JComponent?
+    defaultText: String,
+    private val svgComponentFactory: (Dimension, TextSettings) -> JComponent?,
 ) : JFrame(title) {
 
     private val myTextArea = JTextArea(80, 1)
@@ -41,12 +43,12 @@ class TextSizeDemoWindow(
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     )
 
+    private val myModelComboBox = JComboBox(arrayOf("original", "clustering"))
+
     private val myFontComboBox = JComboBox(
        // arrayOf("Lucida Grande", "Helvetica", "Verdana", "Geneva", "Times New Roman", "Georgia", "Courier")
         GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
-    ).apply {
-        selectedItem = "Arial"
-    }
+    )
 
     private val myFontSize = JSpinner()
     private val mySizeRatio = JSpinner(
@@ -68,7 +70,7 @@ class TextSizeDemoWindow(
     )
 
     private val myAdditiveCoefficient = JSpinner(
-        SpinnerNumberModel(0.0, -20.0, 20.0, 0.1)
+        SpinnerNumberModel(0.0, -20.0, 20.0, 1.0)
     )
 
     private val myInputPanel = JPanel()
@@ -109,6 +111,7 @@ class TextSizeDemoWindow(
             Dimension(size.width - myTextArea.width - 50, size.height - 50),
             TextSettings(
                 textLines = textLines,
+                model = myModelComboBox.selectedItem?.toString() ?: "",
                 fontName = fontName,
                 fontSize = fontSize,
                 isBold = myIsBold.isSelected,
@@ -125,8 +128,9 @@ class TextSizeDemoWindow(
     }
 
     init {
-        myTextArea.text = "Type your text here..."
+        myTextArea.text = defaultText
         myFontSize.addChangeListener { rebuild() }
+        myModelComboBox.addActionListener { rebuild() }
         myFontComboBox.addActionListener { rebuild() }
         myIsBold.addChangeListener {
             myBoldRatio.isEnabled = myIsBold.isSelected
@@ -161,9 +165,14 @@ class TextSizeDemoWindow(
         grid.layout = GridLayout(0, 2)
         grid.preferredSize = Dimension(50,50)
 
+        grid.add(JLabel("Model:"))
+        myModelComboBox.isEditable = false
+        myModelComboBox.selectedItem = "original"
+        grid.add(myModelComboBox)
+
         grid.add(JLabel("Font:"))
         myFontComboBox.isEditable = false
-        myFontComboBox.selectedItem = "Lucida Grande"
+        myFontComboBox.selectedItem = "Arial"
         grid.add(myFontComboBox)
 
         grid.add(JLabel("Font size:"))
