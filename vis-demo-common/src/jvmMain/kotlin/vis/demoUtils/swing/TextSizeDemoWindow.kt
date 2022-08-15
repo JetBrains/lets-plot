@@ -164,6 +164,7 @@ class TextSizeDemoWindow(
         val grid = JPanel()
         grid.layout = GridLayout(0, 2)
         grid.preferredSize = Dimension(50,50)
+        grid.minimumSize = Dimension(400, 300)
 
         grid.add(JLabel("Model:"))
         myModelComboBox.isEditable = false
