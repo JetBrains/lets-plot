@@ -436,7 +436,6 @@ class PlotSvgComponent constructor(
 
     private fun addTitle(
         title: String,
-        leftTop: DoubleVector,
         labelSpec: LabelSpec,
         justification: TextJustification,
         boundRect: DoubleRectangle,
