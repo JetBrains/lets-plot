@@ -33,7 +33,7 @@ internal object PlotLayoutUtil {
         )
     }
 
-    internal fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
+    private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
         return text.split('\n').map(String::trim).map { line -> labelDimensions(line, labelSpec) }
     }
 
