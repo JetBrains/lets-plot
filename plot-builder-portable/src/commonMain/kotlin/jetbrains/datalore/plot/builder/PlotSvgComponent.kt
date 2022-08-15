@@ -28,6 +28,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.splitToLines
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
@@ -58,8 +59,6 @@ class PlotSvgComponent constructor(
     val styleSheet: StyleSheet
 ) : SvgComponent() {
 
-    private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
-
     private val titleLines: List<String> = splitToLines(title)
     private val subtitleLines: List<String> = splitToLines(subtitle)
     private val captionLines: List<String> = splitToLines(caption)
@@ -80,10 +79,10 @@ class PlotSvgComponent constructor(
         private set
 
     // ToDo: remove
-    private val axisTitleLeft: List<String> = splitToLines(frameProviderByTile[0].vAxisLabel)
+    private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
 
     // ToDo: remove
-    private val axisTitleBottom: List<String> = splitToLines(frameProviderByTile[0].hAxisLabel)
+    private val axisTitleBottom: String? = frameProviderByTile[0].hAxisLabel
 
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -246,7 +245,7 @@ class PlotSvgComponent constructor(
             .add(
                 axisTitleSizeDelta(
                     axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    axisTitleBottom = emptyList<String>() to PlotLabelSpec(0.0),
+                    axisTitleBottom = null to PlotLabelSpec(0.0),
                     axisEnabled
                 )
             )
@@ -343,7 +342,7 @@ class PlotSvgComponent constructor(
 
         // add axis titles
         if (axisEnabled) {
-            if (axisTitleLeft.isNotEmpty()) {
+            if (axisTitleLeft != null) {
                 addAxisTitle(
                     axisTitleLeft,
                     Orientation.LEFT,
@@ -353,7 +352,7 @@ class PlotSvgComponent constructor(
                     PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis))
                 )
             }
-            if (axisTitleBottom.isNotEmpty()) {
+            if (axisTitleBottom != null) {
                 addAxisTitle(
                     axisTitleBottom,
                     Orientation.BOTTOM,
@@ -437,7 +436,7 @@ class PlotSvgComponent constructor(
     }
 
     private fun addAxisTitle(
-        text: List<String>,
+        text: String,
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
@@ -494,7 +493,7 @@ class PlotSvgComponent constructor(
             if (orientation.isHorizontal) DoubleVector(0.0, offset) else DoubleVector(offset, 0.0)
         )
 
-        val titleLabel = MultilineLabel(text.joinToString("\n"))
+        val titleLabel = MultilineLabel(text)
         titleLabel.addClassName(className)
         titleLabel.setHorizontalAnchor(horizontalAnchor)
         titleLabel.setLineHeight(titleLineHeight)

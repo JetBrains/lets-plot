@@ -37,6 +37,8 @@ internal object PlotLayoutUtil {
         return textLines.map { line -> labelDimensions(line, labelSpec) }
     }
 
+    internal fun textDimensions(text: String?, labelSpec: LabelSpec) = textDimensions(splitToLines(text), labelSpec)
+
     internal fun textDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
         val linesDimensions = textLinesDimensions(textLines, labelSpec)
         if (linesDimensions.isEmpty()) {
@@ -86,8 +88,8 @@ internal object PlotLayoutUtil {
         baseSize: DoubleVector,
         titleLines: List<String>,
         subtitleLines: List<String>,
-        axisTitleLeft: List<String>,
-        axisTitleBottom: List<String>,
+        axisTitleLeft: String?,
+        axisTitleBottom: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
@@ -116,8 +118,8 @@ internal object PlotLayoutUtil {
         base: DoubleVector,
         titleLines: List<String>,
         subtitleLines: List<String>,
-        axisTitleLeft: List<String>,
-        axisTitleBottom: List<String>,
+        axisTitleLeft: String?,
+        axisTitleBottom: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
@@ -141,8 +143,8 @@ internal object PlotLayoutUtil {
     private fun titlesAndLegendsSizeDelta(
         titleLines: List<String>,
         subtitleLines: List<String>,
-        axisTitleLeft: List<String>,
-        axisTitleBottom: List<String>,
+        axisTitleLeft: String?,
+        axisTitleBottom: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
@@ -169,8 +171,8 @@ internal object PlotLayoutUtil {
     }
 
     fun axisTitleSizeDelta(
-        axisTitleLeft: Pair<List<String>, PlotLabelSpec>,
-        axisTitleBottom: Pair<List<String>, PlotLabelSpec>,
+        axisTitleLeft: Pair<String?, PlotLabelSpec>,
+        axisTitleBottom: Pair<String?, PlotLabelSpec>,
         axisEnabled: Boolean
     ): DoubleVector {
         if (!axisEnabled) return DoubleVector.ZERO
@@ -181,8 +183,8 @@ internal object PlotLayoutUtil {
         return axisTitleLeftDelta.add(axisTitleBottomDelta)
     }
 
-    private fun axisTitleThickness(title: List<String>, axisTitleLabelSpec: PlotLabelSpec): Double {
-        if (title.isEmpty()) return 0.0
+    private fun axisTitleThickness(title: String?, axisTitleLabelSpec: PlotLabelSpec): Double {
+        if (title == null) return 0.0
         val titleSize = textDimensions(title, axisTitleLabelSpec)
         return titleSize.y + AXIS_TITLE_OUTER_MARGIN + AXIS_TITLE_INNER_MARGIN
     }
@@ -214,4 +216,6 @@ internal object PlotLayoutUtil {
             else -> DoubleVector.ZERO
         }
     }
+
+    internal fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
 }
