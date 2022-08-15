@@ -32,8 +32,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
         sizeRatio: Double,
         boldRatio: Double,
         italicRatio: Double,
-        fontRatio: Double,
-        fontAdditiveError: Double
+        multiplicativeCoefficient: Double,
+        additiveCoefficient: Double
     ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
@@ -50,11 +50,11 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
         textLines
             .forEachIndexed { index, text ->
                 // old estimation
-                val oldSize = PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length)
+                val oldSize = correctEstimation(correctEstimation(PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length), multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
                 groupComponent.add(svgRect(createRect(oldSize), Color.LIGHT_GRAY, strokeWidth = 1.0))
 
                 // new estimation
-                val estimatedSize = fixEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, fontRatio, fontAdditiveError))
+                val estimatedSize = correctEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
                 groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
 
                 /// actual size
@@ -97,8 +97,12 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
         return rect
     }
 
-    private fun fixEstimation(estimatedSize: DoubleVector): DoubleVector {
-        return DoubleVector(renderingEngineCoeff * estimatedSize.x, estimatedSize.y)
+    private fun correctEstimation(
+        estimatedSize: DoubleVector,
+        multiplicativeCoefficient: Double = 1.0,
+        additiveCoefficient: Double = 0.0
+    ): DoubleVector {
+        return DoubleVector(multiplicativeCoefficient * estimatedSize.x + additiveCoefficient, estimatedSize.y)
     }
 
     companion object {
@@ -134,8 +138,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
             sizeRatio: Double,
             boldRatio: Double,
             italicRatio: Double,
-            fontRatio: Double,
-            fontAdditiveError: Double,
+            multiplicativeCoefficient: Double,
+            additiveCoefficient: Double,
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize, renderingEngineCoeff)) {
                 createSvgRoots(
@@ -152,8 +156,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
                             sizeRatio,
                             boldRatio,
                             italicRatio,
-                            fontRatio,
-                            fontAdditiveError,
+                            multiplicativeCoefficient,
+                            additiveCoefficient,
                         )
                     )
                 ).firstOrNull()

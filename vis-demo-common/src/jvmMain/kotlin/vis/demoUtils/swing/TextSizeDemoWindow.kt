@@ -24,8 +24,8 @@ data class TextSettings(
     val sizeRatio: Double,
     val boldRatio: Double,
     val italicRatio: Double,
-    val fontRatio: Double,
-    val fontAdditiveError: Double
+    val multiplicativeCoefficient: Double,
+    val additiveCoefficient: Double
 )
 
 class TextSizeDemoWindow(
@@ -63,11 +63,11 @@ class TextSizeDemoWindow(
         SpinnerNumberModel(1.0, 0.1, 2.0, 0.01)
     )
 
-    private val myFontRatio = JSpinner(
+    private val myMultiplicativeCoefficient = JSpinner(
         SpinnerNumberModel(1.0, 0.01, 2.0, 0.01)
     )
 
-    private val myFontAdditiveError = JSpinner(
+    private val myAdditiveCoefficient = JSpinner(
         SpinnerNumberModel(0.0, -20.0, 20.0, 0.1)
     )
 
@@ -117,8 +117,8 @@ class TextSizeDemoWindow(
                 sizeRatio = mySizeRatio.value.toString().toDouble(),
                 boldRatio = myBoldRatio.value.toString().toDouble(),
                 italicRatio = myItalicRatio.value.toString().toDouble(),
-                fontRatio = myFontRatio.value.toString().toDouble(),
-                fontAdditiveError = myFontAdditiveError.value.toString().toDouble(),
+                multiplicativeCoefficient = myMultiplicativeCoefficient.value.toString().toDouble(),
+                additiveCoefficient = myAdditiveCoefficient.value.toString().toDouble(),
             )
         )
         mySplitPane.rightComponent = plotComponent
@@ -140,8 +140,8 @@ class TextSizeDemoWindow(
         mySizeRatio.addChangeListener { rebuild() }
         myBoldRatio.addChangeListener { rebuild() }
         myItalicRatio.addChangeListener { rebuild() }
-        myFontRatio.addChangeListener { rebuild() }
-        myFontAdditiveError.addChangeListener { rebuild() }
+        myMultiplicativeCoefficient.addChangeListener { rebuild() }
+        myAdditiveCoefficient.addChangeListener { rebuild() }
 
         contentPane.add(mySplitPane, BorderLayout.CENTER)
         defaultCloseOperation = EXIT_ON_CLOSE
@@ -173,11 +173,11 @@ class TextSizeDemoWindow(
         grid.add(JLabel("Font size ratio:"))
         grid.add(mySizeRatio)
 
-        grid.add(JLabel("Non base font ratio:"))
-        grid.add(myFontRatio)
+        grid.add(JLabel("Font multiplicative coefficient:"))
+        grid.add(myMultiplicativeCoefficient)
 
-        grid.add(JLabel("Non base font additive error:"))
-        grid.add(myFontAdditiveError)
+        grid.add(JLabel("Font additive coefficient:"))
+        grid.add(myAdditiveCoefficient)
 
         grid.add(myIsBold)
         myBoldRatio.isEnabled = myIsBold.isSelected

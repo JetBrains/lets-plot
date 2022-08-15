@@ -37,7 +37,8 @@ fun main() {
             settings.sizeRatio,
             settings.boldRatio,
             settings.italicRatio,
-            settings.fontAdditiveError
+            settings.multiplicativeCoefficient,
+            settings.additiveCoefficient
         )
         return svgRoot?.let(::createPlotComponent)
     }
