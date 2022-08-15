@@ -471,7 +471,6 @@ class PlotSvgComponent constructor(
         overallGeomBounds: DoubleRectangle,  // geom bounds union
         labelSpec: PlotLabelSpec,
         justification: TextJustification,
-        justification: TextJustification,
         margins: Margins,
         className: String
     ) {
