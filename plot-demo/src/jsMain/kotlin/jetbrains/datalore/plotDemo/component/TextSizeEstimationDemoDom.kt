@@ -10,6 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.data.PlotTitles
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
 import jetbrains.datalore.vis.browser.DomMapperDemoUtil
+import org.w3c.dom.Element
+import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.get
 import org.w3c.dom.svg.SVGTextContentElement
 import kotlin.math.pow
@@ -19,17 +21,42 @@ import kotlin.math.pow
  * Run with TextSizeEstimationDemoBrowser.kt
  */
 fun textSizeEstimationDemo() {
+    val defaultMultiplicativeCoefficient = 1.0
     val rootNodeId = "root"
+    val rootElement = document.getElementById(rootNodeId)
+        ?: throw IllegalStateException("Root node '$rootNodeId' wasn't found")
+
+    val inputPanel = document.createElement("div")
+    val multiplicativeCoefficientInput = document.createElement("input") as HTMLInputElement
+    multiplicativeCoefficientInput.setAttribute("type", "text")
+    multiplicativeCoefficientInput.value = defaultMultiplicativeCoefficient.toString()
+    inputPanel.appendChild(multiplicativeCoefficientInput)
+    rootElement.appendChild(inputPanel)
+
+    val outputPanel = document.createElement("div")
+    outputPanel.id = "root-output"
+    rootElement.appendChild(outputPanel)
+    rebuild(outputPanel, defaultMultiplicativeCoefficient)
+
+    multiplicativeCoefficientInput.addEventListener("input", { event ->
+        rebuild(outputPanel, (event.target as HTMLInputElement).value.toDouble())
+    })
+}
+
+fun rebuild(rootElement: Element, multiplicativeCoefficient: Double) {
+    rootElement.innerHTML = ""
+
     val fontName = "Arial"
     val fontSize = 14
     val isBold = false
     val isItalic = false
     val lineSizes = PlotTitles.TITLES.map { DoubleVector(0.0, 0.0) }
+
     val svgRoot = TextSizeEstimationDemo.createSvgElement(
         DoubleVector(800.0, 600.0),
         0.75,
         PlotTitles.TITLES,
-        "clustering",
+        "original",
         fontName,
         fontSize,
         isBold,
@@ -38,13 +65,11 @@ fun textSizeEstimationDemo() {
         1.0,
         1.0,
         1.0,
-        1.0,
+        multiplicativeCoefficient,
         0.0
     ) ?: return
-    DomMapperDemoUtil.mapToDom(listOf(svgRoot), rootNodeId)
+    DomMapperDemoUtil.mapToDom(listOf(svgRoot), rootElement.id)
 
-    val rootElement = document.getElementById(rootNodeId)
-        ?: throw IllegalStateException("Root node '$rootNodeId' wasn't found")
     val svgElement = rootElement.getElementsByTagName("svg")[0]
         ?: throw IllegalStateException("SVG element wasn't found")
     val textElements = svgElement.getElementsByTagName("text")
