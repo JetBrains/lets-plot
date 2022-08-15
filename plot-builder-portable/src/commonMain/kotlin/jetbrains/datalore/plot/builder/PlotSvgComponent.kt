@@ -348,8 +348,8 @@ class PlotSvgComponent constructor(
                     Orientation.LEFT,
                     overallTileBounds,
                     geomAreaBounds,
-                    "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}",
-                    PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis))
+                    PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
+                    "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
             if (axisTitleBottom != null) {
@@ -358,8 +358,8 @@ class PlotSvgComponent constructor(
                     Orientation.BOTTOM,
                     overallTileBounds,
                     geomAreaBounds,
-                    "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}",
-                    PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis))
+                    PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
+                    "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
         }
@@ -440,8 +440,8 @@ class PlotSvgComponent constructor(
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
-        className: String,
-        labelSpec: PlotLabelSpec
+        labelSpec: PlotLabelSpec,
+        className: String
     ) {
         val referenceRect = when (orientation) {
             Orientation.LEFT,
@@ -487,8 +487,7 @@ class PlotSvgComponent constructor(
                     referenceRect.top - textSize.y - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
                 )
             Orientation.BOTTOM ->
-                DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN
-                )
+                DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
         }.add(
             if (orientation.isHorizontal) DoubleVector(0.0, offset) else DoubleVector(offset, 0.0)
         )
