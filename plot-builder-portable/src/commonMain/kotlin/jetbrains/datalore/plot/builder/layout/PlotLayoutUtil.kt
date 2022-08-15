@@ -37,6 +37,8 @@ internal object PlotLayoutUtil {
         return textLines.map { line -> labelDimensions(line, labelSpec) }
     }
 
+    internal fun textDimensions(text: String?, labelSpec: LabelSpec) = textDimensions(splitToLines(text), labelSpec)
+
     internal fun textDimensions(textLines: List<String>, labelSpec: LabelSpec): DoubleVector {
         val linesDimensions = textLinesDimensions(textLines, labelSpec)
         if (linesDimensions.isEmpty()) {
@@ -60,9 +62,6 @@ internal object PlotLayoutUtil {
             textDimensions(textLines, labelSpec).add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
         }
     }
-
-    private fun axisTitleDimensions(text: String, axisTitleLabelSpec: PlotLabelSpec) =
-        labelDimensions(text, axisTitleLabelSpec)
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
@@ -186,7 +185,7 @@ internal object PlotLayoutUtil {
 
     private fun axisTitleThickness(title: String?, axisTitleLabelSpec: PlotLabelSpec): Double {
         if (title == null) return 0.0
-        val titleSize = axisTitleDimensions(title, axisTitleLabelSpec)
+        val titleSize = textDimensions(title, axisTitleLabelSpec)
         return titleSize.y + AXIS_TITLE_OUTER_MARGIN + AXIS_TITLE_INNER_MARGIN
     }
 
@@ -217,4 +216,6 @@ internal object PlotLayoutUtil {
             else -> DoubleVector.ZERO
         }
     }
+
+    internal fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
 }
