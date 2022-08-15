@@ -60,7 +60,7 @@ abstract class LegendBoxLayout(
     private fun titleSize(s: String): DoubleVector {
         return when {
             s.isBlank() -> DoubleVector.ZERO
-            else -> textDimensions(s.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
+            else -> textDimensions(s, PlotLabelSpecFactory.legendTitle(theme))
         }
     }
 }

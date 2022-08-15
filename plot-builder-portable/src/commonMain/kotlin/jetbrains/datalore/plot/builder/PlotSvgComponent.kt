@@ -28,7 +28,6 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.splitToLines
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
@@ -45,8 +44,9 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 import kotlin.math.max
 
 class PlotSvgComponent constructor(
-    title: String?,
-    subtitle: String?,
+    private val title: String?,
+    private val subtitle: String?,
+    private val caption: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
@@ -55,13 +55,8 @@ class PlotSvgComponent constructor(
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
-    caption: String?,
     val styleSheet: StyleSheet
 ) : SvgComponent() {
-
-    private val titleLines: List<String> = splitToLines(title)
-    private val subtitleLines: List<String> = splitToLines(subtitle)
-    private val captionLines: List<String> = splitToLines(caption)
 
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
@@ -181,14 +176,14 @@ class PlotSvgComponent constructor(
         val axisEnabled = !containsLiveMap
         val plotInnerSizeAvailable = subtractTitlesAndLegends(
             baseSize = entirePlot.dimension,
-            titleLines,
-            subtitleLines,
+            title,
+            subtitle,
+            caption,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines,
             flippedAxis
         )
 
@@ -202,14 +197,14 @@ class PlotSvgComponent constructor(
         val plotInnerSize = plotInfo.size
         val plotOuterSize = addTitlesAndLegends(
             plotInnerSize,
-            titleLines,
-            subtitleLines,
+            title,
+            subtitle,
+            caption,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines,
             flippedAxis
         )
 
@@ -228,7 +223,7 @@ class PlotSvgComponent constructor(
         }
 
         val plotOuterBoundsWithoutTitle = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(titleLines, subtitleLines, theme.plot())
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
             DoubleRectangle(
                 plotOuterBounds.origin.add(titleSizeDelta),
                 plotOuterBounds.dimension.subtract(titleSizeDelta)
@@ -313,22 +308,22 @@ class PlotSvgComponent constructor(
         }
 
         // add plot title
-        if (titleLines.isNotEmpty()) {
+        if (title != null) {
             addTitle(
-                titleLines,
+                title,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
-                className = Style.PLOT_TITLE,
-                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme)
+                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
+                className = Style.PLOT_TITLE
             )
         }
         // add plot subtitle
-        if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(plotTheme))
+        if (subtitle != null) {
+            val titleSize = PlotLayoutUtil.titleDimensions(title, PlotLabelSpecFactory.plotTitle(plotTheme))
             addTitle(
-                subtitleLines,
+                subtitle,
                 leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
-                className = Style.PLOT_SUBTITLE,
-                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme)
+                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                className = Style.PLOT_SUBTITLE
             )
         }
 
@@ -380,14 +375,14 @@ class PlotSvgComponent constructor(
         }
 
         // add caption
-        if (captionLines.isNotEmpty()) {
+        if (caption != null) {
             val captionLineHeight = PlotLabelSpecFactory.plotCaption(plotTheme).height()
-            val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
+            val captionLabel = MultilineLabel(caption)
             captionLabel.addClassName(Style.PLOT_CAPTION)
             captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
             captionLabel.setLineHeight(captionLineHeight)
 
-            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(plotTheme))
+            val captionSize = PlotLayoutUtil.titleDimensions(caption, PlotLabelSpecFactory.plotCaption(plotTheme))
             val captionBounds = DoubleRectangle(
                 geomAreaBounds.right - captionSize.x,
                 plotOuterBounds.bottom - captionSize.y,
@@ -404,18 +399,18 @@ class PlotSvgComponent constructor(
     }
 
     private fun addTitle(
-        titleLines: List<String>,
+        title: String,
         leftTop: DoubleVector,
-        className: String,
-        labelSpec: LabelSpec
+        labelSpec: LabelSpec,
+        className: String
     ) {
         val titleLineHeight = labelSpec.height()
-        val titleLabel = MultilineLabel(titleLines.joinToString("\n"))
+        val titleLabel = MultilineLabel(title)
         titleLabel.addClassName(className)
         titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
         titleLabel.setLineHeight(titleLineHeight)
 
-        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
+        val titleSize = PlotLayoutUtil.titleDimensions(title, labelSpec)
         val titleBounds = DoubleRectangle(leftTop, titleSize)
 
         titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
@@ -423,7 +418,7 @@ class PlotSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             var h = 0.0
-            PlotLayoutUtil.textLinesDimensions(titleLines, labelSpec).forEach { sz ->
+            PlotLayoutUtil.textLinesDimensions(title, labelSpec).forEach { sz ->
                 val bounds = DoubleRectangle(
                     leftTop.add(DoubleVector(0.0, h)),
                     sz

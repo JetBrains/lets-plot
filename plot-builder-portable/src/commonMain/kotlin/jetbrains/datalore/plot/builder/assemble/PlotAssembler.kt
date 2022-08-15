@@ -152,6 +152,7 @@ class PlotAssembler private constructor(
         return PlotSvgComponent(
             title = title,
             subtitle = subtitle,
+            caption = caption,
             coreLayersByTile = coreLayersByTile,
             marginalLayersByTile = marginalLayersByTile,
             plotLayout = plotLayout,
@@ -160,7 +161,6 @@ class PlotAssembler private constructor(
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme,
-            caption = caption,
             styleSheet = styleSheet
         )
     }
