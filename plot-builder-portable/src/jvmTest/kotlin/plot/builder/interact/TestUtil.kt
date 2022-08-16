@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
@@ -40,6 +41,7 @@ object TestUtil {
         override fun showTooltip() = TODO("Not yet implemented")
         override fun titleStyle() = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
+        override fun titleMargins() = Margins()
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")

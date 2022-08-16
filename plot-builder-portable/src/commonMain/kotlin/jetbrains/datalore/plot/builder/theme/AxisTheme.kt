@@ -30,6 +30,8 @@ interface AxisTheme {
 
     fun titleJustification(): TextJustification
 
+    fun titleMargins(): Margins
+
     fun lineWidth(): Double
 
     fun lineColor(): Color
@@ -55,6 +57,4 @@ interface AxisTheme {
     fun tooltipStrokeWidth(): Double
 
     fun tooltipTextStyle(): TextStyle
-
-    fun titleMargins(): Margins = Margins()
 }

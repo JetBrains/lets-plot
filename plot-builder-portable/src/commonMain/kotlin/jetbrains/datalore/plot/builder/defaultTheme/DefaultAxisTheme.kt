@@ -77,6 +77,10 @@ internal class DefaultAxisTheme(
         return getTextJustification(getElemValue(titleKey))
     }
 
+    override fun titleMargins(): Margins {
+        return getMargins(getElemValue(titleKey))
+    }
+
     override fun lineWidth(): Double {
         return getNumber(getElemValue(lineKey), Elem.SIZE)
     }
@@ -117,9 +121,5 @@ internal class DefaultAxisTheme(
         val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
         val textStyle = getTextStyle(getElemValue(tooltipTextKey))
         return textStyle.copy(color = tooltipTextColor)
-    }
-
-    override fun titleMargins(): Margins {
-        return getMargins(getElemValue(titleKey))
     }
 }

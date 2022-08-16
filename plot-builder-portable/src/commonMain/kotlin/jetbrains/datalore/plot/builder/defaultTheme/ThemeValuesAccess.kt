@@ -116,10 +116,10 @@ internal open class ThemeValuesAccess(
         }
 
         return Margins(
-            top = getMargin(Elem.Margin.SIDE_TOP),
-            right = getMargin(Elem.Margin.SIDE_RIGHT),
-            bottom = getMargin(Elem.Margin.SIDE_BOTTOM),
-            left = getMargin(Elem.Margin.SIDE_LEFT),
+            top = getMargin(Elem.Margin.TOP),
+            right = getMargin(Elem.Margin.RIGHT),
+            bottom = getMargin(Elem.Margin.BOTTOM),
+            left = getMargin(Elem.Margin.LEFT),
         )
     }
 }

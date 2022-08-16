@@ -102,10 +102,10 @@ object ThemeOption {
         const val MARGIN = "margin"     // ToDo
 
         object Margin {
-            const val SIDE_TOP = "t"
-            const val SIDE_RIGHT = "r"
-            const val SIDE_BOTTOM = "b"
-            const val SIDE_LEFT = "l"
+            const val TOP = "t"
+            const val RIGHT = "r"
+            const val BOTTOM = "b"
+            const val LEFT = "l"
         }
     }
 
