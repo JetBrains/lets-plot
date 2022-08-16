@@ -32,8 +32,8 @@ internal class DefaultAxisTheme(
     private val suffix = "_$axis"
     internal val ontopKey = listOf(AXIS_ONTOP + suffix, AXIS_ONTOP)
     internal val lineKey = listOf(AXIS_LINE + suffix, AXIS_LINE, AXIS + suffix, AXIS, LINE)
-    internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, TEXT)
-    internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, TITLE, TEXT)
+    internal val textKey = listOf(AXIS_TEXT + suffix, AXIS_TEXT, TEXT, AXIS + suffix, AXIS)
+    internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, TITLE, TEXT, AXIS + suffix, AXIS)
     internal val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
     internal val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
     internal val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
