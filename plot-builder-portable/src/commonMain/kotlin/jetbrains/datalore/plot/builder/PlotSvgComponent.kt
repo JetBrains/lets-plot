@@ -222,20 +222,21 @@ class PlotSvgComponent constructor(
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val plotOuterBoundsWithoutTitle = let {
+        val plotOuterBoundsWithoutTitleAndCaption = let {
             val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
+            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
             DoubleRectangle(
                 plotOuterBounds.origin.add(titleSizeDelta),
-                plotOuterBounds.dimension.subtract(titleSizeDelta)
+                plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
             )
         }
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
-            drawDebugRect(plotOuterBoundsWithoutTitle, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitle")
+            drawDebugRect(plotOuterBoundsWithoutTitleAndCaption, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitleAndCaption")
         }
 
         // Inner bounds - all without titles and legends.
-        val plotInnerOrigin = plotOuterBoundsWithoutTitle.origin
+        val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(
                 axisTitleSizeDelta(
@@ -362,7 +363,7 @@ class PlotSvgComponent constructor(
         // add legends
         if (!legendTheme.position().isHidden) {
             val legendsBlockInfoLayouted = LegendBoxesLayout(
-                outerBounds = plotOuterBoundsWithoutTitle,
+                outerBounds = plotOuterBoundsWithoutTitleAndCaption,
                 innerBounds = geomAreaBounds,
                 legendTheme
             ).doLayout(legendsBlockInfo)
