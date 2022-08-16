@@ -387,7 +387,7 @@ def element_text(
         family=None,
         face=None,
         size=None,
-        # ToDo: hjust, vjust, angle, lineheight, margin
+        # ToDo: angle, lineheight, margin
         hjust=None,
         vjust=None,
         blank=False,

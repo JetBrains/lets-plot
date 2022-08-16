@@ -92,10 +92,10 @@ abstract class LegendBox : SvgComponent() {
                 add(rect)
             }
             // content bounds
-            add(createTransparentRect(spec.contentBounds, Color.RED, 1.0))
+            add(createTransparentRect(spec.contentBounds, Color.DARK_MAGENTA, 1.0))
             // title bounds
             val rect = titleBoundingRect.add(spec.contentOrigin)
-            add(createTransparentRect(rect, Color.BLUE, 1.0))
+            add(createTransparentRect(rect, Color.MAGENTA, 1.0))
         }
 
         add(innerGroup)

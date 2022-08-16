@@ -19,9 +19,11 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
 
-- Parameters `size, family` in `element_text()`.
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb).
+- New parameters  in `element_text()`  [[#562](https://github.com/JetBrains/lets-plot/issues/562)]:
+  - `size, family` 
+    ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb));
+  - `hjust, vjust` for plot title, subtitle, caption, legend and axis titles
+    ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/hjust_vjust.ipynb)).
 
 - Parameter `whisker_width` in `geom_boxplot()` [[#549](https://github.com/JetBrains/lets-plot/issues/549)].
 
