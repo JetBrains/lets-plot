@@ -151,7 +151,7 @@ internal object PlotLayoutUtil {
             axisEnabled
         )
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
-        val captionDelta = DoubleVector(0.0, titleDimensions(caption, PlotLabelSpecFactory.plotCaption(theme.plot())).y)
+        val captionDelta = captionSizeDelta(caption, theme.plot())
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta)
     }
 
@@ -161,6 +161,10 @@ internal object PlotLayoutUtil {
             titleDimensions(title, PlotLabelSpecFactory.plotTitle(theme)).y +
                     titleDimensions(subtitle, PlotLabelSpecFactory.plotSubtitle(theme)).y
         )
+    }
+
+    fun captionSizeDelta(caption: String?, theme: PlotTheme): DoubleVector {
+        return DoubleVector(0.0, titleDimensions(caption, PlotLabelSpecFactory.plotCaption(theme)).y)
     }
 
     fun axisTitleSizeDelta(
