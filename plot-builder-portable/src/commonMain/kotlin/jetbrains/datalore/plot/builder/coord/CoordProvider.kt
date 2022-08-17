@@ -11,7 +11,8 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.coord.CoordinatesMapper
+import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
@@ -24,17 +25,20 @@ interface CoordProvider {
         flipped: Boolean
     ): CoordProvider
 
-//    fun createCoordinateSystem(
-//        xDomain: DoubleSpan,
-//        xMapper: ScaleMapper<Double>,
-//        yDomain: DoubleSpan,
-//        yMapper: ScaleMapper<Double>,
-//    ): CoordinateSystem
+    fun createCoordinateMapper(
+        domain: DoubleRectangle,
+        clientSize: DoubleVector,
+    ): CoordinatesMapper {
+        return CoordinatesMapper(domain, clientSize, projection)
+    }
 
     fun createCoordinateSystem(
         domain: DoubleRectangle,
         clientSize: DoubleVector,
-    ): CoordinateSystem
+    ): CoordinateSystem {
+        val coordMapper = CoordinatesMapper(domain, clientSize, projection)
+        return Coords.create(coordMapper)
+    }
 
     fun buildAxisScaleX(
         scaleProto: Scale<Double>,
@@ -49,18 +53,6 @@ interface CoordProvider {
         xDomain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double>
-
-    fun buildAxisXScaleMapper(
-        domain: DoubleSpan,
-        axisLength: Double,
-        yDomain: DoubleSpan,
-    ): ScaleMapper<Double>
-
-    fun buildAxisYScaleMapper(
-        domain: DoubleSpan,
-        axisLength: Double,
-        xDomain: DoubleSpan,
-    ): ScaleMapper<Double>
 
     fun adjustDomains(
         hDomain: DoubleSpan,

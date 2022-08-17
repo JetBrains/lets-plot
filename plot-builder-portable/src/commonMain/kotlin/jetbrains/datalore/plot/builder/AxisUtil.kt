@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.builder.guide.AxisComponent
 object AxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
-//        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): AxisComponent.BreaksData {
@@ -26,14 +25,9 @@ object AxisUtil {
 
     private fun toAxisCoord(
         scaleBreaks: ScaleBreaks,
-//        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
         horizontal: Boolean
     ): List<Double> {
-//        val breaksMapped = scaleBreaks.transformedValues.map {
-//            // Don't expect NULLs.
-//            scaleMapper(it) as Double
-//        }
         val breaksMapped = scaleBreaks.transformedValues
         val axisBreaks = ArrayList<Double>()
         for (br in breaksMapped) {

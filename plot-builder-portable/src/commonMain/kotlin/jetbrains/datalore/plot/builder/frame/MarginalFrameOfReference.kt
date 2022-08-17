@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.coord.CoordinatesMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.FrameOfReference
@@ -19,8 +19,7 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class MarginalFrameOfReference(
     private val bounds: DoubleRectangle,
-    private val hScaleMapper: ScaleMapper<Double>,
-    private val vScaleMapper: ScaleMapper<Double>,
+    private val coordMapper: CoordinatesMapper,
     private val coord: CoordinateSystem,
     private val isDebugDrawing: Boolean,
 ) : FrameOfReference {
@@ -38,20 +37,15 @@ internal class MarginalFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
+        val leftTop = coordMapper.toClient(bounds.origin)!!
+        val rightBottom = coordMapper.toClient(bounds.origin.add(bounds.dimension))!!
         val aesBounds = DoubleRectangle(
-            xRange = DoubleSpan(
-                hScaleMapper(bounds.left) as Double,
-                hScaleMapper(bounds.right) as Double
-            ),
-            yRange = DoubleSpan(
-                vScaleMapper(bounds.top) as Double,
-                vScaleMapper(bounds.bottom) as Double
-            )
+            xRange = DoubleSpan(leftTop.x, rightBottom.x),
+            yRange = DoubleSpan(leftTop.y, rightBottom.y)
         )
 
         val layerComponent = SquareFrameOfReference.buildGeom(
             layer,
-//            hScaleMapper, vScaleMapper,
             xyAesBounds = aesBounds,
             coord,
             flippedAxis = false,

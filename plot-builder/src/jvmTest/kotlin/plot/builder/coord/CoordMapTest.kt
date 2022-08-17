@@ -25,8 +25,8 @@ internal class CoordMapTest : CoordTestBase() {
             tryApplyScales(
                 ratio, PROVIDER,
                 expectedMin = DoubleVector(0.0, 0.0),
-                expectedMax = DoubleVector(1.0, 1.15),
-                accuracy = DoubleVector(0.0, 0.01)
+                expectedMax = DoubleVector(1.0, 1.1581),
+                accuracy = DoubleVector(0.0, 0.0001)
             )
         }
         run {
@@ -34,8 +34,8 @@ internal class CoordMapTest : CoordTestBase() {
             tryApplyScales(
                 ratio, PROVIDER,
                 expectedMin = DoubleVector(0.0, 0.0),
-                expectedMax = DoubleVector(0.86, 1.0),
-                accuracy = DoubleVector(0.01, 0.0)
+                expectedMax = DoubleVector(0.8634, 1.0),
+                accuracy = DoubleVector(0.0001, 1.0E-10)
             )
         }
     }

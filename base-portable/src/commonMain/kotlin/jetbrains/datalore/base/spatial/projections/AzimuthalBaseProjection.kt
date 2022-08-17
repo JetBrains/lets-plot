@@ -13,7 +13,7 @@ import kotlin.math.*
 
 internal abstract class AzimuthalBaseProjection : Projection {
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
+    override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
 
     override val cylindrical: Boolean = false
 

@@ -16,7 +16,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 interface Projection {
     fun project(v: DoubleVector): DoubleVector?
     fun invert(v: DoubleVector): DoubleVector?
-    fun validRect(): DoubleRectangle
+
+    fun validDomain(): DoubleRectangle
     val nonlinear: Boolean
         get() = true
     val cylindrical: Boolean

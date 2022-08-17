@@ -41,11 +41,13 @@ internal open class CoordTestBase {
             )
         }
 
-        val scaleXMapper = provider.buildAxisXScaleMapper(domainX, displaySize.x, domainY)
-        val scaleYMapper = provider.buildAxisYScaleMapper(domainY, displaySize.y, domainX)
+        val coordMapper = provider.createCoordinateMapper(
+            domain = DoubleRectangle(domainX, domainY),
+            clientSize = displaySize
+        )
 
         // adapts to display size
-        val actualMin = DoubleVector(scaleXMapper(dataBounds.origin.x)!!, scaleYMapper(dataBounds.origin.y)!!)
+        val actualMin = coordMapper.toClient(dataBounds.origin)!!
         assertEqualPoints(
             "min",
             expectedMin,
@@ -54,7 +56,7 @@ internal open class CoordTestBase {
         )
 
         val p = dataBounds.origin.add(dataBounds.dimension)
-        val actualMax = DoubleVector(scaleXMapper(p.x)!!, scaleYMapper(p.y)!!)
+        val actualMax = coordMapper.toClient(p)!!
         assertEqualPoints(
             "max",
             expectedMax,

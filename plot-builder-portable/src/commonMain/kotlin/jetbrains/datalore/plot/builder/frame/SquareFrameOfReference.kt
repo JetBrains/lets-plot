@@ -28,8 +28,6 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 internal class SquareFrameOfReference(
     private val hScale: Scale<Double>,
     private val vScale: Scale<Double>,
-//    private val hScaleMapper: ScaleMapper<Double>,
-//    private val vScaleMapper: ScaleMapper<Double>,
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -39,21 +37,13 @@ internal class SquareFrameOfReference(
 
     var isDebugDrawing: Boolean = false
 
-//    private val hScaleMapper: ScaleMapper<Double> = ScaleMapper.wrap { v ->  }
-
-    //    private val geomMapperX: ScaleMapper<Double>
-//    private val geomMapperY: ScaleMapper<Double>
     private val geomCoord: CoordinateSystem
 
     init {
         if (flipAxis) {
             // flip mappers to 'fool' geom.
-//            geomMapperX = vScaleMapper
-//            geomMapperY = hScaleMapper
             geomCoord = coord.flip()
         } else {
-//            geomMapperX = hScaleMapper
-//            geomMapperY = vScaleMapper
             geomCoord = coord
         }
     }
@@ -104,7 +94,6 @@ internal class SquareFrameOfReference(
             val axisInfo = layoutInfo.hAxisInfo!!
             val hAxis = buildAxis(
                 hScale,
-//                hScaleMapper,
                 axisInfo,
                 hideAxis = !drawHAxis,
                 hideAxisBreaks = !layoutInfo.hAxisShown,
@@ -128,7 +117,6 @@ internal class SquareFrameOfReference(
             val axisInfo = layoutInfo.vAxisInfo!!
             val vAxis = buildAxis(
                 vScale,
-//                vScaleMapper,
                 axisInfo,
                 hideAxis = !drawVAxis,
                 hideAxisBreaks = !layoutInfo.vAxisShown,
@@ -185,27 +173,13 @@ internal class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-//        val hAxisMapper = hScaleMapper
-//        val vAxisMapper = vScaleMapper
-
         val hAxisDomain = layoutInfo.hAxisInfo!!.axisDomain
         val vAxisDomain = layoutInfo.vAxisInfo!!.axisDomain
-//        val aesBounds = DoubleRectangle(
-//            xRange = DoubleSpan(
-//                hAxisMapper(hAxisDomain.lowerEnd) as Double,
-//                hAxisMapper(hAxisDomain.upperEnd) as Double
-//            ),
-//            yRange = DoubleSpan(
-//                vAxisMapper(vAxisDomain.lowerEnd) as Double,
-//                vAxisMapper(vAxisDomain.upperEnd) as Double
-//            )
-//        )
-        // We no longer map x/y
+        // Positional aesthetics are not differ from thransformed data.
         val aesBounds = DoubleRectangle(hAxisDomain, vAxisDomain)
 
         val layerComponent = buildGeom(
             layer,
-//            geomMapperX, geomMapperY,
             xyAesBounds = aesBounds,
             geomCoord,
             flipAxis,
@@ -222,7 +196,6 @@ internal class SquareFrameOfReference(
     companion object {
         private fun buildAxis(
             scale: Scale<Double>,
-//            scaleMapper: ScaleMapper<Double>,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
@@ -246,7 +219,6 @@ internal class SquareFrameOfReference(
 
             val breaksData = AxisUtil.breaksData(
                 scale.getScaleBreaks(),
-//                scaleMapper,
                 coord,
                 orientation.isHorizontal
             )
@@ -296,16 +268,13 @@ internal class SquareFrameOfReference(
          */
         internal fun buildGeom(
             layer: GeomLayer,
-//            xAesMapper: ScaleMapper<Double>,
-//            yAesMapper: ScaleMapper<Double>,
             xyAesBounds: DoubleRectangle,
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(
-                layer,
-//                xAesMapper, yAesMapper
+                layer
             )
 
             @Suppress("NAME_SHADOWING")

@@ -12,18 +12,17 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
-        xRange: DoubleSpan,
-        yRange: DoubleSpan,
         coordMapper: CoordinatesMapper,
     ): CoordinateSystem {
+        val clientBounds = coordMapper.clientBounds
         val origin = DoubleVector(
-            originX(xRange),
-            originY(yRange)
+            originX(clientBounds.xRange()),
+            originY(clientBounds.yRange())
         )
         return create(origin, coordMapper)
     }
 
-    fun create(
+    private fun create(
         origin: DoubleVector,
         coordMapper: CoordinatesMapper
     ): CoordinateSystem {

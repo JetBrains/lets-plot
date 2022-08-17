@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.MarginSide
 
@@ -47,28 +46,6 @@ internal class MarginalLayerCoordProvider(
         breaks: ScaleBreaks
     ): Scale<Double> {
         UNSUPPORTED("MarginalLayerCoordProvider.buildAxisScaleY()")
-    }
-
-    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double, yDomain: DoubleSpan): ScaleMapper<Double> {
-        return when (margin) {
-            MarginSide.LEFT, MarginSide.RIGHT -> super.buildAxisXScaleMapper(
-                domain,
-                axisLength,
-                yDomain
-            )
-            MarginSide.TOP, MarginSide.BOTTOM -> coreCoordProvider.buildAxisXScaleMapper(
-                domain,
-                axisLength,
-                yDomain
-            )
-        }
-    }
-
-    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double, xDomain: DoubleSpan): ScaleMapper<Double> {
-        return when (margin) {
-            MarginSide.LEFT, MarginSide.RIGHT -> coreCoordProvider.buildAxisYScaleMapper(domain, axisLength, xDomain)
-            MarginSide.TOP, MarginSide.BOTTOM -> super.buildAxisYScaleMapper(domain, axisLength, xDomain)
-        }
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {

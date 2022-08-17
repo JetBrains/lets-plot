@@ -26,7 +26,7 @@ internal class MercatorProjection : Projection {
             limitLat(MercatorUtils.getLatitude(v.y))
         )
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
+    override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
     override val cylindrical: Boolean = true
 
     companion object {

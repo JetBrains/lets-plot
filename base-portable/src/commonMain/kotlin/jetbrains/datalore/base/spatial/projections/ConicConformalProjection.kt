@@ -22,7 +22,7 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : Projection {
     }
 
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
+    override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
 
     override val cylindrical: Boolean = false
 

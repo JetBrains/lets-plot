@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.FrameOfReference
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.MarginSide
@@ -84,17 +85,6 @@ internal class SquareFrameOfReferenceProvider(
         val vAxisLayoutInfo = layoutInfo.vAxisInfo!!
 
         // Set-up scales and coordinate system.
-//        val hScaleMapper = coordProvider.buildAxisXScaleMapper(
-//            hAxisLayoutInfo.axisDomain,
-//            hAxisLayoutInfo.axisLength,
-//            vAxisLayoutInfo.axisDomain,
-//        )
-//        val vScaleMapper = coordProvider.buildAxisYScaleMapper(
-//            vAxisLayoutInfo.axisDomain,
-//            vAxisLayoutInfo.axisLength,
-//            hAxisLayoutInfo.axisDomain
-//        )
-
         val domain = DoubleRectangle(
             hAxisLayoutInfo.axisDomain,
             vAxisLayoutInfo.axisDomain
@@ -117,28 +107,10 @@ internal class SquareFrameOfReferenceProvider(
             vAxisLayoutInfo.axisBreaks
         )
 
-//        // ToDo: use hScaleMapper, vScaleMapper.
-//        //       First have to get rid of `twistScaleMapper()` in ProjectionCoordProvider.
-//        val xMapper = CoordProviderBase.linearMapper(
-//            hAxisLayoutInfo.axisDomain,
-//            hAxisLayoutInfo.axisLength
-//        )
-//        val yMapper = CoordProviderBase.linearMapper(
-//            vAxisLayoutInfo.axisDomain,
-//            vAxisLayoutInfo.axisLength,
-//        )
-//        val coord = coordProvider.createCoordinateSystem(
-//            hAxisLayoutInfo.axisDomain,
-//            xMapper,
-//            vAxisLayoutInfo.axisDomain,
-//            yMapper
-//        )
-
         val coord = coordProvider.createCoordinateSystem(domain, client)
 
         val tileFrameOfReference = SquareFrameOfReference(
             hScale, vScale,
-//            hScaleMapper, vScaleMapper,
             coord,
             layoutInfo,
             marginsLayout,
@@ -186,39 +158,25 @@ internal class SquareFrameOfReferenceProvider(
         val hAxisLayoutInfo = tileLayoutInfo.hAxisInfo!!
         val vAxisLayoutInfo = tileLayoutInfo.vAxisInfo!!
         return domainByMargin.mapValues { (side, domain) ->
-            val xDomain = when (side) {
+            val hDomain = when (side) {
                 MarginSide.LEFT, MarginSide.RIGHT -> domain
                 MarginSide.TOP, MarginSide.BOTTOM -> hAxisLayoutInfo.axisDomain
             }
-            val yDomain = when (side) {
+            val vDomain = when (side) {
                 MarginSide.LEFT, MarginSide.RIGHT -> vAxisLayoutInfo.axisDomain
                 MarginSide.TOP, MarginSide.BOTTOM -> domain
             }
 
-            val xSize = sizes.getValue(side).x
-            val ySize = sizes.getValue(side).y
-
             val marginCoordProvider = MarginalLayerCoordProvider(side, coordProvider)
-            val marginHMapper = marginCoordProvider.buildAxisXScaleMapper(xDomain, xSize, yDomain)
-            val marginVMapper = marginCoordProvider.buildAxisYScaleMapper(yDomain, ySize, xDomain)
-
-//            // ToDo: use marginHMapper, marginVMapper.
-//            //       First have to get rid of `twistScaleMapper()` in ProjectionCoordProvider.
-//            val xMapper = CoordProviderBase.linearMapper(xDomain, xSize)
-//            val yMapper = CoordProviderBase.linearMapper(yDomain, ySize)
-            val coord = marginCoordProvider.createCoordinateSystem(
-                domain = DoubleRectangle(xDomain, yDomain),
-                clientSize = DoubleVector(xSize, ySize),
+            val clientSize = sizes.getValue(side)
+            val coordMapper = marginCoordProvider.createCoordinateMapper(
+                domain = DoubleRectangle(hDomain, vDomain),
+                clientSize = clientSize,
             )
+            val coord = Coords.create(coordMapper)
             MarginalFrameOfReference(
                 boundsByMargin.getValue(side),
-                marginHMapper, marginVMapper,  // ToDo: use mappers from 'coord'
-//                marginCoordProvider.createCoordinateSystem(
-//                    xDomain,
-//                    xMapper,
-//                    yDomain,
-//                    yMapper
-//                ),
+                coordMapper,
                 coord,
                 debugDrawing,
             )

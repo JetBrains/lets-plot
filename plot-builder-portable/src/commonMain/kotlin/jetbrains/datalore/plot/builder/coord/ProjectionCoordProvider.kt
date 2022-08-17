@@ -10,8 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
@@ -35,10 +33,10 @@ internal class ProjectionCoordProvider(
         vDomain: DoubleSpan
     ): Pair<DoubleSpan, DoubleSpan> {
         @Suppress("NAME_SHADOWING")
-        val xDomain = toValidDomain(projection.validRect().xRange(), hDomain)
+        val xDomain = toValidDomain(projection.validDomain().xRange(), hDomain)
 
         @Suppress("NAME_SHADOWING")
-        val yDomain = toValidDomain(projection.validRect().yRange(), vDomain)
+        val yDomain = toValidDomain(projection.validDomain().yRange(), vDomain)
         return (xDomain to yDomain)
     }
 
@@ -71,7 +69,7 @@ internal class ProjectionCoordProvider(
     ): Scale<Double> {
         return if (projection.nonlinear) {
             buildAxisScaleWithProjection(
-                projection.validRect().xRange(),
+                projection.validDomain().xRange(),
                 scaleProto,
                 domain,
                 breaks
@@ -89,49 +87,13 @@ internal class ProjectionCoordProvider(
     ): Scale<Double> {
         return if (projection.nonlinear) {
             buildAxisScaleWithProjection(
-                projection.validRect().yRange(),
+                projection.validDomain().yRange(),
                 scaleProto,
                 domain,
                 breaks
             )
         } else {
             super.buildAxisScaleY(scaleProto, domain, xDomain, breaks)
-        }
-    }
-
-    override fun buildAxisXScaleMapper(
-        domain: DoubleSpan,
-        axisLength: Double,
-        yDomain: DoubleSpan
-    ): ScaleMapper<Double> {
-        return if (projection.nonlinear) {
-            val validDomain = toValidDomain(projection.validRect().xRange(), domain)
-            buildAxisScaleMapperWithProjection(
-                { x -> projection.project(DoubleVector(x, yDomain.lowerEnd))?.x ?: Double.NaN },
-                domain,
-                validDomain,
-                axisLength,
-            )
-        } else {
-            super.buildAxisXScaleMapper(domain, axisLength, yDomain)
-        }
-    }
-
-    override fun buildAxisYScaleMapper(
-        domain: DoubleSpan,
-        axisLength: Double,
-        xDomain: DoubleSpan
-    ): ScaleMapper<Double> {
-        return if (projection.nonlinear) {
-            val validDomain = toValidDomain(projection.validRect().yRange(), domain)
-            buildAxisScaleMapperWithProjection(
-                { y -> projection.project(DoubleVector(xDomain.lowerEnd, y))?.y ?: Double.NaN },
-                domain,
-                validDomain,
-                axisLength,
-            )
-        } else {
-            super.buildAxisXScaleMapper(domain, axisLength, xDomain)
         }
     }
 
@@ -180,46 +142,6 @@ internal class ProjectionCoordProvider(
                 validTransformedValues,
                 validLabels
             )
-        }
-
-        private fun buildAxisScaleMapperWithProjection(
-            projection: (Double) -> Double,
-            domain: DoubleSpan,
-            validDomain: DoubleSpan,
-            axisLength: Double,
-        ): ScaleMapper<Double> {
-            val linearMapper = linearMapper(
-                domain,
-                axisLength
-            )
-
-            val validDomainProjected = DoubleSpan(
-                projection(validDomain.lowerEnd),
-                projection(validDomain.upperEnd)
-            )
-
-            val projectionInverse = Mappers.linear(validDomainProjected, validDomain)
-            return twistScaleMapper(
-                projection,
-                projectionInverse,
-                linearMapper
-            )
-        }
-
-        private fun twistScaleMapper(
-            projection: (Double) -> Double,
-            projectionInverse: ScaleMapper<Double>,
-            scaleMapper: ScaleMapper<Double>
-        ): ScaleMapper<Double> {
-            return object : ScaleMapper<Double> {
-                override fun invoke(v: Double?): Double? {
-                    return v?.let {
-                        val projected = projection(it)
-                        val unProjected = projectionInverse(projected)
-                        scaleMapper(unProjected)
-                    }
-                }
-            }
         }
     }
 }

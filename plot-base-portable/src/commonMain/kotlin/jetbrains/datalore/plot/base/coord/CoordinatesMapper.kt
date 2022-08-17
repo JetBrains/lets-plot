@@ -11,9 +11,6 @@ import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 
-/**
- * ToDo: interface
- */
 class CoordinatesMapper(
     domain: DoubleRectangle,
     clientSize: DoubleVector,
@@ -24,7 +21,7 @@ class CoordinatesMapper(
     val clientBounds: DoubleRectangle
 
     init {
-        val validDomain = projection.validRect().intersect(domain)
+        val validDomain = projection.validDomain().intersect(domain)
         if (validDomain != null) {
             val leftTop = projection.project(validDomain.origin)!!
             val rightBottom = projection.project(validDomain.origin.add(validDomain.dimension))!!
