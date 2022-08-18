@@ -109,17 +109,11 @@ internal open class ThemeValuesAccess(
     }
 
     protected fun getMargins(elem: Map<String, Any>): Margins {
-        val margin = elem[Elem.MARGIN] as? Map<*, *>
-
-        fun getMargin(side: String): Double {
-            return (margin?.get(side) as Number).toDouble()
-        }
-
         return Margins(
-            top = getMargin(Elem.Margin.TOP),
-            right = getMargin(Elem.Margin.RIGHT),
-            bottom = getMargin(Elem.Margin.BOTTOM),
-            left = getMargin(Elem.Margin.LEFT),
+            top = getNumber(elem, Elem.Margin.TOP),
+            right = getNumber(elem, Elem.Margin.RIGHT),
+            bottom = getNumber(elem, Elem.Margin.BOTTOM),
+            left = getNumber(elem, Elem.Margin.LEFT),
         )
     }
 }

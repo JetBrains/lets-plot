@@ -28,16 +28,17 @@ class ThemeConfig constructor(
         // Make sure all values are converted to proper objects.
         @Suppress("NAME_SHADOWING")
         val userOptions: Map<String, Any> = themeSettings.mapValues { (key, value) ->
-            val value = convertElementBlank(value)
+            var value = convertElementBlank(value)
+            value = convertMargins(value)
             LegendThemeConfig.convertValue(key, value)
         }
-       val effectiveOptions =  (baselineValues + userOptions).let {
-           val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
-           if (flavorName != null) {
-               ThemeFlavor.forName(flavorName).updateColors(it)
-           } else {
-               it
-           }
+        val effectiveOptions = (baselineValues + userOptions).let {
+            val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
+            if (flavorName != null) {
+                ThemeFlavor.forName(flavorName).updateColors(it)
+            } else {
+                it
+            }
         }
         theme = DefaultTheme(effectiveOptions)
     }
@@ -55,6 +56,16 @@ class ThemeConfig constructor(
                 return ELEMENT_BLANK
             }
             return value
+        }
+
+        private fun convertMargins(value: Any): Any {
+            return if (value is Map<*, *> && ThemeOption.Elem.MARGIN in value) {
+                val oldMargins = value[ThemeOption.Elem.MARGIN] as Map<*, *>
+                val newMargins = oldMargins.map { (k, v) -> ThemeOption.Elem.MARGIN + "_" + k to v }
+                value - ThemeOption.Elem.MARGIN + newMargins
+            } else {
+                value
+            }
         }
     }
 }

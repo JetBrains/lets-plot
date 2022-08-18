@@ -475,7 +475,4 @@ def margin(t=None, r=None, b=None, l=None) -> dict:
             theme(axis_title=element_text(margin=margin(t=10,r=10,b=4,l=4)))
 
     """
-    if None in (t, r, b, l):
-        raise ValueError("Please specify all parameters in `margin(t, r, b, l)`")
-
     return locals()

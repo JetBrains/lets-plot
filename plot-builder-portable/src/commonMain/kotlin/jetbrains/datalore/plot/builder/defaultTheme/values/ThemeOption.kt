@@ -99,13 +99,13 @@ object ThemeOption {
         const val VJUST = "vjust"
         const val ANGLE = "angle"       // ToDo
         const val LINEHEIGHT = "lineheight" // ToDo
-        const val MARGIN = "margin"     // ToDo
+        const val MARGIN = "margin"
 
         object Margin {
-            const val TOP = "t"
-            const val RIGHT = "r"
-            const val BOTTOM = "b"
-            const val LEFT = "l"
+            const val TOP = "margin_t"
+            const val RIGHT = "margin_r"
+            const val BOTTOM = "margin_b"
+            const val LEFT = "margin_l"
         }
     }
 
