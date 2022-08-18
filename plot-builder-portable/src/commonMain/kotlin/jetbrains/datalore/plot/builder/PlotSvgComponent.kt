@@ -334,8 +334,8 @@ class PlotSvgComponent constructor(
         }
         val plotTitleTextRect = plotTitleElementRect?.let(::textRectangle)
         if (DEBUG_DRAWING) {
-            plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+            plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
         }
 
         val subtitleElementRect = subtitle?.let {
@@ -348,8 +348,8 @@ class PlotSvgComponent constructor(
         }
         val subtitleTextRect = subtitleElementRect?.let(::textRectangle)
         if (DEBUG_DRAWING) {
-            subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+            subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
         }
 
         val captionElementRect = caption?.let {
@@ -363,8 +363,8 @@ class PlotSvgComponent constructor(
         }
         val captionTextRect = captionElementRect?.let(::textRectangle)
         if (DEBUG_DRAWING) {
-            captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+            captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
         }
 
         // add plot title
@@ -449,30 +449,6 @@ class PlotSvgComponent constructor(
         }
     }
 
-    private fun addTitle(
-        title: String?,
-        labelSpec: LabelSpec,
-        justification: TextJustification,
-        boundRect: DoubleRectangle,
-        className: String
-    ) {
-        if (title == null) return
-
-        val lineHeight = labelSpec.height()
-        val titleLabel = MultilineLabel(title)
-        titleLabel.addClassName(className)
-        val (position, hAnchor) = applyJustification(
-            boundRect,
-            textSize = PlotLayoutUtil.textDimensions(title, labelSpec),
-            lineHeight,
-            justification
-        )
-        titleLabel.setLineHeight(lineHeight)
-        titleLabel.setHorizontalAnchor(hAnchor)
-        titleLabel.moveTo(position)
-        add(titleLabel)
-    }
-
     private fun addAxisTitle(
         text: String,
         orientation: Orientation,
@@ -503,8 +479,7 @@ class PlotSvgComponent constructor(
             else -> 0.0
         }
 
-        val textSize = PlotLayoutUtil.textDimensions(text, labelSpec)
-        val textHeight = textSize.y
+        val textHeight = PlotLayoutUtil.textDimensions(text, labelSpec).y
 
         val axisTitleBounds = when (orientation) {
             Orientation.LEFT ->
@@ -537,25 +512,45 @@ class PlotSvgComponent constructor(
                 )
         }
 
-        val lineHeight = labelSpec.height()
-        val titleLabel = MultilineLabel(text)
-        titleLabel.addClassName(className)
-        val (position, hAnchor) = applyJustification(
-            axisTitleBounds,
-            textSize,
-            lineHeight,
+        addTitle(
+            text,
+            labelSpec,
             justification,
-            angle = rotation
+            axisTitleBounds,
+            rotation,
+            className
         )
-        titleLabel.setLineHeight(lineHeight)
-        titleLabel.setHorizontalAnchor(hAnchor)
-        titleLabel.moveTo(position)
-        titleLabel.rotate(rotation)
-        add(titleLabel)
 
         if (DEBUG_DRAWING) {
             drawDebugRect(axisTitleBounds, Color.LIGHT_BLUE)
         }
+    }
+
+    private fun addTitle(
+        title: String?,
+        labelSpec: LabelSpec,
+        justification: TextJustification,
+        boundRect: DoubleRectangle,
+        angle: Double? = null,
+        className: String
+    ) {
+        if (title == null) return
+
+        val lineHeight = labelSpec.height()
+        val titleLabel = MultilineLabel(title)
+        titleLabel.addClassName(className)
+        val (position, hAnchor) = applyJustification(
+            boundRect,
+            textSize = PlotLayoutUtil.textDimensions(title, labelSpec),
+            lineHeight,
+            justification,
+            angle ?: 0.0
+        )
+        titleLabel.setLineHeight(lineHeight)
+        titleLabel.setHorizontalAnchor(hAnchor)
+        titleLabel.moveTo(position)
+        angle?.let(titleLabel::rotate)
+        add(titleLabel)
     }
 
     private fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
@@ -585,6 +580,6 @@ class PlotSvgComponent constructor(
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)
-        private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = true
     }
 }
