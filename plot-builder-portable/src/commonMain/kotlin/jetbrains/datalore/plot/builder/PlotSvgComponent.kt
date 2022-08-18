@@ -580,6 +580,6 @@ class PlotSvgComponent constructor(
 
     companion object {
         private val LOG = PortableLogging.logger(PlotSvgComponent::class)
-        private const val DEBUG_DRAWING = true
+        private const val DEBUG_DRAWING = PLOT_DEBUG_DRAWING
     }
 }
