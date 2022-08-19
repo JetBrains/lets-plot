@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.layout.tile
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.vis.TextStyle
@@ -32,6 +33,7 @@ internal class LiveMapAxisTheme : AxisTheme {
         size = Defaults.Plot.Axis.TITLE_FONT_SIZE.toDouble(),
         color = Defaults.TEXT_COLOR
     )
+    override fun titleJustification() = TextJustification(0.5, 1.0)
 
     override fun lineWidth() = 1.0
 

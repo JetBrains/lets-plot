@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.vis.TextStyle
 
@@ -25,6 +26,8 @@ interface AxisTheme {
     fun showTooltip(): Boolean
 
     fun titleStyle(): TextStyle
+
+    fun titleJustification(): TextJustification
 
     fun lineWidth(): Double
 

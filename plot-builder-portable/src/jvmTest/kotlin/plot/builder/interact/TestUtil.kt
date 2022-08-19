@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
@@ -38,6 +39,7 @@ object TestUtil {
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
         override fun titleStyle() = TODO("Not yet implemented")
+        override fun titleJustification() = TextJustification(0.5, 1.0)
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")

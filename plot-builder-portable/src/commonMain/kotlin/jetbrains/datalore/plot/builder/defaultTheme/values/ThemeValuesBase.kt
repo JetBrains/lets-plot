@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
@@ -19,6 +20,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
@@ -48,11 +50,15 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.FONT_FACE to FontFace.NORMAL,
                 Elem.FONT_FAMILY to Defaults.FONT_FAMILY_NORMAL,
+                Elem.HJUST to 0.0,
+                Elem.VJUST to 0.5,
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
             ),
-
+            PLOT_CAPTION to mapOf(
+                Elem.HJUST to 1.0,
+            ),
             PANEL_BORDER_RECT to ELEMENT_BLANK,
 
             PLOT_BKGR_RECT to mapOf(
@@ -67,6 +73,10 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_ONTOP to false,
             AXIS_TICKS_LENGTH to 4.0,
+
+            AXIS_TITLE to mapOf(
+                Elem.HJUST to 0.5,
+            ),
 
             PANEL_GRID_MINOR to mapOf(
                 Elem.SIZE to 0.5,

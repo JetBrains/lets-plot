@@ -17,9 +17,9 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
 
 internal object PlotLayoutUtil {
-    private const val AXIS_TITLE_OUTER_MARGIN = 4.0
-    const val AXIS_TITLE_INNER_MARGIN = 4.0
-    private const val TITLE_V_MARGIN = 4.0
+    internal const val AXIS_TITLE_OUTER_MARGIN = 4.0
+    internal const val AXIS_TITLE_INNER_MARGIN = 4.0
+    internal const val TITLE_V_MARGIN = 4.0
     private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
@@ -33,7 +33,7 @@ internal object PlotLayoutUtil {
         )
     }
 
-    internal fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
+    private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
         return text.split('\n').map(String::trim).map { line -> labelDimensions(line, labelSpec) }
     }
 
@@ -48,12 +48,10 @@ internal object PlotLayoutUtil {
             .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
     }
 
-    internal fun titleDimensions(title: String?, labelSpec: LabelSpec): DoubleVector {
-        return if (title == null) {
-            DoubleVector.ZERO
-        } else {
-            textDimensions(title, labelSpec).add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
-        }
+    internal fun plotTitleThickness(title: String?, labelSpec: LabelSpec): Double {
+        if (title == null) return 0.0
+        val titleSize = textDimensions(title, labelSpec)
+        return titleSize.y + 2 * TITLE_V_MARGIN
     }
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
@@ -158,13 +156,13 @@ internal object PlotLayoutUtil {
     fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(title, PlotLabelSpecFactory.plotTitle(theme)).y +
-                    titleDimensions(subtitle, PlotLabelSpecFactory.plotSubtitle(theme)).y
+            plotTitleThickness(title, PlotLabelSpecFactory.plotTitle(theme)) +
+                    plotTitleThickness(subtitle, PlotLabelSpecFactory.plotSubtitle(theme))
         )
     }
 
     fun captionSizeDelta(caption: String?, theme: PlotTheme): DoubleVector {
-        return DoubleVector(0.0, titleDimensions(caption, PlotLabelSpecFactory.plotCaption(theme)).y)
+        return DoubleVector(0.0, plotTitleThickness(caption, PlotLabelSpecFactory.plotCaption(theme)))
     }
 
     fun axisTitleSizeDelta(
