@@ -221,15 +221,14 @@ class AxisComponent(
     }
 
     private fun tickLabelBaseOffset(): DoubleVector {
-        val distance = axisTheme.tickLabelDistance()
+        val distance = axisTheme.tickLabelDistance(orientation.isHorizontal)
         return when (orientation) {
-            Orientation.LEFT -> DoubleVector(-distance, 0.0)
-            Orientation.RIGHT -> DoubleVector(distance, 0.0)
-            Orientation.TOP -> DoubleVector(0.0, -distance)
-            Orientation.BOTTOM -> DoubleVector(0.0, distance)
+            Orientation.LEFT -> DoubleVector(axisTheme.tickLabelMargins().left - distance, 0.0)
+            Orientation.RIGHT -> DoubleVector(distance - axisTheme.tickLabelMargins().right, 0.0)
+            Orientation.TOP -> DoubleVector(0.0, axisTheme.tickLabelMargins().top - distance)
+            Orientation.BOTTOM -> DoubleVector(0.0, distance - axisTheme.tickLabelMargins().bottom)
         }
     }
-
 
     class BreaksData constructor(
         val majorBreaks: List<Double>,

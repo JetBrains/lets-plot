@@ -16,7 +16,7 @@ internal object PlotAxisLayoutUtil {
         theme: AxisTheme,
     ): Double {
         if (theme.showTickMarks() || theme.showLabels()) {
-            val v = theme.tickLabelDistance()
+            val v = theme.tickLabelDistance(orientation.isHorizontal)
             return if (theme.showLabels()) {
                 v + initialTickLabelSize(orientation, PlotLabelSpecFactory.axisTick(theme))
             } else {

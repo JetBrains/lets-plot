@@ -48,6 +48,7 @@ object TestUtil {
         override fun labelStyle() = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
+        override fun tickLabelMargins() = Margins()
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0

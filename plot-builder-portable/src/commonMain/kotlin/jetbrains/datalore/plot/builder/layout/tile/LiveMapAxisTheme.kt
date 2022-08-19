@@ -55,6 +55,8 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tickMarkLength() = 4.0
 
+    override fun tickLabelMargins() = Margins(3.0, 3.0, 0.0, 0.0)
+
     override fun tooltipFill() = Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 
     override fun tooltipColor() = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR

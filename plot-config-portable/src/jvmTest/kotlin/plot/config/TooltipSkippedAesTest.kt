@@ -202,6 +202,7 @@ class TooltipSkippedAesTest {
             override fun labelStyle() = TODO("Not yet implemented")
             override fun tickMarkWidth() = TODO("Not yet implemented")
             override fun tickMarkLength() = TODO("Not yet implemented")
+            override fun tickLabelMargins() = Margins()
             override fun tooltipFill() = Color.WHITE
             override fun tooltipColor() = Color.BLACK
             override fun tooltipStrokeWidth() = 1.0

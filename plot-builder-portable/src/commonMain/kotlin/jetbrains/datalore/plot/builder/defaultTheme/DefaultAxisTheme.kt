@@ -101,6 +101,10 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
+    override fun tickLabelMargins(): Margins {
+        return getMargins(getElemValue(textKey))
+    }
+
     override fun labelStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))
     }
