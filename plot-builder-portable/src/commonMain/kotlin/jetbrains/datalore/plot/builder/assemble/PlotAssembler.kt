@@ -114,22 +114,14 @@ class PlotAssembler private constructor(
             // Create frame of reference provider for each tile.
             val frameProviderByTile: List<FrameOfReferenceProvider> =
                 domainsXYByTile.map { (xDomain, yDomain) ->
-//                    val (hDomain, vDomain) = coordProvider.adjustDomains(
-//                        hDomain = if (flipAxis) yDomain else xDomain,
-//                        vDomain = if (flipAxis) xDomain else yDomain
-//                    )
-
 //                    val (hDomain, vDomain) = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain)).let {
-//                        val r = if (flipAxis) it.flip() else it
-//                        Pair(r.xRange(), r.yRange())
+//                        Pair(it.xRange(), it.yRange())
 //                    }
-                    val (hDomain, vDomain) = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain)).let {
-                        Pair(it.xRange(), it.yRange())
-                    }
 
+                    val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
                     SquareFrameOfReferenceProvider(
                         hScaleProto, vScaleProto,
-                        hDomain, vDomain,
+                        adjustedDomain,
                         flipAxis,
                         theme,
                         marginsLayout,

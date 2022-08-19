@@ -27,8 +27,7 @@ import kotlin.math.max
 internal class SquareFrameOfReferenceProvider(
     private val hScaleProto: Scale<Double>,
     private val vScaleProto: Scale<Double>,
-    hDomain: DoubleSpan,
-    vDomain: DoubleSpan,
+    private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
@@ -41,14 +40,12 @@ internal class SquareFrameOfReferenceProvider(
     init {
         hAxisSpec = AxisSpec(
             AxisBreaksProviderFactory.forScale(hScaleProto),
-            hDomain,
             hScaleProto.name,
             theme.horizontalAxis(flipAxis)
         )
 
         vAxisSpec = AxisSpec(
             AxisBreaksProviderFactory.forScale(vScaleProto),
-            vDomain,
             vScaleProto.name,
             theme.verticalAxis(flipAxis)
         )
@@ -70,10 +67,7 @@ internal class SquareFrameOfReferenceProvider(
             Orientation.LEFT
         )
 
-        val hDomain = hAxisSpec.domainTransformed
-        val vDomain = vAxisSpec.domainTransformed
-
-        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
+        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)
     }
 
     override fun createTileFrame(
@@ -85,16 +79,12 @@ internal class SquareFrameOfReferenceProvider(
         val vAxisLayoutInfo = layoutInfo.vAxisInfo!!
 
         // Set-up scales and coordinate system.
-        val domain = DoubleRectangle(
-            hAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisDomain
-        )
         val client = DoubleVector(
             hAxisLayoutInfo.axisLength,
             vAxisLayoutInfo.axisLength
         )
 
-        val coord = coordProvider.createCoordinateSystem(domain, client)
+        val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
 
         val hScale = hScaleProto.with()
             .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
@@ -108,6 +98,7 @@ internal class SquareFrameOfReferenceProvider(
 
         val tileFrameOfReference = SquareFrameOfReference(
             hScale, vScale,
+            adjustedDomain,
             coord,
             layoutInfo,
             marginsLayout,
@@ -183,7 +174,6 @@ internal class SquareFrameOfReferenceProvider(
 
     private class AxisSpec(
         val breaksProviderFactory: AxisBreaksProviderFactory,
-        val domainTransformed: DoubleSpan,
         val label: String?,
         val theme: AxisTheme
     )
@@ -191,16 +181,25 @@ internal class SquareFrameOfReferenceProvider(
     private class MyTileLayoutProvider(
         private val hAxisLayout: AxisLayout,
         private val vAxisLayout: AxisLayout,
-        private val hDomain: DoubleSpan, // transformed data ranges.
-        private val vDomain: DoubleSpan,
+        private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
-            return TopDownTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
+            return TopDownTileLayout(
+                hAxisLayout, vAxisLayout,
+                hDomain = adjustedDomain.xRange(),
+                vDomain = adjustedDomain.yRange(),
+                marginsLayout
+            )
         }
 
         override fun createInsideOutTileLayout(): TileLayout {
-            return InsideOutTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
+            return InsideOutTileLayout(
+                hAxisLayout, vAxisLayout,
+                hDomain = adjustedDomain.xRange(),
+                vDomain = adjustedDomain.yRange(),
+                marginsLayout
+            )
         }
     }
 }

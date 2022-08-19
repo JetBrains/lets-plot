@@ -28,6 +28,7 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 internal class SquareFrameOfReference(
     private val hScale: Scale<Double>,
     private val vScale: Scale<Double>,
+    private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -173,14 +174,9 @@ internal class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val hAxisDomain = layoutInfo.hAxisInfo!!.axisDomain
-        val vAxisDomain = layoutInfo.vAxisInfo!!.axisDomain
-        // Positional aesthetics are not differ from thransformed data.
-        val aesBounds = DoubleRectangle(hAxisDomain, vAxisDomain)
-
         val layerComponent = buildGeom(
             layer,
-            xyAesBounds = aesBounds,
+            xyAesBounds = adjustedDomain,  // positional aesthetics and not differ from positional data.
             geomCoord,
             flipAxis,
             targetCollector
