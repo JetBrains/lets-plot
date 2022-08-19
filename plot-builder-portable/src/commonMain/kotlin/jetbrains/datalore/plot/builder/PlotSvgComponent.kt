@@ -315,15 +315,10 @@ class PlotSvgComponent constructor(
         //   xxxElementRect - rectangle for element, including margins
         //   xxxTextRect - for text only
 
-        fun textRectangle(
-            elementRect: DoubleRectangle,
-            topMargin: Double = PlotLayoutUtil.TITLE_V_MARGIN,
-            bottomMargin: Double = PlotLayoutUtil.TITLE_V_MARGIN
-        ) = DoubleRectangle(
-            elementRect.left,
-            elementRect.top + topMargin,
-            elementRect.width,
-            elementRect.height - (topMargin + bottomMargin)
+        fun textRectangle(elementRect: DoubleRectangle) = createTextRectangle(
+            elementRect,
+            topMargin = PlotLayoutUtil.TITLE_V_MARGIN,
+            bottomMargin = PlotLayoutUtil.TITLE_V_MARGIN
         )
 
         val plotTitleElementRect = title?.let {
@@ -453,6 +448,19 @@ class PlotSvgComponent constructor(
         }
     }
 
+    private fun createTextRectangle(
+        elementRect: DoubleRectangle,
+        topMargin: Double = 0.0,
+        rightMargin: Double = 0.0,
+        bottomMargin: Double = 0.0,
+        leftMargin: Double = 0.0
+    ) = DoubleRectangle(
+        elementRect.left + leftMargin,
+        elementRect.top + topMargin,
+        elementRect.width - (rightMargin + leftMargin),
+        elementRect.height - (topMargin + bottomMargin)
+    )
+
     private fun addAxisTitle(
         text: String,
         orientation: Orientation,
@@ -486,63 +494,66 @@ class PlotSvgComponent constructor(
 
         val textHeight = PlotLayoutUtil.textDimensions(text, labelSpec).y
 
-        val axisTitleBounds = when (orientation) {
+        // rectangle for element, including margins
+        val axisTitleElementRect = when (orientation) {
             Orientation.LEFT ->
                 DoubleRectangle(
-                    referenceRect.left - textHeight - margins.right,
+                    referenceRect.left - textHeight - margins.width(),
                     referenceRect.top,
-                    textHeight,
+                    textHeight + margins.width(),
                     referenceRect.height
                 )
             Orientation.RIGHT ->
                 DoubleRectangle(
-                    referenceRect.right + margins.left,
+                    referenceRect.right,
                     referenceRect.top,
-                    textHeight,
+                    textHeight + margins.width(),
                     referenceRect.height
                 )
-            Orientation.TOP ->
-                DoubleRectangle(
-                    referenceRect.left,
-                    referenceRect.top - textHeight - margins.bottom,
-                    referenceRect.width,
-                    textHeight
+            Orientation.TOP -> DoubleRectangle(
+                referenceRect.left,
+                referenceRect.top - textHeight - margins.height(),
+                referenceRect.width,
+                textHeight + margins.height()
+            )
+            Orientation.BOTTOM -> DoubleRectangle(
+                referenceRect.left,
+                referenceRect.bottom,
+                referenceRect.width,
+                textHeight + margins.height()
+            )
+        }
+
+        // rectangle for text (without margins)
+        val axisTitleTextRect = when {
+            orientation.isHorizontal -> {
+                createTextRectangle(
+                    axisTitleElementRect,
+                    topMargin = margins.top,
+                    bottomMargin = margins.bottom
                 )
-            Orientation.BOTTOM ->
-                DoubleRectangle(
-                    referenceRect.left,
-                    referenceRect.bottom + margins.top,
-                    referenceRect.width,
-                    textHeight
+            }
+            else -> {
+                createTextRectangle(
+                    axisTitleElementRect,
+                    rightMargin = margins.right,
+                    leftMargin = margins.left
                 )
+            }
         }
 
         addTitle(
             text,
             labelSpec,
             justification,
-            axisTitleBounds,
+            axisTitleTextRect,
             rotation,
             className
         )
 
         if (DEBUG_DRAWING) {
-            drawDebugRect(axisTitleBounds, Color.LIGHT_BLUE)
-            val rectWithMargins = when {
-                orientation.isHorizontal -> {
-                    DoubleRectangle(
-                        axisTitleBounds.origin.subtract(DoubleVector(0.0, margins.top)),
-                        axisTitleBounds.dimension.add(DoubleVector(0.0, margins.height()))
-                    )
-                }
-                else -> {
-                    DoubleRectangle(
-                        axisTitleBounds.origin.subtract(DoubleVector(margins.left, 0.0)),
-                        axisTitleBounds.dimension.add(DoubleVector(margins.width(), 0.0))
-                    )
-                }
-            }
-            drawDebugRect(rectWithMargins, Color.GRAY)
+            drawDebugRect(axisTitleTextRect, Color.LIGHT_BLUE)
+            drawDebugRect(axisTitleElementRect, Color.GRAY)
         }
     }
 
