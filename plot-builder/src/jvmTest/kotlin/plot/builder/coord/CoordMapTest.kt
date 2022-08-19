@@ -26,7 +26,7 @@ internal class CoordMapTest : CoordTestBase() {
                 ratio, PROVIDER,
                 expectedMin = DoubleVector(0.0, 0.0),
                 expectedMax = DoubleVector(1.0, 1.1581),
-                accuracy = DoubleVector(0.0, 0.0001)
+                accuracy = DoubleVector(1.0E-10, 0.0001)
             )
         }
         run {

@@ -52,23 +52,11 @@ internal object TileLayoutUtil {
         coordProvider: CoordProvider
     ): DoubleRectangle {
         val plottingArea = subtractMargins(hAxisThickness, vAxisThickness, plotSize)
-
-//        val geomInnerSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).let {
-//            when {
-//                MARGINAL_LAYERS -> FeatureSwitch.subtactMarginalLayers(it.dimension)
-//                else -> it.dimension
-//            }
-//        }
-
         val geomInnerSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).dimension.let {
             marginsLayout.toInnerSize(it)
         }
 
         val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomInnerSize).let {
-//            when {
-//                MARGINAL_LAYERS -> FeatureSwitch.addMarginalLayers(it)
-//                else -> it
-//            }
             marginsLayout.toOuterSize(it)
         }
         return DoubleRectangle(plottingArea.origin, geomOuterSizeAdjusted)

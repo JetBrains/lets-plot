@@ -12,21 +12,16 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 internal abstract class CoordProviderBase(
-    _xLim: DoubleSpan?,
-    _yLim: DoubleSpan?,
+    final override val xLim: DoubleSpan?,
+    final override val yLim: DoubleSpan?,
     override val flipAxis: Boolean,
 ) : CoordProvider {
 
     override val projection: Projection = identity()
 
-    private val hLim: DoubleSpan? = when {
-        flipAxis -> _yLim
-        else -> _xLim
-    }
-
-    private val vLim: DoubleSpan? = when {
-        flipAxis -> _xLim
-        else -> _yLim
+    init {
+        require(xLim == null || xLim.length > 0.0) { "Coord x-limits range should be > 0.0" }
+        require(yLim == null || yLim.length > 0.0) { "Coord y-limits range should be > 0.0" }
     }
 
     override fun buildAxisScaleX(
@@ -52,24 +47,6 @@ internal abstract class CoordProviderBase(
             breaks
         )
     }
-
-    final override fun adjustDomains(
-        hDomain: DoubleSpan,
-        vDomain: DoubleSpan,
-    ): Pair<DoubleSpan, DoubleSpan> {
-        return adjustDomainsIntern(
-            hDomain = hLim ?: hDomain,
-            vDomain = vLim ?: vDomain
-        )
-    }
-
-    protected open fun adjustDomainsIntern(
-        hDomain: DoubleSpan,
-        vDomain: DoubleSpan
-    ): Pair<DoubleSpan, DoubleSpan> {
-        return (hDomain to vDomain)
-    }
-
 
     companion object {
         fun buildAxisScaleDefault(

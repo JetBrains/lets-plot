@@ -14,7 +14,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.fail
 
-internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestBase() {
+internal class CoordFixedTest : CoordTestBase() {
 
     @BeforeTest
     fun setUp() {
@@ -28,18 +28,24 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
             yDomain: DoubleSpan,
             xLim: DoubleSpan? = null,
             yLim: DoubleSpan? = null,
-            displaySize: DoubleVector = DoubleVector(800.0, 600.0)
+            displaySize: DoubleVector
         ): DoubleVector {
             val coordProvider = CoordProviders.fixed(1.0, xLim, yLim)
-            val (xDomainAdjusted, yDomainAdjusted) = coordProvider.adjustDomains(xDomain, yDomain)
-            return coordProvider
-                .adjustGeomSize(xDomainAdjusted, yDomainAdjusted, displaySize)
+            val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
+            val coordMapper = coordProvider.createCoordinateMapper(
+                adjustedDomain = adjustedDomain,
+                displaySize
+            )
+//            val (xDomainAdjusted, yDomainAdjusted) = coordProvider.adjustDomains(xDomain, yDomain)
+//            return coordProvider
+//                .adjustGeomSize(xDomainAdjusted, yDomainAdjusted, displaySize)
+            return coordMapper.clientBounds.dimension
         }
 
         fun squareCoord_0_25(
             xLim: DoubleSpan? = null,
             yLim: DoubleSpan? = null,
-            displaySize: DoubleVector = DoubleVector(800.0, 600.0)
+            displaySize: DoubleVector
         ): DoubleVector {
             return squareCoord(
                 DoubleSpan(0.0, 25.0),
@@ -76,25 +82,27 @@ internal class CoordFixedTest : jetbrains.datalore.plot.builder.coord.CoordTestB
             }
 
             // zero length y-domain
-            squareCoord(
-                xDomain = DoubleSpan(0.0, 20.0),
-                yDomain = DoubleSpan(0.0, 0.0),
-                displaySize = DoubleVector(40.0, 40.0)
-            ).let { geomSize ->
-                assertEquals(DoubleVector(40.0, 0.0), geomSize)
-            }
+// zero-length domains are not supported.
+//            squareCoord(
+//                xDomain = DoubleSpan(0.0, 20.0),
+//                yDomain = DoubleSpan(0.0, 0.0),
+//                displaySize = DoubleVector(40.0, 40.0)
+//            ).let { geomSize ->
+//                assertEquals(DoubleVector(40.0, 0.0), geomSize)
+//            }
 
             // limit larger than x-domain with zero length y-domain
-            squareCoord(
-                xDomain = DoubleSpan(100.0, 120.0),
-                yDomain = DoubleSpan(0.0, 0.0),
-                xLim = DoubleSpan(80.0, 140.0),
-                displaySize = DoubleVector(40.0, 40.0)
-            ).let { geomSize ->
-                assertEquals(DoubleVector(40.0, 0.0), geomSize)
-            }
+// zero-length domains are not supported.
+//            squareCoord(
+//                xDomain = DoubleSpan(100.0, 120.0),
+//                yDomain = DoubleSpan(0.0, 0.0),
+//                xLim = DoubleSpan(80.0, 140.0),
+//                displaySize = DoubleVector(40.0, 40.0)
+//            ).let { geomSize ->
+//                assertEquals(DoubleVector(40.0, 0.0), geomSize)
+//            }
 
-            // limit larger than x-domain with non-zero length y-domain
+            // limit larger than x-domain
             squareCoord(
                 xDomain = DoubleSpan(1.0, 2.0),
                 yDomain = DoubleSpan(-10.0, 10.0),

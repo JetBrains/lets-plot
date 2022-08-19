@@ -170,7 +170,7 @@ internal class SquareFrameOfReferenceProvider(
             val marginCoordProvider = MarginalLayerCoordProvider(side, coordProvider)
             val clientSize = sizes.getValue(side)
             val coordMapper = marginCoordProvider.createCoordinateMapper(
-                domain = DoubleRectangle(hDomain, vDomain),
+                adjustedDomain = DoubleRectangle(hDomain, vDomain),
                 clientSize = clientSize,
             )
             val coord = Coords.create(coordMapper)

@@ -16,6 +16,8 @@ import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
+    val xLim: DoubleSpan?
+    val yLim: DoubleSpan?
     val flipAxis: Boolean
     val projection: Projection
 
@@ -25,18 +27,49 @@ interface CoordProvider {
         flipped: Boolean
     ): CoordProvider
 
+    /**
+     * Reshape and flip the domain if necessary
+     */
+    fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+        val validDomain = domain.let {
+            val withLims = DoubleRectangle(
+                xLim ?: domain.xRange(),
+                yLim ?: domain.yRange(),
+            )
+            projection.validDomain().intersect(withLims)
+        }
+
+        return if (validDomain != null && validDomain.height > 0.0 && validDomain.width > 0.0) {
+            if (flipAxis) validDomain.flip() else validDomain
+        } else {
+            throw IllegalArgumentException(
+                """Can't create a valid domain.
+                |  data bbox: $domain
+                |  x-lim: $xLim
+                |  y-lim: $yLim
+            """.trimMargin()
+            )
+        }
+    }
+
     fun createCoordinateMapper(
-        domain: DoubleRectangle,
+        adjustedDomain: DoubleRectangle,
         clientSize: DoubleVector,
     ): CoordinatesMapper {
-        return CoordinatesMapper(domain, clientSize, projection)
+        val geomSize = adjustGeomSize(
+            hDomain = adjustedDomain.xRange(),
+            vDomain = adjustedDomain.yRange(),
+            geomSize = clientSize
+        )
+
+        return CoordinatesMapper(adjustedDomain, geomSize, projection)
     }
 
     fun createCoordinateSystem(
-        domain: DoubleRectangle,
+        adjustedDomain: DoubleRectangle,
         clientSize: DoubleVector,
     ): CoordinateSystem {
-        val coordMapper = CoordinatesMapper(domain, clientSize, projection)
+        val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
         return Coords.create(coordMapper)
     }
 
@@ -53,11 +86,6 @@ interface CoordProvider {
         xDomain: DoubleSpan,
         breaks: ScaleBreaks
     ): Scale<Double>
-
-    fun adjustDomains(
-        hDomain: DoubleSpan,
-        vDomain: DoubleSpan,
-    ): Pair<DoubleSpan, DoubleSpan>
 
     fun adjustGeomSize(
         hDomain: DoubleSpan,

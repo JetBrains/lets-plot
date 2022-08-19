@@ -26,25 +26,10 @@ internal open class CoordTestBase {
         accuracy: DoubleVector
     ) {
 
-        val dataBounds = this.dataBounds
-        var domainX = dataBounds.xRange()
-        var domainY = dataBounds.yRange()
-        val domains = provider.adjustDomains(domainX, domainY)
-        domainX = domains.first
-        domainY = domains.second
-
-        val displaySize = unitDisplaySize(ratio).let {
-            provider.adjustGeomSize(
-                domainX,
-                domainY,
-                geomSize = it
-            )
-        }
-
-        val coordMapper = provider.createCoordinateMapper(
-            domain = DoubleRectangle(domainX, domainY),
-            clientSize = displaySize
-        )
+        val displaySize = unitDisplaySize(ratio)
+        val domain = this.dataBounds
+        val adjustedDomain = provider.adjustDomain(domain)
+        val coordMapper = provider.createCoordinateMapper(adjustedDomain, displaySize)
 
         // adapts to display size
         val actualMin = coordMapper.toClient(dataBounds.origin)!!

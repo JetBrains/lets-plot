@@ -28,18 +28,6 @@ internal class ProjectionCoordProvider(
         return ProjectionCoordProvider(projection, xLim, yLim, flipped)
     }
 
-    protected override fun adjustDomainsIntern(
-        hDomain: DoubleSpan,
-        vDomain: DoubleSpan
-    ): Pair<DoubleSpan, DoubleSpan> {
-        @Suppress("NAME_SHADOWING")
-        val xDomain = toValidDomain(projection.validDomain().xRange(), hDomain)
-
-        @Suppress("NAME_SHADOWING")
-        val yDomain = toValidDomain(projection.validDomain().yRange(), vDomain)
-        return (xDomain to yDomain)
-    }
-
     override fun adjustGeomSize(
         hDomain: DoubleSpan,
         vDomain: DoubleSpan,

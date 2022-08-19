@@ -86,12 +86,13 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
             .color(constant(Color.DARK_MAGENTA))
             .alpha(constant(0.5))
             .build()
-        val coord = CoordProviders.map()
-//            .createCoordinateSystem(domainX, mapper, domainY, mapper)
-            .createCoordinateSystem(
-                domain = DoubleRectangle(domainX, domainY),
+        val coord = CoordProviders.map().let {
+            val adjustedDomain = it.adjustDomain(DoubleRectangle(domainX, domainY))
+            it.createCoordinateSystem(
+                adjustedDomain = adjustedDomain,
                 clientSize = demoInnerSize
             )
+        }
         val layer = SvgLayerRenderer(
             aes,
             PolygonGeom(),

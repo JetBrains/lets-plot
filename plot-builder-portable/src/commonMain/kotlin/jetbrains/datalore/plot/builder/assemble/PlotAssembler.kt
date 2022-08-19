@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -113,10 +114,19 @@ class PlotAssembler private constructor(
             // Create frame of reference provider for each tile.
             val frameProviderByTile: List<FrameOfReferenceProvider> =
                 domainsXYByTile.map { (xDomain, yDomain) ->
-                    val (hDomain, vDomain) = coordProvider.adjustDomains(
-                        hDomain = if (flipAxis) yDomain else xDomain,
-                        vDomain = if (flipAxis) xDomain else yDomain
-                    )
+//                    val (hDomain, vDomain) = coordProvider.adjustDomains(
+//                        hDomain = if (flipAxis) yDomain else xDomain,
+//                        vDomain = if (flipAxis) xDomain else yDomain
+//                    )
+
+//                    val (hDomain, vDomain) = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain)).let {
+//                        val r = if (flipAxis) it.flip() else it
+//                        Pair(r.xRange(), r.yRange())
+//                    }
+                    val (hDomain, vDomain) = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain)).let {
+                        Pair(it.xRange(), it.yRange())
+                    }
+
                     SquareFrameOfReferenceProvider(
                         hScaleProto, vScaleProto,
                         hDomain, vDomain,

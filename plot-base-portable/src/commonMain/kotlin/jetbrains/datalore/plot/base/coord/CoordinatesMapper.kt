@@ -11,8 +11,8 @@ import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 
-class CoordinatesMapper(
-    domain: DoubleRectangle,
+class CoordinatesMapper constructor(
+    adjustedDomain: DoubleRectangle,
     clientSize: DoubleVector,
     internal val projection: Projection
 ) {
@@ -21,28 +21,38 @@ class CoordinatesMapper(
     val clientBounds: DoubleRectangle
 
     init {
-        val validDomain = projection.validDomain().intersect(domain)
-        if (validDomain != null) {
-            val leftTop = projection.project(validDomain.origin)!!
-            val rightBottom = projection.project(validDomain.origin.add(validDomain.dimension))!!
-            val domainProjected = DoubleRectangle.span(leftTop, rightBottom)
-            hScaleMapper = Mappers.mul(domainProjected.xRange(), clientSize.x)
-            vScaleMapper = Mappers.mul(domainProjected.yRange(), clientSize.y)
+        // ToDo: if 'flipped', "adjustedDomain" is not suitable for map projection.
 
-            val clientOrigin = DoubleVector(
-                hScaleMapper(domainProjected.origin.x)!!,
-                vScaleMapper(domainProjected.origin.y)!!,
-            )
-            clientBounds = DoubleRectangle(clientOrigin, clientSize)
-        } else {
-            // ToDo: ???
-            vScaleMapper = NullMapper()
-            hScaleMapper = NullMapper()
-            clientBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+        val leftTop = projection.project(adjustedDomain.origin)
+        check(leftTop != null) {
+            "Can't project domain left-top: ${adjustedDomain.origin}"
         }
+        val domainRB = adjustedDomain.origin.add(adjustedDomain.dimension)
+        val rightBottom = projection.project(domainRB)
+        check(rightBottom != null) {
+            "Can't project domain right-bottom: ${domainRB}"
+        }
+        val domainProjected = DoubleRectangle.span(leftTop, rightBottom)
+        check(domainProjected.xRange().length != 0.0) {
+            "Can't create coordinates mapper: X-domain size is 0.0"
+        }
+        check(domainProjected.yRange().length != 0.0) {
+            "Can't create coordinates mapper: Y-domain size is 0.0"
+        }
+
+        hScaleMapper = Mappers.mul(domainProjected.xRange(), clientSize.x)
+        vScaleMapper = Mappers.mul(domainProjected.yRange(), clientSize.y)
+
+        val clientOrigin = DoubleVector(
+            hScaleMapper(domainProjected.origin.x)!!,
+            vScaleMapper(domainProjected.origin.y)!!,
+        )
+        clientBounds = DoubleRectangle(clientOrigin, clientSize)
     }
 
     fun toClient(p: DoubleVector): DoubleVector? {
+        // ToDo: if 'flipped', "p" is not suitable for map projection.
+
         val projected = projection.project(p)
         if (projected != null) {
             val mappedX = hScaleMapper(projected.x)
@@ -52,9 +62,5 @@ class CoordinatesMapper(
             }
         }
         return null
-    }
-
-    private class NullMapper : ScaleMapper<Double> {
-        override fun invoke(v: Double?): Double? = null
     }
 }

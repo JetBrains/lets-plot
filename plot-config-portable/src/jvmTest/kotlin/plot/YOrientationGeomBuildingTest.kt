@@ -56,10 +56,13 @@ class YOrientationGeomBuildingTest {
             xAesMapper = xAesMapper,
             yAesMapper = yAesMapper,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
-            coord = CoordProviders.cartesian().createCoordinateSystem(
-                domain = DoubleRectangle(xDomain, yDomain),
-                clientSize = DoubleVector(xAxisLength, yAxisLength)
-            ),
+            coord = CoordProviders.cartesian().let {
+                val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain))
+                it.createCoordinateSystem(
+                    adjustedDomain = adjustedDomain,
+                    clientSize = DoubleVector(xAxisLength, yAxisLength)
+                )
+            },
             flippedAxis = false,
             targetCollector = NullGeomTargetCollector()
         )

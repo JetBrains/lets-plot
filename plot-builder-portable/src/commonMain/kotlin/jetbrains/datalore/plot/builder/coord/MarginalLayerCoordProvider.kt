@@ -16,8 +16,8 @@ internal class MarginalLayerCoordProvider(
     private val margin: MarginSide,
     private val coreCoordProvider: CoordProvider,
 ) : CoordProviderBase(
-    _xLim = null,
-    _yLim = null,
+    xLim = null,
+    yLim = null,
     flipAxis = false
 ) {
     init {
@@ -49,10 +49,10 @@ internal class MarginalLayerCoordProvider(
     }
 
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
-        UNSUPPORTED("MarginalLayerCoordProvider.adjustGeomSize()")
+        return geomSize
     }
 
-    override fun adjustDomainsIntern(hDomain: DoubleSpan, vDomain: DoubleSpan): Pair<DoubleSpan, DoubleSpan> {
-        UNSUPPORTED("MarginalLayerCoordProvider.adjustDomainsIntern()")
-    }
+//    override fun adjustDomainsIntern(hDomain: DoubleSpan, vDomain: DoubleSpan): Pair<DoubleSpan, DoubleSpan> {
+//        UNSUPPORTED("MarginalLayerCoordProvider.adjustDomainsIntern()")
+//    }
 }
