@@ -408,6 +408,7 @@ class PlotSvgComponent constructor(
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     justification = theme.verticalAxis(flippedAxis).titleJustification(),
+                    margins = theme.verticalAxis(flippedAxis).titleMargins(),
                     className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
@@ -419,6 +420,7 @@ class PlotSvgComponent constructor(
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     justification = theme.horizontalAxis(flippedAxis).titleJustification(),
+                    margins = theme.horizontalAxis(flippedAxis).titleMargins(),
                     className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
