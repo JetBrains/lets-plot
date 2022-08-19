@@ -410,8 +410,16 @@ def element_text(
         Text size.
     hjust : float
         Horizontal justification (in [0, 1]).
+        0 - left-justified
+        1 - right-justified
+        0.5 - center-justified
+        Can be used with values out of range, but behaviour is not specified.
     vjust : float
         Vertical justification (in [0, 1]).
+        0 - bottom-justified
+        1 - top-justified
+        0.5 - middle-justified
+        Can be used with values out of range, but behaviour is not specified.
     margin : `margin`
         Margins around the text. See `margin()` for more details.
     blank : bool, default=False
