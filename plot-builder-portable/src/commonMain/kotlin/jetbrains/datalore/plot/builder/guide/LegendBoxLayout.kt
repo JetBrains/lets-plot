@@ -28,16 +28,17 @@ abstract class LegendBoxLayout(
 
     val graphOrigin: DoubleVector
         get() = when {
-            isHorizontal -> {
-                val titleSize = titleSize
-                val y = if (titleSize.y > graphSize.y) (titleSize.y - graphSize.y) / 2 else 0.0
-                DoubleVector(titleSize.x, y)
+            isHorizontal -> with(titleSize) {
+                DoubleVector(
+                    x,
+                    if (y > graphSize.y) (y - graphSize.y) / 2 else 0.0
+                )
             }
-            else -> {
+            else -> DoubleVector(
+                0.0,
                 // make some space between title and the rest of the content.
-                val y = titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
-                DoubleVector(0.0, y)
-            }
+                titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
+            )
         }
 
     val size: DoubleVector
