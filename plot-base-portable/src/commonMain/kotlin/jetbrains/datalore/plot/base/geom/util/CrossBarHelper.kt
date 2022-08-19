@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 import jetbrains.datalore.vis.svg.SvgRectElement
-import kotlin.math.max
 
 object CrossBarHelper {
     fun buildBoxes(
@@ -56,7 +55,7 @@ object CrossBarHelper {
                 DoubleVector(x - width / 2, middle),
                 DoubleVector(x + width / 2, middle),
                 p
-            )
+            )!!
 
             // adjust thickness
             val thickness = line.strokeWidth().get()!!

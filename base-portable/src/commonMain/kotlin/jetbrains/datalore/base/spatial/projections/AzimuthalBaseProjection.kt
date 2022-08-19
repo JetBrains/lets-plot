@@ -15,8 +15,6 @@ internal abstract class AzimuthalBaseProjection : Projection {
 
     override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
 
-    override val cylindrical: Boolean = false
-
     override fun project(v: DoubleVector): DoubleVector? {
 
         val x = toRadians(v.x)

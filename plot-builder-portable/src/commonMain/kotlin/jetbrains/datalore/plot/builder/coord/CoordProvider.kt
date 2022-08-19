@@ -10,10 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.coord.CoordinatesMapper
 import jetbrains.datalore.plot.base.coord.Coords
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
 interface CoordProvider {
     val xLim: DoubleSpan?
@@ -72,20 +70,6 @@ interface CoordProvider {
         val coordMapper = createCoordinateMapper(adjustedDomain, clientSize)
         return Coords.create(coordMapper)
     }
-
-    fun buildAxisScaleX(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        yDomain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double>
-
-    fun buildAxisScaleY(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        xDomain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double>
 
     fun adjustGeomSize(
         hDomain: DoubleSpan,

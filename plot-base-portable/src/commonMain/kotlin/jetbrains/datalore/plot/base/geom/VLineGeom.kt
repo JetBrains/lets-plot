@@ -45,6 +45,7 @@ class VLineGeom : GeomBase() {
                 val start = DoubleVector(intercept, viewPort.top)
                 val end = DoubleVector(intercept, viewPort.bottom)
                 val line = helper.createLine(start, end, p)
+                if (line == null) continue
                 lines.add(line)
 
                 val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
@@ -53,7 +54,7 @@ class VLineGeom : GeomBase() {
                 val rect = DoubleRectangle(origin, dimensions)
                 ctx.targetCollector.addRectangle(
                     p.index(),
-                    geomHelper.toClient(rect, p),
+                    geomHelper.toClient(rect, p)!!,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorMarkerMapper(p)
                     )

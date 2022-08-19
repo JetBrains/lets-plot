@@ -47,6 +47,7 @@ class HLineGeom : GeomBase() {
                 val start = DoubleVector(viewPort.left, intercept)
                 val end = DoubleVector(viewPort.right, intercept)
                 val line = helper.createLine(start, end, p)
+                if (line == null) continue
                 lines.add(line)
 
                 val h = AesScaling.strokeWidth(p)
@@ -55,7 +56,7 @@ class HLineGeom : GeomBase() {
                 val rect = DoubleRectangle(origin, dimensions)
                 ctx.targetCollector.addRectangle(
                     p.index(),
-                    geomHelper.toClient(rect, p),
+                    geomHelper.toClient(rect, p)!!,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     ),

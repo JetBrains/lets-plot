@@ -9,7 +9,6 @@ import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.GeomCoord
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
@@ -43,9 +42,8 @@ class YDotplotGeom : DotplotGeom() {
             val x = it.x()!!
             val y = it.y()!!
             val bw = it.binwidth()!!
-            val geomCoord = GeomCoord(coord)
-            val p0 = geomCoord.toClient(DoubleVector(x, y))
-            val p1 = geomCoord.toClient(DoubleVector(x, y + bw))
+            val p0 = coord.toClient(DoubleVector(x, y))!!
+            val p1 = coord.toClient(DoubleVector(x, y + bw))!!
             when (ctx.flipped) {
                 false -> abs(p0.y - p1.y)
                 true -> abs(p0.x - p1.x)
@@ -72,7 +70,7 @@ class YDotplotGeom : DotplotGeom() {
     ) {
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val fullStackSize = dataPoints.map { it.stacksize()!! }.sum().toInt()
+        val fullStackSize = dataPoints.sumOf { it.stacksize()!! }.toInt()
         val stackSize = boundedStackSize(fullStackSize, coord, ctx, binWidthPx, !ctx.flipped)
         var builtStackSize = 0
         for (p in dataPoints) {
@@ -156,7 +154,7 @@ class YDotplotGeom : DotplotGeom() {
         }
         val shift = DoubleVector(shiftedDotId * dotSize * stackRatio * binWidthPx, 0.0)
 
-        return geomHelper.toClient(DoubleVector(x, y), p).add(if (flip) shift.flip() else shift)
+        return geomHelper.toClient(x, y, p)!!.add(if (flip) shift.flip() else shift)
     }
 
     enum class YStackdir {

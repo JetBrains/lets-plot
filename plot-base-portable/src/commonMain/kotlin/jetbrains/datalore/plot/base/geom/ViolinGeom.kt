@@ -84,7 +84,7 @@ class ViolinGeom : GeomBase() {
                 val xmax = toLocationBound(1.0, ctx)(p).x
                 val start = DoubleVector(xmin, p.y()!!)
                 val end = DoubleVector(xmax, p.y()!!)
-                val line = helper.createLine(start, end, p)
+                val line = helper.createLine(start, end, p)!!
                 root.add(line)
             }
         }

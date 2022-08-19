@@ -13,16 +13,15 @@ internal open class DefaultCoordinateSystem(
     val toClientOffsetY: (Double) -> Double,
     val coordMapper: CoordinatesMapper,
 ) : CoordinateSystem {
-    override fun toClient(p: DoubleVector): DoubleVector {
+    override fun toClient(p: DoubleVector): DoubleVector? {
         val mapped = coordMapper.toClient(p)
-        return if (mapped == null) {
-            // ToDo: male `toClient` nullable
-            throw IllegalStateException("Can't poject $p using projection ${coordMapper.projection::class.simpleName}")
-        } else {
+        return if (mapped != null) {
             DoubleVector(
                 toClientOffsetX(mapped.x),
                 toClientOffsetY(mapped.y)
             )
+        } else {
+            null
         }
     }
 

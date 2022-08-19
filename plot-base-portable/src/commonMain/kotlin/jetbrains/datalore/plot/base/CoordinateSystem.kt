@@ -5,10 +5,21 @@
 
 package jetbrains.datalore.plot.base
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
 interface CoordinateSystem {
-    fun toClient(p: DoubleVector): DoubleVector
+    fun toClient(p: DoubleVector): DoubleVector?
+
+    fun toClient(r: DoubleRectangle): DoubleRectangle? {
+        val leftTop = toClient(r.origin)
+        val rightBottom = toClient(r.origin.add(r.dimension))
+        return if (leftTop != null && rightBottom != null) {
+            DoubleRectangle.span(leftTop, rightBottom)
+        } else {
+            null
+        }
+    }
 
     fun flip(): CoordinateSystem
 }

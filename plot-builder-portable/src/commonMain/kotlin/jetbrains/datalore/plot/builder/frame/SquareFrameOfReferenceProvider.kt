@@ -94,20 +94,17 @@ internal class SquareFrameOfReferenceProvider(
             vAxisLayoutInfo.axisLength
         )
 
-        val hScale = coordProvider.buildAxisScaleX(
-            hScaleProto,
-            hAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisDomain,
-            hAxisLayoutInfo.axisBreaks
-        )
-        val vScale = coordProvider.buildAxisScaleY(
-            vScaleProto,
-            vAxisLayoutInfo.axisDomain,
-            hAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisBreaks
-        )
-
         val coord = coordProvider.createCoordinateSystem(domain, client)
+
+        val hScale = hScaleProto.with()
+            .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
+            .labels(hAxisLayoutInfo.axisBreaks.labels)
+            .build()
+
+        val vScale = vScaleProto.with()
+            .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
+            .labels(vAxisLayoutInfo.axisBreaks.labels)
+            .build()
 
         val tileFrameOfReference = SquareFrameOfReference(
             hScale, vScale,

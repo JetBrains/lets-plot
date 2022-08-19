@@ -20,9 +20,11 @@ fun azimuthalEqidistant(): Projection = AzimuthalEquidistantProjection()
 fun conicEqualArea(y0: Double = 0.0, y1: Double = PI / 3): Projection = ConicEqualAreaProjection(y0, y1)
 
 fun identity(): Projection = object : Projection {
-    override fun project(v: DoubleVector): DoubleVector? = v
+    override val nonlinear: Boolean = false
 
-    override fun invert(v: DoubleVector): DoubleVector? = v
+    override fun project(v: DoubleVector): DoubleVector = v
+
+    override fun invert(v: DoubleVector): DoubleVector = v
 
     override fun validDomain(): DoubleRectangle {
         // "infinite" rect
@@ -32,8 +34,6 @@ fun identity(): Projection = object : Projection {
         return DoubleRectangle(orig, size)
     }
 
-    override val cylindrical: Boolean
-        get() = TODO("Not yet implemented")
 
 }
 

@@ -40,7 +40,9 @@ class LineRangeGeom : GeomBase() {
             val start = DoubleVector(x, ymin)
             val end = DoubleVector(x, ymax)
             val line = helper.createLine(start, end, p)
-            root.add(line)
+            if (line != null) {
+                root.add(line)
+            }
         }
 
         BarTooltipHelper.collectRectangleTargets(
@@ -68,7 +70,7 @@ class LineRangeGeom : GeomBase() {
                     val height = ymax - ymin
 
                     val origin = DoubleVector(x - width / 2, ymax - height / 2)
-                    val dimensions = DoubleVector(width, 0.0 )
+                    val dimensions = DoubleVector(width, 0.0)
                     DoubleRectangle(origin, dimensions)
                 } else {
                     null

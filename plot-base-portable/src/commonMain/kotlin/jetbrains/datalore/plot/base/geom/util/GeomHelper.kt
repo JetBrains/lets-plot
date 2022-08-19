@@ -22,24 +22,22 @@ import jetbrains.datalore.vis.svg.SvgShape
 import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 open class GeomHelper(
-    private val myPos: PositionAdjustment,
-    coord: CoordinateSystem,
+    private val pos: PositionAdjustment,
+    private val coord: CoordinateSystem,
     internal val ctx: GeomContext
 ) {
-    private val myGeomCoord: GeomCoord = GeomCoord(coord)
-
-    fun toClient(location: DoubleVector, p: DataPointAesthetics): DoubleVector {
-        return myGeomCoord.toClient(adjust(location, p, myPos, ctx))
+    fun toClient(location: DoubleVector, p: DataPointAesthetics): DoubleVector? {
+        return coord.toClient(adjust(location, p, pos, ctx))
     }
 
-    fun toClient(x: Double?, y: Double?, p: DataPointAesthetics): DoubleVector {
-        // ToDo: don't create new object (optimization)
-        val location = DoubleVector(x!!, y!!)
-        return myGeomCoord.toClient(adjust(location, p, myPos, ctx))
+    fun toClient(x: Double, y: Double, p: DataPointAesthetics): DoubleVector? {
+        val location = DoubleVector(x, y)
+        return coord.toClient(adjust(location, p, pos, ctx))
     }
 
-    fun toClient(r: DoubleRectangle, p: DataPointAesthetics): DoubleRectangle {
-        var clientRect = myGeomCoord.toClient(adjust(r, p, myPos, ctx))
+    fun toClient(r: DoubleRectangle, p: DataPointAesthetics): DoubleRectangle? {
+        var clientRect = coord.toClient(adjust(r, p, pos, ctx))
+        if (clientRect == null) return null
 
         // do not allow zero height or width (shape becomes invisible)
         if (clientRect.width == 0.0) {
@@ -88,7 +86,9 @@ open class GeomHelper(
             val location = projection(p)
             if (location != null) {
                 val pp = toClient(location, p)
-                points.add(pp)
+                if (pp != null) {
+                    points.add(pp)
+                }
             }
         }
         return points
@@ -109,14 +109,6 @@ open class GeomHelper(
         return SvgElementHelper()
     }
 
-    fun toClient(locations: List<DoubleVector>, p: DataPointAesthetics): List<DoubleVector> {
-        val localLocations = ArrayList<DoubleVector>()
-        for (location in locations) {
-            localLocations.add(toClient(location, p))
-        }
-        return localLocations
-    }
-
     inner class SvgElementHelper {
         private var myStrokeAlphaEnabled = false
 
@@ -124,12 +116,14 @@ open class GeomHelper(
             myStrokeAlphaEnabled = b
         }
 
-        fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement {
+        fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement? {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
-
+            if (start == null) return null
             @Suppress("NAME_SHADOWING")
             val end = toClient(end, p)
+            if (end == null) return null
+
             val line = SvgLineElement(
                 start.x, start.y,
                 end.x, end.y
@@ -205,7 +199,7 @@ open class GeomHelper(
 
             var angle = p.angle()!!
             if (angle != 0.0) {
-                // ggplot angle: counter clockwise
+                // ggplot angle: counter-clockwise
                 // SVG angle: clockwise
                 angle = 360 - angle % 360
                 label.rotate(angle)
@@ -213,7 +207,7 @@ open class GeomHelper(
         }
 
         fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
-            return conversionMap.getOrElse(o, { def })
+            return conversionMap.getOrElse(o) { def }
         }
 
         fun decorate(node: SvgNode, p: DataPointAesthetics, applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH) {

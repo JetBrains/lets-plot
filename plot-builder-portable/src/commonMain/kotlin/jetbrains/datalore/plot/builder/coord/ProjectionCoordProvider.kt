@@ -9,9 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ProjectionCoordProvider(
     override val projection: Projection,
@@ -47,89 +44,5 @@ internal class ProjectionCoordProvider(
         val domainRatio = bbox.width / bbox.height
 
         return FixedRatioCoordProvider.reshapeGeom(geomSize, domainRatio)
-    }
-
-    override fun buildAxisScaleX(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        yDomain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double> {
-        return if (projection.nonlinear) {
-            buildAxisScaleWithProjection(
-                projection.validDomain().xRange(),
-                scaleProto,
-                domain,
-                breaks
-            )
-        } else {
-            super.buildAxisScaleX(scaleProto, domain, yDomain, breaks)
-        }
-    }
-
-    override fun buildAxisScaleY(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        xDomain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double> {
-        return if (projection.nonlinear) {
-            buildAxisScaleWithProjection(
-                projection.validDomain().yRange(),
-                scaleProto,
-                domain,
-                breaks
-            )
-        } else {
-            super.buildAxisScaleY(scaleProto, domain, xDomain, breaks)
-        }
-    }
-
-    companion object {
-        private fun toValidDomain(validRange: DoubleSpan, domain: DoubleSpan): DoubleSpan {
-            if (validRange.connected(domain)) {
-                return validRange.intersection(domain)
-            }
-            throw IllegalArgumentException("Illegal range: $domain")
-        }
-
-        private fun buildAxisScaleWithProjection(
-            validRange: DoubleSpan,
-            scaleProto: Scale<Double>,
-            domain: DoubleSpan,
-            breaks: ScaleBreaks
-        ): Scale<Double> {
-            val validDomain = toValidDomain(validRange, domain)
-
-            val validBreaks = validateBreaks(validDomain, breaks)
-            return buildAxisScaleDefault(
-                scaleProto,
-                validBreaks
-            )
-        }
-
-        private fun validateBreaks(validDomain: DoubleSpan, breaks: ScaleBreaks): ScaleBreaks {
-            val validIndices = ArrayList<Int>()
-            var i = 0
-            for (v in breaks.domainValues) {
-                if (v is Double && validDomain.contains(v)) {
-                    validIndices.add(i)
-                }
-                i++
-            }
-
-            if (validIndices.size == breaks.domainValues.size) {
-                return breaks
-            }
-
-            val validDomainValues = SeriesUtil.pickAtIndices(breaks.domainValues, validIndices)
-            val validLabels = SeriesUtil.pickAtIndices(breaks.labels, validIndices)
-            val validTransformedValues = SeriesUtil.pickAtIndices(breaks.transformedValues, validIndices)
-            return ScaleBreaks(
-                validDomainValues,
-                validTransformedValues,
-                validLabels
-            )
-        }
     }
 }

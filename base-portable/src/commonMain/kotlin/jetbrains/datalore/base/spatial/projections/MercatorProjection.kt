@@ -14,6 +14,8 @@ import jetbrains.datalore.base.spatial.limitLat
 import jetbrains.datalore.base.spatial.limitLon
 
 internal class MercatorProjection : Projection {
+    override val cylindrical: Boolean = true
+
     override fun project(v: DoubleVector): DoubleVector =
         DoubleVector(
             MercatorUtils.getMercatorX(limitLon(v.x)),
@@ -27,7 +29,6 @@ internal class MercatorProjection : Projection {
         )
 
     override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
-    override val cylindrical: Boolean = true
 
     companion object {
         private val VALID_RECTANGLE = DoubleRectangle(

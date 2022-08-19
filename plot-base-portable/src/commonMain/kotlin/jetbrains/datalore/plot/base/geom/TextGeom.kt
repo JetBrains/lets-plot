@@ -40,10 +40,12 @@ class TextGeom : GeomBase() {
             val y = p.y()
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
+                val loc = helper.toClient(x!!, y!!, p)
+                if (loc == null) continue
+
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p, sizeUnitRatio)
 
-                val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
                 root.add(label.rootGroup)
 

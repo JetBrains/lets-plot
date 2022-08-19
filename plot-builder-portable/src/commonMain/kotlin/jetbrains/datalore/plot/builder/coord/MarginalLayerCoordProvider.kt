@@ -8,8 +8,6 @@ package jetbrains.datalore.plot.builder.coord
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.MarginSide
 
 internal class MarginalLayerCoordProvider(
@@ -30,29 +28,7 @@ internal class MarginalLayerCoordProvider(
         UNSUPPORTED("MarginalLayerCoordProvider.with()")
     }
 
-    override fun buildAxisScaleX(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        yDomain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double> {
-        UNSUPPORTED("MarginalLayerCoordProvider.buildAxisScaleX()")
-    }
-
-    override fun buildAxisScaleY(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        xDomain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double> {
-        UNSUPPORTED("MarginalLayerCoordProvider.buildAxisScaleY()")
-    }
-
     override fun adjustGeomSize(hDomain: DoubleSpan, vDomain: DoubleSpan, geomSize: DoubleVector): DoubleVector {
         return geomSize
     }
-
-//    override fun adjustDomainsIntern(hDomain: DoubleSpan, vDomain: DoubleSpan): Pair<DoubleSpan, DoubleSpan> {
-//        UNSUPPORTED("MarginalLayerCoordProvider.adjustDomainsIntern()")
-//    }
 }

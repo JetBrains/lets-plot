@@ -68,7 +68,7 @@ class BoxplotGeom : GeomBase() {
         val elementHelper = helper.createSvgElementHelper()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
-            val halfWidth = if (p.defined(Aes.WIDTH)) GeomUtil.widthPx(p, ctx, 2.0) / 2  else 0.0
+            val halfWidth = if (p.defined(Aes.WIDTH)) GeomUtil.widthPx(p, ctx, 2.0) / 2 else 0.0
             val halfFenceWidth = halfWidth * whiskerWidth
 
             val lines = ArrayList<SvgLineElement>()
@@ -83,7 +83,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
                         p
-                    )
+                    )!!
                 )
                 // fence line
                 lines.add(
@@ -91,7 +91,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x - halfFenceWidth, fence),
                         DoubleVector(x + halfFenceWidth, fence),
                         p
-                    )
+                    )!!
                 )
             }
 
@@ -105,7 +105,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x, hinge),
                         DoubleVector(x, fence),
                         p
-                    )
+                    )!!
                 )
                 // fence line
                 lines.add(
@@ -113,7 +113,7 @@ class BoxplotGeom : GeomBase() {
                         DoubleVector(x - halfFenceWidth, fence),
                         DoubleVector(x + halfFenceWidth, fence),
                         p
-                    )
+                    )!!
                 )
 
                 lines.forEach { root.add(it) }
@@ -173,7 +173,10 @@ class BoxplotGeom : GeomBase() {
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
-        private fun rectangleByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun rectangleByDataPoint(
+            ctx: GeomContext,
+            geomHelper: GeomHelper
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val clientRect = if (p.defined(Aes.X) &&
                     p.defined(Aes.LOWER) &&

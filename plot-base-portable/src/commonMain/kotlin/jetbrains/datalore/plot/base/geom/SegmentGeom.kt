@@ -44,10 +44,14 @@ class SegmentGeom : GeomBase() {
                 val start = DoubleVector(p.x()!!, p.y()!!)
                 val end = DoubleVector(p.xend()!!, p.yend()!!)
                 val line = helper.createLine(start, end, p)
+                if (line == null) continue
                 root.add(line)
 
                 targetCollector.addPath(
-                    listOf(coord.toClient(start), coord.toClient(end)),
+                    listOf(
+                        coord.toClient(start)!!,
+                        coord.toClient(end)!!
+                    ),
                     { p.index() },
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)

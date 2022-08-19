@@ -50,10 +50,11 @@ class PointRangeGeom : GeomBase() {
             val start = DoubleVector(x, ymin)
             val end = DoubleVector(x, ymax)
             val line = helper.createLine(start, end, p)
+            if (line == null) continue
             root.add(line)
 
             // mid-point
-            val location = geomHelper.toClient(DoubleVector(x, y), p)
+            val location = geomHelper.toClient(DoubleVector(x, y), p)!!
             val shape = p.shape()!!
             val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
             root.add(wrap(o))

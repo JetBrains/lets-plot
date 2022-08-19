@@ -8,6 +8,7 @@ package jetbrains.datalore.base.geometry
 import kotlin.math.*
 
 class DoubleVector(val x: Double, val y: Double) {
+    val isFinite: Boolean get() = x.isFinite() && y.isFinite()
 
     fun add(v: DoubleVector): DoubleVector {
         return DoubleVector(x + v.x, y + v.y)

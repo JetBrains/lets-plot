@@ -15,7 +15,7 @@ internal class FlippedCoordinateSystem(
     actual.toClientOffsetY,
     coordMapper = actual.coordMapper
 ) {
-    override fun toClient(p: DoubleVector): DoubleVector {
+    override fun toClient(p: DoubleVector): DoubleVector? {
         return super.toClient(p.flip())
     }
 

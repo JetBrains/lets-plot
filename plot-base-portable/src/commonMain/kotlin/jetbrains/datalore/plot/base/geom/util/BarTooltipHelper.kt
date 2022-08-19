@@ -28,7 +28,7 @@ object BarTooltipHelper {
         for (p in aesthetics.dataPoints()) {
             val rect = rectFactory(p) ?: continue
 
-            val objectRadius = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p).run {
+            val objectRadius = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p)!!.run {
                 if (ctx.flipped) {
                     height / 2.0
                 } else {
@@ -54,7 +54,7 @@ object BarTooltipHelper {
 
             ctx.targetCollector.addRectangle(
                 p.index(),
-                helper.toClient(rect, p),
+                helper.toClient(rect, p)!!,
                 GeomTargetCollector.TooltipParams(
                     tipLayoutHints = hintConfigs.hints,
                     fillColor = fillColorMapper(p),
