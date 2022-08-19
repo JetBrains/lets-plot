@@ -29,6 +29,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
+import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
@@ -474,9 +475,9 @@ class PlotSvgComponent constructor(
         }
 
         val rotation = when (orientation) {
-            Orientation.LEFT -> -90.0
-            Orientation.RIGHT -> -90.0
-            else -> 0.0
+            Orientation.LEFT -> TextRotation.ANTICLOCKWISE
+            Orientation.RIGHT -> TextRotation.ANTICLOCKWISE
+            else -> null
         }
 
         val textHeight = PlotLayoutUtil.textDimensions(text, labelSpec).y
@@ -531,7 +532,7 @@ class PlotSvgComponent constructor(
         labelSpec: LabelSpec,
         justification: TextJustification,
         boundRect: DoubleRectangle,
-        angle: Double? = null,
+        rotation: TextRotation? = null,
         className: String
     ) {
         if (title == null) return
@@ -544,12 +545,12 @@ class PlotSvgComponent constructor(
             textSize = PlotLayoutUtil.textDimensions(title, labelSpec),
             lineHeight,
             justification,
-            angle ?: 0.0
+            rotation
         )
         titleLabel.setLineHeight(lineHeight)
         titleLabel.setHorizontalAnchor(hAnchor)
         titleLabel.moveTo(position)
-        angle?.let(titleLabel::rotate)
+        rotation?.angle?.let(titleLabel::rotate)
         add(titleLabel)
     }
 

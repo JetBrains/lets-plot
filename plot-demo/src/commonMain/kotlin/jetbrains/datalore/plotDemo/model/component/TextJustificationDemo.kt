@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -35,14 +36,14 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         val groupComponent = GroupComponent()
 
-        fun place(angle: Double, startPos: DoubleVector) {
+        fun place(rotation: TextRotation?, startPos: DoubleVector) {
             var y = startPos.x
             var x = startPos.y
             specs.forEach { spec ->
-                val labelExample = createLabelExample(rect, spec, angle)
+                val labelExample = createLabelExample(rect, spec, rotation)
                 SvgUtils.transformTranslate(labelExample, x, y)
                 groupComponent.add(labelExample)
-                if (angle != 0.0) {
+                if (rotation != null) {
                     x += 80.0
                 } else {
                     y += rect.height + 20.0
@@ -50,9 +51,9 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             }
         }
 
-        place(angle = 0.0, startPos = DoubleVector(10.0, 10.0))
-        place(angle = 90.0, startPos = DoubleVector(10.0, 590.0))
-        place(angle = -90.0, startPos = DoubleVector(590.0, 590.0))
+        place(rotation = null, startPos = DoubleVector(10.0, 10.0))
+        place(rotation = TextRotation.CLOCKWISE, startPos = DoubleVector(10.0, 590.0))
+        place(rotation = TextRotation.ANTICLOCKWISE, startPos = DoubleVector(590.0, 590.0))
 
         return groupComponent
     }
@@ -65,10 +66,10 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         private fun createLabelExample(
             rect: DoubleRectangle,
             justification: TextJustification,
-            angle: Double
+            rotation: TextRotation?
         ): SvgGElement {
-            val r = if (angle != 0.0) rect.flip() else rect
-            val textLabel = createTextLabel(r, justification, angle)
+            val r = if (rotation != null) rect.flip() else rect
+            val textLabel = createTextLabel(r, justification, rotation)
             val g = SvgGElement()
             g.children().add(createRect(r))
             g.children().add(textLabel.rootGroup)
@@ -85,10 +86,10 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createTextLabel(boundRect: DoubleRectangle, justification: TextJustification, angle: Double): MultilineLabel {
+        private fun createTextLabel(boundRect: DoubleRectangle, justification: TextJustification, rotation: TextRotation?): MultilineLabel {
             val text = "Horizontal justification:" + justification.x + "\n" +
                     "Vertical justification:" + justification.y  + "\n" +
-                    "Angle: " + angle
+                    "Angle: " + rotation.toString()
 
             val label = MultilineLabel(text)
             label.addClassName(LABEL_CLASS_NAME)
@@ -104,11 +105,11 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 textSize,
                 lineHeight,
                 justification,
-                angle
+                rotation
             )
             label.setLineHeight(lineHeight)
             label.setHorizontalAnchor(hAnchor)
-            label.rotate(angle)
+            rotation?.angle?.let(label::rotate)
             label.moveTo(position)
             return label
         }

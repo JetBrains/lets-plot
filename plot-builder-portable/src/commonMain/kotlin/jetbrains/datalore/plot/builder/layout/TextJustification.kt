@@ -10,25 +10,29 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
 
 class TextJustification(val x: Double, val y: Double) {
+
     companion object {
+        enum class TextRotation(val angle: Double) {
+            CLOCKWISE(90.0),
+            ANTICLOCKWISE(-90.0);
+        }
+
         fun applyJustification(
             boundRect: DoubleRectangle,
             textSize: DoubleVector,
             lineHeight: Double,
             justification: TextJustification,
-            angle: Double = 0.0,
+            rotation: TextRotation? = null
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
-            require(angle in listOf(0.0, 90.0, -90.0))
-
-            val rect = if (angle != 0.0) boundRect.flip() else boundRect
+            val rect = if (rotation != null) boundRect.flip() else boundRect
 
             val (x, hAnchor) = xPosition(rect, textSize, justification.x)
             val y = yPosition(rect, textSize, lineHeight, justification.y)
 
-            val position = when {
-                angle == 0.0 -> DoubleVector(x, y)
-                angle < 0.0 -> DoubleVector(y, rect.left + rect.right - x)
-                else -> DoubleVector(rect.top + rect.bottom - y, x)
+            val position = when (rotation) {
+                null -> DoubleVector(x, y)
+                TextRotation.CLOCKWISE -> DoubleVector(rect.top + rect.bottom - y, x)
+                TextRotation.ANTICLOCKWISE -> DoubleVector(y, rect.left + rect.right - x)
             }
             return position to hAnchor
         }
@@ -38,14 +42,16 @@ class TextJustification(val x: Double, val y: Double) {
             textSize: DoubleVector,
             hjust: Double,
         ): Pair<Double, Text.HorizontalAnchor> {
-            val textWidth = 0.0  // todo val textWidth = textSize.x
-            val x = boundRect.left + (boundRect.width - textWidth) * hjust
-            // todo: val anchor = Text.HorizontalAnchor.LEFT
+            // todo:
+            //  val textWidth = textSize.x
+            //  val anchor = Text.HorizontalAnchor.LEFT
+            val textWidth = 0.0
             val anchor = when {
                 hjust < 0.5 -> Text.HorizontalAnchor.LEFT
                 hjust == 0.5 -> Text.HorizontalAnchor.MIDDLE
                 else -> Text.HorizontalAnchor.RIGHT
             }
+            val x = boundRect.left + (boundRect.width - textWidth) * hjust
             return x to anchor
         }
 
