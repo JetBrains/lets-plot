@@ -86,7 +86,7 @@ internal class HorizontalMultilineLabelsLayout(
         val linesCount = boundsByShelfIndex.size
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
-            .bounds(applyLabelsOffset(bounds))
+            .bounds(applyLabelsMargins(bounds))
             .overlap(linesCount > myMaxLines)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)

@@ -74,7 +74,7 @@ internal object BreakLabelsLayoutUtil {
                     axisMapper,
                     PlotLabelSpecFactory.axisTick(theme)
                 )
-                applyLabelsOffset(
+                applyLabelsMargins(
                     labelsBounds,
                     if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
                     theme.tickLabelMargins(),
@@ -83,7 +83,7 @@ internal object BreakLabelsLayoutUtil {
             }
             theme.showTickMarks() -> {
                 val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-                applyLabelsOffset(
+                applyLabelsMargins(
                     labelsBounds,
                     if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
                     theme.tickLabelMargins(),
@@ -113,7 +113,7 @@ internal object BreakLabelsLayoutUtil {
         return axisBreaks
     }
 
-    fun applyLabelsOffset(
+    fun applyLabelsMargins(
         labelsBounds: DoubleRectangle,
         tickLength: Double,
         margins: Margins,
@@ -140,6 +140,27 @@ internal object BreakLabelsLayoutUtil {
             labelsBounds.origin.add(offsetVector),
             dimension
         )
+    }
+
+    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle {
+        return when {
+            orientation.isHorizontal -> {
+                DoubleRectangle(
+                    elementRect.left,
+                    elementRect.top + margins.top,
+                    elementRect.width,
+                    elementRect.height - margins.height()
+                )
+            }
+            else -> {
+                DoubleRectangle(
+                    elementRect.left + margins.left,
+                    elementRect.top,
+                    elementRect.width - margins.width(),
+                    elementRect.height
+                )
+            }
+        }
     }
 
     private fun verticalAxisLabelsBounds(
