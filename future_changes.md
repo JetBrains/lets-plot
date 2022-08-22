@@ -24,7 +24,7 @@
     ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb));
   - `hjust, vjust` for plot title, subtitle, caption, legend and axis titles
     ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/hjust_vjust.ipynb));
-  - `margin` for axis titles and tick labels
+  - `margin` for plot title, subtitle, caption, axis titles and tick labels
     ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/text_margins.ipynb)).
 
 - The 'newline' character (`\n`) now works as `line break` in axis title.

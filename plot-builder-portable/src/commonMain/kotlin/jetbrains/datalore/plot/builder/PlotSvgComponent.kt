@@ -315,10 +315,10 @@ class PlotSvgComponent constructor(
         //   xxxElementRect - rectangle for element, including margins
         //   xxxTextRect - for text only
 
-        fun textRectangle(elementRect: DoubleRectangle) = createTextRectangle(
+        fun textRectangle(elementRect: DoubleRectangle, margins: Margins) = createTextRectangle(
             elementRect,
-            topMargin = PlotLayoutUtil.TITLE_V_MARGIN,
-            bottomMargin = PlotLayoutUtil.TITLE_V_MARGIN
+            topMargin = margins.top,
+            bottomMargin = margins.bottom
         )
 
         val plotTitleElementRect = title?.let {
@@ -326,10 +326,14 @@ class PlotSvgComponent constructor(
                 geomAreaBounds.left,
                 plotOuterBounds.top,
                 geomAreaBounds.width,
-                PlotLayoutUtil.plotTitleThickness(title, PlotLabelSpecFactory.plotTitle(plotTheme))
+                PlotLayoutUtil.titleThickness(
+                    title,
+                    PlotLabelSpecFactory.plotTitle(plotTheme),
+                    theme.plot().titleMargins()
+                )
             )
         }
-        val plotTitleTextRect = plotTitleElementRect?.let(::textRectangle)
+        val plotTitleTextRect = plotTitleElementRect?.let { textRectangle(it, theme.plot().titleMargins()) }
         if (DEBUG_DRAWING) {
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
@@ -340,17 +344,25 @@ class PlotSvgComponent constructor(
                 geomAreaBounds.left,
                 plotTitleElementRect?.bottom ?: plotOuterBounds.top,
                 geomAreaBounds.width,
-                PlotLayoutUtil.plotTitleThickness(subtitle, PlotLabelSpecFactory.plotSubtitle(plotTheme))
+                PlotLayoutUtil.titleThickness(
+                    subtitle,
+                    PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                    theme.plot().subtitleMargins()
+                )
             )
         }
-        val subtitleTextRect = subtitleElementRect?.let(::textRectangle)
+        val subtitleTextRect = subtitleElementRect?.let { textRectangle(it, theme.plot().subtitleMargins()) }
         if (DEBUG_DRAWING) {
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
         }
 
         val captionElementRect = caption?.let {
-            val captionRectHeight = PlotLayoutUtil.plotTitleThickness(caption, PlotLabelSpecFactory.plotCaption(plotTheme))
+            val captionRectHeight = PlotLayoutUtil.titleThickness(
+                caption,
+                PlotLabelSpecFactory.plotCaption(plotTheme),
+                theme.plot().captionMargins()
+            )
             DoubleRectangle(
                 geomAreaBounds.left,
                 plotOuterBounds.bottom - captionRectHeight,
@@ -358,7 +370,7 @@ class PlotSvgComponent constructor(
                 captionRectHeight
             )
         }
-        val captionTextRect = captionElementRect?.let(::textRectangle)
+        val captionTextRect = captionElementRect?.let { textRectangle(it, theme.plot().captionMargins()) }
         if (DEBUG_DRAWING) {
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }

@@ -56,6 +56,10 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
+                Elem.Margin.TOP to 4.0,
+                Elem.Margin.RIGHT to 0.0,
+                Elem.Margin.BOTTOM to 4.0,
+                Elem.Margin.LEFT to 0.0
             ),
             PLOT_CAPTION to mapOf(
                 Elem.HJUST to 1.0,

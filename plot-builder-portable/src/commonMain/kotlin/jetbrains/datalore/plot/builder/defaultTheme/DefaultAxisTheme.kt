@@ -22,7 +22,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
-import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.vis.TextStyle
 
@@ -77,9 +76,7 @@ internal class DefaultAxisTheme(
         return getTextJustification(getElemValue(titleKey))
     }
 
-    override fun titleMargins(): Margins {
-        return getMargins(getElemValue(titleKey))
-    }
+    override fun titleMargins() = getMargins(getElemValue(titleKey))
 
     override fun lineWidth(): Double {
         return getNumber(getElemValue(lineKey), Elem.SIZE)
@@ -101,9 +98,7 @@ internal class DefaultAxisTheme(
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
-    override fun tickLabelMargins(): Margins {
-        return getMargins(getElemValue(textKey))
-    }
+    override fun tickLabelMargins() = getMargins(getElemValue(textKey))
 
     override fun labelStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))
