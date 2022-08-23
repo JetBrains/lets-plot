@@ -21,5 +21,7 @@ interface CoordinateSystem {
         }
     }
 
+    fun unitSize(p: DoubleVector): DoubleVector
+
     fun flip(): CoordinateSystem
 }

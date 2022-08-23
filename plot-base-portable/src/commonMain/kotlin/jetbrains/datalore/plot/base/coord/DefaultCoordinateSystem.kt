@@ -25,6 +25,10 @@ internal class DefaultCoordinateSystem(
         }
     }
 
+    override fun unitSize(p: DoubleVector): DoubleVector {
+        return coordMapper.unitSize(p)
+    }
+
     override fun flip(): CoordinateSystem {
         return DefaultCoordinateSystem(
             toClientOffsetX,

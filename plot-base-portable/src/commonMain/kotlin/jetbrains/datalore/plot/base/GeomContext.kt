@@ -14,6 +14,7 @@ interface GeomContext {
 
     fun getResolution(aes: Aes<Double>): Double
 
+    // ToDo: remove
     fun getUnitResolution(aes: Aes<Double>): Double
 
     /**
