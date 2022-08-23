@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.vis.TextStyle
 
@@ -22,4 +23,8 @@ interface PlotTheme {
     fun titleJustification(): TextJustification
     fun subtitleJustification(): TextJustification
     fun captionJustification(): TextJustification
+
+    fun titleMargins(): Margins
+    fun subtitleMargins(): Margins
+    fun captionMargins(): Margins
 }

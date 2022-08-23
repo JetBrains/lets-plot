@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.defaultTheme.values
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
@@ -55,6 +56,10 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
             TITLE to mapOf(
                 Elem.SIZE to Defaults.FONT_MEDIUM,
+                Elem.Margin.TOP to 4.0,
+                Elem.Margin.RIGHT to 0.0,
+                Elem.Margin.BOTTOM to 4.0,
+                Elem.Margin.LEFT to 0.0
             ),
             PLOT_CAPTION to mapOf(
                 Elem.HJUST to 1.0,
@@ -74,8 +79,19 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             AXIS_ONTOP to false,
             AXIS_TICKS_LENGTH to 4.0,
 
+            AXIS_TEXT to mapOf(
+                Elem.Margin.TOP to 3.0,
+                Elem.Margin.RIGHT to 3.0,
+                Elem.Margin.BOTTOM to 0.0,
+                Elem.Margin.LEFT to 0.0
+            ),
+
             AXIS_TITLE to mapOf(
                 Elem.HJUST to 0.5,
+                Elem.Margin.TOP to 4.0,
+                Elem.Margin.RIGHT to 4.0,
+                Elem.Margin.BOTTOM to 4.0,
+                Elem.Margin.LEFT to 4.0
             ),
 
             PANEL_GRID_MINOR to mapOf(

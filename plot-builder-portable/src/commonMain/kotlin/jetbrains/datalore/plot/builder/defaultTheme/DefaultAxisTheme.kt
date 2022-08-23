@@ -76,6 +76,8 @@ internal class DefaultAxisTheme(
         return getTextJustification(getElemValue(titleKey))
     }
 
+    override fun titleMargins() = getMargins(getElemValue(titleKey))
+
     override fun lineWidth(): Double {
         return getNumber(getElemValue(lineKey), Elem.SIZE)
     }
@@ -95,6 +97,8 @@ internal class DefaultAxisTheme(
     override fun tickMarkColor(): Color {
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
+
+    override fun tickLabelMargins() = getMargins(getElemValue(textKey))
 
     override fun labelStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))

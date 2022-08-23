@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.vis.TextStyle
 
 internal open class ThemeValuesAccess(
@@ -105,5 +106,14 @@ internal open class ThemeValuesAccess(
         val hjust = getNumber(elem, Elem.HJUST)
         val vjust = getNumber(elem, Elem.VJUST)
         return TextJustification(hjust, vjust)
+    }
+
+    protected fun getMargins(elem: Map<String, Any>): Margins {
+        return Margins(
+            top = getNumber(elem, Elem.Margin.TOP),
+            right = getNumber(elem, Elem.Margin.RIGHT),
+            bottom = getNumber(elem, Elem.Margin.BOTTOM),
+            left = getNumber(elem, Elem.Margin.LEFT),
+        )
     }
 }

@@ -70,4 +70,10 @@ internal class DefaultPlotTheme(
     override fun captionJustification(): TextJustification {
         return getTextJustification(getElemValue(captionKey))
     }
+
+    override fun titleMargins() = getMargins(getElemValue(titleKey))
+
+    override fun subtitleMargins() = getMargins(getElemValue(subtitleKey))
+
+    override fun captionMargins() = getMargins(getElemValue(captionKey))
 }

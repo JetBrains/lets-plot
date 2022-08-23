@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorToolt
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
@@ -194,12 +195,14 @@ class TooltipSkippedAesTest {
             override fun showTooltip() = TODO("Not yet implemented")
             override fun titleStyle() = TODO("Not yet implemented")
             override fun titleJustification() = TextJustification(0.5, 1.0)
+            override fun titleMargins() = Margins()
             override fun lineWidth() = TODO("Not yet implemented")
             override fun lineColor() = TODO("Not yet implemented")
             override fun tickMarkColor() = TODO("Not yet implemented")
             override fun labelStyle() = TODO("Not yet implemented")
             override fun tickMarkWidth() = TODO("Not yet implemented")
             override fun tickMarkLength() = TODO("Not yet implemented")
+            override fun tickLabelMargins() = Margins()
             override fun tooltipFill() = Color.WHITE
             override fun tooltipColor() = Color.BLACK
             override fun tooltipStrokeWidth() = 1.0

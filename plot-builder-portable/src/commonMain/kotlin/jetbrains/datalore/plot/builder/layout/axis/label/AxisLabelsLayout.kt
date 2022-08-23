@@ -41,10 +41,11 @@ abstract class AxisLabelsLayout protected constructor(
         )
     }
 
-    internal fun applyLabelsOffset(labelsBounds: DoubleRectangle): DoubleRectangle {
-        return BreakLabelsLayoutUtil.applyLabelsOffset(
+    internal fun applyLabelsMargins(labelsBounds: DoubleRectangle): DoubleRectangle {
+        return BreakLabelsLayoutUtil.applyLabelsMargins(
             labelsBounds,
-            theme.tickLabelDistance(),
+            if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+            theme.tickLabelMargins(),
             orientation
         )
     }
