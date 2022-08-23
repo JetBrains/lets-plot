@@ -6,13 +6,10 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.max
 
 
 object GeomUtil {
@@ -112,12 +109,6 @@ object GeomUtil {
             return dataPoints
         }
         return ordering.sortedCopy(dataPoints)
-    }
-
-    fun widthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double): Double {
-        val w = p.width()
-        val width = w!! * ctx.getResolution(Aes.X)
-        return max(width, minWidth)
     }
 
     fun withDefined(dataPoints: Iterable<DataPointAesthetics>, aes: Aes<*>): Iterable<DataPointAesthetics> {

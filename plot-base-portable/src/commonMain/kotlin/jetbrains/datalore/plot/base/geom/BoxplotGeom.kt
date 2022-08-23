@@ -68,7 +68,7 @@ class BoxplotGeom : GeomBase() {
         val elementHelper = helper.createSvgElementHelper()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
-            val halfWidth = if (p.defined(Aes.WIDTH)) GeomUtil.widthPx(p, ctx, 2.0) / 2 else 0.0
+            val halfWidth = p.width()?.let { it * ctx.getResolution(Aes.X) / 2 } ?: 0.0
             val halfFenceWidth = halfWidth * whiskerWidth
 
             val lines = ArrayList<SvgLineElement>()

@@ -108,7 +108,8 @@ open class BoxPlot {
 
                     "   'layers': [" +
                     "               {" +
-                    "                  'geom': 'boxplot'" +
+                    "                  'geom': 'boxplot'," +
+                    "                  'whisker_width': 0.5" +
                     "               }" +
                     "           ]" +
                     "}"
