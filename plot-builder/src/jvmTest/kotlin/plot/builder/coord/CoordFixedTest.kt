@@ -32,14 +32,11 @@ internal class CoordFixedTest : CoordTestBase() {
         ): DoubleVector {
             val coordProvider = CoordProviders.fixed(1.0, xLim, yLim)
             val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
-            val coordMapper = coordProvider.createCoordinateMapper(
-                adjustedDomain = adjustedDomain,
+            return coordProvider.adjustGeomSize(
+                adjustedDomain.xRange(),
+                adjustedDomain.yRange(),
                 displaySize
             )
-//            val (xDomainAdjusted, yDomainAdjusted) = coordProvider.adjustDomains(xDomain, yDomain)
-//            return coordProvider
-//                .adjustGeomSize(xDomainAdjusted, yDomainAdjusted, displaySize)
-            return coordMapper.clientBounds.dimension
         }
 
         fun squareCoord_0_25(

@@ -9,9 +9,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
@@ -26,8 +26,8 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class SquareFrameOfReference(
-    private val hScale: Scale<Double>,
-    private val vScale: Scale<Double>,
+    private val hScaleBreaks: ScaleBreaks,
+    private val vScaleBreaks: ScaleBreaks,
     private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
@@ -37,17 +37,6 @@ internal class SquareFrameOfReference(
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
-
-    private val geomCoord: CoordinateSystem
-
-    init {
-        if (flipAxis) {
-            // flip mappers to 'fool' geom.
-            geomCoord = coord.flip()
-        } else {
-            geomCoord = coord
-        }
-    }
 
     // Rendering
 
@@ -94,12 +83,13 @@ internal class SquareFrameOfReference(
             // X-axis
             val axisInfo = layoutInfo.hAxisInfo!!
             val hAxis = buildAxis(
-                hScale,
+                hScaleBreaks,
                 axisInfo,
                 hideAxis = !drawHAxis,
                 hideAxisBreaks = !layoutInfo.hAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
+                flipAxis,
                 hAxisTheme,
                 hGridTheme,
                 gridLineLength = geomBounds.height,
@@ -117,12 +107,13 @@ internal class SquareFrameOfReference(
             // Y-axis
             val axisInfo = layoutInfo.vAxisInfo!!
             val vAxis = buildAxis(
-                vScale,
+                vScaleBreaks,
                 axisInfo,
                 hideAxis = !drawVAxis,
                 hideAxisBreaks = !layoutInfo.vAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
+                flipAxis,
                 vAxisTheme,
                 vGridTheme,
                 gridLineLength = geomBounds.width,
@@ -176,8 +167,8 @@ internal class SquareFrameOfReference(
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
         val layerComponent = buildGeom(
             layer,
-            xyAesBounds = adjustedDomain,  // positional aesthetics and not differ from positional data.
-            geomCoord,
+            xyAesBounds = adjustedDomain,  // positional aesthetics are the same as positional data.
+            coord,
             flipAxis,
             targetCollector
         )
@@ -191,12 +182,13 @@ internal class SquareFrameOfReference(
 
     companion object {
         private fun buildAxis(
-            scale: Scale<Double>,
+            scaleBreaks: ScaleBreaks,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
             hideGridlines: Boolean,
             coord: CoordinateSystem,
+            flipAxis: Boolean,
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
@@ -214,8 +206,9 @@ internal class SquareFrameOfReference(
             )
 
             val breaksData = AxisUtil.breaksData(
-                scale.getScaleBreaks(),
+                scaleBreaks,
                 coord,
+                flipAxis,
                 orientation.isHorizontal
             )
 

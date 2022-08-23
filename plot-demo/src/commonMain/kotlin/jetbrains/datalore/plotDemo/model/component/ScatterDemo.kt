@@ -107,7 +107,11 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
-                breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), /*mapperX,*/ coord, horizontal = true),
+                breaksData = AxisUtil.breaksData(
+                    scaleX.getScaleBreaks(), /*mapperX,*/ coord,
+                    flipAxis = false,
+                    horizontal = true
+                ),
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
@@ -125,7 +129,11 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
-                breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), /*mapperY, */coord, horizontal = false),
+                breaksData = AxisUtil.breaksData(
+                    scaleY.getScaleBreaks(), /*mapperY, */coord,
+                    flipAxis = false,
+                    horizontal = false
+                ),
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
@@ -287,7 +295,11 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
-                breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), /*mapperX, */coord, horizontal = true),
+                breaksData = AxisUtil.breaksData(
+                    scaleX.getScaleBreaks(), /*mapperX, */coord,
+                    flipAxis = false,
+                    horizontal = true
+                ),
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
@@ -305,7 +317,11 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
-                breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), /*mapperY,*/ coord, horizontal = false),
+                breaksData = AxisUtil.breaksData(
+                    scaleY.getScaleBreaks(), /*mapperY,*/ coord,
+                    flipAxis = false,
+                    horizontal = false
+                ),
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),
@@ -409,7 +425,11 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeX,
                 orientation = Orientation.BOTTOM,
-                breaksData = AxisUtil.breaksData(scaleX.getScaleBreaks(), /*mapperX,*/ coord, horizontal = true),
+                breaksData = AxisUtil.breaksData(
+                    scaleX.getScaleBreaks(), /*mapperX,*/ coord,
+                    flipAxis = false,
+                    horizontal = true
+                ),
                 gridLineLength = rangeY,
                 gridLineDistance = 0.0,
                 axisTheme = theme.horizontalAxis(flipAxis = false),
@@ -427,7 +447,11 @@ open class ScatterDemo : SimpleDemoBase() {
             val axis = AxisComponent(
                 length = rangeY,
                 orientation = Orientation.LEFT,
-                breaksData = AxisUtil.breaksData(scaleY.getScaleBreaks(), /*mapperY, */coord, horizontal = false),
+                breaksData = AxisUtil.breaksData(
+                    scaleY.getScaleBreaks(), /*mapperY, */coord,
+                    flipAxis = false,
+                    horizontal = false
+                ),
                 gridLineLength = rangeX,
                 gridLineDistance = 0.0,
                 axisTheme = theme.verticalAxis(flipAxis = false),

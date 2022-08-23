@@ -14,9 +14,15 @@ object AxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
         coord: CoordinateSystem,
+        flipAxis: Boolean,
         horizontal: Boolean
     ): AxisComponent.BreaksData {
-        val (breakCoords, breakLabels) = toAxisCoord(scaleBreaks, coord, horizontal)
+        val (breakCoords, breakLabels) = toAxisCoord(
+            scaleBreaks,
+            coord,
+            flipAxis,
+            horizontal
+        )
         return AxisComponent.BreaksData(
             majorBreaks = breakCoords,
             majorLabels = breakLabels
@@ -26,6 +32,7 @@ object AxisUtil {
     private fun toAxisCoord(
         scaleBreaks: ScaleBreaks,
         coord: CoordinateSystem,
+        flipAxis: Boolean,
         horizontal: Boolean
     ): Pair<List<Double>, List<String>> {
         val breaksDataAndLabel: List<Pair<Double, String>> = scaleBreaks.transformedValues.zip(scaleBreaks.labels)
@@ -34,34 +41,30 @@ object AxisUtil {
         val axisLabels = ArrayList<String>()
         for ((br, label) in breaksDataAndLabel) {
             // ToDo: the second coordinate should be taken from "valid domain"
-            val mappedBrPoint = when (horizontal) {
+            val bpCoord = when (horizontal) {
                 true -> DoubleVector(br, 0.0)
                 false -> DoubleVector(0.0, br)
+            }.let {
+                if (flipAxis) {
+                    it.flip()
+                } else {
+                    it
+                }
             }
 
-            val axisBrPoint = coord.toClient(mappedBrPoint)
-            if (!(axisBrPoint != null && axisBrPoint.isFinite)) {
+            val bpClientCoord = coord.toClient(bpCoord)
+            if (!(bpClientCoord != null && bpClientCoord.isFinite)) {
                 // skip this break-point: it's outside the coordinate system' domain.
                 continue
             }
 
-            val brCoord = if (horizontal)
-                axisBrPoint.x
+            val bpOnAxis = if (horizontal)
+                bpClientCoord.x
             else
-                axisBrPoint.y
+                bpClientCoord.y
 
-            axisBreaks.add(brCoord)
+            axisBreaks.add(bpOnAxis)
             axisLabels.add(label)
-//            if (!axisBr.isFinite()) {
-//                val orient = if (horizontal) "horizontal" else "vertical"
-//                throw IllegalStateException(
-//                    "Illegal axis '" + orient + "' break position " + axisBr +
-//                            " at index " + (axisBreaks.size - 1) +
-//                            "\nsource breaks    : " + scaleBreaks.domainValues +
-//                            "\ntranslated breaks: " + breaksMapped +
-//                            "\naxis breaks      : " + axisBreaks
-//                )
-//            }
         }
         return Pair(axisBreaks, axisLabels)
     }

@@ -12,7 +12,7 @@ import jetbrains.datalore.base.spatial.projections.identity
 internal abstract class CoordProviderBase(
     final override val xLim: DoubleSpan?,
     final override val yLim: DoubleSpan?,
-    override val flipAxis: Boolean,
+    override val flipped: Boolean,
 ) : CoordProvider {
 
     override val projection: Projection = identity()

@@ -22,8 +22,6 @@ internal object CoordProto {
         yLim: DoubleSpan?,
         options: OptionsAccessor
     ): CoordProvider {
-//        val xLim = options.getRangeOrNull(X_LIM)
-//        val yLim = options.getRangeOrNull(Y_LIM)
         val flipped = options.getBoolean(Option.Coord.FLIPPED)
         return when (coordName) {
             CARTESIAN -> CoordProviders.cartesian(xLim, yLim, flipped)
@@ -35,17 +33,5 @@ internal object CoordProto {
             FLIP -> throw IllegalStateException("Don't try to instantiate coord FLIP, it's only a flag.")
             else -> throw IllegalArgumentException("Unknown coordinate system name: '$coordName'")
         }
-    }
-
-    fun createCoordProvider(
-        defaultProvider: CoordProvider,
-        xLim: DoubleSpan?,
-        yLim: DoubleSpan?,
-        flipped: Boolean,
-    ): CoordProvider {
-//        val xLim = options.getRangeOrNull(X_LIM)
-//        val yLim = options.getRangeOrNull(Y_LIM)
-//        val flipped = options.getBoolean(Option.Coord.FLIPPED)
-        return defaultProvider.with(xLim, yLim, flipped)
     }
 }

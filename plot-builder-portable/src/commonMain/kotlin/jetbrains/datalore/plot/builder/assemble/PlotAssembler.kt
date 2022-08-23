@@ -61,7 +61,7 @@ class PlotAssembler private constructor(
     fun createPlot(): PlotSvgComponent {
         require(hasLayers()) { "No layers in plot" }
 
-        val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipAxis)
+        val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipped)
 
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
@@ -93,7 +93,7 @@ class PlotAssembler private constructor(
             }
             createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet)
         } else {
-            val flipAxis = coordProvider.flipAxis
+            val flipAxis = coordProvider.flipped
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
                 coreLayersByTile,
                 scaleXProto,
@@ -114,10 +114,6 @@ class PlotAssembler private constructor(
             // Create frame of reference provider for each tile.
             val frameProviderByTile: List<FrameOfReferenceProvider> =
                 domainsXYByTile.map { (xDomain, yDomain) ->
-//                    val (hDomain, vDomain) = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain)).let {
-//                        Pair(it.xRange(), it.yRange())
-//                    }
-
                     val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
                     SquareFrameOfReferenceProvider(
                         hScaleProto, vScaleProto,

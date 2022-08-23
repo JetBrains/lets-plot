@@ -37,12 +37,16 @@ internal class ProjectionCoordProvider(
                 DoubleVector(hDomain.lowerEnd, vDomain.upperEnd),
                 DoubleVector(hDomain.upperEnd, vDomain.lowerEnd),
                 DoubleVector(hDomain.upperEnd, vDomain.upperEnd)
-            ).mapNotNull(projection::project)
-        )
-            ?: error("adjustGeomSize() - can't compute bbox")
+            )
+                .map {
+                    if (flipped) it.flip() else it
+                }.mapNotNull(projection::project)
+                .map {
+                    if (flipped) it.flip() else it
+                }
+        ) ?: error("adjustGeomSize() - can't compute bbox")
 
         val domainRatio = bbox.width / bbox.height
-
         return FixedRatioCoordProvider.reshapeGeom(geomSize, domainRatio)
     }
 }

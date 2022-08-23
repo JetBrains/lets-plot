@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.base.coord
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
-internal open class DefaultCoordinateSystem(
+internal class DefaultCoordinateSystem(
     val toClientOffsetX: (Double) -> Double,
     val toClientOffsetY: (Double) -> Double,
-    val coordMapper: CoordinatesMapper,
+    private val coordMapper: CoordinatesMapper,
 ) : CoordinateSystem {
     override fun toClient(p: DoubleVector): DoubleVector? {
         val mapped = coordMapper.toClient(p)
@@ -26,6 +26,10 @@ internal open class DefaultCoordinateSystem(
     }
 
     override fun flip(): CoordinateSystem {
-        return FlippedCoordinateSystem(this)
+        return DefaultCoordinateSystem(
+            toClientOffsetX,
+            toClientOffsetY,
+            coordMapper.flip()
+        )
     }
 }

@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.base.coord.Coords
 interface CoordProvider {
     val xLim: DoubleSpan?
     val yLim: DoubleSpan?
-    val flipAxis: Boolean
+    val flipped: Boolean
     val projection: Projection
 
     fun with(
@@ -38,7 +38,7 @@ interface CoordProvider {
         }
 
         return if (validDomain != null && validDomain.height > 0.0 && validDomain.width > 0.0) {
-            if (flipAxis) validDomain.flip() else validDomain
+            if (flipped) validDomain.flip() else validDomain
         } else {
             throw IllegalArgumentException(
                 """Can't create a valid domain.
@@ -54,13 +54,7 @@ interface CoordProvider {
         adjustedDomain: DoubleRectangle,
         clientSize: DoubleVector,
     ): CoordinatesMapper {
-        val geomSize = adjustGeomSize(
-            hDomain = adjustedDomain.xRange(),
-            vDomain = adjustedDomain.yRange(),
-            geomSize = clientSize
-        )
-
-        return CoordinatesMapper(adjustedDomain, geomSize, projection)
+        return CoordinatesMapper.create(adjustedDomain, clientSize, projection, flipped)
     }
 
     fun createCoordinateSystem(

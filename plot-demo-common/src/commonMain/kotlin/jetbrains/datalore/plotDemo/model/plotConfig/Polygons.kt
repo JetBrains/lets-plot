@@ -12,7 +12,15 @@ open class Polygons {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            join()
+            join(),
+
+            // flip coord
+            join().apply {
+                this["coord"] = mapOf(
+                    "name" to "flip",
+                    "flip" to true
+                )
+            }
         )
     }
 

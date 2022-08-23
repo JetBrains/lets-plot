@@ -146,6 +146,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 breaksData = AxisUtil.breaksData(
                     scale.getScaleBreaks(), /*scaleMapper, */
                     coord,
+                    flipAxis = false,
                     orientation.isHorizontal
                 ),
                 gridLineLength = 100.0,

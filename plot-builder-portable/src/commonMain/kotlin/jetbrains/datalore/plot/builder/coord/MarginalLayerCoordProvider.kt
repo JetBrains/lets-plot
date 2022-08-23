@@ -8,21 +8,12 @@ package jetbrains.datalore.plot.builder.coord
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.builder.MarginSide
 
-internal class MarginalLayerCoordProvider(
-    private val margin: MarginSide,
-    private val coreCoordProvider: CoordProvider,
-) : CoordProviderBase(
+internal class MarginalLayerCoordProvider : CoordProviderBase(
     xLim = null,
     yLim = null,
-    flipAxis = false
+    flipped = false
 ) {
-    init {
-        check(!coreCoordProvider.flipAxis) {
-            "`flipped` corrdinate system is not supported on plots with marginal layers."
-        }
-    }
 
     override fun with(xLim: DoubleSpan?, yLim: DoubleSpan?, flipped: Boolean): CoordProvider {
         UNSUPPORTED("MarginalLayerCoordProvider.with()")

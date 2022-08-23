@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.FrameOfReference
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.MarginSide
@@ -97,7 +96,8 @@ internal class SquareFrameOfReferenceProvider(
             .build()
 
         val tileFrameOfReference = SquareFrameOfReference(
-            hScale, vScale,
+            hScaleBreaks = hScale.getScaleBreaks(),
+            vScaleBreaks = vScale.getScaleBreaks(),
             adjustedDomain,
             coord,
             layoutInfo,
@@ -118,7 +118,7 @@ internal class SquareFrameOfReferenceProvider(
             return emptyMap()
         }
 
-        check(!coordProvider.flipAxis) {
+        check(!coordProvider.flipped) {
             "`flipped` corrdinate system is not supported on plots with marginal layers."
         }
 
@@ -155,16 +155,16 @@ internal class SquareFrameOfReferenceProvider(
                 MarginSide.TOP, MarginSide.BOTTOM -> domain
             }
 
-            val marginCoordProvider = MarginalLayerCoordProvider(side, coordProvider)
+            val marginCoordProvider = MarginalLayerCoordProvider()
             val clientSize = sizes.getValue(side)
-            val coordMapper = marginCoordProvider.createCoordinateMapper(
-                adjustedDomain = DoubleRectangle(hDomain, vDomain),
+            val adjustedDomain = DoubleRectangle(hDomain, vDomain)
+            val coord = marginCoordProvider.createCoordinateSystem(
+                adjustedDomain = adjustedDomain,
                 clientSize = clientSize,
             )
-            val coord = Coords.create(coordMapper)
             MarginalFrameOfReference(
                 boundsByMargin.getValue(side),
-                coordMapper,
+                adjustedDomain = adjustedDomain,
                 coord,
                 debugDrawing,
             )
