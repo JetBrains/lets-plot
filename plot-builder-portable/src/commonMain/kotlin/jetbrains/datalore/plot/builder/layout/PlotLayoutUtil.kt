@@ -17,9 +17,6 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
 
 internal object PlotLayoutUtil {
-    private const val AXIS_TITLE_OUTER_MARGIN = 4.0
-    const val AXIS_TITLE_INNER_MARGIN = 4.0
-    private const val TITLE_V_MARGIN = 4.0
     private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
@@ -33,7 +30,7 @@ internal object PlotLayoutUtil {
         )
     }
 
-    internal fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
+    private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
         return text.split('\n').map(String::trim).map { line -> labelDimensions(line, labelSpec) }
     }
 
@@ -48,12 +45,13 @@ internal object PlotLayoutUtil {
             .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
     }
 
-    internal fun titleDimensions(title: String?, labelSpec: LabelSpec): DoubleVector {
-        return if (title == null) {
-            DoubleVector.ZERO
-        } else {
-            textDimensions(title, labelSpec).add(DoubleVector(0.0, 2 * TITLE_V_MARGIN))
-        }
+    private fun titleThickness(title: String?, labelSpec: LabelSpec, margin: Double): Double {
+        if (title == null) return 0.0
+        return textDimensions(title, labelSpec).y + margin
+    }
+
+    internal fun titleThickness(title: String?, labelSpec: LabelSpec, margins: Margins): Double {
+        return titleThickness(title, labelSpec, margin = margins.height())
     }
 
     fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
@@ -148,7 +146,8 @@ internal object PlotLayoutUtil {
         val axisTitlesDelta = axisTitleSizeDelta(
             axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
             axisTitleBottom to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
-            axisEnabled
+            axisEnabled,
+            marginDimensions = axisMarginDimensions(theme, flippedAxis)
         )
         val legendBlockDelta = legendBlockDelta(legendsBlockInfo, theme.legend())
         val captionDelta = captionSizeDelta(caption, theme.plot())
@@ -158,38 +157,41 @@ internal object PlotLayoutUtil {
     fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {
         return DoubleVector(
             0.0,
-            titleDimensions(title, PlotLabelSpecFactory.plotTitle(theme)).y +
-                    titleDimensions(subtitle, PlotLabelSpecFactory.plotSubtitle(theme)).y
+            titleThickness(title, PlotLabelSpecFactory.plotTitle(theme), theme.titleMargins()) +
+                    titleThickness(subtitle, PlotLabelSpecFactory.plotSubtitle(theme), theme.subtitleMargins())
         )
     }
 
     fun captionSizeDelta(caption: String?, theme: PlotTheme): DoubleVector {
-        return DoubleVector(0.0, titleDimensions(caption, PlotLabelSpecFactory.plotCaption(theme)).y)
+        return DoubleVector(0.0,
+            titleThickness(caption, PlotLabelSpecFactory.plotCaption(theme), theme.captionMargins())
+        )
+    }
+
+    fun axisMarginDimensions(theme: Theme, flippedAxis: Boolean): DoubleVector {
+        val width = theme.verticalAxis(flippedAxis).titleMargins().width()
+        val height = theme.horizontalAxis(flippedAxis).titleMargins().height()
+        return DoubleVector(width, height)
     }
 
     fun axisTitleSizeDelta(
         axisTitleLeft: Pair<String?, PlotLabelSpec>,
         axisTitleBottom: Pair<String?, PlotLabelSpec>,
-        axisEnabled: Boolean
+        axisEnabled: Boolean,
+        marginDimensions: DoubleVector
     ): DoubleVector {
         if (!axisEnabled) return DoubleVector.ZERO
 
         val axisTitleLeftDelta = DoubleVector(
-            axisTitleThickness(title = axisTitleLeft.first, axisTitleLabelSpec = axisTitleLeft.second),
+            titleThickness(title = axisTitleLeft.first, labelSpec = axisTitleLeft.second, margin = marginDimensions.x),
             0.0
         )
         val axisTitleBottomDelta = DoubleVector(
             0.0,
-            axisTitleThickness(title = axisTitleBottom.first, axisTitleLabelSpec = axisTitleBottom.second)
+            titleThickness(title = axisTitleBottom.first, labelSpec = axisTitleBottom.second, margin = marginDimensions.y)
         )
 
         return axisTitleLeftDelta.add(axisTitleBottomDelta)
-    }
-
-    private fun axisTitleThickness(title: String?, axisTitleLabelSpec: PlotLabelSpec): Double {
-        if (title == null) return 0.0
-        val titleSize = textDimensions(title, axisTitleLabelSpec)
-        return titleSize.y + AXIS_TITLE_OUTER_MARGIN + AXIS_TITLE_INNER_MARGIN
     }
 
     private fun legendBlockDelta(

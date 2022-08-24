@@ -11,6 +11,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.*
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
@@ -73,17 +74,19 @@ internal object BreakLabelsLayoutUtil {
                     axisMapper,
                     PlotLabelSpecFactory.axisTick(theme)
                 )
-                applyLabelsOffset(
+                applyLabelsMargins(
                     labelsBounds,
-                    theme.tickLabelDistance(),
+                    if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+                    theme.tickLabelMargins(),
                     orientation
                 )
             }
             theme.showTickMarks() -> {
                 val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-                applyLabelsOffset(
+                applyLabelsMargins(
                     labelsBounds,
-                    theme.tickLabelDistance(),
+                    if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+                    theme.tickLabelMargins(),
                     orientation
                 )
             }
@@ -110,29 +113,55 @@ internal object BreakLabelsLayoutUtil {
         return axisBreaks
     }
 
-    fun applyLabelsOffset(
+    fun applyLabelsMargins(
         labelsBounds: DoubleRectangle,
-        offset: Double,
+        tickLength: Double,
+        margins: Margins,
         orientation: Orientation
     ): DoubleRectangle {
-        @Suppress("NAME_SHADOWING")
-        var labelsBounds = labelsBounds
+        val offset = tickLength + when (orientation) {
+            LEFT -> margins.width() + labelsBounds.width
+            TOP -> margins.height() + labelsBounds.height
+            RIGHT, BOTTOM -> 0.0
+        }
         val offsetVector = when (orientation) {
             LEFT -> DoubleVector(-offset, 0.0)
             RIGHT -> DoubleVector(offset, 0.0)
             TOP -> DoubleVector(0.0, -offset)
             BOTTOM -> DoubleVector(0.0, offset)
         }
-
-        if (orientation === RIGHT || orientation === BOTTOM) {
-            labelsBounds = labelsBounds.add(offsetVector)
-        } else if (orientation === LEFT || orientation === TOP) {
-            labelsBounds = labelsBounds.add(offsetVector).subtract(DoubleVector(labelsBounds.width, 0.0))
-        }
-
-        return labelsBounds
+        val dimension = labelsBounds.dimension.add(
+            when {
+                orientation.isHorizontal -> DoubleVector(0.0, margins.height())
+                else -> DoubleVector(margins.width(), 0.0)
+            }
+        )
+        return DoubleRectangle(
+            labelsBounds.origin.add(offsetVector),
+            dimension
+        )
     }
 
+    fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle {
+        return when {
+            orientation.isHorizontal -> {
+                DoubleRectangle(
+                    elementRect.left,
+                    elementRect.top + margins.top,
+                    elementRect.width,
+                    elementRect.height - margins.height()
+                )
+            }
+            else -> {
+                DoubleRectangle(
+                    elementRect.left + margins.left,
+                    elementRect.top,
+                    elementRect.width - margins.width(),
+                    elementRect.height
+                )
+            }
+        }
+    }
 
     private fun verticalAxisLabelsBounds(
         breaks: ScaleBreaks,

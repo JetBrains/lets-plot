@@ -9,7 +9,8 @@ __all__ = [
     'element_blank',
     "element_line",
     'element_rect',
-    'element_text'
+    'element_text',
+    'margin'
 ]
 
 
@@ -387,7 +388,10 @@ def element_text(
         family=None,
         face=None,
         size=None,
-        # ToDo: hjust, vjust, angle, lineheight, margin
+        # ToDo: angle, lineheight
+        hjust=None,
+        vjust=None,
+        margin=None,
         blank=False,
 ) -> dict:
     """
@@ -404,6 +408,20 @@ def element_text(
         Font face ("plain", "italic", "bold", "bold_italic").
     size : int
         Text size.
+    hjust : float
+        Horizontal justification (in [0, 1]).
+        0 - left-justified
+        1 - right-justified
+        0.5 - center-justified
+        Can be used with values out of range, but behaviour is not specified.
+    vjust : float
+        Vertical justification (in [0, 1]).
+        0 - bottom-justified
+        1 - top-justified
+        0.5 - middle-justified
+        Can be used with values out of range, but behaviour is not specified.
+    margin : `margin`
+        Margins around the text. See `margin()` for more details.
     blank : bool, default=False
         If True - draws nothing, and assigns no space.
 
@@ -425,6 +443,44 @@ def element_text(
         data = {'x': np.random.normal(size=1000)}
         ggplot(data, aes(x='x')) + geom_histogram() + \\
             theme(axis_text=element_text(color='#bdbdbd'))
+
+    """
+    return locals()
+
+
+def margin(t=None, r=None, b=None, l=None) -> dict:
+    """
+    Dimensions of each margin.
+
+    Parameters
+    ----------
+    t : float
+        Top margin.
+    r : float
+        Right margin.
+    b : float
+        Bottom margin.
+    l : float
+        Left margin.
+
+    Returns
+    -------
+    `dict`
+        Margins specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'x': np.random.normal(size=1000)}
+        ggplot(data, aes(x='x')) + geom_histogram() + \\
+            theme(axis_title=element_text(margin=margin(t=10,r=10,b=4,l=4)))
 
     """
     return locals()

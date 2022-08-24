@@ -19,9 +19,17 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
 
-- Parameters `size, family` in `element_text()`.
+- New parameters  in `element_text()`  [[#562](https://github.com/JetBrains/lets-plot/issues/562)]:
+  - `size, family` 
+    ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb));
+  - `hjust, vjust` for plot title, subtitle, caption, legend and axis titles
+    ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/hjust_vjust.ipynb));
+  - `margin` for plot title, subtitle, caption, axis titles and tick labels
+    ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/text_margins.ipynb)).
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb).
+- The 'newline' character (`\n`) now works as `line break` in axis title.
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/text_margins.ipynb).
 
 - Parameter `whisker_width` in `geom_boxplot()` [[#549](https://github.com/JetBrains/lets-plot/issues/549)].
 
@@ -34,3 +42,4 @@
 - boxplot, violin, crossbar: position dodge width=0.95 should be used by default [[#553](https://github.com/JetBrains/lets-plot/issues/553)].
 - Tooltip is shown not for the nearest object [[#574](https://github.com/JetBrains/lets-plot/issues/574)].
 - Tooltip is not displayed for the object on the border of the plot [[#575](https://github.com/JetBrains/lets-plot/issues/575)].
+- The plot caption overlaps with the legend [[#587](https://github.com/JetBrains/lets-plot/issues/587)].

@@ -227,11 +227,15 @@ internal class SquareFrameOfReference(
             )
 
             if (isDebugDrawing) {
-                val rect = SvgRectElement(info.tickLabelsBounds)
-                rect.strokeColor().set(Color.GREEN)
-                rect.strokeWidth().set(1.0)
-                rect.fillOpacity().set(0.0)
-                axis.add(rect)
+                fun drawDebugRect(r: DoubleRectangle, color: Color) {
+                    val rect = SvgRectElement(r)
+                    rect.strokeColor().set(color)
+                    rect.strokeWidth().set(1.0)
+                    rect.fillOpacity().set(0.0)
+                    axis.add(rect)
+                }
+                drawDebugRect(info.tickLabelsBounds, Color.GREEN)
+                info.tickLabelsTextBounds?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             }
             return axis
         }

@@ -63,7 +63,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     fun createAxisLabelsLayoutInfoBuilder(bounds: DoubleRectangle, overlap: Boolean): AxisLabelsLayoutInfo.Builder {
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
-            .bounds(applyLabelsOffset(bounds))
+            .bounds(applyLabelsMargins(bounds))
             .overlap(overlap)
     }
 
@@ -73,7 +73,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     ): AxisLabelsLayoutInfo {
         if (orientation.isHorizontal) {
             var bounds = DoubleRectangle(axisLength / 2, 0.0, 0.0, 0.0) // empty bounds in the middle of the axis;
-            bounds = applyLabelsOffset(bounds)
+            bounds = applyLabelsMargins(bounds)
             return AxisLabelsLayoutInfo.Builder()
                 .breaks(breaks)
                 .bounds(bounds)

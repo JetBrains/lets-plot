@@ -98,7 +98,6 @@ object Defaults {
             const val TICK_FONT_SIZE = FONT_SMALL
 
             val LINE_COLOR = Color.parseHex(DARK_GRAY)
-            const val TICK_MARK_PADDING = 3.0
         }
     }
 

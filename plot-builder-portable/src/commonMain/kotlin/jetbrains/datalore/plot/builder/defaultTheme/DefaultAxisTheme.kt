@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
@@ -71,6 +72,12 @@ internal class DefaultAxisTheme(
         return getTextStyle(getElemValue(titleKey))
     }
 
+    override fun titleJustification(): TextJustification {
+        return getTextJustification(getElemValue(titleKey))
+    }
+
+    override fun titleMargins() = getMargins(getElemValue(titleKey))
+
     override fun lineWidth(): Double {
         return getNumber(getElemValue(lineKey), Elem.SIZE)
     }
@@ -90,6 +97,8 @@ internal class DefaultAxisTheme(
     override fun tickMarkColor(): Color {
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
+
+    override fun tickLabelMargins() = getMargins(getElemValue(textKey))
 
     override fun labelStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))
