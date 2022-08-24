@@ -44,19 +44,30 @@ class HLineGeom : GeomBase() {
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.YINTERCEPT)) {
             val intercept = p.interceptY()!!
             if (viewPort.yRange().contains(intercept)) {
+                // line
                 val start = DoubleVector(viewPort.left, intercept)
                 val end = DoubleVector(viewPort.right, intercept)
                 val line = helper.createLine(start, end, p)
                 if (line == null) continue
                 lines.add(line)
 
-                val h = AesScaling.strokeWidth(p)
-                val origin = DoubleVector(start.x, intercept - h / 2 - 2.0)
-                val dimensions = DoubleVector(viewPort.dimension.x, h + 4.0)
-                val rect = DoubleRectangle(origin, dimensions)
+                // tooltip
+                val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
+                val h = AesScaling.strokeWidth(p) + 4.0
+                val targetRect = extendTrueHeight(rect, h, ctx)
+
+                // tmp
+//                run {
+//                    var r0 = DoubleRectangle.span(start, end)
+////                    var r = geomHelper.toClient(rect, p)!!
+//                    var r = geomHelper.toClient(r0, p)!!
+//                    var el = SvgRectElement(extendTrueHeight(r, 4.0, ctx))
+//                    root.add(el)
+//                }
+
                 ctx.targetCollector.addRectangle(
                     p.index(),
-                    geomHelper.toClient(rect, p)!!,
+                    targetRect,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     ),
@@ -70,8 +81,25 @@ class HLineGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
+        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = HLineLegendKeyElementFactory()
 
-        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory =
-            HLineLegendKeyElementFactory()
+        private fun extendTrueHeight(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+            val unflipped = if (ctx.flipped) {
+                clientRect.flip()
+            } else {
+                clientRect
+            }
+
+            val unflippedNewHeight = DoubleRectangle.LTRB(
+                unflipped.left, unflipped.top - delta / 2,
+                unflipped.right, unflipped.bottom + delta / 2
+            )
+
+            return if (ctx.flipped) {
+                unflippedNewHeight.flip()
+            } else {
+                unflippedNewHeight
+            }
+        }
     }
 }

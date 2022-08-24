@@ -8,7 +8,10 @@ package jetbrains.datalore.plot.base.geom.util
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.CoordinateSystem
+import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
@@ -243,14 +246,6 @@ open class GeomHelper(
             shape.setFill(fill, fillAlpha)
             shape.setStroke(stroke, strokeAlpha)
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
-        }
-
-        fun getSizeUnitAes(sizeUnitName: String): Aes<Double> {
-            return when (sizeUnitName.lowercase()) {
-                "x" -> Aes.X
-                "y" -> Aes.Y
-                else -> error("Size unit value must be either 'x' or 'y', but was $sizeUnitName.")
-            }
         }
     }
 }

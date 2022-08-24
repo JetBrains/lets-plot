@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgLineElement
-import kotlin.math.max
 
 class VLineGeom : GeomBase() {
 
@@ -42,19 +41,21 @@ class VLineGeom : GeomBase() {
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.XINTERCEPT)) {
             val intercept = p.interceptX()!!
             if (viewPort.xRange().contains(intercept)) {
+                // line
                 val start = DoubleVector(intercept, viewPort.top)
                 val end = DoubleVector(intercept, viewPort.bottom)
                 val line = helper.createLine(start, end, p)
                 if (line == null) continue
                 lines.add(line)
 
-                val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
-                val origin = DoubleVector(intercept - width / 2, end.y)
-                val dimensions = DoubleVector(width, 0.0)
-                val rect = DoubleRectangle(origin, dimensions)
+                // tooltip
+                val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
+                val w = AesScaling.strokeWidth(p) + 4.0
+                val targetRect = extendTrueWidth(rect, w, ctx)
+
                 ctx.targetCollector.addRectangle(
                     p.index(),
-                    geomHelper.toClient(rect, p)!!,
+                    targetRect,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorMarkerMapper(p)
                     )
@@ -67,7 +68,25 @@ class VLineGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory =
-            VLineLegendKeyElementFactory()
+        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = VLineLegendKeyElementFactory()
+
+        private fun extendTrueWidth(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+            val unflipped = if (ctx.flipped) {
+                clientRect.flip()
+            } else {
+                clientRect
+            }
+
+            val unflippedNewWidth = DoubleRectangle.LTRB(
+                unflipped.left - delta / 2, unflipped.top,
+                unflipped.right + delta / 2, unflipped.bottom + delta / 2
+            )
+
+            return if (ctx.flipped) {
+                unflippedNewWidth.flip()
+            } else {
+                unflippedNewWidth
+            }
+        }
     }
 }
