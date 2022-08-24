@@ -12,10 +12,8 @@ interface GeomContext {
     val flipped: Boolean
     val targetCollector: GeomTargetCollector
 
+    // ToDo: Just positional resolution along x or y-axis. Also, its now equal to "data resolution". No need to compute it in 'Aesthetics'.
     fun getResolution(aes: Aes<Double>): Double
-
-    // ToDo: remove
-    fun getUnitResolution(aes: Aes<Double>): Double
 
     /**
      * @return  A rectangle which origin and size are computed basing on

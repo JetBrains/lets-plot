@@ -75,14 +75,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                 resolution = aesthetics.resolution(aes, 0.0)
             }
             if (resolution <= SeriesUtil.TINY) {
-                resolution = getUnitResolution(aes)
+                resolution = 1.0
             }
 
             return resolution
-        }
-
-        override fun getUnitResolution(aes: Aes<Double>): Double {
-            return 1.0
         }
 
         override fun isMappedAes(aes: Aes<*>): Boolean {

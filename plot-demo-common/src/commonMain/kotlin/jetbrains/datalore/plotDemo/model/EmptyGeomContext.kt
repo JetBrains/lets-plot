@@ -19,10 +19,6 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
-    override fun getUnitResolution(aes: Aes<Double>): Double {
-        throw IllegalStateException("Not available in an empty geom context")
-    }
-
     override fun getAesBounds(): DoubleRectangle {
         throw IllegalStateException("Not available in an empty geom context")
     }
