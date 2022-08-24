@@ -38,7 +38,6 @@ open class PointGeom : GeomBase() {
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
-//        val sizeUnitRatio = getSizeUnitRatio(ctx)
 
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
@@ -52,6 +51,7 @@ open class PointGeom : GeomBase() {
 
                 val shape = p.shape()!!
 
+                // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
                 val sizeUnitRatio = when (sizeUnit) {
                     null -> 1.0
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
@@ -69,18 +69,6 @@ open class PointGeom : GeomBase() {
         }
         root.add(wrap(slimGroup))
     }
-
-//    private fun getSizeUnitRatio(/*ctx: GeomContext*/coord: CoordinateSystem): Double {
-//        return if (sizeUnit != null) {
-//            val unitSizePx = coord.unitSize()
-//            val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
-//            // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
-//            // but Shape.size() can't be used because it takes DataPointAesthetics as param
-//            unitRes / AesScaling.UNIT_SHAPE_SIZE
-//        } else {
-//            1.0
-//        }
-//    }
 
     companion object {
         const val HANDLES_GROUPS = false
