@@ -252,6 +252,10 @@ open class AestheticsDefaults {
                 .update(Aes.COLOR, Color.parseHex("#3d3d3d")) // dark gray
         }
 
+        fun label(): AestheticsDefaults {
+            return text()
+                .update(Aes.FILL, Color.WHITE)
+        }
 
         fun raster(): AestheticsDefaults {
             return base()

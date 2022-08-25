@@ -45,6 +45,7 @@ enum class GeomKind {
     RECT,
     SEGMENT,
     TEXT,
+    LABEL,
     RASTER,
     IMAGE
 }

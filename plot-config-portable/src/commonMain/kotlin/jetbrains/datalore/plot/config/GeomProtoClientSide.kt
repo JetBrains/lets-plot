@@ -181,31 +181,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.TEXT -> return GeomProvider.text {
-                val geom = TextGeom()
+                withTextOptions(opts, TextGeom())
+            }
 
-                if (opts.has(Text.LABEL_FORMAT)) {
-                    val labelFormat = opts[Text.LABEL_FORMAT] as? String
-
-                    if (labelFormat != null) {
-                        geom.formatter = StringFormat.forOneArg(labelFormat)::format
-                    } else {
-                        throw IllegalArgumentException("Expected: label_format = 'format string'")
-                    }
-                }
-
-                if (opts.has(Text.NA_TEXT)) {
-                    val naValue = opts[Text.NA_TEXT] as? String
-
-                    if (naValue != null) {
-                        geom.naValue = naValue
-                    } else {
-                        throw IllegalArgumentException("Expected: na_value = 'some string'")
-                    }
-                }
-
-                geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
-
-                geom
+            GeomKind.LABEL -> return GeomProvider.label {
+                withTextOptions(opts, LabelGeom())
             }
 
             GeomKind.IMAGE -> return GeomProvider.image {
@@ -263,10 +243,35 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // step - special case
             PROVIDER[GeomKind.RECT] = GeomProvider.rect()
             // segment - special case
-
-            // text - special case
+            // text, label - special case
             PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
             // image - special case
+        }
+
+        private fun withTextOptions(opts: OptionsAccessor, geom: TextGeom): TextGeom {
+            if (opts.has(Text.LABEL_FORMAT)) {
+                val labelFormat = opts[Text.LABEL_FORMAT] as? String
+
+                if (labelFormat != null) {
+                    geom.formatter = StringFormat.forOneArg(labelFormat)::format
+                } else {
+                    throw IllegalArgumentException("Expected: label_format = 'format string'")
+                }
+            }
+
+            if (opts.has(Text.NA_TEXT)) {
+                val naValue = opts[Text.NA_TEXT] as? String
+
+                if (naValue != null) {
+                    geom.naValue = naValue
+                } else {
+                    throw IllegalArgumentException("Expected: na_value = 'some string'")
+                }
+            }
+
+            geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
+
+            return geom
         }
     }
 }

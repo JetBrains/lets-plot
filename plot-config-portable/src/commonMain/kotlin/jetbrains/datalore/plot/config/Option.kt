@@ -547,6 +547,7 @@ object Option {
         private const val RECT = "rect"
         private const val SEGMENT = "segment"
         const val TEXT = "text"
+        const val LABEL = "label"
         private const val RASTER = "raster"
         const val IMAGE = "image"
 
@@ -593,6 +594,7 @@ object Option {
             map[RECT] = GeomKind.RECT
             map[SEGMENT] = GeomKind.SEGMENT
             map[TEXT] = GeomKind.TEXT
+            map[LABEL] = GeomKind.LABEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
             GEOM_KIND_MAP = map
