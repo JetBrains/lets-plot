@@ -11,11 +11,11 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.Projection
 
 internal class ProjectionCoordProvider(
-    override val projection: Projection,
+    projection: Projection,
     xLim: DoubleSpan?,
     yLim: DoubleSpan?,
     flipped: Boolean
-) : CoordProviderBase(xLim, yLim, flipped) {
+) : CoordProviderBase(xLim, yLim, flipped, projection) {
 
     override fun with(
         xLim: DoubleSpan?,

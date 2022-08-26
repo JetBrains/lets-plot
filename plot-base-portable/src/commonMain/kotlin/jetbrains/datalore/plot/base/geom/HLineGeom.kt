@@ -56,15 +56,6 @@ class HLineGeom : GeomBase() {
                 val h = AesScaling.strokeWidth(p) + 4.0
                 val targetRect = extendTrueHeight(rect, h, ctx)
 
-                // tmp
-//                run {
-//                    var r0 = DoubleRectangle.span(start, end)
-////                    var r = geomHelper.toClient(rect, p)!!
-//                    var r = geomHelper.toClient(r0, p)!!
-//                    var el = SvgRectElement(extendTrueHeight(r, 4.0, ctx))
-//                    root.add(el)
-//                }
-
                 ctx.targetCollector.addRectangle(
                     p.index(),
                     targetRect,
