@@ -66,12 +66,13 @@ class LineRangeGeom : GeomBase() {
                     val x = p.x()!!
                     val ymin = p.ymin()!!
                     val ymax = p.ymax()!!
+                    val height = ymax - ymin
 
                     val rect = geomHelper.toClient(
-                        DoubleRectangle.span(DoubleVector(x, ymin), DoubleVector(x, ymax)),
+                        DoubleRectangle(DoubleVector(x, ymax - height / 2), DoubleVector.ZERO),
                         p
                     )!!
-                    val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
+                    val width = max(AesScaling.strokeWidth(p), 2.0)
                     extendTrueWidth(rect, width, ctx)
                 } else {
                     null
