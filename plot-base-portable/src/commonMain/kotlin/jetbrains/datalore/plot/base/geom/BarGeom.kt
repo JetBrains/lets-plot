@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -23,9 +24,10 @@ open class BarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(
-            rectangleByDataPoint(ctx, isHintRect = false)
+            clientRectByDataPoint(ctx, geomHelper, isHintRect = false)
         )
         rectangles.reverse()
         rectangles.forEach { root.add(it) }
@@ -33,7 +35,7 @@ open class BarGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             emptyList(),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, isHintRect = true),
+            clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
             HintColorUtil::fillWithAlpha
         )
     }
@@ -41,8 +43,9 @@ open class BarGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun rectangleByDataPoint(
+        private fun clientRectByDataPoint(
             ctx: GeomContext,
+            geomHelper: GeomHelper,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
@@ -52,7 +55,7 @@ open class BarGeom : GeomBase() {
                 if (SeriesUtil.allFinite(x, y, width)) {
                     x!!; y!!
                     val w = width!! * ctx.getResolution(Aes.X)
-                    if (isHintRect) {
+                    val rect = if (isHintRect) {
                         val origin = DoubleVector(x - w / 2, y)
                         val dimension = DoubleVector(w, 0.0)
                         DoubleRectangle(origin, dimension)
@@ -68,6 +71,7 @@ open class BarGeom : GeomBase() {
                         }
                         DoubleRectangle(origin, dimensions)
                     }
+                    geomHelper.toClient(rect, p)
                 } else {
                     null
                 }

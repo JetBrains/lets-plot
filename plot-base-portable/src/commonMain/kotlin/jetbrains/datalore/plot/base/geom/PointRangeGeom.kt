@@ -69,7 +69,7 @@ class PointRangeGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(fattenMidPoint),
+            clientRectByDataPoint(ctx, geomHelper, fattenMidPoint),
             { HintColorUtil.colorWithAlpha(it) },
             colorMarkerMapper = colorsByDataPoint
         )
@@ -80,22 +80,28 @@ class PointRangeGeom : GeomBase() {
 
         const val DEF_FATTEN = 5.0
 
-        fun rectangleByDataPoint(fatten: Double): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun clientRectByDataPoint(
+            ctx: GeomContext,
+            geomHelper: GeomHelper,
+            fatten: Double
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 if (p.defined(Aes.X) &&
                     p.defined(Aes.Y)
                 ) {
                     val x = p.x()!!
                     val y = p.y()!!
-
                     val shape = p.shape()!!
+
+                    val rect = geomHelper.toClient(
+                        DoubleRectangle(DoubleVector(x, y), DoubleVector.ZERO),
+                        p
+                    )!!
+
                     val shapeSize = shape.size(p) * fatten
                     val strokeWidth = shape.strokeWidth(p)
                     val width = shapeSize + strokeWidth
-
-                    val origin = DoubleVector(x - width / 2, y)
-                    val dimensions = DoubleVector(width, 0.0)
-                    DoubleRectangle(origin, dimensions)
+                    LineRangeGeom.extendTrueWidth(rect, width, ctx)
                 } else {
                     null
                 }

@@ -48,7 +48,7 @@ class LineRangeGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(),
+            clientRectByDataPoint(ctx, geomHelper),
             { HintColorUtil.colorWithAlpha(it) },
             colorMarkerMapper = colorsByDataPoint
         )
@@ -57,7 +57,7 @@ class LineRangeGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
 
-        fun rectangleByDataPoint(): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun clientRectByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 if (p.defined(Aes.X) &&
                     p.defined(Aes.YMIN) &&
@@ -66,15 +66,33 @@ class LineRangeGeom : GeomBase() {
                     val x = p.x()!!
                     val ymin = p.ymin()!!
                     val ymax = p.ymax()!!
-                    val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
-                    val height = ymax - ymin
 
-                    val origin = DoubleVector(x - width / 2, ymax - height / 2)
-                    val dimensions = DoubleVector(width, 0.0)
-                    DoubleRectangle(origin, dimensions)
+                    val rect = geomHelper.toClient(
+                        DoubleRectangle.span(DoubleVector(x, ymin), DoubleVector(x, ymax)),
+                        p
+                    )!!
+                    val width = max(AesScaling.strokeWidth(p), 2.0) * 2.0
+                    extendTrueWidth(rect, width, ctx)
                 } else {
                     null
                 }
+            }
+        }
+
+        internal fun extendTrueWidth(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+            val unflipped = if (ctx.flipped) {
+                clientRect.flip()
+            } else {
+                clientRect
+            }
+            val unflippedNewWidth = DoubleRectangle.LTRB(
+                unflipped.left - delta / 2, unflipped.top,
+                unflipped.right + delta / 2, unflipped.bottom
+            )
+            return if (ctx.flipped) {
+                unflippedNewWidth.flip()
+            } else {
+                unflippedNewWidth
             }
         }
     }

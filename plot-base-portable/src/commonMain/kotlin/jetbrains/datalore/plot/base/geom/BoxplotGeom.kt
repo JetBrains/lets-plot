@@ -42,14 +42,14 @@ class BoxplotGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, geomHelper)
+            clientRectByDataPoint(ctx, geomHelper)
         )
-        buildLines(root, aesthetics, pos, coord, ctx)
+        buildLines(root, aesthetics, ctx, geomHelper)
         buildOutliers(root, aesthetics, pos, coord, ctx)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, geomHelper),
+            clientRectByDataPoint(ctx, geomHelper),
             { colorWithAlpha(it) },
             defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
@@ -58,14 +58,12 @@ class BoxplotGeom : GeomBase() {
     private fun buildLines(
         root: SvgRoot,
         aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
+        ctx: GeomContext,
+        geomHelper: GeomHelper
     ) {
-        CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
+        CrossBarHelper.buildMidlines(root, aesthetics, ctx, geomHelper, fattenMidline)
 
-        val helper = GeomHelper(pos, coord, ctx)
-        val elementHelper = helper.createSvgElementHelper()
+        val elementHelper = geomHelper.createSvgElementHelper()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X)) {
             val x = p.x()!!
             val halfWidth = p.width()?.let { it * ctx.getResolution(Aes.X) / 2 } ?: 0.0
@@ -173,10 +171,7 @@ class BoxplotGeom : GeomBase() {
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
-        private fun rectangleByDataPoint(
-            ctx: GeomContext,
-            geomHelper: GeomHelper
-        ): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun clientRectByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val clientRect = if (p.defined(Aes.X) &&
                     p.defined(Aes.LOWER) &&
@@ -188,7 +183,10 @@ class BoxplotGeom : GeomBase() {
                     val upper = p.upper()!!
                     val width = p.width()!! * ctx.getResolution(Aes.X)
 
-                    DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower)
+                    geomHelper.toClient(
+                        DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower),
+                        p
+                    )
                 } else {
                     null
                 }

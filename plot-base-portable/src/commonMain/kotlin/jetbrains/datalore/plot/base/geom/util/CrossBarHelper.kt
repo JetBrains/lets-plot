@@ -33,13 +33,11 @@ object CrossBarHelper {
     fun buildMidlines(
         root: SvgRoot,
         aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
         ctx: GeomContext,
+        geomHelper: GeomHelper,
         fatten: Double
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
-        val elementHelper = helper.createSvgElementHelper()
+        val elementHelper = geomHelper.createSvgElementHelper()
 
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),

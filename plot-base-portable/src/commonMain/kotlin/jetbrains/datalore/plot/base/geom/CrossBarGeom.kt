@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.CrossBarHelper
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -27,15 +28,16 @@ class CrossBarGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, false)
+            clientRectByDataPoint(ctx, geomHelper, isHintRect = false)
         )
-        CrossBarHelper.buildMidlines(root, aesthetics, pos, coord, ctx, fattenMidline)
+        CrossBarHelper.buildMidlines(root, aesthetics, ctx, geomHelper, fattenMidline)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(ctx, true),
+            clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
             { HintColorUtil.colorWithAlpha(it) }
         )
     }
@@ -45,12 +47,13 @@ class CrossBarGeom : GeomBase() {
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(false)
 
-        private fun rectangleByDataPoint(
+        private fun clientRectByDataPoint(
             ctx: GeomContext,
+            geomHelper: GeomHelper,
             isHintRect: Boolean
         ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
-                if (!isHintRect &&
+                val rect = if (!isHintRect &&
                     p.defined(Aes.X) &&
                     p.defined(Aes.YMIN) &&
                     p.defined(Aes.YMAX) &&
@@ -79,6 +82,8 @@ class CrossBarGeom : GeomBase() {
                 } else {
                     null
                 }
+
+                rect?.let { geomHelper.toClient(it, p) }
             }
         }
     }
