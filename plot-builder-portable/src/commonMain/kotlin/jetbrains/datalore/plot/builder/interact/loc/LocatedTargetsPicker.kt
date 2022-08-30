@@ -13,42 +13,16 @@ import jetbrains.datalore.plot.builder.interact.MathUtil
 import kotlin.math.abs
 
 class LocatedTargetsPicker(
-    val flippedAxis: Boolean
+    val flippedAxis: Boolean,
+    private val myCursorCoord: DoubleVector? = null
 ) {
-    private val myPicked = ArrayList<LookupResult>()
-    private var myMinDistance = 0.0
     private val myAllLookupResults = ArrayList<LookupResult>()
 
     val picked: List<LookupResult>
         get() = chooseBestResult()
 
-    fun addLookupResult(result: LookupResult, coord: DoubleVector? = null) {
-        val lookupResult = filterResults(result, coord, flippedAxis)
-
-        val distance = distance(lookupResult, coord)
-        if (!lookupResult.isCrosshairEnabled && distance > CUTOFF_DISTANCE) {
-            return
-        }
-
-        when {
-            myPicked.isNotEmpty() && lookupResult.geomKind == TEXT -> {
-                // TEXT tooltips are considered only when no other tooltips are present.
-                // Otherwise, TEXT layer is used as decoration, e.g. values of bars, histograms, corrplot,
-                // and we actually want to see acnestors geom tooltip.
-            }
-            myPicked.isEmpty() || myMinDistance > distance -> {
-                myPicked.clear()
-                myPicked.add(lookupResult)
-                myMinDistance = distance
-            }
-            myMinDistance == distance && stackableResults(myPicked[0], lookupResult) -> {
-                myPicked.add(lookupResult)
-            }
-            myMinDistance == distance -> {
-                myPicked.clear()
-                myPicked.add(lookupResult)
-            }
-        }
+    fun addLookupResult(result: LookupResult) {
+        val lookupResult = filterResults(result, myCursorCoord, flippedAxis)
         myAllLookupResults.add(lookupResult)
     }
 
@@ -60,23 +34,48 @@ class LocatedTargetsPicker(
                     lookupResult.geomKind in listOf(V_LINE, H_LINE)
         }
 
+        val withDistances = myAllLookupResults
+            .map { lookupResult -> lookupResult to distance(lookupResult, myCursorCoord) }
+            .sortedBy { (_, distance) -> distance }
+        val minDistance = withDistances.firstOrNull()?.second ?: 0.0
+
+        val closestResults = withDistances
+            .filter { (lookupResult, distance) -> lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE }
+            .filter { (_, distance) -> distance == minDistance }
+            .map { (lookupResult, _) -> lookupResult }
+            .toList()
+
+        var picked = listOf<LookupResult>()
+        closestResults.forEach { lookupResult ->
+            picked = when {
+                picked.isNotEmpty() && lookupResult.geomKind == TEXT -> {
+                    // TEXT tooltips are considered only when no other tooltips are present.
+                    // Otherwise, TEXT layer is used as decoration, e.g. values of bars, histograms, corrplot,
+                    // and we actually want to see ancestors geom tooltip.
+                    picked
+                }
+                picked.isNotEmpty() && stackableResults(picked[0], lookupResult) -> {
+                    picked + lookupResult
+                }
+                else -> {
+                    listOf(lookupResult)
+                }
+            }
+        }
+
         return when {
-            myPicked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> myPicked
-            myAllLookupResults.none(::hasGeneralTooltip) -> myPicked
-            myAllLookupResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
+            picked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> picked
+            closestResults.none(::hasGeneralTooltip) -> picked
+            closestResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
                 listOf(
-                    myAllLookupResults
-                        .sortedByDescending(LookupResult::distance)
-                        .last { hasGeneralTooltip(it) && hasAxisTooltip(it) }
+                    closestResults.last { hasGeneralTooltip(it) && hasAxisTooltip(it) }
                 )
             }
             else -> {
-                with(myAllLookupResults.sortedByDescending(LookupResult::distance)) {
-                    listOfNotNull(
-                        lastOrNull(::hasGeneralTooltip),
-                        lastOrNull(::hasAxisTooltip)
-                    )
-                }
+                listOfNotNull(
+                    closestResults.lastOrNull(::hasGeneralTooltip),
+                    closestResults.lastOrNull(::hasAxisTooltip)
+                )
             }
         }
     }
