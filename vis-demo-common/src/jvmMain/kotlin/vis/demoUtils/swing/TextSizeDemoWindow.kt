@@ -168,7 +168,7 @@ class TextSizeDemoWindow(
 
         grid.add(JLabel("Model:"))
         myModelComboBox.isEditable = false
-        myModelComboBox.selectedItem = "original"
+        myModelComboBox.selectedItem = "clustering"
         grid.add(myModelComboBox)
 
         grid.add(JLabel("Font:"))

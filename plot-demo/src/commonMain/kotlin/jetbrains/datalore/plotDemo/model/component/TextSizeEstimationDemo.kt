@@ -51,7 +51,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
         boldRatio: Double,
         italicRatio: Double,
         multiplicativeCoefficient: Double,
-        additiveCoefficient: Double
+        additiveCoefficient: Double,
+        aggOnly: Boolean
     ): GroupComponent {
         val groupComponent = GroupComponent()
         var x = 0.0
@@ -66,56 +67,57 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
         }
 
         val deltas = mutableListOf<Double>()
+        val qs = mutableListOf<Double>()
         textLines
             .forEachIndexed { index, text ->
                 val estimatedSize = when (model) {
                     Model.ORIGINAL -> correctEstimation(PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length), multiplicativeCoefficient, additiveCoefficient)
                     Model.CLUSTERING -> correctEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
                 }
-                groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
-
-                /// actual size
                 val actualSize = actualTextDimensions[index]
-                groupComponent.add(svgRect(createRect(actualSize), Color.DARK_BLUE, strokeWidth = 1.0))
-
-                // label
-                val textLabel = createTextLabel(text, font)
-                val element = textLabel.rootGroup
-                SvgUtils.transformTranslate(element, x, y)
-                groupComponent.add(element)
-
-                // delta
                 val delta = estimatedSize.x - actualSize.x
+                val q = estimatedSize.x / actualSize.x
                 deltas.add(delta)
+                qs.add(q)
 
-                val deltaStr = "actual=${actualSize.x.round()}, estimated=${estimatedSize.x.round()}, ∆=${delta.round()}"
-                val deltaLabel = createTextLabel(deltaStr, Font(FontFamily.MONOSPACED, 10))
-                val deltaElement = deltaLabel.rootGroup
-                SvgUtils.transformTranslate(
-                    deltaElement,
-                    x + (listOf(estimatedSize.x, actualSize.x).maxOrNull() ?: 0.0 ) + 10.0,
-                    y
-                )
-                groupComponent.add(deltaElement)
+                if (!aggOnly) {
+                    groupComponent.add(svgRect(createRect(estimatedSize), Color.MAGENTA, strokeWidth = 1.5))
+                    groupComponent.add(svgRect(createRect(actualSize), Color.DARK_BLUE, strokeWidth = 1.0))
 
-                y += estimatedSize.y + lineInterval
-                if ((index + 1) % rowsCount == 0) {
-                    x += max(estimatedSize.x, actualSize.x) + 200.0
-                    y = 20.0
+                    // label
+                    val textLabel = createTextLabel(text, font)
+                    val element = textLabel.rootGroup
+                    SvgUtils.transformTranslate(element, x, y)
+                    groupComponent.add(element)
+
+                    val deltaStr =
+                        "actual=${actualSize.x.round()}, estimated=${estimatedSize.x.round()}, ∆=${delta.round()}, Q=${q.round()}"
+                    val deltaLabel = createTextLabel(deltaStr, Font(FontFamily.MONOSPACED, 10))
+                    val deltaElement = deltaLabel.rootGroup
+                    SvgUtils.transformTranslate(
+                        deltaElement,
+                        x + (listOf(estimatedSize.x, actualSize.x).maxOrNull() ?: 0.0) + 10.0,
+                        y
+                    )
+                    groupComponent.add(deltaElement)
+
+                    y += estimatedSize.y + lineInterval
+                    if ((index + 1) % rowsCount == 0) {
+                        x += max(estimatedSize.x, actualSize.x) + 200.0
+                        y = 20.0
+                    }
                 }
             }
 
         val meanDelta = deltas.sum() / deltas.size
+        val meanQ = qs.sum() / qs.size
         val stdDelta = (deltas.sumOf { (it - meanDelta).pow(2) } / deltas.size).pow(0.5)
-        val accDeltaStr = "Mean ∆ = ${meanDelta.round()}, Std ∆ = ${stdDelta.round()}"
-        val accDeltaLabel = createTextLabel(accDeltaStr, Font(FontFamily.MONOSPACED, 10))
-        val accDeltaElement = accDeltaLabel.rootGroup
-        SvgUtils.transformTranslate(
-            accDeltaElement,
-            x + 10.0,
-            y
-        )
-        groupComponent.add(accDeltaElement)
+        val stdQ = (qs.sumOf { (it - meanQ).pow(2) } / qs.size).pow(0.5)
+        val aggStr = "Mean ∆ = ${meanDelta.round()}, Std ∆ = ${stdDelta.round()}, Mean Q = ${meanQ.round()}, Std Q = ${stdQ.round()}"
+        val aggLabel = createTextLabel(aggStr, Font(FontFamily.MONOSPACED, 10))
+        val aggElement = aggLabel.rootGroup
+        SvgUtils.transformTranslate(aggElement, x + 10.0, y)
+        groupComponent.add(aggElement)
 
         return groupComponent
     }
@@ -172,6 +174,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
             italicRatio: Double,
             multiplicativeCoefficient: Double,
             additiveCoefficient: Double,
+            aggOnly: Boolean = false
         ): SvgSvgElement? {
             return with(TextSizeEstimationDemo(demoInnerSize, renderingEngineCoeff)) {
                 createSvgRoots(
@@ -191,6 +194,7 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
                             italicRatio,
                             multiplicativeCoefficient,
                             additiveCoefficient,
+                            aggOnly
                         )
                     )
                 ).firstOrNull()

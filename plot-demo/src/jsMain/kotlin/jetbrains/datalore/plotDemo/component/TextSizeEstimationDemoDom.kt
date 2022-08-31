@@ -14,7 +14,6 @@ import org.w3c.dom.Element
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.get
 import org.w3c.dom.svg.SVGTextContentElement
-import kotlin.math.pow
 
 /**
  * Called from generated HTML
@@ -44,19 +43,46 @@ fun textSizeEstimationDemo() {
 }
 
 fun rebuild(rootElement: Element, multiplicativeCoefficient: Double) {
+    fillSvg(rootElement, multiplicativeCoefficient, PlotTitles.TITLES.map { DoubleVector(0.0, 0.0) })
+
+    val svgElement = rootElement.getElementsByTagName("svg")[0]
+        ?: throw IllegalStateException("SVG element wasn't found")
+    val textElements = svgElement.getElementsByTagName("text")
+    val textElementsCount = textElements.length
+    val lineSizes = mutableListOf<DoubleVector>()
+    val deltas = mutableListOf<Double>()
+    val qs = mutableListOf<Double>()
+    for (i in 0 until textElementsCount / 2) {
+        val textElement = textElements[2 * i] as SVGTextContentElement
+        val actualWidth = textElement.getComputedTextLength()
+        lineSizes.add(DoubleVector(actualWidth.toDouble(), 0.0))
+        val estimationString = textElements[2 * i + 1] as SVGTextContentElement
+        val estimatedWidth = (estimationString.textContent ?: "").replace("actual=0, estimated=", "").split(",")[0].toDoubleOrNull() ?: 0.0
+        val delta = estimatedWidth - actualWidth
+        val q = estimatedWidth / actualWidth
+        deltas.add(delta)
+        qs.add(q)
+
+        val div = document.createElement("div")
+        div.innerHTML = "width(\"${textElement.textContent}\"): actual=$actualWidth, estimated=$estimatedWidth, &#8710;=$delta, q=$q"
+        rootElement.appendChild(div)
+    }
+    fillSvg(rootElement, multiplicativeCoefficient, lineSizes)
+}
+
+fun fillSvg(rootElement: Element, multiplicativeCoefficient: Double, lineSizes: List<DoubleVector>) {
     rootElement.innerHTML = ""
 
     val fontName = "Arial"
     val fontSize = 14
     val isBold = false
     val isItalic = false
-    val lineSizes = PlotTitles.TITLES.map { DoubleVector(0.0, 0.0) }
 
     val svgRoot = TextSizeEstimationDemo.createSvgElement(
         DoubleVector(800.0, 600.0),
-        0.75,
+        0.742,
         PlotTitles.TITLES,
-        "original",
+        "clustering",
         fontName,
         fontSize,
         isBold,
@@ -69,28 +95,4 @@ fun rebuild(rootElement: Element, multiplicativeCoefficient: Double) {
         0.0
     ) ?: return
     DomMapperDemoUtil.mapToDom(listOf(svgRoot), rootElement.id)
-
-    val svgElement = rootElement.getElementsByTagName("svg")[0]
-        ?: throw IllegalStateException("SVG element wasn't found")
-    val textElements = svgElement.getElementsByTagName("text")
-    val textElementsCount = textElements.length
-    val deltas = mutableListOf<Double>()
-    for (i in 0 until textElementsCount / 2) {
-        val textElement = textElements[2 * i] as SVGTextContentElement
-        val actualWidth = textElement.getComputedTextLength()
-        val estimationString = textElements[2 * i + 1] as SVGTextContentElement
-        val estimatedWidth = (estimationString.textContent ?: "").replace("actual=0, estimated=", "").split(",")[0].toDoubleOrNull() ?: 0.0
-        val delta = estimatedWidth - actualWidth
-        deltas.add(delta)
-
-        val div = document.createElement("div")
-        div.innerHTML = "width(\"${textElement.textContent}\"): actual=$actualWidth, estimated=$estimatedWidth, &#8710;=$delta"
-        rootElement.appendChild(div)
-    }
-
-    val meanDelta = deltas.sum() / deltas.size
-    val stdDelta = (deltas.sumOf { (it - meanDelta).pow(2) } / deltas.size).pow(0.5)
-    val div = document.createElement("div")
-    div.innerHTML = "Mean &#8710; = $meanDelta, Std &#8710; = $stdDelta"
-    rootElement.appendChild(div)
 }
