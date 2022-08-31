@@ -36,46 +36,57 @@ class LocatedTargetsPicker(
 
         val withDistances = myAllLookupResults
             .map { lookupResult -> lookupResult to distance(lookupResult, myCursorCoord) }
-            .sortedBy { (_, distance) -> distance }
-        val minDistance = withDistances.firstOrNull()?.second ?: 0.0
+            .filter { (lookupResult, distance) ->
+                lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE
+            }
 
-        val closestResults = withDistances
-            .filter { (lookupResult, distance) -> lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE }
-            .filter { (_, distance) -> distance == minDistance }
-            .map { (lookupResult, _) -> lookupResult }
-            .toList()
+        val minDistance = withDistances.minByOrNull { (_, distance) -> distance }?.second ?: 0.0
 
         var picked = listOf<LookupResult>()
-        closestResults.forEach { lookupResult ->
-            picked = when {
-                picked.isNotEmpty() && lookupResult.geomKind == TEXT -> {
-                    // TEXT tooltips are considered only when no other tooltips are present.
-                    // Otherwise, TEXT layer is used as decoration, e.g. values of bars, histograms, corrplot,
-                    // and we actually want to see ancestors geom tooltip.
-                    picked
-                }
-                picked.isNotEmpty() && stackableResults(picked[0], lookupResult) -> {
-                    picked + lookupResult
-                }
-                else -> {
-                    listOf(lookupResult)
+        withDistances
+            .filter { (_, distance) -> distance == minDistance }
+            .map { (lookupResult, _) -> lookupResult }
+            .forEach { lookupResult ->
+                picked = when {
+                    picked.isNotEmpty() && lookupResult.geomKind == TEXT -> {
+                        // TEXT tooltips are considered only when no other tooltips are present.
+                        // Otherwise, TEXT layer is used as decoration, e.g. values of bars, histograms, corrplot,
+                        // and we actually want to see ancestors geom tooltip.
+                        picked
+                    }
+                    picked.isNotEmpty() && stackableResults(picked[0], lookupResult) -> {
+                        picked + lookupResult
+                    }
+                    else -> {
+                        listOf(lookupResult)
+                    }
                 }
             }
-        }
+
+        val allConsideredResults = withDistances.map { (lookupResult, _) -> lookupResult }
 
         return when {
             picked.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> picked
-            closestResults.none(::hasGeneralTooltip) -> picked
-            closestResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
+            allConsideredResults.none(::hasGeneralTooltip) -> picked
+            allConsideredResults.any { hasGeneralTooltip(it) && hasAxisTooltip(it) } -> {
                 listOf(
-                    closestResults.last { hasGeneralTooltip(it) && hasAxisTooltip(it) }
+                    withDistances
+                        .sortedByDescending { (_, distance) -> distance }
+                        .map { (lookupResult, _) -> lookupResult }
+                        .last { hasGeneralTooltip(it) && hasAxisTooltip(it) }
                 )
             }
             else -> {
-                listOfNotNull(
-                    closestResults.lastOrNull(::hasGeneralTooltip),
-                    closestResults.lastOrNull(::hasAxisTooltip)
-                )
+                with(
+                    withDistances
+                        .sortedByDescending { (_, distance) -> distance }
+                        .map { (lookupResult, _) -> lookupResult }
+                ) {
+                    listOfNotNull(
+                        lastOrNull(::hasGeneralTooltip),
+                        lastOrNull(::hasAxisTooltip)
+                    )
+                }
             }
         }
     }
