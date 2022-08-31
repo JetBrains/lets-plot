@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plotDemo.data.PlotTitles
+import jetbrains.datalore.plotDemo.data.PlotTexts
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
 import jetbrains.datalore.vis.demoUtils.swing.TextSettings
 import jetbrains.datalore.vis.demoUtils.swing.TextSizeDemoWindow
@@ -49,7 +49,7 @@ fun main() {
         TextSizeDemoWindow(
             "Text size estimation (JFX)",
             Dimension(1200, 600),
-            PlotTitles.TITLES.joinToString("\n"),
+            PlotTexts.TEST.joinToString("\n"),
             ::buildPlotComponent
         ).run()
     }

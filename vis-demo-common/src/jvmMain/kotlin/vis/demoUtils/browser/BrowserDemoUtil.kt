@@ -97,6 +97,7 @@ object BrowserDemoUtil {
         val writer = StringWriter().appendHTML().html {
             lang = "en"
             head {
+                meta { charset = "UTF-8" }
                 title(title)
             }
             body {
