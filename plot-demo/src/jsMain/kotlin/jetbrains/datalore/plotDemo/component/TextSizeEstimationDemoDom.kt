@@ -10,9 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.data.PlotTexts
 import jetbrains.datalore.plotDemo.model.component.TextSizeEstimationDemo
 import jetbrains.datalore.vis.browser.DomMapperDemoUtil
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.get
+import org.w3c.dom.*
 import org.w3c.dom.svg.SVGTextContentElement
 
 /**
@@ -20,6 +18,12 @@ import org.w3c.dom.svg.SVGTextContentElement
  * Run with TextSizeEstimationDemoBrowser.kt
  */
 fun textSizeEstimationDemo() {
+    val availableFontFamilies = listOf("Lucida Grande", "Arial", "Calibri", "Garamond", "Geneva",
+                                       "Georgia", "Helvetica", "Rockwell", "Times New Roman", "Verdana")
+        .filter { checkFont(it) }
+
+    val defaultModel = "clustering2"
+    val defaultFontFamily = availableFontFamilies.first()
     val defaultFontSize = 14
     val defaultIsBold = false
     val defaultIsItalic = false
@@ -30,6 +34,12 @@ fun textSizeEstimationDemo() {
         ?: throw IllegalStateException("Root node '$rootNodeId' wasn't found")
 
     val inputPanel = document.createElement("div")
+    val modelSelect = initSelectElement(inputPanel, mapOf(
+        "original" to "Original",
+        "clustering1" to "Clustering #1",
+        "clustering2" to "Clustering #2"
+    ), "Model: ", defaultModel)
+    val fontSelect = initSelectElement(inputPanel, availableFontFamilies.associateWith { it }, "Font family: ", defaultFontFamily)
     val fontSizeInput = initInputElement(inputPanel, "text", "Font size: ", defaultFontSize.toString())
     val isBoldCheckbox = initInputElement(inputPanel, "checkbox", "Is bold: ", defaultIsBold)
     val isItalicCheckbox = initInputElement(inputPanel, "checkbox", "Is italic: ", defaultIsItalic)
@@ -41,11 +51,37 @@ fun textSizeEstimationDemo() {
     outputPanel.id = "root-output"
     rootElement.appendChild(outputPanel)
 
-    rebuild(outputPanel, defaultFontSize, defaultIsBold, defaultIsItalic, defaultMultiplicativeCoefficient, defaultAdditiveCoefficient)
+    rebuild(outputPanel, defaultModel, defaultFontFamily, defaultFontSize, defaultIsBold, defaultIsItalic, defaultMultiplicativeCoefficient, defaultAdditiveCoefficient)
 
+    modelSelect.addEventListener("change", { event ->
+        rebuild(
+            outputPanel,
+            (event.target as HTMLSelectElement).value,
+            fontSelect.value,
+            fontSizeInput.value.toInt(),
+            isBoldCheckbox.checked,
+            isItalicCheckbox.checked,
+            multiplicativeCoefficientInput.value.toDouble(),
+            additiveCoefficientInput.value.toDouble()
+        )
+    })
+    fontSelect.addEventListener("change", { event ->
+        rebuild(
+            outputPanel,
+            modelSelect.value,
+            (event.target as HTMLSelectElement).value,
+            fontSizeInput.value.toInt(),
+            isBoldCheckbox.checked,
+            isItalicCheckbox.checked,
+            multiplicativeCoefficientInput.value.toDouble(),
+            additiveCoefficientInput.value.toDouble()
+        )
+    })
     fontSizeInput.addEventListener("input", { event ->
         rebuild(
             outputPanel,
+            modelSelect.value,
+            fontSelect.value,
             (event.target as HTMLInputElement).value.toInt(),
             isBoldCheckbox.checked,
             isItalicCheckbox.checked,
@@ -56,6 +92,8 @@ fun textSizeEstimationDemo() {
     isBoldCheckbox.addEventListener("click", { event ->
         rebuild(
             outputPanel,
+            modelSelect.value,
+            fontSelect.value,
             fontSizeInput.value.toInt(),
             (event.target as HTMLInputElement).checked,
             isItalicCheckbox.checked,
@@ -66,6 +104,8 @@ fun textSizeEstimationDemo() {
     isItalicCheckbox.addEventListener("click", { event ->
         rebuild(
             outputPanel,
+            modelSelect.value,
+            fontSelect.value,
             fontSizeInput.value.toInt(),
             isBoldCheckbox.checked, (event.target as HTMLInputElement).checked,
             multiplicativeCoefficientInput.value.toDouble(),
@@ -75,6 +115,8 @@ fun textSizeEstimationDemo() {
     multiplicativeCoefficientInput.addEventListener("input", { event ->
         rebuild(
             outputPanel,
+            modelSelect.value,
+            fontSelect.value,
             fontSizeInput.value.toInt(),
             isBoldCheckbox.checked, isItalicCheckbox.checked,
             (event.target as HTMLInputElement).value.toDouble(),
@@ -84,6 +126,8 @@ fun textSizeEstimationDemo() {
     additiveCoefficientInput.addEventListener("input", { event ->
         rebuild(
             outputPanel,
+            modelSelect.value,
+            fontSelect.value,
             fontSizeInput.value.toInt(),
             isBoldCheckbox.checked, isItalicCheckbox.checked,
             multiplicativeCoefficientInput.value.toDouble(),
@@ -109,15 +153,35 @@ fun initInputElement(inputPanel: Element, type: String, label: String, defaultVa
     return inputElement
 }
 
+fun initSelectElement(inputPanel: Element, options: Map<String, String>, label: String, defaultValue: String): HTMLSelectElement {
+    val selectContainer = document.createElement("div")
+    val selectLabel = document.createElement("span")
+    selectLabel.textContent = label
+    selectContainer.appendChild(selectLabel)
+    val selectElement = document.createElement("select") as HTMLSelectElement
+    for ((value, text) in options) {
+        val optionElement = document.createElement("option") as HTMLOptionElement
+        optionElement.value = value
+        optionElement.textContent = text
+        optionElement.selected = value == defaultValue
+        selectElement.appendChild(optionElement)
+    }
+    selectContainer.appendChild(selectElement)
+    inputPanel.appendChild(selectContainer)
+    return selectElement
+}
+
 fun rebuild(
     rootElement: Element,
+    model: String,
+    fontName: String,
     fontSize: Int,
     isBold: Boolean,
     isItalic: Boolean,
     multiplicativeCoefficient: Double,
     additiveCoefficient: Double
 ) {
-    fillSvg(rootElement, PlotTexts.TEST.map { DoubleVector(0.0, 0.0) }, fontSize, isBold, isItalic, multiplicativeCoefficient, additiveCoefficient)
+    fillSvg(rootElement, PlotTexts.TEST.map { DoubleVector(0.0, 0.0) }, model, fontName, fontSize, isBold, isItalic, multiplicativeCoefficient, additiveCoefficient)
 
     val svgElement = rootElement.getElementsByTagName("svg")[0]
         ?: throw IllegalStateException("SVG element wasn't found")
@@ -141,12 +205,14 @@ fun rebuild(
         div.innerHTML = "width(\"${textElement.textContent}\"): actual=$actualWidth, estimated=$estimatedWidth, &#8710;=$delta, q=$q"
         rootElement.appendChild(div)
     }
-    fillSvg(rootElement, lineSizes, fontSize, isBold, isItalic, multiplicativeCoefficient, additiveCoefficient)
+    fillSvg(rootElement, lineSizes, model, fontName, fontSize, isBold, isItalic, multiplicativeCoefficient, additiveCoefficient)
 }
 
 fun fillSvg(
     rootElement: Element,
     lineSizes: List<DoubleVector>,
+    model: String,
+    fontName: String,
     fontSize: Int,
     isBold: Boolean,
     isItalic: Boolean,
@@ -154,12 +220,11 @@ fun fillSvg(
     additiveCoefficient: Double,
 ) {
     rootElement.innerHTML = ""
-    val fontName = "Arial"
     val svgRoot = TextSizeEstimationDemo.createSvgElement(
         DoubleVector(800.0, 600.0),
         0.742,
         PlotTexts.TEST,
-        "clustering",
+        model,
         fontName,
         fontSize,
         isBold,
@@ -172,4 +237,49 @@ fun fillSvg(
         additiveCoefficient
     ) ?: return
     DomMapperDemoUtil.mapToDom(listOf(svgRoot), rootElement.id)
+}
+
+// Source: https://gist.github.com/fijiwebdesign/3b0bf8e88ceef7518844
+fun checkFont(fontName: String): Boolean {
+    // A font will be compared against all the three default fonts.
+    // And if it doesn't match all 3 then that font is not available.
+    val baseFonts = listOf("monospace", "sans-serif", "serif")
+
+    // We use m or w because these two characters take up the maximum width.
+    // And we use a LLi so that the same matching fonts can get separated.
+    val testString = "mmmmmmmmmmlli"
+
+    // We test using 72px font size, we may use any size. I guess larger the better.
+    val testSize = "72px"
+
+    val h = document.getElementsByTagName("body")[0]!!
+
+    // Create a SPAN in the document to get the width of the text we use to test.
+    val s = document.createElement("span") as HTMLSpanElement
+    s.style.fontSize = testSize
+    s.innerHTML = testString
+    val defaultWidth = mutableMapOf<String, Int>()
+    val defaultHeight = mutableMapOf<String, Int>()
+    for (baseFont in baseFonts) {
+        // Get the default width for the three base fonts.
+        s.style.fontFamily = baseFont
+        h.appendChild(s)
+        defaultWidth[baseFont] = s.offsetWidth // Width for the default font.
+        defaultHeight[baseFont] = s.offsetHeight // Height for the defualt font.
+        h.removeChild(s)
+    }
+
+    fun check(font: String): Boolean {
+        var detected = false
+        for (baseFont in baseFonts) {
+            s.style.fontFamily = "\"$font\",$baseFont" // Name of the font along with the base font for fallback.
+            h.appendChild(s)
+            val matched = (s.offsetWidth != defaultWidth[baseFont] || s.offsetHeight != defaultHeight[baseFont])
+            h.removeChild(s)
+            detected = detected || matched
+        }
+        return detected
+    }
+
+    return check(fontName)
 }

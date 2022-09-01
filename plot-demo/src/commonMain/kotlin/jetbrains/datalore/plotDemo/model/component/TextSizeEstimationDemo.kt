@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.presentation.ClusteringModel
+import jetbrains.datalore.plot.builder.presentation.FirstClusteringModel
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgRectElement
@@ -24,7 +25,7 @@ import kotlin.math.max
 import kotlin.math.pow
 
 enum class Model {
-    ORIGINAL, CLUSTERING;
+    ORIGINAL, CLUSTERING1, CLUSTERING2;
 
     companion object {
 
@@ -34,7 +35,7 @@ enum class Model {
             return ENUM_INFO.safeValueOf(v) ?:
             throw IllegalArgumentException(
                 "Unsupported method: '$v'\n" +
-                "Use one of: original, clustering."
+                "Use one of: original, clustering1, clustering2."
             )
         }
     }
@@ -72,7 +73,8 @@ class TextSizeEstimationDemo(demoInnerSize: DoubleVector, private val renderingE
             .forEachIndexed { index, text ->
                 val estimatedSize = when (model) {
                     Model.ORIGINAL -> correctEstimation(PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(text.length), multiplicativeCoefficient, additiveCoefficient)
-                    Model.CLUSTERING -> correctEstimation(ClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
+                    Model.CLUSTERING1 -> correctEstimation(FirstClusteringModel.textDimension(text, font, sizeRatio, boldRatio, italicRatio, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
+                    Model.CLUSTERING2 -> correctEstimation(ClusteringModel.textDimension(text, font, multiplicativeCoefficient, additiveCoefficient), renderingEngineCoeff)
                 }
                 val actualSize = actualTextDimensions[index]
                 val delta = estimatedSize.x - actualSize.x

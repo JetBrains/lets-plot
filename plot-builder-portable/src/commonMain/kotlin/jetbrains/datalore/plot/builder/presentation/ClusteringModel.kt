@@ -10,215 +10,85 @@ import jetbrains.datalore.base.values.Font
 
 
 object ClusteringModel {
-    // for Lucida Grande, 14, normal
+    private const val BASIC_FAMILY_NAME = "Lucida Grande"
+    private const val BASIC_FONT_SIZE = 14
 
-    private val CLUSTERS = mapOf(
-        '/' to 0,
-        'i' to 0,
-        '.' to 0,
-        't' to 0,
-        ' ' to 0,
-        'j' to 0,
-        ']' to 0,
-        '\\' to 0,
-        '[' to 0,
-        'l' to 0,
-        ',' to 0,
-        '\'' to 0,
-        ':' to 0,
-        ';' to 0,
-        '"' to 1,
-        '-' to 1,
-        'f' to 1,
-        'r' to 1,
-        '*' to 1,
-        'г' to 1,
-        '|' to 1,
-        '!' to 1,
-        'I' to 1,
-        ')' to 1,
-        '{' to 1,
-        '(' to 1,
-        '`' to 1,
-        '}' to 1,
-        '^' to 1,
-        'n' to 2,
-        'z' to 2,
-        'u' to 2,
-        'v' to 2,
-        'x' to 2,
-        'y' to 2,
-        'Г' to 2,
-        's' to 2,
-        'я' to 2,
-        'h' to 2,
-        'п' to 2,
-        'н' to 2,
-        'k' to 2,
-        'л' to 2,
-        'к' to 2,
-        'й' to 2,
-        'и' to 2,
-        'з' to 2,
-        'с' to 2,
-        'у' to 2,
-        'J' to 2,
-        'х' to 2,
-        'a' to 2,
-        'а' to 2,
-        'c' to 2,
-        'ч' to 2,
-        'э' to 2,
-        'в' to 2,
-        'т' to 2,
-        '=' to 3,
-        'ц' to 3,
-        'ъ' to 3,
-        'ь' to 3,
-        '>' to 3,
-        '?' to 3,
-        '_' to 3,
-        'о' to 3,
-        '~' to 3,
-        'е' to 3,
-        'д' to 3,
-        'б' to 3,
-        'У' to 3,
-        'Б' to 3,
-        'Т' to 3,
-        'З' to 3,
-        'Л' to 3,
-        'р' to 3,
-        'К' to 3,
-        '<' to 3,
-        'q' to 3,
-        'e' to 3,
-        'b' to 3,
-        'Z' to 3,
-        'Y' to 3,
-        'g' to 3,
-        'T' to 3,
-        'o' to 3,
-        'p' to 3,
-        'L' to 3,
-        'd' to 3,
-        '0' to 3,
-        '1' to 3,
-        '+' to 3,
-        '3' to 3,
-        '4' to 3,
-        '5' to 3,
-        '6' to 3,
-        '7' to 3,
-        '$' to 3,
-        '#' to 3,
-        '8' to 3,
-        '2' to 3,
-        '9' to 3,
-        'F' to 3,
-        'B' to 4,
-        'Ь' to 4,
-        'E' to 4,
-        'X' to 4,
-        'S' to 4,
-        'U' to 4,
-        'м' to 4,
-        'P' to 4,
-        'N' to 4,
-        'K' to 4,
-        'H' to 4,
-        'V' to 4,
-        '&' to 4,
-        'Ч' to 4,
-        'A' to 4,
-        'Е' to 4,
-        'Д' to 4,
-        'Н' to 4,
-        'В' to 4,
-        'П' to 4,
-        'Р' to 4,
-        'w' to 4,
-        'А' to 4,
-        'Х' to 4,
-        'Q' to 5,
-        'ш' to 5,
-        'щ' to 5,
-        'D' to 5,
-        'ы' to 5,
-        'M' to 5,
-        'C' to 5,
-        'O' to 5,
-        'ю' to 5,
-        'G' to 5,
-        'Ц' to 5,
-        'Й' to 5,
-        'Ф' to 5,
-        'Ъ' to 5,
-        'С' to 5,
-        'И' to 5,
-        'Я' to 5,
-        'Э' to 5,
-        'М' to 5,
-        'ж' to 5,
-        'О' to 5,
-        'R' to 5,
-        'W' to 6,
-        'Ю' to 6,
-        'ф' to 6,
-        '@' to 6,
-        '%' to 6,
-        'Ы' to 6,
-        'm' to 6,
-        'Щ' to 6,
-        'Ш' to 6,
-        'Ж' to 6
+    private val CLUSTERS = listOf(
+        listOf(' ', '!', '\'', '(', ')', ',', '-', '.', ':', ';', 'I', '[', ']', 'f', 'i', 'j', 'l', 'r', 't', '¡', '·', '¹', 'Ì', 'Í', 'Î', 'Ï', 'ì', 'í', 'î', 'ï', 'ĩ', 'ī', 'ĭ', 'į', 'ı', 'ĵ', 'ĺ', 'ļ', 'і', 'ї', 'ј'),
+        listOf('"', '*', '/', 'J', '\\', '`', 's', 'z', '{', '|', '}', '¦', '¨', 'ª', '°', '²', '³', '´', '¸', 'º', 'Ĩ', 'Ī', 'Ĭ', 'Į', 'İ', 'ľ', 'ŀ', 'ł', 'ŕ', 'ŗ', 'ř', 'š', 'ţ', 'ť', 'ŧ', 'ſ', 'ț', 'ȷ', 'І', 'Ї', 'г', 'ѓ', 'ґ'),
+        listOf('$', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '?', 'F', 'L', 'Z', '^', '_', 'a', 'b', 'c', 'd', 'e', 'g', 'h', 'k', 'n', 'o', 'p', 'q', 'u', 'v', 'x', 'y', '¢', '£', '¤', '§', '«', '¯', '±', 'µ', '¶', '»', '¿', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ð', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', '÷', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'þ', 'ÿ', 'ā', 'ă', 'ą', 'ć', 'ĉ', 'ċ', 'č', 'ē', 'ĕ', 'ė', 'ę', 'ě', 'ĝ', 'ğ', 'ġ', 'ģ', 'ĥ', 'ħ', 'ĳ', 'Ĵ', 'ķ', 'ĸ', 'Ĺ', 'Ļ', 'Ľ', 'Ł', 'ń', 'ņ', 'ň', 'ŋ', 'ś', 'ŝ', 'ş', 'ũ', 'ū', 'ŭ', 'ů', 'ű', 'ų', 'ŷ', 'ź', 'ż', 'ž', 'ƒ', 'Ɩ', 'Ɨ', 'ƚ', 'ƪ', 'ƫ', 'ƭ', 'ǀ', 'ǃ', 'Ǐ', 'ǐ', 'ǰ', 'ǻ', 'Ȉ', 'ȉ', 'Ȋ', 'ȋ', 'ȑ', 'ȓ', 'ș', 'ȴ', 'ȶ', 'ɉ', 'ɍ', 'Ѓ', 'Ј', 'Г', 'а', 'в', 'д', 'е', 'з', 'и', 'й', 'к', 'л', 'н', 'п', 'с', 'т', 'у', 'х', 'ч', 'ь', 'э', 'я', 'ё', 'ђ', 'є', 'ѕ', 'ћ', 'ќ', 'ў', 'џ', 'Ґ', 'ғ', 'ҭ', 'Ӏ', 'ӏ', 'ӷ', 'ӻ'),
+        listOf('#', '+', '<', '=', '>', 'A', 'B', 'C', 'E', 'P', 'R', 'S', 'T', 'V', 'X', 'Y', '~', '¥', '¬', 'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', '×', 'Ý', 'Þ', 'Ć', 'Ĉ', 'Ċ', 'Č', 'ď', 'đ', 'Ē', 'Ĕ', 'Ė', 'Ę', 'Ě', 'Ŀ', 'ŉ', 'ō', 'ŏ', 'ő', 'Ś', 'Ŝ', 'Ş', 'Š', 'Ţ', 'Ť', 'Ŧ', 'Ŷ', 'Ÿ', 'Ź', 'Ż', 'Ž', 'ƈ', 'Ɛ', 'ƙ', 'ƛ', 'ơ', 'ƨ', 'ƴ', 'ƶ', 'Ʒ', 'Ƹ', 'ƹ', 'ƺ', 'ƽ', 'ƾ', 'ǁ', 'ǂ', 'ǉ', 'ǎ', 'ǔ', 'ǖ', 'ǘ', 'ǚ', 'ǜ', 'ǝ', 'ǟ', 'ǡ', 'ǧ', 'ǩ', 'Ǯ', 'ǯ', 'ǵ', 'ǹ', 'ǿ', 'ȁ', 'ȃ', 'ȅ', 'ȇ', 'ȕ', 'ȗ', 'Ș', 'Ț', 'Ȝ', 'ȝ', 'ȟ', 'ȥ', 'ȧ', 'ȩ', 'ȳ', 'ȼ', 'ȿ', 'ɀ', 'Ɂ', 'ɂ', 'ɇ', 'Ɉ', 'ɏ', 'Ё', 'Є', 'Ѕ', 'Ќ', 'Ў', 'Б', 'В', 'Е', 'З', 'К', 'Л', 'Р', 'С', 'Т', 'У', 'Ь', 'б', 'м', 'о', 'р', 'ц', 'ъ', 'ѐ', 'ѝ', 'ѧ', 'Ѯ', 'ѯ', 'ҁ', '҂', '҈', '҉', 'ҍ', 'Ғ', 'ҕ', 'Ҙ', 'ҙ', 'Қ', 'қ', 'Ҝ', 'ҝ', 'ҟ', 'ҡ', 'ң', 'ҩ', 'ҫ', 'Ҭ', 'Ү', 'ү', 'Ұ', 'ұ', 'ҳ', 'ҷ', 'ҹ', 'һ', 'ӄ', 'ӌ', 'ӑ', 'ӓ', 'ӗ', 'ә', 'ӛ', 'Ӟ', 'ӟ', 'Ӡ', 'ӡ', 'ӣ', 'ӥ', 'ө', 'ӭ', 'ӯ', 'ӱ', 'ӳ', 'ӵ', 'Ӷ', 'Ӻ', 'ӽ', 'ӿ', 'ԇ', 'Ԑ', 'ԑ', 'ԛ', 'ԟ', 'ԥ'),
+        listOf('&', 'D', 'G', 'H', 'K', 'N', 'O', 'Q', 'U', 'w', '©', '®', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ā', 'Ă', 'Ą', 'Ď', 'Đ', 'Ĝ', 'Ğ', 'Ġ', 'Ģ', 'Ĥ', 'Ħ', 'Ĳ', 'Ķ', 'Ń', 'Ņ', 'Ň', 'Ŋ', 'Ō', 'Ŏ', 'Ő', 'Ŕ', 'Ŗ', 'Ř', 'Ũ', 'Ū', 'Ŭ', 'Ů', 'Ű', 'Ų', 'ŵ', 'ƀ', 'Ɓ', 'Ƃ', 'ƃ', 'Ƅ', 'ƅ', 'Ɔ', 'Ƈ', 'Ɖ', 'Ƌ', 'ƌ', 'ƍ', 'Ǝ', 'Ə', 'Ƒ', 'Ɣ', 'Ƙ', 'Ɲ', 'ƞ', 'Ơ', 'ƣ', 'Ƥ', 'ƥ', 'Ʀ', 'Ƨ', 'Ʃ', 'Ƭ', 'Ʈ', 'Ư', 'ư', 'Ʊ', 'Ʋ', 'Ƴ', 'Ƶ', 'ƻ', 'Ƽ', 'ƿ', 'Ǎ', 'ǒ', 'Ǔ', 'Ǖ', 'Ǘ', 'Ǚ', 'Ǜ', 'Ǟ', 'Ǡ', 'ǥ', 'Ǩ', 'ǫ', 'ǭ', 'Ƿ', 'Ǹ', 'Ǻ', 'Ǿ', 'Ȁ', 'Ȃ', 'Ȅ', 'Ȇ', 'ȍ', 'ȏ', 'Ȑ', 'Ȓ', 'Ȕ', 'Ȗ', 'Ȟ', 'Ƞ', 'ȡ', 'Ȣ', 'ȣ', 'Ȥ', 'Ȧ', 'Ȩ', 'ȫ', 'ȭ', 'ȯ', 'ȱ', 'Ȳ', 'ȵ', 'Ⱥ', 'Ȼ', 'Ƚ', 'Ⱦ', 'Ƀ', 'Ʉ', 'Ʌ', 'Ɇ', 'Ɋ', 'ɋ', 'Ɍ', 'Ɏ', 'Ѐ', 'Ђ', 'Ћ', 'Ѝ', 'Џ', 'А', 'Д', 'И', 'Й', 'Н', 'О', 'П', 'Ф', 'Х', 'Ц', 'Ч', 'Ъ', 'Э', 'Я', 'ж', 'ф', 'ш', 'щ', 'ы', 'ю', 'њ', 'ѡ', 'ѣ', 'ѥ', 'Ѧ', 'ѩ', 'ѫ', 'ѱ', 'ѳ', 'Ѵ', 'ѵ', 'Ѷ', 'ѷ', 'ѻ', 'ѽ', 'ѿ', 'Ҁ', 'Ҋ', 'ҋ', 'Ҍ', 'Ҏ', 'ҏ', 'Ҕ', 'җ', 'Ҟ', 'Ҡ', 'Ң', 'ҥ', 'Ҩ', 'Ҫ', 'Ҳ', 'ҵ', 'Ҷ', 'Ҹ', 'Һ', 'ҽ', 'ҿ', 'ӂ', 'Ӄ', 'Ӆ', 'ӆ', 'Ӈ', 'ӈ', 'Ӊ', 'ӊ', 'Ӌ', 'ӎ', 'Ӑ', 'Ӓ', 'Ӗ', 'Ә', 'Ӛ', 'ӝ', 'Ӣ', 'Ӥ', 'ӧ', 'Ө', 'ӫ', 'Ӭ', 'Ӯ', 'Ӱ', 'Ӳ', 'Ӵ', 'ӹ', 'Ӽ', 'Ӿ', 'Ԁ', 'ԁ', 'Ԇ', 'ԍ', 'Ԏ', 'ԏ', 'Ԓ', 'ԓ', 'ԕ', 'ԗ', 'Ԛ', 'ԝ', 'Ԟ', 'Ԥ', 'Ԧ', 'ԧ', 'Ԩ', 'ԩ', 'Ԭ', 'ԭ', 'Ԯ', 'ԯ'),
+        listOf('%', '@', 'M', 'W', 'm', '¼', '½', '¾', 'Æ', 'æ', 'Œ', 'œ', 'Ŵ', 'Ɗ', 'Ɠ', 'ƕ', 'Ɯ', 'Ɵ', 'Ƣ', 'ǆ', 'Ǉ', 'ǈ', 'ǋ', 'ǌ', 'Ǒ', 'Ǣ', 'ǣ', 'Ǥ', 'Ǧ', 'Ǫ', 'Ǭ', 'ǳ', 'Ǵ', 'Ƕ', 'Ǽ', 'ǽ', 'Ȍ', 'Ȏ', 'Ȫ', 'Ȭ', 'Ȯ', 'Ȱ', 'ȸ', 'ȹ', 'Љ', 'Њ', 'Ж', 'М', 'Ш', 'Щ', 'Ы', 'Ю', 'љ', 'Ѣ', 'Ѥ', 'Ѩ', 'Ѫ', 'Ѭ', 'ѭ', 'Ѱ', 'Ѳ', 'Ѹ', 'ѹ', 'Ѻ', 'Җ', 'Ҥ', 'ҧ', 'Ҵ', 'Ҽ', 'Ҿ', 'Ӂ', 'Ӎ', 'Ӕ', 'ӕ', 'Ӝ', 'Ӧ', 'Ӫ', 'Ӹ', 'Ԃ', 'ԃ', 'Ԅ', 'ԅ', 'Ԉ', 'ԉ', 'Ԋ', 'ԋ', 'Ԍ', 'Ԕ', 'Ԗ', 'Ԙ', 'ԙ', 'Ԝ', 'Ԡ', 'ԡ', 'ԣ', 'ԫ'),
+        listOf('Ǆ', 'ǅ', 'Ǌ', 'Ǳ', 'ǲ', 'Ѡ', 'Ѽ', 'Ѿ', 'Ҧ', 'Ԣ', 'Ԫ')
     )
 
-    private const val DEFAULT_WIDTH = 6.712826547137424
-    private val CLUSTER_WIDTH = mapOf(
-        0 to 4.961409344767602,
-        1 to 6.005937440495767,
-        2 to 9.590962162162162,
-        3 to 11.007489652453847,
-        4 to 13.0,
-        5 to 14.072164948453608,
-        6 to 16.106983655274888
+    private val CLUSTER_WIDTH = listOf(
+        5.436599423631124,
+        8.930740037950665,
+        10.384757221880761,
+        12.330892143808256,
+        13.801235839340885,
+        14.918,
+        19.282511210762333
     )
 
-    private const val BASIC_FONT_SIZE = 14.0
-    private fun isBaseFont(font: Font): Boolean {
-        return font.family.toString() == "Lucida Grande" && font.size.toDouble() == BASIC_FONT_SIZE
+    private val DEFAULT_CLUSTER_WIDTH: Double = CLUSTER_WIDTH.sum() / CLUSTER_WIDTH.size
+
+    private val FAMILY_COEFFICIENT = mapOf(
+        "Arial" to 0.1921364076488976,
+        "Calibri" to -0.6525311548845162,
+        "Garamond" to -1.1297678983166575,
+        "Geneva" to 0.1921364076488976,
+        "Georgia" to 0.17065008326016187,
+        "Helvetica" to 0.1921364076488976,
+        "Lucida Grande" to 0.1921364076488976,
+        "Rockwell" to 0.5214679189726614,
+        "Times New Roman" to -1.0963956607837015,
+        "Verdana" to 1.4085697162509045
+    )
+
+    private val DEFAULT_FAMILY_COEFFICIENT: Double = FAMILY_COEFFICIENT[BASIC_FAMILY_NAME]!!
+
+    private const val SIZE_COEFFICIENT = 0.9824992572627909
+
+    private fun getCharWidth(char: Char): Double {
+        val clusterId = CLUSTERS.indexOfFirst { char in it }
+        return if (clusterId != -1) CLUSTER_WIDTH[clusterId] else DEFAULT_CLUSTER_WIDTH
     }
 
+    private fun getFamilyCoefficient(font: Font): Double {
+        val fontFamily = font.family.toString()
+        return if (fontFamily in FAMILY_COEFFICIENT.keys) FAMILY_COEFFICIENT[fontFamily]!! else DEFAULT_FAMILY_COEFFICIENT
+    }
 
-    private fun sumClusters(text: String): Double {
-        return text.map {
-            val cluster = CLUSTERS[it]
-            if (!CLUSTER_WIDTH.containsKey(cluster)) println("No width for cluster $cluster; symbol: '$it'")
-            CLUSTER_WIDTH[cluster] ?: DEFAULT_WIDTH
-        }.sum()
+    private fun getFaceCoefficient(font: Font): Double {
+        return when {
+            font.isBold && font.isItalic -> 0.9244505704876518
+            font.isBold && !font.isItalic -> 0.698062359998712
+            !font.isBold && font.isItalic -> 0.1855573330542257
+            else -> 0.007238470980551846
+        }
+    }
+
+    private fun getSizeCoefficient(font: Font): Double {
+        return SIZE_COEFFICIENT * font.size / BASIC_FONT_SIZE
     }
 
     fun textDimension(
         text: String,
         font: Font,
-        sizeRatio: Double,
-        boldRatio: Double,
-        italicRatio: Double,
-        nonBaseFontRatio: Double,
-        nonBaseFontAdditiveError: Double,
+        multiplicativeCoefficient: Double,
+        additiveCoefficient: Double,
     ): DoubleVector {
         if (text.isEmpty()) {
             return DoubleVector.ZERO
         }
 
-        val width = sumClusters(text).let {
-            var w = it * font.size / BASIC_FONT_SIZE * sizeRatio
-            if (font.isBold) w *= boldRatio
-            if (font.isItalic) w *= italicRatio
-            if (!isBaseFont(font)) w = nonBaseFontRatio * w + nonBaseFontAdditiveError
-            w
-        }
+        val predictedWidth = text.map(this::getCharWidth).sum()
+        val width = getSizeCoefficient(font) * (
+            predictedWidth + text.length * (getFamilyCoefficient(font) + getFaceCoefficient(font))
+        ) * multiplicativeCoefficient + text.length * additiveCoefficient
 
         return DoubleVector(width, font.size.toDouble())
     }

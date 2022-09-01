@@ -43,7 +43,7 @@ class TextSizeDemoWindow(
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     )
 
-    private val myModelComboBox = JComboBox(arrayOf("original", "clustering"))
+    private val myModelComboBox = JComboBox(arrayOf("original", "clustering1", "clustering2"))
 
     private val myFontComboBox = JComboBox(
        // arrayOf("Lucida Grande", "Helvetica", "Verdana", "Geneva", "Times New Roman", "Georgia", "Courier")
@@ -168,7 +168,7 @@ class TextSizeDemoWindow(
 
         grid.add(JLabel("Model:"))
         myModelComboBox.isEditable = false
-        myModelComboBox.selectedItem = "clustering"
+        myModelComboBox.selectedItem = "clustering2"
         grid.add(myModelComboBox)
 
         grid.add(JLabel("Font:"))
