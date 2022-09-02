@@ -70,7 +70,7 @@ class TextSizeDemoWindow(
     )
 
     private val myAdditiveCoefficient = JSpinner(
-        SpinnerNumberModel(0.0, -20.0, 20.0, 1.0)
+        SpinnerNumberModel(0.0, -2.0, 2.0, 0.01)
     )
 
     private val myInputPanel = JPanel()
