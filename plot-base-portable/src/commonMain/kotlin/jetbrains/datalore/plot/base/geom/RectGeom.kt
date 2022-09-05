@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
@@ -18,12 +19,13 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 class RectGeom : GeomBase() {
 
     override fun buildIntern(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
         val helper =
             RectanglesHelper(aesthetics, pos, coord, ctx)
-        helper.createRectangles(Companion::rectangleByDataPoint).forEach(root::add)
+        helper.createRectangles(clientRectByDataPoint(geomHelper)).forEach(root::add)
         RectTargetCollectorHelper(
             rectanglesHelper = helper,
-            rectangleByDataPoint = Companion::rectangleByDataPoint,
+            clientRectByDataPoint = clientRectByDataPoint(geomHelper),
             tooltipKind = CURSOR_TOOLTIP,
             colorsByDataPoint= HintColorUtil.createColorMarkerMapper(GeomKind.RECT, ctx)
         ).collectTo(ctx.targetCollector)
@@ -44,16 +46,20 @@ class RectGeom : GeomBase() {
         //rectangle groups are used in geom_livemap
         const val HANDLES_GROUPS = true
 
-        private fun rectangleByDataPoint(p: DataPointAesthetics): DoubleRectangle? {
-            val xmin = p.xmin()
-            val xmax = p.xmax()
-            val ymin = p.ymin()
-            val ymax = p.ymax()
-            return if (SeriesUtil.allFinite(xmin, xmax, ymin, ymax)) {
-                DoubleRectangle.span(DoubleVector(xmin!!, ymin!!), DoubleVector(xmax!!, ymax!!))
-            }
-            else {
-                null
+        private fun clientRectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
+            return { p ->
+                val xmin = p.xmin()
+                val xmax = p.xmax()
+                val ymin = p.ymin()
+                val ymax = p.ymax()
+                if (SeriesUtil.allFinite(xmin, xmax, ymin, ymax)) {
+                    geomHelper.toClient(
+                        DoubleRectangle.span(DoubleVector(xmin!!, ymin!!), DoubleVector(xmax!!, ymax!!)),
+                        p
+                    )
+                } else {
+                    null
+                }
             }
         }
     }

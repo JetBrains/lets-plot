@@ -29,7 +29,7 @@ class ImageGeom(private val imageUrl: String) : GeomBase() {
 
         // translate to client coordinates
         val helper = GeomHelper(pos, coord, ctx)
-        val boundsClient = helper.toClient(boundsAes, p)
+        val boundsClient = helper.toClient(boundsAes, p)!!
 
         val svgImageElement = SvgImageElement(
             boundsClient.origin.x, boundsClient.origin.y,

@@ -247,11 +247,11 @@ internal class TooltipRenderer(
             }
 
         internal fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
-            val targetsPicker = LocatedTargetsPicker(flippedAxis).apply {
+            val targetsPicker = LocatedTargetsPicker(flippedAxis, plotCoord).apply {
                 for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
-                        addLookupResult(result, plotCoord)
+                        addLookupResult(result)
                     }
                 }
             }

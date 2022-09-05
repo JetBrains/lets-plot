@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.geom
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -12,11 +13,11 @@ import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
 import jetbrains.datalore.plot.base.geom.PolygonGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -63,27 +64,36 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
         val ratioX = spanX / clientW
         val ratioY = spanY / clientH
         val mapper: ScaleMapper<Double>
-        val ratio: Double
+//        val ratio: Double
         if (ratioX >= ratioY) {
             mapper = Mappers.mul(domainX, clientW)
-            ratio = ratioX
+//            ratio = ratioX
         } else {
             mapper = Mappers.mul(domainY, clientH)
-            ratio = ratioY
+//            ratio = ratioY
         }
-        val lengthX = spanX / ratio
-        val lengthY = spanY / ratio
+//        val lengthX = spanX / ratio
+//        val lengthY = spanY / ratio
+//        val mapperX = Mappers.mul(domainX, lengthX)
+//        val mapperY = Mappers.mul(domainY, lengthY)
         val aes = AestheticsBuilder(KANSAS_X.size)
-            .x(listMapper(coordsX, mapper))
-            .y(listMapper(coordsY, mapper))
+//            .x(listMapper(coordsX, mapper))
+//            .y(listMapper(coordsY, mapper))
+            .x(list(coordsX))
+            .y(list(coordsY))
             .fill(list(toColors(values.toList())))
             .group(array(groups))
             .color(constant(Color.DARK_MAGENTA))
             .alpha(constant(0.5))
             .build()
-        val coord = CoordProviders.map()
-            .createCoordinateSystem(domainX, lengthX, domainY, lengthY)
-        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+        val coord = CoordProviders.map().let {
+            val adjustedDomain = it.adjustDomain(DoubleRectangle(domainX, domainY))
+            it.createCoordinateSystem(
+                adjustedDomain = adjustedDomain,
+                clientSize = demoInnerSize
+            )
+        }
+        val layer = SvgLayerRenderer(
             aes,
             PolygonGeom(),
             PositionAdjustments.identity(),

@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import kotlin.math.max
+import kotlin.math.abs
 
 class YDotplotGeom : DotplotGeom() {
     var yStackDir: YStackdir = DEF_YSTACKDIR
@@ -31,10 +31,24 @@ class YDotplotGeom : DotplotGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val pointsWithBinWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.BINWIDTH)
+        val pointsWithBinWidth = GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.BINWIDTH, Aes.X, Aes.Y
+        )
         if (!pointsWithBinWidth.any()) return
 
-        val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y), 2.0)
+//        val binWidthPx = pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y)
+        val binWidthPx = pointsWithBinWidth.first().let {
+            val x = it.x()!!
+            val y = it.y()!!
+            val bw = it.binwidth()!!
+            val p0 = coord.toClient(DoubleVector(x, y))!!
+            val p1 = coord.toClient(DoubleVector(x, y + bw))!!
+            when (ctx.flipped) {
+                false -> abs(p0.y - p1.y)
+                true -> abs(p0.x - p1.x)
+            }
+        }
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.Y, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointGroup) ->
@@ -56,12 +70,13 @@ class YDotplotGeom : DotplotGeom() {
     ) {
         val dotHelper = DotHelper(pos, coord, ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val fullStackSize = dataPoints.map { it.stacksize()!! }.sum().toInt()
-        val stackSize = boundedStackSize(fullStackSize, ctx, binWidthPx, !ctx.flipped)
+        val fullStackSize = dataPoints.sumOf { it.stacksize()!! }.toInt()
+        val stackSize = boundedStackSize(fullStackSize, coord, ctx, binWidthPx, !ctx.flipped)
         var builtStackSize = 0
         for (p in dataPoints) {
             val groupStackSize = boundedStackSize(
                 builtStackSize + p.stacksize()!!.toInt(),
+                coord,
                 ctx,
                 binWidthPx,
                 !ctx.flipped
@@ -139,7 +154,7 @@ class YDotplotGeom : DotplotGeom() {
         }
         val shift = DoubleVector(shiftedDotId * dotSize * stackRatio * binWidthPx, 0.0)
 
-        return geomHelper.toClient(DoubleVector(x, y), p).add(if (flip) shift.flip() else shift)
+        return geomHelper.toClient(x, y, p)!!.add(if (flip) shift.flip() else shift)
     }
 
     enum class YStackdir {

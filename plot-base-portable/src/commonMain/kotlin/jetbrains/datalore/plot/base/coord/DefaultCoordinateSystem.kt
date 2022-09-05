@@ -6,41 +6,34 @@
 package jetbrains.datalore.plot.base.coord
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.CoordinateSystem
-import kotlin.math.max
-import kotlin.math.min
 
-internal open class DefaultCoordinateSystem(
+internal class DefaultCoordinateSystem(
     val toClientOffsetX: (Double) -> Double,
     val toClientOffsetY: (Double) -> Double,
-    val fromClientOffsetX: (Double) -> Double,
-    val fromClientOffsetY: (Double) -> Double,
-    val clientLimitsX: DoubleSpan?,
-    val clientLimitsY: DoubleSpan?
+    private val coordMapper: CoordinatesMapper,
 ) : CoordinateSystem {
-
-    override fun toClient(p: DoubleVector): DoubleVector {
-        return DoubleVector(toClientOffsetX(p.x), toClientOffsetY(p.y))
+    override fun toClient(p: DoubleVector): DoubleVector? {
+        val mapped = coordMapper.toClient(p)
+        return if (mapped != null) {
+            DoubleVector(
+                toClientOffsetX(mapped.x),
+                toClientOffsetY(mapped.y)
+            )
+        } else {
+            null
+        }
     }
 
-    override fun fromClient(p: DoubleVector): DoubleVector {
-        return DoubleVector(fromClientOffsetX(p.x), fromClientOffsetY(p.y))
+    override fun unitSize(p: DoubleVector): DoubleVector {
+        return coordMapper.unitSize(p)
     }
 
     override fun flip(): CoordinateSystem {
-        return FlippedCoordinateSystem(this)
-    }
-
-
-    companion object {
-        private fun convertRange(range: DoubleSpan, offset: (Double) -> Double): DoubleSpan {
-            val l = offset(range.lowerEnd)
-            val u = offset(range.upperEnd)
-            return DoubleSpan(
-                min(l, u),
-                max(l, u),
-            )
-        }
+        return DefaultCoordinateSystem(
+            toClientOffsetX,
+            toClientOffsetY,
+            coordMapper.flip()
+        )
     }
 }

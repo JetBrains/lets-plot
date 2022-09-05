@@ -10,17 +10,14 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 
 interface GeomContext {
     val flipped: Boolean
-
     val targetCollector: GeomTargetCollector
 
+    // ToDo: Just positional resolution along x or y-axis. Also, its now equal to "data resolution". No need to compute it in 'Aesthetics'.
     fun getResolution(aes: Aes<Double>): Double
 
-    fun getUnitResolution(aes: Aes<Double>): Double
-
     /**
-     * @return 'geom' area in pixels.
-     *          A rectangle which origin and size is computed based on
-     *          the overall ranges of X,Y aesthetics.
+     * @return  A rectangle which origin and size are computed basing on
+     *          the overall ranges of X,Y (and other positional) aesthetics.
      */
     fun getAesBounds(): DoubleRectangle
 

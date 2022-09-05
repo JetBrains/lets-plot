@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
@@ -33,17 +34,25 @@ class TextGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val sizeUnitRatio = getSizeUnitRatio(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
             val text = toString(p.label())
             if (SeriesUtil.allFinite(x, y) && text.isNotEmpty()) {
+                val point = DoubleVector(x!!, y!!)
+                val loc = helper.toClient(point, p)
+                if (loc == null) continue
+
+                // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
+                val sizeUnitRatio = when (sizeUnit) {
+                    null -> 1.0
+                    else -> getSizeUnitRatio(point, coord, sizeUnit!!)
+                }
+
                 val label = TextLabel(text)
                 GeomHelper.decorate(label, p, sizeUnitRatio)
 
-                val loc = helper.toClient(x, y, p)
                 label.moveTo(loc)
                 root.add(label.rootGroup)
 
@@ -62,19 +71,6 @@ class TextGeom : GeomBase() {
         }
     }
 
-    // This implementation is oversimplified.
-    // Current implementation works for label_format ='.2f'
-    // and values between -1.0 and 1.0.
-    private fun getSizeUnitRatio(ctx: GeomContext): Double {
-        return if (sizeUnit != null) {
-            val textWidth = 6.0
-            val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
-            unitRes / textWidth
-        } else {
-            1.0
-        }
-    }
-
     private fun toString(label: Any?): String {
         return when {
             label == null -> naValue
@@ -86,6 +82,24 @@ class TextGeom : GeomBase() {
     companion object {
         const val DEF_NA_VALUE = "n/a"
         const val HANDLES_GROUPS = false
+
+        // Current implementation works for label_format ='.2f'
+        // and values between -1.0 and 1.0.
+        private const val BASELINE_TEXT_WIDTH = 6.0
+
+        private fun getSizeUnitRatio(
+            p: DoubleVector,
+            coord: CoordinateSystem,
+            axis: String
+        ): Double {
+            val unitSquareSize = coord.unitSize(p)
+            val unitSize = when (axis.lowercase()) {
+                "x" -> unitSquareSize.x
+                "y" -> unitSquareSize.y
+                else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
+            }
+            return unitSize / BASELINE_TEXT_WIDTH
+        }
     }
 }
 

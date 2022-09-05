@@ -5,8 +5,10 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.spatial.projections.Projection
+import jetbrains.datalore.base.spatial.projections.identity
 
 internal class CartesianCoordProvider(
     xLim: DoubleSpan?,

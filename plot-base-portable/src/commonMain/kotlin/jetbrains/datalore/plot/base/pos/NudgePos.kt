@@ -6,25 +6,19 @@
 package jetbrains.datalore.plot.base.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 
 internal class NudgePos(width: Double?, height: Double?) : PositionAdjustment {
 
-    private val myWidth: Double
-    private val myHeight: Double
-
-    init {
-        myWidth = width ?: DEF_NUDGE_WIDTH
-        myHeight = height ?: DEF_NUDGE_HEIGHT
-    }
+    private val nudgeDist: DoubleVector = DoubleVector(
+        width ?: DEF_NUDGE_WIDTH,
+        height ?: DEF_NUDGE_HEIGHT
+    )
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
-        val x = myWidth * ctx.getUnitResolution(Aes.X)
-        val y = myHeight * ctx.getUnitResolution(Aes.Y)
-        return v.add(DoubleVector(x, y))
+        return v.add(nudgeDist)
     }
 
     override fun handlesGroups(): Boolean {
@@ -32,7 +26,7 @@ internal class NudgePos(width: Double?, height: Double?) : PositionAdjustment {
     }
 
     companion object {
-        val DEF_NUDGE_WIDTH = 0.0
-        val DEF_NUDGE_HEIGHT = 0.0
+        const val DEF_NUDGE_WIDTH = 0.0
+        const val DEF_NUDGE_HEIGHT = 0.0
     }
 }

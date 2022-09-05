@@ -12,7 +12,15 @@ open class Polygons {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            join()
+            join(),
+
+            // flip coord
+            join().apply {
+                this["coord"] = mapOf(
+                    "name" to "flip",
+                    "flip" to true
+                )
+            }
         )
     }
 
@@ -47,48 +55,18 @@ open class Polygons {
 
             val spec = """
 {
-  "data": null,
-  "mapping": {
-    "x": null,
-    "y": null
-  },
-  "data_meta": {},
   "ggsize": {
     "width": 800,
     "height": 400
   },
   "theme": {
-    "axis_title": "blank",
-    "axis_title_x": null,
-    "axis_title_y": null,
-    "axis_text": "blank",
-    "axis_text_x": null,
-    "axis_text_y": null,
-    "axis_ticks": "blank",
-    "axis_ticks_x": null,
-    "axis_ticks_y": null,
-    "axis_line": "blank",
-    "axis_line_x": null,
-    "axis_line_y": null,
-    "legend_position": null,
-    "legend_justification": null,
-    "legend_direction": null,
-    "axis_tooltip": null,
-    "axis_tooltip_x": null,
-    "axis_tooltip_y": null
+    "axis_title": "blank"
   },
   "kind": "plot",
   "scales": [
     {
       "name": "Population",
       "aesthetic": "fill",
-      "breaks": null,
-      "labels": null,
-      "limits": null,
-      "expand": null,
-      "na_value": null,
-      "guide": null,
-      "trans": null,
       "low": "light_blue",
       "high": "dark_green",
       "scale_mapper_kind": "color_gradient"
@@ -96,30 +74,21 @@ open class Polygons {
   ],
   "layers": [
     {
-      "geom": "rect",
-      "stat": null,
+      "geom": "map",
       "data": {
         "country": ["Argentina", "Chile", "Falkland Is.", "Uruguay", "Brazil", "Bolivia", "Peru", "Colombia", "Venezuela", "Guyana", "Suriname", "Ecuador", "Paraguay"],
         "pop_est": [44293293, 17789267, 2931, 3360148, 207353391, 11138234, 31036656, 47698524, 31304016, 737718, 591919, 16290913, 6943739]
       },
       "mapping": {
-        "x": null,
-        "y": null,
         "fill": "pop_est"
       },
-      "position": null,
-      "show_legend": null,
-      "sampling": null,
       "tooltips": {
         "tooltip_formats": [],
         "tooltip_title": "@country",
         "tooltip_lines": [
           "Population|^fill"
-        ],
-        "tooltip_anchor": null,
-        "tooltip_min_width": null
+        ]
       },
-      "data_meta": {},
       "map_data_meta": {
         "geodataframe": {
           "geometry": "geometry"

@@ -59,7 +59,9 @@ class ABLineGeom : GeomBase() {
                 if (lineEnds.size == 2) {
                     val it = lineEnds.iterator()
                     val line = helper.createLine(it.next(), it.next(), p)
-                    lines.add(line)
+                    if (line != null) {
+                        lines.add(line)
+                    }
                 }
             }
         }

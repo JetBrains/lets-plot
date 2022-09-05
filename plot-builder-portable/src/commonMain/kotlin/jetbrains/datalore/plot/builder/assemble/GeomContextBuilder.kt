@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
@@ -76,15 +75,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                 resolution = aesthetics.resolution(aes, 0.0)
             }
             if (resolution <= SeriesUtil.TINY) {
-                resolution = getUnitResolution(aes)
+                resolution = 1.0
             }
 
             return resolution
-        }
-
-        override fun getUnitResolution(aes: Aes<Double>): Double {
-            val mapper = aestheticMappers?.get(aes) ?: Mappers.IDENTITY
-            return mapper(1.0) as Double
         }
 
         override fun isMappedAes(aes: Aes<*>): Boolean {

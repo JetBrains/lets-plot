@@ -7,59 +7,65 @@ package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 
 object AxisUtil {
     fun breaksData(
         scaleBreaks: ScaleBreaks,
-        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
+        flipAxis: Boolean,
         horizontal: Boolean
     ): AxisComponent.BreaksData {
-        val mappedBreaks = toAxisCoord(scaleBreaks, scaleMapper, coord, horizontal)
+        val (breakCoords, breakLabels) = toAxisCoord(
+            scaleBreaks,
+            coord,
+            flipAxis,
+            horizontal
+        )
         return AxisComponent.BreaksData(
-            majorBreaks = mappedBreaks,
-            majorLabels = scaleBreaks.labels
+            majorBreaks = breakCoords,
+            majorLabels = breakLabels
         )
     }
 
     private fun toAxisCoord(
         scaleBreaks: ScaleBreaks,
-        scaleMapper: ScaleMapper<Double>,
         coord: CoordinateSystem,
+        flipAxis: Boolean,
         horizontal: Boolean
-    ): List<Double> {
-        val breaksMapped = scaleBreaks.transformedValues.map {
-            // Don't expect NULLs.
-            scaleMapper(it) as Double
-        }
+    ): Pair<List<Double>, List<String>> {
+        val breaksDataAndLabel: List<Pair<Double, String>> = scaleBreaks.transformedValues.zip(scaleBreaks.labels)
+
         val axisBreaks = ArrayList<Double>()
-        for (br in breaksMapped) {
-            val mappedBrPoint = when (horizontal) {
+        val axisLabels = ArrayList<String>()
+        for ((br, label) in breaksDataAndLabel) {
+            // ToDo: the second coordinate should be taken from "valid domain"
+            val bpCoord = when (horizontal) {
                 true -> DoubleVector(br, 0.0)
                 false -> DoubleVector(0.0, br)
+            }.let {
+                if (flipAxis) {
+                    it.flip()
+                } else {
+                    it
+                }
             }
 
-            val axisBrPoint = coord.toClient(mappedBrPoint)
-            val axisBr = if (horizontal)
-                axisBrPoint.x
+            val bpClientCoord = coord.toClient(bpCoord)
+            if (!(bpClientCoord != null && bpClientCoord.isFinite)) {
+                // skip this break-point: it's outside the coordinate system' domain.
+                continue
+            }
+
+            val bpOnAxis = if (horizontal)
+                bpClientCoord.x
             else
-                axisBrPoint.y
+                bpClientCoord.y
 
-            axisBreaks.add(axisBr)
-            if (!axisBr.isFinite()) {
-                val orient = if (horizontal) "horizontal" else "vertical"
-                throw IllegalStateException(
-                    "Illegal axis '" + orient + "' break position " + axisBr +
-                            " at index " + (axisBreaks.size - 1) +
-                            "\nsource breaks    : " + scaleBreaks.domainValues +
-                            "\ntranslated breaks: " + breaksMapped +
-                            "\naxis breaks      : " + axisBreaks
-                )
-            }
+            axisBreaks.add(bpOnAxis)
+            axisLabels.add(label)
         }
-        return axisBreaks
+        return Pair(axisBreaks, axisLabels)
     }
 }

@@ -49,15 +49,20 @@ class YOrientationGeomBuildingTest {
         val yAxisLength = GEOM_BOUNDS.height
         val xDomain = GEOM_BOUNDS.xRange()
         val yDomain = GEOM_BOUNDS.yRange()
+        val xAesMapper = Mappers.IDENTITY
+        val yAesMapper = Mappers.IDENTITY
         val layerRenderer = DemoAndTest.buildGeom(
             layer = geomLayerStub,
-            xAesMapper = Mappers.IDENTITY,
-            yAesMapper = Mappers.IDENTITY,
+            xAesMapper = xAesMapper,
+            yAesMapper = yAesMapper,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
-            coord = CoordProviders.cartesian().createCoordinateSystem(
-                xDomain, xAxisLength,
-                yDomain, yAxisLength,
-            ),
+            coord = CoordProviders.cartesian().let {
+                val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain))
+                it.createCoordinateSystem(
+                    adjustedDomain = adjustedDomain,
+                    clientSize = DoubleVector(xAxisLength, yAxisLength)
+                )
+            },
             flippedAxis = false,
             targetCollector = NullGeomTargetCollector()
         )

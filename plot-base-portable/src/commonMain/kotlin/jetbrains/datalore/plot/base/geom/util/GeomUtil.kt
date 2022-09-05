@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.max
 
 
 object GeomUtil {
@@ -114,12 +113,6 @@ object GeomUtil {
         return ordering.sortedCopy(dataPoints)
     }
 
-    fun widthPx(p: DataPointAesthetics, ctx: GeomContext, minWidth: Double): Double {
-        val w = p.width()
-        val width = w!! * ctx.getResolution(Aes.X)
-        return max(width, minWidth)
-    }
-
     fun withDefined(dataPoints: Iterable<DataPointAesthetics>, aes: Aes<*>): Iterable<DataPointAesthetics> {
         return dataPoints.filter { p -> p.defined(aes) }
     }
@@ -151,24 +144,6 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
-    fun rectangleByDataPoint(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
-        val x = p.x()!!
-        val y = p.y()!!
-        val width = widthPx(p, ctx, 2.0)
-
-        val origin: DoubleVector
-        val dimensions: DoubleVector
-        if (y >= 0) {
-            origin = DoubleVector(x - width / 2, 0.0)
-            dimensions = DoubleVector(width, y)
-        } else {
-            origin = DoubleVector(x - width / 2, y)
-            dimensions = DoubleVector(width, -y)
-        }
-
-        return DoubleRectangle(origin, dimensions)
-    }
-
     fun createGroups(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<DataPointAesthetics>> {
         val pointsByGroup = HashMap<Int, MutableList<DataPointAesthetics>>()
         for (p in dataPoints) {
@@ -190,5 +165,41 @@ object GeomUtil {
             DoubleVector(maxX, minY),
             DoubleVector(minX, minY)
         )
+    }
+
+    internal fun extendTrueWidth(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+        val unflipped = if (ctx.flipped) {
+            clientRect.flip()
+        } else {
+            clientRect
+        }
+        val unflippedNewWidth = DoubleRectangle.LTRB(
+            unflipped.left - delta / 2, unflipped.top,
+            unflipped.right + delta / 2, unflipped.bottom
+        )
+        return if (ctx.flipped) {
+            unflippedNewWidth.flip()
+        } else {
+            unflippedNewWidth
+        }
+    }
+
+    internal fun extendTrueHeight(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+        val unflipped = if (ctx.flipped) {
+            clientRect.flip()
+        } else {
+            clientRect
+        }
+
+        val unflippedNewHeight = DoubleRectangle.LTRB(
+            unflipped.left, unflipped.top - delta / 2,
+            unflipped.right, unflipped.bottom + delta / 2
+        )
+
+        return if (ctx.flipped) {
+            unflippedNewHeight.flip()
+        } else {
+            unflippedNewHeight
+        }
     }
 }

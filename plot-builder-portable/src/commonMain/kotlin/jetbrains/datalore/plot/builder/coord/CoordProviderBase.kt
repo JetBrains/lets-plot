@@ -5,121 +5,54 @@
 
 package jetbrains.datalore.plot.builder.coord
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.coord.Coords
-import jetbrains.datalore.plot.base.scale.MapperUtil
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.base.spatial.projections.Projection
+import jetbrains.datalore.base.spatial.projections.identity
+import jetbrains.datalore.plot.base.coord.CoordinatesMapper
 
 internal abstract class CoordProviderBase(
-    _xLim: DoubleSpan?,
-    _yLim: DoubleSpan?,
-    override val flipAxis: Boolean,
+    private val xLim: DoubleSpan?,
+    private val yLim: DoubleSpan?,
+    override val flipped: Boolean,
+    protected val projection: Projection = identity(),
 ) : CoordProvider {
 
-    private val hLim: DoubleSpan? = when {
-        flipAxis -> _yLim
-        else -> _xLim
+    init {
+        require(xLim == null || xLim.length > 0.0) { "Coord x-limits range should be > 0.0" }
+        require(yLim == null || yLim.length > 0.0) { "Coord y-limits range should be > 0.0" }
     }
 
-    private val vLim: DoubleSpan? = when {
-        flipAxis -> _xLim
-        else -> _yLim
-    }
-
-    override fun buildAxisScaleX(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double> {
-        return buildAxisScaleDefault(
-            scaleProto,
-            breaks
-        )
-    }
-
-    override fun buildAxisScaleY(
-        scaleProto: Scale<Double>,
-        domain: DoubleSpan,
-        breaks: ScaleBreaks
-    ): Scale<Double> {
-        return buildAxisScaleDefault(
-            scaleProto,
-            breaks
-        )
-    }
-
-    override fun buildAxisXScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
-        return buildAxisScaleMapperDefault(domain, axisLength)
-    }
-
-    override fun buildAxisYScaleMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
-        return buildAxisScaleMapperDefault(domain, axisLength)
-    }
-
-    final override fun createCoordinateSystem(
-        xDomain: DoubleSpan,
-        xAxisLength: Double,
-        yDomain: DoubleSpan,
-        yAxisLength: Double
-    ): CoordinateSystem {
-        val mapperX = linearMapper(xDomain, xAxisLength)
-        val mapperY = linearMapper(yDomain, yAxisLength)
-        return Coords.create(
-            MapperUtil.map(
-                xDomain,
-                mapperX
-            ),
-            MapperUtil.map(
-                yDomain,
-                mapperY
-            ),
-            hLim?.let { MapperUtil.map(it, mapperX) },
-            vLim?.let { MapperUtil.map(it, mapperY) }
-        )
-    }
-
-    final override fun adjustDomains(
-        hDomain: DoubleSpan,
-        vDomain: DoubleSpan,
-    ): Pair<DoubleSpan, DoubleSpan> {
-        return adjustDomainsIntern(
-            hDomain = hLim ?: hDomain,
-            vDomain = vLim ?: vDomain
-        )
-    }
-
-    protected open fun adjustDomainsIntern(
-        hDomain: DoubleSpan,
-        vDomain: DoubleSpan
-    ): Pair<DoubleSpan, DoubleSpan> {
-        return (hDomain to vDomain)
-    }
-
-
-    companion object {
-        fun linearMapper(domain: DoubleSpan, axisLength: Double): ScaleMapper<Double> {
-            return Mappers.mul(domain, axisLength)
+    /**
+     * Reshape and flip the domain if necessary.
+     */
+    final override fun adjustDomain(domain: DoubleRectangle): DoubleRectangle {
+        val validDomain = domain.let {
+            val withLims = DoubleRectangle(
+                xLim ?: domain.xRange(),
+                yLim ?: domain.yRange(),
+            )
+            projection.validDomain().intersect(withLims)
         }
 
-        private fun buildAxisScaleMapperDefault(
-            domain: DoubleSpan,
-            axisLength: Double,
-        ): ScaleMapper<Double> {
-            return linearMapper(domain, axisLength)
+        return if (validDomain != null && validDomain.height > 0.0 && validDomain.width > 0.0) {
+            if (flipped) validDomain.flip() else validDomain
+        } else {
+            throw IllegalArgumentException(
+                """Can't create a valid domain.
+                |  data bbox: $domain
+                |  x-lim: $xLim
+                |  y-lim: $yLim
+            """.trimMargin()
+            )
         }
+    }
 
-        fun buildAxisScaleDefault(
-            scaleProto: Scale<Double>,
-            breaks: ScaleBreaks
-        ): Scale<Double> {
-            return scaleProto.with()
-                .breaks(breaks.domainValues)
-                .labels(breaks.labels)
-                .build()
-        }
+    final override fun createCoordinateMapper(
+        adjustedDomain: DoubleRectangle,
+        clientSize: DoubleVector,
+    ): CoordinatesMapper {
+        return CoordinatesMapper.create(adjustedDomain, clientSize, projection, flipped)
     }
 }

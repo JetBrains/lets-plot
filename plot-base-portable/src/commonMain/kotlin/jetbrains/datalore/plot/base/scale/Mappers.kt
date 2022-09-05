@@ -39,12 +39,12 @@ object Mappers {
     }
 
     fun mul(domain: DoubleSpan, rangeSpan: Double): ScaleMapper<Double> {
-        val factor = rangeSpan / (domain.upperEnd - domain.lowerEnd)
-        check(!(factor.isInfinite() || factor.isNaN())) { "Can't create mapper with ratio: $factor" }
+        val factor = rangeSpan / domain.length
         return mul(factor)
     }
 
     fun mul(factor: Double): ScaleMapper<Double> {
+        check(factor.isFinite()) { "Can't create mapper with ratio: $factor" }
         return object : ScaleMapper<Double> {
             override fun invoke(v: Double?): Double? {
                 return if (v != null) factor * v

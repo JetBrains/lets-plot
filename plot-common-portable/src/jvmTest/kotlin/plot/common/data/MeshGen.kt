@@ -15,7 +15,7 @@ internal object MeshGen {
     ): XYSeries {
         // columns: 1, 1, 1, 1...2, 2, 2, 2...3, 3, 3, 3...
         val columns = xs.map {
-            List(RegularMeshDetector.COLUMN_THRESHOLD) { i -> it }
+            List(RegularMeshDetector.COLUMN_THRESHOLD) { _ -> it }
         }.flatten()
 
         // rows: 1, 2, 3, 4...1, 2, 3, 4...1, 2, 3, 4...

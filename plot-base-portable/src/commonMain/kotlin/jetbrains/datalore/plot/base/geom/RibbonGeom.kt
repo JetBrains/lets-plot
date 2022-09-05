@@ -81,7 +81,7 @@ class RibbonGeom : GeomBase() {
 
             ctx.targetCollector.addPoint(
                 p.index(),
-                helper.toClient(coord, p),
+                helper.toClient(coord, p)!!,
                 0.0,
                 GeomTargetCollector.TooltipParams(
                     tipLayoutHints = hintsCollection.hints,
