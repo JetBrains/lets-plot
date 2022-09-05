@@ -6,9 +6,11 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 
@@ -163,5 +165,41 @@ object GeomUtil {
             DoubleVector(maxX, minY),
             DoubleVector(minX, minY)
         )
+    }
+
+    internal fun extendTrueWidth(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+        val unflipped = if (ctx.flipped) {
+            clientRect.flip()
+        } else {
+            clientRect
+        }
+        val unflippedNewWidth = DoubleRectangle.LTRB(
+            unflipped.left - delta / 2, unflipped.top,
+            unflipped.right + delta / 2, unflipped.bottom
+        )
+        return if (ctx.flipped) {
+            unflippedNewWidth.flip()
+        } else {
+            unflippedNewWidth
+        }
+    }
+
+    internal fun extendTrueHeight(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
+        val unflipped = if (ctx.flipped) {
+            clientRect.flip()
+        } else {
+            clientRect
+        }
+
+        val unflippedNewHeight = DoubleRectangle.LTRB(
+            unflipped.left, unflipped.top - delta / 2,
+            unflipped.right, unflipped.bottom + delta / 2
+        )
+
+        return if (ctx.flipped) {
+            unflippedNewHeight.flip()
+        } else {
+            unflippedNewHeight
+        }
     }
 }

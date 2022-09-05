@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueWidth
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -77,23 +78,6 @@ class LineRangeGeom : GeomBase() {
                 } else {
                     null
                 }
-            }
-        }
-
-        internal fun extendTrueWidth(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
-            val unflipped = if (ctx.flipped) {
-                clientRect.flip()
-            } else {
-                clientRect
-            }
-            val unflippedNewWidth = DoubleRectangle.LTRB(
-                unflipped.left - delta / 2, unflipped.top,
-                unflipped.right + delta / 2, unflipped.bottom
-            )
-            return if (ctx.flipped) {
-                unflippedNewWidth.flip()
-            } else {
-                unflippedNewWidth
             }
         }
     }

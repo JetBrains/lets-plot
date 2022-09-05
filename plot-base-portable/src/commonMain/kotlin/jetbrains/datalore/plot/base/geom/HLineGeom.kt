@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.HLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueHeight
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -73,24 +74,5 @@ class HLineGeom : GeomBase() {
     companion object {
         const val HANDLES_GROUPS = false
         val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = HLineLegendKeyElementFactory()
-
-        private fun extendTrueHeight(clientRect: DoubleRectangle, delta: Double, ctx: GeomContext): DoubleRectangle {
-            val unflipped = if (ctx.flipped) {
-                clientRect.flip()
-            } else {
-                clientRect
-            }
-
-            val unflippedNewHeight = DoubleRectangle.LTRB(
-                unflipped.left, unflipped.top - delta / 2,
-                unflipped.right, unflipped.bottom + delta / 2
-            )
-
-            return if (ctx.flipped) {
-                unflippedNewHeight.flip()
-            } else {
-                unflippedNewHeight
-            }
-        }
     }
 }
