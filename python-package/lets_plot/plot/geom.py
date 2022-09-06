@@ -5003,7 +5003,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - label : text to add to plot.
     - family : tont family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
     - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
-    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('right') and 1 ('left').
+    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
     - angle : text rotation angle in degrees.
 

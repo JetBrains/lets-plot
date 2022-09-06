@@ -141,9 +141,9 @@ open class GeomHelper(
             "right" to Text.HorizontalAnchor.RIGHT,
             "middle" to Text.HorizontalAnchor.MIDDLE,
             "left" to Text.HorizontalAnchor.LEFT,
-            0.0 to Text.HorizontalAnchor.RIGHT,
+            0.0 to Text.HorizontalAnchor.LEFT,
             0.5 to Text.HorizontalAnchor.MIDDLE,
-            1.0 to Text.HorizontalAnchor.LEFT
+            1.0 to Text.HorizontalAnchor.RIGHT
         )
         val VJUST_MAP: Map<Any, Text.VerticalAnchor> = mapOf(
             "bottom" to Text.VerticalAnchor.BOTTOM,

@@ -46,3 +46,4 @@
 - Tooltip is not displayed for the object on the border of the plot [[#575](https://github.com/JetBrains/lets-plot/issues/575)].
 - The plot caption overlaps with the legend [[#587](https://github.com/JetBrains/lets-plot/issues/587)].
 - No tooltips for geom_boxplot with zero height [[#563](https://github.com/JetBrains/lets-plot/issues/563)].
+- geom_text: wrong label alignment with `hjust` 0 and 1 [[#592](https://github.com/JetBrains/lets-plot/issues/592)].
