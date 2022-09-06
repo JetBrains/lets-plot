@@ -66,7 +66,6 @@ class TextConverterTest {
     }
 
     @Test
-    // todo need to fix test
     fun casesWhenHjustShouldBeZero() {
         matcher.hjust(eq(0.0))
 
@@ -89,7 +88,6 @@ class TextConverterTest {
     }
 
     @Test
-    // todo need to fix test
     fun casesWhenHjustShouldBeOne() {
         matcher.hjust(eq(1.0))
 

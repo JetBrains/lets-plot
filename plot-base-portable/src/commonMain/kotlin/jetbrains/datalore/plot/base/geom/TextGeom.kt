@@ -69,7 +69,7 @@ open class TextGeom : GeomBase() {
 
     open fun buildTextComponent(root: SvgRoot, p: DataPointAesthetics, location: DoubleVector, text: String, sizeUnitRatio: Double) {
         val label = TextLabel(text)
-        GeomHelper.decorate(label, p, sizeUnitRatio)
+        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
         label.moveTo(location)
         root.add(label.rootGroup)
     }

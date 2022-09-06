@@ -30,19 +30,18 @@ class LabelGeom : TextGeom() {
     ) {
         // background rectangle
         val rectangle = rectangleForText(p, location, text, sizeUnitRatio)
-        val backgroundRect = /*SvgRectElement(rectangle)*/ SvgPathElement().apply {
+        //val backgroundRect = SvgRectElement(rectangle)
+        val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle).build()
             )
-
-            strokeColor().set(p.color()!!)
-            fillColor().set(p.fill()!!)
-            strokeWidth().set(1.0)
         }
+        GeomHelper.decorate(backgroundRect, p)
+        backgroundRect.strokeWidth().set(1.0)
 
         // text element
         val label = TextLabel(text)
-        GeomHelper.decorate(label, p, sizeUnitRatio)
+        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
         // move to rectangle's center
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)

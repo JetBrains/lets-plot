@@ -183,9 +183,11 @@ open class GeomHelper(
 
         fun fontSize(p: DataPointAesthetics, scale: Double) = AesScaling.textSize(p) * scale
 
-        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0) {
+        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
             label.textColor().set(p.color())
-            label.textOpacity().set(p.alpha())
+            if (applyAlpha) {
+                label.textOpacity().set(p.alpha())
+            }
             label.setFontSize(fontSize(p, scale))
 
             // family
