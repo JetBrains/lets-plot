@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.util.*
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueHeight
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.colorWithAlpha
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -42,14 +43,14 @@ class BoxplotGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         CrossBarHelper.buildBoxes(
             root, aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper)
+            clientRectByDataPoint(ctx, geomHelper, isHintRect = false)
         )
         buildLines(root, aesthetics, ctx, geomHelper)
         buildOutliers(root, aesthetics, pos, coord, ctx)
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            clientRectByDataPoint(ctx, geomHelper),
+            clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
             { colorWithAlpha(it) },
             defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
         )
@@ -171,7 +172,11 @@ class BoxplotGeom : GeomBase() {
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
 
-        private fun clientRectByDataPoint(ctx: GeomContext, geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun clientRectByDataPoint(
+            ctx: GeomContext,
+            geomHelper: GeomHelper,
+            isHintRect: Boolean
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 val clientRect = if (p.defined(Aes.X) &&
                     p.defined(Aes.LOWER) &&
@@ -182,15 +187,20 @@ class BoxplotGeom : GeomBase() {
                     val lower = p.lower()!!
                     val upper = p.upper()!!
                     val width = p.width()!! * ctx.getResolution(Aes.X)
-
                     geomHelper.toClient(
                         DoubleRectangle.XYWH(x - width / 2, lower, width, upper - lower),
                         p
-                    )
+                    )?.let {
+                        if (isHintRect && upper == lower) {
+                            // Add tooltips for geom_boxplot with zero height (issue #563)
+                            extendTrueHeight(it, 2.0, ctx)
+                        } else {
+                            it
+                        }
+                    }
                 } else {
                     null
                 }
-
                 clientRect
             }
         }
