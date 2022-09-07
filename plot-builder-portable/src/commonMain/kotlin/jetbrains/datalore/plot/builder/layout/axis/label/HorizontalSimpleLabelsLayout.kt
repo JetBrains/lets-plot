@@ -97,19 +97,16 @@ internal class HorizontalSimpleLabelsLayout(
         }
 
         fun estimateBreakCount(labels: List<String>, axisLength: Double, tickLabelSpec: PlotLabelSpec): Int {
-            val maxLength =
-                BreakLabelsLayoutUtil.maxLength(
-                    labels
-                )
+            val longestLabel = BreakLabelsLayoutUtil.longestLabel(labels)
             return estimateBreakCount(
-                maxLength,
+                longestLabel?.length ?: 0,
                 axisLength,
                 tickLabelSpec
             )
         }
 
         private fun estimateBreakCount(labelLength: Int, axisLength: Double, tickLabelSpec: PlotLabelSpec): Int {
-            val tickDistance = tickLabelSpec.width(labelLength) + MIN_TICK_LABEL_DISTANCE
+            val tickDistance = tickLabelSpec.widthByLength(labelLength) + MIN_TICK_LABEL_DISTANCE
             return max(1.0, axisLength / tickDistance).toInt()
         }
     }

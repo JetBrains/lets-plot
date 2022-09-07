@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Font
+import jetbrains.datalore.base.values.FontFamily
 import kotlin.jvm.JvmOverloads
 
 //ToDo:
@@ -14,34 +16,32 @@ interface Serializable
 class LabelMetrics : LabelSpec,
     Serializable {
 
-    override val fontSize: Double
-    override val isBold: Boolean
+    override val font: Font
     override val isMonospaced: Boolean
 
     /**
      * for Serializable
      */
     constructor() {
-        this.fontSize = 0.0
-        isBold = false
+        this.font = Font(FontFamily.DEFAULT_FONT_FAMILY, 0)
         isMonospaced = false
     }
 
-    /**
-     * @param fontSize in 'px' (same meaning as in CSS)
-     */
     @JvmOverloads
-    constructor(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) {
-        this.fontSize = fontSize
-        isBold = bold
+    constructor(font: Font, monospaced: Boolean = false) {
+        this.font = font
         isMonospaced = monospaced
     }
 
-    override fun dimensions(labelLength: Int): DoubleVector {
-        return DoubleVector(width(labelLength), height())
+    override fun dimensions(labelText: String): DoubleVector {
+        return DoubleVector(width(labelText), height())
     }
 
-    override fun width(labelLength: Int): Double {
+    override fun width(labelText: String): Double {
+        return widthByLength(labelText.length)
+    }
+
+    override fun widthByLength(labelLength: Int): Double {
         var ratio =
             FONT_SIZE_TO_GLYPH_WIDTH_RATIO
         if (isMonospaced) {
@@ -49,14 +49,14 @@ class LabelMetrics : LabelSpec,
                 FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED
         }
 
-        val width = labelLength.toDouble() * fontSize * ratio + 2 * LABEL_PADDING
-        return if (isBold) {
+        val width = labelLength.toDouble() * font.size * ratio + 2 * LABEL_PADDING
+        return if (font.isBold) {
             width * FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
         } else width
     }
 
     override fun height(): Double {
-        return fontSize + 2 * LABEL_PADDING
+        return font.size + 2 * LABEL_PADDING
     }
 
     companion object {

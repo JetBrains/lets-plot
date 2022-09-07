@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout
 
+import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -26,5 +27,6 @@ object PlotLabelSpecFactory {
 
     fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle())
 
-    private fun plotLabelSpec(textStyle: TextStyle) = PlotLabelSpec(textStyle.size, textStyle.face.bold)
+    private fun plotLabelSpec(textStyle: TextStyle) =
+        PlotLabelSpec(Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic), textStyle.face.bold)
 }

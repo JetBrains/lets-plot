@@ -23,8 +23,8 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     theme: AxisTheme
 ) : AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
-    private fun labelBounds(labelLocation: DoubleVector, labelLength: Int): DoubleRectangle {
-        val dim = labelSpec.dimensions(labelLength)
+    private fun labelBounds(labelLocation: DoubleVector, labelText: String): DoubleRectangle {
+        val dim = labelSpec.dimensions(labelText)
         val labelBounds = labelBounds(dim)
         return labelBounds.add(labelLocation)
     }
@@ -53,7 +53,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
         val labels = tickLabels.iterator()
         for (pos in tickPositions) {
             val label = labels.next()
-            val bounds = labelBounds(toTickLocation(pos), label.length)
+            val bounds = labelBounds(toTickLocation(pos), label)
             result.add(bounds)
         }
         return result

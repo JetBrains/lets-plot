@@ -47,7 +47,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     }
 
     private fun PlotLabelSpec.width(text: String): Double {
-        return text.map(LetterCategory.Companion::getLetterRatio).sum() * fontSize
+        return text.map(LetterCategory.Companion::getLetterRatio).sum() * font.size
     }
 
     ////////
@@ -117,7 +117,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         val width = if (useLetterTypes) {
             spec.plotLabelSpec.width(spec.text)
         } else {
-            spec.plotLabelSpec.width(spec.text.length)
+            spec.plotLabelSpec.width(spec.text)
         }
         return DoubleVector(width, spec.plotLabelSpec.height())
     }
