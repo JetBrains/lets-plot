@@ -9,6 +9,6 @@ object FeatureSwitch {
 
     const val PLOT_VIEW_TOOLBOX = false
 
-    const val PLOT_DEBUG_DRAWING = true
-    const val LEGEND_DEBUG_DRAWING = true
+    const val PLOT_DEBUG_DRAWING = false
+    const val LEGEND_DEBUG_DRAWING = false
 }
