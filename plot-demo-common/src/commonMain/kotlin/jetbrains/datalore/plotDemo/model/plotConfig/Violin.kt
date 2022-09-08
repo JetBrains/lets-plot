@@ -54,7 +54,8 @@ class Violin {
                 "                'y': 'value'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'NaNs in data'" +
+                "                'text': 'Violin demo'," +
+                "                'subtitle': 'NaNs in data'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
@@ -80,6 +81,9 @@ class Violin {
                 "                'fill': 'group'" +
                 "              }," +
                 "   'ggtitle': {" +
+                "                'text': 'Violin demo'" +
+                "              }," +
+                "   'caption': {" +
                 "                'text': 'Additional grouping'" +
                 "              }," +
                 "   'layers': [" +

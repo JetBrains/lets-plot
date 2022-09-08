@@ -337,7 +337,7 @@ class PlotSvgComponent constructor(
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
             plotTitleTextRect?.let { drawDebugRect(
-                textBoundingBox(title!!, plotTitleTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), centered = false),
+                textBoundingBox(title!!, plotTitleTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
                 Color.DARK_GREEN
             ) }
         }
@@ -358,6 +358,10 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            subtitleTextRect?.let { drawDebugRect(
+                textBoundingBox(subtitle!!, subtitleTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
+                Color.DARK_GREEN
+            ) }
         }
 
         val captionElementRect = caption?.let {
@@ -377,6 +381,10 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            captionTextRect?.let { drawDebugRect(
+                textBoundingBox(caption!!, captionTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), align = 1),
+                Color.DARK_GREEN
+            ) }
         }
 
         // add plot title
@@ -578,13 +586,24 @@ class PlotSvgComponent constructor(
         boundRect: DoubleRectangle,
         labelSpec: PlotLabelSpec,
         orientation: Orientation = Orientation.TOP,
-        centered: Boolean = true
+        align: Int = 0 // < 0 - to left; > 0 - to right; 0 - centered
     ): DoubleRectangle {
         val d = PlotLayoutUtil.textDimensions(text, labelSpec)
-        return if (orientation in listOf(Orientation.TOP, Orientation.BOTTOM))
-            DoubleRectangle(if (centered) boundRect.center.x - d.x / 2 else boundRect.left, boundRect.center.y - d.y / 2, d.x, d.y)
-        else
-            DoubleRectangle(boundRect.center.x - d.y / 2, if (centered) boundRect.center.y - d.x / 2 else boundRect.top, d.y, d.x)
+        return if (orientation in listOf(Orientation.TOP, Orientation.BOTTOM)) {
+            val x = when {
+                align > 0 -> boundRect.right - d.x
+                align < 0 -> boundRect.left
+                else -> boundRect.center.x - d.x / 2
+            }
+            DoubleRectangle(x, boundRect.center.y - d.y / 2, d.x, d.y)
+        } else {
+            val y = when {
+                align > 0 -> boundRect.bottom - d.x
+                align < 0 -> boundRect.top
+                else -> boundRect.center.y - d.x / 2
+            }
+            DoubleRectangle(boundRect.center.x - d.y / 2, y, d.y, d.x)
+        }
     }
 
     private fun addTitle(
