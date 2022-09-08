@@ -41,20 +41,27 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
 }
 
 fun Texts.text(block: TextBuilder.() -> Unit) {
-    TextBuilder(factory)
+    TextBuilder(factory, myWithBackgroundRect = false)
+        .apply(block)
+        .build(textMeasurer)
+}
+
+fun Texts.label(block: TextBuilder.() -> Unit) {
+    TextBuilder(factory, myWithBackgroundRect = true)
         .apply(block)
         .build(textMeasurer)
 }
 
 @LiveMapDsl
 class TextBuilder(
-    private val myFactory: MapEntityFactory
+    private val myFactory: MapEntityFactory,
+    private val myWithBackgroundRect: Boolean
 ) {
     var index: Int = 0
     var point: Vec<LonLat>? = null
 
-    var fillColor: Color = Color.BLACK
-    var strokeColor: Color = Color.TRANSPARENT
+    var fillColor: Color = if (myWithBackgroundRect) Color.WHITE else Color.BLACK
+    var strokeColor: Color = if (myWithBackgroundRect) Color.BLACK else Color.TRANSPARENT
     var strokeWidth: Double = 0.0
 
     var label: String = ""
@@ -76,7 +83,7 @@ class TextBuilder(
         }
             .setInitializer { worldPoint ->
                 + RenderableComponent().apply {
-                    renderer = TextRenderer()
+                    renderer = TextRenderer(this@TextBuilder.myWithBackgroundRect)
                 }
                 + ChartElementComponent().apply {
                     fillColor = this@TextBuilder.fillColor

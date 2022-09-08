@@ -143,14 +143,14 @@ internal class DataPointLiveMapAesthetics {
     val radius: Double
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
-            TEXT -> 0.0
+            TEXT, LABEL -> 0.0
         }
 
     val strokeWidth
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
             POINT, PIE, BAR -> 1.0
-            TEXT -> 0.0
+            TEXT, LABEL -> 0.0
         }
 
 

@@ -36,10 +36,9 @@ class TextSpec(
     val dimension: Vec<Client>
     val alignment: Vec<Client>
     val angle: Double = toRadians(-degreeAngle)
+    val textSize = textMeasurer.measure(label, font)
 
     init {
-        val textSize = textMeasurer.measure(label, font)
-
         alignment = explicitVec(-textSize.x * hjust, textSize.y * vjust)
 
         dimension = rotateTextSize(textSize.mul(2.0), angle)

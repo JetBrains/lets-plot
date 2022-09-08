@@ -12,6 +12,7 @@ enum class MapLayerKind {
     H_LINE,
     V_LINE,
     TEXT,
+    LABEL,
     PIE,
     BAR,
 }

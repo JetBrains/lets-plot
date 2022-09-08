@@ -38,6 +38,7 @@ object LayerConverter {
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT -> MapLayerKind.TEXT to dataPointsConverter.toText()
+                LABEL -> MapLayerKind.LABEL to dataPointsConverter.toText()
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
                     DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
@@ -181,6 +182,24 @@ object LayerConverter {
                 }
             }
 
+            MapLayerKind.LABEL -> texts {
+                liveMapDataPoints.forEach {
+                    label {
+                        index = it.index
+                        point = it.point
+                        fillColor = it.fillColor
+                        strokeColor = it.strokeColor
+                        strokeWidth = 0.0
+                        label = it.label
+                        size = it.size
+                        family = it.family
+                        fontface = it.fontface
+                        hjust = it.hjust
+                        vjust = it.vjust
+                        angle = it.angle
+                    }
+                }
+            }
             MapLayerKind.PIE -> pies {
                 liveMapDataPoints.forEach {
                     pie {
