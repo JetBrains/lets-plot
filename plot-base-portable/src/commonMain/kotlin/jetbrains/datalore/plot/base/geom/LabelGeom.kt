@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -20,6 +21,9 @@ import jetbrains.datalore.vis.svg.SvgUtils
 
 
 class LabelGeom : TextGeom() {
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = TextLegendKeyElementFactory(withBackgroundRect = true)
 
     override fun buildTextComponent(
         root: SvgRoot,

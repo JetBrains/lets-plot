@@ -23,7 +23,7 @@ open class TextGeom : GeomBase() {
     var sizeUnit: String? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = TextLegendKeyElementFactory()
+        get() = TextLegendKeyElementFactory(withBackgroundRect = false)
 
     override fun buildIntern(
         root: SvgRoot,
