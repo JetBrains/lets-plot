@@ -40,11 +40,10 @@ class AreaRidgesGeom : GeomBase() {
     }
 
     private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>): MutableList<Iterable<DataPointAesthetics>> {
-        val minHeight = 0.0
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
         for (p in dataPoints)
-            if (p.height()!! >= minHeight)
+            if (p.height()!! >= MIN_HEIGHT)
                 dataPointsBunch.add(p)
             else {
                 if (dataPointsBunch.any()) result.add(dataPointsBunch)
@@ -116,6 +115,8 @@ class AreaRidgesGeom : GeomBase() {
     }
 
     companion object {
+        private const val MIN_HEIGHT = 0.0
+
         const val HANDLES_GROUPS = true
     }
 }
