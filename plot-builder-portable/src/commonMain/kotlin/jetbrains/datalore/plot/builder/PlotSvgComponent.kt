@@ -29,6 +29,8 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
+import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
+import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
@@ -44,8 +46,9 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 import kotlin.math.max
 
 class PlotSvgComponent constructor(
-    title: String?,
-    subtitle: String?,
+    private val title: String?,
+    private val subtitle: String?,
+    private val caption: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private var plotLayout: PlotLayout,
@@ -54,15 +57,8 @@ class PlotSvgComponent constructor(
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
-    caption: String?,
     val styleSheet: StyleSheet
 ) : SvgComponent() {
-
-    private fun splitToLines(text: String?) = text?.split('\n')?.map(String::trim) ?: emptyList()
-
-    private val titleLines: List<String> = splitToLines(title)
-    private val subtitleLines: List<String> = splitToLines(subtitle)
-    private val captionLines: List<String> = splitToLines(caption)
 
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
@@ -182,14 +178,14 @@ class PlotSvgComponent constructor(
         val axisEnabled = !containsLiveMap
         val plotInnerSizeAvailable = subtractTitlesAndLegends(
             baseSize = entirePlot.dimension,
-            titleLines,
-            subtitleLines,
+            title,
+            subtitle,
+            caption,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines,
             flippedAxis
         )
 
@@ -203,14 +199,14 @@ class PlotSvgComponent constructor(
         val plotInnerSize = plotInfo.size
         val plotOuterSize = addTitlesAndLegends(
             plotInnerSize,
-            titleLines,
-            subtitleLines,
+            title,
+            subtitle,
+            caption,
             axisTitleLeft,
             axisTitleBottom,
             axisEnabled,
             legendsBlockInfo,
             theme,
-            captionLines,
             flippedAxis
         )
 
@@ -228,26 +224,28 @@ class PlotSvgComponent constructor(
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val plotOuterBoundsWithoutTitle = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(titleLines, subtitleLines, theme.plot())
+        val plotOuterBoundsWithoutTitleAndCaption = let {
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
+            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
             DoubleRectangle(
                 plotOuterBounds.origin.add(titleSizeDelta),
-                plotOuterBounds.dimension.subtract(titleSizeDelta)
+                plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
             )
         }
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
-            drawDebugRect(plotOuterBoundsWithoutTitle, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitle")
+            drawDebugRect(plotOuterBoundsWithoutTitleAndCaption, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitleAndCaption")
         }
 
         // Inner bounds - all without titles and legends.
-        val plotInnerOrigin = plotOuterBoundsWithoutTitle.origin
+        val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(
                 axisTitleSizeDelta(
                     axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
                     axisTitleBottom = null to PlotLabelSpec(0.0),
-                    axisEnabled
+                    axisEnabled,
+                    marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
             )
 
@@ -313,23 +311,89 @@ class PlotSvgComponent constructor(
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
         }
 
+        // plot title, subtitle, caption rectangles:
+        //   xxxElementRect - rectangle for element, including margins
+        //   xxxTextRect - for text only
+
+        fun textRectangle(elementRect: DoubleRectangle, margins: Margins) = createTextRectangle(
+            elementRect,
+            topMargin = margins.top,
+            bottomMargin = margins.bottom
+        )
+
+        val plotTitleElementRect = title?.let {
+            DoubleRectangle(
+                geomAreaBounds.left,
+                plotOuterBounds.top,
+                geomAreaBounds.width,
+                PlotLayoutUtil.titleThickness(
+                    title,
+                    PlotLabelSpecFactory.plotTitle(plotTheme),
+                    theme.plot().titleMargins()
+                )
+            )
+        }
+        val plotTitleTextRect = plotTitleElementRect?.let { textRectangle(it, theme.plot().titleMargins()) }
+        if (DEBUG_DRAWING) {
+            plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+            plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+        }
+
+        val subtitleElementRect = subtitle?.let {
+            DoubleRectangle(
+                geomAreaBounds.left,
+                plotTitleElementRect?.bottom ?: plotOuterBounds.top,
+                geomAreaBounds.width,
+                PlotLayoutUtil.titleThickness(
+                    subtitle,
+                    PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                    theme.plot().subtitleMargins()
+                )
+            )
+        }
+        val subtitleTextRect = subtitleElementRect?.let { textRectangle(it, theme.plot().subtitleMargins()) }
+        if (DEBUG_DRAWING) {
+            subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+            subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+        }
+
+        val captionElementRect = caption?.let {
+            val captionRectHeight = PlotLayoutUtil.titleThickness(
+                caption,
+                PlotLabelSpecFactory.plotCaption(plotTheme),
+                theme.plot().captionMargins()
+            )
+            DoubleRectangle(
+                geomAreaBounds.left,
+                plotOuterBounds.bottom - captionRectHeight,
+                geomAreaBounds.width,
+                captionRectHeight
+            )
+        }
+        val captionTextRect = captionElementRect?.let { textRectangle(it, theme.plot().captionMargins()) }
+        if (DEBUG_DRAWING) {
+            captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+            captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
+        }
+
         // add plot title
-        if (titleLines.isNotEmpty()) {
+        plotTitleTextRect?.let {
             addTitle(
-                titleLines,
-                leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top),
-                className = Style.PLOT_TITLE,
-                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme)
+                title,
+                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
+                justification = plotTheme.titleJustification(),
+                boundRect = it,
+                className = Style.PLOT_TITLE
             )
         }
         // add plot subtitle
-        if (subtitleLines.isNotEmpty()) {
-            val titleSize = PlotLayoutUtil.titleDimensions(titleLines, PlotLabelSpecFactory.plotTitle(plotTheme))
+        subtitleTextRect?.let {
             addTitle(
-                subtitleLines,
-                leftTop = DoubleVector(geomAreaBounds.left, plotOuterBounds.top + titleSize.y),
-                className = Style.PLOT_SUBTITLE,
-                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme)
+                subtitle,
+                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
+                justification = plotTheme.subtitleJustification(),
+                boundRect = it,
+                className = Style.PLOT_SUBTITLE
             )
         }
 
@@ -349,7 +413,10 @@ class PlotSvgComponent constructor(
                     Orientation.LEFT,
                     overallTileBounds,
                     geomAreaBounds,
-                    "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
+                    labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
+                    justification = theme.verticalAxis(flippedAxis).titleJustification(),
+                    margins = theme.verticalAxis(flippedAxis).titleMargins(),
+                    className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
             if (axisTitleBottom != null) {
@@ -358,7 +425,10 @@ class PlotSvgComponent constructor(
                     Orientation.BOTTOM,
                     overallTileBounds,
                     geomAreaBounds,
-                    "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
+                    labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
+                    justification = theme.horizontalAxis(flippedAxis).titleJustification(),
+                    margins = theme.horizontalAxis(flippedAxis).titleMargins(),
+                    className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
                 )
             }
         }
@@ -366,7 +436,7 @@ class PlotSvgComponent constructor(
         // add legends
         if (!legendTheme.position().isHidden) {
             val legendsBlockInfoLayouted = LegendBoxesLayout(
-                outerBounds = plotOuterBoundsWithoutTitle,
+                outerBounds = plotOuterBoundsWithoutTitleAndCaption,
                 innerBounds = geomAreaBounds,
                 legendTheme
             ).doLayout(legendsBlockInfo)
@@ -379,66 +449,38 @@ class PlotSvgComponent constructor(
         }
 
         // add caption
-        if (captionLines.isNotEmpty()) {
-            val captionLineHeight = PlotLabelSpecFactory.plotCaption(plotTheme).height()
-            val captionLabel = MultilineLabel(captionLines.joinToString("\n"))
-            captionLabel.addClassName(Style.PLOT_CAPTION)
-            captionLabel.setHorizontalAnchor(HorizontalAnchor.RIGHT)
-            captionLabel.setLineHeight(captionLineHeight)
-
-            val captionSize = PlotLayoutUtil.titleDimensions(captionLines, PlotLabelSpecFactory.plotCaption(plotTheme))
-            val captionBounds = DoubleRectangle(
-                geomAreaBounds.right - captionSize.x,
-                plotOuterBounds.bottom - captionSize.y,
-                captionSize.x,
-                captionSize.y
+        captionTextRect?.let {
+            addTitle(
+                title = caption,
+                labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
+                justification = plotTheme.captionJustification(),
+                boundRect = it,
+                className = Style.PLOT_CAPTION
             )
-            captionLabel.moveTo(captionBounds.right, captionBounds.top + captionLineHeight)
-            add(captionLabel)
-
-            if (DEBUG_DRAWING) {
-                drawDebugRect(captionBounds, Color.BLUE)
-            }
         }
     }
 
-    private fun addTitle(
-        titleLines: List<String>,
-        leftTop: DoubleVector,
-        className: String,
-        labelSpec: LabelSpec
-    ) {
-        val titleLineHeight = labelSpec.height()
-        val titleLabel = MultilineLabel(titleLines.joinToString("\n"))
-        titleLabel.addClassName(className)
-        titleLabel.setHorizontalAnchor(HorizontalAnchor.LEFT)
-        titleLabel.setLineHeight(titleLineHeight)
-
-        val titleSize = PlotLayoutUtil.titleDimensions(titleLines, labelSpec)
-        val titleBounds = DoubleRectangle(leftTop, titleSize)
-
-        titleLabel.moveTo(titleBounds.left, titleBounds.top + titleLineHeight)
-        add(titleLabel)
-
-        if (DEBUG_DRAWING) {
-            var h = 0.0
-            PlotLayoutUtil.textLinesDimensions(titleLines, labelSpec).forEach { sz ->
-                val bounds = DoubleRectangle(
-                    leftTop.add(DoubleVector(0.0, h)),
-                    sz
-                )
-                h += sz.y
-                drawDebugRect(bounds, Color.LIGHT_BLUE)
-            }
-            drawDebugRect(titleBounds, Color.BLUE)
-        }
-    }
+    private fun createTextRectangle(
+        elementRect: DoubleRectangle,
+        topMargin: Double = 0.0,
+        rightMargin: Double = 0.0,
+        bottomMargin: Double = 0.0,
+        leftMargin: Double = 0.0
+    ) = DoubleRectangle(
+        elementRect.left + leftMargin,
+        elementRect.top + topMargin,
+        elementRect.width - (rightMargin + leftMargin),
+        elementRect.height - (topMargin + bottomMargin)
+    )
 
     private fun addAxisTitle(
         text: String,
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
+        labelSpec: PlotLabelSpec,
+        justification: TextJustification,
+        margins: Margins,
         className: String
     ) {
         val referenceRect = when (orientation) {
@@ -456,39 +498,103 @@ class PlotSvgComponent constructor(
                 )
         }
 
-        val horizontalAnchor = HorizontalAnchor.MIDDLE
-        val verticalAnchor = when (orientation) {
-            Orientation.LEFT, Orientation.RIGHT, Orientation.TOP -> VerticalAnchor.BOTTOM
-            Orientation.BOTTOM -> VerticalAnchor.TOP
-        }
-
         val rotation = when (orientation) {
-            Orientation.LEFT -> -90.0
-            Orientation.RIGHT -> -90.0
-            else -> 0.0
+            Orientation.LEFT -> TextRotation.ANTICLOCKWISE
+            Orientation.RIGHT -> TextRotation.ANTICLOCKWISE
+            else -> null
         }
 
-        val titleLocation = when (orientation) {
+        val textHeight = PlotLayoutUtil.textDimensions(text, labelSpec).y
+
+        // rectangle for element, including margins
+        val axisTitleElementRect = when (orientation) {
             Orientation.LEFT ->
-                // Add 2 pix to the margin for better uppearence.
-                DoubleVector(referenceRect.left - (PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN + 2), referenceRect.center.y)
+                DoubleRectangle(
+                    referenceRect.left - textHeight - margins.width(),
+                    referenceRect.top,
+                    textHeight + margins.width(),
+                    referenceRect.height
+                )
             Orientation.RIGHT ->
-                DoubleVector(referenceRect.right + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN, referenceRect.center.y)
-            Orientation.TOP ->
-                DoubleVector(referenceRect.center.x, referenceRect.top - PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
-            Orientation.BOTTOM ->
-                DoubleVector(referenceRect.center.x, referenceRect.bottom + PlotLayoutUtil.AXIS_TITLE_INNER_MARGIN)
+                DoubleRectangle(
+                    referenceRect.right,
+                    referenceRect.top,
+                    textHeight + margins.width(),
+                    referenceRect.height
+                )
+            Orientation.TOP -> DoubleRectangle(
+                referenceRect.left,
+                referenceRect.top - textHeight - margins.height(),
+                referenceRect.width,
+                textHeight + margins.height()
+            )
+            Orientation.BOTTOM -> DoubleRectangle(
+                referenceRect.left,
+                referenceRect.bottom,
+                referenceRect.width,
+                textHeight + margins.height()
+            )
         }
 
-        val titleLabel = TextLabel(text)
-        titleLabel.addClassName(className)
-        titleLabel.setHorizontalAnchor(horizontalAnchor)
-        titleLabel.setVerticalAnchor(verticalAnchor)
-        titleLabel.moveTo(titleLocation)
-        titleLabel.rotate(rotation)
-        add(titleLabel)
+        // rectangle for text (without margins)
+        val axisTitleTextRect = when {
+            orientation.isHorizontal -> {
+                createTextRectangle(
+                    axisTitleElementRect,
+                    topMargin = margins.top,
+                    bottomMargin = margins.bottom
+                )
+            }
+            else -> {
+                createTextRectangle(
+                    axisTitleElementRect,
+                    rightMargin = margins.right,
+                    leftMargin = margins.left
+                )
+            }
+        }
+
+        addTitle(
+            text,
+            labelSpec,
+            justification,
+            axisTitleTextRect,
+            rotation,
+            className
+        )
+
+        if (DEBUG_DRAWING) {
+            drawDebugRect(axisTitleTextRect, Color.LIGHT_BLUE)
+            drawDebugRect(axisTitleElementRect, Color.GRAY)
+        }
     }
 
+    private fun addTitle(
+        title: String?,
+        labelSpec: LabelSpec,
+        justification: TextJustification,
+        boundRect: DoubleRectangle,
+        rotation: TextRotation? = null,
+        className: String
+    ) {
+        if (title == null) return
+
+        val lineHeight = labelSpec.height()
+        val titleLabel = MultilineLabel(title)
+        titleLabel.addClassName(className)
+        val (position, hAnchor) = applyJustification(
+            boundRect,
+            textSize = PlotLayoutUtil.textDimensions(title, labelSpec),
+            lineHeight,
+            justification,
+            rotation
+        )
+        titleLabel.setLineHeight(lineHeight)
+        titleLabel.setHorizontalAnchor(hAnchor)
+        titleLabel.moveTo(position)
+        rotation?.angle?.let(titleLabel::rotate)
+        add(titleLabel)
+    }
 
     private fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
         val rect = SvgRectElement(r)

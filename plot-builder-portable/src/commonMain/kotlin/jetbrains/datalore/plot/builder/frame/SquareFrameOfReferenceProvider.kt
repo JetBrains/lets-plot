@@ -21,12 +21,12 @@ import jetbrains.datalore.plot.builder.layout.tile.InsideOutTileLayout
 import jetbrains.datalore.plot.builder.layout.tile.TopDownTileLayout
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
+import kotlin.math.max
 
 internal class SquareFrameOfReferenceProvider(
     private val hScaleProto: Scale<Double>,
     private val vScaleProto: Scale<Double>,
-    hDomain: DoubleSpan,
-    vDomain: DoubleSpan,
+    private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
@@ -39,14 +39,12 @@ internal class SquareFrameOfReferenceProvider(
     init {
         hAxisSpec = AxisSpec(
             AxisBreaksProviderFactory.forScale(hScaleProto),
-            hDomain,
             hScaleProto.name,
             theme.horizontalAxis(flipAxis)
         )
 
         vAxisSpec = AxisSpec(
             AxisBreaksProviderFactory.forScale(vScaleProto),
-            vDomain,
             vScaleProto.name,
             theme.verticalAxis(flipAxis)
         )
@@ -68,10 +66,7 @@ internal class SquareFrameOfReferenceProvider(
             Orientation.LEFT
         )
 
-        val hDomain = hAxisSpec.domainTransformed
-        val vDomain = vAxisSpec.domainTransformed
-
-        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
+        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)
     }
 
     override fun createTileFrame(
@@ -83,36 +78,27 @@ internal class SquareFrameOfReferenceProvider(
         val vAxisLayoutInfo = layoutInfo.vAxisInfo!!
 
         // Set-up scales and coordinate system.
-        val hScaleMapper = coordProvider.buildAxisXScaleMapper(
-            hAxisLayoutInfo.axisDomain,
+        val client = DoubleVector(
             hAxisLayoutInfo.axisLength,
-        )
-        val vScaleMapper = coordProvider.buildAxisYScaleMapper(
-            vAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisLength,
-        )
-
-        val hScale = coordProvider.buildAxisScaleX(
-            hScaleProto,
-            hAxisLayoutInfo.axisDomain,
-            hAxisLayoutInfo.axisBreaks
-        )
-        val vScale = coordProvider.buildAxisScaleY(
-            vScaleProto,
-            vAxisLayoutInfo.axisDomain,
-            vAxisLayoutInfo.axisBreaks
-        )
-
-        val coord = coordProvider.createCoordinateSystem(
-            hAxisLayoutInfo.axisDomain,
-            hAxisLayoutInfo.axisLength,
-            vAxisLayoutInfo.axisDomain,
             vAxisLayoutInfo.axisLength
         )
 
+        val coord = coordProvider.createCoordinateSystem(adjustedDomain, client)
+
+        val hScale = hScaleProto.with()
+            .breaks(hAxisLayoutInfo.axisBreaks.domainValues)
+            .labels(hAxisLayoutInfo.axisBreaks.labels)
+            .build()
+
+        val vScale = vScaleProto.with()
+            .breaks(vAxisLayoutInfo.axisBreaks.domainValues)
+            .labels(vAxisLayoutInfo.axisBreaks.labels)
+            .build()
+
         val tileFrameOfReference = SquareFrameOfReference(
-            hScale, vScale,
-            hScaleMapper, vScaleMapper,
+            hScaleBreaks = hScale.getScaleBreaks(),
+            vScaleBreaks = vScale.getScaleBreaks(),
+            adjustedDomain,
             coord,
             layoutInfo,
             marginsLayout,
@@ -132,7 +118,7 @@ internal class SquareFrameOfReferenceProvider(
             return emptyMap()
         }
 
-        check(!coordProvider.flipAxis) {
+        check(!coordProvider.flipped) {
             "`flipped` corrdinate system is not supported on plots with marginal layers."
         }
 
@@ -147,10 +133,10 @@ internal class SquareFrameOfReferenceProvider(
         )
 
         val sizes = mapOf(
-            MarginSide.LEFT to DoubleVector(inner.left - outer.left, inner.height),
-            MarginSide.TOP to DoubleVector(inner.width, inner.top - outer.top),
-            MarginSide.RIGHT to DoubleVector(outer.right - inner.right, inner.height),
-            MarginSide.BOTTOM to DoubleVector(inner.width, outer.bottom - inner.bottom),
+            MarginSide.LEFT to DoubleVector(max(0.0, inner.left - outer.left), inner.height),
+            MarginSide.TOP to DoubleVector(inner.width, max(0.0, inner.top - outer.top)),
+            MarginSide.RIGHT to DoubleVector(max(0.0, outer.right - inner.right), inner.height),
+            MarginSide.BOTTOM to DoubleVector(inner.width, max(0.0, outer.bottom - inner.bottom)),
         )
 
         val boundsByMargin = origins.mapValues { (margin, origin) ->
@@ -160,26 +146,26 @@ internal class SquareFrameOfReferenceProvider(
         val hAxisLayoutInfo = tileLayoutInfo.hAxisInfo!!
         val vAxisLayoutInfo = tileLayoutInfo.vAxisInfo!!
         return domainByMargin.mapValues { (side, domain) ->
-            val xDomain = when (side) {
+            val hDomain = when (side) {
                 MarginSide.LEFT, MarginSide.RIGHT -> domain
                 MarginSide.TOP, MarginSide.BOTTOM -> hAxisLayoutInfo.axisDomain
             }
-            val yDomain = when (side) {
+            val vDomain = when (side) {
                 MarginSide.LEFT, MarginSide.RIGHT -> vAxisLayoutInfo.axisDomain
                 MarginSide.TOP, MarginSide.BOTTOM -> domain
             }
 
-            val xSize = sizes.getValue(side).x
-            val ySize = sizes.getValue(side).y
-
-            val marginCoordProvider = MarginalLayerCoordProvider(side, coordProvider)
-            val marginHMapper = marginCoordProvider.buildAxisXScaleMapper(xDomain, xSize)
-            val marginVMapper = marginCoordProvider.buildAxisYScaleMapper(yDomain, ySize)
-
+            val marginCoordProvider = MarginalLayerCoordProvider()
+            val clientSize = sizes.getValue(side)
+            val adjustedDomain = DoubleRectangle(hDomain, vDomain)
+            val coord = marginCoordProvider.createCoordinateSystem(
+                adjustedDomain = adjustedDomain,
+                clientSize = clientSize,
+            )
             MarginalFrameOfReference(
                 boundsByMargin.getValue(side),
-                marginHMapper, marginVMapper,
-                marginCoordProvider.createCoordinateSystem(xDomain, xSize, yDomain, ySize),
+                adjustedDomain = adjustedDomain,
+                coord,
                 debugDrawing,
             )
         }
@@ -188,7 +174,6 @@ internal class SquareFrameOfReferenceProvider(
 
     private class AxisSpec(
         val breaksProviderFactory: AxisBreaksProviderFactory,
-        val domainTransformed: DoubleSpan,
         val label: String?,
         val theme: AxisTheme
     )
@@ -196,16 +181,25 @@ internal class SquareFrameOfReferenceProvider(
     private class MyTileLayoutProvider(
         private val hAxisLayout: AxisLayout,
         private val vAxisLayout: AxisLayout,
-        private val hDomain: DoubleSpan, // transformed data ranges.
-        private val vDomain: DoubleSpan,
+        private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
-            return TopDownTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
+            return TopDownTileLayout(
+                hAxisLayout, vAxisLayout,
+                hDomain = adjustedDomain.xRange(),
+                vDomain = adjustedDomain.yRange(),
+                marginsLayout
+            )
         }
 
         override fun createInsideOutTileLayout(): TileLayout {
-            return InsideOutTileLayout(hAxisLayout, vAxisLayout, hDomain, vDomain, marginsLayout)
+            return InsideOutTileLayout(
+                hAxisLayout, vAxisLayout,
+                hDomain = adjustedDomain.xRange(),
+                vDomain = adjustedDomain.yRange(),
+                marginsLayout
+            )
         }
     }
 }

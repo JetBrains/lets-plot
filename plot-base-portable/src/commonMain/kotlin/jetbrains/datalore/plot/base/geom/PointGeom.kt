@@ -38,7 +38,6 @@ open class PointGeom : GeomBase() {
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
-        val sizeUnitRatio = getSizeUnitRatio(ctx)
 
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
@@ -46,9 +45,17 @@ open class PointGeom : GeomBase() {
             val y = p.y()
 
             if (SeriesUtil.allFinite(x, y)) {
-                val location = helper.toClient(DoubleVector(x!!, y!!), p)
+                val point = DoubleVector(x!!, y!!)
+                val location = helper.toClient(point, p)
+                if (location == null) continue
 
                 val shape = p.shape()!!
+
+                // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
+                val sizeUnitRatio = when (sizeUnit) {
+                    null -> 1.0
+                    else -> getSizeUnitRatio(point, coord, sizeUnit!!)
+                }
 
                 targetCollector.addPoint(
                     i, location, sizeUnitRatio * shape.size(p) / 2,
@@ -63,20 +70,25 @@ open class PointGeom : GeomBase() {
         root.add(wrap(slimGroup))
     }
 
-    private fun getSizeUnitRatio(ctx: GeomContext): Double {
-        return if (sizeUnit != null) {
-            val unitRes = ctx.getUnitResolution(GeomHelper.getSizeUnitAes(sizeUnit!!))
-            // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
-            // but Shape.size() can't be used because it takes DataPointAesthetics as param
-            unitRes / AesScaling.UNIT_SHAPE_SIZE
-        } else {
-            1.0
-        }
-    }
-
     companion object {
         const val HANDLES_GROUPS = false
 
+        private fun getSizeUnitRatio(
+            p: DoubleVector,
+            coord: CoordinateSystem,
+            axis: String
+        ): Double {
+            val unitSquareSize = coord.unitSize(p)
+            val unitSize = when (axis.lowercase()) {
+                "x" -> unitSquareSize.x
+                "y" -> unitSquareSize.y
+                else -> error("Size unit value must be either 'x' or 'y', but was $axis.")
+            }
+
+            // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
+            // but Shape.size() can't be used because it takes DataPointAesthetics as param
+            return unitSize / AesScaling.UNIT_SHAPE_SIZE
+        }
     }
 }
 

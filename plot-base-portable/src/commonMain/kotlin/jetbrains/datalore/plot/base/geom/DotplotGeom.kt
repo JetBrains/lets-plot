@@ -22,8 +22,8 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.base.stat.DotplotStat.Method
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import kotlin.math.abs
 import kotlin.math.ceil
-import kotlin.math.max
 import kotlin.math.min
 
 open class DotplotGeom : GeomBase() {
@@ -55,10 +55,25 @@ open class DotplotGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val pointsWithBinWidth = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.BINWIDTH)
+        val pointsWithBinWidth = GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.BINWIDTH, Aes.X, Aes.Y
+        )
         if (!pointsWithBinWidth.any()) return
 
-        val binWidthPx = max(pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X), 2.0)
+//        val binWidthPx = pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X)
+        val binWidthPx = pointsWithBinWidth.first().let {
+            val x = it.x()!!
+            val y = it.y()!!
+            val bw = it.binwidth()!!
+            val p0 = coord.toClient(DoubleVector(x, y))!!
+            val p1 = coord.toClient(DoubleVector(x + bw, y))!!
+            when (ctx.flipped) {
+                false -> abs(p0.x - p1.x)
+                true -> abs(p0.y - p1.y)
+            }
+        }
+
         GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointStack) ->
@@ -80,6 +95,7 @@ open class DotplotGeom : GeomBase() {
         for (p in dataPoints) {
             val groupStackSize = boundedStackSize(
                 builtStackSize + p.stacksize()!!.toInt(),
+                coord,
                 ctx,
                 binWidthPx,
                 ctx.flipped
@@ -152,7 +168,7 @@ open class DotplotGeom : GeomBase() {
         }
         val shift = DoubleVector(0.0, shiftedDotId * dotSize * stackRatio * binWidthPx)
 
-        return geomHelper.toClient(DoubleVector(x, 0.0), p).add(if (flip) shift.flip() else shift.negate())
+        return geomHelper.toClient(x, 0.0, p)!!.add(if (flip) shift.flip() else shift.negate())
     }
 
     protected class DotHelper constructor(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
@@ -184,19 +200,22 @@ open class DotplotGeom : GeomBase() {
 
     protected fun boundedStackSize(
         stackSize: Int,
+        coord: CoordinateSystem,
         ctx: GeomContext,
         binWidthPx: Double,
         stacksAreVertical: Boolean
     ): Int {
-        val stackCapacity = when (stacksAreVertical) {
-            true -> ctx.getAesBounds().width
-            false -> ctx.getAesBounds().height
+        val bounds = ctx.getAesBounds()
+        val boundsPx = coord.toClient(bounds)!!
+        val stackCapacityPx = when (stacksAreVertical) {
+            true -> boundsPx.width
+            false -> boundsPx.height
         }.let {
             ceil(it / (dotSize * stackRatio * binWidthPx)).toInt() + 1
         }
-        val parityCorrectionTerm = if (stackSize % 2 == stackCapacity % 2) 0 else 1
+        val parityCorrectionTerm = if (stackSize % 2 == stackCapacityPx % 2) 0 else 1
 
-        return min(stackSize, stackCapacity + parityCorrectionTerm)
+        return min(stackSize, stackCapacityPx + parityCorrectionTerm)
     }
 
     enum class Stackdir {

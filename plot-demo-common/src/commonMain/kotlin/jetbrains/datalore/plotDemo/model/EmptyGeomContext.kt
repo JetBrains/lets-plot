@@ -13,14 +13,9 @@ import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 
 class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
-
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
 
     override fun getResolution(aes: Aes<Double>): Double {
-        throw IllegalStateException("Not available in an empty geom context")
-    }
-
-    override fun getUnitResolution(aes: Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")
     }
 

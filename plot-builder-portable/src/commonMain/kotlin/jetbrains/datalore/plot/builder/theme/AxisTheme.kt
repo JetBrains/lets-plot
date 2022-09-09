@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.vis.TextStyle
 
 interface AxisTheme {
@@ -26,6 +27,10 @@ interface AxisTheme {
 
     fun titleStyle(): TextStyle
 
+    fun titleJustification(): TextJustification
+
+    fun titleMargins(): Margins
+
     fun lineWidth(): Double
 
     fun lineColor(): Color
@@ -38,8 +43,13 @@ interface AxisTheme {
 
     fun tickMarkLength(): Double
 
-    fun tickLabelDistance(): Double {
-        var result = Defaults.Plot.Axis.TICK_MARK_PADDING  // little space always
+    fun tickLabelMargins(): Margins
+
+    fun tickLabelDistance(isHorizontalOrientation: Boolean): Double {
+        var result = when {
+            isHorizontalOrientation -> tickLabelMargins().height()
+            else -> tickLabelMargins().width()
+        }
         if (showTickMarks()) {
             result += tickMarkLength()
         }

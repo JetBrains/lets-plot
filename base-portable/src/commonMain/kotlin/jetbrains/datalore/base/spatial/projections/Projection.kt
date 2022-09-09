@@ -14,9 +14,14 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
 interface Projection {
+    val nonlinear: Boolean
+        get() = true
+    val cylindrical: Boolean
+        get() = if (nonlinear) false else error("'cylindrical' is irrelevant for 'linear' projection ${this::class.simpleName}")
+
     fun project(v: DoubleVector): DoubleVector?
     fun invert(v: DoubleVector): DoubleVector?
-    fun validRect(): DoubleRectangle
-    val cylindrical: Boolean
+
+    fun validDomain(): DoubleRectangle
 }
 

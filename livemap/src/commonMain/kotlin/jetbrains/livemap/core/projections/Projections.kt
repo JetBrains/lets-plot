@@ -45,7 +45,7 @@ object Projections {
 internal class ProjectionWrapper(
     private val projection: jetbrains.datalore.base.spatial.projections.Projection
 ) : GeoProjection {
-    override fun validRect(): Rect<LonLat> = projection.validRect().toRect()
+    override fun validRect(): Rect<LonLat> = projection.validDomain().toRect()
     override val cylindrical: Boolean = projection.cylindrical
     override fun project(v: LonLatPoint): GeographicPoint? = projection.project(v.toDoubleVector())?.toVec()
     override fun invert(v: GeographicPoint): LonLatPoint? = projection.invert(v.toDoubleVector())?.toVec()

@@ -18,6 +18,7 @@ fun azimuthalEqualArea(): Projection = AzimuthalEqualAreaProjection()
 fun azimuthalEqidistant(): Projection = AzimuthalEquidistantProjection()
 fun conicEqualArea(y0: Double = 0.0, y1: Double = PI / 3): Projection = ConicEqualAreaProjection(y0, y1)
 
+fun identity(): Projection = IdentityProjection()
 
 internal fun finiteDoubleVectorOrNull(x: Double, y: Double): DoubleVector? = when {
     x.isFinite() && y.isFinite() -> DoubleVector(x, y)

@@ -41,13 +41,13 @@ class ErrorBarGeom : GeomBase() {
             aesthetics.dataPoints(),
             Aes.X,
             Aes.YMIN,
-            Aes.YMAX
+            Aes.YMAX,
+            Aes.WIDTH
         )) {
             val x = p.x()!!
             val ymin = p.ymin()!!
             val ymax = p.ymax()!!
-            var width = p.width()!!
-            width *= ctx.getResolution(Aes.X)
+            val width = p.width()!! * ctx.getResolution(Aes.X)
             val height = ymax - ymin
 
             val r = DoubleRectangle(x - width / 2, ymin, width, height)
@@ -72,13 +72,13 @@ class ErrorBarGeom : GeomBase() {
         colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         val clientRect = geomHelper.toClient(rect, p)
-        val objectRadius = clientRect.run {
+        val objectRadius = clientRect?.run {
             if (ctx.flipped) {
                 height / 2.0
             } else {
                 width / 2.0
             }
-        }
+        }!!
 
         val hint = HintConfigFactory()
             .defaultObjectRadius(objectRadius)
@@ -158,9 +158,9 @@ class ErrorBarGeom : GeomBase() {
             val elementHelper = geomHelper.createSvgElementHelper()
             elementHelper.setStrokeAlphaEnabled(true)
             with(g.children()) {
-                add(elementHelper.createLine(DoubleVector(left, top), DoubleVector(right, top), p))
-                add(elementHelper.createLine(DoubleVector(left, bottom), DoubleVector(right, bottom), p))
-                add(elementHelper.createLine(DoubleVector(center, top), DoubleVector(center, bottom), p))
+                add(elementHelper.createLine(DoubleVector(left, top), DoubleVector(right, top), p)!!)
+                add(elementHelper.createLine(DoubleVector(left, bottom), DoubleVector(right, bottom), p)!!)
+                add(elementHelper.createLine(DoubleVector(center, top), DoubleVector(center, bottom), p)!!)
             }
             return g
         }

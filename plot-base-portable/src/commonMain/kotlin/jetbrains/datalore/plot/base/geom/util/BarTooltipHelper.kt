@@ -18,7 +18,7 @@ object BarTooltipHelper {
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext,
-        rectFactory: (DataPointAesthetics) -> DoubleRectangle?,
+        clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         fillColorMapper: (DataPointAesthetics) -> Color? = { null },
         colorMarkerMapper: (DataPointAesthetics) -> List<Color> = HintColorUtil.createColorMarkerMapper(null, ctx),
         defaultTooltipKind: TipLayoutHint.Kind? = null
@@ -26,19 +26,18 @@ object BarTooltipHelper {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
-            val rect = rectFactory(p) ?: continue
+            val clientRect = clientRectFactory(p) ?: continue
 
-            val objectRadius = helper.toClient(DoubleRectangle(0.0, 0.0, rect.width, 0.0), p).run {
+            val objectRadius = with (clientRect) {
                 if (ctx.flipped) {
                     height / 2.0
                 } else {
                     width / 2.0
                 }
             }
-            val xCoord = rect.center.x
             val hintFactory = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
-                .defaultX(xCoord)
+                .defaultX(p.x()!!)
                 .defaultKind(
                     if (ctx.flipped) {
                         TipLayoutHint.Kind.ROTATED_TOOLTIP
@@ -54,7 +53,7 @@ object BarTooltipHelper {
 
             ctx.targetCollector.addRectangle(
                 p.index(),
-                helper.toClient(rect, p),
+                clientRect,
                 GeomTargetCollector.TooltipParams(
                     tipLayoutHints = hintConfigs.hints,
                     fillColor = fillColorMapper(p),

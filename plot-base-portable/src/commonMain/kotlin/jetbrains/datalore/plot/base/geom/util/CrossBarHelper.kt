@@ -25,8 +25,7 @@ object CrossBarHelper {
         rectFactory: (DataPointAesthetics) -> DoubleRectangle?
     ) {
         // rectangles
-        val helper =
-            RectanglesHelper(aesthetics, pos, coord, ctx)
+        val helper = RectanglesHelper(aesthetics, pos, coord, ctx)
         val rectangles = helper.createRectangles(rectFactory)
         rectangles.forEach { root.add(it) }
     }
@@ -34,13 +33,11 @@ object CrossBarHelper {
     fun buildMidlines(
         root: SvgRoot,
         aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
         ctx: GeomContext,
+        geomHelper: GeomHelper,
         fatten: Double
     ) {
-        val helper = GeomHelper(pos, coord, ctx)
-        val elementHelper = helper.createSvgElementHelper()
+        val elementHelper = geomHelper.createSvgElementHelper()
 
         for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),
@@ -50,13 +47,13 @@ object CrossBarHelper {
         )) {
             val x = p.x()!!
             val middle = p.middle()!!
-            val width = GeomUtil.widthPx(p, ctx, 2.0)
+            val width = p.width()!! * ctx.getResolution(Aes.X)
 
             val line = elementHelper.createLine(
                 DoubleVector(x - width / 2, middle),
                 DoubleVector(x + width / 2, middle),
                 p
-            )
+            )!!
 
             // adjust thickness
             val thickness = line.strokeWidth().get()!!

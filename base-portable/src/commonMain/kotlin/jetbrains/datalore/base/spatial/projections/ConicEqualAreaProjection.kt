@@ -27,8 +27,7 @@ internal class ConicEqualAreaProjection(y0: Double, y1: Double) : Projection {
         r0 = sqrt(c) / n
     }
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
-    override val cylindrical: Boolean = false
+    override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
 
     override fun project(v: DoubleVector): DoubleVector? {
         var x = toRadians(v.x)

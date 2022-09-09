@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.guide
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.textDimensions
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -21,31 +20,25 @@ abstract class LegendBoxLayout(
     abstract val graphSize: DoubleVector
 
     val isHorizontal = legendDirection === LegendDirection.HORIZONTAL
-    val titleHorizontalAnchor = Text.HorizontalAnchor.LEFT
 
-    val titleBounds: DoubleRectangle
+    private val titleBounds: DoubleRectangle
         get() {
-            var origin = DoubleVector.ZERO
-            if (isHorizontal) {
-                val titleHeight = titleSize(title).y
-                val y = if (graphSize.y > titleHeight) (graphSize.y - titleHeight) / 2 else origin.y
-                origin = DoubleVector(origin.x, y)
-            }
-            return DoubleRectangle(origin, titleSize(title))
+            return DoubleRectangle(DoubleVector.ZERO, titleSize)
         }
 
     val graphOrigin: DoubleVector
         get() = when {
-            isHorizontal -> {
-                val titleSize = titleSize(title)
-                val y = if (titleSize.y > graphSize.y) (titleSize.y - graphSize.y) / 2 else 0.0
-                DoubleVector(titleSize.x, y)
+            isHorizontal -> with(titleSize) {
+                DoubleVector(
+                    x,
+                    if (y > graphSize.y) (y - graphSize.y) / 2 else 0.0
+                )
             }
-            else -> {
+            else -> DoubleVector(
+                0.0,
                 // make some space between title and the rest of the content.
-                val y = titleSize(title).y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
-                DoubleVector(0.0, y)
-            }
+                titleSize.y + PlotLabelSpecFactory.legendTitle(theme).height() / 2
+            )
         }
 
     val size: DoubleVector
@@ -57,10 +50,11 @@ abstract class LegendBoxLayout(
             return titleAndContent.dimension
         }
 
-    private fun titleSize(s: String): DoubleVector {
-        return when {
-            s.isBlank() -> DoubleVector.ZERO
-            else -> textDimensions(s.split('\n'), PlotLabelSpecFactory.legendTitle(theme))
+    internal val titleSize: DoubleVector
+        get() {
+            return when {
+                title.isBlank() -> DoubleVector.ZERO
+                else -> textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
+            }
         }
-    }
 }

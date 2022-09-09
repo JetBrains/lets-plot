@@ -6,13 +6,15 @@
 package jetbrains.datalore.plot.base.pos
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.GeomContext
+import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class FillPos(aes: Aesthetics) : PositionAdjustment {
 
-    private val myStackPosHelper: PositionAdjustment =
-        StackPos.splitPositiveNegative(aes)
+    private val myStackPosHelper: PositionAdjustment = StackPos.splitPositiveNegative(aes)
     private val myScalerByIndex: Map<Int, Double> = mapIndexToScaler(aes)
 
     private fun mapIndexToScaler(aes: Aesthetics): Map<Int, Double> {
@@ -38,7 +40,6 @@ internal class FillPos(aes: Aesthetics) : PositionAdjustment {
             }
         }
         val scalerByIndex = HashMap<Int, Double>()
-        // Double max = max(Collections.max(posMaxByBin.values()), Collections.max(negMaxByBin.values()));
         for (i in 0 until aes.dataPointCount()) {
             val dataPoint = aes.dataPointAt(i)
             val x = dataPoint.x()
@@ -60,7 +61,7 @@ internal class FillPos(aes: Aesthetics) : PositionAdjustment {
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
         val newLoc = myStackPosHelper.translate(v, p, ctx)
-        return DoubleVector(newLoc.x, newLoc.y * myScalerByIndex[p.index()]!! * ctx.getUnitResolution(Aes.Y))
+        return DoubleVector(newLoc.x, newLoc.y * myScalerByIndex.getValue(p.index()))
     }
 
     override fun handlesGroups(): Boolean {

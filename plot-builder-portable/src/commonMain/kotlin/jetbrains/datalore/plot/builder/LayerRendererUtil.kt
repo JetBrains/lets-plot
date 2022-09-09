@@ -5,22 +5,25 @@
 
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 
 object LayerRendererUtil {
 
     fun createLayerRendererData(
         layer: GeomLayer,
-        xAesMapper: ScaleMapper<Double>,
-        yAesMapper: ScaleMapper<Double>,
+//        xAesMapper: ScaleMapper<Double>,
+//        yAesMapper: ScaleMapper<Double>,
     ): LayerRendererData {
 
         val aestheticMappers = PlotUtil.prepareLayerAestheticMappers(
             layer,
-            xAesMapper, yAesMapper
+            xAesMapper = Mappers.IDENTITY,
+            yAesMapper = Mappers.IDENTITY
         )
         val aesthetics = PlotUtil.createLayerAesthetics(
             layer,

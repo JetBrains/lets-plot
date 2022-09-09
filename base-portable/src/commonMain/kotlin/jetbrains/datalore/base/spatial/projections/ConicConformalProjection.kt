@@ -22,9 +22,7 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : Projection {
     }
 
 
-    override fun validRect(): DoubleRectangle = VALID_RECTANGLE
-
-    override val cylindrical: Boolean = false
+    override fun validDomain(): DoubleRectangle = VALID_RECTANGLE
 
     override fun project(v: DoubleVector): DoubleVector? {
         val x = toRadians(v.x)
@@ -40,7 +38,7 @@ internal class ConicConformalProjection(y0: Double, y1: Double) : Projection {
             }
         }
 
-        val r = f / tany(y).pow( n)
+        val r = f / tany(y).pow(n)
 
         val px = r * sin(n * x)
         val py = f - r * cos(n * x)

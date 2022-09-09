@@ -79,7 +79,11 @@ object PlotUtil {
             @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
             val aes = aes as Aes<Any>
 
-            val mapperOption = mapperByAes[aes]
+            val mapperOption = when {
+                Aes.isPositional(aes) -> Mappers.IDENTITY
+                else -> mapperByAes[aes]
+            }
+
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)

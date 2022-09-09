@@ -10,8 +10,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -49,10 +50,26 @@ abstract class LegendBox : SvgComponent() {
         innerGroup.transform().set(buildTransform(spec.contentOrigin, 0.0))
 
         val l = spec.layout
+
+        val titleBoundingRect = let {
+            if (!hasTitle()) return@let DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+
+            val titleRectSize = when {
+                l.isHorizontal -> {
+                    spec.contentBounds.dimension.subtract(DoubleVector(l.graphSize.x, 0.0))
+                }
+                else -> {
+                    DoubleVector(spec.contentBounds.width, l.titleSize.y)
+                }
+            }
+            DoubleRectangle(DoubleVector.ZERO, titleRectSize)
+        }
+
         if (hasTitle()) {
             val label = createTitleLabel(
-                l.titleBounds.origin,
-                l.titleHorizontalAnchor
+                titleBoundingRect,
+                l.titleSize,
+                theme.titleJustification()
             )
             innerGroup.children().add(label.rootGroup)
         }
@@ -77,7 +94,8 @@ abstract class LegendBox : SvgComponent() {
             // content bounds
             add(createTransparentRect(spec.contentBounds, Color.DARK_MAGENTA, 1.0))
             // title bounds
-            add(createTransparentRect(l.titleBounds.add(spec.contentOrigin), Color.MAGENTA, 1.0))
+            val rect = titleBoundingRect.add(spec.contentOrigin)
+            add(createTransparentRect(rect, Color.MAGENTA, 1.0))
         }
 
         add(innerGroup)
@@ -86,17 +104,23 @@ abstract class LegendBox : SvgComponent() {
     protected abstract fun appendGuideContent(contentRoot: SvgNode): DoubleVector
 
     private fun createTitleLabel(
-        origin: DoubleVector,
-        horizontalAnchor: Text.HorizontalAnchor
+        boundRect: DoubleRectangle,
+        titleSize: DoubleVector,
+        justification: TextJustification
     ): MultilineLabel {
+        val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height()
+
         val label = MultilineLabel(title)
-        label.addClassName(Style.LEGEND_TITLE)
-        label.setHorizontalAnchor(horizontalAnchor)
-        label.setLineHeight(PlotLabelSpecFactory.legendTitle(theme).height())
-        label.moveTo(
-            // top-align the first line of a multi-line title
-            origin.add(DoubleVector(0.0, PlotLabelSpecFactory.legendTitle(theme).height()*0.8))
+        val (pos, hAnchor) = applyJustification(
+            boundRect,
+            textSize = titleSize,
+            lineHeight,
+            justification
         )
+        label.addClassName(Style.LEGEND_TITLE)
+        label.setHorizontalAnchor(hAnchor)
+        label.setLineHeight(lineHeight)
+        label.moveTo(pos)
         return label
     }
 

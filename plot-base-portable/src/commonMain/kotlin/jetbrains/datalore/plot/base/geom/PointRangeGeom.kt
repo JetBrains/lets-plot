@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueWidth
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -50,10 +51,11 @@ class PointRangeGeom : GeomBase() {
             val start = DoubleVector(x, ymin)
             val end = DoubleVector(x, ymax)
             val line = helper.createLine(start, end, p)
+            if (line == null) continue
             root.add(line)
 
             // mid-point
-            val location = geomHelper.toClient(DoubleVector(x, y), p)
+            val location = geomHelper.toClient(DoubleVector(x, y), p)!!
             val shape = p.shape()!!
             val o = PointShapeSvg.create(shape, location, p, fattenMidPoint)
             root.add(wrap(o))
@@ -68,7 +70,7 @@ class PointRangeGeom : GeomBase() {
         BarTooltipHelper.collectRectangleTargets(
             listOf(Aes.YMAX, Aes.YMIN),
             aesthetics, pos, coord, ctx,
-            rectangleByDataPoint(fattenMidPoint),
+            clientRectByDataPoint(ctx, geomHelper, fattenMidPoint),
             { HintColorUtil.colorWithAlpha(it) },
             colorMarkerMapper = colorsByDataPoint
         )
@@ -79,22 +81,28 @@ class PointRangeGeom : GeomBase() {
 
         const val DEF_FATTEN = 5.0
 
-        fun rectangleByDataPoint(fatten: Double): (DataPointAesthetics) -> DoubleRectangle? {
+        private fun clientRectByDataPoint(
+            ctx: GeomContext,
+            geomHelper: GeomHelper,
+            fatten: Double
+        ): (DataPointAesthetics) -> DoubleRectangle? {
             return { p ->
                 if (p.defined(Aes.X) &&
                     p.defined(Aes.Y)
                 ) {
                     val x = p.x()!!
                     val y = p.y()!!
-
                     val shape = p.shape()!!
-                    val shapeSize = shape.size(p) * fatten
+
+                    val rect = geomHelper.toClient(
+                        DoubleRectangle(DoubleVector(x, y), DoubleVector.ZERO),
+                        p
+                    )!!
+
+                    val shapeSize = shape.size(p) * fatten / 2
                     val strokeWidth = shape.strokeWidth(p)
                     val width = shapeSize + strokeWidth
-
-                    val origin = DoubleVector(x - width / 2, y)
-                    val dimensions = DoubleVector(width, 0.0)
-                    DoubleRectangle(origin, dimensions)
+                    extendTrueWidth(rect, width, ctx)
                 } else {
                     null
                 }

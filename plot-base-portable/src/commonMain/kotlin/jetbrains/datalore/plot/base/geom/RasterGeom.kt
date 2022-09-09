@@ -12,9 +12,9 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.with_X_Y
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
+import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgImageElementEx
 import jetbrains.datalore.vis.svg.SvgImageElementEx.Bitmap
@@ -66,7 +66,7 @@ class RasterGeom : GeomBase() {
                 label.setFontWeight("bold")
                 label.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
                 label.setVerticalAnchor(VerticalAnchor.CENTER)
-                val loc = helper.toClient(center.x, y, randomP)
+                val loc = helper.toClient(center.x, y, randomP)!!
                 label.moveTo(loc)
                 root.add(label.rootGroup)
                 y -= lineHeight
@@ -81,8 +81,8 @@ class RasterGeom : GeomBase() {
         // translate to client coordinates
         // expand bounds by 1/2 step before the translation to adjust for the size of 'image pixel'
         val halfStep = DoubleVector(stepX * 0.5, stepY * 0.5)
-        val corner0 = helper.toClient(boundsXY.origin.subtract(halfStep), randomP)
-        val corner2 = helper.toClient(boundsXY.origin.add(boundsXY.dimension).add(halfStep), randomP)
+        val corner0 = helper.toClient(boundsXY.origin.subtract(halfStep), randomP)!!
+        val corner2 = helper.toClient(boundsXY.origin.add(boundsXY.dimension).add(halfStep), randomP)!!
         val invertedX = corner2.x < corner0.x
         val invertedY = corner2.y < corner0.y
 

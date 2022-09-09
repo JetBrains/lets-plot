@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.HLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueHeight
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -36,10 +37,7 @@ class HLineGeom : GeomBase() {
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
 
-        val viewPort = when {
-            ctx.flipped -> ctx.getAesBounds().flip()
-            else -> ctx.getAesBounds()
-        }
+        val viewPort = overallAesBounds(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.H_LINE, ctx)
 
         val lines = ArrayList<SvgLineElement>()
@@ -47,18 +45,21 @@ class HLineGeom : GeomBase() {
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.YINTERCEPT)) {
             val intercept = p.interceptY()!!
             if (viewPort.yRange().contains(intercept)) {
+                // line
                 val start = DoubleVector(viewPort.left, intercept)
                 val end = DoubleVector(viewPort.right, intercept)
                 val line = helper.createLine(start, end, p)
+                if (line == null) continue
                 lines.add(line)
 
-                val h = AesScaling.strokeWidth(p)
-                val origin = DoubleVector(start.x, intercept - h / 2 - 2.0)
-                val dimensions = DoubleVector(viewPort.dimension.x, h + 4.0)
-                val rect = DoubleRectangle(origin, dimensions)
+                // tooltip
+                val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
+                val h = AesScaling.strokeWidth(p) + 4.0
+                val targetRect = extendTrueHeight(rect, h, ctx)
+
                 ctx.targetCollector.addRectangle(
                     p.index(),
-                    geomHelper.toClient(rect, p),
+                    targetRect,
                     GeomTargetCollector.TooltipParams(
                         markerColors = colorsByDataPoint(p)
                     ),
@@ -72,8 +73,6 @@ class HLineGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = false
-
-        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory =
-            HLineLegendKeyElementFactory()
+        val LEGEND_KEY_ELEMENT_FACTORY: LegendKeyElementFactory = HLineLegendKeyElementFactory()
     }
 }

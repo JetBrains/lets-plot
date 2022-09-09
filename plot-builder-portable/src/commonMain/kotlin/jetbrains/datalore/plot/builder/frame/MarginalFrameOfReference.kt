@@ -7,10 +7,8 @@ package jetbrains.datalore.plot.builder.frame
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.FrameOfReference
@@ -18,9 +16,8 @@ import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class MarginalFrameOfReference(
-    private val bounds: DoubleRectangle,
-    private val hScaleMapper: ScaleMapper<Double>,
-    private val vScaleMapper: ScaleMapper<Double>,
+    private val geomBounds: DoubleRectangle,
+    private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
     private val isDebugDrawing: Boolean,
 ) : FrameOfReference {
@@ -28,7 +25,7 @@ internal class MarginalFrameOfReference(
 
     override fun drawAfterGeomLayer(parent: SvgComponent) {
         if (isDebugDrawing) {
-            parent.add(SvgRectElement(bounds).apply {
+            parent.add(SvgRectElement(geomBounds).apply {
                 strokeColor().set(Color.ORANGE)
                 fillColor().set(Color.ORANGE)
                 strokeWidth().set(0.0)
@@ -38,28 +35,16 @@ internal class MarginalFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val aesBounds = DoubleRectangle(
-            xRange = DoubleSpan(
-                hScaleMapper(bounds.left) as Double,
-                hScaleMapper(bounds.right) as Double
-            ),
-            yRange = DoubleSpan(
-                vScaleMapper(bounds.top) as Double,
-                vScaleMapper(bounds.bottom) as Double
-            )
-        )
-
         val layerComponent = SquareFrameOfReference.buildGeom(
             layer,
-            hScaleMapper, vScaleMapper,
-            xyAesBounds = aesBounds,
+            xyAesBounds = adjustedDomain,
             coord,
             flippedAxis = false,
             targetCollector
         )
 
-        layerComponent.moveTo(bounds.origin)
-        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, bounds.dimension))
+        layerComponent.moveTo(geomBounds.origin)
+        layerComponent.clipBounds(DoubleRectangle(DoubleVector.ZERO, geomBounds.dimension))
         return layerComponent
     }
 }

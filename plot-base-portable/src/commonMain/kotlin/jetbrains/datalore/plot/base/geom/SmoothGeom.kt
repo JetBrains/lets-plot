@@ -54,12 +54,13 @@ class SmoothGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SMOOTH, ctx)
         for (p in dataPoints) {
-            val xCoord = p.x()!!
+            val pX = p.x()!!
+            val pY = p.y()!!
             val objectRadius = 0.0
 
             val hint = HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
-                .defaultX(xCoord)
+                .defaultX(pX)
                 .defaultKind(
                     if (ctx.flipped) VERTICAL_TOOLTIP else HORIZONTAL_TOOLTIP
                 )
@@ -73,7 +74,7 @@ class SmoothGeom : GeomBase() {
                 .addHint(hint.create(Aes.YMIN))
                 .addHint(hint.create(Aes.Y).color(p.color()!!))
 
-            val clientCoord = helper.toClient(p.x(), p.y(), p)
+            val clientCoord = helper.toClient(pX, pY, p)!!
             ctx.targetCollector.addPoint(
                 p.index(), clientCoord, objectRadius,
                 GeomTargetCollector.TooltipParams(

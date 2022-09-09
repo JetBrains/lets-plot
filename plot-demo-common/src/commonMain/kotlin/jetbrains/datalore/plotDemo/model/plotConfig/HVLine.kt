@@ -15,7 +15,8 @@ class HVLine {
             vline(),
             hlineAlone(),
             vlineAlone(),
-            vhLinesByConst()
+            vhLinesByConst(),
+            hlineAloneFlipAxis()
         )
     }
 
@@ -91,6 +92,26 @@ class HVLine {
                 "                   'color': 'red'" +
                 "               }" +
                 "           ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun hlineAloneFlipAxis(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'ggtitle': {'text': 'HLine alone, flip coord.'}," +
+                "   'layers': [" +
+                "               { " +
+                "                   'geom': { " +
+                "                              'name' : 'hline'," +
+                "                              'data': { 'hl': [5.0, 7.0] }" +
+                "                           }," +
+                "                   'mapping': {'yintercept': 'hl'}, " +
+                "                   'color': 'red'" +
+                "               }" +
+                "           ]," +
+                "   'coord': {'name': 'flip', 'flip': true}" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))

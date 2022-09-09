@@ -18,7 +18,6 @@ import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection.*
-import jetbrains.datalore.plot.base.scale.Mappers.IDENTITY
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -64,7 +63,7 @@ object LiveMapProvider {
                 require(tileLayers.first().isLiveMap)
                 tileLayers.first().setLiveMapProvider(
                     MyLiveMapProvider(
-                        tileLayers.map { createLayerRendererData(it, IDENTITY, IDENTITY) },
+                        tileLayers.map { createLayerRendererData(it/*, IDENTITY, IDENTITY*/) },
                         liveMapOptions,
                         cursorServiceConfig.cursorService
                     )
@@ -84,7 +83,7 @@ object LiveMapProvider {
         }
 
         override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
-            val plotLayers = when  {
+            val plotLayers = when {
                 letsPlotLayers.first().geom.let { it as LiveMapGeom }.displayMode == null -> letsPlotLayers.drop(1)
                 myLiveMapOptions.getBool(ONTOP) == true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
                 else -> letsPlotLayers
@@ -128,8 +127,12 @@ object LiveMapProvider {
             val targetSource = HashMap<Pair<Int, Int>, ContextualMapping>()
             val colorMap = HashMap<Int, (Int) -> List<Color>>()
             plotLayers.onEachIndexed { layerIndex, layer ->
-                val colorBarProvider = HintColorUtil.createColorMarkerMapper(layer.geomKind, FILL in layer.mappedAes, COLOR in layer.mappedAes)
-                colorMap[layerIndex] = { i -> colorBarProvider(layer.aesthetics.dataPointAt(i))}
+                val colorBarProvider = HintColorUtil.createColorMarkerMapper(
+                    layer.geomKind,
+                    FILL in layer.mappedAes,
+                    COLOR in layer.mappedAes
+                )
+                colorMap[layerIndex] = { i -> colorBarProvider(layer.aesthetics.dataPointAt(i)) }
 
                 layer.aesthetics.dataPoints().forEach { dataPoint ->
                     targetSource[layerIndex to dataPoint.index()] = layer.contextualMapping

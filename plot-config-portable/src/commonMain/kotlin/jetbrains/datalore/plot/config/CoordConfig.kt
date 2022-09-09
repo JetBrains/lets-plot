@@ -44,13 +44,9 @@ class CoordConfig private constructor(
             return when (coordName) {
                 Option.CoordName.FLIP -> {
                     // Flip the 'default' coord system.
-//                    val withFlip = options + mapOf(FLIPPED to true)
-//                    CoordProto.createCoordProvider(defaultCoordProvider, over(withFlip))
-                    CoordProto.createCoordProvider(defaultCoordProvider, xLim, yLim, flipped = true)
+                    defaultCoordProvider.with(xLim, yLim, flipped = true)
                 }
                 else -> {
-//                    val flipped = accessor.getBoolean(Option.Coord.FLIPPED)
-//                    CoordProto.createCoordProvider(coordName, over(options))
                     CoordProto.createCoordProvider(coordName, xLim, yLim, accessor)
                 }
             }

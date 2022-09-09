@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -252,6 +253,80 @@ class LocatorByGeneralTooltipTest {
         )
         val results = findTargets(targets)
         assertLookupResults(results, FIRST_POINT_KEY, SECOND_POINT_KEY)
+    }
+
+    @Test
+    fun `locator should choose closest, but hover_X shouldn't have priority`() {
+        // Objects have same same tooltip types => will compare their distances to the cursor
+        // But geoms like histogram, when mouse inside a rect or only X projection is used,
+        // distance to cursor is zero => locator will be use fake distance to give a chance for tooltips from other layers.
+
+        run {
+            val target1 = TestUtil.rectTarget(
+                FIRST_POINT_KEY,
+                DoubleRectangle(COORD.add(DoubleVector(-2.0, 10.0)), DoubleVector(4.0, 2.0))
+            )
+            val target2 = TestUtil.pointTarget(
+                SECOND_POINT_KEY,
+                COORD.add(DoubleVector(2.0, 0.0))
+            )
+
+            val targets = listOf(
+                createLocator(
+                    lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
+                    contextualMapping = createContextualMapping(MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }),
+                    targetPrototypes = listOf(target1)
+                ),
+                createLocator(
+                    lookupSpec = lookupSpec,
+                    contextualMapping = createContextualMapping(MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }),
+                    targetPrototypes = listOf(target2)
+                )
+            )
+            val results = findTargets(targets)
+            assertLookupResults(results, SECOND_POINT_KEY)
+        }
+
+        run {
+            // The first should be chosen because it has general tooltip (in contrast to the second)
+
+            val target1 = TestUtil.rectTarget(
+                FIRST_POINT_KEY,
+                DoubleRectangle(COORD.add(DoubleVector(-2.0, 10.0)), DoubleVector(4.0, 2.0))
+            )
+            val target2 = TestUtil.pointTarget(
+                SECOND_POINT_KEY,
+                COORD.add(DoubleVector(2.0, 0.0))
+            )
+
+            val targets = listOf(
+                // with general and axis tooltips
+                createLocator(
+                    lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
+                    contextualMapping = createContextualMapping(
+                        MappedDataAccessMock().also {
+                            it.add(TestUtil.continuous(Aes.X))
+                            it.add(TestUtil.continuous(Aes.FILL))
+                        },
+                        axisTooltips = true
+                    ),
+                    targetPrototypes = listOf(target1)
+                ),
+                // with axis tooltip only
+                createLocator(
+                    lookupSpec = lookupSpec,
+                    contextualMapping = createContextualMapping(
+                        MappedDataAccessMock().also {
+                            it.add(TestUtil.continuous(Aes.X))
+                        },
+                        axisTooltips = true
+                    ),
+                    targetPrototypes = listOf(target2)
+                )
+            )
+            val results = findTargets(targets)
+            assertLookupResults(results, FIRST_POINT_KEY)
+        }
     }
 
     private fun createContextualMapping(

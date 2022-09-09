@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
@@ -60,7 +61,7 @@ class PlotAssembler private constructor(
     fun createPlot(): PlotSvgComponent {
         require(hasLayers()) { "No layers in plot" }
 
-        val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipAxis)
+        val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipped)
 
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
@@ -92,7 +93,7 @@ class PlotAssembler private constructor(
             }
             createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet)
         } else {
-            val flipAxis = coordProvider.flipAxis
+            val flipAxis = coordProvider.flipped
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
                 coreLayersByTile,
                 scaleXProto,
@@ -113,13 +114,10 @@ class PlotAssembler private constructor(
             // Create frame of reference provider for each tile.
             val frameProviderByTile: List<FrameOfReferenceProvider> =
                 domainsXYByTile.map { (xDomain, yDomain) ->
-                    val (hDomain, vDomain) = coordProvider.adjustDomains(
-                        hDomain = if (flipAxis) yDomain else xDomain,
-                        vDomain = if (flipAxis) xDomain else yDomain
-                    )
+                    val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
                     SquareFrameOfReferenceProvider(
                         hScaleProto, vScaleProto,
-                        hDomain, vDomain,
+                        adjustedDomain,
                         flipAxis,
                         theme,
                         marginsLayout,
@@ -152,6 +150,7 @@ class PlotAssembler private constructor(
         return PlotSvgComponent(
             title = title,
             subtitle = subtitle,
+            caption = caption,
             coreLayersByTile = coreLayersByTile,
             marginalLayersByTile = marginalLayersByTile,
             plotLayout = plotLayout,
@@ -160,7 +159,6 @@ class PlotAssembler private constructor(
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme,
-            caption = caption,
             styleSheet = styleSheet
         )
     }

@@ -72,7 +72,7 @@ class TextConverterTest {
         aesData.builder().hjust(constant("left"))
         assertMapObject()
 
-        aesData.builder().hjust(constant(1.0))
+        aesData.builder().hjust(constant(0.0))
         assertMapObject()
     }
 
@@ -94,7 +94,7 @@ class TextConverterTest {
         aesData.builder().hjust(constant("right"))
         assertMapObject()
 
-        aesData.builder().hjust(constant(0.0))
+        aesData.builder().hjust(constant(1.0))
         assertMapObject()
     }
 

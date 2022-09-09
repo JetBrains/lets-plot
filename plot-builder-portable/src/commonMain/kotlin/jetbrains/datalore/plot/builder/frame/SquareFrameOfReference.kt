@@ -7,13 +7,11 @@ package jetbrains.datalore.plot.builder.frame
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent
@@ -28,10 +26,9 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgRectElement
 
 internal class SquareFrameOfReference(
-    private val hScale: Scale<Double>,
-    private val vScale: Scale<Double>,
-    private val hScaleMapper: ScaleMapper<Double>,
-    private val vScaleMapper: ScaleMapper<Double>,
+    private val hScaleBreaks: ScaleBreaks,
+    private val vScaleBreaks: ScaleBreaks,
+    private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
     private val layoutInfo: TileLayoutInfo,
     private val marginsLayout: GeomMarginsLayout,
@@ -40,23 +37,6 @@ internal class SquareFrameOfReference(
 ) : FrameOfReference {
 
     var isDebugDrawing: Boolean = false
-
-    private val geomMapperX: ScaleMapper<Double>
-    private val geomMapperY: ScaleMapper<Double>
-    private val geomCoord: CoordinateSystem
-
-    init {
-        if (flipAxis) {
-            // flip mappers to 'fool' geom.
-            geomMapperX = vScaleMapper
-            geomMapperY = hScaleMapper
-            geomCoord = coord.flip()
-        } else {
-            geomMapperX = hScaleMapper
-            geomMapperY = vScaleMapper
-            geomCoord = coord
-        }
-    }
 
     // Rendering
 
@@ -82,6 +62,8 @@ internal class SquareFrameOfReference(
 
         val drawPanel = panelTheme.showRect() && beforeGeomLayer
         val drawPanelBorder = panelTheme.showBorder() && !beforeGeomLayer
+
+        @Suppress("UnnecessaryVariable")
         val drawGridlines = beforeGeomLayer
         val drawHAxis = when {
             beforeGeomLayer -> !hAxisTheme.isOntop()
@@ -101,13 +83,13 @@ internal class SquareFrameOfReference(
             // X-axis
             val axisInfo = layoutInfo.hAxisInfo!!
             val hAxis = buildAxis(
-                hScale,
-                hScaleMapper,
+                hScaleBreaks,
                 axisInfo,
                 hideAxis = !drawHAxis,
                 hideAxisBreaks = !layoutInfo.hAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
+                flipAxis,
                 hAxisTheme,
                 hGridTheme,
                 gridLineLength = geomBounds.height,
@@ -125,13 +107,13 @@ internal class SquareFrameOfReference(
             // Y-axis
             val axisInfo = layoutInfo.vAxisInfo!!
             val vAxis = buildAxis(
-                vScale,
-                vScaleMapper,
+                vScaleBreaks,
                 axisInfo,
                 hideAxis = !drawVAxis,
                 hideAxisBreaks = !layoutInfo.vAxisShown,
                 hideGridlines = !drawGridlines,
                 coord,
+                flipAxis,
                 vAxisTheme,
                 vGridTheme,
                 gridLineLength = geomBounds.width,
@@ -183,27 +165,10 @@ internal class SquareFrameOfReference(
     }
 
     override fun buildGeomComponent(layer: GeomLayer, targetCollector: GeomTargetCollector): SvgComponent {
-        val hAxisMapper = hScaleMapper
-        val vAxisMapper = vScaleMapper
-
-        val hAxisDomain = layoutInfo.hAxisInfo!!.axisDomain
-        val vAxisDomain = layoutInfo.vAxisInfo!!.axisDomain
-        val aesBounds = DoubleRectangle(
-            xRange = DoubleSpan(
-                hAxisMapper(hAxisDomain.lowerEnd) as Double,
-                hAxisMapper(hAxisDomain.upperEnd) as Double
-            ),
-            yRange = DoubleSpan(
-                vAxisMapper(vAxisDomain.lowerEnd) as Double,
-                vAxisMapper(vAxisDomain.upperEnd) as Double
-            )
-        )
-
         val layerComponent = buildGeom(
             layer,
-            geomMapperX, geomMapperY,
-            xyAesBounds = aesBounds,
-            geomCoord,
+            xyAesBounds = adjustedDomain,  // positional aesthetics are the same as positional data.
+            coord,
             flipAxis,
             targetCollector
         )
@@ -217,13 +182,13 @@ internal class SquareFrameOfReference(
 
     companion object {
         private fun buildAxis(
-            scale: Scale<Double>,
-            scaleMapper: ScaleMapper<Double>,
+            scaleBreaks: ScaleBreaks,
             info: AxisLayoutInfo,
             hideAxis: Boolean,
             hideAxisBreaks: Boolean,
             hideGridlines: Boolean,
             coord: CoordinateSystem,
+            flipAxis: Boolean,
             axisTheme: AxisTheme,
             gridTheme: PanelGridTheme,
             gridLineLength: Double,
@@ -241,9 +206,9 @@ internal class SquareFrameOfReference(
             )
 
             val breaksData = AxisUtil.breaksData(
-                scale.getScaleBreaks(),
-                scaleMapper,
+                scaleBreaks,
                 coord,
+                flipAxis,
                 orientation.isHorizontal
             )
 
@@ -262,11 +227,15 @@ internal class SquareFrameOfReference(
             )
 
             if (isDebugDrawing) {
-                val rect = SvgRectElement(info.tickLabelsBounds)
-                rect.strokeColor().set(Color.GREEN)
-                rect.strokeWidth().set(1.0)
-                rect.fillOpacity().set(0.0)
-                axis.add(rect)
+                fun drawDebugRect(r: DoubleRectangle, color: Color) {
+                    val rect = SvgRectElement(r)
+                    rect.strokeColor().set(color)
+                    rect.strokeWidth().set(1.0)
+                    rect.fillOpacity().set(0.0)
+                    axis.add(rect)
+                }
+                drawDebugRect(info.tickLabelsBounds, Color.GREEN)
+                info.tickLabelsTextBounds?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             }
             return axis
         }
@@ -292,16 +261,13 @@ internal class SquareFrameOfReference(
          */
         internal fun buildGeom(
             layer: GeomLayer,
-            xAesMapper: ScaleMapper<Double>,
-            yAesMapper: ScaleMapper<Double>,
             xyAesBounds: DoubleRectangle,
             coord: CoordinateSystem,
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(
-                layer,
-                xAesMapper, yAesMapper
+                layer
             )
 
             @Suppress("NAME_SHADOWING")

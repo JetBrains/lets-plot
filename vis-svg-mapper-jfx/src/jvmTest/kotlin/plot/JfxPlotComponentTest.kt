@@ -14,12 +14,14 @@ import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import jetbrains.datalore.vis.swing.runOnFxThread
 import javax.swing.JComponent
 import javax.swing.JLabel
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 // ToDo: Make same test for LiveMap
 class JfxPlotComponentTest {
     @Test
+    @Ignore
     internal fun isDisposable_singlePlot() {
         val plotSpec = simplePlot(listOf(simplePointLayer()))
         val component = buildPlotFromRawSpecs(plotSpec)
@@ -29,6 +31,7 @@ class JfxPlotComponentTest {
     }
 
     @Test
+    @Ignore
     internal fun isDisposable_bunch() {
         val geoms = listOf(simplePointLayer(), simplePointLayer())
         val plotSpec = simpleBunch(geoms)
