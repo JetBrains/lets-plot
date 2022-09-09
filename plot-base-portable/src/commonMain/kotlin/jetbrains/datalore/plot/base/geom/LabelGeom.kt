@@ -22,9 +22,9 @@ import jetbrains.datalore.vis.svg.SvgUtils
 
 class LabelGeom : TextGeom() {
 
-    private val myPadding: Double = 0.25     //  Amount of padding around label, 0.25 lines ('label.padding')
-    private val myRadius: Double = 0.15      //  Radius of rounded corners, 0.15 lines  ('label.r')
-    private val myBorderWidth: Double = 1.0  //  Size of label border ('label.size')
+    var paddingFactor: Double = 0.25    //  Amount of padding around label
+    var radiusFactor: Double = 0.15     //  Radius of rounded corners
+    var borderWidth: Double = 1.0       //  Size of label border
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory(withBackgroundRect = true)
@@ -42,11 +42,11 @@ class LabelGeom : TextGeom() {
         val rectangle = rectangleForText(p, location, text, fontSize)
         val backgroundRect = SvgPathElement().apply {
             d().set(
-                roundedRectangle(rectangle, fontSize * myRadius).build()
+                roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
             )
         }
         GeomHelper.decorate(backgroundRect, p)
-        backgroundRect.strokeWidth().set(myBorderWidth)
+        backgroundRect.strokeWidth().set(borderWidth)
 
         // text element
         val label = TextLabel(text)
@@ -75,8 +75,8 @@ class LabelGeom : TextGeom() {
         val fontFace = FontFace.fromString(p.fontface())
         val textSize = textSize(text, fontSize, fontFace)
 
-        val width = textSize.x + fontSize * myPadding * 2
-        val height = textSize.y + fontSize * myPadding * 2
+        val width = textSize.x + fontSize * paddingFactor * 2
+        val height = textSize.y + fontSize * paddingFactor * 2
 
         val originX = when (GeomHelper.hAnchor(p)) {
             Text.HorizontalAnchor.LEFT -> location.x
@@ -109,32 +109,35 @@ class LabelGeom : TextGeom() {
         private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
             return SvgPathDataBuilder().apply {
                 with(rect) {
-                    moveTo(right - radius, bottom)
+                    // Ensure normal radius
+                    val r = listOf(radius, width / 2, height / 2).minOrNull()!!
+
+                    moveTo(right - r, bottom)
                     curveTo(
-                        right - radius, bottom,
+                        right - r, bottom,
                         right, bottom,
-                        right, bottom - radius
+                        right, bottom - r
                     )
 
-                    lineTo(right, top + radius)
+                    lineTo(right, top + r)
                     curveTo(
-                        right, top + radius,
+                        right, top + r,
                         right, top,
-                        right - radius, top
+                        right - r, top
                     )
 
-                    lineTo(left + radius, top)
+                    lineTo(left + r, top)
                     curveTo(
-                        left + radius, top,
+                        left + r, top,
                         left, top,
-                        left, top + radius
+                        left, top + r
                     )
 
-                    lineTo(left, bottom - radius)
+                    lineTo(left, bottom - r)
                     curveTo(
-                        left, bottom - radius,
+                        left, bottom - r,
                         left, bottom,
-                        left + radius, bottom
+                        left + r, bottom
                     )
 
                     closePath()

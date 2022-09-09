@@ -218,6 +218,12 @@ object Option {
             const val SIZE_UNIT = "size_unit"
         }
 
+        object Label {
+            const val PADDING = "padding"
+            const val RADIUS = "radius"
+            const val BORDER = "border"
+        }
+
         object LiveMap {
             const val DISPLAY_MODE = "display_mode"
             const val INTERACTIVE = "interactive"

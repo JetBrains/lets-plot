@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
+import jetbrains.datalore.plot.config.Option.Geom.Label
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
@@ -185,7 +186,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LABEL -> return GeomProvider.label {
-                withTextOptions(opts, LabelGeom())
+                withTextOptions(opts, LabelGeom()).also {
+                    it as LabelGeom
+                    if (opts.has(Label.PADDING)) {
+                        it.paddingFactor = opts.getDouble(Label.PADDING)!!
+                    }
+                    if (opts.has(Label.RADIUS)) {
+                        it.radiusFactor = opts.getDouble(Label.RADIUS)!!
+                    }
+                    if (opts.has(Label.BORDER)) {
+                        it.borderWidth = opts.getDouble(Label.BORDER)!!
+                    }
+                }
             }
 
             GeomKind.IMAGE -> return GeomProvider.image {
