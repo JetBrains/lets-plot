@@ -22,6 +22,10 @@ import jetbrains.datalore.vis.svg.SvgUtils
 
 class LabelGeom : TextGeom() {
 
+    private val myPadding: Double = 0.25     //  Amount of padding around label, 0.25 lines ('label.padding')
+    private val myRadius: Double = 0.15      //  Radius of rounded corners, 0.15 lines  ('label.r')
+    private val myBorderWidth: Double = 1.0  //  Size of label border ('label.size')
+
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = TextLegendKeyElementFactory(withBackgroundRect = true)
 
@@ -32,21 +36,22 @@ class LabelGeom : TextGeom() {
         text: String,
         sizeUnitRatio: Double
     ) {
+        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
+
         // background rectangle
-        val rectangle = rectangleForText(p, location, text, sizeUnitRatio)
-        //val backgroundRect = SvgRectElement(rectangle)
+        val rectangle = rectangleForText(p, location, text, fontSize)
         val backgroundRect = SvgPathElement().apply {
             d().set(
-                roundedRectangle(rectangle).build()
+                roundedRectangle(rectangle, fontSize * myRadius).build()
             )
         }
         GeomHelper.decorate(backgroundRect, p)
-        backgroundRect.strokeWidth().set(1.0)
+        backgroundRect.strokeWidth().set(myBorderWidth)
 
         // text element
         val label = TextLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
-        // move to rectangle's center
+        // move to the rectangle's center
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(rectangle.center)
@@ -65,21 +70,13 @@ class LabelGeom : TextGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        sizeUnitRatio: Double
+        fontSize: Double
     ): DoubleRectangle {
-        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-        val isBold = FontFace.fromString(p.fontface()).bold
-        val padding = 10.0
+        val fontFace = FontFace.fromString(p.fontface())
+        val textSize = textSize(text, fontSize, fontFace)
 
-        // todo size estimation
-        val width = run {
-            val FONT_SIZE_TO_GLYPH_WIDTH_RATIO = 0.67 //0.48; // 0.42;
-            val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
-            var w = fontSize * text.length * FONT_SIZE_TO_GLYPH_WIDTH_RATIO
-            if (isBold) w *= FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
-            w
-        }
-        val height = fontSize + padding
+        val width = textSize.x + fontSize * myPadding * 2
+        val height = textSize.y + fontSize * myPadding * 2
 
         val originX = when (GeomHelper.hAnchor(p)) {
             Text.HorizontalAnchor.LEFT -> location.x
@@ -95,9 +92,22 @@ class LabelGeom : TextGeom() {
     }
 
     companion object {
-        private fun roundedRectangle(rect: DoubleRectangle): SvgPathDataBuilder {
+        private fun textSize(text: String, fontSize: Double, fontFace: FontFace): DoubleVector {
+            // todo size estimation
+            // val textSize = labelSpec.textDimension(text)
+
+            val width = run {
+                val FONT_SIZE_TO_GLYPH_WIDTH_RATIO = 0.67
+                val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
+                var w = fontSize * text.length * FONT_SIZE_TO_GLYPH_WIDTH_RATIO
+                if (fontFace.bold) w *= FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
+                w
+            }
+            return DoubleVector(width, fontSize)
+        }
+
+        private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
             return SvgPathDataBuilder().apply {
-                val radius = 3.0
                 with(rect) {
                     moveTo(right - radius, bottom)
                     curveTo(
