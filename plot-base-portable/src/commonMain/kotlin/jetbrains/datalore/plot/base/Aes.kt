@@ -42,6 +42,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val HEIGHT: Aes<Double> = Aes("height")
         val BINWIDTH: Aes<Double> = Aes("binwidth")
         val VIOLINWIDTH: Aes<Double> = Aes("violinwidth")
+        val RIDGEHEIGHT: Aes<Double> = Aes("ridgeheight")
         val WEIGHT: Aes<Double> = Aes("weight")
         val INTERCEPT: Aes<Double> = Aes("intercept")
         val SLOPE: Aes<Double> = Aes("slope")
@@ -160,6 +161,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == HEIGHT ||
                     aes == BINWIDTH ||
                     aes == VIOLINWIDTH ||
+                    aes == RIDGEHEIGHT ||
                     aes == HJUST ||
                     aes == VJUST ||
                     aes == ANGLE ||

@@ -80,6 +80,10 @@ abstract class DataPointAesthetics {
         return get(Aes.VIOLINWIDTH)
     }
 
+    fun ridgeheight(): Double? {
+        return get(Aes.RIDGEHEIGHT)
+    }
+
     fun weight(): Double? {
         return get(Aes.WEIGHT)
     }

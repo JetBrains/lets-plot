@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
+import jetbrains.datalore.plot.base.Aes.Companion.RIDGEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -104,6 +105,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun violinwidth(v: (Int) -> Double?): AestheticsBuilder {
         return aes(VIOLINWIDTH, v)
+    }
+
+    fun ridgeheight(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(RIDGEHEIGHT, v)
     }
 
     fun weight(v: (Int) -> Double?): AestheticsBuilder {
