@@ -61,7 +61,7 @@ class AreaRidgesGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val boundTransform = toLocationBound(ctx.getUnitResolution(Aes.Y))
+        val boundTransform = toLocationBound()
 
         val paths = helper.createBands(dataPoints, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
         appendNodes(paths, root)
@@ -72,12 +72,10 @@ class AreaRidgesGeom : GeomBase() {
         buildHints(dataPoints, ctx, helper, boundTransform)
     }
 
-    private fun toLocationBound(
-        resolution: Double
-    ): (p: DataPointAesthetics) -> DoubleVector {
+    private fun toLocationBound(): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
             val x = p.x()!!
-            val y = p.y()!! + resolution * p.height()!!
+            val y = p.y()!! + p.height()!!
             return DoubleVector(x, y)
         }
     }

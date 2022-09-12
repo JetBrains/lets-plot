@@ -284,7 +284,7 @@ internal object PositionalScalesUtil {
                 else -> null
             }?.let { heightAes ->
                 when (layer.geomKind) {
-                    GeomKind.AREA_RIDGES -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getUnitResolution(heightAes), 0.0)
+                    GeomKind.AREA_RIDGES -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, 1.0, 0.0)
                     else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
                 }
             }
