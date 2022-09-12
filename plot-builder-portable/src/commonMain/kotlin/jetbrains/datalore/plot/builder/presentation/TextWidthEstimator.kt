@@ -43,7 +43,7 @@ object TextWidthEstimator {
 
     private const val SIZE_COEFFICIENT = 0.9843304096547842
 
-    private const val SHIFT_COEFFICIENT = 1.4944634980552243
+    private const val SHIFT_COEFFICIENT = 1.4693562854125601
 
     private fun getCharWidth(char: Char): Double {
         val clusterId = CLUSTERS.indexOfFirst { char in it }
