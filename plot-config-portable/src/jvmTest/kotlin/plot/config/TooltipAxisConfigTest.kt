@@ -285,62 +285,6 @@ class TooltipAxisConfigTest {
         }
     }
 
-    @Test
-    fun `tooltip value is formatted using the default scale formatter (possible exponential notation)`() {
-        // Some tooltip values are formatted in exponential notation:
-        //   the scale's default formatter is used (NumericBreakFormatter -> NumberFormat(".5e"))
-
-        val data = mapOf(
-            "alphabet" to listOf(
-                "a",
-                "a",
-                "b",
-                "a",
-                "a",
-                "a",
-                "b",
-                "b",
-                "b",
-                "a",
-                "a",
-                "a"
-            ),
-            "coeff" to listOf(
-                0.9898989898989898,
-                0.98989898989899,
-                0.9871794871794872,
-                0.9916666666666667,
-                0.9882352941176471,
-                0.9947368421052631,
-                0.9916666666666667,
-                0.9882352941176471,
-                0.9947368421052631,
-                0.9916666666666667,
-                0.9882352941176471,
-                0.9947368421052631
-            )
-        )
-        val geomLayer = TestUtil.buildGeomLayer(
-            geom = "boxplot",
-            data = data,
-            mapping = mapOf(
-                Aes.X.name to "alphabet",
-                Aes.Y.name to "coeff"
-            )
-        )
-
-        val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.99",
-            Aes.MIDDLE to "9.90783e-1",
-            Aes.LOWER to "9.89067e-1",
-            Aes.YMIN to "9.88235e-1",
-        )
-        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
-            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
-        }
-    }
-
     companion object {
         private fun areEqual(expected: String, actual: String?, name: String, method: (String) -> Unit) {
             if (expected != actual) {
