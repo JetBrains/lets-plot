@@ -13,5 +13,6 @@ data class TextStyle(
     val family: FontFamily,
     val face: FontFace,
     val size: Double,
+    val monospaced: Boolean,
     val color: Color
 )

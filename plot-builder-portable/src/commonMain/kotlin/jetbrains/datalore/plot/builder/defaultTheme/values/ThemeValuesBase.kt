@@ -51,6 +51,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.FONT_FACE to FontFace.NORMAL,
                 Elem.FONT_FAMILY to Defaults.FONT_FAMILY_NORMAL,
+                Elem.FONT_IS_MONOSPACED to Defaults.FONT_IS_MONOSPACED,
                 Elem.HJUST to 0.0,
                 Elem.VJUST to 0.5,
             ),

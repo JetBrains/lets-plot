@@ -52,7 +52,7 @@ object TestUtil {
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
-        override fun tooltipTextStyle() = TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), LIGHT_TEXT_COLOR)
+        override fun tooltipTextStyle() = TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), Defaults.FONT_IS_MONOSPACED, LIGHT_TEXT_COLOR)
     }
 
     private const val VARIABLE_NAME = "A"

@@ -28,5 +28,5 @@ object PlotLabelSpecFactory {
     fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle())
 
     private fun plotLabelSpec(textStyle: TextStyle) =
-        PlotLabelSpec(Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic))
+        PlotLabelSpec(Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic), textStyle.monospaced)
 }
