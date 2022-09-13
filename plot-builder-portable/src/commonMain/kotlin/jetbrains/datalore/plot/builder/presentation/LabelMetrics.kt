@@ -41,14 +41,14 @@ class LabelMetrics : LabelSpec,
         return if (isMonospaced)
             monospacedWidth(labelText.length)
         else
-            BATIK_PLATFORM_COEFFICIENT * TextWidthEstimator.textWidth(labelText, font)
+            FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidth(labelText, font)
     }
 
     override fun widthByLength(labelLength: Int): Double {
         return if (isMonospaced)
             monospacedWidth(labelLength)
         else
-            BATIK_PLATFORM_COEFFICIENT * TextWidthEstimator.textWidthByLength(labelLength, font)
+            FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidthByLength(labelLength, font)
     }
 
     private fun monospacedWidth(labelLength: Int): Double {
@@ -74,6 +74,6 @@ class LabelMetrics : LabelSpec,
         private const val FONT_SIZE_TO_GLYPH_WIDTH_RATIO_MONOSPACED = 0.6
         private const val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
         private const val LABEL_PADDING = 0.0 //2;
-        private const val BATIK_PLATFORM_COEFFICIENT = 0.742
+        private const val FONT_WIDTH_SCALE_FACTOR = 0.85026 // See explanation here: font_width_scale_factor.md
     }
 }

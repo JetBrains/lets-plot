@@ -43,8 +43,6 @@ object TextWidthEstimator {
 
     private const val SIZE_COEFFICIENT = 0.9843304096547842
 
-    private const val SHIFT_COEFFICIENT = 1.4693562854125601
-
     private fun getCharWidth(char: Char): Double {
         val clusterId = CLUSTERS.indexOfFirst { char in it }
         return if (clusterId != -1) CLUSTER_WIDTH[clusterId] else DEFAULT_CHAR_WIDTH
@@ -72,7 +70,7 @@ object TextWidthEstimator {
     private fun correctPrediction(predictedWidth: Double, textLength: Int, font: Font): Double {
         return (
             predictedWidth + textLength * (getFamilyCoefficient(font) + getFaceCoefficient(font))
-        ) * getSizeCoefficient(font) + textLength * SHIFT_COEFFICIENT
+        ) * getSizeCoefficient(font)
     }
 
     fun textWidth(text: String, font: Font): Double {
