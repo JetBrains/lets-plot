@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.base.json
 
+import kotlin.native.concurrent.SharedImmutable
+
 object JsonSupport {
     fun parseJson(jsonString: String): MutableMap<String, Any?> {
         @Suppress("UNCHECKED_CAST")
@@ -16,7 +18,7 @@ object JsonSupport {
 }
 
 
-// Usefull resources:
+// Useful resources:
 // https://www.ietf.org/rfc/rfc4627.txt
 // https://github.com/nst/JSONTestSuite
 
@@ -34,6 +36,7 @@ internal enum class Token {
     NULL,
 }
 
+@SharedImmutable
 internal val SPECIAL_CHARS = mapOf(
     '"' to '"',
     '\\' to '\\',
@@ -44,7 +47,7 @@ internal val SPECIAL_CHARS = mapOf(
     'r' to '\r',
     't' to '\t'
 )
-
+@SharedImmutable
 private val CONTROL_CHARS = (0 until 0x20).map(Int::toChar).toSet()
 
 fun String.escape(): String {
