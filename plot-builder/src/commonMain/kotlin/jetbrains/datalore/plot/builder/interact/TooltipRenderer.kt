@@ -154,7 +154,8 @@ internal class TooltipRenderer(
                     setPosition(
                         arranged.tooltipCoord,
                         arranged.stemCoord,
-                        arranged.orientation
+                        arranged.orientation,
+                        arranged.tooltipSpec.layoutHint.kind == ROTATED_TOOLTIP
                     )
                 }
             }

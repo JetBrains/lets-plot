@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
@@ -30,6 +31,8 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
+import jetbrains.datalore.vis.svg.SvgCircleElement
+import jetbrains.datalore.vis.svg.SvgGraphicsElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -102,9 +105,18 @@ class TooltipBox: SvgComponent() {
         myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
     }
 
-    fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
-        myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
-        moveTo(tooltipCoord.x, tooltipCoord.y)
+    fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation, rotate: Boolean=false) {
+        // Rotate component
+        val myRotationAngle = if (rotate) 15.0 else 0.0
+        rotate(myRotationAngle)
+
+        // Pointer point should not be rotated
+       val p = pointerCoord
+           .subtract(tooltipCoord)
+           .rotate(toRadians(-myRotationAngle))
+
+        myPointerBox.update(p, orientation, withPointer = !rotate)
+        moveTo(tooltipCoord)
 
         if (DEBUG_DRAWING) {
             myContentBox.drawDebugRect()
@@ -115,9 +127,11 @@ class TooltipBox: SvgComponent() {
         private val myPointerPath = SvgPathElement()
         internal var pointerDirection: PointerDirection? = null
         private var myBorderRadius = 0.0
+        private val myHighlightPoint = SvgCircleElement(DoubleVector.ZERO, 0.0)
 
         override fun buildComponent() {
             add(myPointerPath)
+            add(myHighlightPoint)
         }
 
         internal fun updateStyle(
@@ -133,10 +147,17 @@ class TooltipBox: SvgComponent() {
                 strokeWidth().set(strokeWidth)
                 fillColor().set(fillColor)
             }
+
+            myHighlightPoint.apply {
+                fillOpacity().set(0.0)
+                strokeWidth().set(1.0)
+                fillColor().set(fillColor)
+                strokeColor().set(borderColor)
+            }
         }
 
-        internal fun update(pointerCoord: DoubleVector, orientation: Orientation) {
-            pointerDirection = when (orientation) {
+        internal fun update(pointerCoord: DoubleVector, orientation: Orientation, withPointer: Boolean) {
+            pointerDirection = if (!withPointer) null else when (orientation) {
                 HORIZONTAL -> when {
                     pointerCoord.x < contentRect.left -> LEFT
                     pointerCoord.x > contentRect.right -> RIGHT
@@ -218,6 +239,17 @@ class TooltipBox: SvgComponent() {
                     }
                 }.build()
             )
+
+            myHighlightPoint.apply {
+                if (!withPointer) {
+                    visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
+                    cx().set(pointerCoord.x)
+                    cy().set(pointerCoord.y)
+                    r().set(3.0)
+                } else {
+                    visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
+                }
+            }
         }
 
         private fun calculatePointerFootingIndent(sideLength: Double): Double {
@@ -592,21 +624,6 @@ class TooltipBox: SvgComponent() {
                     )
                 }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
                 .also { myYPositionsBetweenLines.removeLastOrNull() }
-                .let { textSize ->
-                    if (rotate) {
-                        components
-                            .onEach { (labelComponent, valueComponent) ->
-                                labelComponent?.setY(-textSize.y + labelComponent.y()!!)
-                                labelComponent?.rotate(90.0)
-
-                                valueComponent.setY(-textSize.y + valueComponent.y()!!)
-                                valueComponent.rotate(90.0)
-                            }
-                        textSize.flip()
-                    } else {
-                        textSize
-                    }
-                }
 
             return textSize
         }
