@@ -93,6 +93,10 @@ task jarLetsPlotJvmBatikClasses(type: ShadowJar) {
 
     // lets-plot JavaFX renderer resource.
     exclude 'svgMapper/**/*'
+
+    // Fix for "META-INF/services files specify xalan" https://github.com/JetBrains/lets-plot/issues/576
+    // Get rid of "services" altogether.
+    exclude 'META-INF/services/**/*'
 }
 
 task jarLetsPlotJvmBatikSources(type: ShadowJar) {
