@@ -10,19 +10,18 @@ import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
 
 
-class StyleSheet(
+class StyleSheet constructor(
     private val textStyles: Map<String, TextStyle>,
-    private val defaultFamily: String
+    private val defaultFamily: FontFamily
 ) {
     fun getClasses(): List<String> = textStyles.keys.toList()
 
     fun getTextStyle(className: String): TextStyle {
         return textStyles[className]
             ?: TextStyle(
-                family = FontFamily.forName(defaultFamily),
+                family = defaultFamily,
                 face = UNDEFINED_FONT_FACE,
                 size = DEFAULT_FONT_SIZE,
-                monospaced = DEFAULT_FONT_MONOSPACED,
                 color = UNDEFINED_FONT_COLOR
             )
     }
@@ -54,7 +53,7 @@ class StyleSheet(
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +
-              "\n   font-style: ${if (italic) "italic" else "normal"};"
+                    "\n   font-style: ${if (italic) "italic" else "normal"};"
         }
 
         private fun TextStyle.toCSS(): String {
@@ -72,7 +71,7 @@ class StyleSheet(
         // }
         private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^\{\}]*)\}"""
 
-        fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
+        fun fromCSS(css: String, defaultFamily: FontFamily, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
                 val regex = Regex("$propertyName:(.+);")
                 return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
@@ -84,19 +83,22 @@ class StyleSheet(
                 .forEach { matched ->
                     val (className, styleProperties) = matched.destructured
 
-                    val fontFamily = parseProperty(styleProperties, "font-family") ?: defaultFamily
+                    val fontFamilyName = parseProperty(styleProperties, "font-family")
                     val fontWeight = parseProperty(styleProperties, "font-weight")
                     val fontStyle = parseProperty(styleProperties, "font-style")
                     val fontSize = parseProperty(styleProperties, "font-size")?.removeSuffix("px")?.toDoubleOrNull()
                         ?: defaultSize
-                    val monospaced = "monospace" in fontFamily
+                    val monospaced = fontFamilyName != null && "monospace" in fontFamilyName
                     val color = parseProperty(styleProperties, "fill")
 
+                    val fontFamily = fontFamilyName?.let {
+                        FontFamily(it, monospaced)
+                    } ?: defaultFamily
+
                     classes[className] = TextStyle(
-                        family = FontFamily.forName(fontFamily),
+                        family = fontFamily,
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
-                        monospaced = monospaced,
                         color = color?.let(Color::parseHex) ?: Color.BLACK
                     )
                 }

@@ -9,9 +9,9 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.layout.Margins
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.vis.TextStyle
 
 internal open class ThemeValuesAccess(
@@ -87,15 +87,17 @@ internal open class ThemeValuesAccess(
     }
 
     private fun getFontFamily(elem: Map<String, Any>): FontFamily {
+        val monospaced = getMonospaced(elem)
         val value = elem.getValue(Elem.FONT_FAMILY) as? String
-        return value?.let { FontFamily.forName(it) }
-            ?: throw IllegalStateException("Theme value is not string: $value. Key : $elem.")
+        return value?.let {
+            FontFamily(it, monospaced)
+        } ?: throw IllegalStateException("Theme value '${Elem.FONT_FAMILY}' is not a string. Elem : $elem.")
     }
 
     private fun getMonospaced(elem: Map<String, Any>): Boolean {
         val value = elem.getValue(Elem.FONT_MONOSPACED)
         return (value as? Boolean)
-            ?: throw IllegalStateException("Theme value is not boolean: $value. Key : $elem.")
+            ?: throw IllegalStateException("Theme value '${Elem.FONT_MONOSPACED}'  is not a boolean. Elem : $elem.")
     }
 
     // element_text(family, face, size, color)
@@ -104,7 +106,6 @@ internal open class ThemeValuesAccess(
             family = getFontFamily(elem),
             face = getFontFace(elem),
             size = getNumber(elem, Elem.SIZE),
-            monospaced = getMonospaced(elem),
             color = getColor(elem, Elem.COLOR)
         )
     }

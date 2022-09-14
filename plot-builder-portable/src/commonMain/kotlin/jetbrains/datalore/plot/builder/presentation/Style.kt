@@ -32,7 +32,7 @@ object Style {
 
     private val CSS = """
         |.$PLOT_CONTAINER {
-        |   font-family: $FONT_FAMILY_NORMAL;
+        |   font-family: ${FONT_FAMILY_NORMAL.name};
         |   user-select: none;
         |   -webkit-user-select: none;
         |   -moz-user-select: none;

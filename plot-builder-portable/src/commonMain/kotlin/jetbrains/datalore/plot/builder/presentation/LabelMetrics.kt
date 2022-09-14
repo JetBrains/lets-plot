@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Font
-import jetbrains.datalore.base.values.FontFamily
+import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import kotlin.jvm.JvmOverloads
 
 //ToDo:
@@ -24,15 +24,15 @@ class LabelMetrics : LabelSpec,
      * for Serializable
      */
     constructor() {
-        this.font = Font(FontFamily.DEFAULT_FONT_FAMILY, 0)
+        this.font = Font(FONT_FAMILY_NORMAL, 0)
         isMonospaced = false
         widthScaleFactor = 1.0
     }
 
     @JvmOverloads
-    constructor(font: Font, monospaced: Boolean = false, widthScaleFactor: Double = 1.0) {
+    constructor(font: Font, widthScaleFactor: Double = 1.0) {
         this.font = font
-        isMonospaced = monospaced
+        isMonospaced = font.family.monospaced
         this.widthScaleFactor = widthScaleFactor
     }
 

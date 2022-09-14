@@ -30,5 +30,8 @@ object PlotLabelSpecFactory {
     fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle(), theme.textWidthScale())
 
     private fun plotLabelSpec(textStyle: TextStyle, widthScaleFactor: Double) =
-        PlotLabelSpec(Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic), textStyle.monospaced, widthScaleFactor)
+        PlotLabelSpec(
+            Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic),
+            widthScaleFactor
+        )
 }

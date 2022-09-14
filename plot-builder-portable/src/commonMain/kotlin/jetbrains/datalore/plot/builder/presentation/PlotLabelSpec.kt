@@ -8,9 +8,9 @@ package jetbrains.datalore.plot.builder.presentation
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Font
 
-class PlotLabelSpec(font: Font, monospaced: Boolean = false, widthScaleFactor: Double = 1.0) :
+class PlotLabelSpec(font: Font, widthScaleFactor: Double = 1.0) :
     LabelSpec {
-    private val myLabelMetrics: LabelMetrics = LabelMetrics(font, monospaced, widthScaleFactor)
+    private val myLabelMetrics: LabelMetrics = LabelMetrics(font, widthScaleFactor)
 
     override val font: Font
         get() = myLabelMetrics.font

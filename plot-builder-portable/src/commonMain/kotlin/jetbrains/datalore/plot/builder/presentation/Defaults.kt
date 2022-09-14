@@ -32,31 +32,29 @@ object Defaults {
     val X_LIGHT_GRAY = Color.VERY_LIGHT_GRAY.toHexColor()
     const val XX_LIGHT_GRAY = "#e0e0e0"
 
-    const val FONT_MONOSPACED = false
     const val TEXT_WIDTH_FACTOR = 1.0
     val TEXT_COLOR = Color.parseHex(DARK_GRAY)
 
-    const val FONT_LARGE = 16
-    const val FONT_MEDIUM = 15
-    const val FONT_SMALL = 13
+    const val FONT_LARGE = 16.0
+    const val FONT_MEDIUM = 15.0
+    const val FONT_SMALL = 13.0
 
-    const val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
-    const val FONT_FAMILY_MONOSPACED = "\"Courier New\", Courier, monospace"
+    val FONT_FAMILY_NORMAL = FontFamily("\"Lucida Grande\", sans-serif", monospaced = false)
 
     class Common {
         object Title {
             const val FONT_SIZE = FONT_LARGE
-            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
         object Subtitle {
             const val FONT_SIZE = FONT_MEDIUM
-            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
         object Caption {
             const val FONT_SIZE = FONT_SMALL
-            val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
         object Legend {
@@ -105,39 +103,38 @@ object Defaults {
 
     private fun createTextStyle(
         face: FontFace = FontFace.NORMAL,
-        size: Double = FONT_MEDIUM.toDouble(),
-        monospaced: Boolean = FONT_MONOSPACED,
+        size: Double = FONT_MEDIUM,
         color: Color = Color.BLACK
-    ) = TextStyle(family = FontFamily.forName(FONT_FAMILY_NORMAL), face, size, monospaced, color)
+    ) = TextStyle(family = FONT_FAMILY_NORMAL, face, size, color)
 
     internal val DEFAULT_TEXT_STYLES = mapOf(
-        Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),
-        Style.PLOT_SUBTITLE to createTextStyle(size = Common.Subtitle.FONT_SIZE.toDouble()),
-        Style.PLOT_CAPTION to createTextStyle(size = Common.Caption.FONT_SIZE.toDouble()),
-        Style.LEGEND_TITLE to createTextStyle(size = Common.Legend.TITLE_FONT_SIZE.toDouble()),
-        Style.LEGEND_ITEM to createTextStyle(size = Common.Legend.ITEM_FONT_SIZE.toDouble()),
-        Style.TOOLTIP_TEXT to createTextStyle(size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble()),
+        Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE, face = FontFace.BOLD),
+        Style.PLOT_SUBTITLE to createTextStyle(size = Common.Subtitle.FONT_SIZE),
+        Style.PLOT_CAPTION to createTextStyle(size = Common.Caption.FONT_SIZE),
+        Style.LEGEND_TITLE to createTextStyle(size = Common.Legend.TITLE_FONT_SIZE),
+        Style.LEGEND_ITEM to createTextStyle(size = Common.Legend.ITEM_FONT_SIZE),
+        Style.TOOLTIP_TEXT to createTextStyle(size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE),
         Style.TOOLTIP_TITLE to createTextStyle(
-            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(),
+            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE,
             face = FontFace.BOLD
         ),
         Style.TOOLTIP_LABEL to createTextStyle(
-            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE.toDouble(),
+            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE,
             face = FontFace.BOLD
         ),
-        "${Style.AXIS_TITLE}-x" to createTextStyle(size = Axis.TITLE_FONT_SIZE.toDouble()),
-        "${Style.AXIS_TITLE}-y" to createTextStyle(size = Axis.TITLE_FONT_SIZE.toDouble()),
-        "${Style.AXIS_TEXT}-x" to createTextStyle(size = Axis.TICK_FONT_SIZE.toDouble()),
-        "${Style.AXIS_TEXT}-y" to createTextStyle(size = Axis.TICK_FONT_SIZE.toDouble()),
+        "${Style.AXIS_TITLE}-x" to createTextStyle(size = Axis.TITLE_FONT_SIZE),
+        "${Style.AXIS_TITLE}-y" to createTextStyle(size = Axis.TITLE_FONT_SIZE),
+        "${Style.AXIS_TEXT}-x" to createTextStyle(size = Axis.TICK_FONT_SIZE),
+        "${Style.AXIS_TEXT}-y" to createTextStyle(size = Axis.TICK_FONT_SIZE),
         "${Style.AXIS_TOOLTIP_TEXT}-x" to createTextStyle(
-            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
             color = Color.WHITE
         ),
         "${Style.AXIS_TOOLTIP_TEXT}-y" to createTextStyle(
-            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
             color = Color.WHITE
         ),
-        "${Style.FACET_STRIP_TEXT}-x" to createTextStyle(size = FONT_MEDIUM.toDouble()),
-        "${Style.FACET_STRIP_TEXT}-y" to createTextStyle(size = FONT_MEDIUM.toDouble())
+        "${Style.FACET_STRIP_TEXT}-x" to createTextStyle(size = FONT_MEDIUM),
+        "${Style.FACET_STRIP_TEXT}-y" to createTextStyle(size = FONT_MEDIUM)
     )
 }

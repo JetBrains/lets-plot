@@ -9,17 +9,16 @@ import jetbrains.datalore.base.function.Functions.identity
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
 import jetbrains.datalore.plot.builder.layout.Margins
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
@@ -34,6 +33,7 @@ object TestUtil {
     val axisTheme = object : AxisTheme {
         override val axis: String
             get() = TODO("Not yet implemented")
+
         override fun showLine() = TODO("Not yet implemented")
         override fun showTickMarks() = TODO("Not yet implemented")
         override fun showLabels() = TODO("Not yet implemented")
@@ -53,7 +53,12 @@ object TestUtil {
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
-        override fun tooltipTextStyle() = TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), Defaults.FONT_MONOSPACED, LIGHT_TEXT_COLOR)
+        override fun tooltipTextStyle() = TextStyle(
+            Defaults.FONT_FAMILY_NORMAL,
+            FontFace.NORMAL,
+            Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
+            LIGHT_TEXT_COLOR
+        )
     }
 
     private const val VARIABLE_NAME = "A"
