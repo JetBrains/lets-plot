@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.values.Font
 
+// Clustering and coefficients calculation: https://github.com/ASmirnov-HORIS/text-width-estimation/blob/main/notebooks/prepare_model.ipynb
 object TextWidthEstimator {
     private const val DEFAULT_CHAR_WIDTH = 12.327791262135923
     private const val DEFAULT_FAMILY = "Lucida Grande"
@@ -19,6 +20,10 @@ object TextWidthEstimator {
         listOf('Ѻ', 'Ğ', 'Ң', 'ѻ', 'җ', 'ѽ', 'ѿ', 'Ҁ', 'Ĝ', 'Ҕ', 'Ҋ', 'æ', 'Ď', 'Ҏ', 'Ҡ', 'Đ', 'Ӈ', 'Ҩ', 'Ӭ', 'Ӯ', 'Ӱ', 'Ӳ', 'Q', 'Ӵ', 'O', 'ӹ', 'M', 'Ӽ', 'Ӿ', 'G', 'D', 'ԅ', 'Ԇ', 'Ԍ', 'Ԏ', 'Ԭ', 'Ԩ', 'Ԧ', 'Ԥ', 'ԣ', 'Ԟ', 'Ӫ', 'ԝ', 'ԙ', 'ԗ', 'Ԗ', 'ԕ', 'Ԓ', 'ԏ', 'Ԛ', 'Ө', 'Ӧ', 'Ӥ', 'Ҿ', 'Ҽ', 'Һ', 'Ҹ', 'Ҷ', 'Ð', 'ӂ', 'Ҳ', 'Ó', 'Ô', 'Õ', 'Ö', 'Ҫ', 'Ø', 'Ò', 'ҥ', 'Ӄ', 'Ѷ', 'Ӣ', 'm', 'w', 'ӝ', '©', 'Ӛ', 'Ӆ', 'Ә', 'Ӗ', 'Ӓ', 'Ӑ', 'ӎ', 'Ӌ', 'Ӊ', '®', 'Ġ', 'Ѣ', 'Ģ', 'Ȩ', 'Ȫ', 'Ȭ', 'Ȯ', 'Ȱ', 'Ȳ', 'ȵ', 'Ⱥ', 'Ȼ', 'Ƴ', 'Ʋ', 'Ʊ', 'Ƀ', 'Ʉ', 'Ȧ', 'Ʌ', 'Ư', 'Ɋ', 'Ƭ', 'Ѵ', 'Ɍ', 'Ɏ', 'Ѐ', 'Ƨ', 'Ђ', 'Ʀ', 'Ƥ', 'ƣ', 'Ћ', 'Ơ', 'Ɇ', 'Ѝ', 'ǈ', 'Ƞ', 'Ǭ', 'Ǩ', 'Ǧ', 'Ǵ', 'Ǥ', 'Ƿ', 'Ǹ', 'ǽ', 'Ǿ', 'Ǡ', 'Ȁ', 'Ȃ', 'Ԯ', 'Ȅ', 'ȡ', 'Ȇ', 'Ǚ', 'Ȍ', 'Ǘ', 'Ȏ', 'Ȑ', 'Ǖ', 'Ȓ', 'Ȕ', 'Ǔ', 'Ȗ', 'Ǒ', 'Ǎ', 'ǌ', 'Ȟ', 'Ǜ', 'Ɵ', 'Ǟ', 'Ǫ', 'Ц', 'Ɗ', 'ѥ', 'Ѧ', 'Ъ', 'Ĳ', 'Ɖ', 'Џ', 'ю', 'Ѫ', 'ѡ', 'щ', 'Ƈ', 'ш', 'Ɔ', 'Ɓ', 'ж', 'ŵ', 'ѫ', 'ф', 'ы', 'Ǝ', 'Ф', 'Ő', 'Ɲ', 'Ѳ', 'Ƙ', 'Ŋ', 'њ', 'И', 'Ə', 'Ɣ', 'Й', 'љ', 'Ō', 'ѱ', 'М', 'Ѱ', 'О', 'Ŏ', 'Ɠ', 'ѩ'),
         listOf('Ѩ', 'ԋ', 'Ԋ', 'ԉ', 'Ѥ', 'Ԉ', '@', 'Æ', 'Ѭ', 'Ѹ', 'ԫ', 'Ԫ', '%', 'ѹ', 'Ǳ', 'ǲ', 'ǳ', 'Ԣ', 'ԡ', 'Ԡ', 'Ƕ', 'Ѽ', 'ѭ', 'Ԝ', 'ǣ', 'Ǣ', 'Ԙ', 'Ѿ', 'Ԕ', 'Ǽ', 'ǋ', 'Ԅ', 'Ӝ', 'Щ', 'Ш', 'Ӕ', '¼', '½', '¾', 'Ы', 'Ҵ', 'ƕ', 'Ƣ', 'Љ', 'Њ', 'Ж', 'Ɯ', 'Ӂ', 'Ӎ', 'Ѡ', 'ҧ', 'Ю', 'ԃ', 'Ԃ', 'Җ', 'Œ', 'œ', 'Ӹ', 'Ǌ', 'Ҧ', 'Ǉ', 'ǅ', 'Ǆ', 'Ŵ', 'W', 'Ҥ', 'ȸ', 'ȹ', 'ǆ', 'ӕ')
     )
+
+    private val CLUSTERING: Map<Char, Int> = CLUSTERS.mapIndexed { id, cluster -> cluster.map { Pair(id, it) } }
+        .flatten()
+        .associate { it.second to it.first }
 
     private val CLUSTER_WIDTH = listOf(
         6.440506329113925,
@@ -44,7 +49,7 @@ object TextWidthEstimator {
     private const val SIZE_COEFFICIENT = 0.9843304096547842
 
     private fun getCharWidth(char: Char): Double {
-        val clusterId = CLUSTERS.indexOfFirst { char in it }
+        val clusterId = CLUSTERING.getOrElse(char) { -1 }
         return if (clusterId != -1) CLUSTER_WIDTH[clusterId] else DEFAULT_CHAR_WIDTH
     }
 
