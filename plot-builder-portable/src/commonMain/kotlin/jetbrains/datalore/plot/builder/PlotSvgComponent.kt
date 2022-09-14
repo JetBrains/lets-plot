@@ -336,10 +336,9 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
-            plotTitleTextRect?.let { drawDebugRect(
-                textBoundingBox(title!!, plotTitleTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
-                Color.DARK_GREEN
-            ) }
+            plotTitleTextRect?.let {
+                drawDebugRect(textBoundingBox(title!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1), Color.DARK_GREEN)
+            }
         }
 
         val subtitleElementRect = subtitle?.let {
@@ -358,10 +357,9 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
-            subtitleTextRect?.let { drawDebugRect(
-                textBoundingBox(subtitle!!, subtitleTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
-                Color.DARK_GREEN
-            ) }
+            subtitleTextRect?.let {
+                drawDebugRect(textBoundingBox(subtitle!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1), Color.DARK_GREEN)
+            }
         }
 
         val captionElementRect = caption?.let {
@@ -381,10 +379,9 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
-            captionTextRect?.let { drawDebugRect(
-                textBoundingBox(caption!!, captionTextRect, PlotLabelSpecFactory.plotTitle(plotTheme), align = 1),
-                Color.DARK_GREEN
-            ) }
+            captionTextRect?.let {
+                drawDebugRect(textBoundingBox(caption!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = 1), Color.DARK_GREEN)
+            }
         }
 
         // add plot title

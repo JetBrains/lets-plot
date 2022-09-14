@@ -74,7 +74,7 @@ internal class DefaultAxisTheme(
     }
 
     override fun textWidthScale(): Double {
-        return getNumber(listOf(ThemeOption.TEXT_WIDTH_SCALE))
+        return getNumber(listOf(ThemeOption.TEXT_WIDTH_FACTOR))
     }
 
     override fun titleJustification(): TextJustification {

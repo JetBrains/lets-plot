@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT_WIDTH_SCALE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT_WIDTH_FACTOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
@@ -52,7 +52,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.SIZE to Defaults.FONT_SMALL,
                 Elem.FONT_FACE to FontFace.NORMAL,
                 Elem.FONT_FAMILY to Defaults.FONT_FAMILY_NORMAL,
-                Elem.FONT_IS_MONOSPACED to Defaults.FONT_IS_MONOSPACED,
+                Elem.FONT_MONOSPACED to Defaults.FONT_MONOSPACED,
                 Elem.HJUST to 0.0,
                 Elem.VJUST to 0.5,
             ),
@@ -66,7 +66,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             PLOT_CAPTION to mapOf(
                 Elem.HJUST to 1.0,
             ),
-            TEXT_WIDTH_SCALE to 1.0,
+            TEXT_WIDTH_FACTOR to 1.0,
             PANEL_BORDER_RECT to ELEMENT_BLANK,
 
             PLOT_BKGR_RECT to mapOf(

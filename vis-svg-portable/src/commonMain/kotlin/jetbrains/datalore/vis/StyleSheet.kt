@@ -22,7 +22,7 @@ class StyleSheet(
                 family = FontFamily.forName(defaultFamily),
                 face = UNDEFINED_FONT_FACE,
                 size = DEFAULT_FONT_SIZE,
-                monospaced = DEFAULT_FONT_IS_MONOSPACED,
+                monospaced = DEFAULT_FONT_MONOSPACED,
                 color = UNDEFINED_FONT_COLOR
             )
     }
@@ -50,7 +50,7 @@ class StyleSheet(
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
         private const val DEFAULT_FONT_SIZE = 15.0
-        private const val DEFAULT_FONT_IS_MONOSPACED = false
+        private const val DEFAULT_FONT_MONOSPACED = false
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +

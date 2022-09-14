@@ -208,7 +208,7 @@ class TooltipSkippedAesTest {
             override fun tooltipColor() = Color.BLACK
             override fun tooltipStrokeWidth() = 1.0
             override fun tooltipTextStyle() =
-                TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), Defaults.FONT_IS_MONOSPACED, Color.GRAY)
+                TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), Defaults.FONT_MONOSPACED, Color.GRAY)
 
         }
 

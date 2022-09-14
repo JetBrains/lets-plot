@@ -93,7 +93,7 @@ internal open class ThemeValuesAccess(
     }
 
     private fun getMonospaced(elem: Map<String, Any>): Boolean {
-        val value = elem.getValue(Elem.FONT_IS_MONOSPACED)
+        val value = elem.getValue(Elem.FONT_MONOSPACED)
         return (value as? Boolean)
             ?: throw IllegalStateException("Theme value is not boolean: $value. Key : $elem.")
     }
