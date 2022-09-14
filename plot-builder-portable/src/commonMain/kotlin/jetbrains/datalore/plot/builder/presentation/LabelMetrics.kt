@@ -18,6 +18,7 @@ class LabelMetrics : LabelSpec,
 
     override val font: Font
     override val isMonospaced: Boolean
+    override val widthScaleFactor: Double
 
     /**
      * for Serializable
@@ -25,12 +26,14 @@ class LabelMetrics : LabelSpec,
     constructor() {
         this.font = Font(FontFamily.DEFAULT_FONT_FAMILY, 0)
         isMonospaced = false
+        widthScaleFactor = 1.0
     }
 
     @JvmOverloads
-    constructor(font: Font, monospaced: Boolean = false) {
+    constructor(font: Font, monospaced: Boolean = false, widthScaleFactor: Double = 1.0) {
         this.font = font
         isMonospaced = monospaced
+        this.widthScaleFactor = widthScaleFactor
     }
 
     override fun dimensions(labelText: String): DoubleVector {
@@ -38,17 +41,25 @@ class LabelMetrics : LabelSpec,
     }
 
     override fun width(labelText: String): Double {
-        return if (isMonospaced)
-            monospacedWidth(labelText.length)
-        else
-            FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidth(labelText, font)
+        return applyWidthAdjustment(
+            if (isMonospaced)
+                monospacedWidth(labelText.length)
+            else
+                FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidth(labelText, font)
+        )
     }
 
     override fun widthByLength(labelLength: Int): Double {
-        return if (isMonospaced)
-            monospacedWidth(labelLength)
-        else
-            FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidthByLength(labelLength, font)
+        return applyWidthAdjustment(
+            if (isMonospaced)
+                monospacedWidth(labelLength)
+            else
+                FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidthByLength(labelLength, font)
+        )
+    }
+
+    private fun applyWidthAdjustment(width: Double): Double {
+        return widthScaleFactor * width
     }
 
     private fun monospacedWidth(labelLength: Int): Double {

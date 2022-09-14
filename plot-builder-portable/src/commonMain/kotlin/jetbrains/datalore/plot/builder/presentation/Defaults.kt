@@ -33,6 +33,7 @@ object Defaults {
     const val XX_LIGHT_GRAY = "#e0e0e0"
 
     const val FONT_IS_MONOSPACED = false
+    const val TEXT_WIDTH_SCALE = 1.0
     val TEXT_COLOR = Color.parseHex(DARK_GRAY)
 
     const val FONT_LARGE = 16

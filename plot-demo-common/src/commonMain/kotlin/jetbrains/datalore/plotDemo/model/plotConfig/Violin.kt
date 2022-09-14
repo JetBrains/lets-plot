@@ -62,7 +62,8 @@ class Violin {
                 "                         'family': 'Verdana'," +
                 "                         'face': 'bold_italic'," +
                 "                         'blank': false" +
-                "                       }" +
+                "                       }," +
+                "              'text_width_scale': 0.9" +
                 "            }," +
                 "   'layers': [" +
                 "               {" +

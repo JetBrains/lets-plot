@@ -27,6 +27,8 @@ interface AxisTheme {
 
     fun titleStyle(): TextStyle
 
+    fun textWidthScale(): Double
+
     fun titleJustification(): TextJustification
 
     fun titleMargins(): Margins

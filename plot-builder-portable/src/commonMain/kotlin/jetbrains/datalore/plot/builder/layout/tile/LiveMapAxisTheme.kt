@@ -35,6 +35,9 @@ internal class LiveMapAxisTheme : AxisTheme {
         monospaced = Defaults.FONT_IS_MONOSPACED,
         color = Defaults.TEXT_COLOR
     )
+
+    override fun textWidthScale() = Defaults.TEXT_WIDTH_SCALE
+
     override fun titleJustification() = TextJustification(0.5, 1.0)
 
     override fun titleMargins() = Margins()

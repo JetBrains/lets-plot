@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT_WIDTH_SCALE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.vis.TextStyle
@@ -53,6 +54,10 @@ internal class DefaultPlotTheme(
 
     override fun captionStyle(): TextStyle {
         return getTextStyle(getElemValue(captionKey))
+    }
+
+    override fun textWidthScale(): Double {
+        return getNumber(listOf(TEXT_WIDTH_SCALE))
     }
 
     override fun textColor(): Color {

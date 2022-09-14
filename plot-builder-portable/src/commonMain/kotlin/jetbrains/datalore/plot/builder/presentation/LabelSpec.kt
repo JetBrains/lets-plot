@@ -13,6 +13,8 @@ interface LabelSpec {
 
     val isMonospaced: Boolean
 
+    val widthScaleFactor: Double
+
     fun dimensions(labelText: String): DoubleVector
 
     fun width(labelText: String): Double

@@ -13,20 +13,20 @@ import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.vis.TextStyle
 
 object PlotLabelSpecFactory {
-    fun plotTitle(theme: PlotTheme) = plotLabelSpec(theme.titleStyle())
+    fun plotTitle(theme: PlotTheme) = plotLabelSpec(theme.titleStyle(), theme.textWidthScale())
 
-    fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleStyle())
+    fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleStyle(), theme.textWidthScale())
 
-    fun plotCaption(theme: PlotTheme) = plotLabelSpec(theme.captionStyle())
+    fun plotCaption(theme: PlotTheme) = plotLabelSpec(theme.captionStyle(), theme.textWidthScale())
 
-    fun legendTitle(theme: LegendTheme) = plotLabelSpec(theme.titleStyle())
+    fun legendTitle(theme: LegendTheme) = plotLabelSpec(theme.titleStyle(), theme.textWidthScale())
 
-    fun legendItem(theme: LegendTheme) = plotLabelSpec(theme.textStyle())
+    fun legendItem(theme: LegendTheme) = plotLabelSpec(theme.textStyle(), theme.textWidthScale())
 
-    fun axisTick(theme: AxisTheme) = plotLabelSpec(theme.labelStyle())
+    fun axisTick(theme: AxisTheme) = plotLabelSpec(theme.labelStyle(), theme.textWidthScale())
 
-    fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle())
+    fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle(), theme.textWidthScale())
 
-    private fun plotLabelSpec(textStyle: TextStyle) =
-        PlotLabelSpec(Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic), textStyle.monospaced)
+    private fun plotLabelSpec(textStyle: TextStyle, widthScaleFactor: Double) =
+        PlotLabelSpec(Font(textStyle.family, textStyle.size.toInt(), textStyle.face.bold, textStyle.face.italic), textStyle.monospaced, widthScaleFactor)
 }

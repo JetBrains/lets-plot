@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
@@ -70,6 +71,10 @@ internal class DefaultAxisTheme(
 
     override fun titleStyle(): TextStyle {
         return getTextStyle(getElemValue(titleKey))
+    }
+
+    override fun textWidthScale(): Double {
+        return getNumber(listOf(ThemeOption.TEXT_WIDTH_SCALE))
     }
 
     override fun titleJustification(): TextJustification {

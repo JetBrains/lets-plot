@@ -62,6 +62,10 @@ internal class DefaultLegendTheme(
         return getTextStyle(getElemValue(textKey))
     }
 
+    override fun textWidthScale(): Double {
+        return getNumber(listOf(ThemeOption.TEXT_WIDTH_SCALE))
+    }
+
     override fun showBackground(): Boolean {
         return !isElemBlank(backgroundKey)
     }
