@@ -49,15 +49,6 @@ class LabelMetrics : LabelSpec,
         )
     }
 
-    override fun widthByLength(labelLength: Int): Double {
-        return applyWidthAdjustment(
-            if (isMonospaced)
-                monospacedWidth(labelLength)
-            else
-                FONT_WIDTH_SCALE_FACTOR * TextWidthEstimator.textWidthByLength(labelLength, font)
-        )
-    }
-
     private fun applyWidthAdjustment(width: Double): Double {
         return widthScaleFactor * width
     }

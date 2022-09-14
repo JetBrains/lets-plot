@@ -29,10 +29,6 @@ class PlotLabelSpec(font: Font, monospaced: Boolean = false, widthScaleFactor: D
         return myLabelMetrics.width(labelText)
     }
 
-    override fun widthByLength(labelLength: Int): Double {
-        return myLabelMetrics.widthByLength(labelLength)
-    }
-
     override fun height(): Double {
         return myLabelMetrics.height()
     }

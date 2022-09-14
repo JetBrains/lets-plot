@@ -19,7 +19,5 @@ interface LabelSpec {
 
     fun width(labelText: String): Double
 
-    fun widthByLength(labelLength: Int): Double
-
     fun height(): Double
 }

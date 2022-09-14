@@ -30,6 +30,6 @@ internal object PlotAxisLayoutUtil {
         return if (orientation.isHorizontal)
             tickLabelSpec.height()
         else
-            tickLabelSpec.widthByLength(1)
+            tickLabelSpec.width("_")
     }
 }
