@@ -13,6 +13,8 @@ import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.vis.TextStyle
 
 object PlotLabelSpecFactory {
+    const val DISTANCE_TO_LABEL_IN_CHARS = "_"
+
     fun plotTitle(theme: PlotTheme) = plotLabelSpec(theme.titleStyle(), theme.textWidthScale())
 
     fun plotSubtitle(theme: PlotTheme) = plotLabelSpec(theme.subtitleStyle(), theme.textWidthScale())

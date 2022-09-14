@@ -62,7 +62,7 @@ abstract class LegendComponentLayout(
 
     private fun doLayout() {
         val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
-        val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width("_") / 2
+        val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
         val labelHOffset = keySize.x + labelLeftMargin
         val labelVOffset = (keySize.y - labelHeight) / 2
 
