@@ -92,12 +92,19 @@ internal open class ThemeValuesAccess(
             ?: throw IllegalStateException("Theme value is not string: $value. Key : $elem.")
     }
 
+    private fun getMonospaced(elem: Map<String, Any>): Boolean {
+        val value = elem.getValue(Elem.FONT_MONOSPACED)
+        return (value as? Boolean)
+            ?: throw IllegalStateException("Theme value is not boolean: $value. Key : $elem.")
+    }
+
     // element_text(family, face, size, color)
     protected fun getTextStyle(elem: Map<String, Any>): TextStyle {
         return TextStyle(
             family = getFontFamily(elem),
             face = getFontFace(elem),
             size = getNumber(elem, Elem.SIZE),
+            monospaced = getMonospaced(elem),
             color = getColor(elem, Elem.COLOR)
         )
     }

@@ -32,6 +32,8 @@ object Defaults {
     val X_LIGHT_GRAY = Color.VERY_LIGHT_GRAY.toHexColor()
     const val XX_LIGHT_GRAY = "#e0e0e0"
 
+    const val FONT_MONOSPACED = false
+    const val TEXT_WIDTH_FACTOR = 1.0
     val TEXT_COLOR = Color.parseHex(DARK_GRAY)
 
     const val FONT_LARGE = 16
@@ -104,8 +106,9 @@ object Defaults {
     private fun createTextStyle(
         face: FontFace = FontFace.NORMAL,
         size: Double = FONT_MEDIUM.toDouble(),
+        monospaced: Boolean = FONT_MONOSPACED,
         color: Color = Color.BLACK
-    ) = TextStyle(family = FontFamily.forName(FONT_FAMILY_NORMAL), face, size, color)
+    ) = TextStyle(family = FontFamily.forName(FONT_FAMILY_NORMAL), face, size, monospaced, color)
 
     internal val DEFAULT_TEXT_STYLES = mapOf(
         Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE.toDouble(), face = FontFace.BOLD),

@@ -11,6 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -96,6 +97,10 @@ abstract class LegendBox : SvgComponent() {
             // title bounds
             val rect = titleBoundingRect.add(spec.contentOrigin)
             add(createTransparentRect(rect, Color.MAGENTA, 1.0))
+            // title bounding box
+            val textDimensions = PlotLayoutUtil.textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
+            val titleBoundingBox = DoubleRectangle(spec.contentBounds.left, spec.contentBounds.top, textDimensions.x, textDimensions.y)
+            add(createTransparentRect(titleBoundingBox, Color.DARK_GREEN, 1.0))
         }
 
         add(innerGroup)

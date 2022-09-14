@@ -6,17 +6,18 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Font
 
 interface LabelSpec {
-    val isBold: Boolean
+    val font: Font
 
     val isMonospaced: Boolean
 
-    val fontSize: Double
+    val widthScaleFactor: Double
 
-    fun dimensions(labelLength: Int): DoubleVector
+    fun dimensions(labelText: String): DoubleVector
 
-    fun width(labelLength: Int): Double
+    fun width(labelText: String): Double
 
     fun height(): Double
 }

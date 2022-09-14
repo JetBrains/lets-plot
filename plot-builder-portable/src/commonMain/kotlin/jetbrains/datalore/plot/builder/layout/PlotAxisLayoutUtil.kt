@@ -11,6 +11,8 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal object PlotAxisLayoutUtil {
 
+    private const val INITIAL_TICK_LABEL_IN_CHARS = "_"
+
     fun initialThickness(
         orientation: Orientation,
         theme: AxisTheme,
@@ -30,6 +32,6 @@ internal object PlotAxisLayoutUtil {
         return if (orientation.isHorizontal)
             tickLabelSpec.height()
         else
-            tickLabelSpec.width(1)
+            tickLabelSpec.width(INITIAL_TICK_LABEL_IN_CHARS)
     }
 }

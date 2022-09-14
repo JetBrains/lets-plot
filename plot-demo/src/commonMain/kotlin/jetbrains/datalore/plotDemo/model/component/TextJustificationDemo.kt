@@ -8,6 +8,8 @@ package jetbrains.datalore.plotDemo.model.component
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Font
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.layout.TextJustification
@@ -96,8 +98,9 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             label.textColor().set(Color.DARK_BLUE)
 
             val lineHeight = FONT_SIZE
+            val lineFont = Font(FontFamily.DEFAULT_FONT_FAMILY, FONT_SIZE.toInt())
             val textSize = DoubleVector(
-                PlotLabelSpec(FONT_SIZE).width(text.length),
+                PlotLabelSpec(lineFont).width(text),
                 lineHeight * label.linesCount()
             )
             val (position, hAnchor) = applyJustification(

@@ -12,6 +12,7 @@ class FontFamily private constructor(private val myName: String) {
     }
 
     companion object {
+        val DEFAULT_FONT_FAMILY = forName("\"Lucida Grande\", sans-serif")
         val MONOSPACED = forName("monospace")
         val SERIF = forName("serif")
 

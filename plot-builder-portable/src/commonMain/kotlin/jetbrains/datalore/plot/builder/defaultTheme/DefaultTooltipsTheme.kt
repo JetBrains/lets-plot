@@ -40,7 +40,7 @@ internal class DefaultTooltipsTheme(
 
     override fun labelStyle(): TextStyle {
         return with (textStyle()) {
-            TextStyle(family, FontFace.BOLD + face, size, color)
+            TextStyle(family, FontFace.BOLD + face, size, monospaced, color)
         }
     }
 }

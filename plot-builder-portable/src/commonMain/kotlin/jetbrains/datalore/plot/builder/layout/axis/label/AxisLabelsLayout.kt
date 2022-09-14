@@ -51,7 +51,7 @@ abstract class AxisLabelsLayout protected constructor(
     }
 
     companion object {
-        const val INITIAL_TICK_LABEL_LENGTH = 4 // symbols
+        const val INITIAL_TICK_LABEL = "0000" // Typical tick label to estimate number of breaks (chosen by eye)
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
 
         private fun tickLabelSpec(theme: AxisTheme) = PlotLabelSpecFactory.axisTick(theme)

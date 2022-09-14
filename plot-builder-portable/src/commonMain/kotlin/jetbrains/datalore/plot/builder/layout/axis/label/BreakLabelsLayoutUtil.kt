@@ -46,12 +46,15 @@ internal object BreakLabelsLayoutUtil {
         return breaks
     }
 
-    fun maxLength(labels: List<String>): Int {
-        var max = 0
-        for (label in labels) {
-            max = max(max, label.length)
-        }
-        return max
+    fun longestLabelWidth(
+        labels: List<String>,
+        labelToWidth: (String) -> Double = { it.length.toDouble() }
+    ): Double {
+        val longestLabel = labels.maxByOrNull(labelToWidth)
+        return if (longestLabel == null)
+            0.0
+        else
+            labelToWidth(longestLabel)
     }
 
     fun horizontalCenteredLabelBounds(labelSize: DoubleVector): DoubleRectangle {
@@ -169,8 +172,7 @@ internal object BreakLabelsLayoutUtil {
         axisMapper: (Double?) -> Double?,
         tickLabelSpec: PlotLabelSpec
     ): DoubleRectangle {
-        val maxLength = maxLength(breaks.labels)
-        val maxLabelWidth = tickLabelSpec.width(maxLength)
+        val maxLabelWidth = longestLabelWidth(breaks.labels) { tickLabelSpec.width(it) }
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {

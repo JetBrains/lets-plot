@@ -12,6 +12,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Font
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
@@ -31,11 +33,8 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
-import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.plot.builder.presentation.*
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgElement
@@ -243,7 +242,7 @@ class PlotSvgComponent constructor(
             .add(
                 axisTitleSizeDelta(
                     axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    axisTitleBottom = null to PlotLabelSpec(0.0),
+                    axisTitleBottom = null to PlotLabelSpec(Font(FontFamily.DEFAULT_FONT_FAMILY, 0)),
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
@@ -337,6 +336,9 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            plotTitleTextRect?.let {
+                drawDebugRect(textBoundingBox(title!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1), Color.DARK_GREEN)
+            }
         }
 
         val subtitleElementRect = subtitle?.let {
@@ -355,6 +357,9 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            subtitleTextRect?.let {
+                drawDebugRect(textBoundingBox(subtitle!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1), Color.DARK_GREEN)
+            }
         }
 
         val captionElementRect = caption?.let {
@@ -374,6 +379,9 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            captionTextRect?.let {
+                drawDebugRect(textBoundingBox(caption!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = 1), Color.DARK_GREEN)
+            }
         }
 
         // add plot title
@@ -566,6 +574,32 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             drawDebugRect(axisTitleTextRect, Color.LIGHT_BLUE)
             drawDebugRect(axisTitleElementRect, Color.GRAY)
+            drawDebugRect(textBoundingBox(text, axisTitleTextRect, labelSpec, orientation), Color.DARK_GREEN)
+        }
+    }
+
+    private fun textBoundingBox(
+        text: String,
+        boundRect: DoubleRectangle,
+        labelSpec: PlotLabelSpec,
+        orientation: Orientation = Orientation.TOP,
+        align: Int = 0 // < 0 - to left; > 0 - to right; 0 - centered
+    ): DoubleRectangle {
+        val d = PlotLayoutUtil.textDimensions(text, labelSpec)
+        return if (orientation in listOf(Orientation.TOP, Orientation.BOTTOM)) {
+            val x = when {
+                align > 0 -> boundRect.right - d.x
+                align < 0 -> boundRect.left
+                else -> boundRect.center.x - d.x / 2
+            }
+            DoubleRectangle(x, boundRect.center.y - d.y / 2, d.x, d.y)
+        } else {
+            val y = when {
+                align > 0 -> boundRect.bottom - d.x
+                align < 0 -> boundRect.top
+                else -> boundRect.center.y - d.x / 2
+            }
+            DoubleRectangle(boundRect.center.x - d.y / 2, y, d.y, d.x)
         }
     }
 

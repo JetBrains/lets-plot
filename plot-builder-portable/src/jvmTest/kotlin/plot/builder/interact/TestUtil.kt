@@ -40,6 +40,7 @@ object TestUtil {
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
         override fun titleStyle() = TODO("Not yet implemented")
+        override fun textWidthScale() = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
         override fun titleMargins() = Margins()
         override fun lineWidth() = TODO("Not yet implemented")
@@ -52,7 +53,7 @@ object TestUtil {
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
-        override fun tooltipTextStyle() = TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), LIGHT_TEXT_COLOR)
+        override fun tooltipTextStyle() = TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), Defaults.FONT_MONOSPACED, LIGHT_TEXT_COLOR)
     }
 
     private const val VARIABLE_NAME = "A"

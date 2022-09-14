@@ -35,6 +35,7 @@ interface LegendTheme {
     fun titleStyle(): TextStyle
     fun titleJustification(): TextJustification
     fun textStyle(): TextStyle
+    fun textWidthScale(): Double
 
     fun showBackground(): Boolean
     fun backgroundColor(): Color

@@ -18,6 +18,7 @@ interface PlotTheme {
     fun titleStyle(): TextStyle
     fun subtitleStyle(): TextStyle
     fun captionStyle(): TextStyle
+    fun textWidthScale(): Double
     fun textColor(): Color
 
     fun titleJustification(): TextJustification

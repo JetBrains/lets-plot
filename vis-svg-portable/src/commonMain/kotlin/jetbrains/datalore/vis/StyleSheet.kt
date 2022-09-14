@@ -22,6 +22,7 @@ class StyleSheet(
                 family = FontFamily.forName(defaultFamily),
                 face = UNDEFINED_FONT_FACE,
                 size = DEFAULT_FONT_SIZE,
+                monospaced = DEFAULT_FONT_MONOSPACED,
                 color = UNDEFINED_FONT_COLOR
             )
     }
@@ -49,6 +50,7 @@ class StyleSheet(
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
         private const val DEFAULT_FONT_SIZE = 15.0
+        private const val DEFAULT_FONT_MONOSPACED = false
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +
@@ -87,12 +89,14 @@ class StyleSheet(
                     val fontStyle = parseProperty(styleProperties, "font-style")
                     val fontSize = parseProperty(styleProperties, "font-size")?.removeSuffix("px")?.toDoubleOrNull()
                         ?: defaultSize
+                    val monospaced = "monospace" in fontFamily
                     val color = parseProperty(styleProperties, "fill")
 
                     classes[className] = TextStyle(
                         family = FontFamily.forName(fontFamily),
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
+                        monospaced = monospaced,
                         color = color?.let(Color::parseHex) ?: Color.BLACK
                     )
                 }

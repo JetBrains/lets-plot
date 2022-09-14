@@ -32,8 +32,12 @@ internal class LiveMapAxisTheme : AxisTheme {
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TITLE_FONT_SIZE.toDouble(),
+        monospaced = Defaults.FONT_MONOSPACED,
         color = Defaults.TEXT_COLOR
     )
+
+    override fun textWidthScale() = Defaults.TEXT_WIDTH_FACTOR
+
     override fun titleJustification() = TextJustification(0.5, 1.0)
 
     override fun titleMargins() = Margins()
@@ -48,6 +52,7 @@ internal class LiveMapAxisTheme : AxisTheme {
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble(),
+        monospaced = Defaults.FONT_MONOSPACED,
         color = Defaults.TEXT_COLOR
     )
 
@@ -67,6 +72,7 @@ internal class LiveMapAxisTheme : AxisTheme {
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),
+        monospaced = Defaults.FONT_MONOSPACED,
         color = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
     )
 }

@@ -6,26 +6,27 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Font
 
-class PlotLabelSpec(fontSize: Double, bold: Boolean = false, monospaced: Boolean = false) :
+class PlotLabelSpec(font: Font, monospaced: Boolean = false, widthScaleFactor: Double = 1.0) :
     LabelSpec {
-    private val myLabelMetrics: LabelMetrics = LabelMetrics(fontSize, bold, monospaced)
+    private val myLabelMetrics: LabelMetrics = LabelMetrics(font, monospaced, widthScaleFactor)
 
-    override val isBold: Boolean
-        get() = myLabelMetrics.isBold
+    override val font: Font
+        get() = myLabelMetrics.font
 
     override val isMonospaced: Boolean
         get() = myLabelMetrics.isMonospaced
 
-    override val fontSize: Double
-        get() = myLabelMetrics.fontSize
+    override val widthScaleFactor: Double
+        get() = myLabelMetrics.widthScaleFactor
 
-    override fun dimensions(labelLength: Int): DoubleVector {
-        return myLabelMetrics.dimensions(labelLength)
+    override fun dimensions(labelText: String): DoubleVector {
+        return myLabelMetrics.dimensions(labelText)
     }
 
-    override fun width(labelLength: Int): Double {
-        return myLabelMetrics.width(labelLength)
+    override fun width(labelText: String): Double {
+        return myLabelMetrics.width(labelText)
     }
 
     override fun height(): Double {
