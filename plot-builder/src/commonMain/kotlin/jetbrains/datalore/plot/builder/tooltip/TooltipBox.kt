@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_SEPARATOR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.ROTATION_ANGLE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_LABEL
@@ -31,11 +32,11 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
-import jetbrains.datalore.vis.svg.SvgCircleElement
 import jetbrains.datalore.vis.svg.SvgGraphicsElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgUtils
 import kotlin.math.max
 import kotlin.math.min
 
@@ -107,13 +108,13 @@ class TooltipBox: SvgComponent() {
 
     fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation, rotate: Boolean=false) {
         // Rotate component
-        val myRotationAngle = if (rotate) 15.0 else 0.0
-        rotate(myRotationAngle)
+        val rotationAngle = if (rotate) ROTATION_ANGLE else 0.0
+        rotate(rotationAngle)
 
         // Pointer point should not be rotated
        val p = pointerCoord
            .subtract(tooltipCoord)
-           .rotate(toRadians(-myRotationAngle))
+           .rotate(toRadians(-rotationAngle))
 
         myPointerBox.update(p, orientation, withPointer = !rotate)
         moveTo(tooltipCoord)
@@ -127,7 +128,7 @@ class TooltipBox: SvgComponent() {
         private val myPointerPath = SvgPathElement()
         internal var pointerDirection: PointerDirection? = null
         private var myBorderRadius = 0.0
-        private val myHighlightPoint = SvgCircleElement(DoubleVector.ZERO, 0.0)
+        private val myHighlightPoint = SvgPathElement()
 
         override fun buildComponent() {
             add(myPointerPath)
@@ -239,16 +240,31 @@ class TooltipBox: SvgComponent() {
                     }
                 }.build()
             )
+            myHighlightPoint.visibility().set(
+                if (withPointer) SvgGraphicsElement.Visibility.HIDDEN else SvgGraphicsElement.Visibility.VISIBLE
+            )
+            if (!withPointer) {
+                val size = 8.0
+                val height = size + 1.0
+                val half = size / 2
 
-            myHighlightPoint.apply {
-                if (!withPointer) {
-                    visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
-                    cx().set(pointerCoord.x)
-                    cy().set(pointerCoord.y)
-                    r().set(3.0)
-                } else {
-                    visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
-                }
+                val ox = pointerCoord.x - half
+                val oy = pointerCoord.y - half
+
+                val xy = listOf(
+                    DoubleVector(half, 0.0),
+                    DoubleVector(size, height),
+                    DoubleVector(0.0, height)
+                ).map { it.add(DoubleVector(ox, oy)) }
+
+                myHighlightPoint.d().set(
+                    SvgPathDataBuilder().apply {
+                        moveTo(xy[0])
+                        xy.forEach(::lineTo)
+                        closePath()
+                    }.build()
+                )
+                SvgUtils.transformRotate(myHighlightPoint, -2*ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
             }
         }
 
