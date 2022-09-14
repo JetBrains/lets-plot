@@ -64,7 +64,7 @@ object TextWidthEstimator {
             font.isBold && font.isItalic -> 0.9172120995070999
             font.isBold && !font.isItalic -> 0.6908238890181602
             !font.isBold && font.isItalic -> 0.1783188620736738
-            else -> -2.1278029435615383e-17
+            else -> 0.0
         }
     }
 
@@ -81,10 +81,5 @@ object TextWidthEstimator {
     fun textWidth(text: String, font: Font): Double {
         if (text.isEmpty()) return 0.0
         return correctPrediction(text.map(this::getCharWidth).sum(), text.length, font)
-    }
-
-    fun textWidthByLength(textLength: Int, font: Font): Double {
-        if (textLength == 0) return 0.0
-        return correctPrediction(textLength * DEFAULT_CHAR_WIDTH, textLength, font)
     }
 }
