@@ -245,16 +245,14 @@ class TooltipBox: SvgComponent() {
             )
             if (!withPointer) {
                 val size = 8.0
-                val height = size + 1.0
                 val half = size / 2
 
                 val ox = pointerCoord.x - half
                 val oy = pointerCoord.y - half
-
                 val xy = listOf(
                     DoubleVector(half, 0.0),
-                    DoubleVector(size, height),
-                    DoubleVector(0.0, height)
+                    DoubleVector(size, size),
+                    DoubleVector(0.0, size)
                 ).map { it.add(DoubleVector(ox, oy)) }
 
                 myHighlightPoint.d().set(
@@ -264,7 +262,7 @@ class TooltipBox: SvgComponent() {
                         closePath()
                     }.build()
                 )
-                SvgUtils.transformRotate(myHighlightPoint, -2*ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
+                SvgUtils.transformRotate(myHighlightPoint, -ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
             }
         }
 

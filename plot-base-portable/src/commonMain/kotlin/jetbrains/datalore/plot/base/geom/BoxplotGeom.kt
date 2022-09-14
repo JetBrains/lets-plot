@@ -52,7 +52,8 @@ class BoxplotGeom : GeomBase() {
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper, isHintRect = true),
             { colorWithAlpha(it) },
-            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
+            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP,
+            hintObjRadius = { aes -> if (ctx.flipped && aes in listOf(Aes.YMAX, Aes.YMIN)) 0.0 else null }
         )
     }
 
