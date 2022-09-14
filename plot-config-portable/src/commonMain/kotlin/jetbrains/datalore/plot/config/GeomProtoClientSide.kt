@@ -188,14 +188,14 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             GeomKind.LABEL -> return GeomProvider.label {
                 withTextOptions(opts, LabelGeom()).also {
                     it as LabelGeom
-                    if (opts.has(Label.PADDING)) {
-                        it.paddingFactor = opts.getDouble(Label.PADDING)!!
+                    if (opts.has(Label.LABEL_PADDING)) {
+                        it.paddingFactor = opts.getDouble(Label.LABEL_PADDING)!!
                     }
-                    if (opts.has(Label.RADIUS)) {
-                        it.radiusFactor = opts.getDouble(Label.RADIUS)!!
+                    if (opts.has(Label.LABEL_R)) {
+                        it.radiusFactor = opts.getDouble(Label.LABEL_R)!!
                     }
-                    if (opts.has(Label.BORDER)) {
-                        it.borderWidth = opts.getDouble(Label.BORDER)!!
+                    if (opts.has(Label.LABEL_SIZE)) {
+                        it.borderWidth = opts.getDouble(Label.LABEL_SIZE)!!
                     }
                 }
             }

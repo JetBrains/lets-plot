@@ -219,9 +219,9 @@ object Option {
         }
 
         object Label {
-            const val PADDING = "padding"
-            const val RADIUS = "radius"
-            const val BORDER = "border"
+            const val LABEL_PADDING = "label_padding"
+            const val LABEL_R = "label_r"
+            const val LABEL_SIZE = "label_size"
         }
 
         object LiveMap {

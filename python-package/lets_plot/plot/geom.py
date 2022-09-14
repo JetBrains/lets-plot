@@ -5108,7 +5108,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                map=None, map_join=None,
                label_format=None,
                na_text=None,
-               padding=None, radius=None, border=None,
+               label_padding=None, label_r=None, label_size=None,
                **other_args):
     """
     Add a text directly to the plot with a rectangle behind the text.
@@ -5155,11 +5155,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         For more info see https://lets-plot.org/pages/formats.html.
     na_text : str, default='n/a'
         Text to show for missing values.
-    padding : float
+    label_padding : float
         Amount of padding around label. Defaults to 0.25 of font size.
-    radius : float
+    label_r : float
         Radius of rounded corners. Defaults to 0.15 of label height.
-    border : float, default = 1.0
+    label_size : float, default = 1.0
         Size of label border.
     other_args
         Other arguments passed on to the layer.
@@ -5237,9 +5237,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  map=map, map_join=map_join,
                  label_format=label_format,
                  na_text=na_text,
-                 padding=padding,
-                 radius=radius,
-                 border=border,
+                 label_padding=label_padding,
+                 label_r=label_r,
+                 label_size=label_size,
                  **other_args)
 
 
