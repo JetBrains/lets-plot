@@ -53,7 +53,7 @@ object TextWidthEstimator {
         return if (clusterId != -1) CLUSTER_WIDTH[clusterId] else DEFAULT_CHAR_WIDTH
     }
 
-    private fun getFamilyCoefficient(font: Font): Double {
+    private fun getFamilyAdditive(font: Font): Double {
         val fontFamily = font.family.toString()
         val defaultFamilyCoefficient = FAMILY_COEFFICIENT[DEFAULT_FAMILY] ?: 0.0
         return FAMILY_COEFFICIENT[fontFamily] ?: defaultFamilyCoefficient
@@ -74,7 +74,7 @@ object TextWidthEstimator {
 
     private fun correctPrediction(predictedWidth: Double, textLength: Int, font: Font): Double {
         return (
-            predictedWidth + textLength * (getFamilyCoefficient(font) + getFaceAdditive(font))
+            predictedWidth + textLength * (getFamilyAdditive(font) + getFaceAdditive(font))
         ) * getSizeCoefficient(font)
     }
 
