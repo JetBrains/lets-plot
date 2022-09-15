@@ -45,6 +45,7 @@ internal class TooltipRenderer(
     private val xAxisTheme: AxisTheme,
     private val yAxisTheme: AxisTheme,
     private val tooltipsTheme: TooltipsTheme,
+    private val plotBackground: Color,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -142,7 +143,8 @@ internal class TooltipRenderer(
                         rotate = spec.layoutHint.kind == ROTATED_TOOLTIP,
                         tooltipMinWidth = spec.minWidth,
                         borderRadius = borderRadius,
-                        markerColors = spec.markerColors.distinct()
+                        markerColors = spec.markerColors.distinct(),
+                        highlightPointStrokeColor = plotBackground
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }

@@ -87,7 +87,8 @@ class TooltipBox: SvgComponent() {
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
-        markerColors: List<Color>
+        markerColors: List<Color>,
+        highlightPointStrokeColor: Color = borderColor
     ) {
         val totalLines = lines.size + if (title != null) 1 else 0
         myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
@@ -103,7 +104,7 @@ class TooltipBox: SvgComponent() {
             markerColors,
             textClassName
         )
-        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, highlightPointStrokeColor)
     }
 
     fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation, rotate: Boolean=false) {
@@ -139,7 +140,8 @@ class TooltipBox: SvgComponent() {
             fillColor: Color,
             borderColor: Color,
             strokeWidth: Double,
-            borderRadius: Double
+            borderRadius: Double,
+            highlightPointStrokeColor: Color
         ) {
             myBorderRadius = borderRadius
 
@@ -150,10 +152,10 @@ class TooltipBox: SvgComponent() {
             }
 
             myHighlightPoint.apply {
-                fillOpacity().set(0.0)
-                strokeWidth().set(1.0)
                 fillColor().set(fillColor)
-                strokeColor().set(borderColor)
+                strokeWidth().set(1.0)
+                val strokeColor = if (fillColor != highlightPointStrokeColor) highlightPointStrokeColor else borderColor
+                strokeColor().set(strokeColor)
             }
         }
 
@@ -245,15 +247,14 @@ class TooltipBox: SvgComponent() {
             )
             if (!withPointer) {
                 val size = 8.0
+                val height = size + 1.0
                 val half = size / 2
 
-                val ox = pointerCoord.x - half
-                val oy = pointerCoord.y - half
                 val xy = listOf(
-                    DoubleVector(half, 0.0),
-                    DoubleVector(size, size),
-                    DoubleVector(0.0, size)
-                ).map { it.add(DoubleVector(ox, oy)) }
+                    DoubleVector(0.0, 0.0),
+                    DoubleVector(half, height),
+                    DoubleVector(-half, height)
+                ).map { it.add(pointerCoord) }
 
                 myHighlightPoint.d().set(
                     SvgPathDataBuilder().apply {
@@ -262,7 +263,7 @@ class TooltipBox: SvgComponent() {
                         closePath()
                     }.build()
                 )
-                SvgUtils.transformRotate(myHighlightPoint, -ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
+                SvgUtils.transformRotate(myHighlightPoint, -2*ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
             }
         }
 
