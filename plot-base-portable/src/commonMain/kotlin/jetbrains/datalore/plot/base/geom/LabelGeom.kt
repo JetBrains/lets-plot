@@ -7,7 +7,9 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -21,6 +23,8 @@ import jetbrains.datalore.vis.svg.SvgUtils
 
 
 class LabelGeom : TextGeom() {
+
+    lateinit var textSizeEstimator: (Font, String) -> DoubleVector
 
     var paddingFactor: Double = 0.25    //  Amount of padding around label
     var radiusFactor: Double = 0.15     //  Radius of rounded corners
@@ -73,7 +77,15 @@ class LabelGeom : TextGeom() {
         fontSize: Double
     ): DoubleRectangle {
         val fontFace = FontFace.fromString(p.fontface())
-        val textSize = textSize(text, fontSize, fontFace)
+        val textSize = textSizeEstimator(
+            Font(
+                family = FontFamily.forName(GeomHelper.fontFamily(p)),
+                size = fontSize.toInt(),
+                isBold = fontFace.bold,
+                isItalic = fontFace.italic
+            ),
+            text
+        )
 
         val width = textSize.x + fontSize * paddingFactor * 2
         val height = textSize.y + fontSize * paddingFactor * 2
@@ -92,20 +104,6 @@ class LabelGeom : TextGeom() {
     }
 
     companion object {
-        private fun textSize(text: String, fontSize: Double, fontFace: FontFace): DoubleVector {
-            // todo size estimation
-            // val textSize = labelSpec.textDimension(text)
-
-            val width = run {
-                val FONT_SIZE_TO_GLYPH_WIDTH_RATIO = 0.67
-                val FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO = 1.075
-                var w = fontSize * text.length * FONT_SIZE_TO_GLYPH_WIDTH_RATIO
-                if (fontFace.bold) w *= FONT_WEIGHT_BOLD_TO_NORMAL_WIDTH_RATIO
-                w
-            }
-            return DoubleVector(width, fontSize)
-        }
-
         private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
             return SvgPathDataBuilder().apply {
                 with(rect) {

@@ -171,6 +171,14 @@ open class GeomHelper(
             Text.VerticalAnchor.CENTER
         )
 
+        fun fontFamily(p: DataPointAesthetics): String {
+            var family = p.family()
+            if (FONT_FAMILY_MAP.containsKey(family)) {   // otherwise - use value as provided by user
+                family = FONT_FAMILY_MAP.get(family)!!
+            }
+            return family
+        }
+
         fun angle(p: DataPointAesthetics): Double {
             var angle = p.angle()!!
             if (angle != 0.0) {
@@ -191,11 +199,7 @@ open class GeomHelper(
             label.setFontSize(fontSize(p, scale))
 
             // family
-            var family = p.family()
-            if (FONT_FAMILY_MAP.containsKey(family)) {   // otherwise - use value as provided by user
-                family = FONT_FAMILY_MAP.get(family)!!
-            }
-            label.setFontFamily(family)
+            label.setFontFamily(fontFamily(p))
 
             // fontface
             // ignore 'plain' / 'normal' as it is default values

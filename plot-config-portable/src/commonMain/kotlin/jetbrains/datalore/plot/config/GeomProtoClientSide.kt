@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
@@ -188,6 +189,10 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             GeomKind.LABEL -> return GeomProvider.label {
                 withTextOptions(opts, LabelGeom()).also {
                     it as LabelGeom
+
+                    it.textSizeEstimator = { font, labelText ->
+                        PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(labelText.length)
+                    }
                     if (opts.has(Label.LABEL_PADDING)) {
                         it.paddingFactor = opts.getDouble(Label.LABEL_PADDING)!!
                     }
