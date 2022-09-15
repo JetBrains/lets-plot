@@ -59,7 +59,7 @@ object TextWidthEstimator {
         return FAMILY_COEFFICIENT[fontFamily] ?: defaultFamilyCoefficient
     }
 
-    private fun getFaceCoefficient(font: Font): Double {
+    private fun getFaceAdditive(font: Font): Double {
         return when {
             font.isBold && font.isItalic -> 0.9172120995070999
             font.isBold && !font.isItalic -> 0.6908238890181602
@@ -74,7 +74,7 @@ object TextWidthEstimator {
 
     private fun correctPrediction(predictedWidth: Double, textLength: Int, font: Font): Double {
         return (
-            predictedWidth + textLength * (getFamilyCoefficient(font) + getFaceCoefficient(font))
+            predictedWidth + textLength * (getFamilyCoefficient(font) + getFaceAdditive(font))
         ) * getSizeCoefficient(font)
     }
 
