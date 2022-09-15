@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.values.Font
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.PlotTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 object PlotLabelSpecFactory {
     const val DISTANCE_TO_LABEL_IN_CHARS = "_"
@@ -30,7 +30,7 @@ object PlotLabelSpecFactory {
 
     fun axisTitle(theme: AxisTheme) = plotLabelSpec(theme.titleStyle())
 
-    private fun plotLabelSpec(textStyle: TextStyle): LabelSpec {
+    private fun plotLabelSpec(textStyle: ThemeTextStyle): LabelSpec {
         return PlotLabelSpec(
             Font(
                 textStyle.family,

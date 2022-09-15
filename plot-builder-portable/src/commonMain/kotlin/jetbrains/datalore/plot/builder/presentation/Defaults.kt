@@ -104,7 +104,7 @@ object Defaults {
         face: FontFace = FontFace.NORMAL,
         size: Double = FONT_MEDIUM,
         color: Color = Color.BLACK
-    ) = TextStyle(family = FONT_FAMILY_NORMAL, face, size, color)
+    ) = TextStyle(family = FONT_FAMILY_NORMAL.name, face, size, color)
 
     internal val DEFAULT_TEXT_STYLES = mapOf(
         Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE, face = FontFace.BOLD),

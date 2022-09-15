@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultLegendTheme(
     options: Map<String, Any>
@@ -50,7 +50,7 @@ internal class DefaultLegendTheme(
         return getValue(ThemeOption.LEGEND_DIRECTION) as LegendDirection
     }
 
-    override fun titleStyle(): TextStyle {
+    override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
@@ -58,7 +58,7 @@ internal class DefaultLegendTheme(
         return getTextJustification(getElemValue(titleKey))
     }
 
-    override fun textStyle(): TextStyle {
+    override fun textStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
     }
 

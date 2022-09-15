@@ -23,7 +23,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultAxisTheme(
     override val axis: String,
@@ -68,7 +68,7 @@ internal class DefaultAxisTheme(
         return !isElemBlank(tooltipKey)
     }
 
-    override fun titleStyle(): TextStyle {
+    override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
@@ -100,7 +100,7 @@ internal class DefaultAxisTheme(
 
     override fun tickLabelMargins() = getMargins(getElemValue(textKey))
 
-    override fun labelStyle(): TextStyle {
+    override fun labelStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
     }
 
@@ -116,7 +116,7 @@ internal class DefaultAxisTheme(
         return getNumber(getElemValue(tooltipKey), Elem.SIZE)
     }
 
-    override fun tooltipTextStyle(): TextStyle {
+    override fun tooltipTextStyle(): ThemeTextStyle {
         val tooltipTextColor = getColor(getElemValue(tooltipTextColorKey), Elem.COLOR)
         val textStyle = getTextStyle(getElemValue(tooltipTextKey))
         return textStyle.copy(color = tooltipTextColor)

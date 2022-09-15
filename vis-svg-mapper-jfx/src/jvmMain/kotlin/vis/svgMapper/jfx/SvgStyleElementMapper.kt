@@ -19,7 +19,7 @@ internal class SvgStyleElementMapper(
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         val styleSheet = StyleSheet.fromCSS(
             css = source.resource.css(),
-            defaultFamily = FontFamily.HELVETICA,
+            defaultFamily = FontFamily.HELVETICA.name,
             defaultSize = 15.0
         )
         peer.applyStyleSheet(styleSheet)

@@ -23,7 +23,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
@@ -39,20 +39,20 @@ object TestUtil {
         override fun showLabels() = TODO("Not yet implemented")
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
-        override fun titleStyle() = TODO("Not yet implemented")
+        override fun titleStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
         override fun titleMargins() = Margins()
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
-        override fun labelStyle() = TODO("Not yet implemented")
+        override fun labelStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
         override fun tickLabelMargins() = Margins()
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
-        override fun tooltipTextStyle() = TextStyle(
+        override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
             Defaults.FONT_FAMILY_NORMAL,
             FontFace.NORMAL,
             Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,

@@ -24,13 +24,13 @@ object DemoModelA {
 
         val textStyles: Map<String, TextStyle> = mapOf(
             "TEXT1" to TextStyle(
-                FontFamily.SERIF,
+                FontFamily.SERIF.name,
                 face = FontFace.ITALIC,
                 size = 15.0,
                 color = Color.BLUE
             ),
             "TEXT2" to TextStyle(
-                FontFamily.SERIF,
+                FontFamily.SERIF.name,
                 face = FontFace.BOLD,
                 size = 20.0,
                 color = Color.RED
@@ -90,7 +90,7 @@ object DemoModelA {
     private fun createStyleElement(textStyles: Map<String, TextStyle>): SvgStyleElement {
         return SvgStyleElement(object : SvgCssResource {
             override fun css(): String {
-                return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF).toCSS()
+                return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF.name).toCSS()
             }
         })
     }

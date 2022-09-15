@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.theme.PlotTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultPlotTheme(
     options: Map<String, Any>
@@ -43,15 +43,15 @@ internal class DefaultPlotTheme(
         return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
 
-    override fun titleStyle(): TextStyle {
+    override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
-    override fun subtitleStyle(): TextStyle {
+    override fun subtitleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(subtitleKey))
     }
 
-    override fun captionStyle(): TextStyle {
+    override fun captionStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(captionKey))
     }
 

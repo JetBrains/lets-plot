@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.theme.TooltipsTheme
-import jetbrains.datalore.vis.TextStyle
 
 internal class DefaultTooltipsTheme(
     options: Map<String, Any>
@@ -30,17 +30,17 @@ internal class DefaultTooltipsTheme(
 
     override fun tooltipStrokeWidth() = getNumber(getElemValue(tooltipKey), Elem.SIZE)
 
-    override fun textStyle(): TextStyle = getTextStyle(getElemValue(textKey))
+    override fun textStyle(): ThemeTextStyle = getTextStyle(getElemValue(textKey))
 
-    override fun titleStyle(): TextStyle {
+    override fun titleStyle(): ThemeTextStyle {
         val titleStyle = getTextStyle(getElemValue(titleTextKey))
         val textFontFace = getFontFace(getElemValue(textKey))
         return titleStyle.copy(face = titleStyle.face + textFontFace)
     }
 
-    override fun labelStyle(): TextStyle {
+    override fun labelStyle(): ThemeTextStyle {
         return with(textStyle()) {
-            TextStyle(family, FontFace.BOLD + face, size, color)
+            ThemeTextStyle(family, FontFace.BOLD + face, size, color)
         }
     }
 }

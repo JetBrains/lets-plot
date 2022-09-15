@@ -12,7 +12,7 @@ import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.TextJustification
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal open class ThemeValuesAccess(
     private val values: Map<String, Any>
@@ -101,8 +101,8 @@ internal open class ThemeValuesAccess(
     }
 
     // element_text(family, face, size, color)
-    protected fun getTextStyle(elem: Map<String, Any>): TextStyle {
-        return TextStyle(
+    protected fun getTextStyle(elem: Map<String, Any>): ThemeTextStyle {
+        return ThemeTextStyle(
             family = getFontFamily(elem),
             face = getFontFace(elem),
             size = getNumber(elem, Elem.SIZE),

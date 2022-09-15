@@ -7,12 +7,11 @@ package jetbrains.datalore.vis
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
 
 
 class StyleSheet constructor(
     private val textStyles: Map<String, TextStyle>,
-    private val defaultFamily: FontFamily
+    private val defaultFamily: String
 ) {
     fun getClasses(): List<String> = textStyles.keys.toList()
 
@@ -71,7 +70,7 @@ class StyleSheet constructor(
         // }
         private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^\{\}]*)\}"""
 
-        fun fromCSS(css: String, defaultFamily: FontFamily, defaultSize: Double): StyleSheet {
+        fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
                 val regex = Regex("$propertyName:(.+);")
                 return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
@@ -83,17 +82,13 @@ class StyleSheet constructor(
                 .forEach { matched ->
                     val (className, styleProperties) = matched.destructured
 
-                    val fontFamilyName = parseProperty(styleProperties, "font-family")
+                    val fontFamily = parseProperty(styleProperties, "font-family") ?: defaultFamily
                     val fontWeight = parseProperty(styleProperties, "font-weight")
                     val fontStyle = parseProperty(styleProperties, "font-style")
                     val fontSize = parseProperty(styleProperties, "font-size")?.removeSuffix("px")?.toDoubleOrNull()
                         ?: defaultSize
-                    val monospaced = fontFamilyName != null && "monospace" in fontFamilyName
-                    val color = parseProperty(styleProperties, "fill")
 
-                    val fontFamily = fontFamilyName?.let {
-                        FontFamily(it, monospaced)
-                    } ?: defaultFamily
+                    val color = parseProperty(styleProperties, "fill")
 
                     classes[className] = TextStyle(
                         family = fontFamily,
