@@ -7,7 +7,8 @@ package jetbrains.datalore.base.values
 
 class FontFamily constructor(
     val name: String,
-    val monospaced: Boolean
+    val monospaced: Boolean,
+    val widthFactor: Double = 1.0
 ) {
 
     /**

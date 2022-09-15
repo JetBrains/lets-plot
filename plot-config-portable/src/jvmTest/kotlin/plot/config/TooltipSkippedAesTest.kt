@@ -193,7 +193,6 @@ class TooltipSkippedAesTest {
             override fun showTitle() = TODO("Not yet implemented")
             override fun showTooltip() = TODO("Not yet implemented")
             override fun titleStyle() = TODO("Not yet implemented")
-            override fun textWidthScale() = TODO("Not yet implemented")
             override fun titleJustification() = TextJustification(0.5, 1.0)
             override fun titleMargins() = Margins()
             override fun lineWidth() = TODO("Not yet implemented")

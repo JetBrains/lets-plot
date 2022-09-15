@@ -32,7 +32,6 @@ object Defaults {
     val X_LIGHT_GRAY = Color.VERY_LIGHT_GRAY.toHexColor()
     const val XX_LIGHT_GRAY = "#e0e0e0"
 
-    const val TEXT_WIDTH_FACTOR = 1.0
     val TEXT_COLOR = Color.parseHex(DARK_GRAY)
 
     const val FONT_LARGE = 16.0

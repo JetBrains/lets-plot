@@ -34,8 +34,6 @@ internal class LiveMapAxisTheme : AxisTheme {
         color = Defaults.TEXT_COLOR
     )
 
-    override fun textWidthScale() = Defaults.TEXT_WIDTH_FACTOR
-
     override fun titleJustification() = TextJustification(0.5, 1.0)
 
     override fun titleMargins() = Margins()

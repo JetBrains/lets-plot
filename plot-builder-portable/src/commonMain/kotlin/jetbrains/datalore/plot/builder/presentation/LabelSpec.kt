@@ -11,10 +11,6 @@ import jetbrains.datalore.base.values.Font
 interface LabelSpec {
     val font: Font
 
-    val isMonospaced: Boolean
-
-    val widthScaleFactor: Double
-
     fun dimensions(labelText: String): DoubleVector
 
     fun width(labelText: String): Double

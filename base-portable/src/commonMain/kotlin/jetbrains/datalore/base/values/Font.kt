@@ -7,7 +7,13 @@ package jetbrains.datalore.base.values
 
 import kotlin.jvm.JvmOverloads
 
-class Font @JvmOverloads constructor(val family: FontFamily, val size: Int, val isBold: Boolean = false, val isItalic: Boolean = false) {
+class Font @JvmOverloads constructor(
+    val family: FontFamily,
+    val size: Int,
+    val isBold: Boolean = false,
+    val isItalic: Boolean = false
+) {
+    val isMonospased: Boolean = family.monospaced
 
     override fun toString(): String {
         return "$family $size ${if (isBold) "bold" else ""} ${if (isItalic) "italic" else ""}"

@@ -6,8 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
@@ -23,6 +21,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.vis.TextStyle
 
@@ -71,10 +70,6 @@ internal class DefaultAxisTheme(
 
     override fun titleStyle(): TextStyle {
         return getTextStyle(getElemValue(titleKey))
-    }
-
-    override fun textWidthScale(): Double {
-        return getNumber(listOf(ThemeOption.TEXT_WIDTH_FACTOR))
     }
 
     override fun titleJustification(): TextJustification {

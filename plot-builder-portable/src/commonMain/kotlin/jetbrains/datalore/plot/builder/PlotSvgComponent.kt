@@ -502,7 +502,7 @@ class PlotSvgComponent constructor(
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
-        labelSpec: PlotLabelSpec,
+        labelSpec: LabelSpec,
         justification: TextJustification,
         margins: Margins,
         className: String
@@ -597,7 +597,7 @@ class PlotSvgComponent constructor(
     private fun textBoundingBox(
         text: String,
         boundRect: DoubleRectangle,
-        labelSpec: PlotLabelSpec,
+        labelSpec: LabelSpec,
         orientation: Orientation = Orientation.TOP,
         align: Int = 0 // < 0 - to left; > 0 - to right; 0 - centered
     ): DoubleRectangle {

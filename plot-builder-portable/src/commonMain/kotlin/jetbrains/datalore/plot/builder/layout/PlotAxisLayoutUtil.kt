@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal object PlotAxisLayoutUtil {
@@ -28,7 +28,7 @@ internal object PlotAxisLayoutUtil {
         return 0.0
     }
 
-    private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: PlotLabelSpec): Double {
+    private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: LabelSpec): Double {
         return if (orientation.isHorizontal)
             tickLabelSpec.height()
         else

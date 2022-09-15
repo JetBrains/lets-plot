@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.max
 import kotlin.math.min
@@ -170,7 +170,7 @@ internal object BreakLabelsLayoutUtil {
         breaks: ScaleBreaks,
         axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?,
-        tickLabelSpec: PlotLabelSpec
+        tickLabelSpec: LabelSpec
     ): DoubleRectangle {
         val maxLabelWidth = longestLabelWidth(breaks.labels) { tickLabelSpec.width(it) }
         var y1 = 0.0

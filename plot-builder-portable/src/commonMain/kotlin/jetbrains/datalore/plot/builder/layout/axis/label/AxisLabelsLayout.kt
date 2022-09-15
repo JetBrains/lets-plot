@@ -8,15 +8,16 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 abstract class AxisLabelsLayout protected constructor(
-    val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+    val orientation: Orientation,
     val axisDomain: DoubleSpan,
-    val labelSpec: PlotLabelSpec,
+    val labelSpec: LabelSpec,
     val theme: AxisTheme
 ) {
 
@@ -57,7 +58,7 @@ abstract class AxisLabelsLayout protected constructor(
         private fun tickLabelSpec(theme: AxisTheme) = PlotLabelSpecFactory.axisTick(theme)
 
         fun horizontalFlexBreaks(
-            orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+            orientation: Orientation,
             axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLabelsLayout {
 
@@ -73,7 +74,7 @@ abstract class AxisLabelsLayout protected constructor(
         }
 
         fun horizontalFixedBreaks(
-            orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+            orientation: Orientation,
             axisDomain: DoubleSpan, breaks: ScaleBreaks, theme: AxisTheme
         ): AxisLabelsLayout {
 
@@ -88,7 +89,7 @@ abstract class AxisLabelsLayout protected constructor(
         }
 
         fun verticalFlexBreaks(
-            orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+            orientation: Orientation,
             axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLabelsLayout {
 
@@ -104,7 +105,7 @@ abstract class AxisLabelsLayout protected constructor(
         }
 
         fun verticalFixedBreaks(
-            orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+            orientation: Orientation,
             axisDomain: DoubleSpan,
             breaks: ScaleBreaks,
             theme: AxisTheme

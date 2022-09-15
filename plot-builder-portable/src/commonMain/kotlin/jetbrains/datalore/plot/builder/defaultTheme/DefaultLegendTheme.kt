@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
@@ -15,6 +14,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.vis.TextStyle
 
@@ -60,10 +60,6 @@ internal class DefaultLegendTheme(
 
     override fun textStyle(): TextStyle {
         return getTextStyle(getElemValue(textKey))
-    }
-
-    override fun textWidthScale(): Double {
-        return getNumber(listOf(ThemeOption.TEXT_WIDTH_FACTOR))
     }
 
     override fun showBackground(): Boolean {
