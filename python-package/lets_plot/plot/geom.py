@@ -947,7 +947,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     Computed variables:
 
     - ..count.. : number of points with x-axis coordinate in the same bin.
-    - ..binwidth..: max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
+    - ..binwidth.. : max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
 
     `geom_dotplot()` understands the following aesthetics mappings:
 
@@ -1835,7 +1835,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specifies appearance, style and content.
     bins : int
         Number of levels.
-    binwidth: float
+    binwidth : float
         Distance between levels.
     other_args
         Other arguments passed on to the layer.
@@ -3071,7 +3071,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
     Computed variables:
 
     - ..count.. : number of points with y-axis coordinate in the same bin.
-    - ..binwidth..: max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
+    - ..binwidth.. : max width of each bin if method is 'dotdensity'; width of each bin if method is 'histodot'.
 
     `geom_ydotplot()` understands the following aesthetics mappings:
 
@@ -3971,8 +3971,10 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         Specifies appearance, style and content.
     width : float, default=0.4
         Amount of horizontal variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
+        Typically ranges between 0 and 0.5. Values that are greater than 0.5 lead to overlapping of the points.
     height : float, default=0.4
         Amount of vertical variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
+        Typically ranges between 0 and 0.5. Values that are greater than 0.5 lead to overlapping of the points.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
