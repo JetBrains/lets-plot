@@ -191,7 +191,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     it as LabelGeom
 
                     it.textSizeEstimator = { font, labelText ->
-                        PlotLabelSpec(font.size.toDouble(), font.isBold).dimensions(labelText.length)
+                        PlotLabelSpec(font).dimensions(labelText)
                     }
                     if (opts.has(Label.LABEL_PADDING)) {
                         it.paddingFactor = opts.getDouble(Label.LABEL_PADDING)!!

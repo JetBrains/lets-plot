@@ -77,9 +77,11 @@ class LabelGeom : TextGeom() {
         fontSize: Double
     ): DoubleRectangle {
         val fontFace = FontFace.fromString(p.fontface())
+        val fontFamily = GeomHelper.fontFamily(p)
+
         val textSize = textSizeEstimator(
             Font(
-                family = FontFamily.forName(GeomHelper.fontFamily(p)),
+                family = FontFamily(fontFamily, monospaced = fontFamily == "monospace"),
                 size = fontSize.toInt(),
                 isBold = fontFace.bold,
                 isItalic = fontFace.italic
