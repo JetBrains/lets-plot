@@ -797,7 +797,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     Computed variables:
 
     - ..count.. : number of points with x-axis coordinate in the same bin.
-    - ..binwidth..: width of each bin.
+    - ..binwidth.. : width of each bin.
 
     `geom_histogram()` understands the following aesthetics mappings:
 
@@ -1209,8 +1209,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
-    - width : width of a tile.
-    - height : height of a tile.
+    - width : width of a tile. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
+    - height : height of a tile. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1406,7 +1406,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - alpha : transparency level of a layer. Understands numbers between 0 and 1.
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines bar line width.
-    - width : width of a bar.
+    - width : width of a bar. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1521,7 +1521,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
-    - width : width of a bar.
+    - width : width of a bar. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1952,7 +1952,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Specifies appearance, style and content.
     bins : int
         Number of levels.
-    binwidth: float
+    binwidth : float
         Distance between levels.
     other_args
         Other arguments passed on to the layer.
@@ -2723,7 +2723,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - fill : color of geometry filling.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-    - width : width of boxplot [0..1].
+    - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
 
     Examples
     --------
