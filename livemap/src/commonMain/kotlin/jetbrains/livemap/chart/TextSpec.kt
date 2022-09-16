@@ -25,7 +25,8 @@ class TextSpec(
     degreeAngle: Double,
     hjust: Double,
     vjust: Double,
-    textMeasurer: TextMeasurer
+    textMeasurer: TextMeasurer,
+    val drawBorder: Boolean
 ) {
     val font = Context2d.Font(
         fontStyle = fontface.extractFontStyle(),

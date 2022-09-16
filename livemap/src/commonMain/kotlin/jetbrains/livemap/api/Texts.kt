@@ -46,12 +46,6 @@ fun Texts.text(block: TextBuilder.() -> Unit) {
         .build(textMeasurer)
 }
 
-fun Texts.label(block: TextBuilder.() -> Unit) {
-    TextBuilder(factory)
-        .apply(block)
-        .build(textMeasurer)
-}
-
 @LiveMapDsl
 class TextBuilder(
     private val myFactory: MapEntityFactory
@@ -62,6 +56,8 @@ class TextBuilder(
     var fillColor: Color = Color.TRANSPARENT
     var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
+
+    var drawBorder: Boolean = false
 
     var label: String = ""
     var size: Double = 10.0
@@ -109,7 +105,8 @@ class TextBuilder(
             angle,
             hjust,
             vjust,
-            textMeasurer
+            textMeasurer,
+            drawBorder
         )
     }
 }

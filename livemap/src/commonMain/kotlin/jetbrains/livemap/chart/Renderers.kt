@@ -240,15 +240,18 @@ object Renderers {
             ctx.save()
             ctx.rotate(textSpec.angle)
 
-            val fillColor = chartElementComponent.fillColor
-            if (fillColor != null && fillColor != Color.TRANSPARENT) {
+            if (textSpec.drawBorder) {
                 val rect = DoubleRectangle(
                     textSpec.alignment.x,
                     textSpec.alignment.y - textSpec.textSize.y,
                     textSpec.textSize.x,
                     textSpec.textSize.y
                 )
-                ctx.setFillStyle(changeAlphaWithMin(fillColor, chartElementComponent.scalingAlphaValue))
+                if (chartElementComponent.fillColor != null) {
+                    ctx.setFillStyle(
+                        changeAlphaWithMin(chartElementComponent.fillColor!!, chartElementComponent.scalingAlphaValue)
+                    )
+                }
                 ctx.setStrokeStyle(chartElementComponent.strokeColor)
                 ctx.fillRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
                 ctx.strokeRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
