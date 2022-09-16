@@ -122,7 +122,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     - x : x-axis value, i.e. longitude in this context.
     - y : y-axis value, i.e. latitude in this context.
-    - alpha : transparency level of the point. Understands numbers between 0 and 1.
+    - alpha : transparency level of the point. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : radius for point, pie chart.
