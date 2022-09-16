@@ -19,7 +19,6 @@ import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
 import jetbrains.datalore.vis.svg.SvgUtils
-import kotlin.math.min
 
 
 class LabelGeom : TextGeom() {
@@ -105,7 +104,7 @@ class LabelGeom : TextGeom() {
             return SvgPathDataBuilder().apply {
                 with(rect) {
                     // Ensure normal radius
-                    val r = min(radius, min(width / 2, height / 2))
+                    val r = minOf(radius, width / 2, height / 2)
 
                     moveTo(right - r, bottom)
                     curveTo(
