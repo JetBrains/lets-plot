@@ -6,44 +6,46 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
-import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL_LICIDA
-import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL_SERIF
 
 class DefaultFontFamilyRegistry constructor(
     private val defaultWidthFactor: Double = 1.0
 ) : FontFamilyRegistry {
 
-    private val defaultMonospaced = false
     private val familyByName: MutableMap<String, FontFamily> = HashMap()
 
     init {
-        // init defaults
-        put(FONT_FAMILY_NORMAL_LICIDA)
-        put(FONT_FAMILY_NORMAL_SERIF)
-        put(FONT_FAMILY_NORMAL)
-
-        // ToDo: add few more monospaced fonts
         put("monospace", isMonospased = true)
+
+        // Monospaced fonts from https://en.wikipedia.org/wiki/List_of_monospaced_typefaces
+        put("Courier", isMonospased = true)
+        put("Consolas", isMonospased = true)
+        put("Fixed", isMonospased = true)
+        put("Fixedsys", isMonospased = true)
+        put("FreeMono", isMonospased = true)
+        put("Lucida Console", isMonospased = true)
+        put("Monaco", isMonospased = true)
+        put("Monofur", isMonospased = true)
+        put("OCR-A", isMonospased = true)
+        put("OCR-B", isMonospased = true)
+        put("Source Code Pro", isMonospased = true)
     }
 
     override fun get(name: String): FontFamily {
         val key = name.trim().lowercase()
-        return familyByName.getOrPut(key) { family(name, defaultMonospaced) }
+        return familyByName.getOrPut(key) { guessFamily(name) }
     }
 
-    fun put(name: String, isMonospased: Boolean? = null, widthFactor: Double? = null): FontFamily {
+    fun put(name: String, isMonospased: Boolean? = null, widthFactor: Double? = null) {
         val key = name.trim().lowercase()
         val wasFamily = familyByName[key]
 
-        val nowMonospaced = isMonospased ?: wasFamily?.monospaced ?: defaultMonospaced
+        val nowMonospaced = isMonospased ?: wasFamily?.monospaced ?: false
         val nowWidthFactor = widthFactor ?: wasFamily?.widthFactor ?: defaultWidthFactor
-        val nowFamily = FontFamily(name, nowMonospaced, nowWidthFactor)
-        familyByName[key] = nowFamily
-        return nowFamily
+        familyByName[key] = FontFamily(name, nowMonospaced, nowWidthFactor)
     }
 
-    private fun family(name: String, monospaced: Boolean): FontFamily {
+    private fun guessFamily(name: String): FontFamily {
+        val monospaced = name.trim().lowercase().endsWith(" mono")
         return FontFamily(name, monospaced, defaultWidthFactor)
     }
 }

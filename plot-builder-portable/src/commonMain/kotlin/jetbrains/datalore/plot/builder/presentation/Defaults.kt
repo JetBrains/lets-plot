@@ -37,11 +37,9 @@ object Defaults {
     const val FONT_MEDIUM = 15.0
     const val FONT_SMALL = 13.0
 
-    const val FONT_FAMILY_NORMAL_LICIDA = "\"Lucida Grande\""
-    const val FONT_FAMILY_NORMAL_SERIF = "sans-serif"
-
     // Note, we don't really support fallback families names in family name (see vis.svgMapper.jfx.SvgTextElementMapper)
-    const val FONT_FAMILY_NORMAL = "$FONT_FAMILY_NORMAL_LICIDA, $FONT_FAMILY_NORMAL_SERIF"
+    // ToDo: should work without quotes.
+    const val FONT_FAMILY_NORMAL = "\"Lucida Grande\", sans-serif"
 
     class Common {
         object Title {
