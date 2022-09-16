@@ -6,12 +6,16 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
@@ -20,6 +24,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
     private var aesBounds: DoubleRectangle? = null
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    private var fontFamilyRegistry: FontFamilyRegistry? = null
 
     constructor()
 
@@ -56,6 +61,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun fontFamilyRegistry(v: FontFamilyRegistry): ImmutableGeomContext.Builder {
+        fontFamilyRegistry = v
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -68,6 +78,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
+
+        private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 
         override fun getResolution(aes: Aes<Double>): Double {
             var resolution = 0.0
@@ -83,6 +95,27 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override fun isMappedAes(aes: Aes<*>): Boolean {
             return aestheticMappers?.containsKey(aes) ?: false
+        }
+
+        override fun estimateTextSize(
+            text: String,
+            family: String,
+            size: Double,
+            isBold: Boolean,
+            isItalic: Boolean
+        ): DoubleVector {
+            val registry = fontFamilyRegistry
+            check(registry != null) { "Font-family registry is not specified." }
+            @Suppress("NAME_SHADOWING")
+            val family = registry.get(family)
+            return PlotLabelSpec(
+                Font(
+                    family = family,
+                    size = size.toInt(),
+                    isBold = isBold,
+                    isItalic = isItalic
+                ),
+            ).dimensions(text)
         }
 
         override fun getAesBounds(): DoubleRectangle {

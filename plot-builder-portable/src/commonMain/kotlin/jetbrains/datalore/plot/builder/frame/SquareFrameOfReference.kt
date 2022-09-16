@@ -266,9 +266,7 @@ internal class SquareFrameOfReference(
             flippedAxis: Boolean,
             targetCollector: GeomTargetCollector
         ): SvgComponent {
-            val rendererData = LayerRendererUtil.createLayerRendererData(
-                layer
-            )
+            val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
             @Suppress("NAME_SHADOWING")
             // val flippedAxis = layer.isYOrientation xor flippedAxis
@@ -303,6 +301,7 @@ internal class SquareFrameOfReference(
                 .aestheticMappers(aestheticMappers)
                 .aesBounds(xyAesBounds)
                 .geomTargetCollector(targetCollector)
+                .fontFamilyRegistry(layer.fontFamilyRegistry)
                 .build()
 
             val pos = rendererData.pos

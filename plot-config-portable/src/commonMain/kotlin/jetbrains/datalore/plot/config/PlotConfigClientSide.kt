@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.GUIDES
@@ -28,7 +29,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         isClientSide = true
     ) {
 
-    internal val theme: Theme = ThemeConfig(getMap(THEME)).theme
+    internal val fontFamilyRegistry: FontFamilyRegistry
+    internal val theme: Theme
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
@@ -36,6 +38,9 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
     val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
 
     init {
+        // ToDo: configure the registry
+        fontFamilyRegistry = FontFamilyRegistry(1.0)
+        theme = ThemeConfig(getMap(THEME), fontFamilyRegistry).theme
 
         val mappersByAes = PlotConfigScaleMappers.createMappers(
             layerConfigs,

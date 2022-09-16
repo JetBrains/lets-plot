@@ -7,10 +7,9 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.Text
@@ -23,9 +22,6 @@ import jetbrains.datalore.vis.svg.SvgUtils
 
 class LabelGeom : TextGeom() {
 
-    lateinit var textSizeEstimator: (Font, String) -> DoubleVector
-    lateinit var fontFamilyByName: (String) -> FontFamily
-
     var paddingFactor: Double = 0.25    //  Amount of padding around label
     var radiusFactor: Double = 0.15     //  Radius of rounded corners
     var borderWidth: Double = 1.0       //  Size of label border
@@ -35,10 +31,11 @@ class LabelGeom : TextGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        sizeUnitRatio: Double
+        sizeUnitRatio: Double,
+        ctx: GeomContext
     ) {
         // background rectangle
-        val rectangle = rectangleForText(p, location, text, sizeUnitRatio)
+        val rectangle = rectangleForText(p, location, text, sizeUnitRatio, ctx)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -69,20 +66,19 @@ class LabelGeom : TextGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        sizeUnitRatio: Double
+        sizeUnitRatio: Double,
+        ctx: GeomContext
     ): DoubleRectangle {
         val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
         val fontFace = FontFace.fromString(p.fontface())
+        val fontFamily = GeomHelper.fontFamily(p)
 
-        val textSize = textSizeEstimator(
-            Font(
-                family = fontFamilyByName(GeomHelper.fontFamily(p)),
-                size = fontSize.toInt(),
-                isBold = fontFace.bold,
-                isItalic = fontFace.italic
-            ),
-            text
+        val textSize = ctx.estimateTextSize(
+            text, fontFamily, fontSize,
+            isBold = fontFace.bold,
+            isItalic = fontFace.italic
         )
+
         val width = textSize.x + fontSize * paddingFactor * 2
         val height = textSize.y + fontSize * paddingFactor * 2
 

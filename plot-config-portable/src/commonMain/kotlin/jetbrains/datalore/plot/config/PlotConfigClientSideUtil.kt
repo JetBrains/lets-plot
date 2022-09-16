@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -124,7 +125,7 @@ object PlotConfigClientSideUtil {
                         )
                     }
 
-                    layerBuilders.add(createLayerBuilder(layerConfig, geomInteraction))
+                    layerBuilders.add(createLayerBuilder(layerConfig, plotConfig.fontFamilyRegistry, geomInteraction))
                 }
 
                 val layer = layerBuilders[layerIndex].build(
@@ -163,6 +164,7 @@ object PlotConfigClientSideUtil {
 
     private fun createLayerBuilder(
         layerConfig: LayerConfig,
+        fontFamilyRegistry: FontFamilyRegistry,
         geomInteraction: GeomInteraction?
     ): GeomLayerBuilder {
         val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
@@ -172,6 +174,7 @@ object PlotConfigClientSideUtil {
             geomProvider = geomProvider,
             stat = stat,
             posProvider = layerConfig.posProvider,
+            fontFamilyRegistry = fontFamilyRegistry
         )
             .yOrientation(layerConfig.isYOrientation)
             .marginal(layerConfig.isMarginal, layerConfig.marginalSide, layerConfig.marginalSize)

@@ -16,7 +16,8 @@ import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.getString
 
 class ThemeConfig constructor(
-    themeSettings: Map<String, Any> = emptyMap()
+    themeSettings: Map<String, Any> = emptyMap(),
+    fontFamilyRegistry: FontFamilyRegistry
 ) {
 
     val theme: Theme
@@ -42,10 +43,7 @@ class ThemeConfig constructor(
             }
         }
 
-        // Tmp: just a default registry.
-        val familyRegistry = FontFamilyRegistry(1.0)
-
-        theme = DefaultTheme(effectiveOptions, familyRegistry)
+        theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
     }
 
     companion object {

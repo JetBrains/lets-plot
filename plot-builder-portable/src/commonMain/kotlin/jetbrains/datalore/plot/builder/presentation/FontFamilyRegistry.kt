@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL_LICIDA
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL_SERIF
 
-class FontFamilyRegistry(private val defaultWidthFactor: Double = 1.0) {
+class FontFamilyRegistry constructor(private val defaultWidthFactor: Double = 1.0) {
     private val defaultMonospaced = false
     private val familyByName: MutableMap<String, FontFamily> = HashMap()
 
