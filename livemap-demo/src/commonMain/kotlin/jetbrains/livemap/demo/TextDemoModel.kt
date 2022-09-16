@@ -18,8 +18,8 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
 
         return basicLiveMap {
             layers {
-                texts(getTexts(coord1, isLabel = false))
-                texts(getTexts(coord2, isLabel = true))
+                texts(getTexts(coord1, withBorder = false))
+                texts(getTexts(coord2, withBorder = true))
                 points(getPoint(coord1))
                 points(getPoint(coord2))
             }
@@ -35,72 +35,72 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         }
     }
 
-    private fun getTexts(coord: LonLatPoint, isLabel: Boolean): Texts.() -> Unit = {
+    private fun getTexts(coord: LonLatPoint, withBorder: Boolean): Texts.() -> Unit = {
         text {
             label = "--------0-->"
             point = coord
             Color.GREEN.let {
-                if (isLabel) fillColor = it else strokeColor = it
+                if (withBorder) fillColor = it else strokeColor = it
             }
             size = 25.0
             angle = 0.0
             vjust = 0.5
-            drawBorder = isLabel
+            drawBorder = withBorder
         }
         text {
             label = "------180-->"
             point = coord
             Color.BLUE.let {
-                if (isLabel) fillColor = it else strokeColor = it
+                if (withBorder) fillColor = it else strokeColor = it
             }
             size = 25.0
             angle = 180.0
             vjust = 0.5
-            drawBorder = isLabel
+            drawBorder = withBorder
         }
         text {
             label = "-------60-->"
             point = coord
             Color.PINK.let {
-                if (isLabel) fillColor = it else strokeColor = it
+                if (withBorder) fillColor = it else strokeColor = it
             }
             size = 25.0
             angle = 60.0
             vjust = 0.5
-            drawBorder = isLabel
+            drawBorder = withBorder
         }
         text {
             label = "------300-->"
             point = coord
             Color.RED.let {
-                if (isLabel) fillColor = it else strokeColor = it
+                if (withBorder) fillColor = it else strokeColor = it
             }
             size = 25.0
             angle = -60.0
             vjust = 0.5
-            drawBorder = isLabel
+            drawBorder = withBorder
         }
         text {
             label = "------120-->"
             point = coord
             Color.CYAN.let {
-                if (isLabel) fillColor = it else strokeColor = it
+                if (withBorder) fillColor = it else strokeColor = it
             }
             size = 25.0
             angle = 120.0
             vjust = 0.5
-            drawBorder = isLabel
+            drawBorder = withBorder
         }
         text {
             label = "------210-->"
             point = coord
             Color.DARK_MAGENTA.let {
-                if (isLabel) fillColor = it else strokeColor = it
+                if (withBorder) fillColor = it else strokeColor = it
             }
             size = 25.0
             angle = -120.0
             vjust = 0.5
-            drawBorder = isLabel
+            drawBorder = withBorder
         }
     }
 }
