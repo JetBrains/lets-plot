@@ -6,12 +6,13 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.*
 
 class DefaultTheme(
     private val options: Map<String, Any>,
-    fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistry()
+    fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry()
 ) : Theme {
 
     private val axisX = DefaultAxisTheme("x", options, fontFamilyRegistry)

@@ -31,6 +31,7 @@ import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
@@ -314,7 +315,7 @@ class GeomLayerBuilder(
             stat: Stat,
             posProvider: PosProvider = PosProvider.wrap(PositionAdjustments.identity()),
         ): GeomLayerBuilder {
-            val builder = GeomLayerBuilder(geomProvider, stat, posProvider, FontFamilyRegistry())
+            val builder = GeomLayerBuilder(geomProvider, stat, posProvider, DefaultFontFamilyRegistry())
             builder.myDataPreprocessor = { data, transformByAes ->
                 val transformedData = DataProcessing.transformOriginals(data, builder.myBindings, transformByAes)
                 when (builder.stat) {

@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
-import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
 /**
@@ -43,7 +43,7 @@ class EmptyGeomContext : GeomContext {
         isItalic: Boolean
     ): DoubleVector {
         @Suppress("NAME_SHADOWING")
-        val family = FontFamilyRegistry().get(family)
+        val family = DefaultFontFamilyRegistry().get(family)
         return PlotLabelSpec(
             Font(
                 family = family,
