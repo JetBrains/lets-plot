@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
@@ -190,9 +191,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 withTextOptions(opts, LabelGeom()).also {
                     it as LabelGeom
 
-                    it.textSizeEstimator = { font, labelText ->
-                        PlotLabelSpec(font).dimensions(labelText)
-                    }
+                    it.textSizeEstimator = { font, labelText -> PlotLabelSpec(font).dimensions(labelText) }
+                    it.fontFamilyByName = { name -> FontFamilyRegistry().get(name) }
+
                     if (opts.has(Label.LABEL_PADDING)) {
                         it.paddingFactor = opts.getDouble(Label.LABEL_PADDING)!!
                     }
@@ -267,23 +268,12 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
         private fun withTextOptions(opts: OptionsAccessor, geom: TextGeom): TextGeom {
             if (opts.has(Text.LABEL_FORMAT)) {
-                val labelFormat = opts[Text.LABEL_FORMAT] as? String
-
-                if (labelFormat != null) {
-                    geom.formatter = StringFormat.forOneArg(labelFormat)::format
-                } else {
-                    throw IllegalArgumentException("Expected: label_format = 'format string'")
-                }
+                val labelFormat = opts.getString(Text.LABEL_FORMAT)!!
+                geom.formatter = StringFormat.forOneArg(labelFormat)::format
             }
-
             if (opts.has(Text.NA_TEXT)) {
-                val naValue = opts[Text.NA_TEXT] as? String
-
-                if (naValue != null) {
-                    geom.naValue = naValue
-                } else {
-                    throw IllegalArgumentException("Expected: na_value = 'some string'")
-                }
+                val naValue = opts.getString(Text.NA_TEXT)!!
+                geom.naValue = naValue
             }
 
             geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()

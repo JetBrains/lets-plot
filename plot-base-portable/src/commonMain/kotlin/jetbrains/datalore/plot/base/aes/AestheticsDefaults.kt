@@ -250,6 +250,7 @@ open class AestheticsDefaults {
             return base()
                 .update(Aes.SIZE, 7.0)
                 .update(Aes.COLOR, Color.parseHex("#3d3d3d")) // dark gray
+                .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
         fun label(): AestheticsDefaults {

@@ -12,7 +12,6 @@ import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -20,18 +19,17 @@ import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
 import jetbrains.datalore.vis.svg.SvgUtils
+import kotlin.math.min
 
 
 class LabelGeom : TextGeom() {
 
     lateinit var textSizeEstimator: (Font, String) -> DoubleVector
+    lateinit var fontFamilyByName: (String) -> FontFamily
 
     var paddingFactor: Double = 0.25    //  Amount of padding around label
     var radiusFactor: Double = 0.15     //  Radius of rounded corners
     var borderWidth: Double = 1.0       //  Size of label border
-
-    override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = TextLegendKeyElementFactory(withBackgroundRect = true)
 
     override fun buildTextComponent(
         root: SvgRoot,
@@ -40,10 +38,8 @@ class LabelGeom : TextGeom() {
         text: String,
         sizeUnitRatio: Double
     ) {
-        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-
         // background rectangle
-        val rectangle = rectangleForText(p, location, text, fontSize)
+        val rectangle = rectangleForText(p, location, text, sizeUnitRatio)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -74,21 +70,20 @@ class LabelGeom : TextGeom() {
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
-        fontSize: Double
+        sizeUnitRatio: Double
     ): DoubleRectangle {
+        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
         val fontFace = FontFace.fromString(p.fontface())
-        val fontFamily = GeomHelper.fontFamily(p)
 
         val textSize = textSizeEstimator(
             Font(
-                family = FontFamily(fontFamily, monospaced = fontFamily == "monospace"),
+                family = fontFamilyByName(GeomHelper.fontFamily(p)),
                 size = fontSize.toInt(),
                 isBold = fontFace.bold,
                 isItalic = fontFace.italic
             ),
             text
         )
-
         val width = textSize.x + fontSize * paddingFactor * 2
         val height = textSize.y + fontSize * paddingFactor * 2
 
@@ -110,7 +105,7 @@ class LabelGeom : TextGeom() {
             return SvgPathDataBuilder().apply {
                 with(rect) {
                     // Ensure normal radius
-                    val r = listOf(radius, width / 2, height / 2).minOrNull()!!
+                    val r = min(radius, min(width / 2, height / 2))
 
                     moveTo(right - r, bottom)
                     curveTo(
