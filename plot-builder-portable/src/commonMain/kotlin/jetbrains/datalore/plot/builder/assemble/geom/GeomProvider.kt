@@ -237,12 +237,13 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
-        fun arearidges(): GeomProvider {
+        fun arearidges(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.AREA_RIDGES,
                 AestheticsDefaults.areaRidges(),
-                AreaRidgesGeom.HANDLES_GROUPS
-            ) { AreaRidgesGeom() }.build()
+                AreaRidgesGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
         }
 
         fun violin(supplier: () -> Geom): GeomProvider {

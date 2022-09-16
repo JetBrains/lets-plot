@@ -34,8 +34,7 @@ class AreaRidges {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'area_ridges'," +
-                "                 'color': 'white'" +
+                "                 'geom': 'area_ridges'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -47,10 +46,10 @@ class AreaRidges {
     private fun withGroups(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [0, 1, 2, 3, 0, 1, 2, 3]," +
-                "             'y': [0, 0, 0, 0, 1, 1, 1, 1]," +
-                "             'rh': [0.2, 0.4, 0.3, 0.1, 0.2, 0.4, 0.3, 0.1]," +
-                "             'g': ['A', 'A', 'B', 'B', 'C', 'C', 'A', 'A']" +
+                "   'data' : {'x': [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]," +
+                "             'y': [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2]," +
+                "             'rh': [0.2, 0.4, 0.2, 0.1, 0.1, 0.2, 0.3, 0.2, 0.2, 0.2, 0.3, 0.1]," +
+                "             'g': ['A', 'A', 'B', 'B', 'C', 'C', 'A', 'A', 'B', 'B', 'C', 'C']" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
@@ -93,6 +92,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
+                "                 'scale': 2," +
                 "                 'color': 'white'" +
                 "               }" +
                 "             ]," +

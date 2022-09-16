@@ -13,6 +13,8 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 class AreaRidgesGeom : GeomBase() {
+    var scale: Double = DEF_SCALE
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -78,7 +80,7 @@ class AreaRidgesGeom : GeomBase() {
     private fun toLocationBound(maxRidgeHeight: Double): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
             val x = p.x()!!
-            val y = p.y()!! + p.height()!! * p.ridgeheight()!! / maxRidgeHeight
+            val y = p.y()!! + scale * p.height()!! * p.ridgeheight()!! / maxRidgeHeight
             return DoubleVector(x, y)
         }
     }
@@ -116,6 +118,8 @@ class AreaRidgesGeom : GeomBase() {
     }
 
     companion object {
+        const val DEF_SCALE = 1.0
+
         private const val MIN_HEIGHT = 0.0
 
         const val HANDLES_GROUPS = true

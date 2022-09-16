@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
+import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
@@ -107,6 +108,14 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 geom.outlierShape = opts.getShape(BoxplotOutlier.SHAPE)
                 geom.outlierSize = opts.getDouble(BoxplotOutlier.SIZE)
+                geom
+            }
+
+            GeomKind.AREA_RIDGES -> return GeomProvider.arearidges {
+                val geom = AreaRidgesGeom()
+                if (opts.hasOwn(AreaRidges.SCALE)) {
+                    geom.scale = opts.getDoubleDef(AreaRidges.SCALE, AreaRidgesGeom.DEF_SCALE)
+                }
                 geom
             }
 
@@ -251,7 +260,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
-            PROVIDER[GeomKind.AREA_RIDGES] = GeomProvider.arearidges()
+            // area ridges - special case
             // violin - special case
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()

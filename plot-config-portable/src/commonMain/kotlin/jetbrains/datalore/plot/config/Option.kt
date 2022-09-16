@@ -173,6 +173,10 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
+        object AreaRidges {
+            const val SCALE = "scale"
+        }
+
         object Violin {
             const val DRAW_QUANTILES = "draw_quantiles"
             const val SHOW_HALF = "show_half"
