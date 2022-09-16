@@ -91,6 +91,8 @@ object Defaults {
             const val AXIS_TOOLTIP_FONT_SIZE = Axis.TICK_FONT_SIZE
             val AXIS_TOOLTIP_COLOR = Axis.LINE_COLOR
             const val AXIS_RADIUS = 1.5 // fix a tooltip border overlapping an axis
+
+            const val ROTATION_ANGLE = 15.0
         }
     }
 

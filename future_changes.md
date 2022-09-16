@@ -41,6 +41,11 @@
 
 ### Changed
 
+- New tooltip style after applying `coord_flip()`  [[#580 The tooltip not rotate after we apply coord_flip().](https://github.com/JetBrains/lets-plot/issues/580)].
+  
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/tooltips_after_coord_flip.ipynb).
+
+
 ### Fixed
 
 - Allow to import all 'bistro' functions just by '*' [[#551](https://github.com/JetBrains/lets-plot/issues/551)].

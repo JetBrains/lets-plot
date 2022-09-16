@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
@@ -23,6 +24,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LINE_SEPARATOR_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.ROTATION_ANGLE
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_LABEL
@@ -30,9 +32,11 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
+import jetbrains.datalore.vis.svg.SvgGraphicsElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
+import jetbrains.datalore.vis.svg.SvgUtils
 import kotlin.math.max
 import kotlin.math.min
 
@@ -83,7 +87,8 @@ class TooltipBox: SvgComponent() {
         rotate: Boolean,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
-        markerColors: List<Color>
+        markerColors: List<Color>,
+        pointMarkerStrokeColor: Color = borderColor
     ) {
         val totalLines = lines.size + if (title != null) 1 else 0
         myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
@@ -99,12 +104,25 @@ class TooltipBox: SvgComponent() {
             markerColors,
             textClassName
         )
-        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, pointMarkerStrokeColor)
     }
 
-    fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation) {
-        myPointerBox.update(pointerCoord.subtract(tooltipCoord), orientation)
-        moveTo(tooltipCoord.x, tooltipCoord.y)
+    fun setPosition(
+        tooltipCoord: DoubleVector,
+        pointerCoord: DoubleVector,
+        orientation: Orientation,
+        rotate: Boolean = false
+    ) {
+        // Rotate component
+        val rotationAngle = if (rotate) ROTATION_ANGLE else 0.0
+        rotate(rotationAngle)
+
+       val p = pointerCoord
+           .subtract(tooltipCoord)
+           .rotate(toRadians(-rotationAngle))   // cancel rotation for pointer point coordinates
+
+        myPointerBox.update(p, orientation, usePointMarker = rotate)
+        moveTo(tooltipCoord)
 
         if (DEBUG_DRAWING) {
             myContentBox.drawDebugRect()
@@ -115,16 +133,19 @@ class TooltipBox: SvgComponent() {
         private val myPointerPath = SvgPathElement()
         internal var pointerDirection: PointerDirection? = null
         private var myBorderRadius = 0.0
+        private val myHighlightPoint = SvgPathElement()
 
         override fun buildComponent() {
             add(myPointerPath)
+            add(myHighlightPoint)
         }
 
         internal fun updateStyle(
             fillColor: Color,
             borderColor: Color,
             strokeWidth: Double,
-            borderRadius: Double
+            borderRadius: Double,
+            pointMarkerStrokeColor: Color
         ) {
             myBorderRadius = borderRadius
 
@@ -133,10 +154,17 @@ class TooltipBox: SvgComponent() {
                 strokeWidth().set(strokeWidth)
                 fillColor().set(fillColor)
             }
+
+            myHighlightPoint.apply {
+                val fill = if (fillColor == pointMarkerStrokeColor) borderColor else fillColor
+                fillColor().set(fill)
+                strokeWidth().set(1.0)
+                strokeColor().set(pointMarkerStrokeColor)
+            }
         }
 
-        internal fun update(pointerCoord: DoubleVector, orientation: Orientation) {
-            pointerDirection = when (orientation) {
+        internal fun update(pointerCoord: DoubleVector, orientation: Orientation, usePointMarker: Boolean) {
+            pointerDirection = if (usePointMarker) null else when (orientation) {
                 HORIZONTAL -> when {
                     pointerCoord.x < contentRect.left -> LEFT
                     pointerCoord.x > contentRect.right -> RIGHT
@@ -218,11 +246,26 @@ class TooltipBox: SvgComponent() {
                     }
                 }.build()
             )
+
+            if (usePointMarker) {
+                myHighlightPoint.d().set(trianglePointer(pointerCoord).build())
+                SvgUtils.transformRotate(myHighlightPoint, -2*ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
+                myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
+            } else {
+                myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
+            }
         }
 
         private fun calculatePointerFootingIndent(sideLength: Double): Double {
             val footingLength = min(sideLength * POINTER_FOOTING_TO_SIDE_LENGTH_RATIO, MAX_POINTER_FOOTING_LENGTH)
             return (sideLength - footingLength) / 2
+        }
+
+        private fun trianglePointer(pointerCoord: DoubleVector) = SvgPathDataBuilder().apply {
+            val xy = TRIANGLE_POINTS.map { it.add(pointerCoord) }
+            moveTo(xy[0])
+            xy.forEach(::lineTo)
+            closePath()
         }
     }
 
@@ -592,21 +635,6 @@ class TooltipBox: SvgComponent() {
                     )
                 }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
                 .also { myYPositionsBetweenLines.removeLastOrNull() }
-                .let { textSize ->
-                    if (rotate) {
-                        components
-                            .onEach { (labelComponent, valueComponent) ->
-                                labelComponent?.setY(-textSize.y + labelComponent.y()!!)
-                                labelComponent?.rotate(90.0)
-
-                                valueComponent.setY(-textSize.y + valueComponent.y()!!)
-                                valueComponent.rotate(90.0)
-                            }
-                        textSize.flip()
-                    } else {
-                        textSize
-                    }
-                }
 
             return textSize
         }
@@ -723,6 +751,16 @@ class TooltipBox: SvgComponent() {
                 result += subList
             }
             return result
+        }
+
+        private val TRIANGLE_POINTS: List<DoubleVector> = run {
+            val size = 8.0
+            val height = size + 1.0
+            listOf(
+                DoubleVector(0.0, 0.0),
+                DoubleVector(size / 2, height),
+                DoubleVector(-size / 2, height)
+            )
         }
     }
 }

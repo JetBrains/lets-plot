@@ -70,7 +70,8 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             tooltipBox.setPosition(
                 tooltipCoord = DoubleVector(0.0, 0.0),
                 pointerCoord = pointerCoord ?: DoubleVector(0.0, 0.0),
-                orientation = orientation
+                orientation = orientation,
+                rotate = rotate
             )
         }
     }
