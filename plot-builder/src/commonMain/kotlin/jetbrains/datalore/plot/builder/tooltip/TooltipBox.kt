@@ -156,10 +156,10 @@ class TooltipBox: SvgComponent() {
             }
 
             myHighlightPoint.apply {
-                fillColor().set(fillColor)
+                val fill = if (fillColor == pointMarkerStrokeColor) borderColor else fillColor
+                fillColor().set(fill)
                 strokeWidth().set(1.0)
-                val strokeColor = if (fillColor != pointMarkerStrokeColor) pointMarkerStrokeColor else borderColor
-                strokeColor().set(strokeColor)
+                strokeColor().set(pointMarkerStrokeColor)
             }
         }
 
