@@ -248,22 +248,7 @@ class TooltipBox: SvgComponent() {
             )
 
             if (usePointMarker) {
-                val size = 8.0
-                val height = size + 1.0
-                val half = size / 2
-                val xy = listOf(
-                    DoubleVector(0.0, 0.0),
-                    DoubleVector(half, height),
-                    DoubleVector(-half, height)
-                ).map { it.add(pointerCoord) }
-
-                myHighlightPoint.d().set(
-                    SvgPathDataBuilder().apply {
-                        moveTo(xy[0])
-                        xy.forEach(::lineTo)
-                        closePath()
-                    }.build()
-                )
+                myHighlightPoint.d().set(trianglePointer(pointerCoord).build())
                 SvgUtils.transformRotate(myHighlightPoint, -2*ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
                 myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
             } else {
@@ -274,6 +259,13 @@ class TooltipBox: SvgComponent() {
         private fun calculatePointerFootingIndent(sideLength: Double): Double {
             val footingLength = min(sideLength * POINTER_FOOTING_TO_SIDE_LENGTH_RATIO, MAX_POINTER_FOOTING_LENGTH)
             return (sideLength - footingLength) / 2
+        }
+
+        private fun trianglePointer(pointerCoord: DoubleVector) = SvgPathDataBuilder().apply {
+            val xy = TRIANGLE_POINTS.map { it.add(pointerCoord) }
+            moveTo(xy[0])
+            xy.forEach(::lineTo)
+            closePath()
         }
     }
 
@@ -759,6 +751,16 @@ class TooltipBox: SvgComponent() {
                 result += subList
             }
             return result
+        }
+
+        private val TRIANGLE_POINTS: List<DoubleVector> = run {
+            val size = 8.0
+            val height = size + 1.0
+            listOf(
+                DoubleVector(0.0, 0.0),
+                DoubleVector(size / 2, height),
+                DoubleVector(-size / 2, height)
+            )
         }
     }
 }
