@@ -22,13 +22,15 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultAxisTheme(
     override val axis: String,
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), AxisTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), AxisTheme {
 
     private val suffix = "_$axis"
     internal val ontopKey = listOf(AXIS_ONTOP + suffix, AXIS_ONTOP)

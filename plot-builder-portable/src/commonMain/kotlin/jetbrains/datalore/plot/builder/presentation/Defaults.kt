@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.presentation
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis
 import jetbrains.datalore.vis.TextStyle
 
@@ -38,7 +37,11 @@ object Defaults {
     const val FONT_MEDIUM = 15.0
     const val FONT_SMALL = 13.0
 
-    val FONT_FAMILY_NORMAL = FontFamily("\"Lucida Grande\", sans-serif", monospaced = false)
+    const val FONT_FAMILY_NORMAL_LICIDA = "\"Lucida Grande\""
+    const val FONT_FAMILY_NORMAL_SERIF = "sans-serif"
+
+    // Note, we don't really support fallback families names in family name (see vis.svgMapper.jfx.SvgTextElementMapper)
+    const val FONT_FAMILY_NORMAL = "$FONT_FAMILY_NORMAL_LICIDA, $FONT_FAMILY_NORMAL_SERIF"
 
     class Common {
         object Title {
@@ -104,7 +107,7 @@ object Defaults {
         face: FontFace = FontFace.NORMAL,
         size: Double = FONT_MEDIUM,
         color: Color = Color.BLACK
-    ) = TextStyle(family = FONT_FAMILY_NORMAL.name, face, size, color)
+    ) = TextStyle(family = FONT_FAMILY_NORMAL, face, size, color)
 
     internal val DEFAULT_TEXT_STYLES = mapOf(
         Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE, face = FontFace.BOLD),

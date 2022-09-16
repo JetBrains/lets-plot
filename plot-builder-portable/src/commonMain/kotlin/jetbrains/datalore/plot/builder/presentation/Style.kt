@@ -34,7 +34,7 @@ object Style {
 
     private val CSS = """
         |.$PLOT_CONTAINER {
-        |   font-family: ${FONT_FAMILY_NORMAL.name};
+        |   font-family: $FONT_FAMILY_NORMAL;
         |   user-select: none;
         |   -webkit-user-select: none;
         |   -moz-user-select: none;
@@ -68,7 +68,7 @@ object Style {
     fun default(): StyleSheet {
         return StyleSheet(
             Defaults.DEFAULT_TEXT_STYLES,
-            defaultFamily = FONT_FAMILY_NORMAL.name
+            defaultFamily = FONT_FAMILY_NORMAL
         )
     }
 
@@ -111,6 +111,6 @@ object Style {
             TOOLTIP_LABEL to ts(theme.tooltips().labelStyle()),
         )
 
-        return StyleSheet(textStyles, defaultFamily = FONT_FAMILY_NORMAL.name)
+        return StyleSheet(textStyles, defaultFamily = FONT_FAMILY_NORMAL)
     }
 }

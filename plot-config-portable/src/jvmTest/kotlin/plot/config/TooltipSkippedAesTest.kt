@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
@@ -207,7 +208,8 @@ class TooltipSkippedAesTest {
             override fun tooltipStrokeWidth() = 1.0
             override fun tooltipTextStyle(): ThemeTextStyle =
                 ThemeTextStyle(
-                    Defaults.FONT_FAMILY_NORMAL,
+//                    Defaults.FONT_FAMILY_NORMAL,
+                    FontFamily.SERIF,
                     FontFace.NORMAL,
                     Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
                     Color.GRAY

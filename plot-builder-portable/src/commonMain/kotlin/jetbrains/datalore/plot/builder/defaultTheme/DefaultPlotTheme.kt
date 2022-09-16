@@ -15,12 +15,14 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultPlotTheme(
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), PlotTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), PlotTheme {
 
     internal val backgroundKey = listOf(PLOT_BKGR_RECT, RECT)
     internal val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)

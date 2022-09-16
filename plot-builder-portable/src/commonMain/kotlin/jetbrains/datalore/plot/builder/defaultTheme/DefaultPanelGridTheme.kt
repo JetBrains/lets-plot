@@ -12,11 +12,13 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MAJOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
 internal class DefaultPanelGridTheme(
     axis: String,
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), PanelGridTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), PanelGridTheme {
 
     private val suffix = "_$axis"
     internal val majorLineKey =

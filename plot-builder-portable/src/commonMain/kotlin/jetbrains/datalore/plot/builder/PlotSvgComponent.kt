@@ -12,7 +12,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
@@ -34,7 +33,6 @@ import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRo
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
-import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -248,8 +246,9 @@ class PlotSvgComponent constructor(
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(
                 axisTitleSizeDelta(
-                    axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    axisTitleBottom = null to PlotLabelSpec(Font(FONT_FAMILY_NORMAL, 0)),
+                    axisTitleLeft = axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
+//                    axisTitleBottom = null to PlotLabelSpec(Font(FONT_FAMILY_NORMAL, 0)),
+                    axisTitleBottom = null to PlotLabelSpec.DUMMY,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )

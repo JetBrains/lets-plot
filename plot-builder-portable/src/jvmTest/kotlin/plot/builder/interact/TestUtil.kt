@@ -9,6 +9,7 @@ import jetbrains.datalore.base.function.Functions.identity
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
@@ -53,7 +54,8 @@ object TestUtil {
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
         override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
-            Defaults.FONT_FAMILY_NORMAL,
+//            Defaults.FONT_FAMILY_NORMAL,
+            FontFamily.SERIF,
             FontFace.NORMAL,
             Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
             LIGHT_TEXT_COLOR

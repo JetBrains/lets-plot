@@ -15,12 +15,14 @@ import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultLegendTheme(
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), LegendTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), LegendTheme {
 
     internal val backgroundKey = listOf(ThemeOption.LEGEND_BKGR_RECT, ThemeOption.RECT)
     internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
