@@ -13,11 +13,14 @@ import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
+import jetbrains.datalore.plot.config.Option.Geom.Label
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Point
@@ -181,31 +184,26 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.TEXT -> return GeomProvider.text {
-                val geom = TextGeom()
+                withTextOptions(opts, TextGeom())
+            }
 
-                if (opts.has(Text.LABEL_FORMAT)) {
-                    val labelFormat = opts[Text.LABEL_FORMAT] as? String
+            GeomKind.LABEL -> return GeomProvider.label {
+                withTextOptions(opts, LabelGeom()).also {
+                    it as LabelGeom
 
-                    if (labelFormat != null) {
-                        geom.formatter = StringFormat.forOneArg(labelFormat)::format
-                    } else {
-                        throw IllegalArgumentException("Expected: label_format = 'format string'")
+                    it.textSizeEstimator = { font, labelText -> PlotLabelSpec(font).dimensions(labelText) }
+                    it.fontFamilyByName = { name -> FontFamilyRegistry().get(name) }
+
+                    if (opts.has(Label.LABEL_PADDING)) {
+                        it.paddingFactor = opts.getDouble(Label.LABEL_PADDING)!!
+                    }
+                    if (opts.has(Label.LABEL_R)) {
+                        it.radiusFactor = opts.getDouble(Label.LABEL_R)!!
+                    }
+                    if (opts.has(Label.LABEL_SIZE)) {
+                        it.borderWidth = opts.getDouble(Label.LABEL_SIZE)!!
                     }
                 }
-
-                if (opts.has(Text.NA_TEXT)) {
-                    val naValue = opts[Text.NA_TEXT] as? String
-
-                    if (naValue != null) {
-                        geom.naValue = naValue
-                    } else {
-                        throw IllegalArgumentException("Expected: na_value = 'some string'")
-                    }
-                }
-
-                geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
-
-                geom
             }
 
             GeomKind.IMAGE -> return GeomProvider.image {
@@ -263,10 +261,24 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // step - special case
             PROVIDER[GeomKind.RECT] = GeomProvider.rect()
             // segment - special case
-
-            // text - special case
+            // text, label - special case
             PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
             // image - special case
+        }
+
+        private fun withTextOptions(opts: OptionsAccessor, geom: TextGeom): TextGeom {
+            if (opts.has(Text.LABEL_FORMAT)) {
+                val labelFormat = opts.getString(Text.LABEL_FORMAT)!!
+                geom.formatter = StringFormat.forOneArg(labelFormat)::format
+            }
+            if (opts.has(Text.NA_TEXT)) {
+                val naValue = opts.getString(Text.NA_TEXT)!!
+                geom.naValue = naValue
+            }
+
+            geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
+
+            return geom
         }
     }
 }

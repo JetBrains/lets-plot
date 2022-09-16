@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
@@ -37,7 +39,7 @@ object LayerConverter {
                 RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
-                TEXT -> MapLayerKind.TEXT to dataPointsConverter.toText()
+                TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText()
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
                     DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
@@ -61,6 +63,7 @@ object LayerConverter {
             createLayerBuilder(
                 index,
                 layerKind,
+                layer.geomKind,
                 dataPointLiveMapAesthetics,
                 sizeScalingRange,
                 alphaScalingEnabled = sizeScalingRange.last != 0
@@ -71,6 +74,7 @@ object LayerConverter {
     private fun createLayerBuilder(
         layerIdx: Int,
         layerKind: MapLayerKind,
+        plotLayerKind: GeomKind,
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         sizeScalingRange: IntRange?,
         alphaScalingEnabled: Boolean,
@@ -167,7 +171,7 @@ object LayerConverter {
                     text {
                         index = it.index
                         point = it.point
-                        fillColor = it.strokeColor // Text is filled by strokeColor
+                        fillColor = if (plotLayerKind == LABEL) it.fillColor else Color.TRANSPARENT
                         strokeColor = it.strokeColor
                         strokeWidth = 0.0
                         label = it.label
@@ -177,6 +181,7 @@ object LayerConverter {
                         hjust = it.hjust
                         vjust = it.vjust
                         angle = it.angle
+                        drawBorder = plotLayerKind == LABEL
                     }
                 }
             }

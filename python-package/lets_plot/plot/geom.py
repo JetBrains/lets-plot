@@ -23,7 +23,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
-           'geom_text']
+           'geom_text', 'geom_label']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -5003,7 +5003,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : font size.
     - label : text to add to plot.
-    - family : tont family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
+    - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
     - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
     - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
@@ -5101,6 +5101,145 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  map=map, map_join=map_join,
                  label_format=label_format,
                  na_text=na_text,
+                 **other_args)
+
+
+def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+               map=None, map_join=None,
+               label_format=None,
+               na_text=None,
+               label_padding=None, label_r=None, label_size=None,
+               **other_args):
+    """
+    Add a text directly to the plot with a rectangle behind the text.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    label_format : str
+        Format used to transform label mapping values to a string.
+        Examples:
+        '.2f' -> '12.45',
+        'Num {}' -> 'Num 12.456789',
+        'TTL: {.2f}$' -> 'TTL: 12.45$'.
+        For more info see https://lets-plot.org/pages/formats.html.
+    na_text : str, default='n/a'
+        Text to show for missing values.
+    label_padding : float
+        Amount of padding around label. Defaults to 0.25 of font size.
+    label_r : float
+        Radius of rounded corners. Defaults to 0.15 of label height.
+    label_size : float, default = 1.0
+        Size of label border.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Adds a text directly to the plot and draws a rectangle behind the text, making it easier to read.
+
+    `geom_label()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill: background color of the label.
+    - size : font size.
+    - label : text to add to plot.
+    - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
+    - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
+    - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
+    - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
+    - angle : rotation angle in degrees.
+
+    |
+
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    |
+
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    Examples
+    --------
+    ToDo: add examples
+
+    """
+    return _geom('label',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 map=map, map_join=map_join,
+                 label_format=label_format,
+                 na_text=na_text,
+                 label_padding=label_padding,
+                 label_r=label_r,
+                 label_size=label_size,
                  **other_args)
 
 
