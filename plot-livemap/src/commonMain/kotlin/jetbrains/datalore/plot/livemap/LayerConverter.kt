@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
@@ -168,7 +169,7 @@ object LayerConverter {
                     text {
                         index = it.index
                         point = it.point
-                        fillColor = it.strokeColor // Text is filled by strokeColor
+                        fillColor = Color.TRANSPARENT
                         strokeColor = it.strokeColor
                         strokeWidth = 0.0
                         label = it.label

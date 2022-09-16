@@ -19,8 +19,8 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         return basicLiveMap {
             layers {
                 texts {
-                    getTexts(coord1).map(::text)
-                    getTexts(coord2).map(::label)
+                    getTexts(coord1, isText = true).map(::text)
+                    getTexts(coord2, isText = false).map(::label)
                 }
                 points(getPoint(coord1))
                 points(getPoint(coord2))
@@ -37,11 +37,13 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         }
     }
 
-    private fun getTexts(coord: LonLatPoint) = listOf<TextBuilder.() -> Unit>(
+    private fun getTexts(coord: LonLatPoint, isText: Boolean) = listOf<TextBuilder.() -> Unit>(
         {
             label = "--------0-->"
             point = coord
-            fillColor = Color.GREEN
+            Color.GREEN.let {
+                if (isText) strokeColor = it else fillColor = it
+            }
             size = 25.0
             angle = 0.0
             vjust = 0.5
@@ -49,7 +51,9 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         {
             label = "------180-->"
             point = coord
-            fillColor = Color.BLUE
+            Color.BLUE.let {
+                if (isText) strokeColor = it else fillColor = it
+            }
             size = 25.0
             angle = 180.0
             vjust = 0.5
@@ -57,7 +61,9 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         {
             label = "-------60-->"
             point = coord
-            fillColor = Color.PINK
+            Color.PINK.let {
+                if (isText) strokeColor = it else fillColor = it
+            }
             size = 25.0
             angle = 60.0
             vjust = 0.5
@@ -65,7 +71,9 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         {
             label = "------300-->"
             point = coord
-            fillColor = Color.RED
+            Color.RED.let {
+                if (isText) strokeColor = it else fillColor = it
+            }
             size = 25.0
             angle = -60.0
             vjust = 0.5
@@ -73,7 +81,9 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         {
             label = "------120-->"
             point = coord
-            fillColor = Color.CYAN
+            Color.CYAN.let {
+                if (isText) strokeColor = it else fillColor = it
+            }
             size = 25.0
             angle = 120.0
             vjust = 0.5
@@ -81,7 +91,9 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         {
             label = "------210-->"
             point = coord
-            fillColor = Color.DARK_MAGENTA
+            Color.DARK_MAGENTA.let {
+                if (isText) strokeColor = it else fillColor = it
+            }
             size = 25.0
             angle = -120.0
             vjust = 0.5

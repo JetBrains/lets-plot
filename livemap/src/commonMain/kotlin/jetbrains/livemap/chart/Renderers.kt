@@ -230,39 +230,35 @@ object Renderers {
         }
     }
 
-    class TextRenderer(private val withBackgroundRect: Boolean) : Renderer {
+    class TextRenderer : Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElementComponent = entity.get<ChartElementComponent>()
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
-            var textColor = chartElementComponent.fillColor
             var textPosition = textSpec.alignment
 
             ctx.save()
             ctx.rotate(textSpec.angle)
 
-            if (withBackgroundRect) {
+            val fillColor = chartElementComponent.fillColor
+            if (fillColor != null && fillColor != Color.TRANSPARENT) {
                 val rect = DoubleRectangle(
                     textSpec.alignment.x,
                     textSpec.alignment.y - textSpec.textSize.y,
                     textSpec.textSize.x,
                     textSpec.textSize.y
                 )
-                ctx.setFillStyle(
-                    changeAlphaWithMin(chartElementComponent.fillColor!!, chartElementComponent.scalingAlphaValue)
-                )
+                ctx.setFillStyle(changeAlphaWithMin(fillColor, chartElementComponent.scalingAlphaValue))
                 ctx.setStrokeStyle(chartElementComponent.strokeColor)
                 ctx.fillRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
                 ctx.strokeRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
 
-                // use strokeColor for the text
-                // and place it in the rectangle's center  (use * 0.35 for better alignment)
-                textColor = chartElementComponent.strokeColor
+                // place text in the rectangle's center (use * 0.35 for better alignment)
                 textPosition = explicitVec(textSpec.alignment.x, rect.center.y + textSpec.textSize.y * 0.35)
             }
 
             ctx.setFont(textSpec.font)
-            ctx.setFillStyle(textColor)
+            ctx.setFillStyle(chartElementComponent.strokeColor)
             ctx.fillText(textSpec.label, textPosition.x, textPosition.y)
 
             ctx.restore()
