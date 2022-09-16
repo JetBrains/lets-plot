@@ -35,6 +35,10 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/boxplot_whisker_width.ipynb).
 
+- Add `geom_label` [[#557](https://github.com/JetBrains/lets-plot/issues/557)].
+  
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/geom_label.ipynb).
+
 ### Changed
 
 ### Fixed
@@ -49,4 +53,4 @@
 - No tooltips for geom_boxplot with zero height [[#563](https://github.com/JetBrains/lets-plot/issues/563)].
 - geom_text: wrong label alignment with `hjust` 0 and 1 [[#592](https://github.com/JetBrains/lets-plot/issues/592)].
 - Error using lets-plot in streamlit [[#595](https://github.com/JetBrains/lets-plot/issues/595)].
-- Tooltip: Aes.Y, Aes.YMIN, Aes.YMAX have different numer format [[#579](https://github.com/JetBrains/lets-plot/issues/579)].
+- Tooltip: Aes.Y, Aes.YMIN, Aes.YMAX have different number format [[#579](https://github.com/JetBrains/lets-plot/issues/579)].
