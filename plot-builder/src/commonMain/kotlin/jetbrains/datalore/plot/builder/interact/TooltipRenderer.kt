@@ -144,7 +144,7 @@ internal class TooltipRenderer(
                         tooltipMinWidth = spec.minWidth,
                         borderRadius = borderRadius,
                         markerColors = spec.markerColors.distinct(),
-                        highlightPointStrokeColor = plotBackground
+                        pointMarkerStrokeColor = plotBackground
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }

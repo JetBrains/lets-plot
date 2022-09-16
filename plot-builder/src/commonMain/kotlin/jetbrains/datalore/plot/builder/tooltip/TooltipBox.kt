@@ -88,7 +88,7 @@ class TooltipBox: SvgComponent() {
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
         markerColors: List<Color>,
-        highlightPointStrokeColor: Color = borderColor
+        pointMarkerStrokeColor: Color = borderColor
     ) {
         val totalLines = lines.size + if (title != null) 1 else 0
         myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
@@ -104,20 +104,24 @@ class TooltipBox: SvgComponent() {
             markerColors,
             textClassName
         )
-        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, highlightPointStrokeColor)
+        myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, borderRadius, pointMarkerStrokeColor)
     }
 
-    fun setPosition(tooltipCoord: DoubleVector, pointerCoord: DoubleVector, orientation: Orientation, rotate: Boolean=false) {
+    fun setPosition(
+        tooltipCoord: DoubleVector,
+        pointerCoord: DoubleVector,
+        orientation: Orientation,
+        rotate: Boolean = false
+    ) {
         // Rotate component
         val rotationAngle = if (rotate) ROTATION_ANGLE else 0.0
         rotate(rotationAngle)
 
-        // Pointer point should not be rotated
        val p = pointerCoord
            .subtract(tooltipCoord)
-           .rotate(toRadians(-rotationAngle))
+           .rotate(toRadians(-rotationAngle))   // cancel rotation for pointer point coordinates
 
-        myPointerBox.update(p, orientation, withPointer = !rotate)
+        myPointerBox.update(p, orientation, usePointMarker = rotate)
         moveTo(tooltipCoord)
 
         if (DEBUG_DRAWING) {
@@ -141,7 +145,7 @@ class TooltipBox: SvgComponent() {
             borderColor: Color,
             strokeWidth: Double,
             borderRadius: Double,
-            highlightPointStrokeColor: Color
+            pointMarkerStrokeColor: Color
         ) {
             myBorderRadius = borderRadius
 
@@ -154,13 +158,13 @@ class TooltipBox: SvgComponent() {
             myHighlightPoint.apply {
                 fillColor().set(fillColor)
                 strokeWidth().set(1.0)
-                val strokeColor = if (fillColor != highlightPointStrokeColor) highlightPointStrokeColor else borderColor
+                val strokeColor = if (fillColor != pointMarkerStrokeColor) pointMarkerStrokeColor else borderColor
                 strokeColor().set(strokeColor)
             }
         }
 
-        internal fun update(pointerCoord: DoubleVector, orientation: Orientation, withPointer: Boolean) {
-            pointerDirection = if (!withPointer) null else when (orientation) {
+        internal fun update(pointerCoord: DoubleVector, orientation: Orientation, usePointMarker: Boolean) {
+            pointerDirection = if (usePointMarker) null else when (orientation) {
                 HORIZONTAL -> when {
                     pointerCoord.x < contentRect.left -> LEFT
                     pointerCoord.x > contentRect.right -> RIGHT
@@ -242,14 +246,11 @@ class TooltipBox: SvgComponent() {
                     }
                 }.build()
             )
-            myHighlightPoint.visibility().set(
-                if (withPointer) SvgGraphicsElement.Visibility.HIDDEN else SvgGraphicsElement.Visibility.VISIBLE
-            )
-            if (!withPointer) {
+
+            if (usePointMarker) {
                 val size = 8.0
                 val height = size + 1.0
                 val half = size / 2
-
                 val xy = listOf(
                     DoubleVector(0.0, 0.0),
                     DoubleVector(half, height),
@@ -264,6 +265,9 @@ class TooltipBox: SvgComponent() {
                     }.build()
                 )
                 SvgUtils.transformRotate(myHighlightPoint, -2*ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
+                myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
+            } else {
+                myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
             }
         }
 

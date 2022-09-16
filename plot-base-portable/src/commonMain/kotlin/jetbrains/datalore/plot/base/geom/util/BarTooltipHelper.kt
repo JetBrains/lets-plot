@@ -21,15 +21,14 @@ object BarTooltipHelper {
         clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         fillColorMapper: (DataPointAesthetics) -> Color? = { null },
         colorMarkerMapper: (DataPointAesthetics) -> List<Color> = HintColorUtil.createColorMarkerMapper(null, ctx),
-        defaultTooltipKind: TipLayoutHint.Kind? = null,
-        hintObjRadius: (Aes<Double>) -> Double? = { null }
+        defaultTooltipKind: TipLayoutHint.Kind? = null
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
         for (p in aesthetics.dataPoints()) {
             val clientRect = clientRectFactory(p) ?: continue
 
-            val defaultObjectRadius = with (clientRect) {
+            val objectRadius = with (clientRect) {
                 if (ctx.flipped) {
                     height / 2.0
                 } else {
@@ -37,6 +36,7 @@ object BarTooltipHelper {
                 }
             }
             val hintFactory = HintsCollection.HintConfigFactory()
+                .defaultObjectRadius(objectRadius)
                 .defaultX(p.x()!!)
                 .defaultKind(
                     if (ctx.flipped) {
@@ -48,9 +48,7 @@ object BarTooltipHelper {
 
             val hintConfigs = hintAesList
                 .fold(HintsCollection(p, helper)) { acc, aes ->
-                    acc.addHint(
-                        hintFactory.create(aes).objectRadius(hintObjRadius(aes) ?: defaultObjectRadius)
-                    )
+                    acc.addHint(hintFactory.create(aes))
                 }
 
             ctx.targetCollector.addRectangle(
