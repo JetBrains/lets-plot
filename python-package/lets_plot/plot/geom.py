@@ -90,7 +90,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of the point. Understands numbers between 0 and 1.
     - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-    - shape : shape of the point.
+    - shape : shape of the point. Understands integers from 0 to 25.
     - size : size of the point.
 
     |
@@ -1640,7 +1640,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - fill : color of geometry filling.
     - size : lines width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-    - shape : shape of the mid-point.
+    - shape : shape of the mid-point. Understands integers from 0 to 25.
 
     Examples
     --------
@@ -2681,7 +2681,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     outlier_fill : str
         Default fill aesthetic for outliers.
     outlier_shape : int
-        Default shape aesthetic for outliers.
+        Default shape aesthetic for outliers. Understands integers from 0 to 25.
     outlier_size : float
         Default size aesthetic for outliers.
     varwidth : bool, default=False
@@ -3998,7 +3998,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a point. Understands numbers between 0 and 1.
     - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-    - shape : shape of the point.
+    - shape : shape of the point. Understands integers from 0 to 25.
     - size : size of the point.
 
     Examples
@@ -4125,7 +4125,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - alpha : transparency level of a point. Understands numbers between 0 and 1.
     - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-    - shape : shape of the point.
+    - shape : shape of the point. Understands integers from 0 to 25.
     - size : size of the point.
 
     Examples
@@ -4232,7 +4232,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - alpha : transparency level of a point. Understands numbers between 0 and 1.
     - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
-    - shape : shape of the point.
+    - shape : shape of the point. Understands integers from 0 to 25.
     - size : size of the point.
 
     Examples

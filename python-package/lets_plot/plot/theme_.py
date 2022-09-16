@@ -112,7 +112,7 @@ def theme(*,
         Set `element_line()` to specify all tick mark parameters.
         `axis_ticks_*` inherits from `axis_ticks` which inherits from `line`.
     axis_ticks_length, axis_ticks_length_x, axis_ticks_length_y : float
-        Length of tick marks.
+        Length of tick marks in px.
     axis_line, axis_line_x, axis_line_y : str or dict
         Lines along axes.
         Set 'blank' or result of `element_blank()` to draw nothing and assign no space.
@@ -407,7 +407,7 @@ def element_text(
     face : str
         Font face ("plain", "italic", "bold", "bold_italic").
     size : int
-        Text size.
+        Text size in pt.
     hjust : float
         Horizontal justification (in [0, 1]).
         0 - left-justified

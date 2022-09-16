@@ -58,9 +58,9 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None):
     Parameters
     ----------
     barwidth : float
-        Color bar width.
+        Color bar width in px.
     barheight : float
-        Color bar height.
+        Color bar height in px.
     nbin : int
         Number of bins in color bar.
 

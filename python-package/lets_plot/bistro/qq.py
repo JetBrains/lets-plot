@@ -58,7 +58,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     size : float, default=3.0
         Size of the points.
     shape : int
-        Shape of the points.
+        Shape of the points. Understands integers from 0 to 25.
     line_color : str, default='#FF0000'
         Color of the fitting line.
     line_size : float, default=0.75
