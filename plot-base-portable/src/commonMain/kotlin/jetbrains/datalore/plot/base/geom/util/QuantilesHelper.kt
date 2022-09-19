@@ -61,12 +61,16 @@ open class QuantilesHelper(
         val dens = densityValues.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
         val quantSample = drawQuantiles.map { pwLinInterp(dens, sampleValues)(it) }
         val quantDensity = quantSample.map { pwLinInterp(sampleValues, densityValues)(it) }
+        val quantilesWidth = dataPoints.first().width()
+        val quantilesHeight = dataPoints.first().height()
         val quantilesColor = dataPoints.first().color()
         val quantilesSize = dataPoints.first().size()
 
         val builder = AestheticsBuilder(quantSample.size)
             .aes(sampleAes, AestheticsBuilder.list(quantSample))
             .aes(densityAes, AestheticsBuilder.list(quantDensity))
+            .width(AestheticsBuilder.constant(quantilesWidth))
+            .height(AestheticsBuilder.constant(quantilesHeight))
             .color(AestheticsBuilder.constant(quantilesColor))
             .size(AestheticsBuilder.constant(quantilesSize))
         if (groupAes != null) {

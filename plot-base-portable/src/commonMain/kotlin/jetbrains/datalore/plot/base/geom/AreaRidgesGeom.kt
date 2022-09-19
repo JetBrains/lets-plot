@@ -38,6 +38,7 @@ class AreaRidgesGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.RIDGEHEIGHT, Aes.HEIGHT)
+        if (!definedDataPoints.any()) return
         val maxRidgeHeight = definedDataPoints.maxByOrNull { it.ridgeheight()!! }?.ridgeheight()!!
         definedDataPoints
             .sortedByDescending(DataPointAesthetics::y)
