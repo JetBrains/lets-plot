@@ -5223,7 +5223,54 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Examples
     --------
-    ToDo: add examples
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 3
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_label(x=0, y=0, label='Lorem ipsum', size=14)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 10
+        np.random.seed(42)
+        x = np.arange(n)
+        y = np.random.normal(loc=10, scale=2, size=n)
+        ggplot({'x': x, 'y': y}, aes(x='x', y='y')) + \\
+            geom_bar(stat='identity', fill='#2b8cbe', tooltips='none') + \\
+            geom_label(aes(label='y'), position=position_nudge(y=1), \\
+                      label_format='.1f', angle=15, fill='#2b8cbe', color='white')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13-14
+
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        cities = ['New York', 'Los Angeles']
+        states = ['NY', 'CA']
+        titles = ['{0} ({1})'.format(city, state) \\
+                  for city, state in zip(cities, states)]
+        data = {'city': cities, 'state': states, 'title': titles}
+        centroids = geocode_cities(data['city']).get_centroids()
+        ggplot(data) + \\
+            geom_livemap() + \\
+            geom_point(map=centroids, map_join='city') + \\
+            geom_label(aes(label='title'), map=centroids, \\
+                       map_join='city', size=7, hjust=0, vjust=0) + \\
+            ggsize(500, 400)
+
 
     """
     return _geom('label',
