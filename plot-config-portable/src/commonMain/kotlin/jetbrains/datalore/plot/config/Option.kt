@@ -175,6 +175,7 @@ object Option {
 
         object AreaRidges {
             const val SCALE = "scale"
+            const val DRAW_QUANTILES = "draw_quantiles"
         }
 
         object Violin {

@@ -116,6 +116,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(AreaRidges.SCALE)) {
                     geom.scale = opts.getDoubleDef(AreaRidges.SCALE, AreaRidgesGeom.DEF_SCALE)
                 }
+                if (opts.hasOwn(AreaRidges.DRAW_QUANTILES)) {
+                    geom.setDrawQuantiles(opts.getBoundedDoubleList(AreaRidges.DRAW_QUANTILES, 0.0, 1.0))
+                }
                 geom
             }
 

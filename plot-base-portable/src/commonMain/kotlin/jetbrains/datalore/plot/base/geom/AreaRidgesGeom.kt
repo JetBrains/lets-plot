@@ -14,6 +14,11 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 class AreaRidgesGeom : GeomBase() {
     var scale: Double = DEF_SCALE
+    private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
+
+    fun setDrawQuantiles(quantiles: List<Double>) {
+        drawQuantiles = quantiles
+    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -74,7 +79,29 @@ class AreaRidgesGeom : GeomBase() {
         helper.setAlphaEnabled(false)
         appendNodes(helper.createLines(dataPoints, boundTransform), root)
 
+        buildQuantiles(root, dataPoints, pos, coord, ctx, maxRidgeHeight)
+
         buildHints(dataPoints, ctx, helper, boundTransform)
+    }
+
+    private fun buildQuantiles(
+        root: SvgRoot,
+        dataPoints: Iterable<DataPointAesthetics>,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext,
+        maxRidgeHeight: Double
+    ) {
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, drawQuantiles, Aes.X, Aes.RIDGEHEIGHT, Aes.Y)
+        val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
+            toLocationBound(maxRidgeHeight)(p)
+        }
+        val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
+            DoubleVector(p.x()!!, p.y()!!)
+        }
+        for (line in quantilesHelper.createGroupedQuantiles(dataPoints, toLocationBoundStart, toLocationBoundEnd)) {
+            root.add(line)
+        }
     }
 
     private fun toLocationBound(maxRidgeHeight: Double): (p: DataPointAesthetics) -> DoubleVector {
@@ -119,6 +146,7 @@ class AreaRidgesGeom : GeomBase() {
 
     companion object {
         const val DEF_SCALE = 1.0
+        val DEF_DRAW_QUANTILES = emptyList<Double>()
 
         private const val MIN_HEIGHT = 0.0
 
