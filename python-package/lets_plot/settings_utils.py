@@ -91,9 +91,9 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
         An attribution or a copyright notice to display on the map as required by the tile license.
         Supports HTML links: ``'<a href="http://www.example.com">Example</a>'``.
     min_zoom : int
-        Minimal zoom limit.
+        Minimal zoom limit, an integer from 1 to 15. Should be less than or equal to `max_zoom`.
     max_zoom : int
-        Maximal zoom limit.
+        Maximal zoom limit, an integer from 1 to 15. Should be greater than or equal to `min_zoom`.
     subdomains : str
         Each character of this list is interpreted as standalone tile servers, so an interactive map
         can request tiles from any of these servers independently for better load balance. If url

@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
 interface ImmutableGeomContext : GeomContext {
 
@@ -26,6 +27,8 @@ interface ImmutableGeomContext : GeomContext {
         fun aesBounds(aesBounds: DoubleRectangle): Builder
 
         fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): Builder
+
+        fun fontFamilyRegistry(v: FontFamilyRegistry): Builder
 
         fun build(): ImmutableGeomContext
     }

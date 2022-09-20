@@ -6,7 +6,9 @@
 package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Context2d.LineJoin
@@ -229,19 +231,39 @@ object Renderers {
     }
 
     class TextRenderer : Renderer {
-
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElementComponent = entity.get<ChartElementComponent>()
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
-            ctx.save()
+            var textPosition = textSpec.alignment
 
+            ctx.save()
             ctx.rotate(textSpec.angle)
 
-            ctx.setFont(textSpec.font)
-            ctx.setFillStyle(chartElementComponent.fillColor)
+            if (textSpec.drawBorder) {
+                val rect = DoubleRectangle(
+                    textSpec.alignment.x,
+                    textSpec.alignment.y - textSpec.textSize.y,
+                    textSpec.textSize.x,
+                    textSpec.textSize.y
+                )
+                if (chartElementComponent.fillColor != null) {
+                    ctx.setFillStyle(
+                        changeAlphaWithMin(chartElementComponent.fillColor!!, chartElementComponent.scalingAlphaValue)
+                    )
+                }
+                ctx.setStrokeStyle(chartElementComponent.strokeColor)
+                ctx.fillRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
+                ctx.strokeRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
 
-            ctx.fillText(textSpec.label, textSpec.alignment.x, textSpec.alignment.y)
+                // place text in the rectangle's center (use * 0.35 for better alignment)
+                textPosition = explicitVec(textSpec.alignment.x, rect.center.y + textSpec.textSize.y * 0.35)
+            }
+
+            ctx.setFont(textSpec.font)
+            ctx.setFillStyle(chartElementComponent.strokeColor)
+            ctx.fillText(textSpec.label, textPosition.x, textPosition.y)
+
             ctx.restore()
         }
     }

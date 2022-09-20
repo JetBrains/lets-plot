@@ -6,10 +6,12 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal object PlotAxisLayoutUtil {
+
+    private const val INITIAL_TICK_LABEL_IN_CHARS = "_"
 
     fun initialThickness(
         orientation: Orientation,
@@ -26,10 +28,10 @@ internal object PlotAxisLayoutUtil {
         return 0.0
     }
 
-    private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: PlotLabelSpec): Double {
+    private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: LabelSpec): Double {
         return if (orientation.isHorizontal)
             tickLabelSpec.height()
         else
-            tickLabelSpec.width(1)
+            tickLabelSpec.width(INITIAL_TICK_LABEL_IN_CHARS)
     }
 }

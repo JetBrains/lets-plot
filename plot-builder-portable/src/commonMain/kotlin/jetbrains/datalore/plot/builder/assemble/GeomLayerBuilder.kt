@@ -31,12 +31,15 @@ import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-class GeomLayerBuilder constructor(
+class GeomLayerBuilder(
     private val geomProvider: GeomProvider,
     private val stat: Stat,
     private val posProvider: PosProvider,
+    private val fontFamilyRegistry: FontFamilyRegistry,
 ) {
 
     private val myBindings = ArrayList<VarBinding>()
@@ -197,7 +200,8 @@ class GeomLayerBuilder constructor(
             isYOrientation = isYOrientation,
             isMarginal = isMarginal,
             marginalSide = marginalSide,
-            marginalSize = marginalSize
+            marginalSize = marginalSize,
+            fontFamilyRegistry = fontFamilyRegistry,
         )
     }
 
@@ -224,8 +228,9 @@ class GeomLayerBuilder constructor(
         override val isMarginal: Boolean,
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
+        override val fontFamilyRegistry: FontFamilyRegistry
 
-        ) : GeomLayer {
+    ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind
@@ -310,7 +315,7 @@ class GeomLayerBuilder constructor(
             stat: Stat,
             posProvider: PosProvider = PosProvider.wrap(PositionAdjustments.identity()),
         ): GeomLayerBuilder {
-            val builder = GeomLayerBuilder(geomProvider, stat, posProvider)
+            val builder = GeomLayerBuilder(geomProvider, stat, posProvider, DefaultFontFamilyRegistry())
             builder.myDataPreprocessor = { data, transformByAes ->
                 val transformedData = DataProcessing.transformOriginals(data, builder.myBindings, transformByAes)
                 when (builder.stat) {

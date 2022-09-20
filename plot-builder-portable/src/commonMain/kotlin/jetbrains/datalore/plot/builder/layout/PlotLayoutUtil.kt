@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -25,7 +24,7 @@ internal object PlotLayoutUtil {
             return DoubleVector(0.0, labelSpec.height())
         }
         return DoubleVector(
-            labelSpec.width(text.length),
+            labelSpec.width(text),
             labelSpec.height()
         )
     }
@@ -163,7 +162,8 @@ internal object PlotLayoutUtil {
     }
 
     fun captionSizeDelta(caption: String?, theme: PlotTheme): DoubleVector {
-        return DoubleVector(0.0,
+        return DoubleVector(
+            0.0,
             titleThickness(caption, PlotLabelSpecFactory.plotCaption(theme), theme.captionMargins())
         )
     }
@@ -175,8 +175,8 @@ internal object PlotLayoutUtil {
     }
 
     fun axisTitleSizeDelta(
-        axisTitleLeft: Pair<String?, PlotLabelSpec>,
-        axisTitleBottom: Pair<String?, PlotLabelSpec>,
+        axisTitleLeft: Pair<String?, LabelSpec>,
+        axisTitleBottom: Pair<String?, LabelSpec>,
         axisEnabled: Boolean,
         marginDimensions: DoubleVector
     ): DoubleVector {
@@ -188,7 +188,11 @@ internal object PlotLayoutUtil {
         )
         val axisTitleBottomDelta = DoubleVector(
             0.0,
-            titleThickness(title = axisTitleBottom.first, labelSpec = axisTitleBottom.second, margin = marginDimensions.y)
+            titleThickness(
+                title = axisTitleBottom.first,
+                labelSpec = axisTitleBottom.second,
+                margin = marginDimensions.y
+            )
         )
 
         return axisTitleLeftDelta.add(axisTitleBottomDelta)

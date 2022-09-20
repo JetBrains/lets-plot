@@ -8,16 +8,15 @@ package jetbrains.datalore.plot.builder.theme
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.TextJustification
-import jetbrains.datalore.vis.TextStyle
 
 interface PlotTheme {
     fun showBackground(): Boolean
     fun backgroundColor(): Color
     fun backgroundFill(): Color
     fun backgroundStrokeWidth(): Double
-    fun titleStyle(): TextStyle
-    fun subtitleStyle(): TextStyle
-    fun captionStyle(): TextStyle
+    fun titleStyle(): ThemeTextStyle
+    fun subtitleStyle(): ThemeTextStyle
+    fun captionStyle(): ThemeTextStyle
     fun textColor(): Color
 
     fun titleJustification(): TextJustification

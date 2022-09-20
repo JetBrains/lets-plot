@@ -19,6 +19,8 @@ def position_dodge(width=None):
     width : float
         Dodging width, when different to the width of the individual elements.
         This is useful when you want to align narrow geoms with wider geoms.
+        The value of width is relative and typically ranges between 0 and 1.
+        Values that are greater than 1 lead to overlapping of the objects.
 
     Returns
     -------
@@ -58,8 +60,12 @@ def position_jitter(width=None, height=None):
     ----------
     width : float
         Jittering width.
+        The value of width is relative and typically ranges between 0 and 0.5.
+        Values that are greater than 0.5 lead to overlapping of the points.
     height : float
         Jittering height.
+        The value of height is relative and typically ranges between 0 and 0.5.
+        Values that are greater than 0.5 lead to overlapping of the points.
 
     Returns
     -------
@@ -144,10 +150,16 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
     ----------
     dodge_width : float
         Bin width.
+        The value of `dodge_width` is relative and typically ranges between 0 and 1.
+        Values that are greater than 1 lead to overlapping of the boxes.
     jitter_width : float
         Jittering width.
+        The value of `jitter_width` is relative and typically ranges between 0 and 0.5.
+        Values that are greater than 0.5 lead to overlapping of the points.
     jitter_height : float
         Jittering height.
+        The value of `jitter_height` is relative and typically ranges between 0 and 0.5.
+        Values that are greater than 0.5 lead to overlapping of the points.
 
     Returns
     -------

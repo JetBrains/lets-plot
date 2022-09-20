@@ -159,18 +159,47 @@ open class GeomHelper(
             "mono" to "monospace"
         )
 
-        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0) {
+        fun hAnchor(p: DataPointAesthetics) = textLabelAnchor(
+            p.hjust(),
+            HJUST_MAP,
+            Text.HorizontalAnchor.MIDDLE
+        )
 
-            label.textColor().set(p.color())
-            label.textOpacity().set(p.alpha())
-            label.setFontSize(AesScaling.textSize(p) * scale)
+        fun vAnchor(p: DataPointAesthetics) = textLabelAnchor(
+            p.vjust(),
+            VJUST_MAP,
+            Text.VerticalAnchor.CENTER
+        )
 
-            // family
+        fun fontFamily(p: DataPointAesthetics): String {
             var family = p.family()
             if (FONT_FAMILY_MAP.containsKey(family)) {   // otherwise - use value as provided by user
                 family = FONT_FAMILY_MAP.get(family)!!
             }
-            label.setFontFamily(family)
+            return family
+        }
+
+        fun angle(p: DataPointAesthetics): Double {
+            var angle = p.angle()!!
+            if (angle != 0.0) {
+                // ggplot angle: counter clockwise
+                // SVG angle: clockwise
+                angle = 360 - angle % 360
+            }
+            return angle
+        }
+
+        fun fontSize(p: DataPointAesthetics, scale: Double) = AesScaling.textSize(p) * scale
+
+        fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
+            label.textColor().set(p.color())
+            if (applyAlpha) {
+                label.textOpacity().set(p.alpha())
+            }
+            label.setFontSize(fontSize(p, scale))
+
+            // family
+            label.setFontFamily(fontFamily(p))
 
             // fontface
             // ignore 'plain' / 'normal' as it is default values
@@ -180,18 +209,8 @@ open class GeomHelper(
             }
 
             // text justification
-            val hAnchor =
-                textLabelAnchor(
-                    p.hjust(),
-                    HJUST_MAP,
-                    Text.HorizontalAnchor.MIDDLE
-                )
-            val vAnchor =
-                textLabelAnchor(
-                    p.vjust(),
-                    VJUST_MAP,
-                    Text.VerticalAnchor.CENTER
-                )
+            val hAnchor = hAnchor(p)
+            val vAnchor = vAnchor(p)
 
             if (hAnchor !== Text.HorizontalAnchor.LEFT) {  // 'left' is default
                 label.setHorizontalAnchor(hAnchor)
@@ -200,13 +219,7 @@ open class GeomHelper(
                 label.setVerticalAnchor(vAnchor)
             }
 
-            var angle = p.angle()!!
-            if (angle != 0.0) {
-                // ggplot angle: counter-clockwise
-                // SVG angle: clockwise
-                angle = 360 - angle % 360
-                label.rotate(angle)
-            }
+            label.rotate(angle(p))
         }
 
         fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {

@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
@@ -15,12 +14,15 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
+import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultLegendTheme(
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), LegendTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), LegendTheme {
 
     internal val backgroundKey = listOf(ThemeOption.LEGEND_BKGR_RECT, ThemeOption.RECT)
     internal val titleKey = listOf(LEGEND_TITLE, TITLE, TEXT)
@@ -50,7 +52,7 @@ internal class DefaultLegendTheme(
         return getValue(ThemeOption.LEGEND_DIRECTION) as LegendDirection
     }
 
-    override fun titleStyle(): TextStyle {
+    override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
@@ -58,7 +60,7 @@ internal class DefaultLegendTheme(
         return getTextJustification(getElemValue(titleKey))
     }
 
-    override fun textStyle(): TextStyle {
+    override fun textStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
     }
 

@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 
 interface GeomContext {
@@ -24,4 +25,12 @@ interface GeomContext {
     fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext
 
     fun isMappedAes(aes: Aes<*>): Boolean
+
+    fun estimateTextSize(
+        text: String,
+        family: String,
+        size: Double,
+        isBold: Boolean,
+        isItalic: Boolean
+    ): DoubleVector
 }

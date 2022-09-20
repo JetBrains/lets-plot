@@ -314,6 +314,20 @@ object GeomMeta {
                 Aes.ANGLE
             )
 
+            GeomKind.LABEL -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.LABEL,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE
+            )
+
             GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'
                 Aes.ALPHA,
                 Aes.COLOR,

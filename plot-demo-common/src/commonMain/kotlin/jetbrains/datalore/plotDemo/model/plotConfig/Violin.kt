@@ -55,8 +55,17 @@ class Violin {
                 "                'y': 'value'" +
                 "              }," +
                 "   'ggtitle': {" +
-                "                'text': 'NaNs in data'" +
+                "                'text': 'Violin demo'," +
+                "                'subtitle': 'NaNs in data'" +
                 "              }," +
+                "   'theme': {" +
+                "              'title': {" +
+                "                         'family': 'Verdana'," +
+                "                         'face': 'bold_italic'," +
+                "                         'blank': false" +
+                "                       }," +
+                "              'text_width_scale': 0.9" +
+                "            }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'" +
@@ -81,8 +90,19 @@ class Violin {
                 "                'fill': 'group'" +
                 "              }," +
                 "   'ggtitle': {" +
+                "                'text': 'Violin demo'" +
+                "              }," +
+                "   'caption': {" +
                 "                'text': 'Additional grouping'" +
                 "              }," +
+                "   'theme': {" +
+                "              'title': {" +
+                "                         'family': 'Courier'," +
+                "                         'size': 18," +
+                "                         'monospaced': true," +
+                "                         'blank': false" +
+                "                       }" +
+                "            }," +
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +

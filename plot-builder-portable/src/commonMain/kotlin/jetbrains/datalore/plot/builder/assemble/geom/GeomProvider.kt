@@ -398,6 +398,15 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
+        fun label(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.LABEL,
+                AestheticsDefaults.label(),
+                TextGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
+        }
+
         fun raster(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.RASTER,

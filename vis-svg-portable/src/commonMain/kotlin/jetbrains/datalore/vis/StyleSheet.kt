@@ -7,10 +7,9 @@ package jetbrains.datalore.vis
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
 
 
-class StyleSheet(
+class StyleSheet constructor(
     private val textStyles: Map<String, TextStyle>,
     private val defaultFamily: String
 ) {
@@ -19,7 +18,7 @@ class StyleSheet(
     fun getTextStyle(className: String): TextStyle {
         return textStyles[className]
             ?: TextStyle(
-                family = FontFamily.forName(defaultFamily),
+                family = defaultFamily,
                 face = UNDEFINED_FONT_FACE,
                 size = DEFAULT_FONT_SIZE,
                 color = UNDEFINED_FONT_COLOR
@@ -49,10 +48,11 @@ class StyleSheet(
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
         private const val DEFAULT_FONT_SIZE = 15.0
+        private const val DEFAULT_FONT_MONOSPACED = false
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +
-              "\n   font-style: ${if (italic) "italic" else "normal"};"
+                    "\n   font-style: ${if (italic) "italic" else "normal"};"
         }
 
         private fun TextStyle.toCSS(): String {
@@ -87,10 +87,11 @@ class StyleSheet(
                     val fontStyle = parseProperty(styleProperties, "font-style")
                     val fontSize = parseProperty(styleProperties, "font-size")?.removeSuffix("px")?.toDoubleOrNull()
                         ?: defaultSize
+
                     val color = parseProperty(styleProperties, "fill")
 
                     classes[className] = TextStyle(
-                        family = FontFamily.forName(fontFamily),
+                        family = fontFamily,
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
                         color = color?.let(Color::parseHex) ?: Color.BLACK

@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -47,7 +48,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     }
 
     private fun PlotLabelSpec.width(text: String): Double {
-        return text.map(LetterCategory.Companion::getLetterRatio).sum() * fontSize
+        return text.map(LetterCategory.Companion::getLetterRatio).sum() * font.size
     }
 
     ////////
@@ -70,7 +71,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         }
     }
 
-    private fun createModel(plotLabel: Pair<String, PlotLabelSpec>, titles: List<String>): GroupComponent {
+    private fun createModel(plotLabel: Pair<String, LabelSpec>, titles: List<String>): GroupComponent {
         val groupComponent = GroupComponent()
 
         val x = 120.0
@@ -82,7 +83,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         titles
             .forEach { title ->
-                val spec = LabelSpec(title, plotLabel.second)
+                val spec = LabelTextAndSpec(title, plotLabel.second)
                 val textLabel = createTextLabel(spec, plotLabel.first)
 
                 val element = textLabel.rootGroup
@@ -110,14 +111,14 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         return rect
     }
 
-    private fun titleDimensions(spec: LabelSpec, useLetterTypes: Boolean): DoubleVector {
+    private fun titleDimensions(spec: LabelTextAndSpec, useLetterTypes: Boolean): DoubleVector {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
         val width = if (useLetterTypes) {
             spec.plotLabelSpec.width(spec.text)
         } else {
-            spec.plotLabelSpec.width(spec.text.length)
+            spec.plotLabelSpec.width(spec.text)
         }
         return DoubleVector(width, spec.plotLabelSpec.height())
     }
@@ -125,12 +126,12 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
     companion object {
         private val DEMO_BOX_SIZE = DoubleVector(450.0, 800.0)
 
-        private class LabelSpec(
+        private class LabelTextAndSpec(
             val text: String,
-            val plotLabelSpec: PlotLabelSpec
+            val plotLabelSpec: LabelSpec
         )
 
-        private fun createTextLabel(spec: LabelSpec, className: String): TextLabel {
+        private fun createTextLabel(spec: LabelTextAndSpec, className: String): TextLabel {
             val label = TextLabel(spec.text)
             label.addClassName(className)
             label.textColor().set(Color.DARK_BLUE)

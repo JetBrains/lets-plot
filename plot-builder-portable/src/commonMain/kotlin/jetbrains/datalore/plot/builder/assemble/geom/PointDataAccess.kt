@@ -49,8 +49,14 @@ internal class PointDataAccess(
     }
 
     private fun formatter(aes: Aes<*>): (Any?) -> String {
-        val scale = getScale(aes)
-        return myFormatters.getOrPut(aes, defaultValue = { createFormatter(aes, scale) })
+        val domainAes = when {
+            Aes.isPositionalX(aes) && myBindings.containsKey(Aes.X) -> Aes.X
+            Aes.isPositionalY(aes) && myBindings.containsKey(Aes.Y )-> Aes.Y
+            else -> aes
+        }
+
+        val scale = getScale(domainAes)
+        return myFormatters.getOrPut(domainAes, defaultValue = { createFormatter(domainAes, scale) })
     }
 
     private fun createFormatter(aes: Aes<*>, scale: Scale<*>): (Any?) -> String {

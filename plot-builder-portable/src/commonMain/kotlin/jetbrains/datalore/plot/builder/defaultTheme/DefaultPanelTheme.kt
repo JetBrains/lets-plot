@@ -10,15 +10,17 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.theme.PanelTheme
 
 internal class DefaultPanelTheme(
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), PanelTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), PanelTheme {
 
-    private val gridX = DefaultPanelGridTheme("x", options)
-    private val gridY = DefaultPanelGridTheme("y", options)
+    private val gridX = DefaultPanelGridTheme("x", options, fontFamilyRegistry)
+    private val gridY = DefaultPanelGridTheme("y", options, fontFamilyRegistry)
 
     internal val rectKey = listOf(PANEL_BKGR_RECT, RECT)
     internal val borderKey = listOf(PANEL_BORDER_RECT, RECT)

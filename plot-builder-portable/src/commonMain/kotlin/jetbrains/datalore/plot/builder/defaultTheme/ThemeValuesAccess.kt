@@ -9,13 +9,15 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.layout.Margins
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal open class ThemeValuesAccess(
-    private val values: Map<String, Any>
+    private val values: Map<String, Any>,
+    private val fontFamilyRegistry: FontFamilyRegistry
 ) {
     private val mem: MutableMap<String, Any> = HashMap()
 
@@ -87,14 +89,23 @@ internal open class ThemeValuesAccess(
     }
 
     private fun getFontFamily(elem: Map<String, Any>): FontFamily {
+//        val monospaced = getMonospaced(elem)
         val value = elem.getValue(Elem.FONT_FAMILY) as? String
-        return value?.let { FontFamily.forName(it) }
-            ?: throw IllegalStateException("Theme value is not string: $value. Key : $elem.")
+        return value?.let {
+//            FontFamily(it, monospaced)
+            fontFamilyRegistry.get(value)
+        } ?: throw IllegalStateException("Theme value '${Elem.FONT_FAMILY}' is not a string. Elem : $elem.")
     }
 
+//    private fun getMonospaced(elem: Map<String, Any>): Boolean {
+//        val value = elem.getValue(Elem.FONT_MONOSPACED)
+//        return (value as? Boolean)
+//            ?: throw IllegalStateException("Theme value '${Elem.FONT_MONOSPACED}'  is not a boolean. Elem : $elem.")
+//    }
+
     // element_text(family, face, size, color)
-    protected fun getTextStyle(elem: Map<String, Any>): TextStyle {
-        return TextStyle(
+    protected fun getTextStyle(elem: Map<String, Any>): ThemeTextStyle {
+        return ThemeTextStyle(
             family = getFontFamily(elem),
             face = getFontFace(elem),
             size = getNumber(elem, Elem.SIZE),

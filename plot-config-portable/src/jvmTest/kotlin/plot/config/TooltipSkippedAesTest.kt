@@ -12,14 +12,14 @@ import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.builder.layout.Margins
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
-import jetbrains.datalore.vis.TextStyle
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -193,26 +193,33 @@ class TooltipSkippedAesTest {
             override fun showLabels() = TODO("Not yet implemented")
             override fun showTitle() = TODO("Not yet implemented")
             override fun showTooltip() = TODO("Not yet implemented")
-            override fun titleStyle() = TODO("Not yet implemented")
+            override fun titleStyle(): ThemeTextStyle = TODO("Not yet implemented")
             override fun titleJustification() = TextJustification(0.5, 1.0)
             override fun titleMargins() = Margins()
             override fun lineWidth() = TODO("Not yet implemented")
             override fun lineColor() = TODO("Not yet implemented")
             override fun tickMarkColor() = TODO("Not yet implemented")
-            override fun labelStyle() = TODO("Not yet implemented")
+            override fun labelStyle(): ThemeTextStyle = TODO("Not yet implemented")
             override fun tickMarkWidth() = TODO("Not yet implemented")
             override fun tickMarkLength() = TODO("Not yet implemented")
             override fun tickLabelMargins() = Margins()
             override fun tooltipFill() = Color.WHITE
             override fun tooltipColor() = Color.BLACK
             override fun tooltipStrokeWidth() = 1.0
-            override fun tooltipTextStyle() =
-                TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), Color.GRAY)
+            override fun tooltipTextStyle(): ThemeTextStyle =
+                ThemeTextStyle(
+//                    Defaults.FONT_FAMILY_NORMAL,
+                    FontFamily.SERIF,
+                    FontFace.NORMAL,
+                    Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
+                    Color.GRAY
+                )
 
         }
 
         private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {
-            val factory = TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
+            val factory =
+                TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
             return factory.create(
                 GeomTarget(
                     hitIndex = 0,

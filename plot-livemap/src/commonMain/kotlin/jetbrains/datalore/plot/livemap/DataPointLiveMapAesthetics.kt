@@ -139,7 +139,6 @@ internal class DataPointLiveMapAesthetics {
             else -> colorWithAlpha(myP.color()!!)
         }
 
-
     val radius: Double
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)

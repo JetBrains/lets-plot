@@ -224,6 +224,12 @@ object Option {
             const val SIZE_UNIT = "size_unit"
         }
 
+        object Label {
+            const val LABEL_PADDING = "label_padding"
+            const val LABEL_R = "label_r"
+            const val LABEL_SIZE = "label_size"
+        }
+
         object LiveMap {
             const val DISPLAY_MODE = "display_mode"
             const val INTERACTIVE = "interactive"
@@ -554,6 +560,7 @@ object Option {
         private const val RECT = "rect"
         private const val SEGMENT = "segment"
         const val TEXT = "text"
+        const val LABEL = "label"
         private const val RASTER = "raster"
         const val IMAGE = "image"
 
@@ -601,6 +608,7 @@ object Option {
             map[RECT] = GeomKind.RECT
             map[SEGMENT] = GeomKind.SEGMENT
             map[TEXT] = GeomKind.TEXT
+            map[LABEL] = GeomKind.LABEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
             GEOM_KIND_MAP = map

@@ -908,6 +908,36 @@ class TooltipConfigTest {
         assertTooltipStrings(expectedLines, lines)
     }
 
+    @Test
+    fun `positional aesthetics should use domain of base aes to prevent mixed number formats`() {
+        // MIDDLE, LOWER, YMIN were formatted with exponential notation, while YMAX and UPPER were formatted
+        // with regular number format
+
+        val data = mapOf(
+            "alphabet" to listOf("a", "a", "b", "a", "a", "a", "b", "b", "b", "a", "a", "a"),
+            "coeff" to listOf(0.989, 0.989, 0.987, 0.991, 0.988, 0.994, 0.991, 0.988, 0.994, 0.991, 0.988, 0.994)
+        )
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.BOX_PLOT,
+            data = data,
+            mapping = mapOf(
+                Aes.X.name to "alphabet",
+                Aes.Y.name to "coeff"
+            )
+        )
+
+        val expected = mapOf(
+            Aes.YMAX to "0.99",
+            Aes.UPPER to "0.99",
+            Aes.MIDDLE to "0.99",
+            Aes.LOWER to "0.99",
+            Aes.YMIN to "0.99",
+        )
+        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
+        }
+    }
+
     companion object {
         private fun getTitleString(geomLayer: GeomLayer): String? {
             return geomLayer.contextualMapping.getTitle(index = 0)

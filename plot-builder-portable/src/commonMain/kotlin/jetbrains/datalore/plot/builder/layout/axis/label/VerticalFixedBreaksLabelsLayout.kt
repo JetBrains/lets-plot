@@ -5,18 +5,18 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class VerticalFixedBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    tickLabelSpec: PlotLabelSpec,
+    tickLabelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, tickLabelSpec, breaks, theme) {

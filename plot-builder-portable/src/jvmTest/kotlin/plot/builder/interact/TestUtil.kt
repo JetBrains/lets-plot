@@ -15,16 +15,16 @@ import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
 import jetbrains.datalore.plot.builder.layout.Margins
+import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import org.assertj.core.api.Condition
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
@@ -34,25 +34,32 @@ object TestUtil {
     val axisTheme = object : AxisTheme {
         override val axis: String
             get() = TODO("Not yet implemented")
+
         override fun showLine() = TODO("Not yet implemented")
         override fun showTickMarks() = TODO("Not yet implemented")
         override fun showLabels() = TODO("Not yet implemented")
         override fun showTitle() = TODO("Not yet implemented")
         override fun showTooltip() = TODO("Not yet implemented")
-        override fun titleStyle() = TODO("Not yet implemented")
+        override fun titleStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun titleJustification() = TextJustification(0.5, 1.0)
         override fun titleMargins() = Margins()
         override fun lineWidth() = TODO("Not yet implemented")
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
-        override fun labelStyle() = TODO("Not yet implemented")
+        override fun labelStyle(): ThemeTextStyle = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
         override fun tickLabelMargins() = Margins()
         override fun tooltipFill() = AXIS_TOOLTIP_COLOR
         override fun tooltipColor() = AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
-        override fun tooltipTextStyle() = TextStyle(FontFamily.SERIF, FontFace.NORMAL, Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(), LIGHT_TEXT_COLOR)
+        override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
+//            Defaults.FONT_FAMILY_NORMAL,
+            FontFamily.SERIF,
+            FontFace.NORMAL,
+            Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
+            LIGHT_TEXT_COLOR
+        )
     }
 
     private const val VARIABLE_NAME = "A"

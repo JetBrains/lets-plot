@@ -7,10 +7,9 @@ package jetbrains.datalore.vis
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
 
 data class TextStyle(
-    val family: FontFamily,
+    val family: String,
     val face: FontFace,
     val size: Double,
     val color: Color

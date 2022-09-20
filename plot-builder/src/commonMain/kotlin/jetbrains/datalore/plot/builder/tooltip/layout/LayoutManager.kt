@@ -46,7 +46,7 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
             ?.let { xAxisTooltip ->
-                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, true)
+                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, ignoreCursor = true)
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
                     desiredPosition.add(positionedTooltip)
 
@@ -142,7 +142,8 @@ class LayoutManager(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
                         BOTTOM,
-                        ignoreCursor = true
+                        ignoreCursor = true,
+                        centered = false
                     )
                 )
 
@@ -298,9 +299,13 @@ class LayoutManager(
     private fun calculateVerticalTooltipPosition(
         measuredTooltip: MeasuredTooltip,
         alignment: VerticalAlignment,
-        ignoreCursor: Boolean
+        ignoreCursor: Boolean,
+        centered: Boolean = true
     ): PositionedTooltip {
-        val tooltipX = centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
+        val tooltipX = if (centered)
+            centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
+        else
+            measuredTooltip.hintCoord.x
 
         val stemY: Double
         val tooltipY: Double

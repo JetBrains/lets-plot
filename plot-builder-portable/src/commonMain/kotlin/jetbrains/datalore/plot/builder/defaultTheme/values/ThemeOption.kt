@@ -17,6 +17,9 @@ object ThemeOption {
     const val PLOT_SUBTITLE = "plot_subtitle"
     const val PLOT_CAPTION = "plot_caption"
 
+    // ToDo: "text_width_scale" is used Violin demo - update.
+//    const val TEXT_WIDTH_FACTOR = "text_width_scale"
+
     // Axis
     const val AXIS = "axis"
     const val AXIS_X = "axis_x"
@@ -95,6 +98,7 @@ object ThemeOption {
         // text
         const val FONT_FAMILY = "family"
         const val FONT_FACE = "face"
+//        const val FONT_MONOSPACED = "monospaced"
         const val HJUST = "hjust"
         const val VJUST = "vjust"
         const val ANGLE = "angle"       // ToDo

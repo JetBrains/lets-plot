@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
@@ -20,7 +20,7 @@ import kotlin.math.max
 internal class HorizontalSimpleLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: PlotLabelSpec,
+    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
@@ -88,28 +88,23 @@ internal class HorizontalSimpleLabelsLayout(
     }
 
     companion object {
-        fun estimateBreakCountInitial(axisLength: Double, tickLabelSpec: PlotLabelSpec): Int {
+        fun estimateBreakCountInitial(axisLength: Double, tickLabelSpec: LabelSpec): Int {
             return estimateBreakCount(
-                INITIAL_TICK_LABEL_LENGTH,
-                axisLength,
-                tickLabelSpec
+                tickLabelSpec.width(INITIAL_TICK_LABEL),
+                axisLength
             )
         }
 
-        fun estimateBreakCount(labels: List<String>, axisLength: Double, tickLabelSpec: PlotLabelSpec): Int {
-            val maxLength =
-                BreakLabelsLayoutUtil.maxLength(
-                    labels
-                )
+        fun estimateBreakCount(labels: List<String>, axisLength: Double, tickLabelSpec: LabelSpec): Int {
+            val longestLabelWidth = BreakLabelsLayoutUtil.longestLabelWidth(labels) { tickLabelSpec.width(it) }
             return estimateBreakCount(
-                maxLength,
-                axisLength,
-                tickLabelSpec
+                longestLabelWidth,
+                axisLength
             )
         }
 
-        private fun estimateBreakCount(labelLength: Int, axisLength: Double, tickLabelSpec: PlotLabelSpec): Int {
-            val tickDistance = tickLabelSpec.width(labelLength) + MIN_TICK_LABEL_DISTANCE
+        private fun estimateBreakCount(width: Double, axisLength: Double): Int {
+            val tickDistance = width + MIN_TICK_LABEL_DISTANCE
             return max(1.0, axisLength / tickDistance).toInt()
         }
     }

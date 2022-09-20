@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class LiveMapAxisTheme : AxisTheme {
     override val axis: String
@@ -28,12 +28,13 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun showTooltip(): Boolean = false
 
-    override fun titleStyle() = TextStyle(
+    override fun titleStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
-        size = Defaults.Plot.Axis.TITLE_FONT_SIZE.toDouble(),
+        size = Defaults.Plot.Axis.TITLE_FONT_SIZE,
         color = Defaults.TEXT_COLOR
     )
+
     override fun titleJustification() = TextJustification(0.5, 1.0)
 
     override fun titleMargins() = Margins()
@@ -44,7 +45,7 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tickMarkColor() = Defaults.Plot.Axis.LINE_COLOR
 
-    override fun labelStyle() = TextStyle(
+    override fun labelStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Plot.Axis.TICK_FONT_SIZE.toDouble(),
@@ -63,7 +64,7 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun tooltipStrokeWidth() = 1.0
 
-    override fun tooltipTextStyle() = TextStyle(
+    override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
         size = Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE.toDouble(),

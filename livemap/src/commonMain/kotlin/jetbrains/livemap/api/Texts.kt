@@ -53,9 +53,11 @@ class TextBuilder(
     var index: Int = 0
     var point: Vec<LonLat>? = null
 
-    var fillColor: Color = Color.BLACK
-    var strokeColor: Color = Color.TRANSPARENT
+    var fillColor: Color = Color.TRANSPARENT
+    var strokeColor: Color = Color.BLACK
     var strokeWidth: Double = 0.0
+
+    var drawBorder: Boolean = false
 
     var label: String = ""
     var size: Double = 10.0
@@ -103,7 +105,8 @@ class TextBuilder(
             angle,
             hjust,
             vjust,
-            textMeasurer
+            textMeasurer,
+            drawBorder
         )
     }
 }

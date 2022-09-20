@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.e
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.elemWithFontOptions
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.test.Test
 
@@ -59,7 +60,7 @@ internal class ThemeOptionTest {
 
     private fun checkElemProperty(theme: String, elemKey: List<String>, elemProperty: String) {
         val themeValues = ThemeValues.forName(theme)
-        val access = object : ThemeValuesAccess(themeValues.values) {
+        val access = object : ThemeValuesAccess(themeValues.values, DefaultFontFamilyRegistry()) {
             fun check() {
                 when (elemProperty) {
                     COLOR, FILL -> this.getColor(getElemValue(elemKey), elemProperty)
@@ -78,7 +79,7 @@ internal class ThemeOptionTest {
 
     private fun checkNumericOption(theme: String, optionKey: List<String>) {
         val themeValues = ThemeValues.forName(theme)
-        val acccess = object : ThemeValuesAccess(themeValues.values) {
+        val acccess = object : ThemeValuesAccess(themeValues.values, DefaultFontFamilyRegistry()) {
             fun check() {
                 this.getNumber(optionKey)
             }

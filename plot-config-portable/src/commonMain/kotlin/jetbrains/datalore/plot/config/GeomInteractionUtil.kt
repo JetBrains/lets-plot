@@ -188,6 +188,7 @@ object GeomInteractionUtil {
                 axisTooltipVisibilityFromConfig = true
             )
             GeomKind.TEXT,
+            GeomKind.LABEL,
             GeomKind.POINT,
             GeomKind.JITTER,
             GeomKind.Q_Q,
@@ -228,13 +229,13 @@ object GeomInteractionUtil {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
-            GeomKind.TEXT -> {
+            GeomKind.TEXT, GeomKind.LABEL -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
                 if (layerConfig.tooltips.tooltipLinePatterns.isNullOrEmpty()) {
-                    GeomMeta.renders(GeomKind.TEXT)
+                    GeomMeta.renders(layerConfig.geomProto.geomKind)
                 } else {
-                    GeomMeta.renders(GeomKind.TEXT) - axisAes
+                    GeomMeta.renders(layerConfig.geomProto.geomKind) - axisAes
                 }
             }
             else -> emptyList()

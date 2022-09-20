@@ -23,8 +23,18 @@ object DemoModelA {
         svgRoot.children().add(createSlimGroup())
 
         val textStyles: Map<String, TextStyle> = mapOf(
-            "TEXT1" to TextStyle(FontFamily.SERIF, face = FontFace.ITALIC, size = 15.0, color = Color.BLUE),
-            "TEXT2" to TextStyle(FontFamily.SERIF, face = FontFace.BOLD, size = 20.0, color = Color.RED)
+            "TEXT1" to TextStyle(
+                FontFamily.SERIF.name,
+                face = FontFace.ITALIC,
+                size = 15.0,
+                color = Color.BLUE
+            ),
+            "TEXT2" to TextStyle(
+                FontFamily.SERIF.name,
+                face = FontFace.BOLD,
+                size = 20.0,
+                color = Color.RED
+            )
         )
         svgRoot.children().add(createStyleElement(textStyles))
 
@@ -80,7 +90,7 @@ object DemoModelA {
     private fun createStyleElement(textStyles: Map<String, TextStyle>): SvgStyleElement {
         return SvgStyleElement(object : SvgCssResource {
             override fun css(): String {
-                return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF.toString()).toCSS()
+                return StyleSheet(textStyles, defaultFamily = FontFamily.SERIF.name).toCSS()
             }
         })
     }
@@ -144,33 +154,33 @@ object DemoModelA {
 
     private fun createClosedPathFrom(x: Double, y: Double): SvgPathData {
         return SvgPathDataBuilder(false)
-                .moveTo(x, y, true)
-                .verticalLineTo(-100.0)
-                .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
-                .closePath()
-                .build()
+            .moveTo(x, y, true)
+            .verticalLineTo(-100.0)
+            .ellipticalArc(100.0, 100.0, 0.0, false, false, -100.0, 100.0)
+            .closePath()
+            .build()
     }
 
     private fun createUnclosedPathFrom(x: Double, y: Double): SvgPathData {
         return SvgPathDataBuilder(true)
-                .moveTo(x, y)
-                .interpolatePoints(createSawPointsFrom(x, y), SvgPathDataBuilder.Interpolation.LINEAR)
-                .build()
+            .moveTo(x, y)
+            .interpolatePoints(createSawPointsFrom(x, y), SvgPathDataBuilder.Interpolation.LINEAR)
+            .build()
     }
 
     private fun createHoledPathFrom(x: Double, y: Double): SvgPathData {
         return SvgPathDataBuilder(false)
-                .moveTo(x, y, true)
-                .horizontalLineTo(50.0)
-                .verticalLineTo(50.0)
-                .horizontalLineTo(-50.0)
-                .closePath()
-                .moveTo(x + 10, y + 10, true)
-                .horizontalLineTo(30.0)
-                .verticalLineTo(30.0)
-                .horizontalLineTo(-30.0)
-                .closePath()
-                .build()
+            .moveTo(x, y, true)
+            .horizontalLineTo(50.0)
+            .verticalLineTo(50.0)
+            .horizontalLineTo(-50.0)
+            .closePath()
+            .moveTo(x + 10, y + 10, true)
+            .horizontalLineTo(30.0)
+            .verticalLineTo(30.0)
+            .horizontalLineTo(-30.0)
+            .closePath()
+            .build()
     }
 
     private fun createSawPointsFrom(x: Double, y: Double): List<DoubleVector> {

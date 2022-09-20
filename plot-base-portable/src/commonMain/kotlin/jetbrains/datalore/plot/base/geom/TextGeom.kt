@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-class TextGeom : GeomBase() {
+open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
     var naValue = DEF_NA_VALUE
     var sizeUnit: String? = null
@@ -50,11 +50,7 @@ class TextGeom : GeomBase() {
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
                 }
 
-                val label = TextLabel(text)
-                GeomHelper.decorate(label, p, sizeUnitRatio)
-
-                label.moveTo(loc)
-                root.add(label.rootGroup)
+                buildTextComponent(root, p, loc, text, sizeUnitRatio, ctx)
 
                 // The geom_text tooltip is similar to the geom_tile:
                 // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
@@ -69,6 +65,20 @@ class TextGeom : GeomBase() {
                 )
             }
         }
+    }
+
+    open fun buildTextComponent(
+        root: SvgRoot,
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        text: String,
+        sizeUnitRatio: Double,
+        ctx: GeomContext
+    ) {
+        val label = TextLabel(text)
+        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
+        label.moveTo(location)
+        root.add(label.rootGroup)
     }
 
     private fun toString(label: Any?): String {

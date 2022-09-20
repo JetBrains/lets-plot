@@ -234,7 +234,11 @@ class PlotSvgComponent constructor(
         }
         @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
-            drawDebugRect(plotOuterBoundsWithoutTitleAndCaption, Color.BLUE, "BLUE: plotOuterBoundsWithoutTitleAndCaption")
+            drawDebugRect(
+                plotOuterBoundsWithoutTitleAndCaption,
+                Color.BLUE,
+                "BLUE: plotOuterBoundsWithoutTitleAndCaption"
+            )
         }
 
         // Inner bounds - all without titles and legends.
@@ -242,8 +246,9 @@ class PlotSvgComponent constructor(
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(
                 axisTitleSizeDelta(
-                    axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    axisTitleBottom = null to PlotLabelSpec(0.0),
+                    axisTitleLeft = axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
+//                    axisTitleBottom = null to PlotLabelSpec(Font(FONT_FAMILY_NORMAL, 0)),
+                    axisTitleBottom = null to PlotLabelSpec.DUMMY,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
@@ -337,6 +342,12 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             plotTitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             plotTitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            plotTitleTextRect?.let {
+                drawDebugRect(
+                    textBoundingBox(title!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
+                    Color.DARK_GREEN
+                )
+            }
         }
 
         val subtitleElementRect = subtitle?.let {
@@ -355,6 +366,12 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             subtitleTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             subtitleElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            subtitleTextRect?.let {
+                drawDebugRect(
+                    textBoundingBox(subtitle!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = -1),
+                    Color.DARK_GREEN
+                )
+            }
         }
 
         val captionElementRect = caption?.let {
@@ -374,6 +391,12 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             captionTextRect?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
             captionElementRect?.let { drawDebugRect(it, Color.GRAY) }
+            captionTextRect?.let {
+                drawDebugRect(
+                    textBoundingBox(caption!!, it, PlotLabelSpecFactory.plotTitle(plotTheme), align = 1),
+                    Color.DARK_GREEN
+                )
+            }
         }
 
         // add plot title
@@ -478,7 +501,7 @@ class PlotSvgComponent constructor(
         orientation: Orientation,
         overallTileBounds: DoubleRectangle,  // tiles union bounds
         overallGeomBounds: DoubleRectangle,  // geom bounds union
-        labelSpec: PlotLabelSpec,
+        labelSpec: LabelSpec,
         justification: TextJustification,
         margins: Margins,
         className: String
@@ -566,6 +589,32 @@ class PlotSvgComponent constructor(
         if (DEBUG_DRAWING) {
             drawDebugRect(axisTitleTextRect, Color.LIGHT_BLUE)
             drawDebugRect(axisTitleElementRect, Color.GRAY)
+            drawDebugRect(textBoundingBox(text, axisTitleTextRect, labelSpec, orientation), Color.DARK_GREEN)
+        }
+    }
+
+    private fun textBoundingBox(
+        text: String,
+        boundRect: DoubleRectangle,
+        labelSpec: LabelSpec,
+        orientation: Orientation = Orientation.TOP,
+        align: Int = 0 // < 0 - to left; > 0 - to right; 0 - centered
+    ): DoubleRectangle {
+        val d = PlotLayoutUtil.textDimensions(text, labelSpec)
+        return if (orientation in listOf(Orientation.TOP, Orientation.BOTTOM)) {
+            val x = when {
+                align > 0 -> boundRect.right - d.x
+                align < 0 -> boundRect.left
+                else -> boundRect.center.x - d.x / 2
+            }
+            DoubleRectangle(x, boundRect.center.y - d.y / 2, d.x, d.y)
+        } else {
+            val y = when {
+                align > 0 -> boundRect.bottom - d.x
+                align < 0 -> boundRect.top
+                else -> boundRect.center.y - d.x / 2
+            }
+            DoubleRectangle(boundRect.center.x - d.y / 2, y, d.y, d.x)
         }
     }
 

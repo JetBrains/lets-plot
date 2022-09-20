@@ -6,6 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Group
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgStyleElement
 
@@ -18,7 +19,7 @@ internal class SvgStyleElementMapper(
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         val styleSheet = StyleSheet.fromCSS(
             css = source.resource.css(),
-            defaultFamily = "Helvetica",
+            defaultFamily = FontFamily.HELVETICA.name,
             defaultSize = 15.0
         )
         peer.applyStyleSheet(styleSheet)

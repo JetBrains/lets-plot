@@ -6,11 +6,10 @@
 package jetbrains.datalore.plot.builder.theme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendJustification
 import jetbrains.datalore.plot.builder.guide.LegendPosition
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.layout.TextJustification
 
 interface LegendTheme {
     fun keySize(): Double
@@ -32,10 +31,9 @@ interface LegendTheme {
 
     fun direction(): LegendDirection
 
-    fun titleStyle(): TextStyle
+    fun titleStyle(): ThemeTextStyle
     fun titleJustification(): TextJustification
-    fun textStyle(): TextStyle
-
+    fun textStyle(): ThemeTextStyle
     fun showBackground(): Boolean
     fun backgroundColor(): Color
     fun backgroundFill(): Color

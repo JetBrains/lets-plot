@@ -63,8 +63,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             STEP -> DefaultSampling.STEP
             RECT -> DefaultSampling.RECT
             SEGMENT -> DefaultSampling.SEGMENT
-            TEXT -> DefaultSampling.TEXT
-
+            TEXT, LABEL -> DefaultSampling.TEXT
             LIVE_MAP,
             RASTER,
             IMAGE -> Samplings.NONE

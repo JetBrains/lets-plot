@@ -11,12 +11,14 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultFacetsTheme(
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), FacetsTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), FacetsTheme {
 
     internal val rectKey = listOf(FACET_STRIP_BGR_RECT, RECT)
     internal val textKey = listOf(FACET_STRIP_TEXT, TEXT)
@@ -41,7 +43,7 @@ internal class DefaultFacetsTheme(
         return getNumber(getElemValue(rectKey), Elem.SIZE)
     }
 
-    override fun stripTextStyle(): TextStyle {
+    override fun stripTextStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(textKey))
     }
 }

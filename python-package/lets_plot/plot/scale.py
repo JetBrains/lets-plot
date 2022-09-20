@@ -1104,7 +1104,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     Notes
     -----
     Create your own discrete scale for alpha (transparency) aesthetic.
-    Values should be taken from [0, 1] interval.
+    Accepts values between 0 and 1.
 
     Examples
     --------
@@ -2437,9 +2437,9 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at.
+        Corresponds to a color hue to start at. Accepts values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with.
+        Corresponds to a color hue to end with. Accepts values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
         Sets the order of colors in the scale.
         If -1, the order of colors is reversed.
@@ -2540,9 +2540,9 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at.
+        Corresponds to a color hue to start at. Accepts values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with.
+        Corresponds to a color hue to end with. Accepts values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
         Sets the order of colors in the scale.
         If -1, the order of colors is reversed.

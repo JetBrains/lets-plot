@@ -5,21 +5,21 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
 
 internal class HorizontalVerticalLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: PlotLabelSpec,
+    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {

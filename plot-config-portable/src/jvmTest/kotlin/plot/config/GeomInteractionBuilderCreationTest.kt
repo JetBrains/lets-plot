@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
@@ -149,7 +150,7 @@ class GeomInteractionBuilderCreationTest {
 
     @Test
     fun `the total number of factors from two layers is enough to show the tooltip`() {
-        val layer1 =  mapOf(
+        val layer1 = mapOf(
             GEOM to Option.GeomName.POINT,
             MAPPING to mapOf(
                 Aes.X.name to listOf(0, 1, 2),
@@ -157,7 +158,7 @@ class GeomInteractionBuilderCreationTest {
                 Aes.COLOR.name to listOf('a', 'b', 'c')
             )
         )
-        val layer2 =  mapOf(
+        val layer2 = mapOf(
             GEOM to Option.GeomName.POINT,
             MAPPING to mapOf(
                 Aes.X.name to listOf(3, 4, 5),
@@ -293,7 +294,7 @@ class GeomInteractionBuilderCreationTest {
         )
         return createGeomInteractionBuilder(
             plotOpts,
-            theme = ThemeConfig(themeOpts).theme
+            theme = ThemeConfig(themeOpts, DefaultFontFamilyRegistry()).theme
         )
     }
 

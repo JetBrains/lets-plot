@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
@@ -15,12 +14,15 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITL
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
+import jetbrains.datalore.plot.builder.layout.TextJustification
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.PlotTheme
-import jetbrains.datalore.vis.TextStyle
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 internal class DefaultPlotTheme(
-    options: Map<String, Any>
-) : ThemeValuesAccess(options), PlotTheme {
+    options: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry
+) : ThemeValuesAccess(options, fontFamilyRegistry), PlotTheme {
 
     internal val backgroundKey = listOf(PLOT_BKGR_RECT, RECT)
     internal val titleKey = listOf(PLOT_TITLE, TITLE, TEXT)
@@ -43,15 +45,15 @@ internal class DefaultPlotTheme(
         return getNumber(getElemValue(backgroundKey), Elem.SIZE)
     }
 
-    override fun titleStyle(): TextStyle {
+    override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
 
-    override fun subtitleStyle(): TextStyle {
+    override fun subtitleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(subtitleKey))
     }
 
-    override fun captionStyle(): TextStyle {
+    override fun captionStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(captionKey))
     }
 

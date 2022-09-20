@@ -8,11 +8,14 @@ package jetbrains.datalore.plotDemo.model.component
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Font
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
+import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.vis.svg.SvgElement
@@ -86,9 +89,13 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createTextLabel(boundRect: DoubleRectangle, justification: TextJustification, rotation: TextRotation?): MultilineLabel {
+        private fun createTextLabel(
+            boundRect: DoubleRectangle,
+            justification: TextJustification,
+            rotation: TextRotation?
+        ): MultilineLabel {
             val text = "Horizontal justification:" + justification.x + "\n" +
-                    "Vertical justification:" + justification.y  + "\n" +
+                    "Vertical justification:" + justification.y + "\n" +
                     "Angle: " + rotation.toString()
 
             val label = MultilineLabel(text)
@@ -96,8 +103,9 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             label.textColor().set(Color.DARK_BLUE)
 
             val lineHeight = FONT_SIZE
+            val lineFont = Font(FontFamily(FONT_FAMILY_NORMAL, false), FONT_SIZE.toInt())
             val textSize = DoubleVector(
-                PlotLabelSpec(FONT_SIZE).width(text.length),
+                PlotLabelSpec(lineFont).width(text),
                 lineHeight * label.linesCount()
             )
             val (position, hAnchor) = applyJustification(

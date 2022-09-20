@@ -6,71 +6,101 @@
 package jetbrains.livemap.demo
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.LonLatPoint
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
-import jetbrains.livemap.model.coord
 
 class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
+        val coord1: LonLatPoint = explicitVec(0.0, 0.0)
+        val coord2: LonLatPoint = explicitVec(25.0, 0.0)
+
         return basicLiveMap {
             layers {
-
-                texts {
-                    text {
-                        label = "--------0-->"
-                        coord(0.0, 0.0)
-                        fillColor = Color.GREEN
-                        size = 25.0
-                        angle = 0.0
-                        vjust = 0.5
-                    }
-
-                    text {
-                        label = "------180-->"
-                        coord(0.0, 0.0)
-                        fillColor = Color.BLUE
-                        size = 25.0
-                        angle = 180.0
-                        vjust = 0.5
-                    }
-
-                    text {
-                        label = "-------60-->"
-                        coord(0.0, 0.0)
-                        fillColor = Color.PINK
-                        size = 25.0
-                        angle = 60.0
-                        vjust = 0.5
-                    }
-
-                    text {
-                        label = "------300-->"
-                        coord(0.0, 0.0)
-                        fillColor = Color.RED
-                        size = 25.0
-                        angle = -60.0
-                        vjust = 0.5
-                    }
-
-                    text {
-                        label = "------120-->"
-                        coord(0.0, 0.0)
-                        fillColor = Color.CYAN
-                        size = 25.0
-                        angle = 120.0
-                        vjust = 0.5
-                    }
-
-                    text {
-                        label = "------210-->"
-                        coord(0.0, 0.0)
-                        fillColor = Color.DARK_MAGENTA
-                        size = 25.0
-                        angle = -120.0
-                        vjust = 0.5
-                    }
-                }
+                texts(getTexts(coord1, withBorder = false))
+                texts(getTexts(coord2, withBorder = true))
+                points(getPoint(coord1))
+                points(getPoint(coord2))
             }
+        }
+    }
+
+    private fun getPoint(coord: LonLatPoint): Points.() -> Unit = {
+        point {
+            point = coord
+            radius = 4.0
+            fillColor = Color.WHITE
+            shape = 21
+        }
+    }
+
+    private fun getTexts(coord: LonLatPoint, withBorder: Boolean): Texts.() -> Unit = {
+        text {
+            label = "--------0-->"
+            point = coord
+            Color.GREEN.let {
+                if (withBorder) fillColor = it else strokeColor = it
+            }
+            size = 25.0
+            angle = 0.0
+            vjust = 0.5
+            drawBorder = withBorder
+        }
+        text {
+            label = "------180-->"
+            point = coord
+            Color.BLUE.let {
+                if (withBorder) fillColor = it else strokeColor = it
+            }
+            size = 25.0
+            angle = 180.0
+            vjust = 0.5
+            drawBorder = withBorder
+        }
+        text {
+            label = "-------60-->"
+            point = coord
+            Color.PINK.let {
+                if (withBorder) fillColor = it else strokeColor = it
+            }
+            size = 25.0
+            angle = 60.0
+            vjust = 0.5
+            drawBorder = withBorder
+        }
+        text {
+            label = "------300-->"
+            point = coord
+            Color.RED.let {
+                if (withBorder) fillColor = it else strokeColor = it
+            }
+            size = 25.0
+            angle = -60.0
+            vjust = 0.5
+            drawBorder = withBorder
+        }
+        text {
+            label = "------120-->"
+            point = coord
+            Color.CYAN.let {
+                if (withBorder) fillColor = it else strokeColor = it
+            }
+            size = 25.0
+            angle = 120.0
+            vjust = 0.5
+            drawBorder = withBorder
+        }
+        text {
+            label = "------210-->"
+            point = coord
+            Color.DARK_MAGENTA.let {
+                if (withBorder) fillColor = it else strokeColor = it
+            }
+            size = 25.0
+            angle = -120.0
+            vjust = 0.5
+            drawBorder = withBorder
         }
     }
 }

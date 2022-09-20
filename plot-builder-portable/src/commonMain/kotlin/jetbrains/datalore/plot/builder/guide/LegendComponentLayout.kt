@@ -62,7 +62,7 @@ abstract class LegendComponentLayout(
 
     private fun doLayout() {
         val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
-        val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(1) / 2
+        val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
         val labelHOffset = keySize.x + labelLeftMargin
         val labelVOffset = (keySize.y - labelHeight) / 2
 
@@ -113,7 +113,7 @@ abstract class LegendComponentLayout(
 
         override fun labelSize(index: Int): DoubleVector {
             val label = breaks[index].label
-            return DoubleVector(PlotLabelSpecFactory.legendItem(theme).width(label.length), PlotLabelSpecFactory.legendItem(theme).height())
+            return DoubleVector(PlotLabelSpecFactory.legendItem(theme).width(label), PlotLabelSpecFactory.legendItem(theme).height())
         }
     }
 
@@ -160,7 +160,7 @@ abstract class LegendComponentLayout(
 
         init {
             for (br in breaks) {
-                myMaxLabelWidth = max(myMaxLabelWidth, PlotLabelSpecFactory.legendItem(theme).width(br.label.length))
+                myMaxLabelWidth = max(myMaxLabelWidth, PlotLabelSpecFactory.legendItem(theme).width(br.label))
             }
         }
 

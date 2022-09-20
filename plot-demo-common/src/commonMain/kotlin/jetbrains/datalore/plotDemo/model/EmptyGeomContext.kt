@@ -6,11 +6,18 @@
 package jetbrains.datalore.plotDemo.model
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
+import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
+/**
+ * Used in demos only.
+ */
 class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
@@ -28,4 +35,22 @@ class EmptyGeomContext : GeomContext {
     }
 
     override fun isMappedAes(aes: Aes<*>): Boolean = false
+    override fun estimateTextSize(
+        text: String,
+        family: String,
+        size: Double,
+        isBold: Boolean,
+        isItalic: Boolean
+    ): DoubleVector {
+        @Suppress("NAME_SHADOWING")
+        val family = DefaultFontFamilyRegistry().get(family)
+        return PlotLabelSpec(
+            Font(
+                family = family,
+                size = size.toInt(),
+                isBold = isBold,
+                isItalic = isItalic
+            ),
+        ).dimensions(text)
+    }
 }

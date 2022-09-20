@@ -358,7 +358,7 @@ class layer_tooltips(FeatureSpec):
         Parameters
         ----------
         value : float
-            Minimum width value.
+            Minimum width value in px.
 
         Returns
         -------

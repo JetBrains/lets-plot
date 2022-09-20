@@ -105,12 +105,12 @@ abstract class ColorBarComponentLayout(
     ) {
 
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).width(1) / 2
+        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
             check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
-            val maxLabelWidth: Double = breaks.labels.map { it.length }
+            val maxLabelWidth: Double = breaks.labels
                 .maxOf { PlotLabelSpecFactory.legendItem(theme).width(it) }
 
             // Bar + labels bounds

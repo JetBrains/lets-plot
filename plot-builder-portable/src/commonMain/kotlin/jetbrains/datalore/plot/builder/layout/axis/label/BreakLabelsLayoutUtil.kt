@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.max
 import kotlin.math.min
@@ -46,12 +46,15 @@ internal object BreakLabelsLayoutUtil {
         return breaks
     }
 
-    fun maxLength(labels: List<String>): Int {
-        var max = 0
-        for (label in labels) {
-            max = max(max, label.length)
-        }
-        return max
+    fun longestLabelWidth(
+        labels: List<String>,
+        labelToWidth: (String) -> Double = { it.length.toDouble() }
+    ): Double {
+        val longestLabel = labels.maxByOrNull(labelToWidth)
+        return if (longestLabel == null)
+            0.0
+        else
+            labelToWidth(longestLabel)
     }
 
     fun horizontalCenteredLabelBounds(labelSize: DoubleVector): DoubleRectangle {
@@ -167,10 +170,9 @@ internal object BreakLabelsLayoutUtil {
         breaks: ScaleBreaks,
         axisDomain: DoubleSpan,
         axisMapper: (Double?) -> Double?,
-        tickLabelSpec: PlotLabelSpec
+        tickLabelSpec: LabelSpec
     ): DoubleRectangle {
-        val maxLength = maxLength(breaks.labels)
-        val maxLabelWidth = tickLabelSpec.width(maxLength)
+        val maxLabelWidth = longestLabelWidth(breaks.labels) { tickLabelSpec.width(it) }
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {

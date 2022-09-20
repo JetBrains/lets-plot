@@ -45,6 +45,7 @@ internal class Interactor(
             theme.horizontalAxis(flippedAxis),
             theme.verticalAxis(flippedAxis),
             theme.tooltips(),
+            theme.plot().backgroundFill(),
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))

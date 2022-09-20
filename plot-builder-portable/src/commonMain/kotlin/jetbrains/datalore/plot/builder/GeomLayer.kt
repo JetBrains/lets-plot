@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
+import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
 interface GeomLayer {
     val dataFrame: DataFrame
@@ -53,6 +54,8 @@ interface GeomLayer {
     val marginalSide: MarginSide
 
     val marginalSize: Double
+
+    val fontFamilyRegistry: FontFamilyRegistry
 
     fun renderedAes(): List<Aes<*>>
 
