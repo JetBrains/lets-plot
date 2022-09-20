@@ -15,7 +15,7 @@
   
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_flavors.ipynb).
 
-- Viridis color scales: `scale_fill_viridis()`, `scale_fill_viridis()`.
+- Viridis color scales: `scale_color_viridis()`, `scale_fill_viridis()`.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
 
