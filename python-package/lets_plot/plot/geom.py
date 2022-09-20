@@ -3184,7 +3184,101 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                     draw_quantiles=None,
+                     scale=None,
                      **other_args):
+    """
+    Plots the sum of the `y` and `ridgeheight` aesthetics versus `x`. Heights of the ridges are relatively scaled.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    draw_quantiles : list of float
+        Draw vertical lines at the given quantiles of the density estimate.
+    scale : float, default=1.0
+        A multiplicative factor applied to ridgeheight aesthetic.
+        If `scale = 1.0`, the heights of a ridges are automatically scaled such that the highest ridge just touches the one above.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `geom_area_ridges()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : y-axis coordinates.
+    - ridgeheight : relative height of the ridge. Assumed to be positive, though this is not required.
+    - height : absolute limit for height of a ridge.
+    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+    - size : lines width.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 30, 3
+        np.random.seed(42)
+        x = np.tile(np.arange(n), m)
+        y = np.repeat(np.arange(m), n)
+        rh = np.random.uniform(size=m*n)
+        ggplot({'x': x, 'y': y, 'rh': rh}) + \\
+            geom_area_ridges(aes('x', 'y', ridgeheight='rh'))
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        import numpy as np
+        from lets_plot import *
+        from lets_plot.mapping import as_discrete
+        LetsPlot.setup_html()
+        n, m = 501, 3
+        x = np.linspace(0, (m * np.pi)**2, n)[:-1]
+        y = np.floor(np.sqrt(x) / np.pi)
+        rh = np.abs(np.sin(np.sqrt(x)))
+        ggplot({'x': x, 'y': y, 'rh': rh}) + \\
+            geom_area_ridges(aes('x', 'y', ridgeheight='rh', fill=as_discrete('y')), \\
+                             color='black', scale=.75, draw_quantiles=[.25, .5, .75])
+
+    """
     return _geom('area_ridges',
                  mapping=mapping,
                  data=data,
@@ -3193,6 +3287,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 draw_quantiles=draw_quantiles,
+                 scale=scale,
                  **other_args)
 
 
