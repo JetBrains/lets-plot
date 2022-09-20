@@ -3237,7 +3237,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - y : y-axis coordinates.
     - ridgeheight : relative height of the ridge. Assumed to be positive, though this is not required.
     - height : absolute limit for height of a ridge.
-    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
