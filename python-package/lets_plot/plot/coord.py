@@ -104,7 +104,7 @@ def coord_fixed(ratio=1., xlim=None, ylim=None, flip=False):
     return _coord('fixed', ratio=ratio, xlim=xlim, ylim=ylim, flip=flip)
 
 
-def coord_map(xlim=None, ylim=None, flip=False, projection='mercator'):
+def coord_map(xlim=None, ylim=None, flip=False):
     """
     Projects a portion of the earth, which is approximately spherical,
     onto a flat 2D plane.
@@ -123,9 +123,6 @@ def coord_map(xlim=None, ylim=None, flip=False, projection='mercator'):
     flip : bool
         Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
 
-    projection : str
-    Default is 'mercator'
-
     Returns
     -------
     `FeatureSpec`
@@ -134,7 +131,6 @@ def coord_map(xlim=None, ylim=None, flip=False, projection='mercator'):
     Examples
     --------
     .. jupyter-execute::
-        :param projection:
         :linenos:
         :emphasize-lines: 6
 
@@ -147,7 +143,7 @@ def coord_map(xlim=None, ylim=None, flip=False, projection='mercator'):
 
     """
 
-    return _coord('map', xlim=xlim, ylim=ylim, flip=flip, projection=projection)
+    return _coord('map', xlim=xlim, ylim=ylim, flip=flip)
 
 
 def coord_flip(xlim=None, ylim=None):
