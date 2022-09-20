@@ -5157,10 +5157,13 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Text to show for missing values.
     label_padding : float
         Amount of padding around label. Defaults to 0.25 of font size.
+        Currently not supported on livemap.
     label_r : float
         Radius of rounded corners. Defaults to 0.15 of label height.
+        Currently not supported on livemap.
     label_size : float, default = 1.0
         Size of label border.
+        Currently not supported on livemap.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
