@@ -251,16 +251,20 @@ class PlotSpec(FeatureSpec):
 
     @classmethod
     def duplicate(cls, other):
-        dup = PlotSpec(data=None, mapping=None, scales=other.__scales, layers=other.__layers,
+        dup = PlotSpec(data=None, mapping=None,
+                       scales=other.__scales,
+                       layers=other.__layers,
+                       metainfo_list=other.__metainfo_list,
                        is_livemap=other.__is_livemap)
         dup.props().update(other.props())
         return dup
 
-    def __init__(self, data, mapping, scales, layers, is_livemap=False, **kwargs):
+    def __init__(self, data, mapping, scales, layers, metainfo_list=[], is_livemap=False, **kwargs):
         """Initialize self."""
         super().__init__('plot', name=None, data=data, mapping=mapping, **kwargs)
         self.__scales = list(scales)
         self.__layers = list(layers)
+        self.__metainfo_list = list(metainfo_list)
         self.__is_livemap = is_livemap
 
     def get_plot_shared_data(self):
@@ -337,6 +341,7 @@ class PlotSpec(FeatureSpec):
             plot + layer -> plot[layers] += layer
             plot + geom ->  plot[layers] += new layer(geom)
             plot + scale -> plot[scales] += scale
+            plot + metainfo -> plot[metainfo_list] += metainfo
             plot + [feature]  -> plot + each feature in []
             plot + theme + theme -> merged theme
         """
@@ -374,6 +379,10 @@ class PlotSpec(FeatureSpec):
 
                 return plot
 
+            if other.kind == 'metainfo':
+                plot.__metainfo_list.append(other)
+                return plot
+
             if isinstance(other, FeatureSpecArray):
                 for spec in other.elements():
                     plot = plot.__add__(spec)
@@ -390,6 +399,7 @@ class PlotSpec(FeatureSpec):
         d['kind'] = self.kind
         d['scales'] = [scale.as_dict() for scale in self.__scales]
         d['layers'] = [layer.as_dict() for layer in self.__layers]
+        d['metainfo_list'] = [metainfo.as_dict() for metainfo in self.__metainfo_list]
         return d
 
     def __str__(self):
@@ -405,6 +415,11 @@ class PlotSpec(FeatureSpec):
         result.append('layers [{}]'.format(len(self.__layers)))
         for layer in self.__layers:
             result.append(str(layer))
+            result.append('-' * 34)
+
+        result.append('metainfo_list [{}]'.format(len(self.__metainfo_list)))
+        for metainfo in self.__metainfo_list:
+            result.append(str(metainfo))
             result.append('-' * 34)
 
         result.append('')  # for trailing \n

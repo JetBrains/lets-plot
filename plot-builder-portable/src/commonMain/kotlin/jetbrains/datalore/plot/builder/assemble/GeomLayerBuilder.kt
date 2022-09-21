@@ -35,7 +35,7 @@ import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 
-class GeomLayerBuilder(
+class GeomLayerBuilder constructor(
     private val geomProvider: GeomProvider,
     private val stat: Stat,
     private val posProvider: PosProvider,

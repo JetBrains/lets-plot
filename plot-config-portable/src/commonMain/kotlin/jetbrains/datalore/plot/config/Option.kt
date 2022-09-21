@@ -103,6 +103,8 @@ object Option {
         const val GUIDES = "guides"
         const val WIDTH = "width"
         const val HEIGHT = "height"
+        const val METAINFO_LIST = "metainfo_list"
+        const val METAINFO = "metainfo"  // a special kind of FeatureSpec
     }
 
     object Layer {
@@ -652,5 +654,16 @@ object Option {
         const val LOG10 = "log10"
         const val REVERSE = "reverse"
         const val SQRT = "sqrt"
+    }
+
+    object PlotMetainfo {
+        const val FONT_METRICS_ADJUSTMENT = "font_metrics_adjustment"
+        const val FONT_FAMILY_INFO = "font_family_info"
+    }
+
+    object FontMetainfo {
+        const val FAMILY = "family"
+        const val WIDTH_CORRECTION = "width_correction"
+        const val MONOSPACED = "monospaced"
     }
 }

@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
-internal class PointDataAccess(
+internal class PointDataAccess constructor (
     private val data: DataFrame,
     bindings: Map<Aes<*>, VarBinding>,
     scaleMap: TypedScaleMap
