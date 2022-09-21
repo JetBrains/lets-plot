@@ -5183,7 +5183,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - x : x-axis value.
     - y : y-axis value.
-    - alpha : transparency level of a layer. Understands numbers between 0 and 1.
+    - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill: background color of the label.
     - size : font size.
