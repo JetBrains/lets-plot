@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.DemoAndTest
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
+import jetbrains.datalore.plot.config.Option.Layer.ORIENTATION
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Meta.KIND
 import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
@@ -80,18 +81,20 @@ object TestUtil {
         mapping: Map<String, Any>,
         tooltips: Any? = null,
         scales: List<Map<String, Any?>> = emptyList(),
+        orientationY: Boolean = false
     ): GeomLayer {
         val plotOpts = mutableMapOf(
             KIND to PLOT,
             DATA to data,
             MAPPING to mapping,
             LAYERS to listOf(
-                mapOf(
-                    GEOM to geom,
-                    TOOLTIPS to tooltips
-                )
+                mutableMapOf<String, Any?>().apply {
+                    put(GEOM, geom)
+                    put(TOOLTIPS, tooltips)
+                    if (orientationY) { put(ORIENTATION, "Y") }
+                }
             ),
-            SCALES to scales
+            SCALES to scales,
         )
         return getSingleGeomLayer(plotOpts)
     }

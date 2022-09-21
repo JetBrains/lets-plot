@@ -909,17 +909,16 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun `positional aesthetics should use domain of base aes to prevent mixed number formats`() {
+    fun `issue579 - geom_boxplot(aes(alphabet, coeff))`() {
         // MIDDLE, LOWER, YMIN were formatted with exponential notation, while YMAX and UPPER were formatted
         // with regular number format
 
-        val data = mapOf(
-            "alphabet" to listOf("a", "a", "b", "a", "a", "a", "b", "b", "b", "a", "a", "a"),
-            "coeff" to listOf(0.989, 0.989, 0.987, 0.991, 0.988, 0.994, 0.991, 0.988, 0.994, 0.991, 0.988, 0.994)
-        )
         val geomLayer = buildGeomLayer(
             geom = Option.GeomName.BOX_PLOT,
-            data = data,
+            data = mapOf<String, List<Any>>(
+                "alphabet" to listOf("a", "a", "b", "a", "a", "a", "b", "b", "b", "a", "a", "a"),
+                "coeff" to listOf(0.119, 0.289, 0.387, 0.491, 0.588, 0.694, 0.791, 0.888, 0.994, 0.0191, 0.988, 0.994)
+            ),
             mapping = mapOf(
                 Aes.X.name to "alphabet",
                 Aes.Y.name to "coeff"
@@ -928,10 +927,69 @@ class TooltipConfigTest {
 
         val expected = mapOf(
             Aes.YMAX to "0.99",
-            Aes.UPPER to "0.99",
-            Aes.MIDDLE to "0.99",
-            Aes.LOWER to "0.99",
-            Aes.YMIN to "0.99",
+            Aes.UPPER to "0.841", // TODO: value 0.841 is INCORRECT
+            Aes.MIDDLE to "0.540", // TODO: value 0.540 is INCORRECT
+            Aes.LOWER to "0.204", // TODO: value 0.204 is INCORRECT
+            Aes.YMIN to "0.019", // TODO: value 0.019 is INCORRECT
+        )
+        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
+        }
+    }
+
+    @Test
+    fun `issue579 - geom_boxplot(aes(coeff, alphabet), orientation=y)`() {
+        // MIDDLE, LOWER, YMIN were formatted with exponential notation, while YMAX and UPPER were formatted
+        // with regular number format
+
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.BOX_PLOT,
+            data = mapOf<String, List<Any>>(
+                "alphabet" to listOf("a", "a", "b", "a", "a", "a", "b", "b", "b", "a", "a", "a"),
+                "coeff" to listOf(0.119, 0.289, 0.387, 0.491, 0.588, 0.694, 0.791, 0.888, 0.994, 0.0191, 0.988, 0.994)
+            ),
+            mapping = mapOf(
+                Aes.X.name to "coeff",
+                Aes.Y.name to "alphabet",
+            ),
+            orientationY = true
+        )
+
+        val expected = mapOf(
+            Aes.YMAX to "0.99",
+            Aes.UPPER to "0.841", // TODO: value 0.841 is INCORRECT
+            Aes.MIDDLE to "0.540", // TODO: value 0.540 is INCORRECT
+            Aes.LOWER to "0.204", // TODO: value 0.204 is INCORRECT
+            Aes.YMIN to "0.019", // TODO: value 0.019 is INCORRECT
+        )
+        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
+        }
+    }
+
+    @Test
+    fun `issue579 - geom_boxplot(aes(coeff), orientation=y)`() {
+        // MIDDLE, LOWER, YMIN were formatted with exponential notation, while YMAX and UPPER were formatted
+        // with regular number format
+
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.BOX_PLOT,
+            data = mapOf<String, List<Any>>(
+                "alphabet" to listOf("a", "a", "b", "a", "a", "a", "b", "b", "b", "a", "a", "a"),
+                "coeff" to listOf(0.119, 0.289, 0.387, 0.491, 0.588, 0.694, 0.791, 0.888, 0.994, 0.0191, 0.988, 0.994)
+            ),
+            mapping = mapOf(
+                Aes.X.name to "coeff"
+            ),
+            orientationY = true
+        )
+
+        val expected = mapOf(
+            Aes.YMAX to "0.99",
+            Aes.UPPER to "0.94",
+            Aes.MIDDLE to "0.64",
+            Aes.LOWER to "0.34",
+            Aes.YMIN to "0.02",
         )
         geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
