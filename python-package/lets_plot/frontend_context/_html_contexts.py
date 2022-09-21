@@ -66,6 +66,14 @@ def _detect_isolated_frame() -> bool:
     if "DEEPNOTE_PROJECT_ID" in os.environ:
         return True  # Deepnote Notebook -> iframe
 
+    if "databricks" in str(os.environ):
+        # Databricks notebook -> iframe
+        # As proposed: https://github.com/JetBrains/lets-plot/issues/602
+        return True
+
+    if "NEXTJOURNAL" in str(os.environ):
+        return True  # NextJournal notebook -> iframe
+
     if os.getenv("PLOTLY_RENDERER") == "colab":
         # good enouth - something colab-like
         return True  # Colab -> iframe
