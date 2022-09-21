@@ -35,9 +35,11 @@
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/boxplot_whisker_width.ipynb).
 
-- Add `geom_label` [[#557](https://github.com/JetBrains/lets-plot/issues/557)].
+- New geometry `geom_label()` [[#557](https://github.com/JetBrains/lets-plot/issues/557)].
   
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/geom_label.ipynb).
+
+- Auto-detection of Databricks and NextJournal environments [[#602](https://github.com/JetBrains/lets-plot/issues/602)].  
 
 ### Changed
 
