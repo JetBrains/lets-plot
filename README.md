@@ -78,7 +78,7 @@ Also read:
     - _high_contrast_light_
     - _high_contrast_dark_
                
-
+  <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22c/images/theme_flavors.png" alt="f-22c/images/theme_flavors.png" width="1000" height="133">
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_flavors.ipynb).
@@ -109,8 +109,8 @@ Also read:
     - _cividis_
     - _turbo_
     - _twilight_    
-                    
 
+  <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22c/images/viridis_plasma.png" alt="f-22c/images/viridis_plasma.png" width="439" height="132">
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
