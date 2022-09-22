@@ -59,52 +59,59 @@ Also read:
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
 
-## What is new in 2.4.0
-
-- ### Python versions
-
-  Added Python 3.10 wheels as well as new Apple Silicon wheel for Python 3.9.
-
-- ### New Plot Types
-
-  - #### Quantile-Quantile (Q-Q) plot.
-    - geometries:
-      - `geom_qq()`
-      - `geom_qq_line()`
-      - `geom_qq2()`
-      - `geom_qq2_line()`
-    - quick Q-Q : the `qq_plot()` function in the `bistro` module.
-
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/qq_plots.ipynb).
-
-  - #### Marginal plots.
-  
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22b/images/marginal_layers.png" alt="f-22b/images/marginal_layers.png" width="360" height="276">
-
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/marginal_layers.ipynb).
+## What is new in 2.5.0
 
 - ### Plot Theme
 
-  - `face` parameter in `element_text()`.
+  - #### `theme_bw()`
 
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/set_font_faces.ipynb).
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_bw.ipynb).
+                         
+  - #### Theme Flavors
+    
+    Theme flavor offers an easy way to change the colors of all elements in a theme to match a specific color scheme.
 
-  - `panel_border` parameter in `theme()`.
+    In this release, we have added the following flavors: 
+    - _darcula_
+    - _solarized_light_
+    - _solarized_dark_
+    - _high_contrast_light_
+    - _high_contrast_dark_
 
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/panel_border.ipynb).
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22c/images/theme_flavors.png" alt="f-22c/images/theme_flavors.png" width="1000" height="133">
 
-  - New options for configuring tooltip appearance.
-  
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22b/images/tooltip_theme.png" alt="f-22b/images/tooltip_theme.png" width="150" height="114">
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_flavors.ipynb).
 
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/tooltips_theme.ipynb).
- 
+  - #### New parameters in `element_text()`
+    - `size, family`
+      ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb))
+    - `hjust, vjust` for plot title, subtitle, caption, legend and axis titles
+      ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/hjust_vjust.ipynb))
+    - `margin` for plot title, subtitle, caption, axis titles and tick labels
+      ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/text_margins.ipynb))
+
+- ### New Plot Types
+
+    `geom_label()`.
+
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/geom_label.ipynb).
+
 - ### Color Scales
 
-  `scale_color_gradientn()` and `scale_fill_gradientn()` functions.
-  
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22b/scale_%28color_fill%29_gradientn.ipynb).
+    Viridis color scales: `scale_color_viridis()`, `scale_fill_viridis()`.
 
+    Supported colormaps:
+    - _magma_
+    - _inferno_
+    - _plasma_
+    - _viridis_
+    - _cividis_
+    - _turbo_
+    - _twilight_    
+
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22c/images/viridis_plasma.png" alt="f-22c/images/viridis_plasma.png" width="439" height="132">
+
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
 
 
 ## Change Log
