@@ -404,6 +404,18 @@ object Option {
 
         const val SCALE_MAPPER_KIND = "scale_mapper_kind"
 
+        object MapperKind {
+            const val IDENTITY = "identity"
+            const val COLOR_GRADIENT = "color_gradient"
+            const val COLOR_GRADIENT2 = "color_gradient2"
+            const val COLOR_GRADIENTN = "color_gradientn"
+            const val COLOR_HUE = "color_hue"
+            const val COLOR_GREY = "color_grey"
+            const val COLOR_BREWER = "color_brewer"
+            const val COLOR_CMAP = "color_cmap"
+            const val SIZE_AREA = "size_area"
+        }
+
         object Viridis {
             const val CMAP_NAME = "option"
             const val ALPHA = "alpha"

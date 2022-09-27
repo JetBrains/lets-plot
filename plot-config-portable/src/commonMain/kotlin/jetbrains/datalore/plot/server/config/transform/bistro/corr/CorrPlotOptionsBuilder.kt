@@ -8,9 +8,9 @@ package jetbrains.datalore.plot.server.config.transform.bistro.corr
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.ScaleConfig
-import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_BREWER
-import jetbrains.datalore.plot.config.ScaleConfig.Companion.COLOR_GRADIENT2
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_GRADIENT2
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_BREWER
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.computeCorrelations
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.correlationsFromCoefficients
 import jetbrains.datalore.plot.server.config.transform.bistro.corr.CorrUtil.correlationsToDataframe
@@ -34,7 +34,7 @@ import kotlin.math.min
  * @param data Dataframe to compute correlations on.
  * @param title Plot title.
  * @param showLegend Whether to show a legend.
- * @param flip Whether to flip the y axis.
+ * @param flip Whether to flip the y-axis.
  * @param threshold Minimal correlation abs value to be included in result. Must be in interval [0.0, 1.0]
  * @param adjustSize A scaler to adjust the plot size which was computed by `CorrPlot` automatically.
  */
@@ -139,7 +139,12 @@ class CorrPlotOptionsBuilder private constructor(
         return this
     }
 
-    fun labels(type: String? = null, diag: Boolean? = null, mapSize: Boolean? = null, color: String? = null): CorrPlotOptionsBuilder {
+    fun labels(
+        type: String? = null,
+        diag: Boolean? = null,
+        mapSize: Boolean? = null,
+        color: String? = null
+    ): CorrPlotOptionsBuilder {
         checkTypeArg(type)
         labels.type = type
         labels.diag = diag
@@ -327,7 +332,7 @@ class CorrPlotOptionsBuilder private constructor(
             scaleOptions = listOf(
                 scale {
                     aes = Aes.SIZE
-                    mapperKind = ScaleConfig.IDENTITY
+                    mapperKind = MapperKind.IDENTITY
                     naValue = 0
                     guide = Option.Guide.NONE
                 },

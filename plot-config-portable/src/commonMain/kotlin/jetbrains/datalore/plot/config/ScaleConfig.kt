@@ -35,6 +35,15 @@ import jetbrains.datalore.plot.config.Option.Scale.LUMINANCE
 import jetbrains.datalore.plot.config.Option.Scale.MAX_SIZE
 import jetbrains.datalore.plot.config.Option.Scale.MID
 import jetbrains.datalore.plot.config.Option.Scale.MIDPOINT
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_BREWER
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_CMAP
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_GRADIENT
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_GRADIENT2
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_GRADIENTN
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_GREY
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.COLOR_HUE
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.IDENTITY
+import jetbrains.datalore.plot.config.Option.Scale.MapperKind.SIZE_AREA
 import jetbrains.datalore.plot.config.Option.Scale.NAME
 import jetbrains.datalore.plot.config.Option.Scale.NA_VALUE
 import jetbrains.datalore.plot.config.Option.Scale.OUTPUT_VALUES
@@ -254,15 +263,6 @@ class ScaleConfig<T> constructor(
     }
 
     companion object {
-        const val IDENTITY = "identity"
-        private const val COLOR_GRADIENT = "color_gradient"
-        const val COLOR_GRADIENT2 = "color_gradient2"
-        const val COLOR_GRADIENTN = "color_gradientn"
-        private const val COLOR_HUE = "color_hue"
-        private const val COLOR_GREY = "color_grey"
-        const val COLOR_BREWER = "color_brewer"
-        const val COLOR_CMAP = "color_cmap"
-        private const val SIZE_AREA = "size_area"
 
         fun aesOrFail(options: Map<String, Any>): Aes<*> {
             val accessor = OptionsAccessor(options)
