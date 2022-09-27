@@ -40,13 +40,17 @@
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/geom_label.ipynb).
 
 - Auto-detection of **Databricks** and **NextJournal** environments [[#602](https://github.com/JetBrains/lets-plot/issues/602)].  
+         
+- Python wheels for manylinux arm64 architecture [[#581](https://github.com/JetBrains/lets-plot/issues/581)].
+
 
 ### Changed
 
 - New tooltip style after applying `coord_flip()`  [[#580](https://github.com/JetBrains/lets-plot/issues/580)].
   
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/tooltips_after_coord_flip.ipynb).
-
+                                                      
+- In Lets-Plot for Java/Swing, Apache Batik upgraded to v.1.15 [[#604](https://github.com/JetBrains/lets-plot/issues/604)] 
 
 ### Fixed
 
