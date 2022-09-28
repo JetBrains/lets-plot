@@ -172,7 +172,7 @@ object LayerConverter {
                         index = it.index
                         point = it.point
                         fillColor = if (plotLayerKind == LABEL) it.fillColor else Color.TRANSPARENT
-                        strokeColor = it.strokeColor
+                        strokeColor = if (plotLayerKind == LABEL) it.myP.color()!! else it.strokeColor
                         strokeWidth = 0.0
                         label = it.label
                         size = it.size
