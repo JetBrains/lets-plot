@@ -59,6 +59,11 @@ class TextBuilder(
 
     var drawBorder: Boolean = false
 
+    // label parameters
+    var labelPadding: Double = 0.25
+    var labelRadius: Double = 0.15
+    var labelSize: Double = 1.0
+
     var label: String = ""
     var size: Double = 10.0
     var family: String = "Arial"
@@ -106,7 +111,10 @@ class TextBuilder(
             hjust,
             vjust,
             textMeasurer,
-            drawBorder
+            drawBorder,
+            labelPadding,
+            labelRadius,
+            labelSize
         )
     }
 }

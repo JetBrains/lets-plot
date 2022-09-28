@@ -241,23 +241,36 @@ object Renderers {
             ctx.rotate(textSpec.angle)
 
             if (textSpec.drawBorder) {
+                val padding = textSpec.font.fontSize * textSpec.labelPadding * 2
+                val width = textSpec.textSize.x + padding
+                val height = textSpec.textSize.y + padding
+
                 val rect = DoubleRectangle(
                     textSpec.alignment.x,
-                    textSpec.alignment.y - textSpec.textSize.y,
-                    textSpec.textSize.x,
-                    textSpec.textSize.y
+                    textSpec.alignment.y - height,
+                    width,
+                    height
                 )
+
+                drawRoundedRectangle(rect, textSpec.labelRadius * height, ctx)
+
                 if (chartElementComponent.fillColor != null) {
                     ctx.setFillStyle(
                         changeAlphaWithMin(chartElementComponent.fillColor!!, chartElementComponent.scalingAlphaValue)
                     )
+                    ctx.fill()
                 }
-                ctx.setStrokeStyle(chartElementComponent.strokeColor)
-                ctx.fillRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
-                ctx.strokeRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
+                if (chartElementComponent.strokeColor != null && textSpec.labelSize != 0.0) {
+                    ctx.setStrokeStyle(chartElementComponent.strokeColor)
+                    ctx.setLineWidth(textSpec.labelSize)
+                    ctx.stroke()
+                }
 
                 // place text in the rectangle's center (use * 0.35 for better alignment)
-                textPosition = explicitVec(textSpec.alignment.x, rect.center.y + textSpec.textSize.y * 0.35)
+                textPosition = explicitVec(
+                    rect.origin.x + padding / 2,
+                    rect.center.y + textSpec.textSize.y * 0.35
+                )
             }
 
             ctx.setFont(textSpec.font)
@@ -265,6 +278,45 @@ object Renderers {
             ctx.fillText(textSpec.label, textPosition.x, textPosition.y)
 
             ctx.restore()
+        }
+
+        private fun drawRoundedRectangle(rect: DoubleRectangle, radius: Double, ctx: Context2d) {
+            ctx.apply {
+                beginPath()
+                with(rect) {
+                    // Ensure normal radius
+                    val r = minOf(radius, rect.width / 2, rect.height / 2)
+
+                    moveTo(right - r, bottom)
+                    bezierCurveTo(
+                        right - r, bottom,
+                        right, bottom,
+                        right, bottom - r
+                    )
+
+                    lineTo(right, top + r)
+                    bezierCurveTo(
+                        right, top + r,
+                        right, top,
+                        right - r, top
+                    )
+
+                    lineTo(left + r, top)
+                    bezierCurveTo(
+                        left + r, top,
+                        left, top,
+                        left, top + r
+                    )
+
+                    lineTo(left, bottom - r)
+                    bezierCurveTo(
+                        left, bottom - r,
+                        left, bottom,
+                        left + r, bottom
+                    )
+                }
+                closePath()
+            }
         }
     }
 }

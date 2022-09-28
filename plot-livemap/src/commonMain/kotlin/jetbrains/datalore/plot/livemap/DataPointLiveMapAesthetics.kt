@@ -23,6 +23,7 @@ import jetbrains.datalore.plot.base.geom.util.TextUtil
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
+import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
 import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
@@ -160,6 +161,14 @@ internal class DataPointLiveMapAesthetics {
             myColorArray
         }
 
+    private var myLabelOptions: LabelOptions? = null
+    val labelPadding: Double
+        get() = myLabelOptions?.padding ?: 0.0
+    val labelRadius: Double
+        get() = myLabelOptions?.radius ?: 0.0
+    val labelSize: Double
+        get() = myLabelOptions?.size ?: 0.0
+
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
     }
@@ -184,6 +193,11 @@ internal class DataPointLiveMapAesthetics {
         if (animation != null) {
             this.animation = animation
         }
+        return this
+    }
+
+    fun setLabelOptions(labelOptions: LabelOptions?): DataPointLiveMapAesthetics {
+        myLabelOptions = labelOptions
         return this
     }
 }

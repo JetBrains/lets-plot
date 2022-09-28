@@ -13,6 +13,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
+import jetbrains.datalore.plot.base.geom.LabelGeom
 import jetbrains.datalore.plot.base.geom.PathGeom
 import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.geom.SegmentGeom
@@ -56,7 +57,7 @@ internal class DataPointsConverter(
     fun toTile() = mySinglePathFeatureConverter.tile()
     fun toPath(geom: Geom) = myMultiPathFeatureConverter.path(geom)
     fun toPolygon() = myMultiPathFeatureConverter.polygon()
-    fun toText() = pointFeatureConverter.text()
+    fun toText(geom: Geom) = pointFeatureConverter.text(geom)
     fun toPie(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.PIE, PIE_CHART)
     fun toBar(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.BAR, BAR)
 
@@ -243,6 +244,12 @@ internal class DataPointsConverter(
         }
     }
 
+    data class LabelOptions(
+        val padding: Double,
+        val radius: Double,
+        val size: Double
+    )
+
     private class PointFeatureConverter(
         private val myAesthetics: Aesthetics
     ) {
@@ -284,7 +291,16 @@ internal class DataPointsConverter(
             }
         }
 
-        internal fun text(): List<DataPointLiveMapAesthetics> {
+        private var myLabelOptions: LabelOptions? = null
+
+        internal fun text(geom: Geom): List<DataPointLiveMapAesthetics> {
+            if (geom is LabelGeom) {
+                myLabelOptions = LabelOptions(
+                    padding = geom.paddingFactor,
+                    radius = geom.radiusFactor,
+                    size = geom.borderWidth
+                )
+            }
             return process(MapLayerKind.TEXT) { explicitVec(it.x()!!, it.y()!!) }
         }
 
@@ -298,6 +314,7 @@ internal class DataPointsConverter(
                     DataPointLiveMapAesthetics(p, layerKind)
                         .setGeometryPoint(v)
                         .setAnimation(myAnimation)
+                        .setLabelOptions(myLabelOptions)
                 }?.let(mapObjects::add)
             }
 

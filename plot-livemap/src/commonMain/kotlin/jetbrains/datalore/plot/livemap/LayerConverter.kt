@@ -39,7 +39,7 @@ object LayerConverter {
                 RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
-                TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText()
+                TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
                     DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
@@ -182,6 +182,9 @@ object LayerConverter {
                         vjust = it.vjust
                         angle = it.angle
                         drawBorder = plotLayerKind == LABEL
+                        labelPadding = it.labelPadding
+                        labelRadius = it.labelRadius
+                        labelSize = it.labelSize
                     }
                 }
             }

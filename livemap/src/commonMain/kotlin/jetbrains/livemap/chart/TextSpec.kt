@@ -26,7 +26,11 @@ class TextSpec(
     hjust: Double,
     vjust: Double,
     textMeasurer: TextMeasurer,
-    val drawBorder: Boolean
+    val drawBorder: Boolean,
+    // label parameters
+    val labelPadding: Double,
+    val labelRadius: Double,
+    val labelSize: Double
 ) {
     val font = Context2d.Font(
         fontStyle = fontface.extractFontStyle(),
