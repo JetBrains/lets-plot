@@ -40,7 +40,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list
-        A numeric vector of positions of ticks.
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -452,7 +452,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -520,7 +520,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -575,7 +575,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -643,7 +643,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -707,7 +707,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -781,7 +781,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -855,7 +855,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -929,7 +929,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1003,7 +1003,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1078,7 +1078,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1154,7 +1154,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1220,7 +1220,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1296,7 +1296,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1426,7 +1426,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     low : str
         Color for low end of gradient.
     mid : str
-        Color for mid point.
+        Color for mid-point.
     high : str
         Color for high end of gradient.
     name : str
@@ -1434,7 +1434,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1506,7 +1506,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     low : str
         Color for low end of gradient.
     mid : str
-        Color for mid point.
+        Color for mid-point.
     high : str
         Color for high end of gradient.
     name : str
@@ -1514,7 +1514,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of strings
         A vector of labels (on ticks).
     limits : list
@@ -1590,7 +1590,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1667,7 +1667,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1750,7 +1750,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1832,7 +1832,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1910,7 +1910,7 @@ def scale_fill_discrete(direction=None,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1985,7 +1985,7 @@ def scale_color_discrete(direction=None,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of strings
         A vector of labels (on ticks).
     limits : list
@@ -2061,7 +2061,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -2143,7 +2143,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -2249,7 +2249,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of strings
         A vector of labels (on ticks).
     limits : list
@@ -2346,7 +2346,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -2458,7 +2458,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of strings
         A vector of labels (on ticks).
     limits : list
@@ -2561,7 +2561,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of strings
         A vector of labels (on ticks).
     limits : list
@@ -2641,11 +2641,11 @@ def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A numeric vector of length two providing limits of the scale.
+        A vector of length two providing limits of the scale.
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
@@ -2710,11 +2710,11 @@ def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=No
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
-        A numeric vector of length two providing limits of the scale.
+        A vector of length two providing limits of the scale.
     expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).

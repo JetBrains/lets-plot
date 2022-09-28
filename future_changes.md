@@ -65,3 +65,4 @@
 - No tooltips for geom_boxplot with zero height [[#563](https://github.com/JetBrains/lets-plot/issues/563)].
 - geom_text: wrong label alignment with `hjust` 0 and 1 [[#592](https://github.com/JetBrains/lets-plot/issues/592)].
 - Error when using lets-plot in streamlit [[#595](https://github.com/JetBrains/lets-plot/issues/595)].
+- Documentation for the `breaks` parameter in scales [[#507](https://github.com/JetBrains/lets-plot/issues/507)].

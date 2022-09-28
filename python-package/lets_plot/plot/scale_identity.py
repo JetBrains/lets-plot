@@ -28,7 +28,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -100,7 +100,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -172,7 +172,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -242,7 +242,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -315,7 +315,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -384,7 +384,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     name : str
         The name of the scale - used as the axis label or the legend title.
     breaks : list of float
-        A numeric vector of positions (of ticks).
+        A vector specifying values to display as ticks on axis.
     labels : list of str
         A vector of labels (on ticks).
     limits : list
