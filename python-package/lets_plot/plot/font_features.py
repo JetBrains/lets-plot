@@ -9,7 +9,7 @@ __all__ = ['font_metrics_adjustment', 'font_family_info']
 
 def font_metrics_adjustment(width_correction: numbers.Real) -> FeatureSpec:
     """
-    Adjust estimated width of text lebels on plot.
+    Adjust estimated width of text labels on plot.
 
     Allows for manual correction in a rare cases when plot layout looks broken
     due to either overestimation or underestimation of size of text labels on plot.
@@ -37,7 +37,7 @@ def font_metrics_adjustment(width_correction: numbers.Real) -> FeatureSpec:
 
 def font_family_info(family: str, width_correction: numbers.Real = None, mono: bool = None) -> FeatureSpec:
     """
-    Specify properies of a particular font-family to adjust estimated width of text lebels on plot.
+    Specify properies of a particular font-family to adjust estimated width of text labels on plot.
 
     Might be useful when some exotic font-family is used that causes issues with the plot layout.
 
