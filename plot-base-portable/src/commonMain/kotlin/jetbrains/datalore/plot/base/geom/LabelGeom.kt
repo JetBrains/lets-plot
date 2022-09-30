@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
@@ -34,8 +34,13 @@ class LabelGeom : TextGeom() {
         sizeUnitRatio: Double,
         ctx: GeomContext
     ) {
-        // background rectangle
-        val rectangle = rectangleForText(p, location, text, sizeUnitRatio, ctx)
+        // text size estimation
+        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
+        val textSize = textSize(text, GeomHelper.fontFamily(p), fontSize, FontFace.fromString(p.fontface()), ctx)
+
+        // Background rectangle
+        val padding = fontSize * paddingFactor
+        val rectangle = rectangleForText(p, location, textSize, padding)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -44,19 +49,22 @@ class LabelGeom : TextGeom() {
         GeomHelper.decorate(backgroundRect, p)
         backgroundRect.strokeWidth().set(borderWidth)
 
-        // text element
-        val label = TextLabel(text)
+        // Text element
+        val label = MultilineLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
-        // move to the rectangle's center
+        // move text to the rectangle's center and top-align the first line
+        val textPosition = with(rectangle) {
+            origin.add(DoubleVector(width / 2, padding + fontSize * 0.8))
+        }
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-        label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.moveTo(rectangle.center)
-        label.rotate(0.0)
+        label.moveTo(textPosition)
 
         // group elements and apply rotation
         val g = SvgGElement()
         g.children().add(backgroundRect)
         g.children().add(label.rootGroup)
+
+        // rotate all
         SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
 
         root.add(g)
@@ -65,22 +73,11 @@ class LabelGeom : TextGeom() {
     private fun rectangleForText(
         p: DataPointAesthetics,
         location: DoubleVector,
-        text: String,
-        sizeUnitRatio: Double,
-        ctx: GeomContext
+        textSize: DoubleVector,
+        padding: Double
     ): DoubleRectangle {
-        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-        val fontFace = FontFace.fromString(p.fontface())
-        val fontFamily = GeomHelper.fontFamily(p)
-
-        val textSize = ctx.estimateTextSize(
-            text, fontFamily, fontSize,
-            isBold = fontFace.bold,
-            isItalic = fontFace.italic
-        )
-
-        val width = textSize.x + fontSize * paddingFactor * 2
-        val height = textSize.y + fontSize * paddingFactor * 2
+        val width = textSize.x + padding * 2
+        val height = textSize.y + padding * 2
 
         val originX = when (GeomHelper.hAnchor(p)) {
             Text.HorizontalAnchor.LEFT -> location.x
@@ -96,6 +93,23 @@ class LabelGeom : TextGeom() {
     }
 
     companion object {
+        private fun textSize(
+            text: String,
+            fontFamily: String,
+            fontSize: Double,
+            fontFace: FontFace,
+            ctx: GeomContext
+        ): DoubleVector {
+            return text.split('\n').map(String::trim).map { line ->
+                ctx.estimateTextSize(line, fontFamily, fontSize, fontFace.bold, fontFace.italic)
+            }.fold(DoubleVector.ZERO) { acc, sz ->
+                DoubleVector(
+                    x = kotlin.math.max(acc.x, sz.x),
+                    y = acc.y + sz.y
+                )
+            }
+        }
+
         private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
             return SvgPathDataBuilder().apply {
                 with(rect) {

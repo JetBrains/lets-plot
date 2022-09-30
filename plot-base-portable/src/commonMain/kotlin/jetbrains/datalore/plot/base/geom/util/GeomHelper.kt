@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -220,6 +221,27 @@ open class GeomHelper(
             }
 
             label.rotate(angle(p))
+        }
+
+        fun decorate(label: MultilineLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
+            label.textColor().set(p.color())
+            if (applyAlpha) {
+                label.setTextOpacity(p.alpha())
+            }
+
+            val fontSize = fontSize(p, scale)
+            label.setFontSize(fontSize)
+            label.setLineHeight(fontSize) // ToDo Use p.lineheight()
+
+            // family
+            label.setFontFamily(fontFamily(p))
+
+            // fontface
+            // ignore 'plain' / 'normal' as it is default values
+            with(FontFace.fromString(p.fontface())) {
+                if (bold) label.setFontWeight("bold")
+                if (italic) label.setFontStyle("italic")
+            }
         }
 
         fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {

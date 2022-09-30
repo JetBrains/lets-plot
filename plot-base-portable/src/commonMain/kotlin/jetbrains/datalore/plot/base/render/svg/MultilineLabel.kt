@@ -46,14 +46,43 @@ class MultilineLabel(text: String) : SvgComponent() {
         }
     }
 
-    fun y(): Double? {
-        return myLines.firstOrNull()?.y()?.get()
-    }
-
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myLines.forEach {
             it.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
         }
+    }
+
+    fun setFontSize(px: Double) {
+        myFontSize = px
+        updateStyleAttribute()
+    }
+
+    /**
+     * @param cssName : normal, bold, bolder, lighter
+     */
+    fun setFontWeight(cssName: String?) {
+        myFontWeight = cssName
+        updateStyleAttribute()
+    }
+
+    /**
+     * @param cssName : normal, italic, oblique
+     */
+    fun setFontStyle(cssName: String?) {
+        myFontStyle = cssName
+        updateStyleAttribute()
+    }
+
+    /**
+     * @param fontFamily : for example 'sans-serif' or 'Times New Roman'
+     */
+    fun setFontFamily(fontFamily: String?) {
+        myFontFamily = fontFamily
+        updateStyleAttribute()
+    }
+
+    fun setTextOpacity(value: Double?) {
+        myLines.forEach { it.fillOpacity().set(value) }
     }
 
     private fun updateStyleAttribute() {
@@ -77,7 +106,7 @@ class MultilineLabel(text: String) : SvgComponent() {
 
     fun setLineHeight(v: Double) {
         myLineHeight = v
-        val yStart = y() ?: 0.0
+        val yStart = myLines.firstOrNull()?.y()?.get() ?: 0.0
         updatePositions(yStart)
     }
 

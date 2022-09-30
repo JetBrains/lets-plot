@@ -14,8 +14,11 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgUtils
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -75,10 +78,27 @@ open class TextGeom : GeomBase() {
         sizeUnitRatio: Double,
         ctx: GeomContext
     ) {
-        val label = TextLabel(text)
+        val label = MultilineLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-        label.moveTo(location)
-        root.add(label.rootGroup)
+
+        label.setHorizontalAnchor(GeomHelper.hAnchor(p))
+
+        val lineHeight = GeomHelper.fontSize(p, sizeUnitRatio) // ToDo Use lineheight (aes)
+        val textHeight = label.linesCount() * lineHeight
+
+        val yPosition = when (GeomHelper.vAnchor(p)) {
+            Text.VerticalAnchor.TOP -> location.y + lineHeight * 0.7
+            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + lineHeight
+            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + lineHeight * 0.8
+        }
+
+        val textLocation = DoubleVector(location.x, yPosition)
+        label.moveTo(textLocation)
+
+        val g = SvgGElement()
+        g.children().add(label.rootGroup)
+        SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
+        root.add(g)
     }
 
     private fun toString(label: Any?): String {
