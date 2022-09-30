@@ -300,7 +300,8 @@ object GeomMeta {
                 Aes.FONTFACE,
                 Aes.HJUST,
                 Aes.VJUST,
-                Aes.ANGLE
+                Aes.ANGLE,
+                Aes.LINEHEIGHT
             )
 
             GeomKind.LABEL -> listOf(
@@ -314,7 +315,8 @@ object GeomMeta {
                 Aes.FONTFACE,
                 Aes.HJUST,
                 Aes.VJUST,
-                Aes.ANGLE
+                Aes.ANGLE,
+                Aes.LINEHEIGHT
             )
 
             GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'

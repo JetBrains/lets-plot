@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
 import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
+import jetbrains.datalore.plot.base.Aes.Companion.LINEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
@@ -95,6 +96,7 @@ internal class TypedOptionConverterMap {
         this.put(LABEL, IDENTITY_O_CVT)
         this.put(FAMILY, IDENTITY_S_CVT)
         this.put(FONTFACE, IDENTITY_S_CVT)
+        this.put(LINEHEIGHT, DOUBLE_CVT)
         this.put(HJUST, IDENTITY_O_CVT)   // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)
         this.put(VJUST, IDENTITY_O_CVT)   // text vertical justification (numbers [0..1] or predefined strings, not positional)
         this.put(ANGLE, DOUBLE_CVT)

@@ -34,9 +34,19 @@ class LabelGeom : TextGeom() {
         sizeUnitRatio: Double,
         ctx: GeomContext
     ) {
+        // Text element
+        val label = MultilineLabel(text)
+
         // text size estimation
         val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-        val textSize = textSize(text, GeomHelper.fontFamily(p), fontSize, FontFace.fromString(p.fontface()), ctx)
+        val textSize = textSize(
+            text,
+            GeomHelper.fontFamily(p),
+            fontSize,
+            GeomHelper.lineheight(p, sizeUnitRatio),
+            FontFace.fromString(p.fontface()),
+            ctx
+        )
 
         // Background rectangle
         val padding = fontSize * paddingFactor
@@ -49,8 +59,6 @@ class LabelGeom : TextGeom() {
         GeomHelper.decorate(backgroundRect, p)
         backgroundRect.strokeWidth().set(borderWidth)
 
-        // Text element
-        val label = MultilineLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
         // move text to the rectangle's center and top-align the first line
         val textPosition = with(rectangle) {
@@ -97,10 +105,12 @@ class LabelGeom : TextGeom() {
             text: String,
             fontFamily: String,
             fontSize: Double,
+            lineHeight: Double,
             fontFace: FontFace,
             ctx: GeomContext
         ): DoubleVector {
-            return text.split('\n').map(String::trim).map { line ->
+            val lines = text.split('\n').map(String::trim)
+            val estimated = lines.map { line ->
                 ctx.estimateTextSize(line, fontFamily, fontSize, fontFace.bold, fontFace.italic)
             }.fold(DoubleVector.ZERO) { acc, sz ->
                 DoubleVector(
@@ -108,6 +118,9 @@ class LabelGeom : TextGeom() {
                     y = acc.y + sz.y
                 )
             }
+            val lineInterval = lineHeight - fontSize
+            val textHeight = estimated.y + lineInterval * (lines.size - 1)
+            return DoubleVector(estimated.x, textHeight)
         }
 
         private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {

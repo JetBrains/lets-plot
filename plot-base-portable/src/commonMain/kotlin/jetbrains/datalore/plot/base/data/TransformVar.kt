@@ -47,6 +47,7 @@ object TransformVar {
     val LABEL = DataFrame.Variable("transform.LABEL", TRANSFORM)
     val FONT_FAMILY = DataFrame.Variable("transform.FONT_FAMILY", TRANSFORM)
     val FONT_FACE = DataFrame.Variable("transform.FONT_FACE", TRANSFORM)
+    val LINEHEIGHT = DataFrame.Variable("transform.LINEHEIGHT", TRANSFORM)
     val HJUST = DataFrame.Variable("transform.HJUST", TRANSFORM)
     val VJUST = DataFrame.Variable("transform.VJUST", TRANSFORM)
     val ANGLE = DataFrame.Variable("transform.ANGLE", TRANSFORM)
@@ -229,6 +230,10 @@ object TransformVar {
 
         override fun fontface(): DataFrame.Variable {
             return FONT_FACE
+        }
+
+        override fun lineheight(): DataFrame.Variable {
+            return LINEHEIGHT
         }
 
         override fun hjust(): DataFrame.Variable {

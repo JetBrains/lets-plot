@@ -191,6 +191,7 @@ open class GeomHelper(
         }
 
         fun fontSize(p: DataPointAesthetics, scale: Double) = AesScaling.textSize(p) * scale
+        fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
         fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
             label.textColor().set(p.color())
@@ -229,9 +230,8 @@ open class GeomHelper(
                 label.setTextOpacity(p.alpha())
             }
 
-            val fontSize = fontSize(p, scale)
-            label.setFontSize(fontSize)
-            label.setLineHeight(fontSize) // ToDo Use p.lineheight()
+            label.setFontSize(fontSize(p, scale))
+            label.setLineHeight(lineheight(p, scale))
 
             // family
             label.setFontFamily(fontFamily(p))

@@ -68,6 +68,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val LABEL: Aes<Any> = Aes("label", false)
         val FAMILY: Aes<String> = Aes("family", false)
         val FONTFACE: Aes<String> = Aes("fontface", false)
+        val LINEHEIGHT: Aes<Double> = Aes("lineheight")
 
         // text horizontal justification (numbers [0..1] or predefined strings = new Aes<>(); not positional)
         val HJUST = Aes<Any>("hjust", false)
@@ -165,6 +166,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == ANGLE ||
                     aes == FAMILY ||
                     aes == FONTFACE ||
+                    aes == LINEHEIGHT ||
                     aes == SYM_X ||
                     aes == SYM_Y ||
                     isPositional(aes)

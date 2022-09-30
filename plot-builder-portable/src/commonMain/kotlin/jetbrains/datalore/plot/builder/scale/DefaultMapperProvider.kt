@@ -20,6 +20,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
 import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
+import jetbrains.datalore.plot.base.Aes.Companion.LINEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
@@ -129,6 +130,7 @@ object DefaultMapperProvider {
             this.put(LABEL, createObjectIdentity())
             this.put(FAMILY, createStringIdentity())
             this.put(FONTFACE, createStringIdentity())
+            this.put(LINEHEIGHT, NUMERIC_IDENTITY)
 
             // text horizontal justification (numbers [0..1] or predefined strings, DOUBLE_CVT; not positional)
             this.put(HJUST, createObjectIdentity())

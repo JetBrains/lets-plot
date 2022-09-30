@@ -65,6 +65,7 @@ class LayerOptions : Options<PlotOptions>() {
     var label: Any? by map(Aes.LABEL)
     var family: String? by map(Aes.FAMILY)
     var fontface: String? by map(Aes.FONTFACE)
+    var lineheight: Double? by map(Aes.LINEHEIGHT)
     var hjust: Any? by map(Aes.HJUST)
     var vjust: Any? by map(Aes.VJUST)
     var angle: Double? by map(Aes.ANGLE)

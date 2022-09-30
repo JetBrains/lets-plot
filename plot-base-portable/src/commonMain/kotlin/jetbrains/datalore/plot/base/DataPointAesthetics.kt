@@ -160,6 +160,10 @@ abstract class DataPointAesthetics {
         return getNotNull(Aes.FONTFACE)
     }
 
+    fun lineheight(): Double? {
+        return get(Aes.LINEHEIGHT)
+    }
+
     fun hjust(): Any {
         return getNotNull(Aes.HJUST)
     }

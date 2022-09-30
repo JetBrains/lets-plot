@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
 import jetbrains.datalore.plot.base.Aes.Companion.FRAME
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
+import jetbrains.datalore.plot.base.Aes.Companion.LINEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -141,6 +142,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun fontface(v: (Int) -> String?): AestheticsBuilder {
         return aes(FONTFACE, v)
+    }
+
+    fun lineheight(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(LINEHEIGHT, v)
     }
 
     fun hjust(v: (Int) -> Any?): AestheticsBuilder {

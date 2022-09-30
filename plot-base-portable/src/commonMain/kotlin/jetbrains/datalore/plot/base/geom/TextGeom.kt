@@ -80,16 +80,17 @@ open class TextGeom : GeomBase() {
     ) {
         val label = MultilineLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-
         label.setHorizontalAnchor(GeomHelper.hAnchor(p))
 
-        val lineHeight = GeomHelper.fontSize(p, sizeUnitRatio) // ToDo Use lineheight (aes)
-        val textHeight = label.linesCount() * lineHeight
+        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
+        val lineHeight = GeomHelper.lineheight(p, sizeUnitRatio)
+        val lineInterval = lineHeight - fontSize
+        val textHeight = label.linesCount() * fontSize + lineInterval * (label.linesCount() - 1)
 
         val yPosition = when (GeomHelper.vAnchor(p)) {
-            Text.VerticalAnchor.TOP -> location.y + lineHeight * 0.7
-            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + lineHeight
-            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + lineHeight * 0.8
+            Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
+            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
+            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
