@@ -48,7 +48,7 @@ class LocatedTargetsPicker(
             .map { (lookupResult, _) -> lookupResult }
             .forEach { lookupResult ->
                 picked = when {
-                    picked.isNotEmpty() && lookupResult.geomKind == TEXT -> {
+                    picked.isNotEmpty() && lookupResult.geomKind in listOf(TEXT, LABEL) -> {
                         // TEXT tooltips are considered only when no other tooltips are present.
                         // Otherwise, TEXT layer is used as decoration, e.g. values of bars, histograms, corrplot,
                         // and we actually want to see ancestors geom tooltip.
