@@ -218,6 +218,8 @@ object Option {
             const val LABEL_FORMAT = "label_format"
             const val NA_TEXT = "na_text"
             const val SIZE_UNIT = "size_unit"
+            const val NUDGE_X = "nudge_x"
+            const val NUDGE_Y = "nudge_y"
         }
 
         object Label {

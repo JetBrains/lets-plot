@@ -5039,6 +5039,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               map=None, map_join=None,
               label_format=None,
               na_text=None,
+              nudge_x=None, nudge_y=None,
               **other_args):
     """
     Add a text directly to the plot.
@@ -5085,6 +5086,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         For more info see https://lets-plot.org/pages/formats.html.
     na_text : str, default='n/a'
         Text to show for missing values.
+    nudge_x : float
+        Horizontal adjustment to nudge labels by.
+    nudge_y : float
+        Vertical adjustment to nudge labels by.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5213,6 +5218,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                map=None, map_join=None,
                label_format=None,
                na_text=None,
+               nudge_x=None, nudge_y=None,
                label_padding=None, label_r=None, label_size=None,
                **other_args):
     """
@@ -5258,6 +5264,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'Num {}' -> 'Num 12.456789',
         'TTL: {.2f}$' -> 'TTL: 12.45$'.
         For more info see https://lets-plot.org/pages/formats.html.
+    nudge_x : float
+        Horizontal adjustment to nudge labels by.
+    nudge_y : float
+        Vertical adjustment to nudge labels by.
     na_text : str, default='n/a'
         Text to show for missing values.
     label_padding : float
