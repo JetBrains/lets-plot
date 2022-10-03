@@ -34,9 +34,6 @@ class LabelGeom : TextGeom() {
         sizeUnitRatio: Double,
         ctx: GeomContext
     ) {
-        // Text element
-        val label = MultilineLabel(text)
-
         // text size estimation
         val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
         val textSize = textSize(
@@ -48,9 +45,12 @@ class LabelGeom : TextGeom() {
             ctx
         )
 
+        val hAnchor = GeomHelper.hAnchor(p)
+        val vAnchor = GeomHelper.vAnchor(p)
+
         // Background rectangle
         val padding = fontSize * paddingFactor
-        val rectangle = rectangleForText(p, location, textSize, padding)
+        val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -59,12 +59,20 @@ class LabelGeom : TextGeom() {
         GeomHelper.decorate(backgroundRect, p)
         backgroundRect.strokeWidth().set(borderWidth)
 
+        // Text element
+        val label = MultilineLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
-        // move text to the rectangle's center and top-align the first line
-        val textPosition = with(rectangle) {
-            origin.add(DoubleVector(width / 2, padding + fontSize * 0.8))
+
+        val xPosition = when (hAnchor) {
+            Text.HorizontalAnchor.LEFT -> location.x + padding
+            Text.HorizontalAnchor.RIGHT -> location.x - padding
+            Text.HorizontalAnchor.MIDDLE -> location.x
         }
-        label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+        val textPosition = DoubleVector(
+            xPosition,
+            rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
+        )
+        label.setHorizontalAnchor(hAnchor)
         label.moveTo(textPosition)
 
         // group elements and apply rotation
@@ -79,20 +87,21 @@ class LabelGeom : TextGeom() {
     }
 
     private fun rectangleForText(
-        p: DataPointAesthetics,
         location: DoubleVector,
         textSize: DoubleVector,
-        padding: Double
+        padding: Double,
+        hAnchor: Text.HorizontalAnchor,
+        vAnchor: Text.VerticalAnchor
     ): DoubleRectangle {
         val width = textSize.x + padding * 2
         val height = textSize.y + padding * 2
 
-        val originX = when (GeomHelper.hAnchor(p)) {
+        val originX = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x
             Text.HorizontalAnchor.RIGHT -> location.x - width
             Text.HorizontalAnchor.MIDDLE -> location.x - width / 2
         }
-        val originY = when (GeomHelper.vAnchor(p)) {
+        val originY = when (vAnchor) {
             Text.VerticalAnchor.TOP -> location.y
             Text.VerticalAnchor.BOTTOM -> location.y - height
             Text.VerticalAnchor.CENTER -> location.y - height / 2
