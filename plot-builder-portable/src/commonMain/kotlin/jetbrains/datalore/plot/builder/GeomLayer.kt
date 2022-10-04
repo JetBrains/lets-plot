@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
@@ -32,8 +31,6 @@ interface GeomLayer {
     val scaleMap: TypedScaleMap
 
     val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>
-
-    val dataAccess: MappedDataAccess
 
     val legendKeyElementFactory: LegendKeyElementFactory
 
