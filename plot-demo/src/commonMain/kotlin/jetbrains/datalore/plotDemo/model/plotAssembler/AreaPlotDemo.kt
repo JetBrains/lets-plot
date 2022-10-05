@@ -87,10 +87,8 @@ open class AreaPlotDemo : SimpleDemoBase() {
 
         val assembler =
             PlotAssembler.singleTile(
-//                scaleByAes,
                 listOf(layer),
-                scaleByAes.get(Aes.X),
-                scaleByAes.get(Aes.Y),
+                scaleByAes,
                 scaleMappersNP,
                 CoordProviders.cartesian(), DefaultTheme.minimal2()
             )

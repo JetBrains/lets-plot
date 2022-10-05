@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.Stats
@@ -17,7 +16,6 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
@@ -88,10 +86,8 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             .build(df, scaleByAes, scaleMappersNP)
 
         val assembler = PlotAssembler.singleTile(
-//            scaleByAes,
             listOf(layer),
-            scaleByAes.get(Aes.X),
-            scaleByAes.get(Aes.Y),
+            scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(),
             theme

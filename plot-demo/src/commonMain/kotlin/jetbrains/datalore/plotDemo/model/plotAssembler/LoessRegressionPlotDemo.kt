@@ -47,10 +47,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .reduce { sum, el -> sum + el }
 
         val assembler = PlotAssembler.singleTile(
-//            scaleByAes,
             layers,
-            scaleByAes.get(Aes.X),
-            scaleByAes.get(Aes.Y),
+            scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(), theme
         )
@@ -390,10 +388,8 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                 .build(data, scaleByAes, emptyMap())
         }
         val assembler = PlotAssembler.singleTile(
-//            scaleByAes,
             layers,
-            scaleByAes.get(Aes.X),
-            scaleByAes.get(Aes.Y),
+            scaleByAes,
             emptyMap(),
             CoordProviders.cartesian(), theme
         )

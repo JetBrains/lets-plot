@@ -28,12 +28,14 @@ import jetbrains.datalore.vis.StyleSheet
 
 class PlotAssembler private constructor(
     private val layersByTile: List<List<GeomLayer>>,
-    private val scaleXProto: Scale<Double>,
-    private val scaleYProto: Scale<Double>,
-    private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+    private val scaleMap: TypedScaleMap,
+    private val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
     private val coordProvider: CoordProvider,
     private val theme: Theme
 ) {
+
+    private val scaleXProto: Scale<Double> = scaleMap.get(Aes.X)
+    private val scaleYProto: Scale<Double> = scaleMap.get(Aes.Y)
 
     val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
         layers.filterNot { it.isMarginal }
@@ -63,13 +65,18 @@ class PlotAssembler private constructor(
 
         val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipped)
 
+        // ToDo: transformed ranges by aes
+
+
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
                 layersByTile,
-                scaleMappers,
+                scaleMap,
+                scaleMappersNP,
                 guideOptionsMap,
                 theme.legend()
             )
+
             else -> emptyList()
         }
 
@@ -175,8 +182,7 @@ class PlotAssembler private constructor(
         // Note: 'singleTile' is only used in demos.
         fun singleTile(
             plotLayers: List<GeomLayer>,
-            scaleXProto: Scale<Double>,
-            scaleYProto: Scale<Double>,
+            scaleMap: TypedScaleMap,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme
@@ -185,8 +191,7 @@ class PlotAssembler private constructor(
             layersByTile.add(plotLayers)
             return multiTile(
                 layersByTile,
-                scaleXProto,
-                scaleYProto,
+                scaleMap,
                 scaleMappersNP,
                 coordProvider,
                 theme
@@ -195,16 +200,14 @@ class PlotAssembler private constructor(
 
         fun multiTile(
             layersByTile: List<List<GeomLayer>>,
-            scaleXProto: Scale<Double>,
-            scaleYProto: Scale<Double>,
+            scaleMap: TypedScaleMap,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme
         ): PlotAssembler {
             return PlotAssembler(
                 layersByTile,
-                scaleXProto,
-                scaleYProto,
+                scaleMap,
                 scaleMappersNP,
                 coordProvider,
                 theme

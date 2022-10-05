@@ -42,7 +42,8 @@ internal object PlotAssemblerUtil {
 
     fun createLegends(
         layersByPanel: List<List<GeomLayer>>,
-        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+        scaleMap: TypedScaleMap,
+        scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -71,7 +72,11 @@ internal object PlotAssemblerUtil {
 
         val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
         for (stitchedPlotLayers in stitchedLayersList) {
-            val layerTransformedDomainByAes = guideTransformedDomainByAes(stitchedPlotLayers, guideOptionsMap)
+            val layerTransformedDomainByAes = guideTransformedDomainByAes(
+                stitchedPlotLayers,
+                scaleMap,
+                guideOptionsMap
+            )
             for ((aes, transformedDomain) in layerTransformedDomainByAes) {
                 updateAesRangeMap(
                     aes,
@@ -84,7 +89,8 @@ internal object PlotAssemblerUtil {
         return createLegends(
             stitchedLayersList,
             transformedDomainByAes,
-            scaleMappers,
+            scaleMap,
+            scaleMappersNP,
             guideOptionsMap,
             theme
         )
@@ -93,7 +99,8 @@ internal object PlotAssemblerUtil {
     private fun createLegends(
         stitchedLayersList: List<StitchedPlotLayers>,
         transformedDomainByAes: Map<Aes<*>, DoubleSpan>,
-        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+        scaleMap: TypedScaleMap,
+        scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
     ): List<LegendBoxInfo> {
@@ -114,7 +121,8 @@ internal object PlotAssemblerUtil {
             for (aes in aesList) {
                 var colorBar = false
                 val binding = stitchedLayers.getBinding(aes)
-                val scale = stitchedLayers.getScale(aes)
+//                val scale = stitchedLayers.getScale(aes)
+                val scale = scaleMap.get(aes)
                 val scaleName = scale.name
                 if (guideOptionsMap.containsKey(aes)) {
                     val guideOptions = guideOptionsMap[aes]
@@ -126,7 +134,7 @@ internal object PlotAssemblerUtil {
                             scaleName,
                             transformedDomainByAes.getValue(aes),
                             scale as Scale<Color>,
-                            scaleMappers.getValue(aes) as ScaleMapper<Color>,
+                            scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                             guideOptions,
                             theme
                         )
@@ -138,7 +146,7 @@ internal object PlotAssemblerUtil {
                         scaleName,
                         transformedDomainByAes.getValue(aes),
                         scale as Scale<Color>,
-                        scaleMappers.getValue(aes) as ScaleMapper<Color>,
+                        scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                         null,
                         theme
                     )
@@ -154,7 +162,7 @@ internal object PlotAssemblerUtil {
                     LegendAssembler(
                         scaleName,
                         guideOptionsMap,
-                        scaleMappers,
+                        scaleMappersNP,
                         theme
                     )
                 }
@@ -167,7 +175,8 @@ internal object PlotAssemblerUtil {
                     varBindings.map { it.aes },
                     layerConstantByAes,
                     aestheticsDefaults,
-                    stitchedLayers.getScaleMap(),
+//                    stitchedLayers.getScaleMap(),
+                    scaleMap,
                     transformedDomainByAes
                 )
             }

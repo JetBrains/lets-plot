@@ -156,15 +156,13 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         // Plot
         //
         val assembler = PlotAssembler.singleTile(
-//            scaleByAes,
             listOf(
                 scatterLayer,
                 trueLineLayer,
                 regressionLineLayer,
                 seLineLayer
             ),
-            scaleByAes.get(Aes.X),
-            scaleByAes.get(Aes.Y),
+            scaleByAes,
             emptyMap(),
             CoordProviders.cartesian(), theme
         )

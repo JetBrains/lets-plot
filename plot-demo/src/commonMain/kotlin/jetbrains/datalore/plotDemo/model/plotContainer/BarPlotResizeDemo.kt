@@ -106,10 +106,8 @@ class BarPlotResizeDemo private constructor(
         //  }
         //};
         val assembler = PlotAssembler.singleTile(
-//            scaleByAes,
             listOf(layer),
-            scaleByAes.get(Aes.X),
-            scaleByAes.get(Aes.Y),
+            scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(),
             DefaultTheme.minimal2()

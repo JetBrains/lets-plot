@@ -45,8 +45,7 @@ object PlotConfigClientSideUtil {
         val layersByTile = buildPlotLayers(config)
         val assembler = PlotAssembler.multiTile(
             layersByTile,
-            config.scaleMap.get(Aes.X),
-            config.scaleMap.get(Aes.Y),
+            config.scaleMap,
             config.mappersByAesNP,
             config.coordProvider,
             config.theme
@@ -93,6 +92,7 @@ object PlotConfigClientSideUtil {
                             layerConfig.marginalSide,
                             flipOrientation = layerConfig.isYOrientation
                         )
+
                         false -> it
                     }
                 }
@@ -102,6 +102,7 @@ object PlotConfigClientSideUtil {
                         layerConfig.marginalSide,
                         flipOrientation = false    // Positional aes are already flipped in the "common scale map".
                     )
+
                     false -> commonScaleMap
                 }
 

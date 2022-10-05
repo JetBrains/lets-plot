@@ -54,6 +54,7 @@ internal object PlotGuidesAssemblerUtil {
 
     fun guideTransformedDomainByAes(
         stitchedLayers: StitchedPlotLayers,
+        scaleMap: TypedScaleMap,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
     ): Map<Aes<*>, DoubleSpan> {
         val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
@@ -68,7 +69,8 @@ internal object PlotGuidesAssemblerUtil {
             check(transformVariable.isTransform)
 
             val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
-            val scale = stitchedLayers.getScale(aes)
+//            val scale = stitchedLayers.getScale(aes)
+            val scale = scaleMap.get(aes)
             if (scale.isContinuousDomain) {
                 transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(
                     transformedDataRange,

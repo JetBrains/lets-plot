@@ -90,10 +90,8 @@ open class TilePlotDemo : SimpleDemoBase() {
         // Plot
         //
         val assembler = PlotAssembler.singleTile(
-//            scaleByAes,
             listOf(tilesLayer),
-            scaleByAes.get(Aes.X),
-            scaleByAes.get(Aes.Y),
+            scaleByAes,
             scaleMappersNP,
             CoordProviders.cartesian(), theme
         )

@@ -158,6 +158,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                         Aes.COLOR
                     )
                 )
+
                 BLACK_WITH_GROUP -> {
                     layerBuilder.addConstantAes(Aes.COLOR, Color.BLACK)
                     layerBuilder.groupingVar(varSupp)
@@ -214,14 +215,12 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             // Plot
             //
             val assembler = PlotAssembler.singleTile(
-//                scaleByAes,
                 listOf(
                     errorBarsLayer,
                     linesLayer,
                     pointsLayer
                 ),
-                scaleByAes.get(Aes.X),
-                scaleByAes.get(Aes.Y),
+                scaleByAes,
                 scaleMappersNP,
                 CoordProviders.cartesian(),
                 theme
