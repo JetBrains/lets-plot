@@ -52,6 +52,10 @@ internal class DefaultLegendTheme(
         return getValue(ThemeOption.LEGEND_DIRECTION) as LegendDirection
     }
 
+    override fun showTitle(): Boolean {
+        return !isElemBlank(titleKey)
+    }
+
     override fun titleStyle(): ThemeTextStyle {
         return getTextStyle(getElemValue(titleKey))
     }
