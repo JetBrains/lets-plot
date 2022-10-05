@@ -229,6 +229,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // dotplot - special case
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
+            PROVIDER[GeomKind.RESIDUAL] = GeomProvider.residual()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
             // crossbar - special case
             // pointrange - special case

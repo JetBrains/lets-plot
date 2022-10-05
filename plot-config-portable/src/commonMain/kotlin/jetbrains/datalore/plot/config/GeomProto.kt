@@ -34,6 +34,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             DOT_PLOT -> DefaultSampling.DOT_PLOT
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
+            RESIDUAL -> DefaultSampling.RESIDUAL
             ERROR_BAR -> DefaultSampling.ERROR_BAR
             CROSS_BAR -> DefaultSampling.CROSS_BAR
             LINE_RANGE -> DefaultSampling.LINE_RANGE
@@ -117,6 +118,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             }
 
             DEFAULTS[SMOOTH] = smoothDefaults()
+            DEFAULTS[RESIDUAL] = residualDefaults()
             DEFAULTS[BAR] = barDefaults()
             DEFAULTS[HISTOGRAM] = histogramDefaults()
             DEFAULTS[DOT_PLOT] = dotplotDefaults()
@@ -147,6 +149,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun smoothDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "smooth"
+            return defaults
+        }
+
+        private fun residualDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "residual"
             return defaults
         }
 

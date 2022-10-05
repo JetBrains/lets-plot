@@ -13,7 +13,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84,
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
            'geom_histogram', 'geom_dotplot', 'geom_bin2d',
-           'geom_tile', 'geom_raster',
+           'geom_tile', 'geom_raster', 'geom_residuals',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
@@ -1348,6 +1348,21 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
+                 **other_args)
+
+
+def geom_residuals(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                   orientation=None,
+                   **other_args):
+    return _geom('residual',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
                  **other_args)
 
 
