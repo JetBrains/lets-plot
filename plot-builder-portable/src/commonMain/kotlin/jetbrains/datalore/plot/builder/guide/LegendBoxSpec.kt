@@ -44,6 +44,6 @@ abstract class LegendBoxSpec(
     }
 
     fun hasTitle(): Boolean {
-        return title.isNotBlank()
+        return title.isNotBlank() && theme.showTitle()
     }
 }

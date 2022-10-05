@@ -31,6 +31,8 @@ interface LegendTheme {
 
     fun direction(): LegendDirection
 
+    fun showTitle(): Boolean
+
     fun titleStyle(): ThemeTextStyle
     fun titleJustification(): TextJustification
     fun textStyle(): ThemeTextStyle
