@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.*
 
@@ -25,6 +26,67 @@ object DensityStatUtil {
             counter += (i - mean).pow(2.0)
         }
         return sqrt(counter / data.size)
+    }
+
+    fun binnedStat(
+        xs: List<Double?>,
+        ys: List<Double?>,
+        ws: List<Double?>,
+        trim: Boolean,
+        bandWidth: Double?,
+        bandWidthMethod: DensityStat.BandWidthMethod,
+        adjust: Double,
+        kernel: DensityStat.Kernel,
+        n: Int,
+        fullScanMax: Int
+    ): MutableMap<DataFrame.Variable, List<Double>> {
+        val binnedData = (xs zip (ys zip ws))
+            .filter { it.first?.isFinite() == true }
+            .groupBy({ it.first!! }, { it.second })
+            .mapValues { it.value.unzip() }
+
+        val statX = ArrayList<Double>()
+        val statY = ArrayList<Double>()
+        val statDensity = ArrayList<Double>()
+        val statCount = ArrayList<Double>()
+        val statScaled = ArrayList<Double>()
+
+        for ((x, bin) in binnedData) {
+            val (filteredY, filteredW) = SeriesUtil.filterFinite(bin.first, bin.second)
+            val (binY, binW) = (filteredY zip filteredW)
+                .sortedBy { it.first }
+                .unzip()
+            if (binY.isEmpty()) continue
+            val ySummary = FiveNumberSummary(binY)
+            val modifier = if (trim) 0.0 else 3.0
+            val bw = bandWidth ?: bandWidth(bandWidthMethod, binY)
+            val rangeY = DoubleSpan(
+                ySummary.min - modifier * bw,
+                ySummary.max + modifier * bw
+            )
+            val binStatY = createStepValues(rangeY, n)
+            val densityFunction = densityFunction(
+                binY, binW,
+                bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
+            )
+            val binStatCount = binStatY.map { densityFunction(it) }
+            val widthsSum = binW.sum()
+            val maxBinCount = binStatCount.maxOrNull()!!
+
+            statX += MutableList(binStatY.size) { x }
+            statY += binStatY
+            statDensity += binStatCount.map { it / widthsSum }
+            statCount += binStatCount
+            statScaled += binStatCount.map { it / maxBinCount }
+        }
+
+        return mutableMapOf(
+            Stats.X to statX,
+            Stats.Y to statY,
+            Stats.DENSITY to statDensity,
+            Stats.COUNT to statCount,
+            Stats.SCALED to statScaled
+        )
     }
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {

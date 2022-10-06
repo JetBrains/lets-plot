@@ -28,6 +28,7 @@ object Stats {
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
+    val HEIGHT = DataFrame.Variable("..height..", STAT, "height")
     val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
 
@@ -53,6 +54,7 @@ object Stats {
             MIDDLE,
             UPPER,
             WIDTH,
+            HEIGHT,
             BIN_WIDTH,
             VIOLIN_WIDTH,
             SCALED,

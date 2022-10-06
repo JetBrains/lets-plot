@@ -61,25 +61,25 @@ open class QuantilesHelper(
         val dens = densityValues.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
         val quantSample = drawQuantiles.map { pwLinInterp(dens, sampleValues)(it) }
         val quantDensity = quantSample.map { pwLinInterp(sampleValues, densityValues)(it) }
-        val quantilesWidth = dataPoints.first().width()
-        val quantilesHeight = dataPoints.first().height()
-        val quantilesColor = dataPoints.first().color()
-        val quantilesSize = dataPoints.first().size()
+        val constWidth = dataPoints.first().width()
+        val constHeight = dataPoints.first().height()
+        val constColor = dataPoints.first().color()
+        val constSize = dataPoints.first().size()
 
         val builder = AestheticsBuilder(quantSample.size)
             .aes(sampleAes, AestheticsBuilder.list(quantSample))
             .aes(densityAes, AestheticsBuilder.list(quantDensity))
-            .color(AestheticsBuilder.constant(quantilesColor))
-            .size(AestheticsBuilder.constant(quantilesSize))
+            .color(AestheticsBuilder.constant(constColor))
+            .size(AestheticsBuilder.constant(constSize))
         if (groupAes != null) {
             val groupValue = dataPoints.first()[groupAes]
             builder.aes(groupAes, AestheticsBuilder.constant(groupValue))
             builder.group(AestheticsBuilder.constant(group ?: DEFAULT_GROUP_VALUE))
         }
         if (densityAes != Aes.HEIGHT)
-            builder.height(AestheticsBuilder.constant(quantilesHeight))
+            builder.height(AestheticsBuilder.constant(constHeight))
         if (densityAes != Aes.WIDTH)
-            builder.width(AestheticsBuilder.constant(quantilesWidth))
+            builder.width(AestheticsBuilder.constant(constWidth))
         return builder.build().dataPoints()
     }
 

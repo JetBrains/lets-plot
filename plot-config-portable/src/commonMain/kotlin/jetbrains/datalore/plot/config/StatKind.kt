@@ -17,6 +17,7 @@ enum class StatKind {
     CONTOUR,
     CONTOURF,
     BOXPLOT,
+    DENSITYRIDGES,
     YDENSITY,
     YDOTPLOT,
     DENSITY,

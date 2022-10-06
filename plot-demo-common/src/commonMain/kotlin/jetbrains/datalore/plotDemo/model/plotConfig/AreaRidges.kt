@@ -15,6 +15,7 @@ class AreaRidges {
             flipCoord(),
             withNegativeHeight(),
             withQuantiles(),
+            withStat()
         )
     }
 
@@ -35,7 +36,8 @@ class AreaRidges {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'area_ridges'" +
+                "                 'geom': 'area_ridges'," +
+                "                 'stat': 'identity'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -64,6 +66,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
+                "                 'stat': 'identity'," +
                 "                 'color': 'black'" +
                 "               }" +
                 "             ]" +
@@ -91,6 +94,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
+                "                 'stat': 'identity'," +
                 "                 'scale': 0.5," +
                 "                 'color': 'white'" +
                 "               }" +
@@ -122,7 +126,8 @@ class AreaRidges {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'area_ridges'" +
+                "                 'geom': 'area_ridges'," +
+                "                 'stat': 'identity'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -149,9 +154,38 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
+                "                 'stat': 'identity'," +
                 "                 'draw_quantiles': [0.25, 0.5, 0.75]," +
                 "                 'color': 'black'," +
                 "                 'fill': 'white'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun withStat(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [0, 0, 1, 1, 0, 0, 0, 1]," +
+                "             'y': [0, 0, 0, 0, 1, 1, 1, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'With density ridges stat'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'area_ridges'," +
+                "                 'draw_quantiles': [0.1, 0.5, 0.9]," +
+                "                 'scale': 0.75," +
+                "                 'trim': false," +
+                "                 'color': 'white'" +
                 "               }" +
                 "             ]" +
                 "}"

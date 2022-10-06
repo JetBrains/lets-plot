@@ -337,6 +337,10 @@ object Option {
             const val BINWIDTH = "binwidth"
         }
 
+        object DensityRidges {
+            const val TRIM = "trim"
+        }
+
         object YDensity {
             const val SCALE = "scale"
             const val TRIM = "trim"
