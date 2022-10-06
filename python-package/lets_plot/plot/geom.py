@@ -3199,9 +3199,10 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='identity'
+    stat : str, default='densityridges'
         The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged).
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'densityridges' (computes and draws kernel density estimate for each ridge).
     position : str or `FeatureSpec`
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
