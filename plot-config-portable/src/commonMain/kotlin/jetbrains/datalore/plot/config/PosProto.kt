@@ -31,6 +31,7 @@ internal object PosProto {
     const val JD_JITTER_WIDTH = "jitter_width"
     const val JD_JITTER_HEIGHT = "jitter_height"
     const val STACK_VJUST = "vjust"
+    const val FILL_VJUST = "vjust"
 
     fun createPosProvider(posOptions: Map<String, Any>): PosProvider {
         val posName = ConfigUtil.featureName(posOptions)
@@ -39,7 +40,7 @@ internal object PosProto {
             IDENTITY -> PosProvider.wrap(PositionAdjustments.identity())
             STACK -> PosProvider.barStack(opts.getDouble(STACK_VJUST))
             DODGE -> PosProvider.dodge(opts.getDouble(DODGE_WIDTH))
-            FILL -> PosProvider.fill()
+            FILL -> PosProvider.fill(opts.getDouble(FILL_VJUST))
             JITTER -> PosProvider.jitter(
                 opts.getDouble(JITTER_WIDTH),
                 opts.getDouble(JITTER_HEIGHT)

@@ -46,8 +46,8 @@ object PositionAdjustments {
         }
     }
 
-    fun fill(aesthetics: Aesthetics): PositionAdjustment {
-        return FillPos(aesthetics)
+    fun fill(aesthetics: Aesthetics, vjust: Double?): PositionAdjustment {
+        return FillPos(aesthetics, vjust)
     }
 
     fun jitter(width: Double?, height: Double?): PositionAdjustment {

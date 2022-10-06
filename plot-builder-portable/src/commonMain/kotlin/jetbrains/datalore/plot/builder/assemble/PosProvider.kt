@@ -57,10 +57,10 @@ abstract class PosProvider {
             }
         }
 
-        fun fill(): PosProvider {
+        fun fill(vjust: Double? = null): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.fill(ctx.aesthetics)
+                    return PositionAdjustments.fill(ctx.aesthetics, vjust)
                 }
 
                 override fun handlesGroups(): Boolean {
