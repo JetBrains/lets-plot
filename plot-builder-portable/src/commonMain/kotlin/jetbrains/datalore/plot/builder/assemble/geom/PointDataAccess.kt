@@ -14,23 +14,21 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
 
-internal class PointDataAccess constructor (
+internal class PointDataAccess constructor(
     private val data: DataFrame,
-    bindings: Map<Aes<*>, VarBinding>,
-    scaleMap: TypedScaleMap
+    private val bindings: Map<Aes<*>, VarBinding>,
+    private val scaleMap: TypedScaleMap
 ) : MappedDataAccess {
 
-    private val scaleByAes: (Aes<*>) -> Scale<*> = { scaleMap[it] }
-    private val myBindings: Map<Aes<*>, VarBinding> = bindings.toMap()
     private val myFormatters = HashMap<Aes<*>, (Any?) -> String>()
 
-    override fun isMapped(aes: Aes<*>) = myBindings.containsKey(aes)
+    override fun isMapped(aes: Aes<*>) = bindings.containsKey(aes)
 
     override fun getOriginalValue(aes: Aes<*>, index: Int): Any? {
         require(isMapped(aes)) { "Not mapped: $aes" }
 
-        val binding = myBindings.getValue(aes)
-        val scale = getScale(aes)
+        val binding = bindings.getValue(aes)
+        val scale = scaleMap[aes]
 
         return binding.variable
             .let { variable -> data.getNumeric(variable)[index] }
@@ -42,21 +40,17 @@ internal class PointDataAccess constructor (
         return formatter(aes).invoke(originalValue)
     }
 
-    override fun getMappedDataLabel(aes: Aes<*>): String = getScale(aes).name
-
-    private fun getScale(aes: Aes<*>): Scale<*> {
-        return scaleByAes(aes)
-    }
+    override fun getMappedDataLabel(aes: Aes<*>): String = scaleMap[aes].name
 
     private fun formatter(aes: Aes<*>): (Any?) -> String {
-        val scale = getScale(aes)
+        val scale = scaleMap[aes]
         return myFormatters.getOrPut(aes, defaultValue = { createFormatter(aes, scale) })
     }
 
     private fun createFormatter(aes: Aes<*>, scale: Scale<*>): (Any?) -> String {
         if (scale.isContinuousDomain) {
             // only 'stat' or 'transform' vars here
-            val domain = myBindings
+            val domain = bindings
                 .getValue(aes)
                 .variable
                 .run(data::range)
