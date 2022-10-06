@@ -36,7 +36,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.RIDGEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -75,7 +74,6 @@ object DefaultNaValue {
         VALUE_MAP.put(HEIGHT, 1.0)
         VALUE_MAP.put(BINWIDTH, 0.0)
         VALUE_MAP.put(VIOLINWIDTH, 0.0)
-        VALUE_MAP.put(RIDGEHEIGHT, 0.0)
         VALUE_MAP.put(WEIGHT, 1.0)
         VALUE_MAP.put(INTERCEPT, 0.0)
         VALUE_MAP.put(SLOPE, 1.0)

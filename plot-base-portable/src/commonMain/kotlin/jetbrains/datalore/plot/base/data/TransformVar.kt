@@ -27,7 +27,6 @@ object TransformVar {
     val HEIGHT = DataFrame.Variable("transform.HEIGHT", TRANSFORM)
     val BINWIDTH = DataFrame.Variable("transform.BINWIDTH", TRANSFORM)
     val VIOLINWIDTH = DataFrame.Variable("transform.VIOLINWIDTH", TRANSFORM)
-    val RIDGEHEIGHT = DataFrame.Variable("transform.RIDGEHEIGHT", TRANSFORM)
     val WEIGHT = DataFrame.Variable("transform.WEIGHT", TRANSFORM)
     val INTERCEPT = DataFrame.Variable("transform.INTERCEPT", TRANSFORM)
     val SLOPE = DataFrame.Variable("transform.SLOPE", TRANSFORM)
@@ -150,10 +149,6 @@ object TransformVar {
 
         override fun violinwidth(): DataFrame.Variable {
             return VIOLINWIDTH
-        }
-
-        override fun ridgeheight(): DataFrame.Variable {
-            return RIDGEHEIGHT
         }
 
         override fun weight(): DataFrame.Variable {

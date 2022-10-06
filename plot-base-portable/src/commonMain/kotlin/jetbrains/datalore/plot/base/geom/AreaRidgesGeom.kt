@@ -37,15 +37,14 @@ class AreaRidgesGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.RIDGEHEIGHT, Aes.HEIGHT)
+        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.HEIGHT)
         if (!definedDataPoints.any()) return
-        val maxRidgeHeight = definedDataPoints.maxByOrNull { it.ridgeheight()!! }?.ridgeheight()!!
         definedDataPoints
             .sortedByDescending(DataPointAesthetics::y)
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
             .forEach { (_, dataPoints) ->
-                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, maxRidgeHeight, pos, coord, ctx) }
+                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
             }
     }
 
@@ -53,7 +52,7 @@ class AreaRidgesGeom : GeomBase() {
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
         for (p in dataPoints)
-            if (p.ridgeheight()!! >= MIN_HEIGHT)
+            if (p.height()!! >= MIN_HEIGHT)
                 dataPointsBunch.add(p)
             else {
                 if (dataPointsBunch.any()) result.add(dataPointsBunch)
@@ -66,13 +65,12 @@ class AreaRidgesGeom : GeomBase() {
     private fun buildRidge(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
-        maxRidgeHeight: Double,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val boundTransform = toLocationBound(maxRidgeHeight)
+        val boundTransform = toLocationBound()
 
         val paths = helper.createBands(dataPoints, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
         appendNodes(paths, root)
@@ -80,7 +78,7 @@ class AreaRidgesGeom : GeomBase() {
         helper.setAlphaEnabled(false)
         appendNodes(helper.createLines(dataPoints, boundTransform), root)
 
-        buildQuantiles(root, dataPoints, pos, coord, ctx, maxRidgeHeight)
+        buildQuantiles(root, dataPoints, pos, coord, ctx)
 
         buildHints(dataPoints, ctx, helper, boundTransform)
     }
@@ -90,12 +88,11 @@ class AreaRidgesGeom : GeomBase() {
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
-        ctx: GeomContext,
-        maxRidgeHeight: Double
+        ctx: GeomContext
     ) {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, drawQuantiles, Aes.X, Aes.RIDGEHEIGHT, Aes.Y)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, drawQuantiles, Aes.X, Aes.HEIGHT, Aes.Y)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
-            toLocationBound(maxRidgeHeight)(p)
+            toLocationBound()(p)
         }
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(p.x()!!, p.y()!!)
@@ -105,10 +102,10 @@ class AreaRidgesGeom : GeomBase() {
         }
     }
 
-    private fun toLocationBound(maxRidgeHeight: Double): (p: DataPointAesthetics) -> DoubleVector {
+    private fun toLocationBound(): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
             val x = p.x()!!
-            val y = p.y()!! + scale * p.height()!! * p.ridgeheight()!! / maxRidgeHeight
+            val y = p.y()!! + scale * p.height()!!
             return DoubleVector(x, y)
         }
     }

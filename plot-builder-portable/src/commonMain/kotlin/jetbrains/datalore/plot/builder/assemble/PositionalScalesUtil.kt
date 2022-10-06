@@ -276,7 +276,7 @@ internal object PositionalScalesUtil {
                 layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
                 else -> null
             }?.let { widthAes ->
-                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx)
+                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx.getResolution(widthAes))
             },
             heightAxis to when {
                 Aes.HEIGHT in renderedAes -> Aes.HEIGHT
@@ -284,8 +284,8 @@ internal object PositionalScalesUtil {
                 else -> null
             }?.let { heightAes ->
                 when (layer.geomKind) {
-                    GeomKind.AREA_RIDGES -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx, 0.0)
-                    else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx)
+                    GeomKind.AREA_RIDGES -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, 1.0, 0.0)
+                    else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
                 }
             }
         )
@@ -294,13 +294,12 @@ internal object PositionalScalesUtil {
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
-        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext, expandShift: Double = -0.5
+        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, resolution: Double, expandShift: Double = -0.5
     ): DoubleSpan? {
         val locations = aesthetics.numericValues(locationAes).iterator()
         val sizes = aesthetics.numericValues(sizeAes).iterator()
 
         val minMax = doubleArrayOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)
-        val resolution = geomCtx.getResolution(sizeAes)
 
         for (i in 0 until aesthetics.dataPointCount()) {
             if (!locations.hasNext()) {

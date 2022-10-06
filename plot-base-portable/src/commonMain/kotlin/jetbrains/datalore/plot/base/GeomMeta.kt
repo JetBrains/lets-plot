@@ -224,14 +224,13 @@ object GeomMeta {
             GeomKind.AREA_RIDGES -> listOf(
                 Aes.X,
                 Aes.Y,
-                Aes.RIDGEHEIGHT,
+                Aes.HEIGHT,
 
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.LINETYPE,
-                Aes.SIZE,
-                Aes.HEIGHT
+                Aes.SIZE
             )
 
             GeomKind.VIOLIN -> listOf(

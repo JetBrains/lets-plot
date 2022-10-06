@@ -69,8 +69,6 @@ open class QuantilesHelper(
         val builder = AestheticsBuilder(quantSample.size)
             .aes(sampleAes, AestheticsBuilder.list(quantSample))
             .aes(densityAes, AestheticsBuilder.list(quantDensity))
-            .width(AestheticsBuilder.constant(quantilesWidth))
-            .height(AestheticsBuilder.constant(quantilesHeight))
             .color(AestheticsBuilder.constant(quantilesColor))
             .size(AestheticsBuilder.constant(quantilesSize))
         if (groupAes != null) {
@@ -78,6 +76,10 @@ open class QuantilesHelper(
             builder.aes(groupAes, AestheticsBuilder.constant(groupValue))
             builder.group(AestheticsBuilder.constant(group ?: DEFAULT_GROUP_VALUE))
         }
+        if (densityAes != Aes.HEIGHT)
+            builder.height(AestheticsBuilder.constant(quantilesHeight))
+        if (densityAes != Aes.WIDTH)
+            builder.width(AestheticsBuilder.constant(quantilesWidth))
         return builder.build().dataPoints()
     }
 

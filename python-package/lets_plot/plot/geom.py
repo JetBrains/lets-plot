@@ -3188,7 +3188,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                      scale=None,
                      **other_args):
     """
-    Plots the sum of the `y` and `ridgeheight` aesthetics versus `x`. Heights of the ridges are relatively scaled.
+    Plots the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
 
     Parameters
     ----------
@@ -3216,8 +3216,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     draw_quantiles : list of float
         Draw vertical lines at the given quantiles of the density estimate.
     scale : float, default=1.0
-        A multiplicative factor applied to ridgeheight aesthetic.
-        If `scale = 1.0`, the heights of a ridges are automatically scaled such that the highest ridge just touches the one above.
+        A multiplicative factor applied to height aesthetic.
+        If `scale = 1.0`, the heights of a ridges are automatically scaled such that the ridge with `height = 1.0` just touches the one above.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3235,8 +3235,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
 
     - x : x-axis coordinates.
     - y : y-axis coordinates.
-    - ridgeheight : relative height of the ridge. Assumed to be positive, though this is not required.
-    - height : absolute limit for height of a ridge.
+    - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
@@ -3256,9 +3255,9 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         np.random.seed(42)
         x = np.tile(np.arange(n), m)
         y = np.repeat(np.arange(m), n)
-        rh = np.random.uniform(size=m*n)
-        ggplot({'x': x, 'y': y, 'rh': rh}) + \\
-            geom_area_ridges(aes('x', 'y', ridgeheight='rh'))
+        h = np.random.uniform(size=m*n)
+        ggplot({'x': x, 'y': y, 'h': h}) + \\
+            geom_area_ridges(aes('x', 'y', height='h'))
 
     |
 
@@ -3273,9 +3272,9 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         n, m = 501, 3
         x = np.linspace(0, (m * np.pi)**2, n)[:-1]
         y = np.floor(np.sqrt(x) / np.pi)
-        rh = np.abs(np.sin(np.sqrt(x)))
-        ggplot({'x': x, 'y': y, 'rh': rh}) + \\
-            geom_area_ridges(aes('x', 'y', ridgeheight='rh', fill=as_discrete('y')), \\
+        h = np.abs(np.sin(np.sqrt(x)))
+        ggplot({'x': x, 'y': y, 'h': h}) + \\
+            geom_area_ridges(aes('x', 'y', height='h', fill=as_discrete('y')), \\
                              color='black', scale=.75, draw_quantiles=[.25, .5, .75])
 
     """

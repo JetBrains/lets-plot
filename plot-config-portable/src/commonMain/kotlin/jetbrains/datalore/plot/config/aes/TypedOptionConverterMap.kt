@@ -33,7 +33,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.RIDGEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -72,7 +71,6 @@ internal class TypedOptionConverterMap {
         this.put(HEIGHT, DOUBLE_CVT)
         this.put(BINWIDTH, DOUBLE_CVT)
         this.put(VIOLINWIDTH, DOUBLE_CVT)
-        this.put(RIDGEHEIGHT, DOUBLE_CVT)
         this.put(WEIGHT, DOUBLE_CVT)
         this.put(INTERCEPT, DOUBLE_CVT)
         this.put(SLOPE, DOUBLE_CVT)

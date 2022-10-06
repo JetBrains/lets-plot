@@ -36,7 +36,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
 import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.RIDGEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
@@ -75,7 +74,6 @@ object AesInitValue {
         VALUE_MAP[HEIGHT] = 1.0
         VALUE_MAP[BINWIDTH] = 1.0
         VALUE_MAP[VIOLINWIDTH] = 0.0
-        VALUE_MAP[RIDGEHEIGHT] = 0.0
         VALUE_MAP[WEIGHT] = 1.0
         VALUE_MAP[INTERCEPT] = 0.0
         VALUE_MAP[SLOPE] = 1.0
