@@ -39,9 +39,9 @@ object PositionAdjustments {
         return DodgePos(aesthetics, groupCount, width)
     }
 
-    fun stack(aes: Aesthetics, strategy: StackingStrategy): PositionAdjustment {
+    fun stack(aes: Aesthetics, strategy: StackingStrategy, vjust: Double?): PositionAdjustment {
         return when (strategy) {
-            StackingStrategy.SPLIT_POSITIVE_NEGATIVE -> StackPos.splitPositiveNegative(aes)
+            StackingStrategy.SPLIT_POSITIVE_NEGATIVE -> StackPos.splitPositiveNegative(aes, vjust)
             StackingStrategy.SUM_POSITIVE_NEGATIVE -> StackPos.sumPositiveNegative(aes)
         }
     }

@@ -13,8 +13,10 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.util.MutableDouble
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal abstract class StackPos(aes: Aesthetics) :
-    PositionAdjustment {
+internal abstract class StackPos(
+    aes: Aesthetics,
+    protected val myVJust: Double?
+) : PositionAdjustment {
 
     private val myOffsetByIndex: Map<Int, Double>
 
@@ -32,7 +34,7 @@ internal abstract class StackPos(aes: Aesthetics) :
         return PositionAdjustments.Meta.STACK.handlesGroups()
     }
 
-    private class SplitPositiveNegative internal constructor(aes: Aesthetics) : StackPos(aes) {
+    private class SplitPositiveNegative internal constructor(aes: Aesthetics, vjust: Double?) : StackPos(aes, vjust) {
 
         override fun mapIndexToOffset(aes: Aesthetics): Map<Int, Double> {
             val offsetByIndex = HashMap<Int, Double>()
@@ -51,13 +53,16 @@ internal abstract class StackPos(aes: Aesthetics) :
                     val y = dataPoint.y()
                     if (SeriesUtil.isFinite(y)) {
                         val pair = negPosBaseByBin[x]!!
-                        val offset: Double
-                        if (y!! >= 0) {
-                            offset = pair.second.getAndAdd(y)
+                        val offset = if (y!! >= 0) {
+                            pair.second.getAndAdd(y)
                         } else {
-                            offset = pair.first.getAndAdd(y)
+                            pair.first.getAndAdd(y)
                         }
-                        offsetByIndex[i] = offset
+                        offsetByIndex[i] = if (myVJust != null) {
+                            offset - y * if (y >= 0) (1 - myVJust) else myVJust
+                        } else {
+                            offset
+                        }
                     }
                 }
             }
@@ -67,7 +72,7 @@ internal abstract class StackPos(aes: Aesthetics) :
 
     }
 
-    private class SumPositiveNegative internal constructor(aes: Aesthetics) : StackPos(aes) {
+    private class SumPositiveNegative internal constructor(aes: Aesthetics) : StackPos(aes, null) {
 
         override fun mapIndexToOffset(aes: Aesthetics): Map<Int, Double> {
             val offsetByIndex = HashMap<Int, Double>()
@@ -94,8 +99,8 @@ internal abstract class StackPos(aes: Aesthetics) :
     }
 
     companion object {
-        fun splitPositiveNegative(aes: Aesthetics): PositionAdjustment {
-            return SplitPositiveNegative(aes)
+        fun splitPositiveNegative(aes: Aesthetics, vjust: Double?): PositionAdjustment {
+            return SplitPositiveNegative(aes, vjust)
         }
 
         fun sumPositiveNegative(aes: Aesthetics): PositionAdjustment {
