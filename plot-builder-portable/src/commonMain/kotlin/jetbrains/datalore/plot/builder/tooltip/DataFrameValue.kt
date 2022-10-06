@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.interact.DataContext
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class DataFrameValue(
@@ -25,9 +25,9 @@ class DataFrameValue(
     override val isOutlier: Boolean = false
     override val isAxis: Boolean = false
 
-    override fun initDataContext(dataContext: DataContext) {
+    override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         require(!::myDataFrame.isInitialized) { "Data context can be initialized only once" }
-        myDataFrame = dataContext.dataFrame
+        myDataFrame = data
 
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
     }

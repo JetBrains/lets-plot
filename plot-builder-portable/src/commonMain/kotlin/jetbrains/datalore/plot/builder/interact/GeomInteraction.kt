@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.builder.interact
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.DataContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
@@ -83,13 +82,11 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             isCrosshairEnabled: Boolean,
             tooltipTitle: TooltipLine?
         ): ContextualMapping {
-            val dataContext = DataContext(dataFrame = dataFrame, mappedDataAccess = dataAccess)
-
             val mappedTooltipLines = tooltipLines.filter { line ->
                 val dataAesList = line.fields.filterIsInstance<MappingValue>()
                 dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
             }
-            mappedTooltipLines.forEach { it.initDataContext(dataContext) }
+            mappedTooltipLines.forEach { it.initDataContext(dataFrame, dataAccess) }
 
             val hasGeneralTooltip = mappedTooltipLines.any { line ->
                 line.fields.none(ValueSource::isOutlier)
@@ -98,7 +95,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 line.fields.any(ValueSource::isAxis)
             }
 
-            tooltipTitle?.initDataContext(dataContext)
+            tooltipTitle?.initDataContext(dataFrame, dataAccess)
 
             return ContextualMapping(
                 mappedTooltipLines,

@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.plot.base.interact.DataContext
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
@@ -19,8 +20,8 @@ class TooltipLine(
 
     private val myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields")
 
-    fun initDataContext(dataContext: DataContext) {
-        fields.forEach { it.initDataContext(dataContext) }
+    fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
+        fields.forEach { it.initDataContext(data, mappedDataAccess) }
     }
 
     override fun getDataPoint(index: Int): DataPoint? {

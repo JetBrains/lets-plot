@@ -6,7 +6,8 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.plot.base.interact.DataContext
+import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class ConstantValue(
@@ -23,10 +24,10 @@ class ConstantValue(
     override val isOutlier: Boolean = false
     override val isAxis: Boolean = false
 
-    override fun initDataContext(dataContext: DataContext) {
+    override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
     }
 
-    override fun getDataPoint(index: Int): DataPoint? {
+    override fun getDataPoint(index: Int): DataPoint {
         return DataPoint(
             label = "",
             value = myDataValue,

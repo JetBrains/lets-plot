@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.DataContext
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
@@ -24,9 +24,9 @@ class MappingValue(
         StringFormat.forOneArg(format, formatFor = aes.name)
     }
 
-    override fun initDataContext(dataContext: DataContext) {
+    override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         require(!::myDataAccess.isInitialized) { "Data context can be initialized only once" }
-        myDataAccess = dataContext.mappedDataAccess
+        myDataAccess = mappedDataAccess
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
 
