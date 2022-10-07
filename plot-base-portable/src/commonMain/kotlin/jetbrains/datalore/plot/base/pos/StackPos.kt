@@ -15,16 +15,16 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal abstract class StackPos(
     aes: Aesthetics,
-    protected val myVJust: Double?
+    vjust: Double?
 ) : PositionAdjustment {
 
     private val myOffsetByIndex: Map<Int, Double>
 
     init {
-        myOffsetByIndex = mapIndexToOffset(aes)
+        myOffsetByIndex = mapIndexToOffset(aes, vjust)
     }
 
-    protected abstract fun mapIndexToOffset(aes: Aesthetics): Map<Int, Double>
+    protected abstract fun mapIndexToOffset(aes: Aesthetics, vjust: Double?): Map<Int, Double>
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
         return v.add(DoubleVector(0.0, myOffsetByIndex[p.index()]!!))
@@ -36,7 +36,7 @@ internal abstract class StackPos(
 
     private class SplitPositiveNegative internal constructor(aes: Aesthetics, vjust: Double?) : StackPos(aes, vjust) {
 
-        override fun mapIndexToOffset(aes: Aesthetics): Map<Int, Double> {
+        override fun mapIndexToOffset(aes: Aesthetics, vjust: Double?): Map<Int, Double> {
             val offsetByIndex = HashMap<Int, Double>()
             val negPosBaseByBin = HashMap<Double, Pair<MutableDouble, MutableDouble>>()
             for (i in 0 until aes.dataPointCount()) {
@@ -58,8 +58,8 @@ internal abstract class StackPos(
                         } else {
                             pair.first.getAndAdd(y)
                         }
-                        offsetByIndex[i] = if (myVJust != null) {
-                            offset - y * if (y >= 0) (1 - myVJust) else myVJust
+                        offsetByIndex[i] = if (vjust != null) {
+                            offset - y * if (y >= 0) (1 - vjust) else vjust
                         } else {
                             offset
                         }
@@ -73,7 +73,7 @@ internal abstract class StackPos(
 
     private class SumPositiveNegative internal constructor(aes: Aesthetics) : StackPos(aes, null) {
 
-        override fun mapIndexToOffset(aes: Aesthetics): Map<Int, Double> {
+        override fun mapIndexToOffset(aes: Aesthetics, vjust: Double?): Map<Int, Double> {
             val offsetByIndex = HashMap<Int, Double>()
             val baseByBin = HashMap<Double, MutableDouble>()
             for (i in 0 until aes.dataPointCount()) {
