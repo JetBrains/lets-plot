@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 
 class TextAndLabel {
     fun plotSpecList(): List<MutableMap<String, Any>> {
-        return listOf(
+       return listOf(
             textWithAngle("text"),
             textWithAngle("text", angle = 45.0),
             textWithAngle("text", angle = 90.0),
@@ -17,7 +17,13 @@ class TextAndLabel {
             textWithAngle("label"),
             textWithAngle("label", angle = 45.0),
             textWithAngle("label", angle = 90.0),
+
+            inwardOutward(hjust = "inward", vjust = "inward", angle = 0.0),
+            inwardOutward(hjust = "inward", vjust = null, angle = 90.0),
         )
+        //return listOf(0,45,90,135,180,225,270,315).map {
+        //    inward_outward(vjust =null , hjust = "inward", angle = it.toDouble())
+        //}
     }
 
     private fun textWithAngle(geom: String, angle: Double = 0.0): MutableMap<String, Any> {
@@ -80,6 +86,49 @@ class TextAndLabel {
                 }
             ]        
         }""".trimIndent()
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = data
+        return plotSpec
+    }
+
+    private fun inwardOutward(hjust: String?, vjust: String?, angle: Double =0.0): MutableMap<String, Any> {
+        val data = mapOf(
+            "x" to listOf(1, 1, 2, 2, 1.5),
+            "y" to listOf(1, 2, 1, 2, 1.5),
+            "text" to listOf(
+                "bottom-left", "top-left",
+                "bottom-right", "top-right", "center"
+            )
+        )
+
+        val hj = ("\"hjust\": \"$hjust\",").takeIf { hjust != null } ?: ""
+        val vj = ("\"vjust\": \"$vjust\",").takeIf { vjust != null } ?: ""
+        val spec = """{
+            "ggtitle" :  {"text": "hjust = $hjust, vjust = $vjust, angle = $angle"}, 
+            "mapping": {
+                "x": "x",
+                "y": "y"
+            },
+            "theme": { "name": "classic" },
+            "kind": "plot",
+            "layers": [
+                {
+                    "geom": "label",
+                    "mapping": {
+                       "label": "text"
+                    },
+                    $hj
+                    $vj
+                    "angle":$angle,
+                    "size": 10  
+                },
+                { 
+                    "geom" : "point",
+                    "size" : 3
+                }
+            ]        
+        }""".trimIndent()
+
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = data
         return plotSpec

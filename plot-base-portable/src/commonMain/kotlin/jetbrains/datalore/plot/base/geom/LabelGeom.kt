@@ -30,13 +30,14 @@ class LabelGeom : TextGeom() {
         location: DoubleVector,
         text: String,
         sizeUnitRatio: Double,
-        ctx: GeomContext
+        ctx: GeomContext,
+        boundsCenter: DoubleVector
     ): SvgGElement {
         // text size estimation
         val textSize = TextHelper.measure(text, p, ctx, sizeUnitRatio)
 
-        val hAnchor = TextHelper.hAnchor(p)
-        val vAnchor = TextHelper.vAnchor(p)
+        val hAnchor = TextHelper.hAnchor(p, location, boundsCenter)
+        val vAnchor = TextHelper.vAnchor(p, location, boundsCenter)
 
         // Background rectangle
         val fontSize = TextHelper.fontSize(p, sizeUnitRatio)
