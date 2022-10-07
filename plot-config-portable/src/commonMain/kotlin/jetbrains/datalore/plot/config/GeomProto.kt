@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.builder.sampling.Samplings
 import jetbrains.datalore.plot.config.Option.Geom
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta
+import jetbrains.datalore.plot.config.Option.Pos
 
 open class GeomProto constructor(val geomKind: GeomKind) {
 
@@ -77,8 +78,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         val posOptionValue: Any = when (geomKind) {
             JITTER -> mapOf(
                 Meta.NAME to PosProto.JITTER,
-                PosProto.JITTER_WIDTH to layerOptions.getDouble(Geom.Jitter.WIDTH),
-                PosProto.JITTER_HEIGHT to layerOptions.getDouble(Geom.Jitter.HEIGHT),
+                Pos.Jitter.WIDTH to layerOptions.getDouble(Geom.Jitter.WIDTH),
+                Pos.Jitter.HEIGHT to layerOptions.getDouble(Geom.Jitter.HEIGHT),
             )
             Y_DOT_PLOT -> if (layerOptions.hasOwn(Geom.YDotplot.STACKGROUPS) &&
                 layerOptions.getBoolean(Geom.YDotplot.STACKGROUPS)
@@ -87,7 +88,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             } else {
                 mapOf(
                     Meta.NAME to PosProto.DODGE,
-                    PosProto.DODGE_WIDTH to 0.95
+                    Pos.Dodge.WIDTH to 0.95
                 )
             }
             TEXT, LABEL -> mapOf(
@@ -194,7 +195,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             defaults[Layer.STAT] = "identity"
             defaults[Layer.POS] = mapOf(
                 Meta.NAME to PosProto.DODGE,
-                PosProto.DODGE_WIDTH to 0.95
+                Pos.Dodge.WIDTH to 0.95
             )
             return defaults
         }
@@ -204,7 +205,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             defaults[Layer.STAT] = "boxplot"
             defaults[Layer.POS] = mapOf(
                 Meta.NAME to PosProto.DODGE,
-                PosProto.DODGE_WIDTH to 0.95
+                Pos.Dodge.WIDTH to 0.95
             )
             return defaults
         }
@@ -214,7 +215,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             defaults[Layer.STAT] = "ydensity"
             defaults[Layer.POS] = mapOf(
                 Meta.NAME to PosProto.DODGE,
-                PosProto.DODGE_WIDTH to 0.95
+                Pos.Dodge.WIDTH to 0.95
             )
             return defaults
         }

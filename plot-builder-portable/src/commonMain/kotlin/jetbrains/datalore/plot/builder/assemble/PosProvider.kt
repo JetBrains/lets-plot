@@ -33,7 +33,11 @@ abstract class PosProvider {
         fun barStack(vjust: Double? = null): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.stack(ctx.aesthetics, PositionAdjustments.StackingStrategy.SPLIT_POSITIVE_NEGATIVE, vjust)
+                    return PositionAdjustments.stack(
+                        ctx.aesthetics,
+                        PositionAdjustments.StackingStrategy.SPLIT_POSITIVE_NEGATIVE,
+                        vjust
+                    )
                 }
 
                 override fun handlesGroups(): Boolean {

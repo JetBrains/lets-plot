@@ -69,7 +69,6 @@ internal abstract class StackPos(
 
             return offsetByIndex
         }
-
     }
 
     private class SumPositiveNegative internal constructor(aes: Aesthetics) : StackPos(aes, null) {
@@ -107,5 +106,4 @@ internal abstract class StackPos(
             return SumPositiveNegative(aes)
         }
     }
-
 }
