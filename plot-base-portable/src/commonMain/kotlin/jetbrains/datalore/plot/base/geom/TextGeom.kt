@@ -84,8 +84,7 @@ open class TextGeom : GeomBase() {
 
         val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
         val lineHeight = GeomHelper.lineheight(p, sizeUnitRatio)
-        val lineInterval = lineHeight - fontSize
-        val textHeight = label.linesCount() * fontSize + lineInterval * (label.linesCount() - 1)
+        val textHeight = lineHeight * (label.linesCount() - 1) + fontSize
 
         val yPosition = when (GeomHelper.vAnchor(p)) {
             Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
