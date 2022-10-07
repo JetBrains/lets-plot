@@ -63,7 +63,7 @@ object LiveMapProvider {
                 require(tileLayers.first().isLiveMap)
                 tileLayers.first().setLiveMapProvider(
                     MyLiveMapProvider(
-                        tileLayers.map { createLayerRendererData(it/*, IDENTITY, IDENTITY*/) },
+                        tileLayers.map { createLayerRendererData(it) },
                         liveMapOptions,
                         cursorServiceConfig.cursorService
                     )

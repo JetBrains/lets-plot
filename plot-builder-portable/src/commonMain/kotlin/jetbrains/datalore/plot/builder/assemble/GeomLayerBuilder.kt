@@ -173,7 +173,7 @@ class GeomLayerBuilder constructor(
         // (!) Positional aes scales have undefined `mapper` at this time because
         // dimensions of plot are not yet known.
         // Data Access shouldn't use aes mapper (!)
-        val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
+//        val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
 
         val groupingVariables = DataProcessing.defaultGroupingVariables(
             data,
@@ -188,12 +188,14 @@ class GeomLayerBuilder constructor(
             posProvider,
             geomProvider.renders(),
             groupingContext.groupMapper,
-            replacementBindings.values,
+//            replacementBindings.values,
+            replacementBindings,
             myConstantByAes,
             scaleMap,
             scaleMapppersNP,
             myLocatorLookupSpec,
-            myContextualMappingProvider.createContextualMapping(dataAccess, data),
+//            myContextualMappingProvider.createContextualMapping(dataAccess, data),
+            myContextualMappingProvider,
             myIsLegendDisabled,
             isYOrientation = isYOrientation,
             isMarginal = isMarginal,
@@ -214,12 +216,12 @@ class GeomLayerBuilder constructor(
         override val posProvider: PosProvider,
         renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
-        varBindings: Collection<VarBinding>,
+        private val varBindings: Map<Aes<*>, VarBinding>,
         constantByAes: TypedKeyHashMap,
         override val scaleMap: TypedScaleMap,
         override val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
-        override val contextualMapping: ContextualMapping,
+        private val contextualMappingProvider: ContextualMappingProvider,
         override val isLegendDisabled: Boolean,
         override val isYOrientation: Boolean,
         override val isMarginal: Boolean,
@@ -235,7 +237,6 @@ class GeomLayerBuilder constructor(
 
         private val myRenderedAes: List<Aes<*>>
         private val myConstantByAes: TypedKeyHashMap
-        private val myVarBindingsByAes = HashMap<Aes<*>, VarBinding>()
 
         override val legendKeyElementFactory: LegendKeyElementFactory
             get() = geom.legendKeyElementFactory
@@ -253,10 +254,6 @@ class GeomLayerBuilder constructor(
             for (key in constantByAes.keys<Any>()) {
                 myConstantByAes.put(key, constantByAes[key])
             }
-
-            for (varBinding in varBindings) {
-                myVarBindingsByAes[varBinding.aes] = varBinding
-            }
         }
 
         override fun renderedAes(): List<Aes<*>> {
@@ -264,11 +261,11 @@ class GeomLayerBuilder constructor(
         }
 
         override fun hasBinding(aes: Aes<*>): Boolean {
-            return myVarBindingsByAes.containsKey(aes)
+            return varBindings.containsKey(aes)
         }
 
         override fun <T> getBinding(aes: Aes<T>): VarBinding {
-            return myVarBindingsByAes[aes]!!
+            return varBindings[aes]!!
         }
 
         override fun hasConstant(aes: Aes<*>): Boolean {
@@ -302,6 +299,11 @@ class GeomLayerBuilder constructor(
             } else {
                 throw IllegalStateException("Not Livemap: " + geom::class.simpleName)
             }
+        }
+
+        override fun createConextualMapping(): ContextualMapping {
+            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap)
+            return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
         }
     }
 

@@ -827,7 +827,7 @@ class TooltipConfigTest {
 
     @Test
     fun `tooltip format() should be applied to axis tooltips`() {
-        val formats =  listOf(
+        val formats = listOf(
             mapOf(FIELD to "^x", FORMAT to "x = {.1f}"), //  x-axis tooltip
             mapOf(FIELD to "^Y", FORMAT to "y = {.1f}")  //  all positionals including y-axis tooltip
         )
@@ -932,7 +932,7 @@ class TooltipConfigTest {
             Aes.LOWER to "0.204", // TODO: value 0.204 is INCORRECT
             Aes.YMIN to "0.019", // TODO: value 0.019 is INCORRECT
         )
-        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createConextualMapping().getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -962,7 +962,7 @@ class TooltipConfigTest {
             Aes.LOWER to "0.204", // TODO: value 0.204 is INCORRECT
             Aes.YMIN to "0.019", // TODO: value 0.019 is INCORRECT
         )
-        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createConextualMapping().getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -991,14 +991,14 @@ class TooltipConfigTest {
             Aes.LOWER to "0.34",
             Aes.YMIN to "0.02",
         )
-        geomLayer.contextualMapping.getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createConextualMapping().getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
 
     companion object {
         private fun getTitleString(geomLayer: GeomLayer): String? {
-            return geomLayer.contextualMapping.getTitle(index = 0)
+            return geomLayer.createConextualMapping().getTitle(index = 0)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
@@ -1006,17 +1006,17 @@ class TooltipConfigTest {
         }
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
-            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
             return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
-            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
             return dataPoints.filter(DataPoint::isAxis)
         }
 
         private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
-            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
             return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 

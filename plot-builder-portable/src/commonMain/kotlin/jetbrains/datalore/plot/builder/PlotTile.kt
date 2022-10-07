@@ -83,7 +83,7 @@ internal class PlotTile(
                 val collectorWithLocator = LayerTargetCollectorWithLocator(
                     layer.geomKind,
                     layer.locatorLookupSpec,
-                    layer.contextualMapping,
+                    layer.createConextualMapping(),
                 )
                 _targetLocators.add(collectorWithLocator)
 

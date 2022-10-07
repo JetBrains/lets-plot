@@ -223,7 +223,12 @@ class TooltipAxisConfigTest {
             )
             assertGeneralTooltip(geomLayer, "tooltip = 0.34447 %", ::println)  // todo "tooltip = 0.344 %"
             assertYAxisTooltip(geomLayer, "tooltip = 0.34447 %", ::println)    // todo "tooltip = 0.344 %"
-            areEqual("scale = 0.31622776601683794 %", getYTick(geomLayer, closedRange), "y tick", ::println) // todo "scale = 0.32 %"
+            areEqual(
+                "scale = 0.31622776601683794 %",
+                getYTick(geomLayer, closedRange),
+                "y tick",
+                ::println
+            ) // todo "scale = 0.32 %"
         }
         run {
             val geomLayer = log10(scaleFormat = "scale = {.3f} %", tooltipFormat = "tooltip = {.4f} %")
@@ -293,7 +298,7 @@ class TooltipAxisConfigTest {
         }
 
         private fun assertGeneralTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
-            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
             val generalTooltip = dataPoints
                 .filterNot(TooltipLineSpec.DataPoint::isOutlier)
                 .map(TooltipLineSpec.DataPoint::value)
@@ -302,7 +307,7 @@ class TooltipAxisConfigTest {
         }
 
         private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
-            val dataPoints = geomLayer.contextualMapping.getDataPoints(index = 0)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
             val yAxisTooltip = dataPoints
                 .filter(TooltipLineSpec.DataPoint::isAxis)
                 .filter { it.aes == Aes.Y }
@@ -311,7 +316,7 @@ class TooltipAxisConfigTest {
             areEqual(expected, yAxisTooltip, "axis tooltip", method)
         }
 
-        private fun getYTick(geomLayer: GeomLayer, closedRange: DoubleSpan = DoubleSpan(0.3,0.4)): String  {
+        private fun getYTick(geomLayer: GeomLayer, closedRange: DoubleSpan = DoubleSpan(0.3, 0.4)): String {
             return ScaleConfigLabelsTest.getScaleLabels(
                 geomLayer.scaleMap[Aes.Y],
                 targetCount = 1,

@@ -48,7 +48,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
         assertGeneralTooltips(
             tooltipSpecs,
             expectedLines = listOf("2.00")
@@ -80,7 +80,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
         // No tooltips
         assertGeneralTooltips(
             tooltipSpecs,
@@ -116,7 +116,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
         assertGeneralTooltips(
             tooltipSpecs,
             expectedLines = listOf("z: 5.00")
@@ -136,7 +136,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
         assertGeneralTooltips(
             tooltipSpecs,
             expectedLines = listOf("z: 5.00")
@@ -157,7 +157,7 @@ class TooltipSkippedAesTest {
         }"""
 
             val layer = getSingleGeomLayer(spec)
-            val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+            val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
             assertGeneralTooltips(
                 tooltipSpecs,
                 expectedLines = listOf("Color: 5.00")
@@ -175,7 +175,7 @@ class TooltipSkippedAesTest {
         }"""
 
             val layer = getSingleGeomLayer(spec)
-            val tooltipSpecs = createTooltipSpecs(layer.contextualMapping)
+            val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
             assertGeneralTooltips(
                 tooltipSpecs,
                 expectedLines = listOf("Size: 5.00")

@@ -41,8 +41,6 @@ interface GeomLayer {
 
     val locatorLookupSpec: LookupSpec
 
-    val contextualMapping: ContextualMapping
-
     val isYOrientation: Boolean
 
     val isMarginal: Boolean
@@ -70,4 +68,6 @@ interface GeomLayer {
     fun rangeIncludesZero(aes: Aes<*>): Boolean
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider)
+
+    fun createConextualMapping(): ContextualMapping
 }
