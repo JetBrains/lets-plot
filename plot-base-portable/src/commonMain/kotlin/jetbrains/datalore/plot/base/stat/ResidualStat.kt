@@ -29,7 +29,7 @@ class ResidualStat : BaseStat(DEF_MAPPING) {
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statData.getValue(Stats.X))
-            .putNumeric(Stats.Y, statData.getValue(Stats.Y))
+            .putNumeric(Stats.RESIDUAL, statData.getValue(Stats.RESIDUAL))
             .build()
     }
 
@@ -43,7 +43,7 @@ class ResidualStat : BaseStat(DEF_MAPPING) {
         val reg = LinearRegression(xs, ys, DEF_CONFIDENCE_LEVEL)
         return mutableMapOf(
             Stats.X to filteredData.unzip().first,
-            Stats.Y to filteredData.map { p -> p.second - reg.evalX(p.first).y }
+            Stats.RESIDUAL to filteredData.map { p -> p.second - reg.evalX(p.first).y }
         )
     }
 
@@ -51,7 +51,7 @@ class ResidualStat : BaseStat(DEF_MAPPING) {
         private const val DEF_CONFIDENCE_LEVEL = 0.99 // Any acceptable value
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.Y
+            Aes.Y to Stats.RESIDUAL
         )
     }
 }
