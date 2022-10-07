@@ -113,6 +113,10 @@ open class AestheticsDefaults {
             return tile()
         }
 
+        fun residual(): AestheticsDefaults {
+            return point()
+        }
+
         fun errorBar(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.BLACK)

@@ -13,7 +13,7 @@ from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84,
 __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
            'geom_histogram', 'geom_dotplot', 'geom_bin2d',
-           'geom_tile', 'geom_raster',
+           'geom_tile', 'geom_raster', 'geom_residuals',
            'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
@@ -1348,6 +1348,111 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
+                 **other_args)
+
+
+def geom_residuals(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                   orientation=None,
+                   **other_args):
+    """
+    A residual value is a measure of how much a regression line vertically misses a data point.
+    The geometry draw the residual values on the vertical axis; the horizontal axis displays the independent variable.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='residual'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'residual' (calculate residual values),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    A residual plot is typically used to find problems with regression.
+    Some data sets are not good candidates for regression, including:
+
+    - heteroscedastic data (points at widely varying distances from the line);
+    - data that is non-linearly associated;
+    - data sets with outliers.
+
+    Computed variables:
+
+    - ..residual.. : the residual value.
+
+    `geom_residuals()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of the point. Accepts values between 0 and 1.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - shape : shape of the point, an integer from 0 to 25.
+    - size : size of the point.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 13
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        n = 100
+        x = np.random.uniform(0, 4, size=n)
+        y = x**2 + x * np.random.normal(size=n)
+        p = ggplot({'x': x, 'y': y}, aes('x', 'y'))
+        bunch = GGBunch()
+        bunch.add_plot(p + geom_point() + \\
+                       geom_smooth(se=False) + ggtitle("Scatter plot"), \\
+                       0, 0, 400, 300)
+        bunch.add_plot(p + geom_residuals() + \\
+                       geom_hline(yintercept=0, color='magenta') + ggtitle("Residual plot"), \\
+                       400, 0, 400, 300)
+        bunch.show()
+
+    """
+    return _geom('residual',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
                  **other_args)
 
 

@@ -138,6 +138,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { Bin2dGeom() }.build()
         }
 
+        fun residual(): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.RESIDUAL,
+                AestheticsDefaults.residual(),
+                ResidualGeom.HANDLES_GROUPS
+            ) { ResidualGeom() }.build()
+        }
+
         fun errorBar(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.ERROR_BAR,

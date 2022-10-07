@@ -15,6 +15,7 @@ enum class GeomKind {
     TILE,
     BIN_2D,
     MAP,
+    RESIDUAL,
     ERROR_BAR,
     CROSS_BAR,
     LINE_RANGE,
