@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.TextHelper
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
@@ -78,13 +78,13 @@ internal class DataPointLiveMapAesthetics {
     val label get() = myP.label()?.toString() ?: "n/a"
 
     val hjust
-        get() = when (GeomHelper.textLabelAnchor(myP.hjust(), GeomHelper.HJUST_MAP, MIDDLE)) {
+        get() = when (TextHelper.textLabelAnchor(myP.hjust(), TextHelper.HJUST_MAP, MIDDLE)) {
             LEFT -> 0.0
             RIGHT -> 1.0
             MIDDLE -> 0.5
         }
     val vjust
-        get() = when (GeomHelper.textLabelAnchor(myP.vjust(), GeomHelper.VJUST_MAP, CENTER)) {
+        get() = when (TextHelper.textLabelAnchor(myP.vjust(), TextHelper.VJUST_MAP, CENTER)) {
             TOP -> 0.0
             BOTTOM -> 1.0
             CENTER -> 0.5

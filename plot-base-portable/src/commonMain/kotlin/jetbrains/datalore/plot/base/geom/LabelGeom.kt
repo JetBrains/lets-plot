@@ -7,11 +7,10 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.geom.util.TextHelper
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -34,20 +33,13 @@ class LabelGeom : TextGeom() {
         ctx: GeomContext
     ): SvgGElement {
         // text size estimation
-        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-        val textSize = textSize(
-            text,
-            GeomHelper.fontFamily(p),
-            fontSize,
-            GeomHelper.lineheight(p, sizeUnitRatio),
-            FontFace.fromString(p.fontface()),
-            ctx
-        )
+        val textSize = TextHelper.measure(text, p, ctx, sizeUnitRatio)
 
-        val hAnchor = GeomHelper.hAnchor(p)
-        val vAnchor = GeomHelper.vAnchor(p)
+        val hAnchor = TextHelper.hAnchor(p)
+        val vAnchor = TextHelper.vAnchor(p)
 
         // Background rectangle
+        val fontSize = TextHelper.fontSize(p, sizeUnitRatio)
         val padding = fontSize * paddingFactor
         val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
@@ -60,7 +52,7 @@ class LabelGeom : TextGeom() {
 
         // Text element
         val label = MultilineLabel(text)
-        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
+        TextHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
 
         val xPosition = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x + padding
@@ -80,7 +72,7 @@ class LabelGeom : TextGeom() {
         g.children().add(label.rootGroup)
 
         // rotate all
-        SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
+        SvgUtils.transformRotate(g, TextHelper.angle(p), location.x, location.y)
 
         return g
     }
@@ -109,28 +101,6 @@ class LabelGeom : TextGeom() {
     }
 
     companion object {
-        private fun textSize(
-            text: String,
-            fontFamily: String,
-            fontSize: Double,
-            lineHeight: Double,
-            fontFace: FontFace,
-            ctx: GeomContext
-        ): DoubleVector {
-            val lines = text.split('\n').map(String::trim)
-            val estimated = lines.map { line ->
-                ctx.estimateTextSize(line, fontFamily, fontSize, fontFace.bold, fontFace.italic)
-            }.fold(DoubleVector.ZERO) { acc, sz ->
-                DoubleVector(
-                    x = kotlin.math.max(acc.x, sz.x),
-                    y = acc.y + sz.y
-                )
-            }
-            val lineInterval = lineHeight - fontSize
-            val textHeight = estimated.y + lineInterval * (lines.size - 1)
-            return DoubleVector(estimated.x, textHeight)
-        }
-
         private fun roundedRectangle(rect: DoubleRectangle, radius: Double): SvgPathDataBuilder {
             return SvgPathDataBuilder().apply {
                 with(rect) {

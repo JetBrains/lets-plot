@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
@@ -30,7 +31,7 @@ internal object PlotLayoutUtil {
     }
 
     private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
-        return text.split('\n').map(String::trim).map { line -> labelDimensions(line, labelSpec) }
+        return MultilineLabel.splitText(text).map { line -> labelDimensions(line, labelSpec) }
     }
 
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {

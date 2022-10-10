@@ -715,17 +715,13 @@ class TooltipBox: SvgComponent() {
         }
 
         private fun prepareMultiline(value: String, maxLength: Int?) =
-            value
-                .split("\n")
-                .map(String::trim)
-                .flatMap { line ->
-                    if (maxLength != null) {
-                        line.chunkedBy(delimiter = " ", maxLength)
-                    } else {
-                        listOf(line)
-                    }
+            MultilineLabel.splitText(value).flatMap { line ->
+                if (maxLength != null) {
+                    line.chunkedBy(delimiter = " ", maxLength)
+                } else {
+                    listOf(line)
                 }
-                .joinToString("\n")
+            }.joinToString("\n")
 
         private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
             return split(delimiter)

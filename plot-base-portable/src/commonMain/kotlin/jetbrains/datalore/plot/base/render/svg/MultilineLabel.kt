@@ -14,7 +14,7 @@ import jetbrains.datalore.vis.svg.SvgTextElement
 
 
 class MultilineLabel(text: String) : SvgComponent() {
-    private val myLines: List<SvgTextElement> = text.split('\n').map(String::trim).map(::SvgTextElement)
+    private val myLines: List<SvgTextElement> = splitText(text).map(::SvgTextElement)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
@@ -117,4 +117,8 @@ class MultilineLabel(text: String) : SvgComponent() {
     }
 
     fun linesCount() = myLines.size
+
+    companion object {
+        fun splitText(text: String) = text.split('\n').map(String::trim)
+    }
 }

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.TextHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
@@ -24,7 +24,7 @@ internal class TextLegendKeyElementFactory :
         AestheticsUtil.updateFill(rect, p)
 
         val label = TextLabel("a")
-        GeomHelper.decorate(label, p)
+        TextHelper.decorate(label, p)
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(size.x / 2, size.y / 2)

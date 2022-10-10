@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.geom.util.TextHelper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -79,14 +80,14 @@ open class TextGeom : GeomBase() {
         ctx: GeomContext
     ): SvgGElement {
         val label = MultilineLabel(text)
-        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-        label.setHorizontalAnchor(GeomHelper.hAnchor(p))
+        TextHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
+        label.setHorizontalAnchor(TextHelper.hAnchor(p))
 
-        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-        val lineHeight = GeomHelper.lineheight(p, sizeUnitRatio)
-        val textHeight = lineHeight * (label.linesCount() - 1) + fontSize
+        val fontSize = TextHelper.fontSize(p, sizeUnitRatio)
+        val textHeight = TextHelper.measure(text, p, ctx, sizeUnitRatio).y
+        //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
-        val yPosition = when (GeomHelper.vAnchor(p)) {
+        val yPosition = when (TextHelper.vAnchor(p)) {
             Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
             Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
             Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
@@ -97,7 +98,7 @@ open class TextGeom : GeomBase() {
 
         val g = SvgGElement()
         g.children().add(label.rootGroup)
-        SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
+        SvgUtils.transformRotate(g, TextHelper.angle(p), location.x, location.y)
         return g
     }
 
