@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.render.svg.TextLabel
+import kotlin.math.abs
 import kotlin.math.max
 
 object TextHelper {
@@ -39,20 +40,86 @@ object TextHelper {
         "mono" to "monospace"
     )
 
-    fun hAnchor(p: DataPointAesthetics) = textLabelAnchor(
-        p.hjust(),
+    private fun hAnchor(hjust: Any) = textLabelAnchor(
+        hjust,
         HJUST_MAP,
         Text.HorizontalAnchor.MIDDLE
     )
 
-    fun vAnchor(p: DataPointAesthetics) = textLabelAnchor(
-        p.vjust(),
+    private fun hAnchor(p: DataPointAesthetics) = hAnchor(p.hjust())
+
+    fun hAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector): Text.HorizontalAnchor {
+        var hjust = p.hjust()
+        if (hjust == "inward" || hjust == "outward") {
+            hjust = computeJustification(p, location, center, isHorizontal = true)
+        }
+        return hAnchor(hjust)
+    }
+
+    private fun vAnchor(vjust: Any) = textLabelAnchor(
+        vjust,
         VJUST_MAP,
         Text.VerticalAnchor.CENTER
     )
 
+    private fun vAnchor(p: DataPointAesthetics) = vAnchor(p.vjust())
+
+    fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector): Text.VerticalAnchor {
+        var vjust = p.vjust()
+        if (vjust == "inward" || vjust == "outward") {
+            vjust = computeJustification(p, location, center, isHorizontal = false)
+        }
+        return vAnchor(vjust)
+    }
+
     fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
         return conversionMap.getOrElse(o) { def }
+    }
+
+    private fun computeJustification(
+        p: DataPointAesthetics,
+        location: DoubleVector,
+        center: DoubleVector,
+        isHorizontal: Boolean
+    ): Any {
+        val just = if (isHorizontal) p.hjust() else p.vjust()
+        if (just !in listOf("inward", "outward")) {
+            return just
+        }
+
+        var angle = p.angle()!! % 360
+        // ensure correct behaviour for angles in -360...+360
+        angle =  if (angle > 180) angle - 360 else angle
+        angle = if (angle < -180) angle + 360 else angle
+
+        val rotatedForward = (angle > 45.0 && angle < 135.0)
+        val rotatedBackwards = (angle < -45.0 && angle > -135.0)
+
+        val a = if (isHorizontal) DoubleVector::x else DoubleVector::y
+        val b = if (isHorizontal) DoubleVector::y else DoubleVector::x
+        val coord = if (rotatedForward || rotatedBackwards) b else a
+
+        val swap = //rotatedForward || abs(angle) > 135.0
+            (isHorizontal && rotatedForward) || (!isHorizontal && rotatedBackwards) || abs(angle) >= 135.0
+
+        val putInward = (just == "inward" && !swap) || (just == "outward" && swap)
+        val justifications = if (isHorizontal) {
+            listOf("left", "middle", "right")
+        } else {
+            listOf("top", "center", "bottom")
+        }
+            .let { if (!putInward) it.reversed() else it }
+
+        fun compare(v: Double, center: Double): Int {
+            fun areEquals(expected: Double, actual: Double, epsilon: Double = 0.00001) = abs(expected - actual) < epsilon
+            return when {
+                areEquals(v, center) -> 1
+                v < center -> 0
+                else -> 2
+            }
+        }
+        val pos = compare(coord(location), coord(center))
+        return justifications[pos]
     }
 
     fun fontFamily(p: DataPointAesthetics): String {
@@ -74,7 +141,6 @@ object TextHelper {
     }
 
     fun fontSize(p: DataPointAesthetics, scale: Double) = AesScaling.textSize(p) * scale
-
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
