@@ -27,13 +27,12 @@ class LabelGeom : TextGeom() {
     var borderWidth: Double = 1.0       //  Size of label border
 
     override fun buildTextComponent(
-        root: SvgRoot,
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
         sizeUnitRatio: Double,
         ctx: GeomContext
-    ) {
+    ): SvgGElement {
         // text size estimation
         val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
         val textSize = textSize(
@@ -83,7 +82,7 @@ class LabelGeom : TextGeom() {
         // rotate all
         SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
 
-        root.add(g)
+        return g
     }
 
     private fun rectangleForText(

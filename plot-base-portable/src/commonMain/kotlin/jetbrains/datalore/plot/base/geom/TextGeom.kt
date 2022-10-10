@@ -53,7 +53,8 @@ open class TextGeom : GeomBase() {
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
                 }
 
-                buildTextComponent(root, p, loc, text, sizeUnitRatio, ctx)
+                val g = buildTextComponent(p, loc, text, sizeUnitRatio, ctx)
+                root.add(g)
 
                 // The geom_text tooltip is similar to the geom_tile:
                 // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
@@ -71,13 +72,12 @@ open class TextGeom : GeomBase() {
     }
 
     open fun buildTextComponent(
-        root: SvgRoot,
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
         sizeUnitRatio: Double,
         ctx: GeomContext
-    ) {
+    ): SvgGElement {
         val label = MultilineLabel(text)
         GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
         label.setHorizontalAnchor(GeomHelper.hAnchor(p))
@@ -98,7 +98,7 @@ open class TextGeom : GeomBase() {
         val g = SvgGElement()
         g.children().add(label.rootGroup)
         SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
-        root.add(g)
+        return g
     }
 
     private fun toString(label: Any?): String {
@@ -135,6 +135,3 @@ open class TextGeom : GeomBase() {
 
 // How 'just' and 'angle' works together
 // https://stackoverflow.com/questions/7263849/what-do-hjust-and-vjust-do-when-making-a-plot-using-ggplot
-// ToDo: lineheight (aes)
-// ToDo: nudge_x, nudge_y
-

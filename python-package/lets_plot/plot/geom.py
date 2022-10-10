@@ -5118,6 +5118,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
     - angle : text rotation angle in degrees.
+    - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
     |
 
@@ -5211,6 +5212,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  map=map, map_join=map_join,
                  label_format=label_format,
                  na_text=na_text,
+                 nudge_x=nudge_x, nudge_y=nudge_y,
                  **other_args)
 
 
@@ -5308,6 +5310,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
     - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
     - angle : rotation angle in degrees.
+    - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
     |
 
@@ -5402,6 +5405,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  map=map, map_join=map_join,
                  label_format=label_format,
                  na_text=na_text,
+                 nudge_x=nudge_x, nudge_y=nudge_y,
                  label_padding=label_padding,
                  label_r=label_r,
                  label_size=label_size,
