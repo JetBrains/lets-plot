@@ -103,6 +103,7 @@ class MouseInputSystem(
                 MOUSE_MOVED -> moveEvent = InputMouseEvent(event.location)
                 MOUSE_DRAGGED -> updateDragState(event.location, isStopEvent = false)
                 MOUSE_RELEASED -> if (event.button == Button.LEFT) updateDragState(event.location, isStopEvent = true)
+                else -> Unit
             }
 
             if (event.button == Button.LEFT) {
@@ -110,6 +111,7 @@ class MouseInputSystem(
                     MOUSE_CLICKED -> clickEvent = InputMouseEvent(event.location)
                     MOUSE_DOUBLE_CLICKED -> doubleClickEvent = InputMouseEvent(event.location)
                     MOUSE_PRESSED -> pressEvent = InputMouseEvent(event.location)
+                    else -> Unit
                 }
             }
         }
