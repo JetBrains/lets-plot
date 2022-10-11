@@ -23,8 +23,8 @@ class TextSpec(
     size: Int,
     family: String,
     degreeAngle: Double,
-    hjust: Double,
-    vjust: Double,
+    val hjust: Double,
+    val vjust: Double,
     textMeasurer: TextMeasurer,
     val drawBorder: Boolean,
     // label parameters

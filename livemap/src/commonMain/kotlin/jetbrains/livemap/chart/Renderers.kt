@@ -246,8 +246,8 @@ object Renderers {
                 val height = textSpec.textSize.y + padding
 
                 val rect = DoubleRectangle(
-                    textSpec.alignment.x,
-                    textSpec.alignment.y - height,
+                    textSpec.alignment.x - padding * textSpec.hjust,
+                    textSpec.alignment.y - height + padding * textSpec.vjust,
                     width,
                     height
                 )
