@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.base.render.svg.TextLabel
 import kotlin.math.abs
 import kotlin.math.max
 
-object TextHelper {
+object TextUtil {
 
     val HJUST_MAP: Map<Any, Text.HorizontalAnchor> = mapOf(
         "right" to Text.HorizontalAnchor.RIGHT,
@@ -195,7 +195,7 @@ object TextHelper {
     }
 
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
-        val lines = MultilineLabel.splitText(text)
+        val lines = MultilineLabel.splitLines(text)
         val fontSize = fontSize(p, scale)
         val lineHeight = lineheight(p, scale)
         val fontFamily = fontFamily(p)

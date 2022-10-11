@@ -31,7 +31,7 @@ internal object PlotLayoutUtil {
     }
 
     private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
-        return MultilineLabel.splitText(text).map { line -> labelDimensions(line, labelSpec) }
+        return MultilineLabel.splitLines(text).map { line -> labelDimensions(line, labelSpec) }
     }
 
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {

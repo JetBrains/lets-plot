@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.TextHelper
+import jetbrains.datalore.plot.base.geom.util.TextUtil
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -34,13 +34,13 @@ class LabelGeom : TextGeom() {
         boundsCenter: DoubleVector
     ): SvgGElement {
         // text size estimation
-        val textSize = TextHelper.measure(text, p, ctx, sizeUnitRatio)
+        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
 
-        val hAnchor = TextHelper.hAnchor(p, location, boundsCenter)
-        val vAnchor = TextHelper.vAnchor(p, location, boundsCenter)
+        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+        val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
 
         // Background rectangle
-        val fontSize = TextHelper.fontSize(p, sizeUnitRatio)
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val padding = fontSize * paddingFactor
         val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
@@ -53,7 +53,7 @@ class LabelGeom : TextGeom() {
 
         // Text element
         val label = MultilineLabel(text)
-        TextHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
+        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = false)
 
         val xPosition = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x + padding
@@ -73,7 +73,7 @@ class LabelGeom : TextGeom() {
         g.children().add(label.rootGroup)
 
         // rotate all
-        SvgUtils.transformRotate(g, TextHelper.angle(p), location.x, location.y)
+        SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
 
         return g
     }
