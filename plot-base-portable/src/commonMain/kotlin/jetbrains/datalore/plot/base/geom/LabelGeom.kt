@@ -31,7 +31,7 @@ class LabelGeom : TextGeom() {
         text: String,
         sizeUnitRatio: Double,
         ctx: GeomContext,
-        boundsCenter: DoubleVector
+        boundsCenter: DoubleVector?
     ): SvgGElement {
         // text size estimation
         val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)

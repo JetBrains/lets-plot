@@ -39,7 +39,7 @@ open class TextGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
-        val aesBoundsCenter = coord.toClient(ctx.getAesBounds())!!.center
+        val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
@@ -79,7 +79,7 @@ open class TextGeom : GeomBase() {
         text: String,
         sizeUnitRatio: Double,
         ctx: GeomContext,
-        boundsCenter: DoubleVector
+        boundsCenter: DoubleVector?
     ): SvgGElement {
         val label = MultilineLabel(text)
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)

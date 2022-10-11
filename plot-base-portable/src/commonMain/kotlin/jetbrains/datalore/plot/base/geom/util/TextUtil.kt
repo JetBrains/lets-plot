@@ -48,9 +48,9 @@ object TextUtil {
 
     private fun hAnchor(p: DataPointAesthetics) = hAnchor(p.hjust())
 
-    fun hAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector): Text.HorizontalAnchor {
+    fun hAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.HorizontalAnchor {
         var hjust = p.hjust()
-        if (hjust == "inward" || hjust == "outward") {
+        if (hjust in listOf("inward", "outward") && center != null) {
             hjust = computeJustification(p, location, center, isHorizontal = true)
         }
         return hAnchor(hjust)
@@ -64,9 +64,9 @@ object TextUtil {
 
     private fun vAnchor(p: DataPointAesthetics) = vAnchor(p.vjust())
 
-    fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector): Text.VerticalAnchor {
+    fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.VerticalAnchor {
         var vjust = p.vjust()
-        if (vjust == "inward" || vjust == "outward") {
+        if (vjust in listOf("inward", "outward") && center != null) {
             vjust = computeJustification(p, location, center, isHorizontal = false)
         }
         return vAnchor(vjust)
