@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
 import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
+import jetbrains.datalore.plot.base.Aes.Companion.LINEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
@@ -176,6 +177,9 @@ abstract class AesVisitor<T> {
         if (aes == FONTFACE) {
             return fontface()
         }
+        if (aes == LINEHEIGHT) {
+            return lineheight()
+        }
         if (aes == HJUST) {
             return hjust()
         }
@@ -268,6 +272,8 @@ abstract class AesVisitor<T> {
     protected abstract fun family(): T
 
     protected abstract fun fontface(): T
+
+    protected abstract fun lineheight(): T
 
     protected abstract fun hjust(): T
 

@@ -437,7 +437,7 @@ class TooltipBox: SvgComponent() {
         }
 
         private fun initTitleComponent(titleLine: String): MultilineLabel {
-            val titleComponent = MultilineLabel(prepareMultiline(titleLine, maxLength = null))
+            val titleComponent = MultilineLabel(wrap(titleLine, maxLength = null))
             titleComponent.addClassName(TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
@@ -488,8 +488,8 @@ class TooltipBox: SvgComponent() {
             val components: List<Pair<MultilineLabel?, MultilineLabel>> = lines
                 .map { line ->
                     Pair(
-                        line.label?.let { MultilineLabel(prepareMultiline(it, maxLength = null)) },
-                        MultilineLabel(prepareMultiline(line.value, maxLength = VALUE_LINE_MAX_LENGTH))
+                        line.label?.let { MultilineLabel(wrap(it, maxLength = null)) },
+                        MultilineLabel(wrap(line.value, maxLength = VALUE_LINE_MAX_LENGTH))
                     )
                 }
             // for labels
@@ -714,18 +714,14 @@ class TooltipBox: SvgComponent() {
             }
         }
 
-        private fun prepareMultiline(value: String, maxLength: Int?) =
-            value
-                .split("\n")
-                .map(String::trim)
-                .flatMap { line ->
-                    if (maxLength != null) {
-                        line.chunkedBy(delimiter = " ", maxLength)
-                    } else {
-                        listOf(line)
-                    }
+        private fun wrap(value: String, maxLength: Int?) =
+            MultilineLabel.splitLines(value).flatMap { line ->
+                if (maxLength != null) {
+                    line.chunkedBy(delimiter = " ", maxLength)
+                } else {
+                    listOf(line)
                 }
-                .joinToString("\n")
+            }.joinToString("\n")
 
         private fun String.chunkedBy(delimiter: String, maxLength: Int): List<String> {
             return split(delimiter)

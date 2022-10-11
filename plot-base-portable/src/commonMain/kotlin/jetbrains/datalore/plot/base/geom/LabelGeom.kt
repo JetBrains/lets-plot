@@ -7,13 +7,12 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.geom.util.TextUtil
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import jetbrains.datalore.vis.svg.SvgPathElement
@@ -27,15 +26,22 @@ class LabelGeom : TextGeom() {
     var borderWidth: Double = 1.0       //  Size of label border
 
     override fun buildTextComponent(
-        root: SvgRoot,
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
         sizeUnitRatio: Double,
         ctx: GeomContext
-    ) {
-        // background rectangle
-        val rectangle = rectangleForText(p, location, text, sizeUnitRatio, ctx)
+    ): SvgGElement {
+        // text size estimation
+        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
+
+        val hAnchor = TextUtil.hAnchor(p)
+        val vAnchor = TextUtil.vAnchor(p)
+
+        // Background rectangle
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
+        val padding = fontSize * paddingFactor
+        val rectangle = rectangleForText(location, textSize, padding, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, radiusFactor * rectangle.height).build()
@@ -44,50 +50,49 @@ class LabelGeom : TextGeom() {
         GeomHelper.decorate(backgroundRect, p)
         backgroundRect.strokeWidth().set(borderWidth)
 
-        // text element
-        val label = TextLabel(text)
-        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = false)
-        // move to the rectangle's center
-        label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-        label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.moveTo(rectangle.center)
-        label.rotate(0.0)
+        // Text element
+        val label = MultilineLabel(text)
+        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = false)
+
+        val xPosition = when (hAnchor) {
+            Text.HorizontalAnchor.LEFT -> location.x + padding
+            Text.HorizontalAnchor.RIGHT -> location.x - padding
+            Text.HorizontalAnchor.MIDDLE -> location.x
+        }
+        val textPosition = DoubleVector(
+            xPosition,
+            rectangle.origin.y + padding + fontSize * 0.8 // top-align the first line
+        )
+        label.setHorizontalAnchor(hAnchor)
+        label.moveTo(textPosition)
 
         // group elements and apply rotation
         val g = SvgGElement()
         g.children().add(backgroundRect)
         g.children().add(label.rootGroup)
-        SvgUtils.transformRotate(g, GeomHelper.angle(p), location.x, location.y)
 
-        root.add(g)
+        // rotate all
+        SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
+
+        return g
     }
 
     private fun rectangleForText(
-        p: DataPointAesthetics,
         location: DoubleVector,
-        text: String,
-        sizeUnitRatio: Double,
-        ctx: GeomContext
+        textSize: DoubleVector,
+        padding: Double,
+        hAnchor: Text.HorizontalAnchor,
+        vAnchor: Text.VerticalAnchor
     ): DoubleRectangle {
-        val fontSize = GeomHelper.fontSize(p, sizeUnitRatio)
-        val fontFace = FontFace.fromString(p.fontface())
-        val fontFamily = GeomHelper.fontFamily(p)
+        val width = textSize.x + padding * 2
+        val height = textSize.y + padding * 2
 
-        val textSize = ctx.estimateTextSize(
-            text, fontFamily, fontSize,
-            isBold = fontFace.bold,
-            isItalic = fontFace.italic
-        )
-
-        val width = textSize.x + fontSize * paddingFactor * 2
-        val height = textSize.y + fontSize * paddingFactor * 2
-
-        val originX = when (GeomHelper.hAnchor(p)) {
+        val originX = when (hAnchor) {
             Text.HorizontalAnchor.LEFT -> location.x
             Text.HorizontalAnchor.RIGHT -> location.x - width
             Text.HorizontalAnchor.MIDDLE -> location.x - width / 2
         }
-        val originY = when (GeomHelper.vAnchor(p)) {
+        val originY = when (vAnchor) {
             Text.VerticalAnchor.TOP -> location.y
             Text.VerticalAnchor.BOTTOM -> location.y - height
             Text.VerticalAnchor.CENTER -> location.y - height / 2

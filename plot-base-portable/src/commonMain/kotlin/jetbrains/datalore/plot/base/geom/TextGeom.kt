@@ -10,12 +10,16 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
+import jetbrains.datalore.plot.base.geom.util.TextUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgUtils
 
 open class TextGeom : GeomBase() {
     var formatter: ((Any) -> String)? = null
@@ -50,7 +54,8 @@ open class TextGeom : GeomBase() {
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
                 }
 
-                buildTextComponent(root, p, loc, text, sizeUnitRatio, ctx)
+                val g = buildTextComponent(p, loc, text, sizeUnitRatio, ctx)
+                root.add(g)
 
                 // The geom_text tooltip is similar to the geom_tile:
                 // it looks better when the text is on a tile in corr_plot (but the color will be different from the geom_tile tooltip)
@@ -68,17 +73,33 @@ open class TextGeom : GeomBase() {
     }
 
     open fun buildTextComponent(
-        root: SvgRoot,
         p: DataPointAesthetics,
         location: DoubleVector,
         text: String,
         sizeUnitRatio: Double,
         ctx: GeomContext
-    ) {
-        val label = TextLabel(text)
-        GeomHelper.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-        label.moveTo(location)
-        root.add(label.rootGroup)
+    ): SvgGElement {
+        val label = MultilineLabel(text)
+        TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
+        label.setHorizontalAnchor(TextUtil.hAnchor(p))
+
+        val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
+        val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
+        //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
+
+        val yPosition = when (TextUtil.vAnchor(p)) {
+            Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
+            Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
+            Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8
+        }
+
+        val textLocation = DoubleVector(location.x, yPosition)
+        label.moveTo(textLocation)
+
+        val g = SvgGElement()
+        g.children().add(label.rootGroup)
+        SvgUtils.transformRotate(g, TextUtil.angle(p), location.x, location.y)
+        return g
     }
 
     private fun toString(label: Any?): String {
@@ -115,6 +136,3 @@ open class TextGeom : GeomBase() {
 
 // How 'just' and 'angle' works together
 // https://stackoverflow.com/questions/7263849/what-do-hjust-and-vjust-do-when-making-a-plot-using-ggplot
-// ToDo: lineheight (aes)
-// ToDo: nudge_x, nudge_y
-

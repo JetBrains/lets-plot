@@ -22,6 +22,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.HJUST
 import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.LABEL
+import jetbrains.datalore.plot.base.Aes.Companion.LINEHEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
@@ -94,6 +95,7 @@ object DefaultNaValue {
         VALUE_MAP.put(LABEL, "-")
         VALUE_MAP.put(FAMILY, "sans-serif")
         VALUE_MAP.put(FONTFACE, "plain")
+        VALUE_MAP.put(LINEHEIGHT, 1.0)
         VALUE_MAP.put(HJUST, 0.5)  // 'middle'
         VALUE_MAP.put(VJUST, 0.5)  // 'middle'
         VALUE_MAP.put(ANGLE, 0.0)
