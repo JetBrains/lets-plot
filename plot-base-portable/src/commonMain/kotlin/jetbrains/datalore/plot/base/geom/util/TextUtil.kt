@@ -51,7 +51,7 @@ object TextUtil {
     fun hAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.HorizontalAnchor {
         var hjust = p.hjust()
         if (hjust in listOf("inward", "outward") && center != null) {
-            hjust = computeJustification(p, location, center, isHorizontal = true)
+            hjust = computeJustification(hjust, p.angle()!!, location, center, isHorizontal = true)
         }
         return hAnchor(hjust)
     }
@@ -67,7 +67,7 @@ object TextUtil {
     fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.VerticalAnchor {
         var vjust = p.vjust()
         if (vjust in listOf("inward", "outward") && center != null) {
-            vjust = computeJustification(p, location, center, isHorizontal = false)
+            vjust = computeJustification(vjust, p.angle()!!, location, center, isHorizontal = false)
         }
         return vAnchor(vjust)
     }
@@ -76,18 +76,19 @@ object TextUtil {
         return conversionMap.getOrElse(o) { def }
     }
 
-    private fun computeJustification(
-        p: DataPointAesthetics,
+    // 'internal' access for tests
+    internal fun computeJustification(
+        initialJust: Any,
+        initialAngle: Double,
         location: DoubleVector,
         center: DoubleVector,
         isHorizontal: Boolean
     ): Any {
-        val just = if (isHorizontal) p.hjust() else p.vjust()
-        if (just !in listOf("inward", "outward")) {
-            return just
+        if (initialJust !in listOf("inward", "outward")) {
+            return initialJust
         }
 
-        var angle = p.angle()!! % 360
+        var angle = initialAngle % 360
         // ensure correct behaviour for angles in -360...+360
         angle =  if (angle > 180) angle - 360 else angle
         angle = if (angle < -180) angle + 360 else angle
@@ -102,7 +103,7 @@ object TextUtil {
         val swap = //rotatedForward || abs(angle) > 135.0
             (isHorizontal && rotatedForward) || (!isHorizontal && rotatedBackwards) || abs(angle) >= 135.0
 
-        val putInward = (just == "inward" && !swap) || (just == "outward" && swap)
+        val putInward = (initialJust == "inward" && !swap) || (initialJust == "outward" && swap)
         val justifications = if (isHorizontal) {
             listOf("left", "middle", "right")
         } else {
