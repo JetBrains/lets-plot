@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 
 class TextAndLabel {
     fun plotSpecList(): List<MutableMap<String, Any>> {
-       return listOf(
+        return listOf(
             textWithAngle("text"),
             textWithAngle("text", angle = 45.0),
             textWithAngle("text", angle = 90.0),

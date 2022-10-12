@@ -141,6 +141,7 @@ object TextUtil {
     }
 
     fun fontSize(p: DataPointAesthetics, scale: Double) = AesScaling.textSize(p) * scale
+
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
     fun decorate(label: TextLabel, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
