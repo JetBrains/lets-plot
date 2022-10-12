@@ -10,9 +10,10 @@ import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleRectangles.boundingBox
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.plot.builder.interact.MathUtil.polygonContainsCoordinate
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
 import kotlin.math.max
 import kotlin.math.min
@@ -21,14 +22,8 @@ import kotlin.math.min
 internal open class TargetProjection
 
 internal class PointTargetProjection private constructor(val data: Any) : TargetProjection() {
-
-    fun x(): Double {
-        return data as Double
-    }
-
-    fun xy(): DoubleVector {
-        return data as DoubleVector
-    }
+    fun x() = data as Double
+    fun xy() = data as DoubleVector
 
     companion object {
         fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection {
@@ -42,19 +37,13 @@ internal class PointTargetProjection private constructor(val data: Any) : Target
 }
 
 internal class RectTargetProjection private constructor(val data: Any) : TargetProjection() {
-
-    fun x(): DoubleRange {
-        return data as DoubleRange
-    }
-
-    fun xy(): DoubleRectangle {
-        return data as DoubleRectangle
-    }
+    fun x() = data as DoubleSpan
+    fun xy() = data as DoubleRectangle
 
     companion object {
         fun create(rect: DoubleRectangle, lookupSpace: LookupSpace): RectTargetProjection {
             return when (lookupSpace) {
-                X -> RectTargetProjection(DoubleRange.withStartAndEnd(rect.left, rect.right))
+                X -> RectTargetProjection(DoubleSpan(rect.left, rect.right))
                 XY -> RectTargetProjection(rect)
                 NONE -> undefinedLookupSpaceError()
             }
@@ -63,18 +52,13 @@ internal class RectTargetProjection private constructor(val data: Any) : TargetP
 }
 
 internal class PolygonTargetProjection private constructor(val data: Any) : TargetProjection() {
-
-    fun x(): DoubleRange {
-        return data as DoubleRange
-    }
-
+    fun x() = data as DoubleSpan
     fun xy(): List<RingXY> {
         @Suppress("UNCHECKED_CAST")
         return data as List<RingXY>
     }
 
     companion object {
-        private const val AREA_LIMIT_TO_REMOVE_POLYGON = 25.0
         private const val POINTS_COUNT_TO_SKIP_SIMPLIFICATION = 20.0
         private const val AREA_TOLERANCE_RATIO = 0.1
         private const val MAX_TOLERANCE = 40.0
@@ -89,7 +73,7 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
             }
         }
 
-        private fun mapToX(rings: List<List<DoubleVector>>): DoubleRange {
+        private fun mapToX(rings: List<List<DoubleVector>>): DoubleSpan {
             var min = rings[0][0].x
             var max = min
             for (ring in rings) {
@@ -98,7 +82,7 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
                     max = max(max, point.x)
                 }
             }
-            return DoubleRange.withStartAndEnd(min, max)
+            return DoubleSpan(min, max)
         }
 
         private fun mapToXY(rings: List<List<DoubleVector>>): List<RingXY> {
@@ -118,20 +102,20 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
                     val tolerance = min(area * AREA_TOLERANCE_RATIO, MAX_TOLERANCE)
                     simplifiedRing = PolylineSimplifier.visvalingamWhyatt(ring).setWeightLimit(tolerance).points
 
-                    @Suppress("ConstantConditionIf")
                     if (isLogEnabled) {
-                        log("Simp: " + ring.size + " -> " + simplifiedRing.size +
-                                ", tolerance=" + tolerance +
-                                ", bbox=" + bbox +
-                                ", area=" + area
+                        log(
+                            "Simp: " + ring.size + " -> " + simplifiedRing.size +
+                                    ", tolerance=" + tolerance +
+                                    ", bbox=" + bbox +
+                                    ", area=" + area
                         )
                     }
                 } else {
-                    @Suppress("ConstantConditionIf")
                     if (isLogEnabled) {
-                        log("Keep: size: " + ring.size +
-                                ", bbox=" + bbox +
-                                ", area=" + area
+                        log(
+                            "Keep: size: " + ring.size +
+                                    ", bbox=" + bbox +
+                                    ", area=" + area
                         )
                     }
                     simplifiedRing = ring
@@ -154,24 +138,26 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
         private const val isLogEnabled = false
     }
 
-    internal class RingXY(val edges: List<DoubleVector>, val bbox: DoubleRectangle)
+    internal class RingXY(
+        private val edges: List<DoubleVector>,
+        private val bbox: DoubleRectangle
+    ) {
+        operator fun contains(p: DoubleVector) = p in bbox && polygonContainsCoordinate(edges, p)
+    }
 }
 
 internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjection() {
-
     val points: List<PathPoint> = data
 
     internal class PathPoint private constructor(
-            private val myPointTargetProjection: PointTargetProjection,
-            val originalCoord: DoubleVector,
-            val index: Int) {
-
-        fun projection(): PointTargetProjection {
-            return myPointTargetProjection
-        }
+        private val myPointTargetProjection: PointTargetProjection,
+        val originalCoord: DoubleVector,
+        val index: Int
+    ) {
+        fun projection() = myPointTargetProjection
 
         companion object {
-            fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
+            internal fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
                 return when (lookupSpace) {
                     X -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
                     XY -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
@@ -182,10 +168,19 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
     }
 
     companion object {
-        fun create(points: List<DoubleVector>, indexMapper: (Int) -> Int, lookupSpace: LookupSpace): PathTargetProjection {
+        fun create(
+            points: List<DoubleVector>,
+            indexMapper: (Int) -> Int,
+            lookupSpace: LookupSpace
+        ): PathTargetProjection {
             val pointsLocation = ArrayList<PathPoint>()
             for ((i, point) in points.withIndex()) {
                 pointsLocation.add(PathPoint.create(point, indexMapper(i), lookupSpace))
+            }
+
+            // Sort for fast search
+            if (lookupSpace == X) {
+                pointsLocation.sortBy { it.projection().x() }
             }
 
             return PathTargetProjection(pointsLocation)

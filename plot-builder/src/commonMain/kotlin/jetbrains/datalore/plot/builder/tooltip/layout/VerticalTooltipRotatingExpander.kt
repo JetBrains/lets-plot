@@ -7,16 +7,16 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 internal class VerticalTooltipRotatingExpander(
-    private val verticalSpace: DoubleRange,
-    private val horizontalSpace: DoubleRange
+    private val verticalSpace: DoubleSpan,
+    private val horizontalSpace: DoubleSpan
 ) {
 
     fun fixOverlapping(tooltips: List<PositionedTooltip>, restrictions: List<DoubleRectangle>): List<PositionedTooltip> {
@@ -97,11 +97,11 @@ internal class VerticalTooltipRotatingExpander(
                 continue
             }
 
-            if (!jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndLength(candidate.origin.y, candidate.dimension.y).inside(verticalSpace)) {
+            if (DoubleSpan.withLowerEnd(candidate.origin.y, candidate.dimension.y) !in verticalSpace) {
                 continue
             }
 
-            if (!jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndLength(candidate.origin.x, candidate.dimension.x).inside(horizontalSpace)) {
+            if (DoubleSpan.withLowerEnd(candidate.origin.x, candidate.dimension.x) !in horizontalSpace) {
                 continue
             }
 
@@ -148,10 +148,10 @@ internal class VerticalTooltipRotatingExpander(
     }
 
     companion object {
-        private val STEM_TO_LEFT_SIDE_ANGLE_RANGE = jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(-1.0 / 4.0 * PI, 1.0 / 4.0 * PI)
-        private val STEM_TO_BOTTOM_SIDE_ANGLE_RANGE = jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(1.0 / 4.0 * PI, 3.0 / 4.0 * PI)
-        private val STEM_TO_RIGHT_SIDE_ANGLE_RANGE = jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(3.0 / 4.0 * PI, 5.0 / 4.0 * PI)
-        private val STEM_TO_TOP_SIDE_ANGLE_RANGE = jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(5.0 / 4.0 * PI, 7.0 / 4.0 * PI)
+        private val STEM_TO_LEFT_SIDE_ANGLE_RANGE = DoubleSpan(-1.0 / 4.0 * PI, 1.0 / 4.0 * PI)
+        private val STEM_TO_BOTTOM_SIDE_ANGLE_RANGE = DoubleSpan(1.0 / 4.0 * PI, 3.0 / 4.0 * PI)
+        private val STEM_TO_RIGHT_SIDE_ANGLE_RANGE = DoubleSpan(3.0 / 4.0 * PI, 5.0 / 4.0 * PI)
+        private val STEM_TO_TOP_SIDE_ANGLE_RANGE = DoubleSpan(5.0 / 4.0 * PI, 7.0 / 4.0 * PI)
         private const val SECTOR_COUNT = 36
         private const val SECTOR_ANGLE = PI * 2 / SECTOR_COUNT
         private val POINT_RESTRICTION_SIZE = DoubleVector(1.0, 1.0)

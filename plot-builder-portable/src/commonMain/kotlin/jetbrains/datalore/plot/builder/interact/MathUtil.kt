@@ -9,8 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 object MathUtil {
 
@@ -61,29 +59,29 @@ object MathUtil {
 
     fun leftEdgeOf(rect: DoubleRectangle): DoubleSegment {
         return DoubleSegment(
-                DoubleVector(rect.left, rect.top),
-                DoubleVector(rect.left, rect.bottom)
+            DoubleVector(rect.left, rect.top),
+            DoubleVector(rect.left, rect.bottom)
         )
     }
 
     fun topEdgeOf(rect: DoubleRectangle): DoubleSegment {
         return DoubleSegment(
-                DoubleVector(rect.left, rect.top),
-                DoubleVector(rect.right, rect.top)
+            DoubleVector(rect.left, rect.top),
+            DoubleVector(rect.right, rect.top)
         )
     }
 
     fun rightEdgeOf(rect: DoubleRectangle): DoubleSegment {
         return DoubleSegment(
-                DoubleVector(rect.right, rect.top),
-                DoubleVector(rect.right, rect.bottom)
+            DoubleVector(rect.right, rect.top),
+            DoubleVector(rect.right, rect.bottom)
         )
     }
 
     fun bottomEdgeOf(rect: DoubleRectangle): DoubleSegment {
         return DoubleSegment(
-                DoubleVector(rect.left, rect.bottom),
-                DoubleVector(rect.right, rect.bottom)
+            DoubleVector(rect.left, rect.bottom),
+            DoubleVector(rect.right, rect.bottom)
         )
     }
 
@@ -130,80 +128,5 @@ object MathUtil {
             NEW_FARTHER,
             EQUAL
         }
-    }
-
-    class DoubleRange private constructor(private val myStart: Double, private val myLength: Double) {
-
-        init {
-            if (myLength < 0) {
-                throw IllegalStateException("Length should be positive")
-            }
-        }
-
-        fun length(): Double {
-            return myLength
-        }
-
-        fun overlaps(v: DoubleRange): Boolean {
-            return start() <= v.end() && v.start() <= end()
-        }
-
-        fun inside(v: DoubleRange): Boolean {
-            return start() >= v.start() && end() <= v.end()
-        }
-
-        operator fun contains(value: Double): Boolean {
-            return value >= start() && value <= end()
-        }
-
-        fun start(): Double {
-            return myStart
-        }
-
-        fun end(): Double {
-            return myStart + length()
-        }
-
-        fun move(delta: Double): DoubleRange {
-            return withStartAndLength(
-                start() + delta,
-                length()
-            )
-        }
-
-        fun moveLeft(delta: Double): DoubleRange {
-            if (delta < 0) {
-                throw IllegalStateException("Value should be positive")
-            }
-
-            return withStartAndLength(
-                start() - delta,
-                length()
-            )
-        }
-
-        fun moveRight(delta: Double): DoubleRange {
-            if (delta < 0) {
-                throw IllegalStateException("Value should be positive")
-            }
-
-            return withStartAndLength(
-                start() + delta,
-                length()
-            )
-        }
-
-        companion object {
-            fun withStartAndEnd(start: Double, end: Double): DoubleRange {
-                val rangeStart = min(start, end)
-                val rangeLength = max(start, end) - rangeStart
-                return DoubleRange(rangeStart, rangeLength)
-            }
-
-            fun withStartAndLength(start: Double, length: Double): DoubleRange {
-                return DoubleRange(start, length)
-            }
-        }
-
     }
 }

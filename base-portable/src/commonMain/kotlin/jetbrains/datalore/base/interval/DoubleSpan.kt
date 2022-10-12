@@ -26,6 +26,10 @@ class DoubleSpan(
         return v >= lowerEnd && v <= upperEnd
     }
 
+    operator fun contains(other: DoubleSpan): Boolean {
+        return lowerEnd <= other.lowerEnd && upperEnd >= other.upperEnd
+    }
+
     fun encloses(other: DoubleSpan): Boolean {
         return lowerEnd <= other.lowerEnd && upperEnd >= other.upperEnd
     }
@@ -60,9 +64,9 @@ class DoubleSpan(
     }
 
     companion object {
-        fun singleton(v: Double): DoubleSpan {
-            return DoubleSpan(v, v)
-        }
+        fun withLowerEnd(lowerEnd: Double, length: Double) = DoubleSpan(lowerEnd, lowerEnd + length)
+        fun withUpperEnd(upperEnd: Double, length: Double) = DoubleSpan(upperEnd - length, upperEnd)
+        fun singleton(v: Double) = DoubleSpan(v, v)
 
         fun encloseAll(values: Iterable<Double?>): DoubleSpan {
             val min = values.filterNotNull().minOrNull()

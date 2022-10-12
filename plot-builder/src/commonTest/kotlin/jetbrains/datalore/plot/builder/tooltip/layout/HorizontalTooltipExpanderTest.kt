@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
@@ -21,7 +22,7 @@ import kotlin.test.assertTrue
 class HorizontalTooltipExpanderTest {
     @Test
     fun noOverlapping() {
-        val expander = HorizontalTooltipExpander(jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(0.0, 561.0))
+        val expander = HorizontalTooltipExpander(DoubleSpan(0.0, 561.0))
 
         val fixed = expander.fixOverlapping(listOf(
             newTooltip(
@@ -52,7 +53,7 @@ class HorizontalTooltipExpanderTest {
 
     @Test
     fun stickAB() {
-        val expander = HorizontalTooltipExpander(jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(0.0, 561.0))
+        val expander = HorizontalTooltipExpander(DoubleSpan(0.0, 561.0))
 
         val fixed = expander.fixOverlapping(listOf(
             newTooltip(
@@ -84,7 +85,7 @@ class HorizontalTooltipExpanderTest {
 
     @Test
     fun stickAndSawpAB() {
-        val expander = HorizontalTooltipExpander(jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(0.0, 561.0))
+        val expander = HorizontalTooltipExpander(DoubleSpan(0.0, 561.0))
 
         val fixed = expander.fixOverlapping(listOf(
             newTooltip(
@@ -117,7 +118,7 @@ class HorizontalTooltipExpanderTest {
     @Test
     fun shouldCountAsOverlappedWhenDistanceIsLessThanTooltipsMargin() {
 
-        val expander = HorizontalTooltipExpander(jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(0.0, 561.0))
+        val expander = HorizontalTooltipExpander(DoubleSpan(0.0, 561.0))
 
         val fixed = expander.fixOverlapping(listOf(
             newTooltip(
@@ -155,7 +156,7 @@ class HorizontalTooltipExpanderTest {
 
     @Test
     fun stickAll() {
-        val expander = HorizontalTooltipExpander(jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.withStartAndEnd(0.0, 561.0))
+        val expander = HorizontalTooltipExpander(DoubleSpan(0.0, 561.0))
 
         val fixed = expander.fixOverlapping(listOf(
             newTooltip(

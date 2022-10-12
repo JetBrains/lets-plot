@@ -6,21 +6,19 @@
 package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.Companion.withStartAndEnd
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange.Companion.withStartAndLength
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.Companion.moveIntoLimit
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 
-internal class HorizontalTooltipExpander(private val mySpace: DoubleRange) {
+internal class HorizontalTooltipExpander(private val mySpace: DoubleSpan) {
 
     fun fixOverlapping(tooltips: List<PositionedTooltip>): List<PositionedTooltip> {
         return tooltips
             .sortedWith(compareBy({ it.stemCoord.y }, { it.tooltipCoord.y }))
-            .fold(ArrayList<Group>(), ::spaceOutTooltip)
+            .fold(ArrayList(), ::spaceOutTooltip)
             .flatMap {
-                var y = it.range.start()
+                var y = it.range.lowerEnd
                 it.tooltips.map { tooltip ->
                     tooltip.moveTo(DoubleVector(tooltip.left, y))
                         .also { y += tooltip.height + MARGIN_BETWEEN_TOOLTIPS }
@@ -39,7 +37,7 @@ internal class HorizontalTooltipExpander(private val mySpace: DoubleRange) {
                 .firstOrNull { (g1, g2) -> g1.overlaps(g2) }
                 ?.let { (g1, g2) ->
                     val index = groups.indexOf(g1)
-                    groups.set(index, Group(g1.tooltips + g2.tooltips, mySpace))
+                    groups[index] = Group(g1.tooltips + g2.tooltips, mySpace)
                     groups.remove(g2)
                 }
                 ?: return groups // stop the loop if no overlappings
@@ -49,29 +47,26 @@ internal class HorizontalTooltipExpander(private val mySpace: DoubleRange) {
 
     internal class Group internal constructor(
         internal val tooltips: List<PositionedTooltip>,
-        private val space: DoubleRange
+        private val space: DoubleSpan
     ) {
-        internal val range: DoubleRange
+        constructor(tooltip: PositionedTooltip, space: DoubleSpan) : this(listOf(tooltip), space)
 
-        constructor(tooltip: PositionedTooltip, space: DoubleRange)
-                : this(listOf(tooltip), space) {}
-
+        internal val range: DoubleSpan
         init {
-            val length = tooltips.map { it.length + MARGIN_BETWEEN_TOOLTIPS }.sum() - MARGIN_BETWEEN_TOOLTIPS
-            val start = when(tooltips.size) {
+            val height = tooltips.sumOf(PositionedTooltip::height) + (tooltips.size - 1) * MARGIN_BETWEEN_TOOLTIPS
+            val start = when (tooltips.size) {
                 0 -> 0.0
                 1 -> tooltips[0].top
-                else -> tooltips.sumOf { it.middle } / tooltips.size  - length / 2
+                else -> tooltips.sumOf { it.bottom - it.height / 2 } / tooltips.size - height / 2
             }
 
-            range = rangeWithLength(start, length).run { moveIntoLimit(this, space) }
+            range = DoubleSpan.withLowerEnd(start, height).run { moveIntoLimit(this, space) }
         }
 
-        fun overlaps(other: Group) = range.extend(MARGIN_BETWEEN_TOOLTIPS).overlaps(other.range)
+        fun overlaps(other: Group): Boolean =
+            DoubleSpan(
+                range.lowerEnd - MARGIN_BETWEEN_TOOLTIPS,
+                range.upperEnd + MARGIN_BETWEEN_TOOLTIPS
+            ).connected(other.range)
     }
 }
-
-private fun DoubleRange.extend(delta: Double) = withStartAndEnd(start() - delta, end() + delta)
-private fun rangeWithLength(start: Double, length: Double) = withStartAndLength(start, length)
-private val PositionedTooltip.length get() = height
-private val PositionedTooltip.middle get() = bottom - height / 2

@@ -5,22 +5,25 @@
 
 package jetbrains.datalore.plot.builder.tooltip.layout
 
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
 
-internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleRange) {
+internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleSpan) {
 
-    fun resolve(topPlacementRange: DoubleRange, bottomPlacementRange: DoubleRange, preferredPlacement: VerticalAlignment,
-                cursorRange: DoubleRange): VerticalAlignment? {
-
+    fun resolve(
+        topPlacementRange: DoubleSpan,
+        bottomPlacementRange: DoubleSpan,
+        preferredPlacement: VerticalAlignment,
+        cursorRange: DoubleSpan
+    ): VerticalAlignment {
         val currentState = Matcher()
-                .topCursorOk(!topPlacementRange.overlaps(cursorRange))
-                .topSpaceOk(topPlacementRange.inside(myVerticalSpace))
-                .bottomCursorOk(!bottomPlacementRange.overlaps(cursorRange))
-                .bottomSpaceOk(bottomPlacementRange.inside(myVerticalSpace))
-                .preferredAlignment(preferredPlacement)
+            .topCursorOk(!topPlacementRange.connected(cursorRange))
+            .topSpaceOk(topPlacementRange in myVerticalSpace)
+            .bottomCursorOk(!bottomPlacementRange.connected(cursorRange))
+            .bottomSpaceOk(bottomPlacementRange in myVerticalSpace)
+            .preferredAlignment(preferredPlacement)
 
         for (matcher in PLACEMENT_MATCHERS) {
             if (matcher.first.match(currentState)) {
@@ -104,58 +107,58 @@ internal class VerticalAlignmentResolver(private val myVerticalSpace: DoubleRang
 
     companion object {
         private val PLACEMENT_MATCHERS = listOf(
-                rule(
-                        Matcher()
-                                .preferredAlignment(TOP)
-                                .topSpaceOk(true)
-                                .topCursorOk(true),
-                        TOP
-                ),
+            rule(
+                Matcher()
+                    .preferredAlignment(TOP)
+                    .topSpaceOk(true)
+                    .topCursorOk(true),
+                TOP
+            ),
 
-                rule(
-                        Matcher()
-                                .preferredAlignment(BOTTOM)
-                                .bottomSpaceOk(true)
-                                .bottomCursorOk(true),
-                        BOTTOM
-                ),
+            rule(
+                Matcher()
+                    .preferredAlignment(BOTTOM)
+                    .bottomSpaceOk(true)
+                    .bottomCursorOk(true),
+                BOTTOM
+            ),
 
-                rule(
-                        Matcher()
-                                .preferredAlignment(TOP)
-                                .topSpaceOk(true)
-                                .topCursorOk(false)
-                                .bottomSpaceOk(true)
-                                .bottomCursorOk(true),
-                        BOTTOM
-                ),
+            rule(
+                Matcher()
+                    .preferredAlignment(TOP)
+                    .topSpaceOk(true)
+                    .topCursorOk(false)
+                    .bottomSpaceOk(true)
+                    .bottomCursorOk(true),
+                BOTTOM
+            ),
 
-                rule(
-                        Matcher()
-                                .preferredAlignment(BOTTOM)
-                                .bottomSpaceOk(true)
-                                .bottomCursorOk(false)
-                                .topSpaceOk(true)
-                                .topCursorOk(true),
-                        TOP
-                ),
+            rule(
+                Matcher()
+                    .preferredAlignment(BOTTOM)
+                    .bottomSpaceOk(true)
+                    .bottomCursorOk(false)
+                    .topSpaceOk(true)
+                    .topCursorOk(true),
+                TOP
+            ),
 
-                rule(
-                        Matcher()
-                                .topSpaceOk(false),
-                        BOTTOM
-                ),
+            rule(
+                Matcher()
+                    .topSpaceOk(false),
+                BOTTOM
+            ),
 
-                rule(
-                        Matcher()
-                                .bottomSpaceOk(false),
-                        TOP
-                ),
+            rule(
+                Matcher()
+                    .bottomSpaceOk(false),
+                TOP
+            ),
 
-                rule(
-                        Matcher(),
-                        TOP
-                )
+            rule(
+                Matcher(),
+                TOP
+            )
         )
 
         private fun rule(condition: Matcher, result: VerticalAlignment): Pair<Matcher, VerticalAlignment> {

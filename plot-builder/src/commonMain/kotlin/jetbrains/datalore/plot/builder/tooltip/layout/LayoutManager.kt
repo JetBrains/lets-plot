@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
@@ -22,11 +22,11 @@ class LayoutManager(
     private val myViewport: DoubleRectangle,
     private val myPreferredHorizontalAlignment: HorizontalAlignment
 ) {
-    private val myHorizontalSpace: DoubleRange = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
-    private var myVerticalSpace: DoubleRange = DoubleRange.withStartAndEnd(0.0, 0.0)
+    private val myHorizontalSpace: DoubleSpan = DoubleSpan(myViewport.left, myViewport.right)
+    private var myVerticalSpace: DoubleSpan = DoubleSpan(0.0, 0.0)
     private var myCursorCoord: DoubleVector = DoubleVector.ZERO
-    private var myHorizontalTooltipSpace = DoubleRange.withStartAndEnd(myViewport.left, myViewport.right)
-    private var myVerticalTooltipSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
+    private var myHorizontalTooltipSpace = DoubleSpan(myViewport.left, myViewport.right)
+    private var myVerticalTooltipSpace = DoubleSpan(myViewport.top, myViewport.bottom)
     private lateinit var myVerticalAlignmentResolver: VerticalAlignmentResolver
 
     fun arrange(
@@ -35,10 +35,10 @@ class LayoutManager(
         geomBounds: DoubleRectangle
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
-        myVerticalSpace = DoubleRange.withStartAndEnd(myViewport.top, myViewport.bottom)
+        myVerticalSpace = DoubleSpan(myViewport.top, myViewport.bottom)
         myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
-        myHorizontalTooltipSpace = DoubleRange.withStartAndLength(geomBounds.left, geomBounds.width)
-        myVerticalTooltipSpace = DoubleRange.withStartAndLength(geomBounds.top, geomBounds.height)
+        myHorizontalTooltipSpace = DoubleSpan.withLowerEnd(geomBounds.left, geomBounds.width)
+        myVerticalTooltipSpace = DoubleSpan.withLowerEnd(geomBounds.top, geomBounds.height)
 
         val desiredPosition = ArrayList<PositionedTooltip>()
 
@@ -51,7 +51,7 @@ class LayoutManager(
                     desiredPosition.add(positionedTooltip)
 
                     // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
-                    myVerticalSpace = DoubleRange.withStartAndEnd(
+                    myVerticalSpace = DoubleSpan(
                         myViewport.top,
                         min(
                             positionedTooltip.stemCoord.y,
@@ -169,18 +169,17 @@ class LayoutManager(
             .filter(::isCorner) // has an anchor
             .groupBy { it.tooltipSpec.anchor!! }
             .forEach { (tooltipAnchor, cornerTooltips) ->
-                val tooltipsHeight =
-                    cornerTooltips.sumOf { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
+                val tooltipsHeight = cornerTooltips.sumOf { it.size.y } + MARGIN_BETWEEN_TOOLTIPS * cornerTooltips.size
                 val verticalTooltipRange = when (tooltipAnchor.verticalAnchor) {
-                    TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalTooltipSpace.start(), tooltipsHeight, 0.0)
-                    TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalTooltipSpace.end(), tooltipsHeight, 0.0)
+                    TooltipAnchor.VerticalAnchor.TOP -> rightAligned(myVerticalTooltipSpace.lowerEnd, tooltipsHeight, 0.0)
+                    TooltipAnchor.VerticalAnchor.BOTTOM -> leftAligned(myVerticalTooltipSpace.upperEnd, tooltipsHeight, 0.0)
                     TooltipAnchor.VerticalAnchor.MIDDLE -> centered(
-                        (myVerticalTooltipSpace.start() + myVerticalTooltipSpace.end()) / 2,
+                        (myVerticalTooltipSpace.lowerEnd + myVerticalTooltipSpace.upperEnd) / 2,
                         tooltipsHeight
                     )
                 }
 
-                var tooltipY = verticalTooltipRange.start()
+                var tooltipY = verticalTooltipRange.lowerEnd
                 cornerTooltips.forEach { tooltip ->
                     val positionedTooltip = calculatePlotCornerTooltipPosition(
                         tooltip,
@@ -218,12 +217,12 @@ class LayoutManager(
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
         // Include overlapped corner tooltips.
 
-        val horizontalsWithOverlappedCorners =
-            tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+        val horizontalsWithOverlappedCorners = tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
         horizontalsWithOverlappedCorners
             .let { horizontalTooltips ->
-                if (horizontalTooltips.sumOf(PositionedTooltip::height) < myVerticalSpace.length()) {
-                    HorizontalTooltipExpander(myVerticalSpace).fixOverlapping(horizontalTooltips)
+                if (horizontalTooltips.sumOf(PositionedTooltip::height) < myVerticalSpace.length) {
+                    HorizontalTooltipExpander(myVerticalSpace)
+                        .fixOverlapping(horizontalTooltips)
                         .forEach(::fixate)
                 } else {
                     horizontalTooltips
@@ -238,7 +237,7 @@ class LayoutManager(
 
         (tooltips.select(VERTICAL_TOOLTIP, ROTATED_TOOLTIP) - tooltips.selectCorner())
             .let { verticalTooltips ->
-                if (verticalTooltips.sumOf(PositionedTooltip::width) < myHorizontalSpace.length()) {
+                if (verticalTooltips.sumOf(PositionedTooltip::width) < myHorizontalSpace.length) {
                     fixOverlappingWithShifting(
                         VerticalTooltipRotatingExpander(myVerticalSpace, myHorizontalSpace).fixOverlapping(
                             verticalTooltips,
@@ -321,30 +320,25 @@ class LayoutManager(
             val bottomTooltipRange =
                 rightAligned(targetBottomPoint, tooltipHeight, stemLength).let { bottomTooltipRange ->
                     // bottom range of the axis tooltip is out of the vertical space => move it to the border
-                    if (measuredTooltip.hintKind == X_AXIS_TOOLTIP && !bottomTooltipRange.inside(myVerticalSpace)) {
-                        leftAligned(myVerticalSpace.end(), tooltipHeight, stemLength)
+                    if (measuredTooltip.hintKind == X_AXIS_TOOLTIP && bottomTooltipRange !in myVerticalSpace) {
+                        leftAligned(myVerticalSpace.upperEnd, tooltipHeight, stemLength)
                     } else {
                         bottomTooltipRange
                     }
                 }
 
             val cursorVerticalRange = if (!ignoreCursor && overlapsCursorHorizontalRange(measuredTooltip, tooltipX))
-                DoubleRange.withStartAndLength(myCursorCoord.y, CURSOR_DIMENSION.y)
+                DoubleSpan.withLowerEnd(myCursorCoord.y, CURSOR_DIMENSION.y)
             else
                 EMPTY_DOUBLE_RANGE
 
-            if (myVerticalTooltipSpace.contains(targetTopPoint) &&
-                myVerticalAlignmentResolver.resolve(
-                    topTooltipRange,
-                    bottomTooltipRange,
-                    alignment,
-                    cursorVerticalRange
-                ) === TOP
+            if (targetTopPoint in myVerticalTooltipSpace &&
+                myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, alignment, cursorVerticalRange) === TOP
             ) {
-                tooltipY = topTooltipRange.start()
+                tooltipY = topTooltipRange.lowerEnd
                 stemY = targetTopPoint
             } else {
-                tooltipY = bottomTooltipRange.start()
+                tooltipY = bottomTooltipRange.lowerEnd
                 stemY = targetBottomPoint
             }
         }
@@ -379,15 +373,15 @@ class LayoutManager(
             // restrictions are expected to contain only y-axis tooltip.
             // Also the coordinate pointed to by the tooltip should be inside the geometry space.
             // Don't change canFitRight as it is not affected by restrictions (as long as y-axis is on the left side).
-            val canFitLeft = leftTooltipPlacement.inside(myHorizontalSpace) &&
+            val canFitLeft = leftTooltipPlacement in myHorizontalSpace &&
                     (measuredTooltip.hintKind == Y_AXIS_TOOLTIP || myHorizontalTooltipSpace.contains(targetLeftPoint)) &&
                     restrictions.all {
                         val tooltipRect = DoubleRectangle(
-                            DoubleVector(leftTooltipPlacement.start(), tooltipY), measuredTooltip.size
+                            DoubleVector(leftTooltipPlacement.lowerEnd, tooltipY), measuredTooltip.size
                         )
                         !it.intersects(tooltipRect)
                     }
-            val canFitRight = rightTooltipPlacement.inside(myHorizontalSpace)
+            val canFitRight = rightTooltipPlacement in myHorizontalSpace
 
             when {
                 measuredTooltip.hintKind == Y_AXIS_TOOLTIP && !canFitLeft -> {
@@ -395,6 +389,7 @@ class LayoutManager(
                     tooltipX = 0.0
                     stemX = targetLeftPoint
                 }
+
                 !(canFitLeft || canFitRight) -> {
                     when (myPreferredHorizontalAlignment) {
                         HorizontalAlignment.LEFT -> {
@@ -411,12 +406,14 @@ class LayoutManager(
                         }
                     }
                 }
+
                 myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight -> {
-                    tooltipX = leftTooltipPlacement.start()
+                    tooltipX = leftTooltipPlacement.lowerEnd
                     stemX = targetLeftPoint
                 }
+
                 else -> {
-                    tooltipX = rightTooltipPlacement.start()
+                    tooltipX = rightTooltipPlacement.lowerEnd
                     stemX = targetCoordX + hintSize
                 }
             }
@@ -427,7 +424,10 @@ class LayoutManager(
         return PositionedTooltip(measuredTooltip, tooltipCoord, stemCoord)
     }
 
-    private fun calculateCursorTooltipPosition(measuredTooltip: MeasuredTooltip, restrictions: List<DoubleRectangle>): PositionedTooltip {
+    private fun calculateCursorTooltipPosition(
+        measuredTooltip: MeasuredTooltip,
+        restrictions: List<DoubleRectangle>
+    ): PositionedTooltip {
         val tooltipX = centerInsideRange(myCursorCoord.x, measuredTooltip.size.x, myHorizontalSpace)
 
         val tooltipY: Double
@@ -445,16 +445,16 @@ class LayoutManager(
 
             // The tooltip should fit in vertical space and not intersect restrictions,
             // restrictions are expected to contain only y-axis tooltip.
-            if (topTooltipPlacement.inside(myVerticalSpace) && restrictions.all {
+            if (topTooltipPlacement in myVerticalSpace && restrictions.all {
                     val tooltipRect = DoubleRectangle(
-                        DoubleVector(tooltipX, topTooltipPlacement.start()), measuredTooltip.size
+                        DoubleVector(tooltipX, topTooltipPlacement.lowerEnd), measuredTooltip.size
                     )
                     !it.intersects(tooltipRect)
                 }) {
-                tooltipY = topTooltipPlacement.start()
+                tooltipY = topTooltipPlacement.lowerEnd
                 stemY = targetTopPoint
             } else {
-                tooltipY = bottomTooltipPlacement.start()
+                tooltipY = bottomTooltipPlacement.lowerEnd
                 stemY = targetBottomPoint
             }
         }
@@ -466,16 +466,16 @@ class LayoutManager(
 
     private fun calculateAnchorX(measuredTooltip: MeasuredTooltip, horizontalAlignment: HorizontalAlignment): Double {
         return when (horizontalAlignment) {
-            HorizontalAlignment.RIGHT -> myHorizontalTooltipSpace.end() - measuredTooltip.size.x
-            HorizontalAlignment.LEFT -> myHorizontalSpace.start() + myHorizontalTooltipSpace.start() + MARGIN_BETWEEN_TOOLTIPS
-            HorizontalAlignment.CENTER -> (myHorizontalTooltipSpace.start() + myHorizontalTooltipSpace.end() - measuredTooltip.size.x) / 2
+            HorizontalAlignment.RIGHT -> myHorizontalTooltipSpace.upperEnd - measuredTooltip.size.x
+            HorizontalAlignment.LEFT -> myHorizontalSpace.lowerEnd + myHorizontalTooltipSpace.lowerEnd + MARGIN_BETWEEN_TOOLTIPS
+            HorizontalAlignment.CENTER -> (myHorizontalTooltipSpace.lowerEnd + myHorizontalTooltipSpace.upperEnd - measuredTooltip.size.x) / 2
         }
     }
 
     private fun calculatePlotCornerTooltipPosition(
         measuredTooltip: MeasuredTooltip,
         tooltipY: Double,
-        verticalTooltipRange: DoubleRange,
+        verticalTooltipRange: DoubleSpan,
         horizontalAnchor: TooltipAnchor.HorizontalAnchor
     ): PositionedTooltip {
         val horizontalAlignment = when (horizontalAnchor) {
@@ -500,14 +500,14 @@ class LayoutManager(
     }
 
     private fun overlapsCursorHorizontalRange(measuredTooltip: MeasuredTooltip, tooltipX: Double): Boolean {
-        val horizontalTooltipRange = DoubleRange.withStartAndLength(tooltipX, measuredTooltip.size.x)
-        val cursorHorizontalRange = DoubleRange.withStartAndLength(myCursorCoord.x, CURSOR_DIMENSION.x)
-        return horizontalTooltipRange.overlaps(cursorHorizontalRange)
+        val horizontalTooltipRange = DoubleSpan.withLowerEnd(tooltipX, measuredTooltip.size.x)
+        val cursorHorizontalRange = DoubleSpan.withLowerEnd(myCursorCoord.x, CURSOR_DIMENSION.x)
+        return horizontalTooltipRange.connected(cursorHorizontalRange)
     }
 
-    private fun overlapsCursorVerticalRange(verticalTooltipRange: DoubleRange): Boolean {
-        val cursorVerticalRange = DoubleRange.withStartAndLength(myCursorCoord.y, CURSOR_DIMENSION.y)
-        return verticalTooltipRange.overlaps(cursorVerticalRange)
+    private fun overlapsCursorVerticalRange(verticalTooltipRange: DoubleSpan): Boolean {
+        val cursorVerticalRange = DoubleSpan.withLowerEnd(myCursorCoord.y, CURSOR_DIMENSION.y)
+        return verticalTooltipRange.connected(cursorVerticalRange)
     }
 
     private fun isCorner(tooltipSpec: TooltipSpec) = tooltipSpec.anchor != null
@@ -589,6 +589,7 @@ class LayoutManager(
     ) {
         constructor(tooltipSpec: TooltipSpec, tooltipBox: TooltipBox, strokeWidth: Double)
                 : this(tooltipSpec, tooltipBox.contentRect.dimension, tooltipBox, strokeWidth)
+
         internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
         internal val hintKind get() = tooltipSpec.layoutHint.kind
         internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius + strokeWidth
@@ -598,37 +599,34 @@ class LayoutManager(
     companion object {
 
         private val CURSOR_DIMENSION = DoubleVector(10.0, 10.0)
-        private val EMPTY_DOUBLE_RANGE = DoubleRange.withStartAndLength(0.0, 0.0)
+        private val EMPTY_DOUBLE_RANGE = DoubleSpan.withLowerEnd(0.0, 0.0)
 
-        internal fun moveIntoLimit(range: DoubleRange, limit: DoubleRange): DoubleRange {
-            if (range.inside(limit)) {
+        internal fun moveIntoLimit(range: DoubleSpan, limit: DoubleSpan): DoubleSpan {
+            if (range in limit) {
                 return range
             }
 
-            if (range.start() < limit.start()) {
-                return range.move(limit.start() - range.start())
+            return when {
+                range.lowerEnd < limit.lowerEnd -> DoubleSpan.withLowerEnd(limit.lowerEnd, range.length)
+                range.upperEnd > limit.upperEnd -> DoubleSpan.withUpperEnd(limit.upperEnd, range.length)
+                else -> range
             }
-
-            return if (range.end() > limit.end()) {
-                range.move(limit.end() - range.end())
-            } else range
-
         }
 
-        private fun centered(start: Double, length: Double): DoubleRange {
-            return DoubleRange.withStartAndLength(start - length / 2, length)
+        private fun centered(start: Double, length: Double): DoubleSpan {
+            return DoubleSpan.withLowerEnd(start - length / 2, length)
         }
 
-        private fun leftAligned(start: Double, length: Double, margin: Double): DoubleRange {
-            return DoubleRange.withStartAndLength(start - length - margin, length)
+        private fun leftAligned(start: Double, length: Double, margin: Double): DoubleSpan {
+            return DoubleSpan.withLowerEnd(start - length - margin, length)
         }
 
-        private fun rightAligned(start: Double, length: Double, margin: Double): DoubleRange {
-            return DoubleRange.withStartAndLength(start + margin, length)
+        private fun rightAligned(start: Double, length: Double, margin: Double): DoubleSpan {
+            return DoubleSpan.withLowerEnd(start + margin, length)
         }
 
-        private fun centerInsideRange(position: Double, size: Double, range: DoubleRange): Double {
-            return moveIntoLimit(centered(position, size), range).start()
+        private fun centerInsideRange(position: Double, size: Double, range: DoubleSpan): Double {
+            return moveIntoLimit(centered(position, size), range).lowerEnd
         }
 
         private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {

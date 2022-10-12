@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.rect
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
@@ -40,7 +40,7 @@ class VerticalTooltipShiftingExpanderTest {
         arrangedTooltips = ArrayList()
         restrictions = ArrayList()
 
-        helper = VerticalTooltipShiftingExpander(DoubleRange.withStartAndLength(0.0, 1000.0))
+        helper = VerticalTooltipShiftingExpander(DoubleSpan.withLowerEnd(0.0, 1000.0))
     }
 
     @Test

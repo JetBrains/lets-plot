@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.interact.MathUtil.bottomEdgeOf
 import jetbrains.datalore.plot.builder.interact.MathUtil.leftEdgeOf
 import jetbrains.datalore.plot.builder.interact.MathUtil.rightEdgeOf
@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.PositionedTo
 import kotlin.math.max
 
 internal class VerticalTooltipShiftingExpander(
-    @Suppress("UNUSED_PARAMETER") space: DoubleRange
+    @Suppress("UNUSED_PARAMETER") space: DoubleSpan
 ) {
 
     private var mySpacedTooltips: MutableList<Pair<Int, DoubleVector>>? = null

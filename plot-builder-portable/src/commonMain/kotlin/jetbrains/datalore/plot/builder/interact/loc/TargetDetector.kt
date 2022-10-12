@@ -6,246 +6,180 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.MathUtil
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker.COMPARISON_RESULT
-import jetbrains.datalore.plot.builder.interact.MathUtil.DoubleRange
 import jetbrains.datalore.plot.builder.interact.loc.PathTargetProjection.PathPoint
 
 internal class TargetDetector(
-        private val locatorLookupSpace: LookupSpace,
-        private val locatorLookupStrategy: LookupStrategy
+    private val locatorLookupSpace: LookupSpace,
+    private val locatorLookupStrategy: LookupStrategy
 ) {
-    fun checkPath(cursorCoord: DoubleVector, pathProjection: PathTargetProjection, closestPointChecker: ClosestPointChecker): PathPoint? {
+    fun checkPath(
+        cursorCoord: DoubleVector,
+        pathProjection: PathTargetProjection,
+        closestPointChecker: ClosestPointChecker
+    ): PathPoint? {
+        if (pathProjection.points.isEmpty()) {
+            return null
+        }
 
-        when (locatorLookupSpace) {
-
-            LookupSpace.X -> {
-                if (locatorLookupStrategy === LookupStrategy.NONE) {
-                    return null
-                }
-
-                val pathPoints = pathProjection.points
-                if (pathPoints.isEmpty()) {
-                    return null
-                }
-
-                val resultIndex = binarySearch(
-                    cursorCoord.x,
-                    pathPoints.size
-                ) { index ->
-                    pathPoints[index].projection().x()
-                }
-                val bestPoint = pathPoints[resultIndex]
-
-                return when (locatorLookupStrategy) {
-                    LookupStrategy.HOVER -> {
-                        if (cursorCoord.x < pathPoints[0].projection().x() || cursorCoord.x > pathPoints[pathPoints.size - 1].projection().x()) {
-                            null
-                        } else bestPoint
+        return when (locatorLookupSpace) {
+            LookupSpace.NONE -> null
+            LookupSpace.X -> when (locatorLookupStrategy) {
+                LookupStrategy.NONE -> null
+                LookupStrategy.NEAREST -> searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() }
+                LookupStrategy.HOVER ->
+                    if (cursorCoord.x < pathProjection.points.first().projection().x() || cursorCoord.x > pathProjection.points.last().projection().x()) {
+                        null
+                    } else {
+                        searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() }
                     }
-
-                    LookupStrategy.NEAREST -> bestPoint
-
-                    else -> throw IllegalStateException("Unknown lookup strategy: $locatorLookupStrategy")
-                }
             }
 
-            LookupSpace.XY -> {
-                when (locatorLookupStrategy) {
-
-                    LookupStrategy.HOVER -> {
-                        for (pathPoint in pathProjection.points) {
-                            val targetPointCoord = pathPoint.projection().xy()
-                            if (MathUtil.areEqual(targetPointCoord, cursorCoord,
-                                    POINT_AREA_EPSILON
-                                )) {
-                                return pathPoint
-                            }
+            LookupSpace.XY -> when (locatorLookupStrategy) {
+                LookupStrategy.NONE -> return null
+                LookupStrategy.HOVER -> {
+                    for (pathPoint in pathProjection.points) {
+                        val targetPointCoord = pathPoint.projection().xy()
+                        if (MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)) {
+                            return pathPoint
                         }
-                        return null
                     }
-
-                    LookupStrategy.NEAREST -> {
-                        var nearestPoint: PathPoint? = null
-                        for (pathPoint in pathProjection.points) {
-                            val targetPointCoord = pathPoint.projection().xy()
-                            if (closestPointChecker.check(targetPointCoord)) {
-                                nearestPoint = pathPoint
-                            }
+                    return null
+                }
+                LookupStrategy.NEAREST -> {
+                    var nearestPoint: PathPoint? = null
+                    for (pathPoint in pathProjection.points) {
+                        val targetPointCoord = pathPoint.projection().xy()
+                        if (closestPointChecker.check(targetPointCoord)) {
+                            nearestPoint = pathPoint
                         }
-                        return nearestPoint
                     }
-
-                    LookupStrategy.NONE -> return null
+                    return nearestPoint
                 }
             }
-
-            LookupSpace.NONE -> return null
-
-            else -> throw IllegalStateException()
         }
     }
 
-    fun checkPoint(cursorCoord: DoubleVector, pointProjection: PointTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        when (locatorLookupSpace) {
-
-            LookupSpace.X -> {
-                val x = pointProjection.x()
-                return when (locatorLookupStrategy) {
-                    LookupStrategy.HOVER -> MathUtil.areEqual(x, cursorCoord.x,
-                        POINT_AREA_EPSILON
-                    )
-                    LookupStrategy.NEAREST -> {
-                        closestPointChecker.check(DoubleVector(x, 0.0))
-                    }
-                    LookupStrategy.NONE -> false
-                }
+    fun checkPoint(
+        cursorCoord: DoubleVector,
+        pointProjection: PointTargetProjection,
+        closestPointChecker: ClosestPointChecker
+    ): Boolean {
+        return when (locatorLookupSpace) {
+            LookupSpace.NONE -> false
+            LookupSpace.X -> when (locatorLookupStrategy) {
+                LookupStrategy.NONE -> false
+                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.x(), cursorCoord.x, POINT_AREA_EPSILON)
+                LookupStrategy.NEAREST -> closestPointChecker.check(DoubleVector(pointProjection.x(), 0.0))
             }
 
-            LookupSpace.XY -> {
-                val targetPointCoord = pointProjection.xy()
-                return when (locatorLookupStrategy) {
-                    LookupStrategy.HOVER -> MathUtil.areEqual(targetPointCoord, cursorCoord, POINT_AREA_EPSILON)
-                    LookupStrategy.NEAREST -> closestPointChecker.check(targetPointCoord)
-                    LookupStrategy.NONE -> false
-                }
+            LookupSpace.XY -> when (locatorLookupStrategy) {
+                LookupStrategy.NONE -> false
+                LookupStrategy.HOVER -> MathUtil.areEqual(pointProjection.xy(), cursorCoord, POINT_AREA_EPSILON)
+                LookupStrategy.NEAREST -> closestPointChecker.check(pointProjection.xy())
             }
-
-            LookupSpace.NONE -> return false
-
-            else -> throw IllegalStateException()
         }
     }
 
-    fun checkRect(cursorCoord: DoubleVector, rectProjection: RectTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        when (locatorLookupSpace) {
-
-            LookupSpace.X -> {
-                val range = rectProjection.x()
-                return rangeBasedLookup(cursorCoord, closestPointChecker, range)
-            }
-
+    fun checkRect(
+        cursorCoord: DoubleVector,
+        rectProjection: RectTargetProjection,
+        closestPointChecker: ClosestPointChecker
+    ): Boolean {
+        return when (locatorLookupSpace) {
+            LookupSpace.NONE -> false
+            LookupSpace.X -> rangeBasedLookup(cursorCoord, closestPointChecker, rectProjection.x())
             LookupSpace.XY -> {
                 val rect = rectProjection.xy()
                 when (locatorLookupStrategy) {
-
-                    LookupStrategy.HOVER -> return rect.contains(cursorCoord)
-
-                    LookupStrategy.NEAREST -> {
-                        if (rect.contains(cursorCoord)) {
-                            return closestPointChecker.check(cursorCoord)
-                        }
-
+                    LookupStrategy.NONE -> false
+                    LookupStrategy.HOVER -> cursorCoord in rect
+                    LookupStrategy.NEAREST -> if (cursorCoord in rect) {
+                        closestPointChecker.check(cursorCoord)
+                    } else {
                         var x = if (cursorCoord.x < rect.left) rect.left else rect.right
                         var y = if (cursorCoord.y < rect.top) rect.top else rect.bottom
 
                         x = if (rect.xRange().contains(cursorCoord.x)) cursorCoord.x else x
                         y = if (rect.yRange().contains(cursorCoord.y)) cursorCoord.y else y
 
-                        return closestPointChecker.check(DoubleVector(x, y))
+                        closestPointChecker.check(DoubleVector(x, y))
                     }
-
-                    LookupStrategy.NONE -> return false
-
-                    else -> throw IllegalStateException()
                 }
             }
-
-            LookupSpace.NONE -> return false
-
-            else -> throw IllegalStateException()
         }
     }
 
-    fun checkPolygon(cursorCoord: DoubleVector, polygonProjection: PolygonTargetProjection, closestPointChecker: ClosestPointChecker): Boolean {
-        when (locatorLookupSpace) {
-
-            LookupSpace.X -> {
-                val range = polygonProjection.x()
-                return rangeBasedLookup(cursorCoord, closestPointChecker, range)
+    fun checkPolygon(
+        cursorCoord: DoubleVector,
+        polygonProjection: PolygonTargetProjection,
+        closestPointChecker: ClosestPointChecker
+    ): Boolean {
+        return when (locatorLookupSpace) {
+            LookupSpace.NONE -> false
+            LookupSpace.X -> rangeBasedLookup(cursorCoord, closestPointChecker, polygonProjection.x())
+            LookupSpace.XY -> when (locatorLookupStrategy) {
+                LookupStrategy.NONE -> false
+                LookupStrategy.NEAREST, // Doesn't support nearest strategy. Target can be found only by hovering a cursor above the polygon.
+                LookupStrategy.HOVER -> polygonProjection.xy().count { cursorCoord in it } % 2 != 0
             }
-
-            LookupSpace.XY -> {
-                val polygon = polygonProjection.xy()
-                when (locatorLookupStrategy) {
-
-                    LookupStrategy.HOVER, LookupStrategy.NEAREST -> {
-                        // Doesn't support nearest strategy. Target can be found only by hovering a cursor above the polygon.
-                        var counter = 0
-                        for (ring in polygon) {
-                            if (ring.bbox.contains(cursorCoord) && MathUtil.polygonContainsCoordinate(ring.edges, cursorCoord)) {
-                                counter++
-                            }
-                        }
-                        return counter % 2 != 0
-                    }
-
-                    LookupStrategy.NONE -> return false
-
-                    else -> throw IllegalStateException()
-                }
-            }
-
-            LookupSpace.NONE -> return false
-
-            else -> throw IllegalStateException()
         }
     }
 
-    private fun rangeBasedLookup(cursorCoord: DoubleVector, closestPointChecker: ClosestPointChecker, range: DoubleRange): Boolean {
-        when (locatorLookupStrategy) {
-
-            LookupStrategy.HOVER -> return range.contains(cursorCoord.x)
-
+    private fun rangeBasedLookup(
+        cursorCoord: DoubleVector,
+        closestPointChecker: ClosestPointChecker,
+        range: DoubleSpan
+    ): Boolean {
+        return when (locatorLookupStrategy) {
+            LookupStrategy.NONE -> false
+            LookupStrategy.HOVER -> cursorCoord.x in range
             LookupStrategy.NEAREST -> {
                 //Too far
-                return if (!range.contains(cursorCoord.x - RECT_X_NEAREST_EPSILON) && !range.contains(cursorCoord.x + RECT_X_NEAREST_EPSILON)) {
+                if (range.contains(cursorCoord.x - RECT_X_NEAREST_EPSILON) || range.contains(cursorCoord.x + RECT_X_NEAREST_EPSILON))
+                    closestPointChecker.compare(DoubleVector(range.lowerEnd + range.length / 2, cursorCoord.y)) != COMPARISON_RESULT.NEW_FARTHER
+                else {
                     false
-                } else closestPointChecker.compare(DoubleVector(range.start() + range.length() / 2, cursorCoord.y)) !== COMPARISON_RESULT.NEW_FARTHER
-
+                }
             }
-
-            LookupStrategy.NONE -> return false
-
-            else -> throw IllegalStateException()
         }
     }
 
     companion object {
         private const val POINT_AREA_EPSILON = 0.1
-        private const val POINT_X_NEAREST_EPSILON = 2.0
         private const val RECT_X_NEAREST_EPSILON = 2.0
 
-        private fun binarySearch(value: Double, length: Int, indexer: (Int) -> Double): Int {
-
-            if (value < indexer(0)) {
-                return 0
+        private fun <T> searchNearest(value: Double, items: List<T>, mapper: (T) -> Double): T {
+            if (value < mapper(items.first())) {
+                return items.first()
             }
-            if (value > indexer(length - 1)) {
-                return length - 1
+            if (value > mapper(items.last())) {
+                return items.last()
             }
 
             var lo = 0
-            var hi = length - 1
+            var hi = items.lastIndex
 
             while (lo <= hi) {
                 val mid = (hi + lo) / 2
-                val midValue = indexer(mid)
+                val midValue = mapper(items[mid])
 
                 when {
                     value < midValue -> hi = mid - 1
                     value > midValue -> lo = mid + 1
-                    else -> return mid
+                    else -> return items[mid]
                 }
             }
 
-            return if (indexer(lo) - value < value - indexer(hi)) {
-                lo
+            return if (mapper(items[lo]) - value < value - mapper(items[hi])) {
+                items[lo]
             } else {
-                hi
+                items[hi]
             }
         }
     }
