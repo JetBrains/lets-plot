@@ -77,6 +77,7 @@ internal class DataPointLiveMapAesthetics {
     val size get() = AestheticsUtil.textSize(myP)
     val fillColor get() = colorWithAlpha(myP.fill()!!)
     val label get() = myP.label()?.toString() ?: "n/a"
+    val lineheight get() = myP.lineheight()!!
 
     val hjust
         get() = when (TextUtil.textLabelAnchor(myP.hjust(), TextUtil.HJUST_MAP, MIDDLE)) {

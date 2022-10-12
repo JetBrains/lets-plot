@@ -71,6 +71,7 @@ class TextBuilder(
     var hjust: Double = 0.0
     var vjust: Double = 0.0
     var angle: Double = 0.0
+    var lineheight: Double = 1.0
 
     fun build(
         textMeasurer: TextMeasurer
@@ -89,6 +90,7 @@ class TextBuilder(
                     fillColor = this@TextBuilder.fillColor
                     strokeColor = this@TextBuilder.strokeColor
                     strokeWidth = this@TextBuilder.strokeWidth
+                    lineheight = this@TextBuilder.lineheight
                 }
                 + TextSpecComponent().apply { this.textSpec = textSpec }
                 + WorldOriginComponent(worldPoint)
@@ -114,7 +116,8 @@ class TextBuilder(
             drawBorder,
             labelPadding,
             labelRadius,
-            labelSize
+            labelSize,
+            lineheight
         )
     }
 }

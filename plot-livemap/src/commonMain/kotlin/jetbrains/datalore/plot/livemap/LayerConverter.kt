@@ -185,6 +185,7 @@ object LayerConverter {
                         labelPadding = it.labelPadding
                         labelRadius = it.labelRadius
                         labelSize = it.labelSize
+                        lineheight = it.lineheight
                     }
                 }
             }

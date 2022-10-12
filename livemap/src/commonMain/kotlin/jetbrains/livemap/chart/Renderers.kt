@@ -8,6 +8,7 @@ package jetbrains.livemap.chart
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
@@ -235,24 +236,23 @@ object Renderers {
             val chartElementComponent = entity.get<ChartElementComponent>()
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
-            var textPosition = textSpec.alignment
+            val textPosition: Vec<Client>
 
             ctx.save()
             ctx.rotate(textSpec.angle)
 
             if (textSpec.drawBorder) {
-                val padding = textSpec.font.fontSize * textSpec.labelPadding * 2
-                val width = textSpec.textSize.x + padding
-                val height = textSpec.textSize.y + padding
+                val padding = textSpec.font.fontSize * textSpec.labelPadding
+                val width = textSpec.textSize.x + padding * 2
+                val height = textSpec.textSize.y + padding * 2
 
-                val rect = DoubleRectangle(
-                    textSpec.alignment.x - padding * textSpec.hjust,
-                    textSpec.alignment.y - height + padding * textSpec.vjust,
+                val rectangle = DoubleRectangle(
+                    -width * textSpec.hjust,
+                    -height * (1 - textSpec.vjust),
                     width,
                     height
                 )
-
-                drawRoundedRectangle(rect, textSpec.labelRadius * height, ctx)
+                drawRoundedRectangle(rectangle, textSpec.labelRadius * height, ctx)
 
                 if (chartElementComponent.fillColor != null) {
                     ctx.setFillStyle(
@@ -266,16 +266,33 @@ object Renderers {
                     ctx.stroke()
                 }
 
-                // place text in the rectangle's center (use * 0.35 for better alignment)
+                val xPosition = when (textSpec.hjust) {
+                    0.0 -> padding
+                    1.0 -> -padding
+                    else -> 0.0
+                }
                 textPosition = explicitVec(
-                    rect.origin.x + padding / 2,
-                    rect.center.y + textSpec.textSize.y * 0.35
+                    xPosition,
+                    rectangle.origin.y + padding + textSpec.font.fontSize * 0.8 // top-align the first line
                 )
+            } else {
+                val yPosition = with(textSpec) {
+                    when (vjust) {
+                        1.0 -> font.fontSize * 0.7
+                        0.0 -> -textSize.y + font.fontSize
+                        else -> -textSize.y / 2 + font.fontSize * 0.8
+                    }
+                }
+                textPosition = explicitVec(0.0, yPosition)
             }
 
             ctx.setFont(textSpec.font)
             ctx.setFillStyle(chartElementComponent.strokeColor)
-            ctx.fillText(textSpec.label, textPosition.x, textPosition.y)
+
+            ctx.setTextAlign(textSpec.textAlign)
+            textSpec.lines.forEachIndexed { index, line ->
+                ctx.fillText(line, textPosition.x, textPosition.y + textSpec.lineHeight * index)
+            }
 
             ctx.restore()
         }
