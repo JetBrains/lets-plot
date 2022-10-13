@@ -39,6 +39,7 @@ open class TextGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
+        val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         for (p in aesthetics.dataPoints()) {
             val x = p.x()
             val y = p.y()
@@ -54,7 +55,7 @@ open class TextGeom : GeomBase() {
                     else -> getSizeUnitRatio(point, coord, sizeUnit!!)
                 }
 
-                val g = buildTextComponent(p, loc, text, sizeUnitRatio, ctx)
+                val g = buildTextComponent(p, loc, text, sizeUnitRatio, ctx, aesBoundsCenter)
                 root.add(g)
 
                 // The geom_text tooltip is similar to the geom_tile:
@@ -77,17 +78,19 @@ open class TextGeom : GeomBase() {
         location: DoubleVector,
         text: String,
         sizeUnitRatio: Double,
-        ctx: GeomContext
+        ctx: GeomContext,
+        boundsCenter: DoubleVector?
     ): SvgGElement {
         val label = MultilineLabel(text)
         TextUtil.decorate(label, p, sizeUnitRatio, applyAlpha = true)
-        label.setHorizontalAnchor(TextUtil.hAnchor(p))
+        val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
+        label.setHorizontalAnchor(hAnchor)
 
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)
         val textHeight = TextUtil.measure(text, p, ctx, sizeUnitRatio).y
         //val textHeight = TextHelper.lineheight(p, sizeUnitRatio) * (label.linesCount() - 1) + fontSize
 
-        val yPosition = when (TextUtil.vAnchor(p)) {
+        val yPosition = when (TextUtil.vAnchor(p, location, boundsCenter)) {
             Text.VerticalAnchor.TOP -> location.y + fontSize * 0.7
             Text.VerticalAnchor.BOTTOM -> location.y - textHeight + fontSize
             Text.VerticalAnchor.CENTER -> location.y - textHeight / 2 + fontSize * 0.8

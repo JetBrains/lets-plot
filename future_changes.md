@@ -11,7 +11,8 @@
 
   -  the 'newline' character (`\n`) now works as `line break`  ([[#605](https://github.com/JetBrains/lets-plot/issues/605)])
   - `lineheight` aesthetic ([[#324](https://github.com/JetBrains/lets-plot/issues/324)])
-  - `nudge_x, nudge_y` parameters  ([[#324](https://github.com/JetBrains/lets-plot/issues/324)])
+  - `nudge_x, nudge_y` parameters ([[#324](https://github.com/JetBrains/lets-plot/issues/324)])
+  - special text alignments (`vjust` and `hjust`): `"inward"` and `"outward"` ([[#324](https://github.com/JetBrains/lets-plot/issues/324)])
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/geom_text_new_features.ipynb).  
 
