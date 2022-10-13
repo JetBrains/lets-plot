@@ -78,13 +78,13 @@ internal class DataPointLiveMapAesthetics {
     val label get() = myP.label()?.toString() ?: "n/a"
 
     val hjust
-        get() = when (TextUtil.textLabelAnchor(myP.hjust(), TextUtil.HJUST_MAP, MIDDLE)) {
+        get() = when (TextUtil.hAnchor(myP.hjust())) {
             LEFT -> 0.0
             RIGHT -> 1.0
             MIDDLE -> 0.5
         }
     val vjust
-        get() = when (TextUtil.textLabelAnchor(myP.vjust(), TextUtil.VJUST_MAP, CENTER)) {
+        get() = when (TextUtil.vAnchor(myP.vjust())) {
             TOP -> 0.0
             BOTTOM -> 1.0
             CENTER -> 0.5

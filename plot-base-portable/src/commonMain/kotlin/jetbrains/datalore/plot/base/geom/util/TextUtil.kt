@@ -40,13 +40,7 @@ object TextUtil {
         "mono" to "monospace"
     )
 
-    private fun hAnchor(hjust: Any) = textLabelAnchor(
-        hjust,
-        HJUST_MAP,
-        Text.HorizontalAnchor.MIDDLE
-    )
-
-    private fun hAnchor(p: DataPointAesthetics) = hAnchor(p.hjust())
+    fun hAnchor(hjust: Any) = HJUST_MAP[hjust] ?: Text.HorizontalAnchor.MIDDLE
 
     fun hAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.HorizontalAnchor {
         var hjust = p.hjust()
@@ -56,13 +50,7 @@ object TextUtil {
         return hAnchor(hjust)
     }
 
-    private fun vAnchor(vjust: Any) = textLabelAnchor(
-        vjust,
-        VJUST_MAP,
-        Text.VerticalAnchor.CENTER
-    )
-
-    private fun vAnchor(p: DataPointAesthetics) = vAnchor(p.vjust())
+    fun vAnchor(vjust: Any) = VJUST_MAP[vjust] ?:Text.VerticalAnchor.CENTER
 
     fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.VerticalAnchor {
         var vjust = p.vjust()
@@ -70,10 +58,6 @@ object TextUtil {
             vjust = computeJustification(vjust, p.angle()!!, location, center, isHorizontal = false)
         }
         return vAnchor(vjust)
-    }
-
-    fun <T> textLabelAnchor(o: Any, conversionMap: Map<Any, T>, def: T): T {
-        return conversionMap.getOrElse(o) { def }
     }
 
     // 'internal' access for tests
@@ -163,8 +147,8 @@ object TextUtil {
         }
 
         // text justification
-        val hAnchor = hAnchor(p)
-        val vAnchor = vAnchor(p)
+        val hAnchor = hAnchor(p.hjust())
+        val vAnchor = vAnchor(p.vjust())
 
         if (hAnchor !== Text.HorizontalAnchor.LEFT) {  // 'left' is default
             label.setHorizontalAnchor(hAnchor)
