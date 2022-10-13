@@ -26,7 +26,7 @@ class TextJustification(val x: Double, val y: Double) {
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
             val rect = if (rotation != null) boundRect.flip() else boundRect
 
-            val (x, hAnchor) = xPosition(rect, textSize, justification.x)
+            val (x, hAnchor) = xPosition(rect, justification.x)
             val y = yPosition(rect, textSize, lineHeight, justification.y)
 
             val position = when (rotation) {
@@ -39,7 +39,6 @@ class TextJustification(val x: Double, val y: Double) {
 
         private fun xPosition(
             boundRect: DoubleRectangle,
-            textSize: DoubleVector,
             hjust: Double,
         ): Pair<Double, Text.HorizontalAnchor> {
             // todo:
