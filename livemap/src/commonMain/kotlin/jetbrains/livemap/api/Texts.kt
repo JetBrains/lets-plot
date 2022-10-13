@@ -59,6 +59,11 @@ class TextBuilder(
 
     var drawBorder: Boolean = false
 
+    // label parameters
+    var labelPadding: Double = 0.25
+    var labelRadius: Double = 0.15
+    var labelSize: Double = 1.0
+
     var label: String = ""
     var size: Double = 10.0
     var family: String = "Arial"
@@ -66,6 +71,7 @@ class TextBuilder(
     var hjust: Double = 0.0
     var vjust: Double = 0.0
     var angle: Double = 0.0
+    var lineheight: Double = 1.0
 
     fun build(
         textMeasurer: TextMeasurer
@@ -84,6 +90,7 @@ class TextBuilder(
                     fillColor = this@TextBuilder.fillColor
                     strokeColor = this@TextBuilder.strokeColor
                     strokeWidth = this@TextBuilder.strokeWidth
+                    lineheight = this@TextBuilder.lineheight
                 }
                 + TextSpecComponent().apply { this.textSpec = textSpec }
                 + WorldOriginComponent(worldPoint)
@@ -106,7 +113,11 @@ class TextBuilder(
             hjust,
             vjust,
             textMeasurer,
-            drawBorder
+            drawBorder,
+            labelPadding,
+            labelRadius,
+            labelSize,
+            lineheight
         )
     }
 }

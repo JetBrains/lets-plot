@@ -8,6 +8,7 @@ package jetbrains.livemap.chart
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
@@ -235,36 +236,95 @@ object Renderers {
             val chartElementComponent = entity.get<ChartElementComponent>()
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
-            var textPosition = textSpec.alignment
+            val textPosition: Vec<Client>
 
             ctx.save()
             ctx.rotate(textSpec.angle)
 
             if (textSpec.drawBorder) {
-                val rect = DoubleRectangle(
-                    textSpec.alignment.x,
-                    textSpec.alignment.y - textSpec.textSize.y,
-                    textSpec.textSize.x,
-                    textSpec.textSize.y
-                )
+                val rectangle = textSpec.rectangle
+                drawRoundedRectangle(rectangle, textSpec.labelRadius * rectangle.height, ctx)
+
                 if (chartElementComponent.fillColor != null) {
                     ctx.setFillStyle(
                         changeAlphaWithMin(chartElementComponent.fillColor!!, chartElementComponent.scalingAlphaValue)
                     )
+                    ctx.fill()
                 }
-                ctx.setStrokeStyle(chartElementComponent.strokeColor)
-                ctx.fillRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
-                ctx.strokeRect(rect.origin.x, rect.origin.y, rect.width, rect.height)
+                if (chartElementComponent.strokeColor != null && textSpec.labelSize != 0.0) {
+                    ctx.setStrokeStyle(chartElementComponent.strokeColor)
+                    ctx.setLineWidth(textSpec.labelSize)
+                    ctx.stroke()
+                }
 
-                // place text in the rectangle's center (use * 0.35 for better alignment)
-                textPosition = explicitVec(textSpec.alignment.x, rect.center.y + textSpec.textSize.y * 0.35)
+                val xPosition = when (textSpec.hjust) {
+                    0.0 -> textSpec.padding
+                    1.0 -> -textSpec.padding
+                    else -> 0.0
+                }
+                textPosition = explicitVec(
+                    xPosition,
+                    rectangle.origin.y + textSpec.padding + textSpec.font.fontSize * 0.8 // top-align the first line
+                )
+            } else {
+                val yPosition = with(textSpec) {
+                    when (vjust) {
+                        1.0 -> font.fontSize * 0.7
+                        0.0 -> -textSize.y + font.fontSize
+                        else -> -textSize.y / 2 + font.fontSize * 0.8
+                    }
+                }
+                textPosition = explicitVec(0.0, yPosition)
             }
 
             ctx.setFont(textSpec.font)
             ctx.setFillStyle(chartElementComponent.strokeColor)
-            ctx.fillText(textSpec.label, textPosition.x, textPosition.y)
+
+            ctx.setTextAlign(textSpec.textAlign)
+            textSpec.lines.forEachIndexed { index, line ->
+                ctx.fillText(line, textPosition.x, textPosition.y + textSpec.lineHeight * index)
+            }
 
             ctx.restore()
+        }
+
+        private fun drawRoundedRectangle(rect: DoubleRectangle, radius: Double, ctx: Context2d) {
+            ctx.apply {
+                beginPath()
+                with(rect) {
+                    // Ensure normal radius
+                    val r = minOf(radius, rect.width / 2, rect.height / 2)
+
+                    moveTo(right - r, bottom)
+                    bezierCurveTo(
+                        right - r, bottom,
+                        right, bottom,
+                        right, bottom - r
+                    )
+
+                    lineTo(right, top + r)
+                    bezierCurveTo(
+                        right, top + r,
+                        right, top,
+                        right - r, top
+                    )
+
+                    lineTo(left + r, top)
+                    bezierCurveTo(
+                        left + r, top,
+                        left, top,
+                        left, top + r
+                    )
+
+                    lineTo(left, bottom - r)
+                    bezierCurveTo(
+                        left, bottom - r,
+                        left, bottom,
+                        left + r, bottom
+                    )
+                }
+                closePath()
+            }
         }
     }
 }

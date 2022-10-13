@@ -9,6 +9,7 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.aes.AesInitValue
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
+import jetbrains.datalore.plot.base.geom.TextGeom
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
@@ -139,7 +140,7 @@ class TextConverterTest {
     }
 
     private fun assertMapObject() {
-        val mapObjectList = aesData.buildConverter().toText()
+        val mapObjectList = aesData.buildConverter().toText(TextGeom())
         assertEquals(1, mapObjectList.size)
 
         matcher.match(mapObjectList[0])

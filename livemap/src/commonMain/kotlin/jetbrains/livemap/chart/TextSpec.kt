@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.chart
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.Vec
@@ -18,16 +19,22 @@ import kotlin.math.abs
 import kotlin.math.max
 
 class TextSpec(
-    val label: String,
+    label: String,
     fontface: String,
     size: Int,
     family: String,
     degreeAngle: Double,
-    hjust: Double,
-    vjust: Double,
+    val hjust: Double,
+    val vjust: Double,
     textMeasurer: TextMeasurer,
-    val drawBorder: Boolean
+    val drawBorder: Boolean,
+    // label parameters
+    labelPadding: Double,
+    val labelRadius: Double,
+    val labelSize: Double,
+    lineheight: Double
 ) {
+    val lines = label.split('\n').map(String::trim)
     val font = Context2d.Font(
         fontStyle = fontface.extractFontStyle(),
         fontWeight = fontface.extractFontWeight(),
@@ -35,14 +42,28 @@ class TextSpec(
         fontFamily = family
     )
     val dimension: Vec<Client>
-    val alignment: Vec<Client>
     val angle: Double = toRadians(-degreeAngle)
-    val textSize = textMeasurer.measure(label, font)
+    val lineHeight = lineheight * size
+    val textSize = textMeasurer.measure(lines, font, lineHeight)
+    val textAlign = when (hjust) {
+        0.0 -> Context2d.TextAlign.START
+        1.0 -> Context2d.TextAlign.END
+        else -> Context2d.TextAlign.CENTER
+    }
+    val padding = font.fontSize * labelPadding
+    val rectangle: DoubleRectangle
 
     init {
-        alignment = explicitVec(-textSize.x * hjust, textSize.y * vjust)
-
         dimension = rotateTextSize(textSize.mul(2.0), angle)
+
+        val width = textSize.x + padding * 2
+        val height = textSize.y + padding * 2
+        rectangle = DoubleRectangle(
+            -width * hjust,
+            -height * (1 - vjust),
+            width,
+            height
+        )
     }
 
     private fun rotateTextSize(textSize: DoubleVector, angle: Double): Vec<Client> {

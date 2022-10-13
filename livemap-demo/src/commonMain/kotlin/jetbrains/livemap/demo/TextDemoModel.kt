@@ -15,6 +15,8 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         val coord1: LonLatPoint = explicitVec(0.0, 0.0)
         val coord2: LonLatPoint = explicitVec(25.0, 0.0)
+        val coord3: LonLatPoint = explicitVec(0.0, -10.0)
+        val coord4: LonLatPoint = explicitVec(25.0, -10.0)
 
         return basicLiveMap {
             layers {
@@ -22,6 +24,11 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
                 texts(getTexts(coord2, withBorder = true))
                 points(getPoint(coord1))
                 points(getPoint(coord2))
+                texts(multiline(coord3, withBorder = false))
+                points(getPoint(coord3))
+                texts(multiline(coord4, withBorder = true))
+                points(getPoint(coord4))
+
             }
         }
     }
@@ -100,6 +107,20 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
             size = 25.0
             angle = -120.0
             vjust = 0.5
+            drawBorder = withBorder
+        }
+    }
+
+    private fun multiline(coord: LonLatPoint, withBorder: Boolean): Texts.() -> Unit = {
+        text {
+            label = "first line\nthe second\n3"
+            point = coord
+            size = 20.0
+            angle = 20.0
+            vjust = 1.0
+            hjust = 0.5
+            labelPadding = 1.0
+            lineheight = 1.5
             drawBorder = withBorder
         }
     }
