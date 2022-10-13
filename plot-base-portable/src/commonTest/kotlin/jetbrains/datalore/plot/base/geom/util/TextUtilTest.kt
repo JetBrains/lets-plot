@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -106,11 +107,12 @@ class TextUtilTest {
     }
 
     companion object {
-        val CENTER = DoubleVector.ZERO
-        val TOP_LEFT = DoubleVector(-1.0, -1.0)
-        val TOP_RIGHT = DoubleVector(1.0, -1.0)
-        val BOTTOM_LEFT = DoubleVector(-1.0, 1.0)
-        val BOTTOM_RIGHT = DoubleVector(1.0, 1.0)
+        private val viewport = DoubleRectangle(0.0, 0.0, 100.0, 100.0)
+        val CENTER = viewport.center
+        val TOP_LEFT = DoubleVector(viewport.left, viewport.top)
+        val TOP_RIGHT = DoubleVector(viewport.right, viewport.top)
+        val BOTTOM_LEFT = DoubleVector(viewport.left, viewport.bottom)
+        val BOTTOM_RIGHT = DoubleVector(viewport.right, viewport.bottom)
 
         fun angles(from: Int, to: Int, step: Int = 15) = (from..to step step).map(Int::toDouble)
 

@@ -112,9 +112,9 @@ object TextUtil {
             .let { if (!putInward) it.reversed() else it }
 
         fun compare(v: Double, center: Double): Int {
-            fun areEquals(expected: Double, actual: Double, epsilon: Double = 0.00001) = abs(expected - actual) < epsilon
+            fun areEqual(expected: Double, actual: Double, epsilon: Double = 0.00001) = abs(expected - actual) < epsilon
             return when {
-                areEquals(v, center) -> 1
+                areEqual(v, center) -> 1
                 v < center -> 0
                 else -> 2
             }
