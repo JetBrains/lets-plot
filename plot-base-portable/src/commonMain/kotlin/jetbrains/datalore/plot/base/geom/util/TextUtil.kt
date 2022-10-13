@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.math.areEqual
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
@@ -73,37 +74,33 @@ object TextUtil {
         }
 
         var angle = initialAngle % 360
-        // ensure correct behaviour for angles in -360...+360
         angle =  if (angle > 180) angle - 360 else angle
         angle = if (angle < -180) angle + 360 else angle
 
         val rotatedForward = (angle > 45.0 && angle < 135.0)
-        val rotatedBackwards = (angle < -45.0 && angle > -135.0)
+        val rotatedBackward = (angle < -45.0 && angle > -135.0)
 
         val a = if (isHorizontal) DoubleVector::x else DoubleVector::y
         val b = if (isHorizontal) DoubleVector::y else DoubleVector::x
-        val coord = if (rotatedForward || rotatedBackwards) b else a
+        val coord = if (rotatedForward || rotatedBackward) b else a
 
-        val swap = //rotatedForward || abs(angle) > 135.0
-            (isHorizontal && rotatedForward) || (!isHorizontal && rotatedBackwards) || abs(angle) >= 135.0
+        val swap =
+            (isHorizontal && rotatedForward) || (!isHorizontal && rotatedBackward) || abs(angle) >= 135.0
+        val outward = (initialJust == "inward" && swap) || (initialJust == "outward" && !swap)
 
-        val putInward = (initialJust == "inward" && !swap) || (initialJust == "outward" && swap)
         val justifications = if (isHorizontal) {
             listOf("left", "middle", "right")
         } else {
             listOf("top", "center", "bottom")
         }
-            .let { if (!putInward) it.reversed() else it }
+            .toMutableList()
+            .apply { if (outward) reverse() }
 
-        fun compare(v: Double, center: Double): Int {
-            fun areEqual(expected: Double, actual: Double, epsilon: Double = 0.00001) = abs(expected - actual) < epsilon
-            return when {
-                areEqual(v, center) -> 1
-                v < center -> 0
-                else -> 2
-            }
+        val pos = when {
+            areEqual(coord(location), coord(center)) -> 1
+            coord(location) < coord(center) -> 0
+            else -> 2
         }
-        val pos = compare(coord(location), coord(center))
         return justifications[pos]
     }
 

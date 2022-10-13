@@ -41,3 +41,5 @@ fun distance(vector: Vector, doubleVector: DoubleVector): Double {
 fun Int.ipow(e: Int): Double {
     return this.toDouble().pow(e)
 }
+
+fun areEqual(a: Double, b: Double, epsilon: Double = 0.00001) = abs(a - b) < epsilon
