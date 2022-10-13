@@ -242,17 +242,8 @@ object Renderers {
             ctx.rotate(textSpec.angle)
 
             if (textSpec.drawBorder) {
-                val padding = textSpec.font.fontSize * textSpec.labelPadding
-                val width = textSpec.textSize.x + padding * 2
-                val height = textSpec.textSize.y + padding * 2
-
-                val rectangle = DoubleRectangle(
-                    -width * textSpec.hjust,
-                    -height * (1 - textSpec.vjust),
-                    width,
-                    height
-                )
-                drawRoundedRectangle(rectangle, textSpec.labelRadius * height, ctx)
+                val rectangle = textSpec.rectangle
+                drawRoundedRectangle(rectangle, textSpec.labelRadius * rectangle.height, ctx)
 
                 if (chartElementComponent.fillColor != null) {
                     ctx.setFillStyle(
@@ -267,13 +258,13 @@ object Renderers {
                 }
 
                 val xPosition = when (textSpec.hjust) {
-                    0.0 -> padding
-                    1.0 -> -padding
+                    0.0 -> textSpec.padding
+                    1.0 -> -textSpec.padding
                     else -> 0.0
                 }
                 textPosition = explicitVec(
                     xPosition,
-                    rectangle.origin.y + padding + textSpec.font.fontSize * 0.8 // top-align the first line
+                    rectangle.origin.y + textSpec.padding + textSpec.font.fontSize * 0.8 // top-align the first line
                 )
             } else {
                 val yPosition = with(textSpec) {

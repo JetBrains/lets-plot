@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.chart
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.Vec
@@ -28,7 +29,7 @@ class TextSpec(
     textMeasurer: TextMeasurer,
     val drawBorder: Boolean,
     // label parameters
-    val labelPadding: Double,
+    labelPadding: Double,
     val labelRadius: Double,
     val labelSize: Double,
     lineheight: Double
@@ -49,9 +50,20 @@ class TextSpec(
         1.0 -> Context2d.TextAlign.END
         else -> Context2d.TextAlign.CENTER
     }
+    val padding = font.fontSize * labelPadding
+    val rectangle: DoubleRectangle
 
     init {
         dimension = rotateTextSize(textSize.mul(2.0), angle)
+
+        val width = textSize.x + padding * 2
+        val height = textSize.y + padding * 2
+        rectangle = DoubleRectangle(
+            -width * hjust,
+            -height * (1 - vjust),
+            width,
+            height
+        )
     }
 
     private fun rotateTextSize(textSize: DoubleVector, angle: Double): Vec<Client> {
