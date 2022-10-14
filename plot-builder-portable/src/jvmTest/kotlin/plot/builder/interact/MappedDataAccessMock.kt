@@ -7,10 +7,11 @@ package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.mockito.eq
 import org.mockito.ArgumentMatchers.anyInt
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class MappedDataAccessMock {
 
@@ -25,15 +26,15 @@ class MappedDataAccessMock {
         val aes = mapping.aes
 
         if (index == null) {
-            `when`(mappedDataAccess.getMappedDataValue(eq(aes), anyInt()))
+            `when`(mappedDataAccess.getMappedDataValue(eq(aes), anyInt(), eq(TestingPlotContext.DUMMY)))
                 .thenReturn(mapping.value)
         } else {
-            `when`(mappedDataAccess.getMappedDataValue(eq(aes), eq(index)))
+            `when`(mappedDataAccess.getMappedDataValue(eq(aes), eq(index), eq(TestingPlotContext.DUMMY)))
                 .thenReturn(mapping.value)
         }
 
         `when`(mappedDataAccess.isMapped(eq(aes)))
-                .thenReturn(true)
+            .thenReturn(true)
         `when`(mappedDataAccess.getMappedDataLabel(eq(aes)))
             .thenReturn(mapping.label)
 

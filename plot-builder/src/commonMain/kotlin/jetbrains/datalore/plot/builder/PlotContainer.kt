@@ -29,7 +29,8 @@ class PlotContainer(
                 mouseEventPeer = mouseEventPeer,
                 plotSize = plot.plotSize,
                 flippedAxis = plot.flippedAxis,
-                theme = plot.theme
+                theme = plot.theme,
+                plotContext = plot.plotContext
             )
 
             if (FeatureSwitch.PLOT_VIEW_TOOLBOX) {

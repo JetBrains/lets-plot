@@ -14,6 +14,7 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
@@ -57,7 +58,8 @@ class PlotSvgComponent constructor(
     private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
-    val styleSheet: StyleSheet
+    val styleSheet: StyleSheet,
+    val plotContext: PlotContext
 ) : SvgComponent() {
 
     val flippedAxis = frameProviderByTile[0].flipAxis

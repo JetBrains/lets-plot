@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TestUtil.axisTheme
 import jetbrains.datalore.plot.builder.interact.mockito.ReturnsNotNullValuesAnswer
 import org.mockito.Mockito.*
@@ -45,7 +46,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tipLayoutHint).thenReturn(tipLayoutHint)
 
-        return factory.create(geomTarget)
+        return factory.create(geomTarget, TestingPlotContext.DUMMY)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {

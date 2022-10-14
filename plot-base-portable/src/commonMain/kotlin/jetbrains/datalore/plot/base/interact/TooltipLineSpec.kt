@@ -6,9 +6,10 @@
 package jetbrains.datalore.plot.base.interact
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.PlotContext
 
 interface TooltipLineSpec {
-    fun getDataPoint(index: Int): DataPoint?
+    fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
 
     class DataPoint(
         val label: String?,

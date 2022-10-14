@@ -9,9 +9,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpecFactory
 import jetbrains.datalore.plot.builder.layout.Margins
@@ -48,7 +50,8 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
+        val ctx = TestingPlotContext.create(layer)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping(), ctx)
         assertGeneralTooltips(
             tooltipSpecs,
             expectedLines = listOf("2.00")
@@ -80,7 +83,8 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
+        val ctx = TestingPlotContext.create(layer)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping(), ctx)
         // No tooltips
         assertGeneralTooltips(
             tooltipSpecs,
@@ -116,7 +120,8 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
+        val ctx = TestingPlotContext.create(layer)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping(), ctx)
         assertGeneralTooltips(
             tooltipSpecs,
             expectedLines = listOf("z: 5.00")
@@ -136,7 +141,8 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
+        val ctx = TestingPlotContext.create(layer)
+        val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping(), ctx)
         assertGeneralTooltips(
             tooltipSpecs,
             expectedLines = listOf("z: 5.00")
@@ -157,7 +163,8 @@ class TooltipSkippedAesTest {
         }"""
 
             val layer = getSingleGeomLayer(spec)
-            val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
+            val ctx = TestingPlotContext.create(layer)
+            val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping(), ctx)
             assertGeneralTooltips(
                 tooltipSpecs,
                 expectedLines = listOf("Color: 5.00")
@@ -175,7 +182,8 @@ class TooltipSkippedAesTest {
         }"""
 
             val layer = getSingleGeomLayer(spec)
-            val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping())
+            val ctx = TestingPlotContext.create(layer)
+            val tooltipSpecs = createTooltipSpecs(layer.createConextualMapping(), ctx)
             assertGeneralTooltips(
                 tooltipSpecs,
                 expectedLines = listOf("Size: 5.00")
@@ -217,7 +225,7 @@ class TooltipSkippedAesTest {
 
         }
 
-        private fun createTooltipSpecs(contextualMapping: ContextualMapping): List<TooltipSpec> {
+        private fun createTooltipSpecs(contextualMapping: ContextualMapping, ctx: PlotContext): List<TooltipSpec> {
             val factory =
                 TooltipSpecFactory(contextualMapping, DoubleVector.ZERO, flippedAxis = false, axisTheme, axisTheme)
             return factory.create(
@@ -225,7 +233,8 @@ class TooltipSkippedAesTest {
                     hitIndex = 0,
                     tipLayoutHint = cursorTooltip(DoubleVector.ZERO),
                     aesTipLayoutHints = emptyMap()
-                )
+                ),
+                ctx
             )
         }
 

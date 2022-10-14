@@ -8,14 +8,12 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
-import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.guideTransformedDomainByAes
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -40,66 +38,70 @@ internal object PlotAssemblerUtil {
         }
     }
 
+//    fun createLegends(
+////        layersByPanel: List<List<GeomLayer>>,
+////        scaleMap: TypedScaleMap,
+//        plotContext: PlotContext,
+//        scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
+//        guideOptionsMap: Map<Aes<*>, GuideOptions>,
+//        theme: LegendTheme
+//    ): List<LegendBoxInfo> {
+//
+//        // stitch together layers from all panels
+//        var planeCount = 0
+//        if (layersByPanel.isNotEmpty()) {
+//            planeCount = layersByPanel[0].size
+//        }
+//
+//        val stitchedLayersList = ArrayList<StitchedPlotLayers>()
+//        for (i in 0 until planeCount) {
+//            val layersOnPlane = ArrayList<GeomLayer>()
+//
+//            // collect layer[i] chunks from all panels
+//            for (panelLayers in layersByPanel) {
+//                layersOnPlane.add(panelLayers[i])
+//            }
+//
+//            stitchedLayersList.add(
+//                StitchedPlotLayers(
+//                    layersOnPlane
+//                )
+//            )
+//        }
+//
+//        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
+//        for (stitchedPlotLayers in stitchedLayersList) {
+//            val layerTransformedDomainByAes = guideTransformedDomainByAes(
+//                stitchedPlotLayers,
+//                scaleMap,
+//                guideOptionsMap
+//            )
+//            for ((aes, transformedDomain) in layerTransformedDomainByAes) {
+//                updateAesRangeMap(
+//                    aes,
+//                    transformedDomain,
+//                    transformedDomainByAes
+//                )
+//            }
+//        }
+//
+//        return createLegends(
+//            stitchedLayersList,
+//            transformedDomainByAes,
+//            scaleMap,
+//
+//            scaleMappersNP,
+//            guideOptionsMap,
+//            theme
+//        )
+//    }
+
+    //    private fun createLegends(
     fun createLegends(
-        layersByPanel: List<List<GeomLayer>>,
-        scaleMap: TypedScaleMap,
-        scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>,
-        theme: LegendTheme
-    ): List<LegendBoxInfo> {
-
-        // stitch together layers from all panels
-        var planeCount = 0
-        if (layersByPanel.isNotEmpty()) {
-            planeCount = layersByPanel[0].size
-        }
-
-        val stitchedLayersList = ArrayList<StitchedPlotLayers>()
-        for (i in 0 until planeCount) {
-            val layersOnPlane = ArrayList<GeomLayer>()
-
-            // collect layer[i] chunks from all panels
-            for (panelLayers in layersByPanel) {
-                layersOnPlane.add(panelLayers[i])
-            }
-
-            stitchedLayersList.add(
-                StitchedPlotLayers(
-                    layersOnPlane
-                )
-            )
-        }
-
-        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
-        for (stitchedPlotLayers in stitchedLayersList) {
-            val layerTransformedDomainByAes = guideTransformedDomainByAes(
-                stitchedPlotLayers,
-                scaleMap,
-                guideOptionsMap
-            )
-            for ((aes, transformedDomain) in layerTransformedDomainByAes) {
-                updateAesRangeMap(
-                    aes,
-                    transformedDomain,
-                    transformedDomainByAes
-                )
-            }
-        }
-
-        return createLegends(
-            stitchedLayersList,
-            transformedDomainByAes,
-            scaleMap,
-            scaleMappersNP,
-            guideOptionsMap,
-            theme
-        )
-    }
-
-    private fun createLegends(
-        stitchedLayersList: List<StitchedPlotLayers>,
-        transformedDomainByAes: Map<Aes<*>, DoubleSpan>,
-        scaleMap: TypedScaleMap,
+//        stitchedLayersList: List<StitchedPlotLayers>,
+//        transformedDomainByAes: Map<Aes<*>, DoubleSpan>,
+//        scaleMap: TypedScaleMap,
+        ctx: PlotContext,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
         theme: LegendTheme
@@ -108,21 +110,22 @@ internal object PlotAssemblerUtil {
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-        for (stitchedLayers in stitchedLayersList) {
+//        for (stitchedLayers in stitchedLayersList) {
+        for (contextLayer in ctx.layers) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
-            for (aes in stitchedLayers.renderedAes()) {
-                if (stitchedLayers.hasConstant(aes)) {
-                    layerConstantByAes[aes] = stitchedLayers.getConstant(aes)!!
+            for (aes in contextLayer.renderedAes()) {
+                if (contextLayer.hasConstant(aes)) {
+                    layerConstantByAes[aes] = contextLayer.getConstant(aes)!!
                 }
             }
 
-            val layerBindingsByScaleName = LinkedHashMap<String, MutableList<VarBinding>>()
-            val aesList = mappedRenderedAesToCreateGuides(stitchedLayers, guideOptionsMap)
+//            val layerBindingsByScaleName = LinkedHashMap<String, MutableList<VarBinding>>()
+            val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
+            val aesList = mappedRenderedAesToCreateGuides(contextLayer, guideOptionsMap)
             for (aes in aesList) {
                 var colorBar = false
-                val binding = stitchedLayers.getBinding(aes)
-//                val scale = stitchedLayers.getScale(aes)
-                val scale = scaleMap.get(aes)
+//                val binding = contextLayer.getBinding(aes)
+                val scale = ctx.getScale(aes)
                 val scaleName = scale.name
                 if (guideOptionsMap.containsKey(aes)) {
                     val guideOptions = guideOptionsMap[aes]
@@ -132,7 +135,8 @@ internal object PlotAssemblerUtil {
                         @Suppress("UNCHECKED_CAST")
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                             scaleName,
-                            transformedDomainByAes.getValue(aes),
+//                            transformedDomainByAes.getValue(aes),
+                            ctx.overallTransformedDomain(aes),
                             scale as Scale<Color>,
                             scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                             guideOptions,
@@ -144,7 +148,8 @@ internal object PlotAssemblerUtil {
                     @Suppress("UNCHECKED_CAST")
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                         scaleName,
-                        transformedDomainByAes.getValue(aes),
+//                        transformedDomainByAes.getValue(aes),
+                        ctx.overallTransformedDomain(aes),
                         scale as Scale<Color>,
                         scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                         null,
@@ -153,11 +158,12 @@ internal object PlotAssemblerUtil {
                 }
 
                 if (!colorBar) {
-                    layerBindingsByScaleName.getOrPut(scaleName) { ArrayList() }.add(binding)
+//                    layerBindingsByScaleName.getOrPut(scaleName) { ArrayList() }.add(binding)
+                    aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)
                 }
             }
 
-            for (scaleName in layerBindingsByScaleName.keys) {
+            for (scaleName in aesListByScaleName.keys) {
                 val legendAssembler = legendAssemblerByTitle.getOrPut(scaleName) {
                     LegendAssembler(
                         scaleName,
@@ -167,17 +173,19 @@ internal object PlotAssemblerUtil {
                     )
                 }
 
-                val varBindings = layerBindingsByScaleName[scaleName]!!
-                val legendKeyFactory = stitchedLayers.legendKeyElementFactory
-                val aestheticsDefaults = stitchedLayers.aestheticsDefaults
+//                val varBindings = layerBindingsByScaleName[scaleName]!!
+                val aesListForScaleName = aesListByScaleName.getValue(scaleName)
+                val legendKeyFactory = contextLayer.legendKeyElementFactory
+                val aestheticsDefaults = contextLayer.aestheticsDefaults
                 legendAssembler.addLayer(
                     legendKeyFactory,
-                    varBindings.map { it.aes },
+//                    varBindings.map { it.aes },
+                    aesListForScaleName,
                     layerConstantByAes,
                     aestheticsDefaults,
-//                    stitchedLayers.getScaleMap(),
-                    scaleMap,
-                    transformedDomainByAes
+//                    scaleMap,
+//                    transformedDomainByAes
+                    ctx
                 )
             }
         }

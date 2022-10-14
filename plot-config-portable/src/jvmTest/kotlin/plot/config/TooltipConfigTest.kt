@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
@@ -258,11 +259,11 @@ class TooltipConfigTest {
             tooltips = null
         )
         val expectedLines = mapOf(
-            Aes.YMAX to "11.50",
-            Aes.UPPER to "8.65",
-            Aes.MIDDLE to "6.85",
-            Aes.LOWER to "6.10",
-            Aes.YMIN to "4.20"
+            Aes.YMAX to "11.5",
+            Aes.UPPER to "8.7",
+            Aes.MIDDLE to "6.9",
+            Aes.LOWER to "6.1",
+            Aes.YMIN to "4.2"
         )
         val lines = getOutlierLines(geomLayer)
 
@@ -927,12 +928,13 @@ class TooltipConfigTest {
 
         val expected = mapOf(
             Aes.YMAX to "0.99",
-            Aes.UPPER to "0.841", // TODO: value 0.841 is INCORRECT
-            Aes.MIDDLE to "0.540", // TODO: value 0.540 is INCORRECT
-            Aes.LOWER to "0.204", // TODO: value 0.204 is INCORRECT
-            Aes.YMIN to "0.019", // TODO: value 0.019 is INCORRECT
+            Aes.UPPER to "0.84",
+            Aes.MIDDLE to "0.54",
+            Aes.LOWER to "0.20",
+            Aes.YMIN to "0.02",
         )
-        geomLayer.createConextualMapping().getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+        val ctx = TestingPlotContext.create(geomLayer)
+        geomLayer.createConextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -957,12 +959,13 @@ class TooltipConfigTest {
 
         val expected = mapOf(
             Aes.YMAX to "0.99",
-            Aes.UPPER to "0.841", // TODO: value 0.841 is INCORRECT
-            Aes.MIDDLE to "0.540", // TODO: value 0.540 is INCORRECT
-            Aes.LOWER to "0.204", // TODO: value 0.204 is INCORRECT
-            Aes.YMIN to "0.019", // TODO: value 0.019 is INCORRECT
+            Aes.UPPER to "0.84",
+            Aes.MIDDLE to "0.54",
+            Aes.LOWER to "0.20",
+            Aes.YMIN to "0.02",
         )
-        geomLayer.createConextualMapping().getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+        val ctx = TestingPlotContext.create(geomLayer)
+        geomLayer.createConextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -991,14 +994,16 @@ class TooltipConfigTest {
             Aes.LOWER to "0.34",
             Aes.YMIN to "0.02",
         )
-        geomLayer.createConextualMapping().getDataPoints(0).filter { it.isOutlier && !it.isAxis }.forEach {
+        val ctx = TestingPlotContext.create(geomLayer)
+        geomLayer.createConextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
 
     companion object {
         private fun getTitleString(geomLayer: GeomLayer): String? {
-            return geomLayer.createConextualMapping().getTitle(index = 0)
+            val ctx = TestingPlotContext.create(geomLayer)
+            return geomLayer.createConextualMapping().getTitle(index = 0, ctx)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
@@ -1006,17 +1011,20 @@ class TooltipConfigTest {
         }
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
+            val ctx = TestingPlotContext.create(geomLayer)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
+            val ctx = TestingPlotContext.create(geomLayer)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filter(DataPoint::isAxis)
         }
 
         private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
+            val ctx = TestingPlotContext.create(geomLayer)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 

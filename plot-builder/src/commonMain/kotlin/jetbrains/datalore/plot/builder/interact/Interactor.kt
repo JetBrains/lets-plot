@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.tool.DragFeedback
@@ -20,12 +21,13 @@ import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgNode
 
-internal class Interactor(
+internal class Interactor constructor(
     val decorationLayer: SvgNode,
     mouseEventPeer: MouseEventPeer,
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
-    theme: Theme
+    theme: Theme,
+    plotContext: PlotContext
 ) : PlotInteractor {
     val eventsManager: EventsManager = EventsManager()
 
@@ -46,6 +48,7 @@ internal class Interactor(
             theme.verticalAxis(flippedAxis),
             theme.tooltips(),
             theme.plot().backgroundFill(),
+            plotContext,
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))
@@ -55,7 +58,7 @@ internal class Interactor(
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector
+        axisOrigin: DoubleVector,
     ) {
         tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin)
         geomBoundsList.add(geomBounds)
@@ -70,6 +73,7 @@ internal class Interactor(
                     geomBoundsList
                 )
             )
+
             else -> throw IllegalArgumentException("Unknown tool feedback type: ${toolFeedback::class.simpleName}")
         }
         return Registration.from(disposable)

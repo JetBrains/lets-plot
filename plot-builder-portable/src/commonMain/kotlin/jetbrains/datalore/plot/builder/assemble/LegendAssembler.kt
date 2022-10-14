@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -35,8 +35,9 @@ class LegendAssembler(
         aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-        scaleByAes: TypedScaleMap,
-        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
+//        scaleByAes: TypedScaleMap,
+//        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
+        ctx: PlotContext,
     ) {
 
         legendLayers.add(
@@ -45,9 +46,10 @@ class LegendAssembler(
                 aesList,
                 constantByAes,
                 aestheticsDefaults,
-                scaleByAes,
+//                scaleByAes,
                 scaleMappers,
-                transformedDomainByAes
+//                transformedDomainByAes
+                ctx
             )
         )
     }
@@ -110,9 +112,10 @@ class LegendAssembler(
         internal val aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-        scaleMap: TypedScaleMap,
+//        scaleMap: TypedScaleMap,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
-        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
+//        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
+        ctx: PlotContext,
     ) {
 
         internal val keyAesthetics: Aesthetics
@@ -121,9 +124,11 @@ class LegendAssembler(
         init {
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
             for (aes in aesList) {
-                var scale = scaleMap[aes]
+//                var scale = scaleMap[aes]
+                var scale = ctx.getScale(aes)
                 if (!scale.hasBreaks()) {
-                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDomainByAes.getValue(aes), 5)
+//                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDomainByAes.getValue(aes), 5)
+                    scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
                 }
                 check(scale.hasBreaks()) { "No breaks were defined for scale $aes" }
 

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
@@ -66,12 +67,13 @@ class PlotAssembler private constructor(
         val styleSheet: StyleSheet = Style.fromTheme(theme, coordProvider.flipped)
 
         // ToDo: transformed ranges by aes
-
+        val plotContext: PlotContext = PlotAssemblerPlotContext(layersByTile, scaleMap)
 
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
-                layersByTile,
-                scaleMap,
+//                layersByTile,
+//                scaleMap,
+                plotContext,
                 scaleMappersNP,
                 guideOptionsMap,
                 theme.legend()
@@ -98,7 +100,7 @@ class PlotAssembler private constructor(
             val frameProviderByTile = coreLayersByTile.map {
                 BogusFrameOfReferenceProvider()
             }
-            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet, plotContext)
         } else {
             val flipAxis = coordProvider.flipped
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
@@ -143,7 +145,7 @@ class PlotAssembler private constructor(
                 vAxisTheme = theme.verticalAxis(flipAxis),
             )
 
-            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet, plotContext)
         }
     }
 
@@ -151,7 +153,8 @@ class PlotAssembler private constructor(
         frameProviderByTile: List<FrameOfReferenceProvider>,
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>,
-        styleSheet: StyleSheet
+        styleSheet: StyleSheet,
+        plotContext: PlotContext
     ): PlotSvgComponent {
 
         return PlotSvgComponent(
@@ -166,7 +169,8 @@ class PlotAssembler private constructor(
             legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme,
-            styleSheet = styleSheet
+            styleSheet = styleSheet,
+            plotContext = plotContext
         )
     }
 

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
@@ -24,9 +25,9 @@ class TooltipLine(
         fields.forEach { it.initDataContext(data, mappedDataAccess) }
     }
 
-    override fun getDataPoint(index: Int): DataPoint? {
+    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
         val dataValues = fields.map { dataValue ->
-            dataValue.getDataPoint(index) ?: return null
+            dataValue.getDataPoint(index, ctx) ?: return null
         }
         return if (dataValues.size == 1) {
             val dataValue = dataValues.single()

@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.TestUtil.axisTheme
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
@@ -50,7 +51,12 @@ open class TooltipSpecTestHelper {
         assertEquals(expected, myTooltipSpecs[0].fill)
     }
 
-    private fun assertHint(index: Int, expectedHintKind: Kind, expectedHintCoord: DoubleVector, expectedObjectRadius: Double) {
+    private fun assertHint(
+        index: Int,
+        expectedHintKind: Kind,
+        expectedHintCoord: DoubleVector,
+        expectedObjectRadius: Double
+    ) {
         val tooltipSpec = myTooltipSpecs[index]
         assertEquals(expectedHintKind, tooltipSpec.layoutHint.kind)
         assertEquals(expectedHintCoord, tooltipSpec.layoutHint.coord)
@@ -67,7 +73,8 @@ open class TooltipSpecTestHelper {
     }
 
     fun assertLines(expectedLines: List<String>, isOutlier: Boolean) {
-        val actualLines = myTooltipSpecs.filter { it.isOutlier == isOutlier }.flatMap { it.lines.map(TooltipSpec.Line::toString) }
+        val actualLines =
+            myTooltipSpecs.filter { it.isOutlier == isOutlier }.flatMap { it.lines.map(TooltipSpec.Line::toString) }
         assertEquals(expectedLines.size, actualLines.size)
         assertEquals(expectedLines, actualLines)
     }
@@ -97,7 +104,7 @@ open class TooltipSpecTestHelper {
             flippedAxis = false,
             axisTheme,
             axisTheme
-        ).create(geomTarget)
+        ).create(geomTarget, TestingPlotContext.DUMMY)
     }
 
     internal fun createTooltipSpecWithValueSources(
@@ -117,7 +124,7 @@ open class TooltipSpecTestHelper {
             flippedAxis = false,
             axisTheme,
             axisTheme
-        ).create(geomTarget)
+        ).create(geomTarget, TestingPlotContext.DUMMY)
     }
 
     internal fun buildTooltipSpecs() {

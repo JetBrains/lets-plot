@@ -233,7 +233,7 @@ class GeomLayerBuilder constructor(
 
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults
+        override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults()
 
         private val myRenderedAes: List<Aes<*>>
         private val myConstantByAes: TypedKeyHashMap
@@ -248,9 +248,7 @@ class GeomLayerBuilder constructor(
             myRenderedAes = ArrayList(renderedAes)
 
             // constant value by aes (default + specified)
-            aestheticsDefaults = geomProvider.aestheticsDefaults()
             myConstantByAes = TypedKeyHashMap()
-
             for (key in constantByAes.keys<Any>()) {
                 myConstantByAes.put(key, constantByAes[key])
             }
@@ -302,7 +300,7 @@ class GeomLayerBuilder constructor(
         }
 
         override fun createConextualMapping(): ContextualMapping {
-            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap)
+            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
             return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
         }
     }

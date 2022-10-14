@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
@@ -43,10 +44,11 @@ class MappingValue(
         }
     }
 
-    override fun getDataPoint(index: Int): DataPoint {
+    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
         val originalValue = myDataAccess.getOriginalValue(aes, index)
         val formattedValue =
-            originalValue?.let { myFormatter?.format(it) } ?: myDataAccess.getMappedDataValue(aes, index)
+            originalValue?.let { myFormatter?.format(it) } ?:
+            myDataAccess.getMappedDataValue(aes, index, ctx)
         return DataPoint(
             label = myDataLabel,
             value = formattedValue,

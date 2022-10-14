@@ -8,19 +8,18 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.ContinuousTransform
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.base.scale.transform.Transforms.ensureApplicableDomain
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
-        layerTiles: StitchedPlotLayers,
+//        layerTiles: StitchedPlotLayers,
+        layer: PlotContext.Layer,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
     ): List<Aes<*>> {
-        if (layerTiles.isLegendDisabled) {
+        if (layer.isLegendDisabled) {
             // ToDo: add support for
             // show_legend = True     : show all aesthetics in legend
             // show_legend = [.. list of aesthetics to show ..]     : show selected aesthetics in legend
@@ -29,15 +28,15 @@ internal object PlotGuidesAssemblerUtil {
         }
 
         val result = ArrayList<Aes<*>>()
-        for (aes in layerTiles.renderedAes()) {
+        for (aes in layer.renderedAes()) {
             if (Aes.noGuideNeeded(aes)) {
                 continue
             }
-            if (layerTiles.hasConstant(aes)) {
+            if (layer.hasConstant(aes)) {
                 // constants mask aes mappings
                 continue
             }
-            if (!layerTiles.hasBinding(aes)) {
+            if (!layer.hasBinding(aes)) {
                 continue
             }
             if (guideOptionsMap.containsKey(aes)) {
@@ -52,60 +51,60 @@ internal object PlotGuidesAssemblerUtil {
         return result
     }
 
-    fun guideTransformedDomainByAes(
-        stitchedLayers: StitchedPlotLayers,
-        scaleMap: TypedScaleMap,
-        guideOptionsMap: Map<Aes<*>, GuideOptions>
-    ): Map<Aes<*>, DoubleSpan> {
-        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
-        val aesSet = mappedRenderedAesToCreateGuides(
-            stitchedLayers,
-            guideOptionsMap
-        )
+//    fun guideTransformedDomainByAes(
+//        stitchedLayers: StitchedPlotLayers,
+//        scaleMap: TypedScaleMap,
+//        guideOptionsMap: Map<Aes<*>, GuideOptions>
+//    ): Map<Aes<*>, DoubleSpan> {
+//        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
+//        val aesSet = mappedRenderedAesToCreateGuides(
+//            stitchedLayers,
+//            guideOptionsMap
+//        )
+//
+//        for (aes in aesSet) {
+//            // Should be only 'tarnsform' variables in bindings at this point.
+//            val transformVariable = stitchedLayers.getBinding(aes).variable
+//            check(transformVariable.isTransform)
+//
+//            val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
+////            val scale = stitchedLayers.getScale(aes)
+//            val scale = scaleMap.get(aes)
+//            if (scale.isContinuousDomain) {
+//                transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(
+//                    transformedDataRange,
+//                    scale.transform as ContinuousTransform
+//                )
+//            } else if (transformedDataRange != null) {
+//                transformedDomainByAes[aes] = transformedDataRange
+//            }
+//        }
+//
+//        return transformedDomainByAes
+//    }
 
-        for (aes in aesSet) {
-            // Should be only 'tarnsform' variables in bindings at this point.
-            val transformVariable = stitchedLayers.getBinding(aes).variable
-            check(transformVariable.isTransform)
-
-            val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
-//            val scale = stitchedLayers.getScale(aes)
-            val scale = scaleMap.get(aes)
-            if (scale.isContinuousDomain) {
-                transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(
-                    transformedDataRange,
-                    scale.transform as ContinuousTransform
-                )
-            } else if (transformedDataRange != null) {
-                transformedDomainByAes[aes] = transformedDataRange
-            }
-        }
-
-        return transformedDomainByAes
-    }
-
-    private fun refineTransformedDataRangeForContinuousDomain(
-        transformedDataRange: DoubleSpan?,
-        transform: ContinuousTransform
-    ): DoubleSpan {
-        val (dataLower, dataUpper) = when (transformedDataRange) {
-            null -> Pair(Double.NaN, Double.NaN)
-            else -> Pair(transformedDataRange.lowerEnd, transformedDataRange.upperEnd)
-        }
-        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(transform)
-
-        val lowerEnd = if (scaleLower.isFinite()) scaleLower else dataLower
-        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
-
-        val newRange = when {
-            lowerEnd.isFinite() && upperEnd.isFinite() -> DoubleSpan(lowerEnd, upperEnd)
-            lowerEnd.isFinite() -> DoubleSpan(lowerEnd, lowerEnd)
-            upperEnd.isFinite() -> DoubleSpan(upperEnd, upperEnd)
-            else -> null
-        }
-
-        return ensureApplicableDomain(newRange, transform)
-    }
+//    private fun refineTransformedDataRangeForContinuousDomain(
+//        transformedDataRange: DoubleSpan?,
+//        transform: ContinuousTransform
+//    ): DoubleSpan {
+//        val (dataLower, dataUpper) = when (transformedDataRange) {
+//            null -> Pair(Double.NaN, Double.NaN)
+//            else -> Pair(transformedDataRange.lowerEnd, transformedDataRange.upperEnd)
+//        }
+//        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(transform)
+//
+//        val lowerEnd = if (scaleLower.isFinite()) scaleLower else dataLower
+//        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
+//
+//        val newRange = when {
+//            lowerEnd.isFinite() && upperEnd.isFinite() -> DoubleSpan(lowerEnd, upperEnd)
+//            lowerEnd.isFinite() -> DoubleSpan(lowerEnd, lowerEnd)
+//            upperEnd.isFinite() -> DoubleSpan(upperEnd, upperEnd)
+//            else -> null
+//        }
+//
+//        return ensureApplicableDomain(newRange, transform)
+//    }
 
     fun createColorBarAssembler(
         scaleName: String,

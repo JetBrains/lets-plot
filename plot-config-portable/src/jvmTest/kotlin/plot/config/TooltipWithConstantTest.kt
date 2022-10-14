@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
@@ -101,7 +102,8 @@ class TooltipWithConstantTest {
     }
 
     private fun getTooltipLines(geomLayer: GeomLayer): List<String> {
-        return geomLayer.createConextualMapping().getDataPoints(index = 0)
+        val ctx = TestingPlotContext.create(geomLayer)
+        return geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
             .map { dataPoint -> Line.withLabelAndValue(dataPoint.label, dataPoint.value) }
             .map(TooltipSpec.Line::toString)
     }

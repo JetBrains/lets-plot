@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
@@ -32,7 +33,7 @@ class DataFrameValue(
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
     }
 
-    override fun getDataPoint(index: Int): DataPoint? {
+    override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,

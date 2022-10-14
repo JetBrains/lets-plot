@@ -11,12 +11,16 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class StitchedPlotLayers constructor(
+internal class StitchedPlotLayer constructor(
     private val geomLayers: List<GeomLayer>
 ) {
+    val isYOrientation: Boolean
+        get() {
+            check(geomLayers.isNotEmpty())
+            return geomLayers[0].isYOrientation
+        }
 
     val legendKeyElementFactory: LegendKeyElementFactory
         get() {
@@ -55,10 +59,10 @@ internal class StitchedPlotLayers constructor(
         return geomLayers[0].getConstant(aes)
     }
 
-    fun getBinding(aes: Aes<*>): VarBinding {
-        check(geomLayers.isNotEmpty())
-        return geomLayers[0].getBinding(aes)
-    }
+//    fun getBinding(aes: Aes<*>): VarBinding {
+//        check(geomLayers.isNotEmpty())
+//        return geomLayers[0].getBinding(aes)
+//    }
 
     fun getDataRange(variable: DataFrame.Variable): DoubleSpan? {
         check(isNumericData(variable)) { "Not numeric data [$variable]" }
@@ -78,5 +82,15 @@ internal class StitchedPlotLayers constructor(
             }
         }
         return true
+    }
+
+    internal fun getVariables(): Set<DataFrame.Variable> {
+        check(geomLayers.isNotEmpty())
+        return geomLayers[0].dataFrame.variables()
+    }
+
+    internal fun hasVariable(v: DataFrame.Variable): Boolean {
+        check(geomLayers.isNotEmpty())
+        return geomLayers[0].dataFrame.has(v)
     }
 }

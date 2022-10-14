@@ -13,6 +13,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.common.time.TimeUtil
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
@@ -212,8 +213,8 @@ class TooltipAxisConfigTest {
 
         run {
             val geomLayer = log10(scaleFormat = null, tooltipFormat = null)
-            assertGeneralTooltip(geomLayer, "0.344")
-            assertYAxisTooltip(geomLayer, "0.344")
+            assertGeneralTooltip(geomLayer, "0.34")
+            assertYAxisTooltip(geomLayer, "0.34")
             assertEquals("0.32", getYTick(geomLayer, closedRange))
         }
         run {
@@ -298,7 +299,8 @@ class TooltipAxisConfigTest {
         }
 
         private fun assertGeneralTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
+            val ctx = TestingPlotContext.create(geomLayer)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
             val generalTooltip = dataPoints
                 .filterNot(TooltipLineSpec.DataPoint::isOutlier)
                 .map(TooltipLineSpec.DataPoint::value)
@@ -307,7 +309,8 @@ class TooltipAxisConfigTest {
         }
 
         private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0)
+            val ctx = TestingPlotContext.create(geomLayer)
+            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
             val yAxisTooltip = dataPoints
                 .filter(TooltipLineSpec.DataPoint::isAxis)
                 .filter { it.aes == Aes.Y }

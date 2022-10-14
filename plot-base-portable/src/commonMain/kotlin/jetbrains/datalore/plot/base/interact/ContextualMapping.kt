@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.base.interact
 
+import jetbrains.datalore.plot.base.PlotContext
+
 // `open` for Mockito tests
 open class ContextualMapping(
     private val tooltipLines: List<TooltipLineSpec>,
@@ -16,10 +18,11 @@ open class ContextualMapping(
     val isCrosshairEnabled: Boolean,
     private val tooltipTitle: TooltipLineSpec?
 ) {
-    fun getDataPoints(index: Int): List<TooltipLineSpec.DataPoint> {
-        return tooltipLines.mapNotNull { it.getDataPoint(index) }
+    fun getDataPoints(index: Int, ctx: PlotContext): List<TooltipLineSpec.DataPoint> {
+        return tooltipLines.mapNotNull { it.getDataPoint(index, ctx) }
     }
-    fun getTitle(index: Int): String? {
-        return tooltipTitle?.getDataPoint(index)?.value
+
+    fun getTitle(index: Int, ctx: PlotContext): String? {
+        return tooltipTitle?.getDataPoint(index, ctx)?.value
     }
 }

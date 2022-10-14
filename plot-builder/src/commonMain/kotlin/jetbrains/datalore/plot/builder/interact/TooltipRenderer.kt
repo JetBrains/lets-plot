@@ -15,6 +15,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Color.Companion.WHITE
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.Colors.mimicTransparency
+import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
@@ -38,7 +39,7 @@ import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility
 import jetbrains.datalore.vis.svg.SvgNode
 
 
-internal class TooltipRenderer(
+internal class TooltipRenderer constructor(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
     plotSize: DoubleVector,
@@ -46,6 +47,7 @@ internal class TooltipRenderer(
     private val yAxisTheme: AxisTheme,
     private val tooltipsTheme: TooltipsTheme,
     private val plotBackground: Color,
+    private val plotContext: PlotContext,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -86,7 +88,7 @@ internal class TooltipRenderer(
             return
         }
 
-        val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin)
+        val tooltipSpecs = createTooltipSpecs(tileInfo.findTargets(cursor), tileInfo.axisOrigin, plotContext)
         val geomBounds = tileInfo.geomBounds
         val tooltipComponents = tooltipStorage.provide(tooltipSpecs.size)
 
@@ -197,7 +199,7 @@ internal class TooltipRenderer(
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector
+        axisOrigin: DoubleVector,
     ) {
         val tileInfo = TileInfo(
             geomBounds,
@@ -220,13 +222,14 @@ internal class TooltipRenderer(
 
     private fun createTooltipSpecs(
         lookupResults: List<GeomTargetLocator.LookupResult>,
-        axisOrigin: DoubleVector
+        axisOrigin: DoubleVector,
+        ctx: PlotContext
     ): List<TooltipSpec> {
         val tooltipSpecs = ArrayList<TooltipSpec>()
 
         lookupResults.forEach { result ->
             val factory = TooltipSpecFactory(result.contextualMapping, axisOrigin, flippedAxis, xAxisTheme, yAxisTheme)
-            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget)) }
+            result.targets.forEach { geomTarget -> tooltipSpecs.addAll(factory.create(geomTarget, ctx)) }
         }
 
         return tooltipSpecs
