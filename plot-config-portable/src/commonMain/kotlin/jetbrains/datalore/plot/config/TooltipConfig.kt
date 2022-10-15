@@ -108,13 +108,15 @@ class TooltipConfig(
                     requireNotNull(groupingVarName) { "Variable name for 'group' is not specified" }
                     DataFrameValue(groupingVarName, format)
                 }
+
                 isAes -> {
                     val aes = Option.Mapping.toAes(fieldName)
                     when (val constant = constantsMap[aes]) {
                         null -> MappingValue(aes, format = format)
-                        else -> ConstantValue(constant, format)
+                        else -> ConstantValue(aes, constant, format)
                     }
                 }
+
                 else -> {
                     DataFrameValue(fieldName, format)
                 }
@@ -165,8 +167,7 @@ class TooltipConfig(
 
             return varBindings
                 .filter { it.variable.name == field.name }
-                .map(VarBinding::aes)
-                .map { aes ->
+                .map(VarBinding::aes).associate { aes ->
                     val aesField = aesField(aes.name)
                     if (aesField in valueSources)
                         aesField to valueSources[aesField]!!
@@ -177,7 +178,6 @@ class TooltipConfig(
                             format = format
                         )
                 }
-                .toMap()
         }
 
         private fun getValueSource(field: Field): ValueSource {
@@ -206,9 +206,11 @@ class TooltipConfig(
                 fieldString.startsWith(AES_NAME_PREFIX) -> {
                     aesField(fieldString.removePrefix(AES_NAME_PREFIX))
                 }
+
                 fieldString.startsWith(VARIABLE_NAME_PREFIX) -> {
                     varField(detachVariableName(fieldString))
                 }
+
                 else -> error("Unknown type of the field with name = \"$fieldString\"")
             }
 
@@ -243,19 +245,23 @@ class TooltipConfig(
                     TooltipAnchor.VerticalAnchor.MIDDLE,
                     TooltipAnchor.HorizontalAnchor.CENTER
                 )
+
                 "middle_right" -> TooltipAnchor(
                     TooltipAnchor.VerticalAnchor.MIDDLE,
                     TooltipAnchor.HorizontalAnchor.RIGHT
                 )
+
                 "bottom_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.LEFT)
                 "bottom_center" -> TooltipAnchor(
                     TooltipAnchor.VerticalAnchor.BOTTOM,
                     TooltipAnchor.HorizontalAnchor.CENTER
                 )
+
                 "bottom_right" -> TooltipAnchor(
                     TooltipAnchor.VerticalAnchor.BOTTOM,
                     TooltipAnchor.HorizontalAnchor.RIGHT
                 )
+
                 else -> throw IllegalArgumentException(
                     "Illegal value $anchor, ${Option.Layer.TOOLTIP_ANCHOR}, expected values are: " +
                             "'top_left'/'top_center'/'top_right'/" +

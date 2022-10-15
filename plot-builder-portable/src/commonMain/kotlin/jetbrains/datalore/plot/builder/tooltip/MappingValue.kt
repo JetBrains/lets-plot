@@ -47,8 +47,17 @@ class MappingValue(
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
         val originalValue = myDataAccess.getOriginalValue(aes, index)
         val formattedValue =
-            originalValue?.let { myFormatter?.format(it) } ?:
-            myDataAccess.getMappedDataValue(aes, index, ctx)
+            originalValue?.let {
+                myFormatter?.format(it)
+            } ?: run {
+                val tooltipAes = when {
+                    Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+                    else -> aes
+                }
+                ctx.getTooltipFormatter(tooltipAes) {
+                    TooltipFormatting.createFormatter(tooltipAes, ctx)
+                }.invoke(originalValue)
+            }
         return DataPoint(
             label = myDataLabel,
             value = formattedValue,

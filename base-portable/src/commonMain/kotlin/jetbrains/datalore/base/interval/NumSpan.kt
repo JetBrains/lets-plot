@@ -10,7 +10,7 @@ abstract class NumSpan {
     abstract val upperEnd: Number
 
     override fun toString(): String {
-        return "${this::class.simpleName}[$lowerEnd, $upperEnd]"
+        return "${this::class.simpleName}($lowerEnd, $upperEnd)"
     }
 
     override fun equals(other: Any?): Boolean {

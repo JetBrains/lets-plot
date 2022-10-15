@@ -21,6 +21,7 @@ internal class PlotAssemblerPlotContext(
 
     private val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(layersByTile)
     private val transformedDomainByAes: MutableMap<Aes<*>, DoubleSpan> = HashMap()
+    private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
 
     override val layers: List<PlotContext.Layer> = stitchedPlotLayers.map(::ContextPlotLayer)
 
@@ -35,6 +36,12 @@ internal class PlotAssemblerPlotContext(
             computeOverallTransformedDomain(aes, stitchedPlotLayers, scaleMap)
         }
     }
+
+    override fun getTooltipFormatter(aes: Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String {
+        checkPositionalAes(aes)
+        return tooltipFormatters.getOrPut(aes, defaultValue)
+    }
+
 
     private companion object {
         fun createStitchedLayers(

@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.GeomTarget
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
-import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.TestUtil.axisTheme
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
@@ -27,6 +26,8 @@ open class TooltipSpecTestHelper {
     private lateinit var nonTooltipAes: List<Aes<*>>
     private lateinit var axisAes: List<Aes<*>>
 
+    private val plotContext = TestingPlotContextWithTooltipFormatters()
+
     internal fun init() {
         geomTargetBuilder =
             TestingGeomTargetBuilder(TARGET_HIT_COORD)
@@ -40,6 +41,7 @@ open class TooltipSpecTestHelper {
 
     internal fun <T> addMappedData(mapping: Mapping<T>): Mapping<T> {
         mappedDataAccessMock.add(mapping)
+        plotContext.addMappedData(mapping)
         return mapping
     }
 
@@ -104,7 +106,7 @@ open class TooltipSpecTestHelper {
             flippedAxis = false,
             axisTheme,
             axisTheme
-        ).create(geomTarget, TestingPlotContext.DUMMY)
+        ).create(geomTarget, plotContext)
     }
 
     internal fun createTooltipSpecWithValueSources(
@@ -124,7 +126,7 @@ open class TooltipSpecTestHelper {
             flippedAxis = false,
             axisTheme,
             axisTheme
-        ).create(geomTarget, TestingPlotContext.DUMMY)
+        ).create(geomTarget, plotContext)
     }
 
     internal fun buildTooltipSpecs() {
