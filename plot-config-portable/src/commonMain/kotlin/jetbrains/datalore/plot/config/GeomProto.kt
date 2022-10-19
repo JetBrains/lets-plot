@@ -93,8 +93,8 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             }
             TEXT, LABEL -> mapOf(
                 Meta.NAME to PosProto.NUDGE,
-                PosProto.NUDGE_WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
-                PosProto.NUDGE_HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y)
+                Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
+                Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y)
             )
             else -> {
                 // Some other geoms has stateless position adjustments defined in `defaults`
