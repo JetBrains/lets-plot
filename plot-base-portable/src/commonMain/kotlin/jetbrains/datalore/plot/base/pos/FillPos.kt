@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class FillPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
-    private val myStackPosHelper: PositionAdjustment = StackPos.splitPositiveNegative(aes, vjust)
+    private val myStackPosHelper: PositionAdjustment = StackPos(aes, vjust)
     private val myScalerByIndex: Map<Int, Double> = mapIndexToScaler(aes)
 
     private fun mapIndexToScaler(aes: Aesthetics): Map<Int, Double> {
