@@ -11,13 +11,13 @@ from lets_plot.plot.scale import _scale
 
 
 def gen_scale_args():
-    pos_args = ['a', 'n']  # aesthetic
-    pos_args_as_dict = {'aesthetic': 'a', 'name': 'n'}
-    other_args = {'other1': 1, 'other2': 2}
+    positional_args = ['a']  # aesthetic
+    positional_args_as_dict = {'aesthetic': 'a'}
+    kwargs = {'name':'n', 'other1': 1, 'other2': 2}
 
-    expected = pos_args_as_dict.copy()
-    expected.update(other_args)
-    return pos_args, other_args, expected
+    expected = positional_args_as_dict.copy()
+    expected.update(kwargs)
+    return positional_args, kwargs, expected
 
 
 @pytest.mark.parametrize('args_list,args_dict,expected', [

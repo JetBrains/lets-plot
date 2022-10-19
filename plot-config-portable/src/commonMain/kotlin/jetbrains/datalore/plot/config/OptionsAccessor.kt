@@ -215,6 +215,11 @@ open class OptionsAccessor(
         return getNumber(option)?.toDouble()
     }
 
+    fun getDoubleSafe(option: String): Double {
+        return getNumber(option)?.toDouble()
+            ?: throw IllegalArgumentException("Can't get double value: option '$option' is not present.")
+    }
+
     fun getInteger(option: String): Int? {
         return getNumber(option)?.toInt()
     }

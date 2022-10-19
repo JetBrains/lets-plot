@@ -17,7 +17,8 @@ class TransformLog10 {
             issue301(),
             issue284(),
             issue284_1(),
-            scale_y_log10()
+            scale_y_log10(),
+            scale_y_log10_with_const_y(),
         )
     }
 
@@ -187,6 +188,31 @@ class TransformLog10 {
                 }
               ]
             }""".trimIndent()
+
+        return parsePlotSpec(spec)
+    }
+
+    @Suppress("FunctionName")
+    private fun scale_y_log10_with_const_y(): MutableMap<String, Any> {
+        // ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log10()
+
+        val rnd = Random(0)
+        val x = (1..100).map { rnd.nextInt(0..5) }.joinToString(transform = Int::toString)
+        val spec = """
+            {
+             'kind': 'plot',
+             'scales': [{'aesthetic': 'y', 'trans': 'log10'}],
+             'layers': [
+                {   'geom': 'label',
+                    'mapping': {'y': [8]},
+                    'label': 'Data y=8'
+                },
+                {   'geom': 'label',
+                    'label': 'Const y=10',
+                    'y': 10}
+               ]
+             }
+             """.trimIndent()
 
         return parsePlotSpec(spec)
     }

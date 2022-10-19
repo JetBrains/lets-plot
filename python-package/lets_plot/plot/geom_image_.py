@@ -5,7 +5,6 @@
 import base64
 import io
 
-from .core import aes
 from .geom import _geom
 from .util import as_boolean
 from .util import is_ndarray
@@ -19,7 +18,6 @@ try:
     import numpy
 except ImportError:
     numpy = None
-
 
 __all__ = ['geom_image']
 
@@ -149,7 +147,9 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         elif nchannels == 4:
             image_type = 'rgba'
         else:
-            raise Exception("Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(nchannels))
+            raise Exception(
+                "Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(
+                    nchannels))
 
     # Choose scaler function (sometimes - normalization)
     if image_data.dtype.kind == 'f':
@@ -182,7 +182,8 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         # do not normalize values (ints)
         scaler = _scaler_0_255_byte
     else:
-        raise Exception("Invalid image_data: floating point or integer dtype is expected but was '{}'".format(image_data.dtype))
+        raise Exception(
+            "Invalid image_data: floating point or integer dtype is expected but was '{}'".format(image_data.dtype))
 
     # set output type to int8 - pypng produces broken colors with other types
     scale = numpy.vectorize(scaler, otypes=[numpy.int8])
@@ -201,9 +202,10 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
 
     # image bounds (including 1/2 pixel expand in all directions)
-    xmin = [-0.5]
-    ymin = [-0.5]
-    xmax = [width - 0.5]
-    ymax = [height - 0.5]
-    mapping = aes(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
-    return _geom('image', mapping=mapping, href=href)
+    xmin = -0.5
+    ymin = -0.5
+    xmax = width - 0.5
+    ymax = height - 0.5
+
+    bbox = dict(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
+    return _geom('image', **bbox, href=href)

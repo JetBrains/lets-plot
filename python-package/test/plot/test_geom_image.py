@@ -14,19 +14,12 @@ def _image_spec(width, height, href):
     return dict(
         data_meta={},
         geom='image',
-        # image_spec=dict(
-        #     width=width,
-        #     height=height,
-        #     type=type,
-        #     bytes=bytes
-        # ),
         href=href,
-        mapping=dict(
-            xmin=[-0.5],
-            ymin=[-0.5],
-            xmax=[width - 1 + 0.5],
-            ymax=[height - 1 + 0.5],
-        )
+        mapping={},
+        xmin=-0.5,
+        ymin=-0.5,
+        xmax=width - 1 + 0.5,
+        ymax=height - 1 + 0.5
     )
 
 

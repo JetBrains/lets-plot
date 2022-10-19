@@ -87,8 +87,8 @@ object PlotUtil {
             if (layer.hasConstant(aes)) {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)
-                @Suppress("UNCHECKED_CAST")
-                aesBuilder.constantAes(aes, asAesValue(aes, v, mapperOption as? ScaleMapper<Any>))
+                val t = transformIfContinuous(scale(aes, layer))
+                aesBuilder.constantAes(aes, constantToAesValue(aes, v, t, mapperOption))
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
@@ -116,10 +116,10 @@ object PlotUtil {
                 } else {
                     // apply default
                     val v = layer.getDefault(aes)
-                    @Suppress("UNCHECKED_CAST")
+                    val t = transformIfContinuous(scale(aes, layer))
                     aesBuilder.constantAes(
                         aes,
-                        asAesValue(aes, v, mapperOption as? ScaleMapper<Any>)
+                        constantToAesValue(aes, v, t, mapperOption)
                     )
                 }
             }
@@ -135,10 +135,29 @@ object PlotUtil {
         return aesBuilder.build()
     }
 
-    private fun <T> asAesValue(aes: Aes<*>, dataValue: T, mapperOption: ScaleMapper<T>?): T? {
-        return if (aes.isNumeric && mapperOption != null) {
-            mapperOption(dataValue as? Double)
-        } else dataValue
+    private fun constantToAesValue(
+        aes: Aes<*>,
+        v: Any?,
+        continuousTransform: ContinuousTransform?,
+        mapperOption: ScaleMapper<*>?
+    ): Any? {
+
+        return if (aes.isNumeric) {
+            // Constants for numerin Aes : x, y, size etc.
+            // should be transformed before further mapping is applied.
+            val transformed = if (continuousTransform != null) {
+                when (continuousTransform.isInDomain(v as Double)) {
+                    true -> continuousTransform.apply(v)
+                    false -> null
+                }
+            } else {
+                v as? Double   // Aes like 'width', 'height' not expected to have a transform.
+            }
+
+            mapperOption?.invoke(transformed) ?: transformed
+        } else {
+            v
+        }
     }
 
     /**
@@ -156,11 +175,7 @@ object PlotUtil {
 
         // Compute expands in terms of the original data.
         // Otherwise, can easily run into Infinities then using 'log10' transform
-        val continuousTransform: ContinuousTransform? = if (scale.isContinuousDomain) {
-            scale.transform as ContinuousTransform
-        } else {
-            null
-        }
+        val continuousTransform: ContinuousTransform? = transformIfContinuous(scale)
 
         // Inverse transform ends and make sure that lowe <= upper
         val domain = DoubleSpan(
@@ -204,6 +219,29 @@ object PlotUtil {
             }
         }
         return DoubleSpan(lowerEndWithExpand, upperEndWithExpand)
+    }
+
+    private fun transformIfContinuous(scale: Scale<*>?): ContinuousTransform? {
+        if (scale == null) return null
+        return if (scale.isContinuousDomain) {
+            scale.transform as ContinuousTransform
+        } else {
+            null
+        }
+    }
+
+    private fun scale(aes: Aes<*>, layer: GeomLayer): Scale<*>? {
+        @Suppress("NAME_SHADOWING")
+        val aes = when {
+            Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, layer.isYOrientation)
+            else -> aes
+        }
+        return if (layer.scaleMap.containsKey(aes)) {
+            layer.scaleMap[aes]
+        } else {
+            // Aes like 'width', 'height' do not have scale.
+            null
+        }
     }
 
     object DemoAndTest {

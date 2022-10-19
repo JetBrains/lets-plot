@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.ImageGeom
+import jetbrains.datalore.plotDemo.model.plotConfig.ImageWithScaleLimits
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
 fun main() {
-    with(ImageGeom()) {
+    with(ImageWithScaleLimits()) {
         PlotSpecsDemoWindowJfx(
             "image_geom",
             plotSpecList()

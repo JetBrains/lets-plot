@@ -244,12 +244,12 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
                 val r = when {
                     myDataPointCount <= 0 -> null
                     myConstantAes.contains(aes) -> {
-                        // constant should not be null
-                        val v = numericValues(aes).iterator().next()!!
-                        if (v.isFinite()) {
+                        val v = numericValues(aes).iterator().next()
+                        if (v != null && v.isFinite()) {
                             DoubleSpan(v, v)
                         } else null
                     }
+
                     else -> {
                         val values = numericValues(aes)
                         SeriesUtil.range(values)

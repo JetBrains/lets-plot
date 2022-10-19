@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
@@ -150,6 +152,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 geom
             }
+
             GeomKind.SEGMENT -> return GeomProvider.segment {
                 val geom = SegmentGeom()
                 if (opts.has(Segment.ARROW)) {
@@ -190,21 +193,28 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     it as LabelGeom
 
                     if (opts.has(Label.LABEL_PADDING)) {
-                        it.paddingFactor = opts.getDouble(Label.LABEL_PADDING)!!
+                        it.paddingFactor = opts.getDoubleSafe(Label.LABEL_PADDING)!!
                     }
                     if (opts.has(Label.LABEL_R)) {
-                        it.radiusFactor = opts.getDouble(Label.LABEL_R)!!
+                        it.radiusFactor = opts.getDoubleSafe(Label.LABEL_R)!!
                     }
                     if (opts.has(Label.LABEL_SIZE)) {
-                        it.borderWidth = opts.getDouble(Label.LABEL_SIZE)!!
+                        it.borderWidth = opts.getDoubleSafe(Label.LABEL_SIZE)!!
                     }
                 }
             }
 
             GeomKind.IMAGE -> return GeomProvider.image {
-                require(opts.hasOwn(Image.HREF)) { "Image reference URL (href) is not specified" }
+                require(opts.hasOwn(Image.HREF)) { "Image reference URL (href) is not specified." }
+                for (s in listOf(Image.XMIN, Image.XMAX, Image.YMIN, Image.YMAX)) {
+                    require(opts.hasOwn(s)) { "'$s' is not specified." }
+                }
                 ImageGeom(
-                    opts.getString(Image.HREF)!!
+                    imageUrl = opts.getString(Image.HREF)!!,
+                    bbox = DoubleRectangle.span(
+                        DoubleVector(opts.getDoubleSafe(Image.XMIN), opts.getDoubleSafe(Image.YMIN)),
+                        DoubleVector(opts.getDoubleSafe(Image.XMAX), opts.getDoubleSafe(Image.YMAX)),
+                    )
                 )
             }
 

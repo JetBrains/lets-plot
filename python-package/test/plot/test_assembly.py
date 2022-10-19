@@ -23,7 +23,8 @@ def test_plot_geom_geom():
             geom1.as_dict(),
             geom2.as_dict()
         ],
-        'scales': []
+        'scales': [],
+        'metainfo_list': [],
     }
 
     assert (plot + geom1 + geom2).as_dict() == expect
@@ -41,7 +42,8 @@ def test_plot_geom_scale():
         'mapping': {},
         'data_meta': {},
         'layers': [geom.as_dict()],
-        'scales': [scale.as_dict()]
+        'scales': [scale.as_dict()],
+        'metainfo_list': [],
     }
 
     assert (plot + geom + scale).as_dict() == expect
@@ -59,7 +61,8 @@ def test_plot_ggtitle():
         'data_meta': {},
         'layers': [],
         'mapping': {},
-        'scales': []
+        'scales': [],
+        'metainfo_list': [],
     }
 
     assert (plot + ggtitle).as_dict() == expect
