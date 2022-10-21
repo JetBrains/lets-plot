@@ -344,6 +344,16 @@ object GeomMeta {
                 Aes.YMIN,
                 Aes.YMAX
             )
+
+            GeomKind.PIE -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.SLICE,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+            )
         }
     }
 }

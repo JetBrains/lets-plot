@@ -215,6 +215,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 )
             }
 
+            GeomKind.PIE -> return GeomProvider.pie {
+                val geom = PieGeom()
+                if (opts.has(Pie.HOLE)) {
+                    geom.holeRatio = opts.getDouble(Pie.HOLE)!!
+                }
+                if (opts.has(Pie.FILL_BY)) {
+                    val fillBy = opts.getString(Pie.FILL_BY)!!
+                    val aes = Option.Mapping.toAes(fillBy)
+                    geom.setAesForFill(aes)
+                }
+                geom
+            }
 
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
@@ -266,6 +278,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // text, label - special case
             PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
             // image - special case
+            // pie - special case
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

@@ -30,6 +30,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
@@ -101,6 +102,7 @@ object AesInitValue {
         VALUE_MAP[ANGLE] = 0.0
         VALUE_MAP[SYM_X] = 0.0
         VALUE_MAP[SYM_Y] = 0.0
+        VALUE_MAP[SLICE] = 0.0
     }
 
     /**

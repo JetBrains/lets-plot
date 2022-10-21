@@ -184,6 +184,10 @@ abstract class DataPointAesthetics {
         return get(Aes.SYM_Y)
     }
 
+    fun slice(): Double? {
+        return get(Aes.SLICE)
+    }
+
     fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }

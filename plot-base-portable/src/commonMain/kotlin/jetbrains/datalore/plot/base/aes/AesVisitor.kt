@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
@@ -198,6 +199,10 @@ abstract class AesVisitor<T> {
             return symY()
         }
 
+        if (aes == SLICE) {
+            return slice()
+        }
+
         throw IllegalArgumentException("Unexpected aes: $aes")
     }
 
@@ -284,4 +289,6 @@ abstract class AesVisitor<T> {
     protected abstract fun symX(): T
 
     protected abstract fun symY(): T
+
+    protected abstract fun slice(): T
 }

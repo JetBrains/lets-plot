@@ -67,6 +67,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE -> Samplings.NONE
+            PIE -> Samplings.NONE
         }
     }
 

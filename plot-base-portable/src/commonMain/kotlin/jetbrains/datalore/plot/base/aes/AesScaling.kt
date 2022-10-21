@@ -20,6 +20,11 @@ object AesScaling {
         return p.size()!! * UNIT_SHAPE_SIZE
     }
 
+    fun pieDiameter(p: DataPointAesthetics): Double {
+        // aes Units -> px
+        return p.size()!! * 3.0
+    }
+
     fun circleDiameterSmaller(p: DataPointAesthetics): Double {
         // aes Units -> px
         return p.size()!! * 1.5

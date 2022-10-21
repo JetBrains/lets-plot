@@ -47,5 +47,6 @@ enum class GeomKind {
     TEXT,
     LABEL,
     RASTER,
-    IMAGE
+    IMAGE,
+    PIE
 }
