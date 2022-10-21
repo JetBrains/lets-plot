@@ -266,6 +266,10 @@ open class AestheticsDefaults {
             return base()
         }
 
+        fun pie(): AestheticsDefaults {
+            return base()
+        }
+
         private fun base(): AestheticsDefaults {
             return AestheticsDefaults()
         }

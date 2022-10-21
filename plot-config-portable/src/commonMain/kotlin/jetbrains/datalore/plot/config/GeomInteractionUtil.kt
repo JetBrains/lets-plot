@@ -208,6 +208,7 @@ object GeomInteractionUtil {
                     }
                 }
             }
+            GeomKind.PIE,
             GeomKind.H_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,

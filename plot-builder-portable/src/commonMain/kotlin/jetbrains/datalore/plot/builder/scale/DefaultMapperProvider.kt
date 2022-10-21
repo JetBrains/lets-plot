@@ -28,6 +28,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
@@ -141,6 +142,8 @@ object DefaultMapperProvider {
 
             this.put(SYM_X, NUMERIC_IDENTITY)
             this.put(SYM_Y, NUMERIC_IDENTITY)
+
+            this.put(SLICE, NUMERIC_IDENTITY)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {

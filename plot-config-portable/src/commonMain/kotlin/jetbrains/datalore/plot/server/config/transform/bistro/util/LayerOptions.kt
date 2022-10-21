@@ -71,6 +71,7 @@ class LayerOptions : Options() {
     var angle: Double? by map(Aes.ANGLE)
     var symX: Double? by map(Aes.SYM_X)
     var symY: Double? by map(Aes.SYM_Y)
+    var slice: Double? by map(Aes.SLICE)
 
     fun <T> setParameter(name: String, v: T) { properties[name] = v }
 }
