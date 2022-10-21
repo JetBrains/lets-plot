@@ -37,7 +37,7 @@ def _scaler_0_255_byte(v):
     return int(v) % 256
 
 
-def geom_image(image_data, norm=None, vmin=None, vmax=None):
+def geom_image(image_data, norm=None, vmin=None, vmax=None, extent=None):
     """
     Displays image specified by ndarray with shape (n, m) or (n, m, 3) or (n, m, 4).
     This geom is not as flexible as `geom_raster()` or `geom_tile()`
@@ -49,10 +49,15 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         Specifies image type, size and pixel values in `numpy.ndarray`.
     norm : bool, default=True
         False - disables default scaling of a 2-D float (luminance) input to the (0, 1) range.
-    vmin : float, default=None
+    vmin : float, optional
         Uses normalized luminance data. Only applied to gray-scale images encoded as float array.
-    vmax : float, default=None
+    vmax : float, optional
         Uses normalized luminance data. Only applied to gray-scale images encoded as float array.
+    extent : list of 4 numbers: [left, right, bottom, top]
+        Defines image's bounding box in terms of the "data coordinates".
+        - `left, right`: coordinates of pixels' outer edge along the x-axis for pixels in the 1-st and the last column.
+        - `bottom, top`: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
+        The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
 
     Returns
     -------
@@ -122,18 +127,19 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
     """
 
     if png == None:
-        raise Exception("pypng is not installed")
+        raise ValueError("pypng is not installed")
 
     if not is_ndarray(image_data):
-        raise Exception("Invalid image_data: ndarray is expected but was {}".format(type(image_data)))
+        raise ValueError("Invalid image_data: ndarray is expected but was {}".format(type(image_data)))
 
     if image_data.ndim not in (2, 3):
-        raise Exception("Invalid image_data: 2d or 3d array is expected but was {}-dimensional".format(image_data.ndim))
+        raise ValueError(
+            "Invalid image_data: 2d or 3d array is expected but was {}-dimensional".format(image_data.ndim))
 
     vmin = float(vmin) if vmin else None
     vmax = float(vmax) if vmax else None
     if vmin and vmax and vmin >= vmax:
-        raise Exception("vmin value must be less then vmax value, was: {} >= {}".format(vmin, vmax))
+        raise ValueError("vmin value must be less then vmax value, was: {} >= {}".format(vmin, vmax))
 
     # Figure out the type of the image
     if image_data.ndim == 2:
@@ -147,7 +153,7 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         elif nchannels == 4:
             image_type = 'rgba'
         else:
-            raise Exception(
+            raise ValueError(
                 "Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(
                     nchannels))
 
@@ -182,8 +188,28 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
         # do not normalize values (ints)
         scaler = _scaler_0_255_byte
     else:
-        raise Exception(
+        raise ValueError(
             "Invalid image_data: floating point or integer dtype is expected but was '{}'".format(image_data.dtype))
+
+    # Image extent with possible axis flipping.
+    # The default image bounds include 1/2 unit size expand in all directions.
+    ext_x0, ext_x1, ext_y0, ext_y1 = -.5, width - .5, -.5, height - .5
+    if (extent):
+        try:
+            ext_x0, ext_x1, ext_y0, ext_y1 = [float(v) for v in extent]
+        except ValueError as e:
+            raise ValueError(
+                "Invalid `extent`: list of 4 numbers expected: {}".format(e)
+            )
+
+    if (ext_x0 > ext_x1):
+        # copy after flip to work around this numpy issue: https://github.com/drj11/pypng/issues/91
+        image_data = numpy.flip(image_data, axis=1).copy()
+        ext_x0, ext_x1 = ext_x1, ext_x0
+
+    if (ext_y0 > ext_y1):
+        image_data = numpy.flip(image_data, axis=0)
+        ext_y0, ext_y1 = ext_y1, ext_y0
 
     # set output type to int8 - pypng produces broken colors with other types
     scale = numpy.vectorize(scaler, otypes=[numpy.int8])
@@ -201,11 +227,10 @@ def geom_image(image_data, norm=None, vmin=None, vmax=None):
 
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
 
-    # image bounds (including 1/2 pixel expand in all directions)
-    xmin = -0.5
-    ymin = -0.5
-    xmax = width - 0.5
-    ymax = height - 0.5
-
-    bbox = dict(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax)
-    return _geom('image', **bbox, href=href)
+    return _geom('image',
+                 href=href,
+                 xmin=ext_x0,
+                 ymin=ext_y0,
+                 xmax=ext_x1,
+                 ymax=ext_y1
+                 )
