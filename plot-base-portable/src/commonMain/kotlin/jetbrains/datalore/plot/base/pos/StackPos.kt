@@ -55,6 +55,6 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
     }
 
     companion object {
-        const val DEF_VJUST = 1.0
+        private const val DEF_VJUST = 1.0
     }
 }
