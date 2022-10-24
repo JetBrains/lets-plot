@@ -14,7 +14,6 @@ enum class StatKind {
     BIN2D,
     DOTPLOT,
     SMOOTH,
-    RESIDUAL,
     CONTOUR,
     CONTOURF,
     BOXPLOT,

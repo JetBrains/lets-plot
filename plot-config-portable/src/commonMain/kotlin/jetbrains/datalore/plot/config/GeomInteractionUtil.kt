@@ -191,7 +191,6 @@ object GeomInteractionUtil {
             GeomKind.LABEL,
             GeomKind.POINT,
             GeomKind.JITTER,
-            GeomKind.RESIDUAL,
             GeomKind.Q_Q,
             GeomKind.Q_Q_2,
             GeomKind.CONTOUR,
@@ -331,7 +330,6 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,
-            GeomKind.RESIDUAL,
             GeomKind.Q_Q,
             GeomKind.Q_Q_2,
             GeomKind.LINE,

@@ -123,8 +123,6 @@ object GeomMeta {
                 Aes.SIZE
             )
 
-            GeomKind.RESIDUAL -> POINT
-
             GeomKind.ERROR_BAR -> listOf(
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,

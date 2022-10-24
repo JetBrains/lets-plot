@@ -80,8 +80,6 @@ object StatProto {
 
             StatKind.SMOOTH -> return configureSmoothStat(options)
 
-            StatKind.RESIDUAL -> return ResidualStat()
-
             StatKind.BOXPLOT -> {
                 return Stats.boxplot(
                     whiskerIQRRatio = options.getDoubleDef(Boxplot.COEF, BoxplotStat.DEF_WHISKER_IQR_RATIO),
