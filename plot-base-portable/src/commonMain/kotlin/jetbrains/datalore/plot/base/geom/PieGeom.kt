@@ -27,9 +27,12 @@ import kotlin.math.abs
 
 class PieGeom : GeomBase() {
 
+    var holeRatio: Double = 0.0
+
     // ToDo: Add space between pieces and color of these gaps (TRANSPARENT as default)
 
-    var holeRatio: Double = 0.0
+    private val strokeWidth: Double = 1.0
+    private val strokeColor: Color = Color.WHITE
 
     private var myFillColorMapper: (DataPointAesthetics) -> Color = fillColorMapper(Aes.FILL)
 
@@ -38,7 +41,7 @@ class PieGeom : GeomBase() {
     }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PieLegendKeyElementFactory(myFillColorMapper, strokeColor = Color.TRANSPARENT)
+        get() = PieLegendKeyElementFactory(myFillColorMapper, strokeColor)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -71,7 +74,8 @@ class PieGeom : GeomBase() {
             val linePath = buildSector(location, sector, dataPoints[index])
             result.add(linePath)
 
-            buildHint(location, sector, ctx)
+            val colorMarkerMapper =  { p: DataPointAesthetics -> listOf(myFillColorMapper(p)) }
+            buildHint(location, sector, colorMarkerMapper(dataPoints[index]), ctx)
         }
         return result
     }
@@ -81,64 +85,48 @@ class PieGeom : GeomBase() {
         sector: Sector,
         p: DataPointAesthetics
     ): LinePath {
-        val geometry = if (holeRatio == 0.0) ::buildPieSector else ::buildDonutSector
-        val linePath = geometry(location, sector) // ToDo: Use unified method
-        val fill = myFillColorMapper(p)
-        val fillAlpha = AestheticsUtil.alpha(fill, p)
-        linePath.fill().set(Colors.withOpacity(fill, fillAlpha))
-        linePath.width().set(1.0)
-        linePath.color().set(Color.WHITE)
-        return linePath
-    }
-
-    private fun buildPieSector(location: DoubleVector, sector: Sector): LinePath {
-        val basis = DoubleVector(0.0, -sector.radius)
-        val builder = SvgPathDataBuilder()
-        builder.moveTo(location)
-        builder.lineTo(location.add(basis.rotate(sector.startAngle)))
-        val arcTo = location.add(basis.rotate(sector.endAngle))
-        builder.ellipticalArc(
-            rx = sector.radius,
-            ry = sector.radius,
-            xAxisRotation = 0.0,
-            largeArc = (sector.endAngle - sector.startAngle) > PI,
-            sweep = true,
-            to = arcTo
-        )
-        builder.closePath()
-        return LinePath(builder)
-    }
-
-    private fun buildDonutSector(location: DoubleVector, sector: Sector): LinePath {
         val builder = SvgPathDataBuilder()
 
         val innerRadius = sector.radius * holeRatio
+        val innerBasis = DoubleVector(0.0, -innerRadius)
+        val outerBasis = DoubleVector(0.0, -sector.radius)
+        val p1 = location.add(innerBasis.rotate(sector.startAngle))
+        val p2 = location.add(outerBasis.rotate(sector.startAngle))
+        val p3 = location.add(outerBasis.rotate(sector.endAngle))
+        val p4 = location.add(innerBasis.rotate(sector.endAngle))
+
         val largeArc = (sector.endAngle - sector.startAngle) > PI
 
-        val startPoint = location.add(DoubleVector(0.0, -innerRadius).rotate(sector.startAngle))
-        builder.moveTo(startPoint)
-        builder.lineTo(location.add(DoubleVector(0.0, -sector.radius).rotate(sector.startAngle)))
+        builder.moveTo(p1)
+        builder.lineTo(p2)
         builder.ellipticalArc(
             rx = sector.radius,
             ry = sector.radius,
             xAxisRotation = 0.0,
             largeArc = largeArc,
             sweep = true,
-            to = location.add(DoubleVector(0.0, -sector.radius).rotate(sector.endAngle))
+            to = p3
         )
-        builder.lineTo(location.add(DoubleVector(0.0, -innerRadius).rotate(sector.endAngle)))
+        builder.lineTo(p4)
         builder.ellipticalArc(
             rx = innerRadius,
             ry = innerRadius,
             xAxisRotation = 0.0,
             largeArc = largeArc,
             sweep = false,
-            to = startPoint
+            to = p1
         )
-        return LinePath(builder)
+
+        return LinePath(builder).apply {
+            val fill = myFillColorMapper(p)
+            val fillAlpha = AestheticsUtil.alpha(fill, p)
+            fill().set(Colors.withOpacity(fill, fillAlpha))
+            width().set(strokeWidth)
+            color().set(strokeColor)
+        }
     }
 
-    private fun buildHint(location: DoubleVector, sector: Sector, ctx: GeomContext) {
+    private fun buildHint(location: DoubleVector, sector: Sector, markerColors: List<Color>, ctx: GeomContext) {
         val innerRadius = sector.radius * holeRatio
 
         val step = toRadians(15.0)
@@ -146,13 +134,12 @@ class PieGeom : GeomBase() {
             generateSequence(sector.startAngle) { it + step }.takeWhile { it < sector.endAngle } + sector.endAngle
         val points = listOf(location.add(DoubleVector(0.0, -innerRadius).rotate(sector.startAngle))) +
                 middleAngles.map { location.add(DoubleVector(0.0, -sector.radius).rotate(it)) } +
-                location.add(DoubleVector(0.0, -innerRadius).rotate(sector.endAngle)) +
                 middleAngles.toList().reversed().map { location.add(DoubleVector(0.0, -innerRadius).rotate(it)) }
 
         ctx.targetCollector.addPolygon(
             points = points,
             localToGlobalIndex = { sector.dataPointIndex },
-            GeomTargetCollector.TooltipParams()
+            GeomTargetCollector.TooltipParams(markerColors = markerColors)
         )
     }
 
@@ -187,7 +174,6 @@ class PieGeom : GeomBase() {
             val values = dataPoints.map { it.slice()!! }
             var currentAngle = Double.NaN
             return transformValues2Angles(values).withIndex()
-                .sortedByDescending { it.value } // ToDo: remove it!
                 .map { (index, angle) ->
                     if (currentAngle.isNaN()) {
                         currentAngle = -angle
