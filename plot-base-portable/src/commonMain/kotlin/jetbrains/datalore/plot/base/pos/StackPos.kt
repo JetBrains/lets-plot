@@ -13,14 +13,11 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.util.MutableDouble
 
-internal class StackPos(
-    aes: Aesthetics,
-    vjust: Double?
-) : PositionAdjustment {
+internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust)
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST)
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double?): Map<Int, Double> {
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double): Map<Int, Double> {
         val offsetByIndex = HashMap<Int, Double>()
         val negPosBaseByBin = HashMap<Double, Pair<MutableDouble, MutableDouble>>()
         for (i in 0 until aes.dataPointCount()) {
@@ -42,11 +39,7 @@ internal class StackPos(
                     } else {
                         pair.first.getAndAdd(y)
                     }
-                    offsetByIndex[i] = if (vjust != null) {
-                        offset - y * if (y >= 0) (1 - vjust) else vjust
-                    } else {
-                        offset
-                    }
+                    offsetByIndex[i] = offset - y * (1 - vjust)
                 }
             }
         }
@@ -59,5 +52,9 @@ internal class StackPos(
 
     override fun handlesGroups(): Boolean {
         return PositionAdjustments.Meta.STACK.handlesGroups()
+    }
+
+    companion object {
+        const val DEF_VJUST = 1.0
     }
 }
