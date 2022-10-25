@@ -4,7 +4,7 @@
 #
 from collections.abc import Iterable
 from datetime import datetime
-from typing import Any, Tuple, Sequence
+from typing import Any, Tuple, Sequence, Optional
 
 from lets_plot._type_utils import is_dict_or_dataframe
 from lets_plot.geo_data_internals.utils import find_geo_names
@@ -164,11 +164,11 @@ def get_geo_data_frame_meta(geo_data_frame) -> dict:
     }
 
 
-def geo_data_frame_to_wgs84(data):
-    if data.crs is not None:
-        return data.to_crs(epsg=4326)
-    else:
-        return data
+def geo_data_frame_to_crs(gdf: 'GeoDataFrame', use_crs: Optional[str]):
+    if gdf.crs is None:
+        return gdf
+
+    return gdf.to_crs('EPSG:4326' if use_crs is None else use_crs)
 
 
 def is_ndarray(data) -> bool:

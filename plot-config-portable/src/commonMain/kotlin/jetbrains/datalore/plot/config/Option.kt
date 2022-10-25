@@ -122,6 +122,7 @@ object Option {
         const val TOOLTIP_TITLE = "tooltip_title"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
+        const val USE_CRS = "use_crs"
         const val ORIENTATION = "orientation"
         const val MARGINAL = "marginal"
 
@@ -657,6 +658,11 @@ object Option {
         const val EXPAND = "expand"  // todo
         const val ORIENTATION = "orientation" // Todo: see 'coord_map'
         const val PROJECTION = "projection"   // todo
+
+        object Projections {
+            const val MERCATOR = "mercator"
+            const val IDENTITY = "identity"
+        }
     }
 
     object CoordName {

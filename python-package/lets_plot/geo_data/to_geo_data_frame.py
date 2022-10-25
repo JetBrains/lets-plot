@@ -19,7 +19,7 @@ ShapelyMultiPolygon = shapely.geometry.MultiPolygon
 def _create_geo_data_frame(data, geometry) -> DataFrame:
     return GeoDataFrame(
         data,
-        # crs={'init': 'epsg:4326'}, # causes warning in Jupyter. Everything looks fine w/o. Related issue: https://github.com/geopandas/geopandas/issues/1245
+        crs='EPSG:4326',
         geometry=geometry
     )
 

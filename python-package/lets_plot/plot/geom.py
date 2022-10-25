@@ -5,7 +5,7 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
-from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_wgs84, get_geo_data_frame_meta
+from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -27,7 +27,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-               map=None, map_join=None,
+               map=None, map_join=None, use_crs=None,
                **other_args):
     """
     Draw points defined by an x and y coordinate, as for a scatter plot.
@@ -65,6 +65,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -180,12 +183,12 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  **other_args)
 
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              map=None, map_join=None,
+              map=None, map_join=None, use_crs=None,
               **other_args):
     """
     Connects observations in the order, how they appear in the data.
@@ -223,6 +226,9 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -319,7 +325,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  **other_args)
 
 
@@ -2038,7 +2044,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 map=None, map_join=None,
+                 map=None, map_join=None, use_crs=None,
                  **other_args):
     """
     Display a filled closed path defined by the vertex coordinates of individual polygons.
@@ -2071,6 +2077,9 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2198,12 +2207,12 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  **other_args)
 
 
 def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-             map=None, map_join=None,
+             map=None, map_join=None, use_crs=None,
              **other_args):
     """
     Display polygons from a reference map.
@@ -2241,6 +2250,9 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2335,7 +2347,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  **other_args)
 
 
@@ -4687,7 +4699,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              map=None, map_join=None,
+              map=None, map_join=None, use_crs=None,
               **other_args):
     """
     Display an axis-aligned rectangle defined by two corners.
@@ -4720,6 +4732,9 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4822,7 +4837,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  **other_args)
 
 
@@ -4931,7 +4946,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 
 def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-              map=None, map_join=None,
+              map=None, map_join=None, use_crs=None,
               label_format=None,
               na_text=None,
               nudge_x=None, nudge_y=None,
@@ -4972,6 +4987,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5104,7 +5122,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  label_format=label_format,
                  na_text=na_text,
                  nudge_x=nudge_x, nudge_y=nudge_y,
@@ -5112,7 +5130,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-               map=None, map_join=None,
+               map=None, map_join=None, use_crs=None,
                label_format=None,
                na_text=None,
                nudge_x=None, nudge_y=None,
@@ -5154,6 +5172,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
+    use_crs : str, default=None
+        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
+        If None then data will be projected to WGS84 and then to coord_map projection.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5297,7 +5318,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 map=map, map_join=map_join,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  label_format=label_format,
                  na_text=na_text,
                  nudge_x=nudge_x, nudge_y=nudge_y,
@@ -5325,9 +5346,9 @@ def _geom(name, *,
     if is_geocoder(data):
         data = data.get_geocodes()
 
-    # TODO: check why map shouldn't be a GeoDataFrame
+    # GDF in a map parameter has higher priority for defining a geo_data_meta
     if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map', None)):
-        data = geo_data_frame_to_wgs84(data)
+        data = geo_data_frame_to_crs(data, kwargs.get('use_crs', None))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
     return LayerSpec(geom=name,

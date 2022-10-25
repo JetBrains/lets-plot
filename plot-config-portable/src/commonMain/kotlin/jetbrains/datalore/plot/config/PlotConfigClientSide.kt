@@ -59,9 +59,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         mappersByAesNP = mappersByAes.filterKeys { !Aes.isPositional(it) }
 
         val preferredCoordProvider: CoordProvider? = layerConfigs
-            .map { it.geomProto as GeomProtoClientSide }
-            .firstOrNull { it.hasPreferredCoordinateSystem() }
-            ?.preferredCoordinateSystem()
+            .firstNotNullOfOrNull { (it.geomProto as GeomProtoClientSide).preferredCoordinateSystem(it) }
+
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
         val coordProvider = CoordConfig.create(
             get(COORD),

@@ -6,6 +6,8 @@ import json
 
 __all__ = ['aes', 'layer']
 
+from typing import Optional
+
 from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
 
@@ -255,17 +257,22 @@ class PlotSpec(FeatureSpec):
                        scales=other.__scales,
                        layers=other.__layers,
                        metainfo_list=other.__metainfo_list,
-                       is_livemap=other.__is_livemap)
+                       is_livemap=other.__is_livemap,
+                       crs_initialized=other.__crs_initialized,
+                       crs=other.__crs,
+                       )
         dup.props().update(other.props())
         return dup
 
-    def __init__(self, data, mapping, scales, layers, metainfo_list=[], is_livemap=False, **kwargs):
+    def __init__(self, data, mapping, scales, layers, metainfo_list=[], is_livemap=False, crs_initialized=False, crs=None, **kwargs):
         """Initialize self."""
         super().__init__('plot', name=None, data=data, mapping=mapping, **kwargs)
         self.__scales = list(scales)
         self.__layers = list(layers)
         self.__metainfo_list = list(metainfo_list)
         self.__is_livemap = is_livemap
+        self.__crs_initialized = crs_initialized
+        self.__crs = crs
 
     def get_plot_shared_data(self):
         """
@@ -358,6 +365,19 @@ class PlotSpec(FeatureSpec):
             if other.kind == 'layer':
                 if other.props()['geom'] == 'livemap':
                     plot.__is_livemap = True
+
+                from lets_plot.plot.util import is_geo_data_frame  # local import to break circular reference
+                if is_geo_data_frame(other.props().get('data', None)) \
+                        or is_geo_data_frame(other.props().get('map', None)):
+                    if plot.__crs_initialized:
+                        if plot.__crs != other.props().get('use_crs', None):
+                            raise ValueError('All geoms with map parameter should either use same `use_crs` or not use it at all')
+                    else:
+                        plot.__crs_initialized = True
+                        plot.__crs = other.props().get('use_crs', None)
+
+                if plot.__is_livemap and plot.__crs is not None:
+                    raise ValueError("livemap doesn't support `use_crs`")
 
                 other.before_append(plot.__is_livemap)
                 plot.__layers.append(other)
@@ -471,7 +491,7 @@ class LayerSpec(FeatureSpec):
         super().__init__('layer', name=None, **kwargs)
 
     def before_append(self, is_livemap):
-        from .util import normalize_map_join, is_geo_data_frame, auto_join_geo_names, geo_data_frame_to_wgs84, \
+        from .util import normalize_map_join, is_geo_data_frame, auto_join_geo_names, geo_data_frame_to_crs, \
             get_geo_data_frame_meta
         from lets_plot.geo_data_internals.utils import is_geocoder
 
@@ -502,7 +522,7 @@ class LayerSpec(FeatureSpec):
                     raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
 
         if is_geo_data_frame(map):
-            map = geo_data_frame_to_wgs84(map)
+            map = geo_data_frame_to_crs(map, self.props().get('use_crs', None))
             map_join = auto_join_geo_names(map_join, map)
             map_data_meta = get_geo_data_frame_meta(map)
 

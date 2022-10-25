@@ -6,8 +6,7 @@
 package jetbrains.datalore.plot.builder.coord
 
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.spatial.projections.azimuthalEqualArea
-import jetbrains.datalore.base.spatial.projections.conicEqualArea
+import jetbrains.datalore.base.spatial.projections.Projection
 import jetbrains.datalore.base.spatial.projections.mercator
 
 object CoordProviders {
@@ -35,17 +34,10 @@ object CoordProviders {
         xLim: DoubleSpan? = null,
         yLim: DoubleSpan? = null,
         flipped: Boolean = false,
-        projection: String = "mercator"
+        projection: Projection = mercator()
     ): CoordProvider {
-        // Only Mercator so far.
-        val mapProjection = when (projection) {
-            "mercator" -> mercator()
-            "conic" -> conicEqualArea()
-            "azimuthal" -> azimuthalEqualArea()
-            else -> mercator()
-        }
         return ProjectionCoordProvider(
-            mapProjection,
+            projection,
             xLim,
             yLim,
             flipped

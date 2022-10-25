@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.spatial.projections.identity
+import jetbrains.datalore.base.spatial.projections.mercator
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
@@ -30,30 +32,26 @@ import jetbrains.datalore.plot.config.Option.Geom.Step
 import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
 import jetbrains.datalore.plot.config.Option.Geom.YDotplot
+import jetbrains.datalore.plot.config.Option.Layer.USE_CRS
 
 
 class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
-    private val preferredCoordinateSystem: CoordProvider? = when (geomKind) {
-        GeomKind.TILE,
-        GeomKind.BIN_2D,
-        GeomKind.CONTOUR,
-        GeomKind.CONTOURF,
-        GeomKind.DENSITY2D,
-        GeomKind.DENSITY2DF,
-        GeomKind.RASTER,
-        GeomKind.IMAGE -> CoordProviders.fixed(1.0)
 
-        GeomKind.MAP -> CoordProviders.map()
+    fun preferredCoordinateSystem(layerConfig: LayerConfig): CoordProvider? {
+        return when (geomKind) {
+            GeomKind.TILE,
+            GeomKind.BIN_2D,
+            GeomKind.CONTOUR,
+            GeomKind.CONTOURF,
+            GeomKind.DENSITY2D,
+            GeomKind.DENSITY2DF,
+            GeomKind.RASTER,
+            GeomKind.IMAGE -> CoordProviders.fixed(1.0)
 
-        else -> null
-    }
+            GeomKind.MAP -> CoordProviders.map(projection = identity().takeIf { layerConfig.has(USE_CRS) } ?: mercator())
 
-    fun hasPreferredCoordinateSystem(): Boolean {
-        return preferredCoordinateSystem != null
-    }
-
-    fun preferredCoordinateSystem(): CoordProvider {
-        return preferredCoordinateSystem!!
+            else -> null
+        }
     }
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
