@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.builder.assemble.PosProvider
+import jetbrains.datalore.plot.config.Option.Pos
 
 @Suppress("MemberVisibilityCanBePrivate")
 internal object PosProto {
@@ -19,38 +20,26 @@ internal object PosProto {
     const val JITTER = "jitter"
     const val JITTER_DODGE = "jitterdodge"
 
-    // ToDo: move option names to the plot.config.Option to make them available in LPK and to remove
-    //  duplicates in org.jetbrains.letsPlot.pos.
-    // option names
-    const val DODGE_WIDTH = "width"
-    const val JITTER_WIDTH = "width"
-    const val JITTER_HEIGHT = "height"
-    const val NUDGE_WIDTH = "x"
-    const val NUDGE_HEIGHT = "y"
-    const val JD_DODGE_WIDTH = "dodge_width"
-    const val JD_JITTER_WIDTH = "jitter_width"
-    const val JD_JITTER_HEIGHT = "jitter_height"
-
     fun createPosProvider(posOptions: Map<String, Any>): PosProvider {
         val posName = ConfigUtil.featureName(posOptions)
         val opts = OptionsAccessor(posOptions)
         return when (posName) {
             IDENTITY -> PosProvider.wrap(PositionAdjustments.identity())
-            STACK -> PosProvider.barStack()
-            DODGE -> PosProvider.dodge(opts.getDouble(DODGE_WIDTH))
-            FILL -> PosProvider.fill()
+            STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST))
+            DODGE -> PosProvider.dodge(opts.getDouble(Pos.Dodge.WIDTH))
+            FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST))
             JITTER -> PosProvider.jitter(
-                opts.getDouble(JITTER_WIDTH),
-                opts.getDouble(JITTER_HEIGHT)
+                opts.getDouble(Pos.Jitter.WIDTH),
+                opts.getDouble(Pos.Jitter.HEIGHT)
             )
             NUDGE -> PosProvider.nudge(
-                opts.getDouble(NUDGE_WIDTH),
-                opts.getDouble(NUDGE_HEIGHT)
+                opts.getDouble(Pos.Nudge.WIDTH),
+                opts.getDouble(Pos.Nudge.HEIGHT)
             )
             JITTER_DODGE -> PosProvider.jitterDodge(
-                opts.getDouble(JD_DODGE_WIDTH),
-                opts.getDouble(JD_JITTER_WIDTH),
-                opts.getDouble(JD_JITTER_HEIGHT)
+                opts.getDouble(Pos.JitterDodge.DODGE_WIDTH),
+                opts.getDouble(Pos.JitterDodge.JITTER_WIDTH),
+                opts.getDouble(Pos.JitterDodge.JITTER_HEIGHT)
             )
             else -> throw IllegalArgumentException("Unknown position adjustments name: '$posName'")
         }

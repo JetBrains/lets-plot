@@ -17,6 +17,8 @@ class PositionStackFill {
             histPlot(),
             histPlot("identity"),
             histPlot("fill"),
+            withLabel("stack", vjust = 0.5),
+            withLabel("fill", vjust = 0.5),
         )
     }
 
@@ -66,5 +68,33 @@ class PositionStackFill {
         plotSpec["data"] = Iris.df
         plotSpec["ggtitle"] = mapOf("text" to "Position: ${position?.let { "$it" } ?: "def"}")
         return plotSpec
+    }
+
+    private fun withLabel(position: String, vjust: Double?): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'ggtitle': {'text': 'Position: $position with vjust = $vjust'}," +
+                "   'data': {" +
+                "       'x': [1, 1, 2, 2, 1, 2, 2]," +
+                "       'y': [1, 3, 2, 1, 2, -3, 2], " +
+                "       'grp': ['a', 'b', 'a', 'b', 'c', 'c','d']" +
+                "    }," +
+                "   'mapping': {'x': 'x', 'y': 'y', 'group': 'grp'}," +
+                "   'kind': 'plot'," +
+                "   'layers': [" +
+                "           {" +
+                "               'geom': 'bar'," +
+                "               'stat': 'identity'," +
+                "               'mapping': {'fill': 'grp'}," +
+                "               'position':{ 'name': '$position' }" +
+                "           }," +
+                "           {" +
+                "               'geom': 'label'," +
+                "               'mapping': {'label': 'y'}," +
+                "               'position':{'name': '$position', 'vjust':  $vjust }" +
+                "           }" +
+                "   ]" +
+                "}"
+
+        return parsePlotSpec(spec)
     }
 }

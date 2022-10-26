@@ -361,6 +361,36 @@ object Option {
         }
     }
 
+    object Pos {
+        object Dodge {
+            const val WIDTH = "width"
+        }
+
+        object Jitter {
+            const val WIDTH = "width"
+            const val HEIGHT = "height"
+        }
+
+        object Nudge {
+            const val WIDTH = "x"
+            const val HEIGHT = "y"
+        }
+
+        object JitterDodge {
+            const val DODGE_WIDTH = "dodge_width"
+            const val JITTER_WIDTH = "jitter_width"
+            const val JITTER_HEIGHT = "jitter_height"
+        }
+
+        object Stack {
+            const val VJUST = "vjust"
+        }
+
+        object Fill {
+            const val VJUST = "vjust"
+        }
+    }
+
     object Scale {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"

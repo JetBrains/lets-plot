@@ -19,7 +19,7 @@ import kotlin.math.max
 
 object TextUtil {
 
-    val HJUST_MAP: Map<Any, Text.HorizontalAnchor> = mapOf(
+    private val HJUST_MAP: Map<Any, Text.HorizontalAnchor> = mapOf(
         "right" to Text.HorizontalAnchor.RIGHT,
         "middle" to Text.HorizontalAnchor.MIDDLE,
         "left" to Text.HorizontalAnchor.LEFT,
@@ -27,7 +27,7 @@ object TextUtil {
         0.5 to Text.HorizontalAnchor.MIDDLE,
         1.0 to Text.HorizontalAnchor.RIGHT
     )
-    val VJUST_MAP: Map<Any, Text.VerticalAnchor> = mapOf(
+    private val VJUST_MAP: Map<Any, Text.VerticalAnchor> = mapOf(
         "bottom" to Text.VerticalAnchor.BOTTOM,
         "center" to Text.VerticalAnchor.CENTER,
         "top" to Text.VerticalAnchor.TOP,

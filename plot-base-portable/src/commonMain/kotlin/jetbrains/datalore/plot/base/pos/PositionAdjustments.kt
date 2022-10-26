@@ -39,15 +39,12 @@ object PositionAdjustments {
         return DodgePos(aesthetics, groupCount, width)
     }
 
-    fun stack(aes: Aesthetics, strategy: StackingStrategy): PositionAdjustment {
-        return when (strategy) {
-            StackingStrategy.SPLIT_POSITIVE_NEGATIVE -> StackPos.splitPositiveNegative(aes)
-            StackingStrategy.SUM_POSITIVE_NEGATIVE -> StackPos.sumPositiveNegative(aes)
-        }
+    fun stack(aes: Aesthetics, vjust: Double?): PositionAdjustment {
+        return StackPos(aes, vjust)
     }
 
-    fun fill(aesthetics: Aesthetics): PositionAdjustment {
-        return FillPos(aesthetics)
+    fun fill(aesthetics: Aesthetics, vjust: Double?): PositionAdjustment {
+        return FillPos(aesthetics, vjust)
     }
 
     fun jitter(width: Double?, height: Double?): PositionAdjustment {
@@ -81,10 +78,4 @@ object PositionAdjustments {
             return handlesGroups
         }
     }
-
-    enum class StackingStrategy {
-        SUM_POSITIVE_NEGATIVE,
-        SPLIT_POSITIVE_NEGATIVE
-    }
-
 }

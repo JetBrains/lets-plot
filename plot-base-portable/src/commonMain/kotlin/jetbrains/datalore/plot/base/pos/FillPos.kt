@@ -12,9 +12,9 @@ import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class FillPos(aes: Aesthetics) : PositionAdjustment {
+internal class FillPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
-    private val myStackPosHelper: PositionAdjustment = StackPos.splitPositiveNegative(aes)
+    private val myStackPosHelper: PositionAdjustment = StackPos(aes, vjust)
     private val myScalerByIndex: Map<Int, Double> = mapIndexToScaler(aes)
 
     private fun mapIndexToScaler(aes: Aesthetics): Map<Int, Double> {

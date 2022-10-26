@@ -15,6 +15,11 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_extent.ipynb).
 
+- `vjust` parameter in `position_stack()` and `position_fill()` [[#323](https://github.com/JetBrains/lets-plot/issues/323)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/position_stack.ipynb).
+
+
 ### Changed
 
 ### Fixed

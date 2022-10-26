@@ -30,10 +30,10 @@ abstract class PosProvider {
             }
         }
 
-        fun barStack(): PosProvider {
+        fun barStack(vjust: Double? = null): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.stack(ctx.aesthetics, PositionAdjustments.StackingStrategy.SPLIT_POSITIVE_NEGATIVE)
+                    return PositionAdjustments.stack(ctx.aesthetics, vjust)
                 }
 
                 override fun handlesGroups(): Boolean {
@@ -57,10 +57,10 @@ abstract class PosProvider {
             }
         }
 
-        fun fill(): PosProvider {
+        fun fill(vjust: Double? = null): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.fill(ctx.aesthetics)
+                    return PositionAdjustments.fill(ctx.aesthetics, vjust)
                 }
 
                 override fun handlesGroups(): Boolean {
