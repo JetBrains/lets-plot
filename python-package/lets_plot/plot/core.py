@@ -367,14 +367,14 @@ class PlotSpec(FeatureSpec):
                     plot.__is_livemap = True
 
                 from lets_plot.plot.util import is_geo_data_frame  # local import to break circular reference
-                if is_geo_data_frame(other.props().get('data', None)) \
-                        or is_geo_data_frame(other.props().get('map', None)):
+                if is_geo_data_frame(other.props().get('data')) \
+                        or is_geo_data_frame(other.props().get('map')):
                     if plot.__crs_initialized:
-                        if plot.__crs != other.props().get('use_crs', None):
+                        if plot.__crs != other.props().get('use_crs'):
                             raise ValueError('All geoms with map parameter should either use same `use_crs` or not use it at all')
                     else:
                         plot.__crs_initialized = True
-                        plot.__crs = other.props().get('use_crs', None)
+                        plot.__crs = other.props().get('use_crs')
 
                 if plot.__is_livemap and plot.__crs is not None:
                     raise ValueError("livemap doesn't support `use_crs`")
@@ -495,9 +495,9 @@ class LayerSpec(FeatureSpec):
             get_geo_data_frame_meta
         from lets_plot.geo_data_internals.utils import is_geocoder
 
-        name = self.props().get('geom', None)
-        map_join = self.props().get('map_join', None)
-        map = self.props().get('map', None)
+        name = self.props()['geom']
+        map_join = self.props().get('map_join')
+        map = self.props().get('map')
         map_data_meta = None
 
         if map_join is None and map is None:
@@ -522,7 +522,7 @@ class LayerSpec(FeatureSpec):
                     raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
 
         if is_geo_data_frame(map):
-            map = geo_data_frame_to_crs(map, self.props().get('use_crs', None))
+            map = geo_data_frame_to_crs(map, self.props().get('use_crs'))
             map_join = auto_join_geo_names(map_join, map)
             map_data_meta = get_geo_data_frame_meta(map)
 

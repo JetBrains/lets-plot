@@ -104,7 +104,7 @@ def test_data_should_call_to_dataframe():
 
 
 def get_layer_spec(plot_spec, spec_name):
-    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0].get(spec_name, None)
+    return _standardize_plot_spec(plot_spec.as_dict())['layers'][0].get(spec_name)
 
 
 @pytest.mark.parametrize('map_join,map_columns,expected', [

@@ -19,6 +19,10 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/position_stack.ipynb).
 
+- `use_crs` parameter in `geom_map` and other geoms, working with `GeoDataFrame`
+ 
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/map_use_crs.ipynb).
+
 
 ### Changed
 

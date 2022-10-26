@@ -5347,8 +5347,8 @@ def _geom(name, *,
         data = data.get_geocodes()
 
     # GDF in a map parameter has higher priority for defining a geo_data_meta
-    if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map', None)):
-        data = geo_data_frame_to_crs(data, kwargs.get('use_crs', None))
+    if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map')):
+        data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
 
     return LayerSpec(geom=name,
