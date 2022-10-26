@@ -36,7 +36,7 @@ class Test:
 
     # 2 x 3 array of ints
     expected_gray_2_x_3 = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAEElEQVR4nGP4dWIaQ4oRAwAQDALv5PFYgAAAAABJRU5ErkJggg=='
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAEElEQVR4nGP4f2YmQ5oxAwAQXgL+el5zTgAAAABJRU5ErkJggg=='
     )
     test_params_list.append((
         np.array([
@@ -47,15 +47,12 @@ class Test:
     ))
 
     # 2 x 3 array of floats
-    expected_gray_2_x_3_floats = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAAAAAC4HznGAAAAEElEQVR4nGP4f2YmQ5oxAwAQXgL+el5zTgAAAABJRU5ErkJggg=='
-    )
     test_params_list.append((
         np.array([
             [0., 50 / 255, 100 / 255],
             [150 / 255, 200 / 255, 250 / 255]
         ]),
-        expected_gray_2_x_3_floats
+        expected_gray_2_x_3
     ))
 
     # -- rgb --
