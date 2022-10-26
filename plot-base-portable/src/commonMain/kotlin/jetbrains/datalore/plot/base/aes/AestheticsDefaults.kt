@@ -268,6 +268,8 @@ open class AestheticsDefaults {
 
         fun pie(): AestheticsDefaults {
             return base()
+                .update(Aes.SIZE, 10.0)
+                .updateInLegend(Aes.SIZE, 5.0)
         }
 
         private fun base(): AestheticsDefaults {

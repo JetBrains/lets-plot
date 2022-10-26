@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Image
 import jetbrains.datalore.plot.config.Option.Geom.Label
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
+import jetbrains.datalore.plot.config.Option.Geom.Pie
 import jetbrains.datalore.plot.config.Option.Geom.Point
 import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
