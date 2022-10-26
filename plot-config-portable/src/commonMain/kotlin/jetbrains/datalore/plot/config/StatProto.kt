@@ -34,6 +34,7 @@ object StatProto {
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
+            StatKind.PIE_COUNT -> return Stats.pieCount()
             StatKind.BIN -> {
                 return Stats.bin(
                     binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),

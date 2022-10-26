@@ -90,6 +90,10 @@ object Stats {
         return CountStat()
     }
 
+    fun pieCount(): Stat {
+        return PieCountStat()
+    }
+
     fun bin(
         binCount: Int = BinStat.DEF_BIN_COUNT,
         binWidth: Double? = null,
