@@ -143,6 +143,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             DEFAULTS[Q_Q_2_LINE] = qq2LineDefaults()
             DEFAULTS[FREQPOLY] = freqpolyDefaults()
             DEFAULTS[BIN_2D] = bin2dDefaults()
+            DEFAULTS[PIE] = pieDefaults()
         }
 
         private fun commonDefaults(): Map<String, Any> {
@@ -285,6 +286,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun bin2dDefaults(): Map<String, Any> {
             return mapOf(
                 Layer.STAT to "bin2d"
+            )
+        }
+
+        private fun pieDefaults(): Map<String, Any> {
+            return mapOf(
+                Layer.STAT to "pie_count"
             )
         }
     }

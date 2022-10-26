@@ -10,6 +10,7 @@ import jetbrains.datalore.base.enums.EnumInfoFactory
 enum class StatKind {
     IDENTITY,
     COUNT,
+    PIE_COUNT,
     BIN,
     BIN2D,
     DOTPLOT,
