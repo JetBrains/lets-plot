@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.DataFrame
  * Counts the number of cases at each x, y, fill position.
  * (or if the weight aesthetic is supplied, the sum of the weights)
  */
-internal class PieCountStat : AbstractCountStat(DEF_MAPPING, Aes.FILL) {
+internal class PieCountStat(baseAes: Aes<*>) : AbstractCountStat(DEF_MAPPING, baseAes) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.Y, Aes.WEIGHT)
