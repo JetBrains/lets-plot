@@ -159,7 +159,7 @@ object StatProto {
             span = options.getDoubleDef(Smooth.SPAN, SmoothStat.DEF_SPAN),
             polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStat.DEF_DEG),
             loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_LOESS_CRITICAL_SIZE),
-            samplingSeed = options.getLongDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_SAMPLING_SEED)
+            samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStat.DEF_SAMPLING_SEED)
         )
     }
 
