@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.util
 import jetbrains.datalore.plot.config.Option
 
 
-class CoordOptions : Options<CoordOptions>() {
+class CoordOptions : Options() {
     var name: String? by map(Option.Meta.NAME)
     var xLim: Pair<Double, Double>? by map(Option.Coord.X_LIM)
     var yLim: Pair<Double, Double>? by map(Option.Coord.Y_LIM)

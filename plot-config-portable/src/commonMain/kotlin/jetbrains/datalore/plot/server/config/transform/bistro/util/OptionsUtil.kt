@@ -14,15 +14,14 @@ import jetbrains.datalore.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.config.Option
 
 object OptionsUtil {
-    fun toSpec(options: Options<*>): MutableMap<String, Any> {
-        @Suppress("UNCHECKED_CAST")
+    fun toSpec(options: Options): MutableMap<String, Any> {
         return toSpec(options.properties)
     }
 
     private fun toSpec(prop: Any?): Any? {
         return when (prop) {
             null -> null
-            is Options<*> -> toSpec(prop)
+            is Options -> toSpec(prop)
             is List<*> -> prop.map(this::toSpec)
             is Map<*, *> -> toSpec(prop)
             else -> standardise(prop)

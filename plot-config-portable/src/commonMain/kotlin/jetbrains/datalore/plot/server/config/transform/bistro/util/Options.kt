@@ -5,18 +5,23 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro.util
 
+import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.config.Option
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-abstract class Options<T>(
-    val properties: MutableMap<String, Any?>
+abstract class Options(
+    val properties: MutableMap<String, Any?> = mutableMapOf()
 ) {
-    constructor() : this(mutableMapOf())
+    inline operator fun <reified T> get(aes: Aes<T>): T = properties[Option.Mapping.toOption(aes)] as T
+    operator fun <T> set(aes: Aes<T>, v: T) { properties[Option.Mapping.toOption(aes)] = v }
+}
 
-    inline fun <T, reified TValue> T.map(key: String): ReadWriteProperty<T, TValue?> {
-        return object : ReadWriteProperty<T, TValue?> {
-            override fun getValue(thisRef: T, property: KProperty<*>): TValue? = properties.get(key) as TValue?
-            override fun setValue(thisRef: T, property: KProperty<*>, value: TValue?) = run { properties[key] = value }
-        }
+inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, TValue?> {
+    return object : ReadWriteProperty<T, TValue?> {
+        override fun getValue(thisRef: T, property: KProperty<*>): TValue? = thisRef.properties[key] as TValue?
+        override fun setValue(thisRef: T, property: KProperty<*>, value: TValue?) = run { thisRef.properties[key] = value }
     }
 }
+
+inline fun <reified TValue> map(key: Aes<*>): ReadWriteProperty<Options, TValue?> = map(Option.Mapping.toOption(key))

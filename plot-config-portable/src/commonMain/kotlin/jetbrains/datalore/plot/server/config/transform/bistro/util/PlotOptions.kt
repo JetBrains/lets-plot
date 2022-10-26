@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.config.Option.Plot
 import jetbrains.datalore.plot.config.Option.PlotBase
 
 
-class PlotOptions : Options<PlotOptions>(
+class PlotOptions : Options(
     mutableMapOf(Meta.KIND to Meta.Kind.PLOT)
 ) {
     var data: Map<String, List<Any>>? by map(PlotBase.DATA)
@@ -22,7 +22,7 @@ class PlotOptions : Options<PlotOptions>(
     var themeOptions: ThemeOptions? by map(Plot.THEME)
     var size: Size? by map(Plot.SIZE)
 
-    class Size : Options<Size>() {
+    class Size : Options() {
         var width: Int? by map(Plot.WIDTH)
         var height: Int? by map(Plot.HEIGHT)
     }

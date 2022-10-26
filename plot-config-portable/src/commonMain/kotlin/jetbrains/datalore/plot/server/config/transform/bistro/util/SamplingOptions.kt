@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.util
 
 import jetbrains.datalore.plot.config.Option
 
-class SamplingOptions : Options<SamplingOptions>() {
+class SamplingOptions : Options() {
     var kind: String? by map(Option.Meta.NAME)
     var n: Int? by map(Option.Sampling.N)
     var seed: Int? by map(Option.Sampling.SEED)

@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option
 
 
-class ScaleOptions : Options<ScaleOptions>() {
+class ScaleOptions : Options() {
     var name: String? by map(Option.Scale.NAME)
     var aes: Aes<*>? by map(Option.Scale.AES)
     var mapperKind: String? by map(Option.Scale.SCALE_MAPPER_KIND)

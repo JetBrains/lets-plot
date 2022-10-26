@@ -11,21 +11,21 @@ import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.config.Option.Geom
 import jetbrains.datalore.plot.config.Option.Layer
-import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import jetbrains.datalore.plot.config.Option.PlotBase
-import kotlin.properties.ReadWriteProperty
 
 
-class LayerOptions : Options<PlotOptions>() {
+class LayerOptions : Options() {
     var geom: GeomKind? by map(Layer.GEOM)
     var data: Map<String, List<Any?>>? by map(PlotBase.DATA)
     var mappings: Map<Aes<*>, String>? by map(PlotBase.MAPPING)
     var tooltipsOptions: TooltipsOptions? by map(Layer.TOOLTIPS)
     var samplingOptions: SamplingOptions? by map(Layer.SAMPLING)
     var stat: String? by map(Layer.STAT)
-    var position: String? by map(Layer.POS)
-    var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)
     var showLegend: Boolean? by map(Layer.SHOW_LEGEND)
+    var position: String? by map(Layer.POS)
+
+    // geom_text
+    var sizeUnit: Aes<*>? by map(Geom.Text.SIZE_UNIT)
     var naText: String? by map(Geom.Text.NA_TEXT)
     var labelFormat: String? by map(Geom.Text.LABEL_FORMAT)
 
@@ -72,12 +72,7 @@ class LayerOptions : Options<PlotOptions>() {
     var symX: Double? by map(Aes.SYM_X)
     var symY: Double? by map(Aes.SYM_Y)
 
-    inline operator fun <reified T> get(aes: Aes<T>): T = properties[toOption(aes)] as T
-    operator fun <T> set(aes: Aes<T>, v: T) { properties[toOption(aes)] = v }
-
     fun <T> setParameter(name: String, v: T) { properties[name] = v }
-
-    private inline fun <T, reified TValue> T.map(key: Aes<*>): ReadWriteProperty<T, TValue?> = map(toOption(key))
 }
 
 fun layer(block: LayerOptions.() -> Unit) = LayerOptions().apply(block)

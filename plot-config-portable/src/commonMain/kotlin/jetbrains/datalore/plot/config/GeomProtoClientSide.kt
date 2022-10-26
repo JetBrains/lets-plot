@@ -183,23 +183,22 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.TEXT -> return GeomProvider.text {
-                withTextOptions(opts, TextGeom())
+                val geom = TextGeom()
+
+                applyTextOptions(opts, geom)
+
+                geom
             }
 
             GeomKind.LABEL -> return GeomProvider.label {
-                withTextOptions(opts, LabelGeom()).also {
-                    it as LabelGeom
+                val geom = LabelGeom()
 
-                    if (opts.has(Label.LABEL_PADDING)) {
-                        it.paddingFactor = opts.getDoubleSafe(Label.LABEL_PADDING)!!
-                    }
-                    if (opts.has(Label.LABEL_R)) {
-                        it.radiusFactor = opts.getDoubleSafe(Label.LABEL_R)!!
-                    }
-                    if (opts.has(Label.LABEL_SIZE)) {
-                        it.borderWidth = opts.getDoubleSafe(Label.LABEL_SIZE)!!
-                    }
-                }
+                applyTextOptions(opts, geom)
+                opts.getDouble(Label.LABEL_PADDING)?.let { geom.paddingFactor = it }
+                opts.getDouble(Label.LABEL_R)?.let { geom.radiusFactor = it }
+                opts.getDouble(Label.LABEL_SIZE)?.let { geom.borderWidth = it }
+
+                geom
             }
 
             GeomKind.IMAGE -> return GeomProvider.image {
@@ -269,19 +268,10 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // image - special case
         }
 
-        private fun withTextOptions(opts: OptionsAccessor, geom: TextGeom): TextGeom {
-            if (opts.has(Text.LABEL_FORMAT)) {
-                val labelFormat = opts.getString(Text.LABEL_FORMAT)!!
-                geom.formatter = StringFormat.forOneArg(labelFormat)::format
-            }
-            if (opts.has(Text.NA_TEXT)) {
-                val naValue = opts.getString(Text.NA_TEXT)!!
-                geom.naValue = naValue
-            }
-
+        private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {
+            opts.getString(Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it)::format }
+            opts.getString(Text.NA_TEXT)?.let { geom.naValue = it }
             geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
-
-            return geom
         }
     }
 }

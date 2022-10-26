@@ -7,13 +7,13 @@ package jetbrains.datalore.plot.server.config.transform.bistro.util
 
 import jetbrains.datalore.plot.config.Option
 
-class TooltipsOptions : Options<ThemeOptions>() {
+class TooltipsOptions : Options() {
     var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)
     var minWidth: String? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
     var formats: List<Format>? by map(Option.Layer.TOOLTIP_FORMATS)
     var lines: List<String>? by map(Option.Layer.TOOLTIP_LINES)
 
-    class Format : Options<Format>() {
+    class Format : Options() {
         var field: String? by map(Option.TooltipFormat.FIELD)
         var format: String? by map(Option.TooltipFormat.FORMAT)
     }
