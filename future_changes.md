@@ -24,3 +24,4 @@
 - Tooltip: different formats for same aesthetic Y [[#579](https://github.com/JetBrains/lets-plot/issues/579)].
 - Positioning with "constant" x/y doesn't work on axis with log10 transform [[#618](https://github.com/JetBrains/lets-plot/issues/618)].
 - Positional "constant" doesn't honor axis limits [[#619](https://github.com/JetBrains/lets-plot/issues/619)].
+- position stack: add the `vjust` parameter [[#323](https://github.com/JetBrains/lets-plot/issues/323)].

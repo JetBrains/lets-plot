@@ -255,7 +255,7 @@ def position_fill(vjust=None):
 
     Notes
     -----
-        Adjust position by stacking overlapping objects on top of each other.
+        Adjust position by stacking overlapping objects on top of each other
         and standardise each stack to have constant height.
 
     Examples
