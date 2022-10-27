@@ -31,6 +31,9 @@ kotlin {
         target {
             browser {
                 dceTask {
+                    // DCE disabled to prevent 'Exception in thread "main" java.lang.StackOverflowError' error.
+                    dceOptions.devMode = true
+
                     keep.addAll(
                             "lets-plot-js-package.buildPlotFromRawSpecs",
                             "lets-plot-js-package.buildPlotFromProcessedSpecs",
