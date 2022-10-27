@@ -27,3 +27,5 @@ color blindness ambiguity.
 
 The color map `twilight` was created by Bastian Bechtold ([@bastibe](https://github.com/bastibe)) : [twilight](https://github.com/bastibe/twilight).
 
+### Palettable
+Copyright (c) 2019 Matt Davis. Licensed under MIT License.
