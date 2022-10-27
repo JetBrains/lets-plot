@@ -9,8 +9,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.util.MutableDouble
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 /**
  * Counts the number of cases at each x position.

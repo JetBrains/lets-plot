@@ -10,9 +10,9 @@ import jetbrains.datalore.plot.parsePlotSpec
 class Pie {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            pie(hole = 0.0),
+            pie(hole = 0.0, useCountStat = false),
             pie(hole = 0.2),
-            pieStatCount()
+            pie(hole = 0.5, withOrdering = true),
         )
     }
 
@@ -21,22 +21,41 @@ class Pie {
         "value" to listOf(160, 90, 34, 44, 21, 86, 15, 100, 20)
     )
 
-    private fun pie(hole: Double): MutableMap<String, Any> {
+    private fun pie(hole: Double, useCountStat: Boolean = true, withOrdering: Boolean = false): MutableMap<String, Any> {
+        val stat = if (useCountStat) "pie_count" else "identity"
+        val mapping = if (useCountStat) {
+            "'fill': 'name', 'weight': 'value'"
+        } else {
+            "'fill': 'name', 'slice': 'value'"
+        }
+        val ordering = if (useCountStat && withOrdering) {
+                ",   'data_meta': {" +
+                        "      'mapping_annotations': [" +
+                        "          {" +
+                        "               'aes': 'fill'," +
+                        "               'annotation': 'as_discrete'," +
+                        "               'parameters': {" +
+                        "                   'label':'name', 'order_by': '..count..', 'order': -1 " +
+                        "               }" +
+                        "          }" +
+                        "       ]" +
+                        "   }"
+        } else ""
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'mapping': {" +
-                "                'fill': 'name'," +
-                "                'slice': 'value'" +
-                "              }," +
+                "   'ggsize': {'width': 400, 'height': 300}," +
+                "   'ggtitle': {'text' : 'stat=$stat ${if (withOrdering) "with ordering" else ""}; hole=$hole'}," +
+                "   'theme': { 'line': 'blank', 'axis': 'blank' }," +
+                "   'mapping': { $mapping }," +
                 "   'layers': [" +
                 "               {" +
                 "                  'geom': 'pie', " +
-                "                  'stat': 'identity', " +
-                "                  'x':0, 'y':0, " +
+                "                  'stat': '$stat', " +
                 "                  'hole': $hole," +
                 "                  'size': 40" +
                 "               }" +
                 "             ]" +
+                "    $ordering" +
                 "}"
 
         val plotSpec = HashMap(parsePlotSpec(spec))
@@ -44,35 +63,4 @@ class Pie {
         return plotSpec
     }
 
-    private fun pieStatCount(): MutableMap<String, Any> {
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'mapping': {" +
-                "                'fill': 'name'," +
-                "                'weight': 'value'" +
-                "              }," +
-                "   'layers': [" +
-                "               {" +
-                "                  'geom': 'pie', " +
-                "                  'x':0, 'y':0, " +
-                "                  'size': 40" +
-                "               }" +
-                "             ]," +
-                "   'data_meta': {" +
-                "      'mapping_annotations': [" +
-                "          {" +
-                "               'aes': 'fill'," +
-                "               'annotation': 'as_discrete'," +
-                "               'parameters': {" +
-                "                   'label':'name', 'order_by': '..count..', 'order': -1 " +
-                "               }" +
-                "          }" +
-                "       ]" +
-                "   }" +
-                "}"
-
-        val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = data
-        return plotSpec
-    }
 }
