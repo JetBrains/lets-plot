@@ -6,7 +6,7 @@
 import numpy as np
 import pytest
 
-from lets_plot.plot.geom_image_ import geom_image
+from lets_plot.plot.geom_imshow_ import geom_imshow
 
 # 'extent' which flips image along both: x,y-axis.
 _extent = [1 + .5, 0 - .5, 1 + .5, 0 - .5]  # [left, right, bottom, top]
@@ -79,5 +79,5 @@ class Test:
 
     @pytest.mark.parametrize('image_data,expected', test_params_list)
     def test_image_spec(self, image_data, expected):
-        spec = geom_image(image_data, extent=_extent)
+        spec = geom_imshow(image_data, extent=_extent)
         assert spec.as_dict() == expected

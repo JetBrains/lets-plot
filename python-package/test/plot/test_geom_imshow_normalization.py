@@ -7,7 +7,7 @@ from typing import NamedTuple
 import numpy as np
 import pytest
 
-from lets_plot.plot.geom_image_ import geom_image
+from lets_plot.plot.geom_imshow_ import geom_imshow
 
 
 class TestParams(NamedTuple):
@@ -98,8 +98,8 @@ class Test:
 
     @pytest.mark.parametrize('params', test_params_list, ids=lambda d: d.descr)
     def test_image_spec(self, params: TestParams):
-        spec_0 = geom_image(image_data=params.image_data_0, norm=params.normalize)
-        spec_1 = geom_image(image_data=params.image_data_1, norm=params.normalize)
+        spec_0 = geom_imshow(image_data=params.image_data_0, norm=params.normalize)
+        spec_1 = geom_imshow(image_data=params.image_data_1, norm=params.normalize)
 
         if params.expected_equal:
             assert spec_0.as_dict() == spec_1.as_dict()

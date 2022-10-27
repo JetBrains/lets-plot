@@ -6,7 +6,7 @@
 import numpy as np
 import pytest
 
-from lets_plot.plot.geom_image_ import geom_image
+from lets_plot.plot.geom_imshow_ import geom_imshow
 
 
 def _image_spec(width, height, href):
@@ -93,7 +93,7 @@ class Test:
 
     @pytest.mark.parametrize('args_list,args_dict,expected', test_params_list)
     def test_image_spec(self, args_list, args_dict, expected):
-        spec = geom_image(*args_list, **args_dict)
+        spec = geom_imshow(*args_list, **args_dict)
         assert spec.as_dict() == expected
         # print(json.dumps(spec.as_dict(), indent=2))
         # print(json.dumps(expected, indent=2))

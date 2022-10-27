@@ -4,7 +4,7 @@
 #
 from typing import Any
 
-from lets_plot.plot.geom_image_ import geom_image
+from lets_plot.plot.geom_imshow_ import geom_imshow
 from lets_plot.plot.plot import ggplot, GGBunch
 from lets_plot.plot.scale import scale_x_continuous, scale_y_continuous
 from lets_plot.plot.theme_ import theme
@@ -114,7 +114,7 @@ def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
 
             h, w = image_data.shape[0:2]
             h, w = _expand_h_w(h, w, scale)
-            p = ggplot() + geom_image(image_data=image_data, norm=norm)
+            p = ggplot() + geom_imshow(image_data=image_data, norm=norm)
             p += options
             ggbunch.add_plot(p, col * w_max, row * h_max, w, h)
 

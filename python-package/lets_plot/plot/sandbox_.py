@@ -4,7 +4,7 @@
 #
 # import numpy as np
 #
-# from lets_plot.geom_image_ import geom_image
+# from lets_plot.geom_imshow_ import geom_imshow
 #
 # print("1")
 # img = np.array([
@@ -12,8 +12,8 @@
 # ])
 #
 # print(img)
-# # print(geom_image(image_data=img))
-# geom_image(image_data=img)
+# # print(geom_imshow(image_data=img))
+# geom_imshow(image_data=img)
 #
 # print("2")
 # img = np.array([
@@ -21,6 +21,6 @@
 # ])
 #
 # print(img)
-# geom_image(image_data=img)
+# geom_imshow(image_data=img)
 #
-# print(geom_image(image_data=img))
+# print(geom_imshow(image_data=img))

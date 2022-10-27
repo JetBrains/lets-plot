@@ -7,7 +7,7 @@ from .core import *
 from .facet import *
 from .geom import *
 from .geom_extras import *
-from .geom_image_ import *
+from .geom_imshow_ import *
 from .geom_livemap_ import *
 from .guide import *
 from .label import *
@@ -28,7 +28,7 @@ __all__ = (coord.__all__ +
            facet.__all__ +
            geom.__all__ +
            geom_extras.__all__ +
-           geom_image_.__all__ +
+           geom_imshow_.__all__ +
            geom_livemap_.__all__ +
            guide.__all__ +
            label.__all__ +

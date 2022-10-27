@@ -24,7 +24,7 @@ try:
 except ImportError:
     palettable = None
 
-__all__ = ['geom_image']
+__all__ = ['geom_imshow', 'geom_image']
 
 
 def _hex2rgb(hex_c):
@@ -87,6 +87,24 @@ def _normalize_RGBa(image_data):
 
 def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent=None):
     """
+    Function `geom_image()` is deprecated.
+    Please, use `geom_imshow()` instead.
+
+    """
+    print("WARN: The function geom_image() is deprecated and and will be removed in future releases.\n"
+          "      Please, use geom_imshow() instead.")
+
+    return geom_imshow(image_data,
+                       cmap=cmap,
+                       norm=norm,
+                       vmin=vmin,
+                       vmax=vmax,
+                       extent=extent
+                       )
+
+
+def geom_imshow(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent=None):
+    """
     Displays image specified by ndarray with shape
      - (M, N) - grey-scale image
      - (M, N, 3) - color RGB image
@@ -146,7 +164,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
         LetsPlot.setup_html()
         np.random.seed(42)
         image = np.random.randint(256, size=(64, 64, 4))
-        ggplot() + geom_image(image)
+        ggplot() + geom_imshow(image)
 
     |
 
@@ -160,7 +178,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
         n = 64
         image = 256 * np.linspace(np.linspace(0, .5, n), \\
                                   np.linspace(.5, .5, n), n)
-        ggplot() + geom_image(image, norm=False)
+        ggplot() + geom_imshow(image, norm=False)
 
     |
 
@@ -173,7 +191,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
         LetsPlot.setup_html()
         np.random.seed(42)
         image = np.random.normal(size=(64, 64))
-        ggplot() + geom_image(image, vmin=-1, vmax=1)
+        ggplot() + geom_imshow(image, vmin=-1, vmax=1)
 
     """
 
@@ -204,7 +222,6 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
             raise ValueError(
                 "Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(
                     nchannels))
-
 
     # Make sure all values are ints in range 0-255.
     def clip_value_0_255(v):
