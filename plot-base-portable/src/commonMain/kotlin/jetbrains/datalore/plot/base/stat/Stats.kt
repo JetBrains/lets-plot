@@ -90,7 +90,7 @@ object Stats {
         return CountStat()
     }
 
-    fun pieCount(aes: Aes<*>): Stat {
+    fun pieCount(aes: Aes<*>?): Stat {
         return PieCountStat(aes)
     }
 
