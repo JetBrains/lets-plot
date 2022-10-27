@@ -24,7 +24,6 @@ import jetbrains.datalore.vis.svg.SvgRectElement
 import kotlin.math.PI
 import kotlin.math.abs
 
-
 class PieGeom : GeomBase() {
 
     var holeRatio: Double = 0.0
@@ -41,7 +40,7 @@ class PieGeom : GeomBase() {
     }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PieLegendKeyElementFactory(myFillColorMapper, strokeColor)
+        get() = PieLegendKeyElementFactory(myFillColorMapper, Color.TRANSPARENT)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -74,7 +73,7 @@ class PieGeom : GeomBase() {
             val linePath = buildSector(location, sector, dataPoints[index])
             result.add(linePath)
 
-            val colorMarkerMapper =  { p: DataPointAesthetics -> listOf(myFillColorMapper(p)) }
+            val colorMarkerMapper = { p: DataPointAesthetics -> listOf(myFillColorMapper(p)) }
             buildHint(location, sector, colorMarkerMapper(dataPoints[index]), ctx)
         }
         return result
@@ -87,34 +86,40 @@ class PieGeom : GeomBase() {
     ): LinePath {
         val builder = SvgPathDataBuilder()
 
+        fun getCoordinate(center: DoubleVector, angle: Double, radius: Double): DoubleVector {
+            return center.add(
+                DoubleVector(0.0, -radius).rotate(angle)
+            )
+        }
+
         val innerRadius = sector.radius * holeRatio
-        val innerBasis = DoubleVector(0.0, -innerRadius)
-        val outerBasis = DoubleVector(0.0, -sector.radius)
-        val p1 = location.add(innerBasis.rotate(sector.startAngle))
-        val p2 = location.add(outerBasis.rotate(sector.startAngle))
-        val p3 = location.add(outerBasis.rotate(sector.endAngle))
-        val p4 = location.add(innerBasis.rotate(sector.endAngle))
+
+        val innerPnt1 = getCoordinate(location, sector.startAngle, innerRadius)
+        val outerPnt1 = getCoordinate(location, sector.startAngle, sector.radius)
+        val outerPnt2 = getCoordinate(location, sector.endAngle, sector.radius)
+        val innerPnt2 = getCoordinate(location, sector.endAngle, innerRadius)
+
 
         val largeArc = (sector.endAngle - sector.startAngle) > PI
 
-        builder.moveTo(p1)
-        builder.lineTo(p2)
+        builder.moveTo(innerPnt1)
+        builder.lineTo(outerPnt1)
         builder.ellipticalArc(
             rx = sector.radius,
             ry = sector.radius,
             xAxisRotation = 0.0,
             largeArc = largeArc,
             sweep = true,
-            to = p3
+            to = outerPnt2
         )
-        builder.lineTo(p4)
+        builder.lineTo(innerPnt2)
         builder.ellipticalArc(
             rx = innerRadius,
             ry = innerRadius,
             xAxisRotation = 0.0,
             largeArc = largeArc,
             sweep = false,
-            to = p1
+            to = innerPnt1
         )
 
         return LinePath(builder).apply {
