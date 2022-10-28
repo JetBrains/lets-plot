@@ -211,7 +211,7 @@ subprojects {
                 } else {
                     if (currentOs.macOsX) {
                         macosArm64()
-                        macosX64
+                        macosX64()
                     } else if (currentOs.linux) {
                         linuxArm64()
                         linuxX64()
