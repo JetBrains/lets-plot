@@ -13,22 +13,32 @@ from lets_plot.plot.util import is_ndarray
 __all__ = ['image_matrix']
 
 
-def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
+def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None, scale=1) -> GGBunch:
     """
-    Display images in a grid.
-    The grid dimensions are determined by shape of the input 2D ndarray.
+    Display a set of images in a grid.
+    Dimensions of the grid are determined by the shape of the input Numpy 2D array.
 
-    Elements of the input 2D array are images specified by ndarrays with shape
-    (n, m) or (n, m, 3) or (n, m, 4).
+    Each element of the input 2D array is an 2D or 3D Numpy array itself
+    specifying either a grayscale image (2D array) or a color RGB(A) image (3D array).
+    For more information on image arrays please see the documentation of geom_imshow() function.
 
     Parameters
     ----------
     image_data_array : `ndarray`
-        2D `numpy.ndarray` containing images. Specifies dimensions of output grid.
-    norm : bool, default=True
-        False value disables default scaling of a luminance (grayscale) images to the (0, 255) range.
+        2D `numpy.ndarray` containing images.
+    cmap : str, optional
+        Name of colormap. For example "viridis", "magma", "plasma", "inferno", or any other colormap
+        which is supported by the Palettable package (https://github.com/jiffyclub/palettable)
+        This parameter is ignored for RGB(A) images.
+    norm : bool, optional, default=True
+        True - luminance values in grey-scale image will be scaled to [0-255] range using a linear scaler.
+        False - disables scaling of luminance values in grey-scale image.
+        This parameter is ignored for RGB(A) images.
+    vmin, vmax : number, optional
+        Define the data range used for luminance normalization in grey-scale images.
+        This parameter is ignored for RGB(A) images or if parameter `norm=False`.
     scale : float, default=1.0
-        Specifies magnification factor.
+        Specifies the image size magnification factor.
 
     Returns
     -------
@@ -114,7 +124,13 @@ def image_matrix(image_data_array, *, norm: bool = None, scale=1) -> GGBunch:
 
             h, w = image_data.shape[0:2]
             h, w = _expand_h_w(h, w, scale)
-            p = ggplot() + geom_imshow(image_data=image_data, norm=norm)
+            p = ggplot() + geom_imshow(
+                image_data=image_data,
+                cmap=cmap,
+                norm=norm,
+                vmin=vmin,
+                vmax=vmax
+            )
             p += options
             ggbunch.add_plot(p, col * w_max, row * h_max, w, h)
 
@@ -144,4 +160,5 @@ def _expand_h_w(h, w, scale):
     w = 50 if w < 50 else w
 
     # Currently plot has not customizable 10px padding on the right and the bottom
-    return h + 10, w + 10
+    # return h + 10, w + 10
+    return h, w

@@ -103,7 +103,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
                        )
 
 
-def geom_imshow(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent=None):
+def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, extent=None):
     """
     Displays image specified by ndarray with shape
      - (M, N) - grey-scale image
@@ -241,9 +241,8 @@ def geom_imshow(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, exten
 
         def map2rgb(v):
             # v is in range [0,255]
-            # i = int(v) % 256
-            # return cmap_rgb_256[i]
-            return cmap_rgb_256[int(v)]
+            i = max(0, min(255, int(v + .5)))
+            return cmap_rgb_256[i]
 
         cmapper = numpy.vectorize(map2rgb, signature='()->(n)')
         image_data = cmapper(image_data)
