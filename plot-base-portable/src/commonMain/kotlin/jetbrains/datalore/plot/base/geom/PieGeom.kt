@@ -79,18 +79,18 @@ class PieGeom : GeomBase() {
         return result
     }
 
+    private fun getCoordinate(center: DoubleVector, angle: Double, radius: Double): DoubleVector {
+        return center.add(
+            DoubleVector(0.0, -radius).rotate(angle)
+        )
+    }
+
     private fun buildSector(
         location: DoubleVector,
         sector: Sector,
         p: DataPointAesthetics
     ): LinePath {
         val builder = SvgPathDataBuilder()
-
-        fun getCoordinate(center: DoubleVector, angle: Double, radius: Double): DoubleVector {
-            return center.add(
-                DoubleVector(0.0, -radius).rotate(angle)
-            )
-        }
 
         val innerRadius = sector.radius * holeRatio
 
@@ -137,9 +137,9 @@ class PieGeom : GeomBase() {
         val step = toRadians(15.0)
         val middleAngles =
             generateSequence(sector.startAngle) { it + step }.takeWhile { it < sector.endAngle } + sector.endAngle
-        val points = listOf(location.add(DoubleVector(0.0, -innerRadius).rotate(sector.startAngle))) +
-                middleAngles.map { location.add(DoubleVector(0.0, -sector.radius).rotate(it)) } +
-                middleAngles.toList().reversed().map { location.add(DoubleVector(0.0, -innerRadius).rotate(it)) }
+        val points = listOf(getCoordinate(location, sector.startAngle, innerRadius)) +
+                middleAngles.map { getCoordinate(location, angle = it, sector.radius) } +
+                middleAngles.toList().reversed().map { getCoordinate(location, angle = it, innerRadius) }
 
         ctx.targetCollector.addPolygon(
             points = points,
