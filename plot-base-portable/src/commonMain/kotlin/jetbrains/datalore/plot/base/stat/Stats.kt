@@ -91,7 +91,7 @@ object Stats {
     }
 
     fun pieCount(aes: Aes<*>?): Stat {
-        return PieCountStat(aes)
+        return Count2dStat(aes)
     }
 
     fun bin(

@@ -22,7 +22,7 @@ class Pie {
     )
 
     private fun pie(hole: Double, useCountStat: Boolean = true, withOrdering: Boolean = false): MutableMap<String, Any> {
-        val stat = if (useCountStat) "pie_count" else "identity"
+        val stat = if (useCountStat) "count2d" else "identity"
         val mapping = if (useCountStat) {
             "'fill': 'name', 'weight': 'value'"
         } else {
