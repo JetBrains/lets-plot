@@ -1,45 +1,53 @@
-plugins {
-    id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
-}
-
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+}
+
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+def currentOsArch = DefaultNativePlatform.getCurrentArchitecture()
 
 kotlin {
     if (project.buildSettings.build_python_extension) {
-        def target
-        if (currentOs.isMacOsX()) {
-            def currentArch = DefaultNativePlatform.getCurrentArchitecture()
-            if (currentArch.displayName.contains("arm-v8")) {
-                target = macosArm64("native")
-            } else {
-                target = macosX64("native")
+        def targetList = []
+        if (version.contains("alpha")){
+            if (currentOs.macOsX & currentOsArch.amd64) {
+                targetList.add(macosX64("native"))
+            } else if (currentOs.macOsX & currentOsArch.arm) {
+                targetList.add(macosArm64("native"))
+            } else if (currentOs.linux & currentOsArch.amd64) {
+                targetList.add(linuxX64("native"))
+            } else if (currentOs.linux & currentOsArch.arm) {
+                targetList.add(linuxArm64("native"))
             }
-        } else if (currentOs.isLinux()) {
-            target = linuxX64("native")
-        } else if (currentOs.isWindows()) {
-            target = mingwX64("native")
         } else {
-            throw "Unsupported platform " + currentOs.displayName
-        }
-
-        target.binaries {
-            staticLib {
-                baseName = "lets-plot-${project.name}"
+            if (currentOs.macOsX) {
+                targetList.add(macosArm64("native"))
+                targetList.add(macosX64("native"))
+            } else if (currentOs.linux) {
+                targetList.add(linuxArm64("native"))
+                targetList.add(linuxX64("native"))
             }
         }
-
-        target.compilations.main.cinterops {
-            python {
-                compilerOpts "-I${project.buildSettings.python.include_path}"
+        if (currentOs.windows) {
+            mingwX64("native")
+        }
+        for (target in targetList) {
+            target.binaries {
+                staticLib {
+                    baseName = "lets-plot-${project.name}"
+                }
+            }
+            target.compilations.main.cinterops {
+                python {
+                    compilerOpts "-I${project.buildSettings.python.include_path}"
+                }
             }
         }
     } else {
