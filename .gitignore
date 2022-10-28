@@ -28,3 +28,6 @@ kotlin-js-store
 # intermediate build files on Windows
 python-package/kotlin-bridge/*.def
 python-package/kotlin-bridge/lets_plot_kotlin_bridge.o
+
+# VSCode service directiry
+.vscode

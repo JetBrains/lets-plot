@@ -13,6 +13,8 @@ plugins {
     id "io.codearte.nexus-staging"
 }
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+
 project.ext.letsPlotTaskGroup = 'lets-plot'
 
 def include_sources_letsPlotJvmCommon = [
@@ -177,7 +179,40 @@ task publishKotlinApiDependenciesToMavenRepository {
     group project.letsPlotTaskGroup
 }
 
+
 subprojects {
+    // Configure Kotlin Native build.
+    if (name in [
+            'base-portable',
+            'plot-base-portable',
+            'plot-builder-portable',
+            'plot-common-portable',
+            'plot-config-portable',
+            'test-common',
+            'vis-svg-portable',
+    ]) {
+        apply plugin: "org.jetbrains.kotlin.multiplatform"
+
+        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+        def currentOsArch = DefaultNativePlatform.getCurrentArchitecture()
+
+        kotlin{
+            if (project.buildSettings.build_python_extension) {
+                if (currentOs.macOsX & currentOsArch.amd64) {
+                    macosX64()
+                } else if (currentOs.macOsX & currentOsArch.arm) {
+                    macosArm64()
+                } else if (currentOs.linux & currentOsArch.amd64) {
+                    linuxX64()
+                } else if (currentOs.linux & currentOsArch.arm) {
+                    linuxArm64()
+                } else if (currentOs.isWindows()) {
+                    mingwX64()
+                }
+            }
+        }
+    }
+
     // Configure publishing for projects which "Lets-Plot Kotlin API" depends on.
     if (name in [
             'plot-base-portable',

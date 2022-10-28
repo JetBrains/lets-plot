@@ -14,6 +14,8 @@ plugins {
 // ----------------------------------------
 
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+def currentOsArch = DefaultNativePlatform.getCurrentArchitecture()
+
 //def task_group = 'lets plot'
 def tools_dir = "${rootDir}/tools"
 def python_package_dir = "${rootDir}/python-package"
@@ -59,7 +61,7 @@ if (project.buildSettings.enable_python_package) {
         description = 'Builds lets-plot wheel distribution with Manylinux platform for publication(python)'
 
         workingDir tools_dir
-        commandLine "./run_manylinux_docker.sh", "${rootDir}"
+        commandLine "./run_manylinux_docker.sh", "${rootDir}", "${currentOsArch}"
     }
 
 
