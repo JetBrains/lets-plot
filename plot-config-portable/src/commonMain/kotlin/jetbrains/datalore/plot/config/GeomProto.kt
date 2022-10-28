@@ -291,7 +291,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
 
         private fun pieDefaults(): Map<String, Any> {
             return mapOf(
-                Layer.STAT to "pie_count"
+                Layer.STAT to "count2d"
             )
         }
     }

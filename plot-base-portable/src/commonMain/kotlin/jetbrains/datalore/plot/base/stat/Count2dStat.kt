@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.common.util.MutableDouble
  * Counts the number of cases at each x, y, fill position.
  * (or if the weight aesthetic is supplied, the sum of the weights)
  */
-internal class PieCountStat(aes: Aes<*>?): BaseStat(DEF_MAPPING) {
+internal class Count2dStat(aes: Aes<*>?): BaseStat(DEF_MAPPING) {
 
     private val myBaseAes = aes ?: DEF_BASE_AES
 

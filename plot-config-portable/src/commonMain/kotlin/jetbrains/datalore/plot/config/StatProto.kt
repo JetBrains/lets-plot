@@ -34,7 +34,7 @@ object StatProto {
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
-            StatKind.PIE_COUNT -> {
+            StatKind.COUNT2D -> {
                 val fillBy = options.getString(Option.Geom.Pie.FILL_BY)
                 val aes = fillBy?.let(Option.Mapping::toAes)
                 return Stats.pieCount(aes)
