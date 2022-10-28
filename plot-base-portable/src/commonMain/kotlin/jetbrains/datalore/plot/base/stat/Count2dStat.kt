@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.common.util.MutableDouble
  * Counts the number of cases at each x, y, fill position.
  * (or if the weight aesthetic is supplied, the sum of the weights)
  */
-internal class Count2dStat(aes: Aes<*>?): BaseStat(DEF_MAPPING) {
+internal class Count2dStat(aes: Aes<*>?) : BaseStat(DEF_MAPPING) {
 
     private val myBaseAes = aes ?: DEF_BASE_AES
 
@@ -60,11 +60,29 @@ internal class Count2dStat(aes: Aes<*>?): BaseStat(DEF_MAPPING) {
             .build()
     }
 
+    override fun normalize(dataAfterStat: DataFrame): DataFrame {
+        val xs = dataAfterStat.getNumeric(Stats.X).map { it!! }
+        val ys = dataAfterStat.getNumeric(Stats.Y).map { it!! }
+        val counts = dataAfterStat.getNumeric(Stats.COUNT).map { it!! }
+
+        val countByValues = countByValues(xs, ys, List(xs.size) { 0.0 }, counts)
+        val statCount = ArrayList<Double>()
+        for (i in xs.indices) {
+            val x = xs[i]
+            val y = ys[i]
+            statCount.add(countByValues[Triple(x, y, 0.0)]!!.get())
+        }
+        return dataAfterStat.builder()
+            .putNumeric(Stats.SIZE, statCount)
+            .build()
+    }
+
     companion object {
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.SLICE to Stats.COUNT
+            Aes.SLICE to Stats.COUNT,
+            Aes.SIZE to Stats.SIZE
         )
         private val DEF_BASE_AES = Aes.FILL
 
@@ -79,7 +97,7 @@ internal class Count2dStat(aes: Aes<*>?): BaseStat(DEF_MAPPING) {
                 val x = valuesX[i]
                 val y = valuesY[i]
                 val value = valuesFill[i]
-                if (SeriesUtil.allFinite(x,y,value)) {
+                if (SeriesUtil.allFinite(x, y, value)) {
                     val key = Triple(x!!, y!!, value!!)
                     if (!result.containsKey(key)) {
                         result[key] = MutableDouble(0.0)
