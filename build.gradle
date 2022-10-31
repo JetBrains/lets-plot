@@ -198,27 +198,18 @@ subprojects {
 
         kotlin{
             if (project.buildSettings.build_python_extension) {
-                if (version.contains("alpha")){
-                    if (currentOs.macOsX & currentOsArch.amd64) {
-                        macosX64()
-                    } else if (currentOs.macOsX & currentOsArch.arm) {
-                        macosArm64()
-                    } else if (currentOs.linux & currentOsArch.amd64) {
-                        linuxX64()
-                    } else if (currentOs.linux & currentOsArch.arm) {
-                        linuxArm64()
-                    }
-                } else {
-                    if (currentOs.macOsX) {
-                        macosArm64()
-                        macosX64()
-                    } else if (currentOs.linux) {
-                        linuxArm64()
-                        linuxX64()
-                    }
-                }
-                if (currentOs.windows) {
+                if (currentOs.macOsX & currentOsArch.amd64) {
+                    macosX64()
+                } else if (currentOs.macOsX & currentOsArch.arm) {
+                    macosArm64()
+                } else if (currentOs.linux & currentOsArch.amd64) {
+                    linuxX64()
+                } else if (currentOs.linux & currentOsArch.arm) {
+                    linuxArm64()
+                } else if (currentOs.windows) {
                     mingwX64()
+                } else {
+                    throw new Exception("Unsupported platform.")
                 }
             }
         }

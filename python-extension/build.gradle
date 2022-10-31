@@ -15,41 +15,32 @@ def currentOsArch = DefaultNativePlatform.getCurrentArchitecture()
 
 kotlin {
     if (project.buildSettings.build_python_extension) {
-        def targetList = []
-        if (version.contains("alpha")){
-            if (currentOs.macOsX & currentOsArch.amd64) {
-                targetList.add(macosX64("native"))
-            } else if (currentOs.macOsX & currentOsArch.arm) {
-                targetList.add(macosArm64("native"))
-            } else if (currentOs.linux & currentOsArch.amd64) {
-                targetList.add(linuxX64("native"))
-            } else if (currentOs.linux & currentOsArch.arm) {
-                targetList.add(linuxArm64("native"))
-            }
+        def target
+        if (currentOs.macOsX & currentOsArch.amd64) {
+            target = macosX64("native")
+        } else if (currentOs.macOsX & currentOsArch.arm) {
+            target = macosArm64("native")
+        } else if (currentOs.linux & currentOsArch.amd64) {
+            target = linuxX64("native")
+        } else if (currentOs.linux & currentOsArch.arm) {
+            target =linuxArm64("native")
+        } else if (currentOs.windows) {
+            target = mingwX64("native")
         } else {
-            if (currentOs.macOsX) {
-                targetList.add(macosArm64("native"))
-                targetList.add(macosX64("native"))
-            } else if (currentOs.linux) {
-                targetList.add(linuxArm64("native"))
-                targetList.add(linuxX64("native"))
+            throw new Exception("Unsupported platform.")
+        }
+
+        target.binaries {
+            staticLib {
+                baseName = "lets-plot-${project.name}"
             }
         }
-        if (currentOs.windows) {
-            mingwX64("native")
-        }
-        for (target in targetList) {
-            target.binaries {
-                staticLib {
-                    baseName = "lets-plot-${project.name}"
-                }
-            }
-            target.compilations.main.cinterops {
-                python {
-                    compilerOpts "-I${project.buildSettings.python.include_path}"
-                }
+        target.compilations.main.cinterops {
+            python {
+                compilerOpts "-I${project.buildSettings.python.include_path}"
             }
         }
+
     } else {
         jvm() // at least one target is required by MPP - dummy jvm target will work just fine
     }
