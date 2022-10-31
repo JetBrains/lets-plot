@@ -43,8 +43,9 @@ open class PointGeom : GeomBase() {
             val p = aesthetics.dataPointAt(i)
             val x = p.x()
             val y = p.y()
+            val size = p.size()
 
-            if (SeriesUtil.allFinite(x, y)) {
+            if (SeriesUtil.allFinite(x, y, size)) {
                 val point = DoubleVector(x!!, y!!)
                 val location = helper.toClient(point, p)
                 if (location == null) continue
