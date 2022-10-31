@@ -94,11 +94,15 @@ class PieGeom : GeomBase() {
 
         val innerRadius = sector.radius * holeRatio
 
+        // Fix full circle drawing
+        var endAngle = sector.endAngle
+        if ((sector.endAngle - sector.startAngle) % (2*PI) == 0.0) {
+            endAngle -= 0.0001
+        }
         val innerPnt1 = getCoordinate(location, sector.startAngle, innerRadius)
         val outerPnt1 = getCoordinate(location, sector.startAngle, sector.radius)
-        val outerPnt2 = getCoordinate(location, sector.endAngle, sector.radius)
-        val innerPnt2 = getCoordinate(location, sector.endAngle, innerRadius)
-
+        val outerPnt2 = getCoordinate(location, endAngle, sector.radius)
+        val innerPnt2 = getCoordinate(location, endAngle, innerRadius)
 
         val largeArc = (sector.endAngle - sector.startAngle) > PI
 
