@@ -63,6 +63,18 @@ object MonolithicCommon {
         plotPreferredWidth: Double? = null
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
+
+        @Suppress("NAME_SHADOWING")
+        val plotSize = plotSize?.let {
+            // Fix error (Batik):
+            //  org.apache.batik.bridge.BridgeException: null:-1
+            //  The attribute "height" of the element <svg> cannot be negative
+            DoubleVector(
+                max(0.0, it.x),
+                max(0.0, it.y)
+            )
+        }
+
         PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
@@ -82,11 +94,13 @@ object MonolithicCommon {
                     )
                 )
             }
+
             PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(
                 plotSpec,
                 plotMaxWidth,
                 plotPreferredWidth
             )
+
             else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
         }
     }
