@@ -6,11 +6,11 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Corr
-import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
     with(Corr()) {
-        PlotSpecsDemoWindowJfx(
+        PlotSpecsDemoWindowBatik(
             "corr plot",
             plotSpecList()
         ).open()
