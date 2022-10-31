@@ -51,7 +51,7 @@ object TextUtil {
         return hAnchor(hjust)
     }
 
-    fun vAnchor(vjust: Any) = VJUST_MAP[vjust] ?:Text.VerticalAnchor.CENTER
+    fun vAnchor(vjust: Any) = VJUST_MAP[vjust] ?: Text.VerticalAnchor.CENTER
 
     fun vAnchor(p: DataPointAesthetics, location: DoubleVector, center: DoubleVector?): Text.VerticalAnchor {
         var vjust = p.vjust()
@@ -74,7 +74,7 @@ object TextUtil {
         }
 
         var angle = initialAngle % 360
-        angle =  if (angle > 180) angle - 360 else angle
+        angle = if (angle > 180) angle - 360 else angle
         angle = if (angle < -180) angle + 360 else angle
 
         val rotatedForward = (angle > 45.0 && angle < 135.0)
@@ -115,14 +115,21 @@ object TextUtil {
     fun angle(p: DataPointAesthetics): Double {
         var angle = p.angle()!!
         if (angle != 0.0) {
-            // ggplot angle: counter clockwise
+            // ggplot angle: counter-clockwise
             // SVG angle: clockwise
             angle = 360 - angle % 360
         }
         return angle
     }
 
-    fun fontSize(p: DataPointAesthetics, scale: Double) = AesScaling.textSize(p) * scale
+    fun fontSize(p: DataPointAesthetics, scale: Double): Double {
+        val d = AesScaling.textSize(p) * scale
+
+        // Fix error (Batik):
+        // org.w3c.dom.DOMException: <unknown>:
+        // The attribute "style" represents an invalid CSS declaration ("fill:#000000;font:7.602310327302772E-4px sans-serif;").
+        return max(0.1, d)
+    }
 
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
