@@ -34,11 +34,7 @@ object StatProto {
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
-            StatKind.COUNT2D -> {
-                val fillBy = options.getString(Option.Geom.Pie.FILL_BY)
-                val aes = fillBy?.let(Option.Mapping::toAes)
-                return Stats.pieCount(aes)
-            }
+            StatKind.COUNT2D -> return Stats.pieCount()
             StatKind.BIN -> {
                 return Stats.bin(
                     binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),

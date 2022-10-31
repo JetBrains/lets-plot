@@ -31,7 +31,7 @@ object Stats {
     val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
     val RESIDUAL = DataFrame.Variable("..residual..", STAT, "residual")
-    val SIZE = DataFrame.Variable("..size..", STAT, "size")
+    val SUM = DataFrame.Variable("..sum..", STAT, "sum")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -58,7 +58,7 @@ object Stats {
             BIN_WIDTH,
             VIOLIN_WIDTH,
             RESIDUAL,
-            SIZE,
+            SUM,
             SCALED,
             GROUP,
         )
@@ -94,8 +94,8 @@ object Stats {
         return CountStat()
     }
 
-    fun pieCount(aes: Aes<*>?): Stat {
-        return Count2dStat(aes)
+    fun pieCount(): Stat {
+        return Count2dStat()
     }
 
     fun bin(
