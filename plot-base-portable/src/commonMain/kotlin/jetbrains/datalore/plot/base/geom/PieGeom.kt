@@ -152,6 +152,7 @@ class PieGeom : GeomBase() {
         private val fillColorMapper: (DataPointAesthetics) -> Color,
         private val strokeColor: Color
     ) : LegendKeyElementFactory {
+
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
             val rect = SvgRectElement(0.0, 0.0, size.x, size.y).apply {
                 fillColor().set(fillColorMapper(p))
@@ -162,6 +163,12 @@ class PieGeom : GeomBase() {
             val g = SvgGElement()
             g.children().add(rect)
             return g
+        }
+
+        override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
+            val strokeWidth = AesScaling.strokeWidth(p)
+            val size = strokeWidth + 4
+            return DoubleVector(size, size)
         }
     }
 
