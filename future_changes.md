@@ -1,4 +1,4 @@
-## [2.5.1] - 2022-??-??
+## [2.5.1] - 2022-11-??
 
 ### Added
 
@@ -51,3 +51,4 @@
 - Positioning with "constant" x/y doesn't work on axis with log10 transform [[#618](https://github.com/JetBrains/lets-plot/issues/618)].
 - Positional "constant" doesn't honor axis limits [[#619](https://github.com/JetBrains/lets-plot/issues/619)].
 - Parameter `norm` in `geom_imshow()`.
+- Several issues leading to crush in Swing/Batik apps. Related to [[discussions](https://github.com/JetBrains/lets-plot-kotlin/discussions/138)]
