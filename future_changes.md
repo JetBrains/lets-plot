@@ -43,8 +43,6 @@
   See updated examples: [image 101](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_101.ipynb),
   [Fisher's boat](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_fisher_boat.ipynb).
 
-- Text width estimation procedure was upgraded.
-
 ### Fixed
 
 - element_blank() has no effect in theme legend_title [[#608](https://github.com/JetBrains/lets-plot/issues/608)].
@@ -55,3 +53,4 @@
 - Parameter `norm` in `geom_imshow()`.
 - Several issues leading to crush in Swing/Batik apps. Related to [[discussions](https://github.com/JetBrains/lets-plot-kotlin/discussions/138)]
 - Default value for parameter `whisker_width` in `geom_boxplot()` is 0.5.
+- Increased estimated width for symbols '-', '/', '\' and '|'. This will fix overlapping and other plot layouting issues.
