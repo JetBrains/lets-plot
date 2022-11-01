@@ -27,6 +27,10 @@ clean {
     delete python_package_dist_dir
     delete "${python_package_dir}/lets_plot/package_data"
     delete "${python_package_dir}/lets_plot.egg-info"
+    delete "${python_package_dir}/kotlin-bridge/kotlin_bridge.o"
+    delete fileTree("${python_package_dir}/kotlin-bridge/"){
+        include "*.def"
+    }
 }
 
 if (project.buildSettings.enable_python_package) {
