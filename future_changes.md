@@ -52,3 +52,4 @@
 - Positional "constant" doesn't honor axis limits [[#619](https://github.com/JetBrains/lets-plot/issues/619)].
 - Parameter `norm` in `geom_imshow()`.
 - Several issues leading to crush in Swing/Batik apps. Related to [[discussions](https://github.com/JetBrains/lets-plot-kotlin/discussions/138)]
+- Default value for parameter `whisker_width` in `geom_boxplot()` is 0.5.
