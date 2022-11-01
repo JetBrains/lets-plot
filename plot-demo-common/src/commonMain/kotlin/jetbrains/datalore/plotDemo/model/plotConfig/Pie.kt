@@ -28,6 +28,10 @@ class Pie {
         } else {
             "'fill': 'name', 'slice': 'value'"
         }
+        val tooltipContent = if (useCountStat) {
+            "'tooltip_lines': [ '@|^fill', 'count|@{..count..} (@{..percent..})', 'total|@{..sum..}' ]," +
+            "'tooltip_formats': [{'field': '@{..percent..}', 'format': '{d}%'}]"
+        } else ""
         val ordering = if (useCountStat && withOrdering) {
                 ",   'data_meta': {" +
                         "      'mapping_annotations': [" +
@@ -52,7 +56,7 @@ class Pie {
                 "                  'geom': 'pie', " +
                 "                  'stat': '$stat', " +
                 "                  'hole': $hole," +
-                "                  'size': 40" +
+                "                  'tooltips': { $tooltipContent }" +
                 "               }" +
                 "             ]" +
                 "    $ordering" +
