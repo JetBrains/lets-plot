@@ -43,6 +43,8 @@
   See updated examples: [image 101](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_101.ipynb),
   [Fisher's boat](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_fisher_boat.ipynb).
 
+- Text width estimation procedure was upgraded.
+
 ### Fixed
 
 - element_blank() has no effect in theme legend_title [[#608](https://github.com/JetBrains/lets-plot/issues/608)].
