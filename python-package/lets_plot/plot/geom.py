@@ -2700,7 +2700,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         If False make a standard box plot.
         If True, boxes are drawn with widths proportional to the square-roots
         of the number of observations in the groups.
-    whisker_width : float, default=0.0
+    whisker_width : float, default=0.5
         A multiplicative factor applied to the box width to draw horizontal segments on whiskers.
     other_args
         Other arguments passed on to the layer.

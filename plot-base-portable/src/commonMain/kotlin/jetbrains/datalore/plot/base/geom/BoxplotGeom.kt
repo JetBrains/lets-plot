@@ -23,7 +23,7 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 class BoxplotGeom : GeomBase() {
 
     var fattenMidline: Double = 1.0
-    var whiskerWidth: Double = 0.0
+    var whiskerWidth: Double = 0.5
 
     var outlierColor: Color? = null
     var outlierFill: Color? = null
