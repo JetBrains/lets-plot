@@ -5029,7 +5029,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
     - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
     - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
+        There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward  (away from the plot center).
     - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
+        There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward  (away from the plot center).
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
@@ -5190,13 +5192,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Text to show for missing values.
     label_padding : float
         Amount of padding around label. Defaults to 0.25 of font size.
-        Currently not supported on livemap.
     label_r : float
         Radius of rounded corners. Defaults to 0.15 of label height.
-        Currently not supported on livemap.
     label_size : float, default = 1.0
         Size of label border.
-        Currently not supported on livemap.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5224,7 +5223,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
     - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
     - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
+        There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward  (away from the plot center).
     - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
+        There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward  (away from the plot center).
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
