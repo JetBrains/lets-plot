@@ -14,56 +14,7 @@ object Coords {
     fun create(
         coordMapper: CoordinatesMapper,
     ): CoordinateSystem {
-        val clientBounds = coordMapper.clientBounds
-        val origin = DoubleVector(
-            originX(clientBounds.xRange()),
-            originY(clientBounds.yRange())
-        )
-        return create(origin, coordMapper)
-    }
-
-    private fun create(
-        origin: DoubleVector,
-        coordMapper: CoordinatesMapper
-    ): CoordinateSystem {
-        return DefaultCoordinateSystem(
-            toClientOffsetX(origin.x),
-            toClientOffsetY(origin.y),
-            coordMapper
-        )
-    }
-
-    fun toClientOffsetX(xRange: DoubleSpan): (Double) -> Double {
-        return toClientOffsetX(
-            originX(
-                xRange
-            )
-        )
-    }
-
-    fun toClientOffsetY(yRange: DoubleSpan): (Double) -> Double {
-        return toClientOffsetY(
-            originY(
-                yRange
-            )
-        )
-    }
-
-    private fun originX(xRange: DoubleSpan): Double {
-        return -xRange.lowerEnd
-    }
-
-    private fun originY(yRange: DoubleSpan): Double {
-        return yRange.upperEnd
-    }
-
-    private fun toClientOffsetX(originX: Double): (Double) -> Double {
-        return { x -> originX + x }
-    }
-
-    private fun toClientOffsetY(originY: Double): (Double) -> Double {
-        // y-axis is inverted
-        return { y -> originY - y }
+        return DefaultCoordinateSystem(coordMapper)
     }
 
 
