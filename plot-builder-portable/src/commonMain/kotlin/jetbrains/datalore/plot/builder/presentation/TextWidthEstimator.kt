@@ -14,7 +14,7 @@ object TextWidthEstimator {
     private const val DEFAULT_FONT_SIZE = 14
 
     // Symbols '-', '/', '\' and '|' were classified by our model as the Cluster-0 symbols (most narrow).
-    // However, they appear to be subsantially wider on MacOS when it was expected.
+    // However, they appear to be substantially wider than it was expected on MacOS.
     // Wherefore, as a temporary workaround, they were moved to the Cluster-1 - i.e. to the cluster of slightly wider symbols.
     private val MISCLASSIFIED = listOf('-', '/', '\\', '|')
 
