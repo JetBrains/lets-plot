@@ -157,12 +157,23 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             return DoubleRectangle(x0, y0, x1 - x0, y1 - y0)
         }
 
+        @Suppress("FunctionName")
         fun LTRB(left: Double, top: Double, right: Double, bottom: Double): DoubleRectangle {
             return DoubleRectangle(left, top, right - left, bottom - top)
         }
 
+        @Suppress("FunctionName")
         fun XYWH(x: Double, y: Double, width: Double, height: Double): DoubleRectangle {
             return DoubleRectangle(x, y, width, height)
+        }
+
+        fun hvRange(hRange: DoubleSpan, vRange: DoubleSpan): DoubleRectangle {
+            return DoubleRectangle(
+                hRange.lowerEnd,
+                vRange.lowerEnd,
+                hRange.length,
+                vRange.length
+            )
         }
     }
 }

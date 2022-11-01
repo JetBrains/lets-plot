@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.DemoAndTest
 import jetbrains.datalore.plot.builder.GeomLayer
@@ -49,12 +48,8 @@ class YOrientationGeomBuildingTest {
         val yAxisLength = GEOM_BOUNDS.height
         val xDomain = GEOM_BOUNDS.xRange()
         val yDomain = GEOM_BOUNDS.yRange()
-        val xAesMapper = Mappers.IDENTITY
-        val yAesMapper = Mappers.IDENTITY
         val layerRenderer = DemoAndTest.buildGeom(
             layer = geomLayerStub,
-            xAesMapper = xAesMapper,
-            yAesMapper = yAesMapper,
             xyAesBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector(xAxisLength, yAxisLength)),
             coord = CoordProviders.cartesian().let {
                 val adjustedDomain = it.adjustDomain(DoubleRectangle(xDomain, yDomain))

@@ -56,7 +56,8 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         scaleX = ScaleBreaksUtil.withBreaks(scaleX, domainX, 10)
         scaleY = ScaleBreaksUtil.withBreaks(scaleY, domainY, 10)
 
-        val coord = Coords.create(rangeX, rangeY)
+//        val coord = Coords.create(rangeX, rangeY)
+        val coord = Coords.DemoAndTest.create(domainX, domainY, CENTER_SQUARE_SIZE)
 
         val leftAxis = createAxis(
             CENTER_SQUARE_SIZE.y,

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.stat
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
@@ -42,7 +43,9 @@ open class BinDemo : SimpleDemoBase() {
     private fun histogramWithLimits(): GroupComponent = createModel(true)
 
     private fun createModel(limits: Boolean): GroupComponent {
-        val coord = Coords.create(DoubleVector(demoInnerSize.x / 2, demoInnerSize.y / 2))
+        val domainX = DoubleSpan(-demoInnerSize.x / 2, demoInnerSize.x / 2)
+        val domainY = DoubleSpan(-demoInnerSize.y / 2, demoInnerSize.y / 2)
+        val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
         val count = 200
 
@@ -52,7 +55,6 @@ open class BinDemo : SimpleDemoBase() {
         val mapperX = Mappers.mul(1.0)
         var scaleX = Scales.DemoAndTest.continuousDomainNumericRange("A scale")
             .with()
-//            .mapper(Mappers.mul(1.0))
             .build()
 
         if (limits) {
@@ -77,7 +79,6 @@ open class BinDemo : SimpleDemoBase() {
             val mapperY = Mappers.mul(2.5)
             val scaleY = Scales.DemoAndTest.continuousDomainNumericRange("bar height")
                 .with()
-//                .mapper(Mappers.mul(2.5))
                 .build()
 
             // transform must happen before stat
@@ -99,8 +100,6 @@ open class BinDemo : SimpleDemoBase() {
             // build aesthetics for stat summary
             run {
                 val aes = AestheticsBuilder(statX.size)
-//                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
-//                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
                     .x(AestheticsBuilder.listMapper(statX, mapperX))
                     .y(AestheticsBuilder.listMapper(statY, mapperY))
                     .fill(constant(Color.LIGHT_BLUE))
@@ -108,7 +107,7 @@ open class BinDemo : SimpleDemoBase() {
                     .build()
 
                 val pos = PositionAdjustments.dodge(aes, 1, .95)
-                val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                val layer = SvgLayerRenderer(
                     aes,
                     BarGeom(),
                     pos,
@@ -121,8 +120,6 @@ open class BinDemo : SimpleDemoBase() {
             // add layer of stat points (for test)
             run {
                 val aes = AestheticsBuilder(statX.size)
-//                    .x(AestheticsBuilder.listMapper(statX, scaleX.mapper))
-//                    .y(AestheticsBuilder.listMapper(statY, scaleY.mapper))
                     .x(AestheticsBuilder.listMapper(statX, mapperX))
                     .y(AestheticsBuilder.listMapper(statY, mapperY))
                     .color(constant(Color.BLUE))
@@ -132,7 +129,7 @@ open class BinDemo : SimpleDemoBase() {
 
                 val pos = PositionAdjustments.identity()
                 val layer =
-                    jetbrains.datalore.plot.builder.SvgLayerRenderer(
+                    SvgLayerRenderer(
                         aes,
                         PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
                     )
@@ -143,7 +140,6 @@ open class BinDemo : SimpleDemoBase() {
         // points layer
         run {
             val aes = AestheticsBuilder(count)
-//                .x(AestheticsBuilder.listMapper(x, scaleX.mapper))
                 .x(AestheticsBuilder.listMapper(x, mapperX))
                 .y(list(y))
                 .color(constant(Color.RED))
@@ -152,11 +148,10 @@ open class BinDemo : SimpleDemoBase() {
                 .build()
 
             val pos = PositionAdjustments.identity()
-            val layer =
-                jetbrains.datalore.plot.builder.SvgLayerRenderer(
-                    aes,
-                    PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
-                )
+            val layer = SvgLayerRenderer(
+                aes,
+                PointGeom(), pos, coord, EMPTY_GEOM_CONTEXT
+            )
             groupComponent.add(layer.rootGroup)
         }
 
