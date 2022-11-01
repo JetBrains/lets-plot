@@ -43,14 +43,16 @@
   See updated examples: [image 101](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_101.ipynb),
   [Fisher's boat](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22d/image_fisher_boat.ipynb).
 
+- `geom_boxplot()`: default value for parameter `whisker_width` is 0.5.
+
 ### Fixed
 
 - element_blank() has no effect in theme legend_title [[#608](https://github.com/JetBrains/lets-plot/issues/608)].
-- livemap: add support of geom_label parameters [[#601](https://github.com/JetBrains/lets-plot/issues/601)].
+- `geom_livemap()`: add support of geom_label parameters [[#601](https://github.com/JetBrains/lets-plot/issues/601)].
 - Tooltip: different formats for same aesthetic Y [[#579](https://github.com/JetBrains/lets-plot/issues/579)].
 - Positioning with "constant" x/y doesn't work on axis with log10 transform [[#618](https://github.com/JetBrains/lets-plot/issues/618)].
 - Positional "constant" doesn't honor axis limits [[#619](https://github.com/JetBrains/lets-plot/issues/619)].
 - Parameter `norm` in `geom_imshow()`.
 - Several issues leading to crush in Swing/Batik apps. Related to [[discussions](https://github.com/JetBrains/lets-plot-kotlin/discussions/138)]
-- Default value for parameter `whisker_width` in `geom_boxplot()` is 0.5.
-- Increased estimated width for symbols '-', '/', '\' and '|'. This will fix overlapping and other plot layouting issues.
+- Overlapping of plot elements due to underestimation of the width of some symbols on `macOS`. Increased estimated width for `-`, `/`, `\` and `|`.
+- `geom_livemap()` not loading vector tiles inside `iframe` with certain security policies.
