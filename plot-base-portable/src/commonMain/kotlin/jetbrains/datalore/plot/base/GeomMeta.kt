@@ -352,7 +352,7 @@ object GeomMeta {
                 Aes.SIZE,
                 Aes.COLOR,
                 Aes.FILL,
-                Aes.ALPHA,
+                Aes.ALPHA
             )
         }
     }

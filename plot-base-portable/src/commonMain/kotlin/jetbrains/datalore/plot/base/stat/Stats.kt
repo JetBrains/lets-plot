@@ -32,6 +32,7 @@ object Stats {
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
     val RESIDUAL = DataFrame.Variable("..residual..", STAT, "residual")
     val SUM = DataFrame.Variable("..sum..", STAT, "sum")
+    val PERCENT = DataFrame.Variable("..percent..", STAT, "percent")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -59,6 +60,7 @@ object Stats {
             VIOLIN_WIDTH,
             RESIDUAL,
             SUM,
+            PERCENT,
             SCALED,
             GROUP,
         )
