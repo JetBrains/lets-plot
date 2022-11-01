@@ -63,17 +63,17 @@ internal class Count2dStat : BaseStat(DEF_MAPPING) {
 
         val countByXY = countByXY(xs, ys, counts)
         val sumStatCount = ArrayList<Double>()
-        val percentStat = ArrayList<Double>()
+        val prop = ArrayList<Double>()
         for (i in xs.indices) {
             val x = xs[i]
             val y = ys[i]
             val sum = countByXY[DoubleVector(x, y)]!!.get()
             sumStatCount.add(sum)
-            percentStat.add(counts[i] * 100 / sum)
+            prop.add(counts[i] / sum)
         }
         return dataAfterStat.builder()
             .putNumeric(Stats.SUM, sumStatCount)
-            .putNumeric(Stats.PERCENT, percentStat)
+            .putNumeric(Stats.PROP, prop)
             .build()
     }
 
