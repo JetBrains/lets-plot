@@ -45,6 +45,9 @@
 
 - `geom_boxplot()`: default value for parameter `whisker_width` is 0.5.
 
+- Upgraded Kotlin version to 1.7.20 (was 1.6.21).
+
+
 ### Fixed
 
 - element_blank() has no effect in theme legend_title [[#608](https://github.com/JetBrains/lets-plot/issues/608)].
@@ -55,4 +58,4 @@
 - Parameter `norm` in `geom_imshow()`.
 - Several issues leading to crush in Swing/Batik apps. Related to [[discussions](https://github.com/JetBrains/lets-plot-kotlin/discussions/138)]
 - Text labels got trimmed occasionally, when symbols `-`, `/`, `\` or `|` present.
-- `geom_livemap()` not loading vector tiles inside `iframe` with certain security policies.
+- `geom_livemap()` doesn't load vector tiles inside `iframe` with certain security policies.
