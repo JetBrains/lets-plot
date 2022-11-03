@@ -91,7 +91,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
     Please, use `geom_imshow()` instead.
 
     """
-    print("WARN: The function geom_image() is deprecated and and will be removed in future releases.\n"
+    print("WARN: The function geom_image() is deprecated and will be removed in future releases.\n"
           "      Please, use geom_imshow() instead.")
 
     return geom_imshow(image_data,

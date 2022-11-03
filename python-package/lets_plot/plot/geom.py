@@ -65,9 +65,10 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -226,9 +227,10 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2077,9 +2079,10 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2250,9 +2253,10 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4732,9 +4736,10 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4987,9 +4992,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5174,9 +5180,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    use_crs : str, default=None
-        If not None then GeoDataFrame will be projected to this crs, coord_map will not be applied.
-        If None then data will be projected to WGS84 and then to coord_map projection.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
