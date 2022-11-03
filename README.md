@@ -66,7 +66,7 @@ Nevertheless, few new features and improvements were added as well, among them:
   - New rendering options in `geom_text(), geom_label()`
   - `geom_imshow()` is now supporting `cmap` and `extent` parameters (also, `norm, vmin` and `vmax` were fixed)
 
-You will find more details about fixes and improvements in the [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md).
+You will find more details about fixes and improvements in the [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md#251---2022-11-03).
 
 ## What is new in 2.5.0
 
