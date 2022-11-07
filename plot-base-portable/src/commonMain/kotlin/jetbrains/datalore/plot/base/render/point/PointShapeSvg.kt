@@ -23,11 +23,13 @@ object PointShapeSvg {
             )
         }
         if (shape is NamedShape) {
+            val size = shape.size(p) * fatten
+            check(size.isFinite()) { "Invalid point size: $size" }
             return createNamedShape(
                 shape,
                 location,
-                p,
-                fatten
+                size,
+                p
             )
         }
         throw IllegalArgumentException("Unsupported point shape code ${shape.code} ${shape::class.simpleName}")
@@ -45,13 +47,13 @@ object PointShapeSvg {
     private fun createNamedShape(
         shape: NamedShape,
         location: DoubleVector,
-        p: DataPointAesthetics,
-        fatten: Double
+        size: Double,
+        p: DataPointAesthetics
     ): SvgSlimObject {
         val glyph = createSlimGlyph(
             shape,
             location,
-            shape.size(p) * fatten
+            size
         )
         AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, shape.strokeWidth(p))
         return glyph

@@ -4,7 +4,7 @@ import numpy as np
 from geopandas import GeoDataFrame
 from shapely.geometry import Point
 
-from lets_plot.plot import ggplot, geom_point, geom_map, geom_image, geom_livemap
+from lets_plot.plot import ggplot, geom_point, geom_map, geom_imshow, geom_livemap
 
 ITALY_UTM_33N = 'EPSG:32633'
 WGS84 = 'epsg:4326'
@@ -44,11 +44,11 @@ def test_map_gdf_ggplot__geom_map__geom_point():
     assert ROME_COORD_UTM_33N.almost_equals(spec.as_dict()['layers'][1]['map'].geometry[0], decimal=4)  # geom_point
 
 
-def test_map_gdf_ggplot__geom_map__geom_point__geom_image():
+def test_map_gdf_ggplot__geom_map__geom_point__geom_imshow():
     spec = ggplot() \
            + geom_map(map=ROME_GDF, use_crs=ITALY_UTM_33N) \
            + geom_point(map=ROME_GDF, use_crs=ITALY_UTM_33N) \
-           + geom_image(np.array([[290199.90107], [4639536.51707]], dtype=np.float))
+           + geom_imshow(np.array([[290199.90107], [4639536.51707]], dtype=np.float))
 
     assert ROME_COORD_UTM_33N.almost_equals(spec.as_dict()['layers'][0]['map'].geometry[0], decimal=4)  # geom_map
     assert ROME_COORD_UTM_33N.almost_equals(spec.as_dict()['layers'][1]['map'].geometry[0], decimal=4)  # geom_point

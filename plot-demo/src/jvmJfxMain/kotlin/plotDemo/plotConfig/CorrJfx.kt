@@ -11,7 +11,7 @@ import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 fun main() {
     with(Corr()) {
         PlotSpecsDemoWindowJfx(
-            "stat_corr",
+            "corr plot",
             plotSpecList()
         ).open()
     }

@@ -13,3 +13,4 @@ dependencies:
   - pip
   - pip:
       - pypng
+      - palettable

@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomOuterBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxHAxisTickLabelsBounds
+import kotlin.math.max
 
 internal class TopDownTileLayout(
     private val hAxisLayout: AxisLayout,
@@ -70,6 +71,12 @@ internal class TopDownTileLayout(
             if (rightOverflow > 0) {
                 newW = newW - rightOverflow
             }
+
+
+            // Fix for (Batik)
+            //            org.apache.batik.bridge.BridgeException: null:-1
+            //            The attribute "width" of the element <rect> cannot be negative
+            newW = max(0.0, newW)
 
             val boundsNew = DoubleRectangle(
                 newX, it.origin.y,

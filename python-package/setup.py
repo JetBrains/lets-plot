@@ -135,6 +135,7 @@ setup(name='lets-plot',
       ),
 
       install_requires=[
-          'pypng',  # needed for geom_image
+          'pypng',          # for geom_imshow
+          'palettable',     # for geom_imshow
       ],
       )

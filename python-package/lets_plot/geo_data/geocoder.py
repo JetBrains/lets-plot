@@ -779,7 +779,7 @@ class NamesGeocoder(Geocoder):
             from lets_plot import *
             from lets_plot.geo_data import *
             LetsPlot.setup_html()
-            city = geocode_cities('Warwick').countries('US')\
+            city = geocode_cities('Warwick').countries('US')\\
                    .where(name='Warwick', country='US', scope='Massachusetts').get_centroids()
             display(city)
             ggplot() + geom_livemap() + geom_point(data=city, color='red', size=5)
