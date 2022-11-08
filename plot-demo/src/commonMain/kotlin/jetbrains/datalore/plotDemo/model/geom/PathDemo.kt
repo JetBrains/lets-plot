@@ -5,8 +5,9 @@
 
 package jetbrains.datalore.plotDemo.model.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
@@ -22,8 +23,8 @@ open class PathDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                simple(),
-                grouped()
+            simple(),
+            grouped()
         )
     }
 
@@ -34,10 +35,10 @@ open class PathDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .x(array(x))
-                .y(array(y))
-                .color(constant(Color.RED))
-                .build()
+            .x(array(x))
+            .y(array(y))
+            .color(constant(Color.RED))
+            .build()
 
         return createGeomLayer(aes)
     }
@@ -70,18 +71,25 @@ open class PathDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(x.size)
-                .x(list(x))
-                .y(list(y))
-                .color(colorGen)
-                .group(list(group))
-                .build()
+            .x(list(x))
+            .y(list(y))
+            .color(colorGen)
+            .group(list(group))
+            .build()
 
         return createGeomLayer(aes)
     }
 
     private fun createGeomLayer(aes: Aesthetics): GroupComponent {
         val groupComponent = GroupComponent()
-        val coord = Coords.create(DoubleVector(0.0, demoInnerSize.y / 2))
+        val domainX = aes.range(Aes.X)!!
+        val domainY = aes.range(Aes.Y)!!
+        val coord = Coords.DemoAndTest.create(
+            DoubleSpan(domainX.lowerEnd - 20, domainX.upperEnd + 20),
+            DoubleSpan(domainY.lowerEnd - 20, domainY.upperEnd + 20),
+            demoInnerSize
+        )
+
         val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
             aes,
             PathGeom(),
