@@ -106,23 +106,23 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
 def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, extent=None):
     """
     Displays image specified by ndarray with shape
-     - (M, N) - grey-scale image
-     - (M, N, 3) - color RGB image
-     - (M, N, 4) - color RGB image with alpha channel
+
+    - (M, N) - grey-scale image
+    - (M, N, 3) - color RGB image
+    - (M, N, 4) - color RGB image with alpha channel
 
     This geom is not as flexible as `geom_raster()` or `geom_tile()`
     but vastly superior in the terms of rendering efficiency.   
 
     Parameters
     ----------
-    image_data : `ndarray`
+    image_data : ndarray
         Specifies image type, size and pixel values.
         Supported array shapes are:
-        - (M, N): an image with scalar data.
-                The values are mapped to colors (greys by default) using normalization.
-                See parameters `norm, cmap, vmin, vmax`.
+
+        - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization. See parameters `norm`, `cmap`, `vmin`, `vmax`.
         - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
-        - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int)
+        - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int).
 
         The first two dimensions (M, N) define the rows and columns of the image.
         Out-of-range values are clipped.
@@ -139,8 +139,10 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         This parameter is ignored for RGB(A) images or if parameter `norm=False`.
     extent : list of 4 numbers: [left, right, bottom, top], optional
         Define image's bounding box in terms of the "data coordinates".
+
         - `left, right`: coordinates of pixels' outer edge along the x-axis for pixels in the 1-st and the last column.
         - `bottom, top`: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
+
         The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
 
     Returns
