@@ -5337,7 +5337,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 
 def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-             hole=None, fill_by=None,
+             hole=None, fill_by=None, stroke=None, stroke_color=None,
              **other_args):
     """
     Draw pie chart.
@@ -5370,6 +5370,10 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
     fill_by : string, default='fill'
         Defines the source aesthetic for geometry filling.
+    stroke : float, default=0.0
+        Width of slice borders.
+    stroke_color : str, default='white'.
+        Color of slice borders.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5438,7 +5442,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 hole=hole, fill_by=fill_by,
+                 hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
                  **other_args)
 
 

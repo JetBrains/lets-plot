@@ -30,8 +30,8 @@ class PieGeom : GeomBase() {
 
     // ToDo: Add space between pieces and color of these gaps (TRANSPARENT as default)
 
-    private val strokeWidth: Double = 1.0
-    private val strokeColor: Color = Color.WHITE
+    var strokeWidth: Double = 0.0
+    var strokeColor: Color = Color.WHITE
 
     private var myFillColorMapper: (DataPointAesthetics) -> Color = fillColorMapper(Aes.FILL)
 

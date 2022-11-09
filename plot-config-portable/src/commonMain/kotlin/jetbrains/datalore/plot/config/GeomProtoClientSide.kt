@@ -218,9 +218,10 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.PIE -> return GeomProvider.pie {
                 val geom = PieGeom()
-                if (opts.has(Pie.HOLE)) {
-                    geom.holeRatio = opts.getDouble(Pie.HOLE)!!
-                }
+
+                opts.getDouble(Pie.HOLE)?.let { geom.holeRatio = it }
+                opts.getDouble(Pie.STROKE)?.let { geom.strokeWidth = it }
+                opts.getColor(Pie.STROKE_COLOR)?.let { geom.strokeColor = it }
                 if (opts.has(Pie.FILL_BY)) {
                     val fillBy = opts.getString(Pie.FILL_BY)!!
                     val aes = Option.Mapping.toAes(fillBy)
