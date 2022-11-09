@@ -240,6 +240,8 @@ object Option {
         object Pie {
             const val FILL_BY = "fill_by"
             const val HOLE = "hole"
+            const val STROKE = "stroke"
+            const val STROKE_COLOR = "stroke_color"
         }
 
         object LiveMap {
