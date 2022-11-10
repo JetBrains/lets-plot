@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.AreaRidgesGeom
 import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
@@ -284,7 +285,10 @@ internal object PositionalScalesUtil {
                 else -> null
             }?.let { heightAes ->
                 when (layer.geomKind) {
-                    GeomKind.AREA_RIDGES -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, 1.0, 0.0)
+                    GeomKind.AREA_RIDGES -> {
+                        val minHeight = (layer.geom as AreaRidgesGeom).minHeight
+                        computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, 1.0, minHeight)
+                    }
                     else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
                 }
             }
@@ -294,7 +298,7 @@ internal object PositionalScalesUtil {
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
-        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, resolution: Double, expandShift: Double = -0.5
+        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, resolution: Double, lowerBound: Double? = null
     ): DoubleSpan? {
         val locations = aesthetics.numericValues(locationAes).iterator()
         val sizes = aesthetics.numericValues(sizeAes).iterator()
@@ -312,7 +316,7 @@ internal object PositionalScalesUtil {
             val size = sizes.next()
             if (SeriesUtil.isFinite(loc) && SeriesUtil.isFinite(size)) {
                 val expand = resolution * size!!
-                updateExpandedMinMax(loc!!, expand, expandShift, minMax)
+                updateExpandedMinMax(loc!!, expand, resolution, lowerBound, minMax)
             }
         }
 
@@ -322,11 +326,12 @@ internal object PositionalScalesUtil {
             null
     }
 
-    private fun updateExpandedMinMax(value: Double, expand: Double, expandShift: Double, expandedMinMax: DoubleArray) {
-        expandedMinMax[0] = min(value + expandShift * expand, expandedMinMax[0])
-        expandedMinMax[1] = max(value + (1.0 + expandShift) * expand, expandedMinMax[1])
+    private fun updateExpandedMinMax(value: Double, expand: Double, resolution: Double, lowerBound: Double?, expandedMinMax: DoubleArray) {
+        val lowerValue = if (lowerBound == null) -expand / 2 else resolution * lowerBound
+        val upperValue = if (lowerBound == null) expand / 2 else expand
+        expandedMinMax[0] = min(value + lowerValue, expandedMinMax[0])
+        expandedMinMax[1] = max(value + upperValue, expandedMinMax[1])
     }
-
 
     private object RangeUtil {
         fun initialRange(transform: Transform): DoubleSpan? {

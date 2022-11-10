@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 class AreaRidgesGeom : GeomBase() {
     var scale: Double = DEF_SCALE
+    var minHeight: Double = DEF_MIN_HEIGHT
     private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
 
     fun setDrawQuantiles(quantiles: List<Double>) {
@@ -52,7 +53,7 @@ class AreaRidgesGeom : GeomBase() {
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
         for (p in dataPoints)
-            if (p.height()!! >= MIN_HEIGHT)
+            if (p.height()!! >= minHeight)
                 dataPointsBunch.add(p)
             else {
                 if (dataPointsBunch.any()) result.add(dataPointsBunch)
@@ -144,9 +145,8 @@ class AreaRidgesGeom : GeomBase() {
 
     companion object {
         const val DEF_SCALE = 1.0
+        const val DEF_MIN_HEIGHT = 0.0
         val DEF_DRAW_QUANTILES = emptyList<Double>()
-
-        private const val MIN_HEIGHT = 0.0
 
         const val HANDLES_GROUPS = true
     }

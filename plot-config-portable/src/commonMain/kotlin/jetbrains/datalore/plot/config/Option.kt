@@ -175,6 +175,7 @@ object Option {
 
         object AreaRidges {
             const val SCALE = "scale"
+            const val MIN_HEIGHT = "min_height"
             const val DRAW_QUANTILES = "draw_quantiles"
         }
 
