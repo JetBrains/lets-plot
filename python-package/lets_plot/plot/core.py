@@ -390,7 +390,7 @@ class PlotSpec(FeatureSpec):
             if other.kind == 'theme':
                 new_theme_options = {k: v for k, v in other.props().items() if v is not None}
                 if 'name' in new_theme_options:
-                    # pre-configured theme overrides existing theme all together.
+                    # pre-configured theme overrides existing theme altogether.
                     plot.props()['theme'] = new_theme_options
                 else:
                     # merge themes
