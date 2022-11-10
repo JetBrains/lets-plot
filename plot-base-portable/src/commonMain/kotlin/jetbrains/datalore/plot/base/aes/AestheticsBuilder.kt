@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -187,6 +188,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun slice(v: (Int) -> Double?): AestheticsBuilder {
         return aes(SLICE, v)
+    }
+
+    fun explode(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(EXPLODE, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {

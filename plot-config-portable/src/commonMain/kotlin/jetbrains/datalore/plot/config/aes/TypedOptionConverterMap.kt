@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -104,6 +105,7 @@ internal class TypedOptionConverterMap {
         this.put(SYM_X, DOUBLE_CVT)
         this.put(SYM_Y, DOUBLE_CVT)
         this.put(SLICE, DOUBLE_CVT)
+        this.put(EXPLODE, DOUBLE_CVT)
     }
 
     private fun <T> put(aes: Aes<T>, value: (Any?) -> T?) {

@@ -5398,6 +5398,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value.
     - y : y-axis value.
     - slice : values associated to pie sectors.
+    - explode : values to explode slices away from their center point, detaching it from the main pie.
     - size : pie diameter.
     - fill : color of geometry filling (by default).
     - color (colour) : color of geometry filling if `fill_by='color'`.

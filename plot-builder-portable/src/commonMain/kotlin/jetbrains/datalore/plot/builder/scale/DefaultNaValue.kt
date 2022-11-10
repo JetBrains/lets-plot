@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -103,6 +104,7 @@ object DefaultNaValue {
         VALUE_MAP.put(SYM_X, 0.0)
         VALUE_MAP.put(SYM_Y, 0.0)
         VALUE_MAP.put(SLICE, 0.0)
+        VALUE_MAP.put(EXPLODE, 0.0)
     }
 
     /**

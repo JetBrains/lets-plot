@@ -349,6 +349,7 @@ object GeomMeta {
                 Aes.X,
                 Aes.Y,
                 Aes.SLICE,
+                Aes.EXPLODE,
                 Aes.SIZE,
                 Aes.COLOR,
                 Aes.FILL,
