@@ -238,6 +238,7 @@ object GeomInteractionUtil {
                     GeomMeta.renders(layerConfig.geomProto.geomKind) - axisAes
                 }
             }
+            GeomKind.PIE -> listOf(Aes.EXPLODE)
             else -> emptyList()
         }
     }
