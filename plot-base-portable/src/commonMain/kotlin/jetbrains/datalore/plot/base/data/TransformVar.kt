@@ -54,6 +54,7 @@ object TransformVar {
     val SYM_X = DataFrame.Variable("transform.SYM_X", TRANSFORM)
     val SYM_Y = DataFrame.Variable("transform.SYM_Y", TRANSFORM)
     val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
+    val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VAR_BY_NAME: Map<String, DataFrame.Variable>
@@ -259,6 +260,10 @@ object TransformVar {
 
         override fun slice(): DataFrame.Variable {
             return SLICE
+        }
+
+        override fun explode(): DataFrame.Variable {
+            return EXPLODE
         }
     }
 }

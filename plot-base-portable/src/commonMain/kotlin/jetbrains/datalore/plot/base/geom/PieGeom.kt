@@ -27,9 +27,6 @@ import kotlin.math.abs
 class PieGeom : GeomBase() {
 
     var holeRatio: Double = 0.0
-
-    // ToDo: Add space between pieces and color of these gaps (TRANSPARENT as default)
-
     var strokeWidth: Double = 0.0
     var strokeColor: Color = Color.WHITE
 
@@ -70,11 +67,15 @@ class PieGeom : GeomBase() {
     ): List<LinePath> {
         val result = ArrayList<LinePath>()
         splitSectors(dataPoints).forEachIndexed { index, sector ->
-            val linePath = buildSector(location, sector, dataPoints[index])
+            val sectorOffset = sector.radius * dataPoints[index].explode()!!
+            val middleAngle = (sector.startAngle + sector.endAngle) / 2
+            val sectorLocation = getCoordinate(location, middleAngle, sectorOffset)
+
+            val linePath = buildSector(sectorLocation, sector, dataPoints[index])
             result.add(linePath)
 
             val colorMarkerMapper = { p: DataPointAesthetics -> listOf(myFillColorMapper(p)) }
-            buildHint(location, sector, colorMarkerMapper(dataPoints[index]), ctx)
+            buildHint(sectorLocation, sector, colorMarkerMapper(dataPoints[index]), ctx)
         }
         return result
     }

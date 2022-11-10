@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -203,6 +204,10 @@ abstract class AesVisitor<T> {
             return slice()
         }
 
+        if (aes == EXPLODE) {
+            return explode()
+        }
+
         throw IllegalArgumentException("Unexpected aes: $aes")
     }
 
@@ -291,4 +296,6 @@ abstract class AesVisitor<T> {
     protected abstract fun symY(): T
 
     protected abstract fun slice(): T
+
+    protected abstract fun explode(): T
 }

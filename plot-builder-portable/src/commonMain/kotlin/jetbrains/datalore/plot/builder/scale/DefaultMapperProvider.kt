@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -144,6 +145,7 @@ object DefaultMapperProvider {
             this.put(SYM_Y, NUMERIC_IDENTITY)
 
             this.put(SLICE, NUMERIC_IDENTITY)
+            this.put(EXPLODE, NUMERIC_IDENTITY)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {
