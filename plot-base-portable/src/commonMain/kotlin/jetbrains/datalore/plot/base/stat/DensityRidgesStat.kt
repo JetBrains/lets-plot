@@ -70,7 +70,7 @@ class DensityRidgesStat(
     }
 
     companion object {
-        const val DEF_TRIM = true
+        const val DEF_TRIM = false
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.Y,

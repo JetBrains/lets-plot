@@ -286,8 +286,8 @@ internal object PositionalScalesUtil {
             }?.let { heightAes ->
                 when (layer.geomKind) {
                     GeomKind.AREA_RIDGES -> {
-                        val minHeight = (layer.geom as AreaRidgesGeom).minHeight
-                        computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, 1.0, minHeight)
+                        val geom = layer.geom as AreaRidgesGeom
+                        computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geom.scale, geom.minHeight)
                     }
                     else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
                 }

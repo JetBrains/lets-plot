@@ -37,7 +37,8 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
-                "                 'stat': 'identity'" +
+                "                 'stat': 'identity'," +
+                "                 'color': 'black'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -185,7 +186,6 @@ class AreaRidges {
                 "                 'geom': 'area_ridges'," +
                 "                 'draw_quantiles': [0.1, 0.5, 0.9]," +
                 "                 'scale': 0.75," +
-                "                 'trim': false," +
                 "                 'color': 'white'" +
                 "               }" +
                 "             ]" +

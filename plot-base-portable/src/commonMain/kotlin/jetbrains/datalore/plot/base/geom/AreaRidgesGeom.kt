@@ -144,7 +144,7 @@ class AreaRidgesGeom : GeomBase() {
     }
 
     companion object {
-        const val DEF_SCALE = 1.0
+        const val DEF_SCALE = 3.0
         const val DEF_MIN_HEIGHT = 0.0
         val DEF_DRAW_QUANTILES = emptyList<Double>()
 
