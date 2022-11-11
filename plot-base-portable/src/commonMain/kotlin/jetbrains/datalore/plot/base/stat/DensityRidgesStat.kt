@@ -18,7 +18,7 @@ class DensityRidgesStat(
     private val kernel: DensityStat.Kernel,
     private val n: Int,
     private val fullScanMax: Int,
-    private val drawQuantiles: List<Double>
+    private val quantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
 
     init {
@@ -48,7 +48,7 @@ class DensityRidgesStat(
             List(ys.size) { 1.0 }
         }
 
-        val statData = DensityStatUtil.binnedStat(ys, xs, ws, trim, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, drawQuantiles)
+        val statData = DensityStatUtil.binnedStat(ys, xs, ws, trim, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, quantiles)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -72,7 +72,7 @@ class DensityRidgesStat(
 
     companion object {
         const val DEF_TRIM = false
-        val DEF_DRAW_QUANTILES = emptyList<Double>()
+        val DEF_QUANTILES = emptyList<Double>()
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.Y,

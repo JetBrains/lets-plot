@@ -176,7 +176,7 @@ object Option {
         object AreaRidges {
             const val SCALE = "scale"
             const val MIN_HEIGHT = "min_height"
-            const val DRAW_QUANTILES = "draw_quantiles"
+            const val QUANTILE_LINES = "quantile_lines"
         }
 
         object Violin {
@@ -340,6 +340,7 @@ object Option {
 
         object DensityRidges {
             const val TRIM = "trim"
+            const val QUANTILES = "quantiles"
         }
 
         object YDensity {

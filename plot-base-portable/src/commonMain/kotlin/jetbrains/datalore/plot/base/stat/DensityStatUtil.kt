@@ -39,7 +39,7 @@ object DensityStatUtil {
         kernel: DensityStat.Kernel,
         n: Int,
         fullScanMax: Int,
-        drawQuantiles: List<Double> = emptyList()
+        quantiles: List<Double> = emptyList()
     ): MutableMap<DataFrame.Variable, List<Double>> {
         val binnedData = (xs zip (ys zip ws))
             .filter { it.first?.isFinite() == true }
@@ -80,7 +80,7 @@ object DensityStatUtil {
             statDensity += binStatCount.map { it / widthsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
-            statQuantile += calculateQuantiles(binStatY, binStatCount, drawQuantiles)
+            statQuantile += calculateQuantiles(binStatY, binStatCount, quantiles)
         }
 
         return mutableMapOf(
@@ -96,25 +96,24 @@ object DensityStatUtil {
     private fun calculateQuantiles(
         sample: List<Double>,
         density: List<Double>,
-        drawQuantiles: List<Double>
+        quantiles: List<Double>
     ): List<Double> {
+        val quantileMaxValue = 1.0
         if (sample.isEmpty()) return emptyList()
-        val maxSampleValue = sample.maxOrNull()!!
         val densityValuesSum = density.sum()
         val dens = density.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
-        val quantilesSample = drawQuantiles.sorted().map { pwLinInterp(dens, sample)(it) }
-        val quantilesItr = quantilesSample.iterator()
-        if (!quantilesItr.hasNext()) return List(sample.size) { maxSampleValue }
+        val quantilesItr = quantiles.iterator()
+        if (!quantilesItr.hasNext()) return List(sample.size) { quantileMaxValue }
         var quantile = quantilesItr.next()
         return sample.map { sampleValue ->
-            if (sampleValue <= quantile)
+            if (sampleValue <= pwLinInterp(dens, sample)(quantile))
                 quantile
             else {
                 if (quantilesItr.hasNext()) {
                     quantile = quantilesItr.next()
                     quantile
                 } else {
-                    maxSampleValue
+                    quantileMaxValue
                 }
             }
         }

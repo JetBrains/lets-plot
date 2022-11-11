@@ -84,7 +84,7 @@ object AesInitValue {
         VALUE_MAP[MIDDLE] = Double.NaN
         VALUE_MAP[UPPER] = Double.NaN
         VALUE_MAP[SAMPLE] = 0.0
-        VALUE_MAP[QUANTILE] = 0.0
+        VALUE_MAP[QUANTILE] = Double.NaN
         VALUE_MAP[MAP_ID] = "empty map_id"
         VALUE_MAP[FRAME] = "empty frame"
         VALUE_MAP[SPEED] = 10.0

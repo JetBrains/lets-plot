@@ -15,11 +15,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 class AreaRidgesGeom : GeomBase() {
     var scale: Double = DEF_SCALE
     var minHeight: Double = DEF_MIN_HEIGHT
-    private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
-
-    fun setDrawQuantiles(quantiles: List<Double>) {
-        drawQuantiles = quantiles
-    }
+    var quantileLines: Boolean = DEF_QUANTILE_LINES
 
     override fun buildIntern(
         root: SvgRoot,
@@ -45,11 +41,13 @@ class AreaRidgesGeom : GeomBase() {
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
             .forEach { (_, dataPoints) ->
-                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
+                splitDataToQuantiles(dataPoints).forEach { quantileDataPoints ->
+                    splitDataPointsByMinHeight(quantileDataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
+                }
             }
     }
 
-    private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>): MutableList<Iterable<DataPointAesthetics>> {
+    private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
         for (p in dataPoints)
@@ -59,6 +57,29 @@ class AreaRidgesGeom : GeomBase() {
                 if (dataPointsBunch.any()) result.add(dataPointsBunch)
                 dataPointsBunch = mutableListOf()
             }
+        if (dataPointsBunch.any()) result.add(dataPointsBunch)
+        return result
+    }
+
+    private fun splitDataToQuantiles(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
+        val result = mutableListOf<Iterable<DataPointAesthetics>>()
+        val pointsItr = dataPoints.sortedBy(DataPointAesthetics::x).iterator()
+        var current: DataPointAesthetics? = null
+        var prev: DataPointAesthetics? = null
+        var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
+        while (pointsItr.hasNext()) {
+            if (current != null) prev = current
+            current = pointsItr.next()
+            if (prev == null) continue
+            dataPointsBunch.add(prev)
+            if ((prev.quantile()?.isFinite() != true && current.quantile()?.isFinite() != true) ||
+                prev.quantile() == current.quantile())
+                continue
+            dataPointsBunch.add(current)
+            result.add(dataPointsBunch)
+            dataPointsBunch = mutableListOf()
+        }
+        if (current != null) dataPointsBunch.add(current)
         if (dataPointsBunch.any()) result.add(dataPointsBunch)
         return result
     }
@@ -79,38 +100,37 @@ class AreaRidgesGeom : GeomBase() {
         helper.setAlphaEnabled(false)
         appendNodes(helper.createLines(dataPoints, boundTransform), root)
 
-        buildQuantiles(root, dataPoints, pos, coord, ctx)
+        if (quantileLines) drawQuantileLines(root, dataPoints, pos, coord, ctx)
 
         buildHints(dataPoints, ctx, helper, boundTransform)
     }
 
-    private fun buildQuantiles(
+    private fun drawQuantileLines(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        val p = dataPoints.first()
+        if (p.quantile()?.isFinite() == true) {
+            drawQuantileLine(root, p, pos, coord, ctx)
+            if (p.quantile() == 1.0) drawQuantileLine(root, dataPoints.last(), pos, coord, ctx)
+        }
+    }
+
+    private fun drawQuantileLine(
+        root: SvgRoot,
+        dataPoint: DataPointAesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val svgElementHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
-        val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
-            toLocationBound()(p)
-        }
-        val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
-            DoubleVector(p.x()!!, p.y()!!)
-        }
-        val pointsItr = dataPoints.iterator()
-        var current: DataPointAesthetics? = null
-        var prev: DataPointAesthetics? = null
-        while (pointsItr.hasNext()) {
-            if (current != null) prev = current
-            current = pointsItr.next()
-            if (prev == null) continue
-            if (prev.quantile() == current.quantile()) continue
-            val start = toLocationBoundStart(current)
-            val end = toLocationBoundEnd(current)
-            val line = svgElementHelper.createLine(start, end, current)!!
-            root.add(line)
-        }
+        val start = toLocationBound()(dataPoint)
+        val end = DoubleVector(dataPoint.x()!!, dataPoint.y()!!)
+        val line = svgElementHelper.createLine(start, end, dataPoint)!!
+        root.add(line)
     }
 
     private fun toLocationBound(): (p: DataPointAesthetics) -> DoubleVector {
@@ -156,7 +176,7 @@ class AreaRidgesGeom : GeomBase() {
     companion object {
         const val DEF_SCALE = 3.0
         const val DEF_MIN_HEIGHT = 0.0
-        val DEF_DRAW_QUANTILES = emptyList<Double>()
+        const val DEF_QUANTILE_LINES = false
 
         const val HANDLES_GROUPS = true
     }

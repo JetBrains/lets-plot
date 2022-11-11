@@ -181,9 +181,9 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        val drawQuantiles = if (options.hasOwn(Option.Geom.AreaRidges.DRAW_QUANTILES)) {
-            options.getBoundedDoubleList(Option.Geom.AreaRidges.DRAW_QUANTILES, 0.0, 1.0)
-        } else DensityRidgesStat.DEF_DRAW_QUANTILES
+        val drawQuantiles = if (options.hasOwn(DensityRidges.QUANTILES)) {
+            options.getBoundedDoubleList(DensityRidges.QUANTILES, 0.0, 1.0)
+        } else DensityRidgesStat.DEF_QUANTILES
 
         return DensityRidgesStat(
             trim = options.getBoolean(DensityRidges.TRIM, DensityRidgesStat.DEF_TRIM),
@@ -193,7 +193,7 @@ object StatProto {
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
-            drawQuantiles = drawQuantiles
+            quantiles = drawQuantiles
         )
     }
 

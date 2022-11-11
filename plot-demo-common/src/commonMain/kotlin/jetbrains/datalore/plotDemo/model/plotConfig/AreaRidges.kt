@@ -153,9 +153,13 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
-                "                 'draw_quantiles': [0.1, 0.5, 0.9]," +
+                "                 'quantiles': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]," +
+                "                 'quantile_lines': true," +
                 "                 'scale': 0.75," +
-                "                 'color': 'white'" +
+                "                 'color': 'white'," +
+                "                 'mapping': {" +
+                "                   'fill': '..quantile..'" +
+                "                 }" +
                 "               }" +
                 "             ]" +
                 "}"
