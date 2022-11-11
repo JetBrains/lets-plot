@@ -27,10 +27,15 @@ class TextSpecComponent : EcsComponent {
     lateinit var textSpec: TextSpec
 }
 
+class PieSpecComponent : EcsComponent {
+    var holeRatio: Double = 0.0
+}
+
 // Pie/Bar chart data
 class SymbolComponent : EcsComponent {
     var size: Vec<Client> = explicitVec(0.0, 0.0)
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
+    var explodeValues: List<Double> = emptyList()
 }

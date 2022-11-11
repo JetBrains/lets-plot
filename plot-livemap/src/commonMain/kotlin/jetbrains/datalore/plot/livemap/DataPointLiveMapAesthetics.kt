@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesInitValue
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.TextUtil
@@ -25,6 +26,7 @@ import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
 import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
+import jetbrains.datalore.plot.livemap.DataPointsConverter.PieOptions
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
 import jetbrains.livemap.api.geometry
@@ -37,6 +39,7 @@ internal class DataPointLiveMapAesthetics {
         myP = p
         indices = emptyList<Int>()
         valueArray = emptyList()
+        explodeArray = emptyList()
     }
 
     constructor(p: MultiDataPoint, layerKind: MapLayerKind) {
@@ -45,12 +48,14 @@ internal class DataPointLiveMapAesthetics {
         indices = p.indices
         valueArray = p.values
         myColorArray = p.colors
+        explodeArray = p.explodeValues
     }
 
     val myP: DataPointAesthetics
     private var myColorArray: List<Color> = emptyList()
     val indices: List<Int>
     val valueArray: List<Double>
+    val explodeArray: List<Double>
 
     val myLayerKind: MapLayerKind
 
@@ -138,20 +143,23 @@ internal class DataPointLiveMapAesthetics {
     val strokeColor
         get() = when (myLayerKind) {
             POLYGON -> myP.color()!!
+            PIE -> myPieOptions?.strokeColor ?: Color.WHITE
             else -> colorWithAlpha(myP.color()!!)
         }
 
     val radius: Double
         get() = when (myLayerKind) {
-            POLYGON, PATH, H_LINE, V_LINE, POINT, PIE, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
+            POLYGON, PATH, H_LINE, V_LINE, POINT, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
+            PIE -> AesScaling.pieDiameter(myP) / 2.0
             TEXT -> 0.0
         }
 
     val strokeWidth
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
-            POINT, PIE, BAR -> 1.0
+            POINT, BAR -> 1.0
             TEXT -> 0.0
+            PIE -> myPieOptions?.strokeWidth ?: 0.0
         }
 
 
@@ -169,6 +177,10 @@ internal class DataPointLiveMapAesthetics {
         get() = myLabelOptions?.radius ?: 0.0
     val labelSize: Double
         get() = myLabelOptions?.size ?: 0.0
+
+    private var myPieOptions: PieOptions? = null
+    val holeRatio: Double
+        get() = myPieOptions?.holeRatio ?: 0.0
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
@@ -200,5 +212,10 @@ internal class DataPointLiveMapAesthetics {
     fun setLabelOptions(labelOptions: LabelOptions?): DataPointLiveMapAesthetics {
         myLabelOptions = labelOptions
         return this
+    }
+
+    fun setPieOptions(pieOptions: PieOptions?): DataPointLiveMapAesthetics {
+       myPieOptions = pieOptions
+       return this
     }
 }

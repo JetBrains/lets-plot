@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.geom.LabelGeom
 import jetbrains.datalore.plot.base.geom.PathGeom
+import jetbrains.datalore.plot.base.geom.PieGeom
 import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.geom.SegmentGeom
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
@@ -49,6 +50,18 @@ internal class DataPointsConverter(
             }
     }
 
+    data class PieOptions(
+        val strokeColor: Color,
+        val strokeWidth: Double,
+        val holeRatio: Double
+    )
+    private fun pieConverter(geom: Geom): List<DataPointLiveMapAesthetics> {
+        val pieOptions = (geom as? PieGeom)?.let {
+            PieOptions(it.strokeColor, it.strokeWidth, it.holeRatio)
+        }
+        return symbolConverter(MapLayerKind.PIE, PIE_CHART).map { p -> p.setPieOptions(pieOptions)}
+    }
+
     fun toPoint(geom: Geom) = pointFeatureConverter.point(geom)
     fun toHorizontalLine() = pointFeatureConverter.hLine()
     fun toVerticalLine() = pointFeatureConverter.vLine()
@@ -58,7 +71,7 @@ internal class DataPointsConverter(
     fun toPath(geom: Geom) = myMultiPathFeatureConverter.path(geom)
     fun toPolygon() = myMultiPathFeatureConverter.polygon()
     fun toText(geom: Geom) = pointFeatureConverter.text(geom)
-    fun toPie(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.PIE, PIE_CHART)
+    fun toPie(geom: Geom): List<DataPointLiveMapAesthetics> = pieConverter(geom)
     fun toBar(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.BAR, BAR)
 
     private abstract class PathFeatureConverterBase internal constructor(
@@ -366,17 +379,19 @@ internal class DataPointsConverter(
             }
 
             internal fun build(): MultiDataPoint {
-                myPoints.sort(if (myUsesOrder) BY_ORDER else BY_VALUE)
-
-                if (mySortingMode == PIE_CHART && !myUsesOrder) {
-                    myPoints.move(myPoints.lastIndex, 0)
+                if (mySortingMode == BAR) {
+                    myPoints.sort(if (myUsesOrder) BY_ORDER else BY_VALUE)
                 }
-
+                val values = when (mySortingMode) {
+                    BAR -> myPoints.map { it.symY()!! }  // symY can't be null - pre-filtered in function getPoints()
+                    PIE_CHART -> myPoints.map { it.slice()!! }
+                }
                 return MultiDataPoint(
                     aes = myAes,
                     indices = myPoints.map { it.index() },
-                    values = myPoints.map { it.symY()!! }, // symY can't be null - pre-filtered in function getPoints()
-                    colors = myPoints.map { it.fill()!! }
+                    values = values,
+                    colors = myPoints.map { it.fill()!! },
+                    explodeValues = myPoints.map { it.explode()!! }
                 )
             }
 
@@ -402,8 +417,8 @@ internal class DataPointsConverter(
             val aes: DataPointAesthetics,
             val indices: List<Int>,
             val values: List<Double>,
-            val colors: List<Color>
+            val colors: List<Color>,
+            val explodeValues: List<Double>
         )
     }
-
 }

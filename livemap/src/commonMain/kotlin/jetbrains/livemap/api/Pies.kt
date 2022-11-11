@@ -8,6 +8,7 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.DonutChart
+import jetbrains.livemap.chart.PieSpecComponent
 import jetbrains.livemap.chart.SymbolComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -32,7 +33,7 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
-            + layerManager.addLayer("livemap_pie", LayerKind.FEATURES)
+            + layerManager.addLayer("geom_pie", LayerKind.FEATURES)
             + LayerEntitiesComponent()
         }
 
@@ -83,6 +84,10 @@ class PiesFactory(
                 values = transformValues2Angles(symbol.values)
                 colors = symbol.colors
                 indices = symbol.indices
+                explodeValues = symbol.explodeValues
+            }
+            + PieSpecComponent().apply {
+                holeRatio = symbol.holeRatio
             }
             + WorldOriginComponent(worldPoint)
             + ScreenDimensionComponent()

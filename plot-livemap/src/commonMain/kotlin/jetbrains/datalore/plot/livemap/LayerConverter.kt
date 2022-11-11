@@ -41,9 +41,9 @@ object LayerConverter {
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
+                PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom)
                 LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
                     DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
-                    DisplayMode.PIE -> MapLayerKind.PIE to dataPointsConverter.toPie()
                     DisplayMode.BAR -> MapLayerKind.BAR to dataPointsConverter.toBar()
                     else -> error("Unexpected livemap display mode.")
                 }
@@ -197,6 +197,9 @@ object LayerConverter {
                         this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
                         fromDataPoint(it)
+                        strokeWidth = it.strokeWidth
+                        strokeColor = it.strokeColor
+                        holeRatio = it.holeRatio
                     }
                 }
             }
@@ -222,5 +225,6 @@ object LayerConverter {
         indices = p.indices
         values = p.valueArray
         colors = p.colorArray
+        explodeValues = p.explodeArray
     }
 }
