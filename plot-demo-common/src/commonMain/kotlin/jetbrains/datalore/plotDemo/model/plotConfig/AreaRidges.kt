@@ -14,7 +14,6 @@ class AreaRidges {
             withGroups(),
             flipCoord(),
             withNegativeHeight(),
-            withQuantiles(),
             withStat()
         )
     }
@@ -130,36 +129,6 @@ class AreaRidges {
                 "                 'geom': 'area_ridges'," +
                 "                 'min_height': -0.5," +
                 "                 'stat': 'identity'" +
-                "               }" +
-                "             ]" +
-                "}"
-
-        return HashMap(parsePlotSpec(spec))
-
-    }
-
-    private fun withQuantiles(): MutableMap<String, Any> {
-        val spec = "{" +
-                "   'kind': 'plot'," +
-                "   'data' : {'x': [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]," +
-                "             'y': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]," +
-                "             'h': [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64, 0.81, 1.00, 1.09, 1.13, 1.14, 1.13, 1.09, 1.00, 0.81, 0.64, 0.49, 0.36, 0.25, 0.16, 0.09, 0.04, 0.01]" +
-                "            }," +
-                "   'mapping': {" +
-                "                'x': 'x'," +
-                "                'y': 'y'," +
-                "                'height': 'h'" +
-                "              }," +
-                "   'ggtitle': {" +
-                "                'text': 'Quantiles'" +
-                "              }," +
-                "   'layers': [" +
-                "               {" +
-                "                 'geom': 'area_ridges'," +
-                "                 'stat': 'identity'," +
-                "                 'draw_quantiles': [0.25, 0.5, 0.75]," +
-                "                 'color': 'black'," +
-                "                 'fill': 'white'" +
                 "               }" +
                 "             ]" +
                 "}"

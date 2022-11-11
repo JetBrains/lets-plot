@@ -225,6 +225,7 @@ object GeomMeta {
                 Aes.X,
                 Aes.Y,
                 Aes.HEIGHT,
+                Aes.QUANTILE,
 
                 Aes.ALPHA,
                 Aes.COLOR,

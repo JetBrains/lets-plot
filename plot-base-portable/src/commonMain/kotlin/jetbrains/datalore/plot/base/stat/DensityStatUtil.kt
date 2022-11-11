@@ -38,7 +38,8 @@ object DensityStatUtil {
         adjust: Double,
         kernel: DensityStat.Kernel,
         n: Int,
-        fullScanMax: Int
+        fullScanMax: Int,
+        drawQuantiles: List<Double> = emptyList()
     ): MutableMap<DataFrame.Variable, List<Double>> {
         val binnedData = (xs zip (ys zip ws))
             .filter { it.first?.isFinite() == true }
@@ -50,6 +51,7 @@ object DensityStatUtil {
         val statDensity = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
+        val statQuantile = ArrayList<Double>()
 
         for ((x, bin) in binnedData) {
             val (filteredY, filteredW) = SeriesUtil.filterFinite(bin.first, bin.second)
@@ -78,6 +80,7 @@ object DensityStatUtil {
             statDensity += binStatCount.map { it / widthsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
+            statQuantile += calculateQuantiles(binStatY, binStatCount, drawQuantiles)
         }
 
         return mutableMapOf(
@@ -85,8 +88,48 @@ object DensityStatUtil {
             Stats.Y to statY,
             Stats.DENSITY to statDensity,
             Stats.COUNT to statCount,
-            Stats.SCALED to statScaled
+            Stats.SCALED to statScaled,
+            Stats.QUANTILE to statQuantile
         )
+    }
+
+    private fun calculateQuantiles(
+        sample: List<Double>,
+        density: List<Double>,
+        drawQuantiles: List<Double>
+    ): List<Double> {
+        if (sample.isEmpty()) return emptyList()
+        val maxSampleValue = sample.maxOrNull()!!
+        val densityValuesSum = density.sum()
+        val dens = density.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
+        val quantilesSample = drawQuantiles.sorted().map { pwLinInterp(dens, sample)(it) }
+        val quantilesItr = quantilesSample.iterator()
+        if (!quantilesItr.hasNext()) return List(sample.size) { maxSampleValue }
+        var quantile = quantilesItr.next()
+        return sample.map { sampleValue ->
+            if (sampleValue <= quantile)
+                quantile
+            else {
+                if (quantilesItr.hasNext()) {
+                    quantile = quantilesItr.next()
+                    quantile
+                } else {
+                    maxSampleValue
+                }
+            }
+        }
+    }
+
+    private fun pwLinInterp(x: List<Double>, y: List<Double>): (Double) -> Double {
+        // Returns (bounded) piecewise linear interpolation function
+        return fun(t: Double): Double {
+            val i = x.indexOfFirst { it >= t }
+            if (i == 0) return y.first()
+            if (i == -1) return y.last()
+            val a = (y[i] - y[i - 1]) / (x[i] - x[i - 1])
+            val b = y[i - 1] - a * x[i - 1]
+            return a * t + b
+        }
     }
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {

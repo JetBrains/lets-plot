@@ -36,6 +36,7 @@ object TransformVar {
     val MIDDLE = DataFrame.Variable("transform.MIDDLE", TRANSFORM)
     val UPPER = DataFrame.Variable("transform.UPPER", TRANSFORM)
     val SAMPLE = DataFrame.Variable("transform.SAMPLE", TRANSFORM)
+    val QUANTILE = DataFrame.Variable("transform.QUANTILE", TRANSFORM)
     val MAP_ID = DataFrame.Variable("transform.MAP_ID", TRANSFORM)
     val FRAME = DataFrame.Variable("transform.FRAME", TRANSFORM)
     val SPEED = DataFrame.Variable("transform.SPEED", TRANSFORM)
@@ -185,6 +186,10 @@ object TransformVar {
 
         override fun sample(): DataFrame.Variable {
             return SAMPLE
+        }
+
+        override fun quantile(): DataFrame.Variable {
+            return QUANTILE
         }
 
         override fun mapId(): DataFrame.Variable {

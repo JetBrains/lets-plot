@@ -24,6 +24,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -143,6 +144,9 @@ abstract class AesVisitor<T> {
         if (aes == SAMPLE) {
             return sample()
         }
+        if (aes == QUANTILE) {
+            return quantile()
+        }
         if (aes == MAP_ID) {
             return mapId()
         }
@@ -246,6 +250,8 @@ abstract class AesVisitor<T> {
     protected abstract fun upper(): T
 
     protected abstract fun sample(): T
+
+    protected abstract fun quantile(): T
 
     protected abstract fun mapId(): T
 

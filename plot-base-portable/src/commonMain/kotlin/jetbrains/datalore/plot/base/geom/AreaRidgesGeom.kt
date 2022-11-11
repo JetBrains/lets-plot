@@ -91,14 +91,24 @@ class AreaRidgesGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, drawQuantiles, Aes.X, Aes.HEIGHT, Aes.Y)
+        val svgElementHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             toLocationBound()(p)
         }
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(p.x()!!, p.y()!!)
         }
-        for (line in quantilesHelper.createGroupedQuantiles(dataPoints, toLocationBoundStart, toLocationBoundEnd)) {
+        val pointsItr = dataPoints.iterator()
+        var current: DataPointAesthetics? = null
+        var prev: DataPointAesthetics? = null
+        while (pointsItr.hasNext()) {
+            if (current != null) prev = current
+            current = pointsItr.next()
+            if (prev == null) continue
+            if (prev.quantile() == current.quantile()) continue
+            val start = toLocationBoundStart(current)
+            val end = toLocationBoundEnd(current)
+            val line = svgElementHelper.createLine(start, end, current)!!
             root.add(line)
         }
     }

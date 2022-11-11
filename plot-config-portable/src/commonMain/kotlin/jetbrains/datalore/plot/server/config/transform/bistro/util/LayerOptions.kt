@@ -52,6 +52,7 @@ class LayerOptions : Options<PlotOptions>() {
     var middle: Double? by map(Aes.MIDDLE)
     var upper: Double? by map(Aes.UPPER)
     var sample: Double? by map(Aes.SAMPLE)
+    var quantile: Double? by map(Aes.QUANTILE)
     var xmin: Double? by map(Aes.XMIN)
     var xmax: Double? by map(Aes.XMAX)
     var ymin: Double? by map(Aes.YMIN)

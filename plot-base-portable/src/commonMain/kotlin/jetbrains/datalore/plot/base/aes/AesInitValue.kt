@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -83,6 +84,7 @@ object AesInitValue {
         VALUE_MAP[MIDDLE] = Double.NaN
         VALUE_MAP[UPPER] = Double.NaN
         VALUE_MAP[SAMPLE] = 0.0
+        VALUE_MAP[QUANTILE] = 0.0
         VALUE_MAP[MAP_ID] = "empty map_id"
         VALUE_MAP[FRAME] = "empty frame"
         VALUE_MAP[SPEED] = 10.0

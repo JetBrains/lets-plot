@@ -27,6 +27,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
@@ -83,6 +84,7 @@ object DefaultNaValue {
         VALUE_MAP.put(MIDDLE, 0.0)
         VALUE_MAP.put(UPPER, 0.0)
         VALUE_MAP.put(SAMPLE, 0.0)
+        VALUE_MAP.put(QUANTILE, 0.0)
         VALUE_MAP.put(MAP_ID, "empty map_id")
         VALUE_MAP.put(FRAME, "empty frame")
         VALUE_MAP.put(SPEED, 10.0)
