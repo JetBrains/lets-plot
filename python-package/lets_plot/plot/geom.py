@@ -5337,6 +5337,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 
 def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+             map=None, map_join=None, use_crs=None,
              hole=None, fill_by=None, stroke=None, stroke_color=None,
              **other_args):
     """
@@ -5366,6 +5367,16 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
     fill_by : string, default='fill'
@@ -5406,6 +5417,36 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     |
 
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    |
+
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    |
+
     Examples
     --------
     .. jupyter-execute::
@@ -5443,6 +5484,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 map=map, map_join=map_join, use_crs=use_crs,
                  hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
                  **other_args)
 
