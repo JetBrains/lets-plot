@@ -216,7 +216,7 @@ internal object PlotAssemblerUtil {
     ): PlotLayout {
         if (!facets.isDefined) {
             val topDownLayout = layoutProviderByTile[0].createTopDownTileLayout()
-            return SingleTilePlotLayout(topDownLayout)
+            return SingleTilePlotLayout(topDownLayout, hAxisTheme, vAxisTheme)
         }
 
         return FacetedPlotLayout(
