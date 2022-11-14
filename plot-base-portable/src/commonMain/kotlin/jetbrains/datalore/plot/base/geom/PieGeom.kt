@@ -161,13 +161,13 @@ class PieGeom : GeomBase() {
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
             val location = DoubleVector(size.x / 2, size.y / 2)
             val shapeSize = shapeSize(p)
-            val rect = SvgCircleElement(location.x, location.y, shapeSize / 2).apply {
+            val circle = SvgCircleElement(location.x, location.y, shapeSize / 2).apply {
                 fillColor().set(fillColorMapper(p))
                 strokeColor().set(strokeColor)
                 strokeWidth().set(1.0)
             }
             val g = SvgGElement()
-            g.children().add(rect)
+            g.children().add(circle)
             return g
         }
 
