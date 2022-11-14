@@ -18,9 +18,9 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.vis.svg.SvgCircleElement
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import jetbrains.datalore.vis.svg.SvgRectElement
 import kotlin.math.PI
 import kotlin.math.abs
 
@@ -37,7 +37,7 @@ class PieGeom : GeomBase() {
     }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PieLegendKeyElementFactory(myFillColorMapper, Color.TRANSPARENT)
+        get() = PieLegendKeyElementFactory(myFillColorMapper, strokeColor)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -159,11 +159,12 @@ class PieGeom : GeomBase() {
     ) : LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
-            val rect = SvgRectElement(0.0, 0.0, size.x, size.y).apply {
+            val location = DoubleVector(size.x / 2, size.y / 2)
+            val shapeSize = shapeSize(p)
+            val rect = SvgCircleElement(location.x, location.y, shapeSize / 2).apply {
                 fillColor().set(fillColorMapper(p))
-                fillOpacity().set(p.alpha())
                 strokeColor().set(strokeColor)
-                strokeWidth().set(1.5) // set thickness
+                strokeWidth().set(1.0)
             }
             val g = SvgGElement()
             g.children().add(rect)
@@ -171,10 +172,12 @@ class PieGeom : GeomBase() {
         }
 
         override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
-            val strokeWidth = AesScaling.strokeWidth(p)
-            val size = strokeWidth + 4
+            val shapeSize = shapeSize(p)
+            val size = shapeSize + 4.0
             return DoubleVector(size, size)
         }
+
+        private fun shapeSize(p: DataPointAesthetics) = p.size()!! * 2.5
     }
 
     companion object {
