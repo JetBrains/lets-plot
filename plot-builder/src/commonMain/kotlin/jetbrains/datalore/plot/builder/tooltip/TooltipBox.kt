@@ -12,7 +12,6 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
@@ -32,11 +31,7 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
-import jetbrains.datalore.vis.svg.SvgGraphicsElement
-import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import jetbrains.datalore.vis.svg.SvgPathElement
-import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svg.SvgUtils
+import jetbrains.datalore.vis.svg.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -131,7 +126,7 @@ class TooltipBox: SvgComponent() {
 
     private inner class PointerBox : SvgComponent() {
         private val myPointerPath = SvgPathElement()
-        internal var pointerDirection: PointerDirection? = null
+        var pointerDirection: PointerDirection? = null
         private var myBorderRadius = 0.0
         private val myHighlightPoint = SvgPathElement()
 
@@ -140,7 +135,7 @@ class TooltipBox: SvgComponent() {
             add(myHighlightPoint)
         }
 
-        internal fun updateStyle(
+        fun updateStyle(
             fillColor: Color,
             borderColor: Color,
             strokeWidth: Double,
@@ -163,7 +158,7 @@ class TooltipBox: SvgComponent() {
             }
         }
 
-        internal fun update(pointerCoord: DoubleVector, orientation: Orientation, usePointMarker: Boolean) {
+        fun update(pointerCoord: DoubleVector, orientation: Orientation, usePointMarker: Boolean) {
             pointerDirection = if (usePointMarker) null else when (orientation) {
                 HORIZONTAL -> when {
                     pointerCoord.x < contentRect.left -> LEFT
@@ -301,7 +296,7 @@ class TooltipBox: SvgComponent() {
             myColorBars.forEach { add(it) }
         }
 
-        internal fun update(
+        fun update(
             lines: List<TooltipSpec.Line>,
             title: String?,
             valueTextColor: Color?,
@@ -317,7 +312,7 @@ class TooltipBox: SvgComponent() {
 
             // title component
             val titleComponent = title?.let(::initTitleComponent)
-            val rawTitleBBox = getBBox(title, titleComponent) ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
+            val rawTitleBBox = getBBox(titleComponent) ?: DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
             // detect min tooltip width
             val minWidthWithTitle = listOfNotNull(tooltipMinWidth, rawTitleBBox.width).maxOrNull()
@@ -428,8 +423,8 @@ class TooltipBox: SvgComponent() {
                 }
         }
 
-        private fun getBBox(text: String?, textLabel: SvgComponent?): DoubleRectangle? {
-            if (textLabel == null || text.isNullOrBlank()) {
+        private fun getBBox(textLabel: MultilineLabel?): DoubleRectangle? {
+            if (textLabel == null || textLabel.text.isBlank()) {
                 // also for blank string - Batik throws an exception for a text element with a blank string
                 return null
             }
@@ -450,11 +445,11 @@ class TooltipBox: SvgComponent() {
         private fun estimateLineHeight(line: String?, className: String): Double? {
             return line
                 ?.split("\n")
-                ?.associateWith { TextLabel(it).apply { addClassName(className) } }
-                ?.mapNotNull { (value, lineTextLabel) ->
+                ?.map { MultilineLabel(it).apply { addClassName(className) } }
+                ?.mapNotNull { lineTextLabel ->
                     with(myLinesContainer.children()) {
                         add(lineTextLabel.rootGroup)
-                        val height = getBBox(value, lineTextLabel)?.height
+                        val height = getBBox(lineTextLabel)?.height
                         remove(lineTextLabel.rootGroup)
                         height
                     }
@@ -521,13 +516,7 @@ class TooltipBox: SvgComponent() {
                 valueComponent.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
             }
 
-            val rawBBoxes = lines.zip(components).map { (line, component) ->
-                val (labelComponent, valueComponent) = component
-                Pair(
-                    getBBox(line.label, labelComponent),
-                    getBBox(line.value, valueComponent)
-                )
-            }
+            val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }
 
             // max label width - all labels will be aligned to this value
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
@@ -586,7 +575,7 @@ class TooltipBox: SvgComponent() {
 
             val textSize = components
                 .zip(lineBBoxes)
-                .fold(DoubleVector.ZERO, { textDimension, (lineInfo, bBoxes) ->
+                .fold(DoubleVector.ZERO) { textDimension, (lineInfo, bBoxes) ->
                     val (labelComponent, valueComponent) = lineInfo
                     val (labelBBox, valueBBox) = bBoxes
 
@@ -614,11 +603,13 @@ class TooltipBox: SvgComponent() {
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
                             }
                         }
+
                         valueBBox.dimension.x == maxLineWidth && valueComponent.linesCount() == 1 -> {
                             // No label and value's width is equal to the total width => centered
                             // Again works differently in Batik(some positive padding) and JavaFX (always zero)
                             valueComponent.setX(-valueBBox.left)
                         }
+
                         else -> {
                             // Move value to the center
                             valueComponent.setX(maxLineWidth / 2)
@@ -633,7 +624,7 @@ class TooltipBox: SvgComponent() {
                         x = maxLineWidth,
                         y = y + LINE_INTERVAL
                     )
-                }).subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                }.subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
                 .also { myYPositionsBetweenLines.removeLastOrNull() }
 
             return textSize
