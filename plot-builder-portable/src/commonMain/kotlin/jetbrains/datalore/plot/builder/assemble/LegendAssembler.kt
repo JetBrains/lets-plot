@@ -169,10 +169,13 @@ class LegendAssembler(
                 )
             }
 
-            var keySize = DoubleVector(theme.keySize(), theme.keySize())
+            val themeKeySize = DoubleVector(theme.keySize(), theme.keySize())
+            var keySize = themeKeySize
+            val keySizes = mutableListOf<DoubleVector>()
             for (br in breaks) {
                 val minimumKeySize = br.minimumKeySize
                 keySize = keySize.max(pretty(minimumKeySize))
+                keySizes += themeKeySize.max(pretty(minimumKeySize))
             }
 
             // row, col count
@@ -212,7 +215,7 @@ class LegendAssembler(
                     layout = LegendComponentLayout.horizontal(title, breaks, keySize, theme)
                 }
             } else {
-                layout = LegendComponentLayout.vertical(title, breaks, keySize, theme)
+                layout = LegendComponentLayout.vertical(title, breaks, keySize, theme, keySizes)
             }
 
             layout.colCount = colCount

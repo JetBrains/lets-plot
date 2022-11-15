@@ -162,9 +162,11 @@ class PieGeom : GeomBase() {
             val location = DoubleVector(size.x / 2, size.y / 2)
             val shapeSize = shapeSize(p)
             val circle = SvgCircleElement(location.x, location.y, shapeSize / 2).apply {
-                fillColor().set(fillColorMapper(p))
-                strokeColor().set(strokeColor)
-                strokeWidth().set(1.0)
+                val fill = fillColorMapper(p)
+                fillColor().set(fill)
+                val stroke = if (fill == Color.TRANSPARENT) Color.BLACK else strokeColor
+                strokeColor().set(stroke)
+                strokeWidth().set(1.5)
             }
             val g = SvgGElement()
             g.children().add(circle)
@@ -177,7 +179,7 @@ class PieGeom : GeomBase() {
             return DoubleVector(size, size)
         }
 
-        private fun shapeSize(p: DataPointAesthetics) = p.size()!! * 2.5
+        private fun shapeSize(p: DataPointAesthetics) = AesScaling.pieDiameter(p) / 3
     }
 
     companion object {

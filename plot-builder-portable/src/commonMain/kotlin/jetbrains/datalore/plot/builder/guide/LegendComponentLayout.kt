@@ -15,9 +15,10 @@ import kotlin.math.max
 abstract class LegendComponentLayout(
     title: String,
     protected val breaks: List<LegendBreak>,
-    val keySize: DoubleVector,
+    val maxKeySize: DoubleVector,
     legendDirection: LegendDirection,
-    theme: LegendTheme
+    theme: LegendTheme,
+    val keySizes: List<DoubleVector>? = null
 ) : LegendBoxLayout(title, legendDirection, theme) {
 
     private var myContentSize: DoubleVector? = null
@@ -63,13 +64,14 @@ abstract class LegendComponentLayout(
     private fun doLayout() {
         val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
         val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
-        val labelHOffset = keySize.x + labelLeftMargin
-        val labelVOffset = (keySize.y - labelHeight) / 2
+        val labelHOffset = maxKeySize.x + labelLeftMargin
 
         val contentOrigin = DoubleVector.ZERO
         var breakBoxBounds: DoubleRectangle? = null
         for (i in breaks.indices) {
             val labelSize = labelSize(i)
+            val keySize = keySizes?.get(i) ?: maxKeySize
+            val labelVOffset = (keySize.y - labelHeight) / 2
             val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, keySize.y)
             breakBoxBounds = DoubleRectangle(
                 breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
@@ -96,11 +98,13 @@ abstract class LegendComponentLayout(
         title: String,
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
-        theme: LegendTheme
+        theme: LegendTheme,
+        keySizes: List<DoubleVector> = breaks.map { keySize }
     ) : LegendComponentLayout(
         title, breaks, keySize,
         LegendDirection.HORIZONTAL,
-        theme
+        theme,
+        keySizes
     ) {
         init {
             colCount = breaks.size
@@ -137,11 +141,13 @@ abstract class LegendComponentLayout(
         title: String,
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
-        theme: LegendTheme
+        theme: LegendTheme,
+        keySizes: List<DoubleVector>?
     ) : MyMultiRow(
         title, breaks, keySize,
         LegendDirection.VERTICAL,
-        theme
+        theme,
+        keySizes
     ) {
         init {
             colCount = 1
@@ -154,8 +160,9 @@ abstract class LegendComponentLayout(
         breaks: List<LegendBreak>,
         keySize: DoubleVector,
         legendDirection: LegendDirection,
-        theme: LegendTheme
-    ) : LegendComponentLayout(title, breaks, keySize, legendDirection, theme) {
+        theme: LegendTheme,
+        keySizes: List<DoubleVector>? = null
+    ) : LegendComponentLayout(title, breaks, keySize, legendDirection, theme, keySizes) {
         private var myMaxLabelWidth = 0.0
 
         init {
@@ -202,12 +209,13 @@ abstract class LegendComponentLayout(
             )
         }
 
-        fun vertical(title: String, breaks: List<LegendBreak>, keySize: DoubleVector, theme: LegendTheme): LegendComponentLayout {
+        fun vertical(title: String, breaks: List<LegendBreak>, keySize: DoubleVector, theme: LegendTheme, keySizes: List<DoubleVector>?): LegendComponentLayout {
             return MyVertical(
                 title,
                 breaks,
                 keySize,
-                theme
+                theme,
+                keySizes
             )
         }
     }
