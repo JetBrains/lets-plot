@@ -270,6 +270,8 @@ open class AestheticsDefaults {
             return base()
                 .update(Aes.SIZE, 10.0)
                 .updateInLegend(Aes.SIZE, 5.0)
+                .updateInLegend(Aes.FILL, Color.TRANSPARENT)
+                .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }
 
         private fun base(): AestheticsDefaults {
