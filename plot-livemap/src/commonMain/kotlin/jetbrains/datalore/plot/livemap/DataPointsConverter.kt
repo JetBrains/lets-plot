@@ -28,9 +28,6 @@ import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.createMu
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.multiPointAppender
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode
-import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode.BAR
-import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.SortingMode.PIE_CHART
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -42,24 +39,22 @@ internal class DataPointsConverter(
     private val pointFeatureConverter get() = PointFeatureConverter(aesthetics)
     private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics, geodesic)
     private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics, geodesic)
-    private fun symbolConverter(mapLayerKind: MapLayerKind, sortingMode: SortingMode): List<DataPointLiveMapAesthetics> {
-        return MultiDataPointHelper.getPoints(aesthetics, sortingMode)
-            .map {
-                DataPointLiveMapAesthetics(it, mapLayerKind)
-                    .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
-            }
-    }
 
     data class PieOptions(
         val strokeColor: Color,
         val strokeWidth: Double,
-        val holeRatio: Double
+        val holeSize: Double
     )
     private fun pieConverter(geom: Geom): List<DataPointLiveMapAesthetics> {
         val pieOptions = (geom as? PieGeom)?.let {
             PieOptions(it.strokeColor, it.strokeWidth, it.holeRatio)
         }
-        return symbolConverter(MapLayerKind.PIE, PIE_CHART).map { p -> p.setPieOptions(pieOptions)}
+        return MultiDataPointHelper.getPoints(aesthetics)
+            .map {
+                DataPointLiveMapAesthetics(it, MapLayerKind.PIE)
+                    .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
+                    .setPieOptions(pieOptions)
+            }
     }
 
     fun toPoint(geom: Geom) = pointFeatureConverter.point(geom)
@@ -72,7 +67,6 @@ internal class DataPointsConverter(
     fun toPolygon() = myMultiPathFeatureConverter.polygon()
     fun toText(geom: Geom) = pointFeatureConverter.text(geom)
     fun toPie(geom: Geom): List<DataPointLiveMapAesthetics> = pieConverter(geom)
-    fun toBar(): List<DataPointLiveMapAesthetics> = symbolConverter(MapLayerKind.BAR, BAR)
 
     private abstract class PathFeatureConverterBase internal constructor(
         internal val aesthetics: Aesthetics,
@@ -343,73 +337,37 @@ internal class DataPointsConverter(
     ) {
 
         companion object {
-            fun getPoints(aesthetics: Aesthetics, sortingMode: SortingMode): List<MultiDataPoint> {
+            fun getPoints(aesthetics: Aesthetics): List<MultiDataPoint> {
                 val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
 
                 fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
                     val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
-                    return builders.getOrPut(coord) { MultiDataPointBuilder(p, sortingMode) }
+                    return builders.getOrPut(coord) { MultiDataPointBuilder(p) }
                 }
 
                 aesthetics.dataPoints()
-                    .filter { it.symY() != null }
                     .forEach { p -> fetchBuilder(p).add(p) }
                 return builders.values.map(MultiDataPointBuilder::build)
             }
         }
 
-        internal enum class SortingMode {
-            BAR,
-            PIE_CHART
-        }
-
         private class MultiDataPointBuilder(
-            private val myAes: DataPointAesthetics,
-            private val mySortingMode: SortingMode
+            private val myAes: DataPointAesthetics
         ) {
             private val myPoints = ArrayList<DataPointAesthetics>()
-            private var myUsesOrder: Boolean = false
 
-            internal fun add(p: DataPointAesthetics) {
-                if (p.symX() != 0.0) {
-                    myUsesOrder = true
-                }
-
+            fun add(p: DataPointAesthetics) {
                 myPoints.add(p)
             }
 
-            internal fun build(): MultiDataPoint {
-                if (mySortingMode == BAR) {
-                    myPoints.sort(if (myUsesOrder) BY_ORDER else BY_VALUE)
-                }
-                val values = when (mySortingMode) {
-                    BAR -> myPoints.map { it.symY()!! }  // symY can't be null - pre-filtered in function getPoints()
-                    PIE_CHART -> myPoints.map { it.slice()!! }
-                }
+            fun build(): MultiDataPoint {
                 return MultiDataPoint(
                     aes = myAes,
                     indices = myPoints.map { it.index() },
-                    values = values,
+                    values = myPoints.map { it.slice()!! },
                     colors = myPoints.map { it.fill()!! },
                     explodeValues = myPoints.map { it.explode()!! }
                 )
-            }
-
-            private fun <T> MutableList<T>.sort(sorting: (T) -> Double) {
-                sortedBy(sorting).also { clear(); addAll(it) }
-            }
-
-            private fun <T> MutableList<T>.move(from: Int, to: Int) {
-                val p = this[from]
-
-                val delta = if (to <= from) 0 else -1
-                removeAt(from)
-                add(to + delta, p)
-            }
-
-            companion object {
-                private val BY_ORDER: (DataPointAesthetics) -> Double = { it.symX()!! }
-                private val BY_VALUE: (DataPointAesthetics) -> Double = { it.symY()!! }
             }
         }
 

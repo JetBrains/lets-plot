@@ -33,8 +33,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -140,9 +138,6 @@ object DefaultMapperProvider {
             // text vertical justification (numbers [0..1] or predefined strings, not positional)
             this.put(VJUST, createObjectIdentity())
             this.put(ANGLE, NUMERIC_IDENTITY)
-
-            this.put(SYM_X, NUMERIC_IDENTITY)
-            this.put(SYM_Y, NUMERIC_IDENTITY)
 
             this.put(SLICE, NUMERIC_IDENTITY)
             this.put(EXPLODE, NUMERIC_IDENTITY)

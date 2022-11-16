@@ -8,24 +8,15 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.legend.GenericLegendKeyElementFactory
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 
-class LiveMapGeom(
-    val displayMode: DisplayMode?
-) : Geom {
+class LiveMapGeom: Geom {
     private lateinit var myMapProvider: LiveMapProvider
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() {
-            return when (displayMode) {
-                DisplayMode.POINT -> PointLegendKeyElementFactory()
-                DisplayMode.PIE -> FilledCircleLegendKeyElementFactory()
-                else -> GenericLegendKeyElementFactory()
-            }
-        }
+        get() = GenericLegendKeyElementFactory()
 
     override fun build(
         root: SvgRoot,

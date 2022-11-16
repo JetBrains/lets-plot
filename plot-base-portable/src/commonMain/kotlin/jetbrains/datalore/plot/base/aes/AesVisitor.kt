@@ -32,8 +32,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -192,14 +190,6 @@ abstract class AesVisitor<T> {
             return angle()
         }
 
-        if (aes == SYM_X) {
-            return symX()
-        }
-
-        if (aes == SYM_Y) {
-            return symY()
-        }
-
         if (aes == SLICE) {
             return slice()
         }
@@ -290,10 +280,6 @@ abstract class AesVisitor<T> {
     protected abstract fun vjust(): T
 
     protected abstract fun angle(): T
-
-    protected abstract fun symX(): T
-
-    protected abstract fun symY(): T
 
     protected abstract fun slice(): T
 

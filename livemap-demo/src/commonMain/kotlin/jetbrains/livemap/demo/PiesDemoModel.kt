@@ -26,8 +26,9 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         radius = 50.0
                         values = listOf(-2.0, 5.0, 1.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                        strokeColor = Color.RED
-                        strokeWidth = 4.0
+                        strokeColor = Color.WHITE
+                        strokeWidth = 2.0
+                        holeSize = 0.4
                     }
 
                     pie {
@@ -36,6 +37,7 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         radius = 50.0
                         values = listOf(3.0, 1.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
+                        explodeValues = listOf(.0, .2, .0)
                     }
                 }
             }

@@ -8,7 +8,7 @@ package jetbrains.livemap.searching
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.SymbolComponent
+import jetbrains.livemap.chart.PointComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.LocatorUtil.distance
@@ -20,11 +20,11 @@ class PointLocatorHelper : LocatorHelper {
             return false
         }
 
-        val radius = target.get<SymbolComponent>().size.x / 2 * target.get<ChartElementComponent>().scalingSizeFactor
+        val radius = target.get<PointComponent>().size / 2 * target.get<ChartElementComponent>().scalingSizeFactor
         return target.get<ScreenLoopComponent>().origins.any { distance(coord, it) <= radius }
     }
 
     companion object {
-        val REQUIRED_COMPONENTS = listOf(SymbolComponent::class, ScreenLoopComponent::class, ChartElementComponent::class)
+        val REQUIRED_COMPONENTS = listOf(PointComponent::class, ScreenLoopComponent::class, ChartElementComponent::class)
     }
 }

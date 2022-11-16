@@ -35,8 +35,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -101,8 +99,6 @@ object AesInitValue {
         VALUE_MAP[HJUST] = 0.5  // 'middle'
         VALUE_MAP[VJUST] = 0.5  // 'middle'
         VALUE_MAP[ANGLE] = 0.0
-        VALUE_MAP[SYM_X] = 0.0
-        VALUE_MAP[SYM_Y] = 0.0
         VALUE_MAP[SLICE] = 0.0
         VALUE_MAP[EXPLODE] = 0.0
     }

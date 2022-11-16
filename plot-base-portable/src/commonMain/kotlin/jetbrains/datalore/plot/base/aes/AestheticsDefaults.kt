@@ -161,19 +161,8 @@ open class AestheticsDefaults {
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun livemap(displayMode: LivemapConstants.DisplayMode?): AestheticsDefaults {
-            return when (displayMode) {
-                null -> base()
-                LivemapConstants.DisplayMode.POINT -> point()
-                    .updateInLegend(Aes.SIZE, 5.0)
-                LivemapConstants.DisplayMode.BAR -> base()
-                    .update(Aes.SIZE, 40.0)
-                    .update(Aes.COLOR, Color.TRANSPARENT)
-                LivemapConstants.DisplayMode.PIE -> base()
-                    .update(Aes.SIZE, 20.0)
-                    .update(Aes.COLOR, Color.TRANSPARENT)
-                    .updateInLegend(Aes.SIZE, 5.0)
-            }
+        fun livemap(): AestheticsDefaults {
+            return base()
         }
 
         fun ribbon(): AestheticsDefaults {

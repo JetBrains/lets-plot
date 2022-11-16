@@ -10,8 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.livemap.api.*
 
@@ -42,11 +40,6 @@ object LayerConverter {
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom)
-                LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
-                    DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
-                    DisplayMode.BAR -> MapLayerKind.BAR to dataPointsConverter.toBar()
-                    else -> error("Unexpected livemap display mode.")
-                }
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
@@ -199,18 +192,7 @@ object LayerConverter {
                         fromDataPoint(it)
                         strokeWidth = it.strokeWidth
                         strokeColor = it.strokeColor
-                        holeRatio = it.holeRatio
-                    }
-                }
-            }
-
-            MapLayerKind.BAR -> bars {
-                liveMapDataPoints.forEach {
-                    bar {
-                        this.sizeScalingRange = sizeScalingRange
-                        this.alphaScalingEnabled = alphaScalingEnabled
-                        layerIndex = layerIdx
-                        fromDataPoint(it)
+                        holeSize = it.holeRatio
                     }
                 }
             }

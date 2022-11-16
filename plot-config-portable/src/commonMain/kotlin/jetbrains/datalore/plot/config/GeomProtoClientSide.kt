@@ -13,7 +13,6 @@ import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -24,7 +23,6 @@ import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
 import jetbrains.datalore.plot.config.Option.Geom.Label
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
 import jetbrains.datalore.plot.config.Option.Geom.Pie
 import jetbrains.datalore.plot.config.Option.Geom.Point
@@ -139,10 +137,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(YDotplot.METHOD)!!)
                 }
                 geom
-            }
-
-            GeomKind.LIVE_MAP -> {
-                return GeomProvider.livemap(opts.mergedOptions.getEnum<DisplayMode>(DISPLAY_MODE))
             }
 
             GeomKind.STEP -> return GeomProvider.step {
@@ -282,6 +276,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
             // image - special case
             // pie - special case
+            PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

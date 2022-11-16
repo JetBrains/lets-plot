@@ -26,7 +26,6 @@ __all__ = ['geom_livemap']
 
 def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
                  map=None, map_join=None,
-                 symbol=None,
                  location=None,
                  zoom=None,
                  projection=None,
@@ -35,7 +34,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=None,
                  data_size_zoomin=None,
                  const_size_zoomin=None,
-                 ontop=None,
                  **other_args):
     """
     Display an interactive map.
@@ -63,10 +61,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Keys used to join map coordinates with data.
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
-    symbol : str, default=None
-        The marker used for displaying the data. There are:
-        'point' for circles of different size and color;
-        None for map without markers.
     location : list
         Initial position of the map. If not set, displays the United States.
         There are [lon1, lat1, lon2, lat2,..., lonN, latN]:
@@ -100,9 +94,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         `-1` - size will be increasing without limits;
         `n` - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
-    ontop : bool, default=False
-        Whether geometry objects created by aesthetics mappings specified in directly in `geom_livemap()`
-        appear below (False) or ontop (True) of  objects of other plot layers.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -126,8 +117,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : radius for point, pie chart.
-    - sym_x : value order for pie chart and bar chart.
-    - sym_y : value specifying the sector size for pie chart and the heigth for bar chart.
 
     |
 
@@ -173,7 +162,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9-12
+        :emphasize-lines: 9-10
 
         from lets_plot import *
         LetsPlot.setup_html()
@@ -184,10 +173,9 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
             geom_livemap(geodesic=False, projection='epsg4326', \\
-                         symbol='point', color='white', \\
-                         tiles=maptiles_lets_plot(theme='dark'), \\
-                         tooltips=layer_tooltips().line('@city')) + \\
+                         tiles=maptiles_lets_plot(theme='dark')) + \\
             geom_path(color='white') + \\
+            geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle('SQ23 - the longest scheduled airline flight '
                     'by great circle distance since 2020')
 
@@ -218,7 +206,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join,
-                 display_mode=symbol,
                  location=location,
                  zoom=zoom,
                  projection=projection,
@@ -228,7 +215,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=show_coord_pick_tools,
                  data_size_zoomin=data_size_zoomin,
                  const_size_zoomin=const_size_zoomin,
-                 ontop=ontop,
                  **other_args
     )
 

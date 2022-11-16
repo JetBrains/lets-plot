@@ -132,27 +132,6 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                     }
                 }
 
-                bars {
-                    bar {
-                        indices = listOf(0, 1, 2)
-                        coord(BOSTON)
-
-                        radius = 30.0
-                        values = listOf(3.0, 0.0, 2.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                    }
-
-                    bar {
-                        coord(26.642449862865874, 63.339789715873216) // = "Finland"
-
-                        indices = listOf(3, 4, 5)
-
-                        radius = 30.0
-                        values = listOf(-2.0, -1.0, 4.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                    }
-                }
-
                 pies {
                     pie {
                         indices = listOf(0, 1, 2)

@@ -46,7 +46,6 @@ internal class MapObjectMatcher {
     fun match(mapEntity: DataPointLiveMapAesthetics) {
         when (mapEntity.myLayerKind) {
             PIE -> matchPieSector(mapEntity)
-            BAR -> matchBar(mapEntity)
             // HEATMAP -> matchHeatmap(mapObject)
             V_LINE, H_LINE -> matchLine(mapEntity)
             PATH -> matchPath(mapEntity)
@@ -67,17 +66,6 @@ internal class MapObjectMatcher {
         // startAngle.assertExpectation(pieSector.startAngle)
         // endAngle.assertExpectation(pieSector.endAngle)
         point.assertExpectation(pieSector.point)
-    }
-
-    private fun matchBar(bar: DataPointLiveMapAesthetics) {
-        // locationBoundingBoxes.assertExpectation(calculateBBoxes(bar))
-        index.assertExpectation(bar.index)
-        fillColor.assertExpectation(bar.fillColor)
-        strokeColor.assertExpectation(bar.strokeColor)
-        strokeWidth.assertExpectation(bar.strokeWidth)
-        // barRadius.assertExpectation(bar.dimension)
-        // centerOffset.assertExpectation(bar.offset)
-        point.assertExpectation(bar.point)
     }
 
     private fun matchHeatmap(heatmap: DataPointLiveMapAesthetics) {

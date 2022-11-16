@@ -39,7 +39,7 @@ internal class DataPointLiveMapAesthetics {
         myP = p
         indices = emptyList<Int>()
         valueArray = emptyList()
-        explodeArray = emptyList()
+        explodeArray = null
     }
 
     constructor(p: MultiDataPoint, layerKind: MapLayerKind) {
@@ -55,7 +55,7 @@ internal class DataPointLiveMapAesthetics {
     private var myColorArray: List<Color> = emptyList()
     val indices: List<Int>
     val valueArray: List<Double>
-    val explodeArray: List<Double>
+    val explodeArray: List<Double>?
 
     val myLayerKind: MapLayerKind
 
@@ -149,7 +149,7 @@ internal class DataPointLiveMapAesthetics {
 
     val radius: Double
         get() = when (myLayerKind) {
-            POLYGON, PATH, H_LINE, V_LINE, POINT, BAR -> ceil(myP.shape()!!.size(myP) / 2.0)
+            POLYGON, PATH, H_LINE, V_LINE, POINT -> ceil(myP.shape()!!.size(myP) / 2.0)
             PIE -> AesScaling.pieDiameter(myP) / 2.0
             TEXT -> 0.0
         }
@@ -157,7 +157,7 @@ internal class DataPointLiveMapAesthetics {
     val strokeWidth
         get() = when (myLayerKind) {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
-            POINT, BAR -> 1.0
+            POINT -> 1.0
             TEXT -> 0.0
             PIE -> myPieOptions?.strokeWidth ?: 0.0
         }
@@ -180,7 +180,7 @@ internal class DataPointLiveMapAesthetics {
 
     private var myPieOptions: PieOptions? = null
     val holeRatio: Double
-        get() = myPieOptions?.holeRatio ?: 0.0
+        get() = myPieOptions?.holeSize ?: 0.0
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())

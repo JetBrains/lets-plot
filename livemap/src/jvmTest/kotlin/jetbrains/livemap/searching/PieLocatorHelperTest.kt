@@ -15,7 +15,7 @@ import jetbrains.livemap.Client
 import jetbrains.livemap.api.transformValues2Angles
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.DonutChart
-import jetbrains.livemap.chart.SymbolComponent
+import jetbrains.livemap.chart.PieSpecComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -40,8 +40,8 @@ class PieLocatorHelperTest {
             .addComponents {
                 + IndexComponent(1, 1)
                 + ChartElementComponent()
-                + SymbolComponent().apply {
-                    size = explicitVec(r * 2, r * 2)
+                + PieSpecComponent().apply {
+                    radius = r
                     indices = vals.indices.toList()
                     values = transformValues2Angles(vals)
                     colors = vals.indices.map { Color.BLACK }

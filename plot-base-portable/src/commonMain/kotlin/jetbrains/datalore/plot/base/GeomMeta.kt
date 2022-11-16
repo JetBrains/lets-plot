@@ -317,7 +317,7 @@ object GeomMeta {
                 Aes.LINEHEIGHT
             )
 
-            GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'
+            GeomKind.LIVE_MAP -> listOf(
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
@@ -325,9 +325,7 @@ object GeomMeta {
                 Aes.SHAPE,
                 Aes.FRAME,
                 Aes.X,
-                Aes.Y,
-                Aes.SYM_X,
-                Aes.SYM_Y
+                Aes.Y
             )
 
             GeomKind.RASTER -> listOf(

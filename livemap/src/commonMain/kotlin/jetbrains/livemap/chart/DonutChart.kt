@@ -33,22 +33,22 @@ object DonutChart {
         val explode: Double
     )
 
-    private fun splitSectors(symbol: SymbolComponent, scaleFactor: Double): List<Sector> {
+    private fun splitSectors(pieSpec: PieSpecComponent, scaleFactor: Double): List<Sector> {
         var currentAngle = Double.NaN
-        return symbol.values.indices.map { index ->
-                val angle = symbol.values[index]
+        return pieSpec.values.indices.map { index ->
+                val angle = pieSpec.values[index]
                 if (currentAngle.isNaN()) {
                     currentAngle = -angle - PI/2
                 }
                 val endAngle = currentAngle + angle
-                val radius = symbol.size.x * scaleFactor / 2.0
+                val radius = pieSpec.radius * scaleFactor
                 Sector(
-                    index = symbol.indices[index],
+                    index = pieSpec.indices[index],
                     radius = radius,
                     startAngle = currentAngle,
                     endAngle = endAngle,
-                    color = symbol.colors[index],
-                    explode = radius * symbol.explodeValues[index]
+                    color = pieSpec.colors[index],
+                    explode = radius * (pieSpec.explodeValues?.get(index) ?: 0.0)
                 ).also { currentAngle = endAngle }
             }
     }
@@ -56,15 +56,15 @@ object DonutChart {
     class Renderer : jetbrains.livemap.mapengine.Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElement = entity.get<ChartElementComponent>()
-            val symbol = entity.get<SymbolComponent>()
-            val holeRatio = entity.get<PieSpecComponent>().holeRatio
+            val pieSpec = entity.get<PieSpecComponent>()
+            val holeSize = pieSpec.holeSize
 
-            splitSectors(symbol, chartElement.scalingSizeFactor).forEach { sector ->
+            splitSectors(pieSpec, chartElement.scalingSizeFactor).forEach { sector ->
                 val sectorOffset = sector.explode
                 val middleAngle = (sector.startAngle + sector.endAngle) / 2
                 val location = DoubleVector.ZERO.add(DoubleVector(0.0, -sectorOffset).rotate(middleAngle + PI / 2))
 
-                val holeRadius = floor(sector.radius * holeRatio)
+                val holeRadius = floor(sector.radius * holeSize)
 
                 // fill sector
                 ctx.setFillStyle(changeAlphaWithMin(sector.color, chartElement.scalingAlphaValue))
@@ -123,9 +123,9 @@ object DonutChart {
             }
 
             val chartElement = target.get<ChartElementComponent>()
-            val symbol = target.get<SymbolComponent>()
+            val pieSpec = target.get<PieSpecComponent>()
 
-            splitSectors(symbol, chartElement.scalingSizeFactor).forEach { (index, radius, startAngle, endAngle, _, explode) ->
+            splitSectors(pieSpec, chartElement.scalingSizeFactor).forEach { (index, radius, startAngle, endAngle, _, explode) ->
                     target.get<ScreenLoopComponent>().origins.forEach { origin ->
                         val middleAngle = (startAngle + endAngle) / 2
                         val offsetBasis = DoubleVector(0.0, -explode).rotate(middleAngle + PI / 2)
@@ -157,7 +157,7 @@ object DonutChart {
         }
 
         companion object {
-            val LOCATABLE_COMPONENTS = listOf(SymbolComponent::class, ScreenLoopComponent::class)
+            val LOCATABLE_COMPONENTS = listOf(PieSpecComponent::class, ScreenLoopComponent::class)
         }
     }
 }

@@ -130,7 +130,7 @@ class Symbol {
     var alphaScalingEnabled: Boolean = false
     var layerIndex: Int? = null
     var radius: Double = 0.0
-    var holeRatio: Double = 0.0
+    var holeSize: Double = 0.0
     var point: Vec<LonLat>? = null
 
     var strokeColor: Color = Color.BLACK
@@ -139,7 +139,7 @@ class Symbol {
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
-    var explodeValues: List<Double> = emptyList()
+    var explodeValues: List<Double>? = null
 }
 
 fun geometry(
