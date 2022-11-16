@@ -269,7 +269,7 @@ open class AestheticsDefaults {
         fun pie(): AestheticsDefaults {
             return base()
                 .update(Aes.SIZE, 10.0)
-                .updateInLegend(Aes.SIZE, 5.0)
+                .updateInLegend(Aes.SIZE, 1.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
                 .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }

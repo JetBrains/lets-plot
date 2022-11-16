@@ -179,7 +179,7 @@ class PieGeom : GeomBase() {
             return DoubleVector(size, size)
         }
 
-        private fun shapeSize(p: DataPointAesthetics) = AesScaling.pieDiameter(p) / 3
+        private fun shapeSize(p: DataPointAesthetics) = AesScaling.pieDiameter(p)
     }
 
     companion object {
