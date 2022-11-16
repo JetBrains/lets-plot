@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
@@ -25,19 +26,13 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 class PieGeom : GeomBase() {
-
-    var holeRatio: Double = 0.0
+    var holeSize: Double = 0.0
     var strokeWidth: Double = 0.0
     var strokeColor: Color = Color.WHITE
-
-    private var myFillColorMapper: (DataPointAesthetics) -> Color = fillColorMapper(Aes.FILL)
-
-    fun setAesForFill(aes: Aes<*>) {
-        myFillColorMapper = fillColorMapper(aes)
-    }
+    var fillWithColor: Boolean = false
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PieLegendKeyElementFactory(myFillColorMapper, strokeColor)
+        get() = PieLegendKeyElementFactory()
 
     override fun buildIntern(
         root: SvgRoot,
@@ -47,130 +42,129 @@ class PieGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
-            .groupBy { p ->
-                val point = DoubleVector(p.x()!!, p.y()!!)
-                geomHelper.toClient(point, p)
-            }
-            .forEach { (location, dataPoints) ->
-                if (location == null) return@forEach
 
-                val sectors = buildPie(location, dataPoints, ctx)
-                appendNodes(sectors, root)
-            }
+        val pies = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+            .groupBy { p -> geomHelper.toClient(p.x()!!, p.y()!!, p) }
+            .filterNotNullKeys()
+            .mapValues { (pieCenter, dataPoints) -> buildSectors(pieCenter, dataPoints) }
+
+        val svgPies = pies.flatMap { (center, sectors) -> buildSvgPie(center, sectors, ctx) }
+
+        appendNodes(svgPies, root)
     }
 
-    private fun buildPie(
-        location: DoubleVector,
-        dataPoints: List<DataPointAesthetics>,
+    private fun buildSvgPie(
+        pieCenter: DoubleVector, // todo: remove
+        sectors: List<Sector>,
         ctx: GeomContext
     ): List<LinePath> {
         val result = ArrayList<LinePath>()
-        splitSectors(dataPoints).forEachIndexed { index, sector ->
-            val sectorOffset = sector.radius * dataPoints[index].explode()!!
+        sectors.forEach { sector ->
             val middleAngle = (sector.startAngle + sector.endAngle) / 2
-            val sectorLocation = getCoordinate(location, middleAngle, sectorOffset)
+            //val sectorCenter = shift(pieCenter, sector.explode, middleAngle)
+            val sectorCenter = getCoordinate(pieCenter, middleAngle, sector.explode)
 
-            val linePath = buildSector(sectorLocation, sector, dataPoints[index])
+            val linePath = buildSvgSector(sectorCenter, sector)
             result.add(linePath)
 
-            val colorMarkerMapper = { p: DataPointAesthetics -> listOf(myFillColorMapper(p)) }
-            buildHint(sectorLocation, sector, colorMarkerMapper(dataPoints[index]), ctx)
+            buildHint(sectorCenter, sector, getFillColor(sector.p), ctx)
         }
         return result
     }
 
+    private fun shift(v: DoubleVector, l: Double, angle: Double): DoubleVector {
+        return DoubleVector(0.0, l).rotate(angle).add(v)
+    }
+
     private fun getCoordinate(center: DoubleVector, angle: Double, radius: Double): DoubleVector {
-        return center.add(
-            DoubleVector(0.0, -radius).rotate(angle)
+        return center
+            .add(DoubleVector(0.0, -radius).rotate(angle)
         )
     }
 
-    private fun buildSector(
-        location: DoubleVector,
-        sector: Sector,
-        p: DataPointAesthetics
+    private fun buildSvgSector(
+        location: DoubleVector, // todo: remove
+        sector: Sector
     ): LinePath {
-        val builder = SvgPathDataBuilder()
-
-        val innerRadius = sector.radius * holeRatio
 
         // Fix full circle drawing
         var endAngle = sector.endAngle
-        if ((sector.endAngle - sector.startAngle) % (2*PI) == 0.0) {
+        if ((sector.endAngle - sector.startAngle) % (2 * PI) == 0.0) {
             endAngle -= 0.0001
         }
-        val innerPnt1 = getCoordinate(location, sector.startAngle, innerRadius)
+        //val innerPnt1 = shift(sector.sectorCenter, sector.startAngle, sector.holeRadius)
+        //val outerPnt1 = shift(sector.sectorCenter, sector.startAngle, sector.radius)
+        //val outerPnt2 = shift(sector.sectorCenter, endAngle, sector.radius)
+        //val innerPnt2 = shift(sector.sectorCenter, endAngle, sector.holeRadius)
+        val innerPnt1 = getCoordinate(location, sector.startAngle, sector.holeRadius)
         val outerPnt1 = getCoordinate(location, sector.startAngle, sector.radius)
         val outerPnt2 = getCoordinate(location, endAngle, sector.radius)
-        val innerPnt2 = getCoordinate(location, endAngle, innerRadius)
+        val innerPnt2 = getCoordinate(location, endAngle, sector.holeRadius)
 
         val largeArc = (sector.endAngle - sector.startAngle) > PI
 
-        builder.moveTo(innerPnt1)
-        builder.lineTo(outerPnt1)
-        builder.ellipticalArc(
-            rx = sector.radius,
-            ry = sector.radius,
-            xAxisRotation = 0.0,
-            largeArc = largeArc,
-            sweep = true,
-            to = outerPnt2
-        )
-        builder.lineTo(innerPnt2)
-        builder.ellipticalArc(
-            rx = innerRadius,
-            ry = innerRadius,
-            xAxisRotation = 0.0,
-            largeArc = largeArc,
-            sweep = false,
-            to = innerPnt1
-        )
+        val builder = SvgPathDataBuilder().apply {
+            moveTo(innerPnt1)
+            lineTo(outerPnt1)
+            ellipticalArc(
+                rx = sector.radius,
+                ry = sector.radius,
+                xAxisRotation = 0.0,
+                largeArc = largeArc,
+                sweep = true,
+                to = outerPnt2
+            )
+            lineTo(innerPnt2)
+            ellipticalArc(
+                rx = sector.holeRadius,
+                ry = sector.holeRadius,
+                xAxisRotation = 0.0,
+                largeArc = largeArc,
+                sweep = false,
+                to = innerPnt1
+            )
+        }
 
         return LinePath(builder).apply {
-            val fill = myFillColorMapper(p)
-            val fillAlpha = AestheticsUtil.alpha(fill, p)
+            val fill = getFillColor(sector.p)
+            val fillAlpha = AestheticsUtil.alpha(fill, sector.p)
             fill().set(Colors.withOpacity(fill, fillAlpha))
             width().set(strokeWidth)
             color().set(strokeColor)
         }
     }
 
-    private fun buildHint(location: DoubleVector, sector: Sector, markerColors: List<Color>, ctx: GeomContext) {
-        val innerRadius = sector.radius * holeRatio
-
+    private fun buildHint(location: DoubleVector, sector: Sector, color: Color, ctx: GeomContext) {
         val step = toRadians(15.0)
         val middleAngles =
             generateSequence(sector.startAngle) { it + step }.takeWhile { it < sector.endAngle } + sector.endAngle
-        val points = listOf(getCoordinate(location, sector.startAngle, innerRadius)) +
+        val points = listOf(getCoordinate(location, sector.startAngle, sector.holeRadius)) +
                 middleAngles.map { getCoordinate(location, angle = it, sector.radius) } +
-                middleAngles.toList().reversed().map { getCoordinate(location, angle = it, innerRadius) }
+                middleAngles.toList().reversed().map { getCoordinate(location, angle = it, sector.holeRadius) }
 
         ctx.targetCollector.addPolygon(
             points = points,
-            localToGlobalIndex = { sector.dataPointIndex },
-            GeomTargetCollector.TooltipParams(markerColors = markerColors)
+            localToGlobalIndex = { sector.p.index() },
+            GeomTargetCollector.TooltipParams(markerColors = listOf(color))
         )
     }
 
-    private class PieLegendKeyElementFactory(
-        private val fillColorMapper: (DataPointAesthetics) -> Color,
-        private val strokeColor: Color
-    ) : LegendKeyElementFactory {
+    private inner class PieLegendKeyElementFactory : LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
-            val location = DoubleVector(size.x / 2, size.y / 2)
-            val shapeSize = shapeSize(p)
-            val circle = SvgCircleElement(location.x, location.y, shapeSize / 2).apply {
-                val fill = fillColorMapper(p)
-                fillColor().set(fill)
-                val stroke = if (fill == Color.TRANSPARENT) Color.BLACK else strokeColor
-                strokeColor().set(stroke)
-                strokeWidth().set(1.5)
+            return SvgGElement().apply {
+                children().add(
+                    SvgCircleElement(
+                        size.x / 2,
+                        size.y / 2,
+                        shapeSize(p) / 2
+                    ).apply {
+                        fillColor().set(getFillColor(p))
+                        strokeColor().set(if (getFillColor(p) == Color.TRANSPARENT) Color.BLACK else strokeColor)
+                        strokeWidth().set(1.5)
+                    }
+                )
             }
-            val g = SvgGElement()
-            g.children().add(circle)
-            return g
         }
 
         override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
@@ -182,33 +176,37 @@ class PieGeom : GeomBase() {
         private fun shapeSize(p: DataPointAesthetics) = AesScaling.pieDiameter(p)
     }
 
+    private inner class Sector(
+        val pieCenter: DoubleVector,
+        val p: DataPointAesthetics,
+        val startAngle: Double,
+        val endAngle: Double
+    ) {
+        val radius: Double = AesScaling.pieDiameter(p) / 2
+        val holeRadius = radius * holeSize
+        val explode = radius * p.explode()!!
+        val sectorCenter = shift(pieCenter, explode, (startAngle + endAngle) / 2)
+    }
+
+    private fun buildSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
+        val values = dataPoints.map { it.slice()!! }
+        var currentAngle = Double.NaN
+        return transformValues2Angles(values).withIndex()
+            .map { (index, angle) ->
+                if (currentAngle.isNaN()) {
+                    currentAngle = -angle
+                }
+                Sector(
+                    p = dataPoints[index],
+                    pieCenter = pieCenter,
+                    startAngle = currentAngle,
+                    endAngle = currentAngle + angle
+                ).also { currentAngle = it.endAngle }
+            }
+    }
+
     companion object {
         const val HANDLES_GROUPS = false
-
-        private data class Sector(
-            val dataPointIndex: Int,
-            val radius: Double,
-            val startAngle: Double,
-            val endAngle: Double
-        )
-
-        private fun splitSectors(dataPoints: List<DataPointAesthetics>): List<Sector> {
-            val values = dataPoints.map { it.slice()!! }
-            var currentAngle = Double.NaN
-            return transformValues2Angles(values).withIndex()
-                .map { (index, angle) ->
-                    if (currentAngle.isNaN()) {
-                        currentAngle = -angle
-                    }
-                    val endAngle = currentAngle + angle
-                    Sector(
-                        dataPointIndex = dataPoints[index].index(),
-                        radius = AesScaling.pieDiameter(dataPoints[index]) / 2,
-                        startAngle = currentAngle,
-                        endAngle = endAngle
-                    ).also { currentAngle = endAngle }
-                }
-        }
 
         private fun transformValues2Angles(values: List<Double>): List<Double> {
             val sum = values.sumOf(::abs)
@@ -220,14 +218,10 @@ class PieGeom : GeomBase() {
         }
     }
 
-    private fun fillColorMapper(aes: Aes<*>): (DataPointAesthetics) -> Color {
-        require(Aes.isColor(aes))
-        return { p: DataPointAesthetics ->
-            when (aes) {
-                Aes.COLOR -> p.color()!!
-                Aes.FILL -> p.fill()!!
-                else -> error("Pie is not applicable to $aes aesthetic as fill color.")
-            }
+    private fun getFillColor(p: DataPointAesthetics): Color {
+        return when (fillWithColor) {
+            true -> p.color()!!
+            false -> p.fill()!!
         }
     }
 }

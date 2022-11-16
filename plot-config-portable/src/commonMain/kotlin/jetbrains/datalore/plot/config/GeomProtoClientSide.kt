@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.base.spatial.projections.mercator
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
@@ -219,13 +220,13 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             GeomKind.PIE -> return GeomProvider.pie {
                 val geom = PieGeom()
 
-                opts.getDouble(Pie.HOLE)?.let { geom.holeRatio = it }
+                opts.getDouble(Pie.HOLE)?.let { geom.holeSize = it }
                 opts.getDouble(Pie.STROKE)?.let { geom.strokeWidth = it }
                 opts.getColor(Pie.STROKE_COLOR)?.let { geom.strokeColor = it }
                 if (opts.has(Pie.FILL_BY)) {
                     val fillBy = opts.getString(Pie.FILL_BY)!!
                     val aes = Option.Mapping.toAes(fillBy)
-                    geom.setAesForFill(aes)
+                    geom.fillWithColor = aes == Aes.COLOR
                 }
                 geom
             }
