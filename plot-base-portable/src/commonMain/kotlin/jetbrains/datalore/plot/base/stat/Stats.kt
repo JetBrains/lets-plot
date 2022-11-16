@@ -30,7 +30,6 @@ object Stats {
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
     val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
-    val RESIDUAL = DataFrame.Variable("..residual..", STAT, "residual")
     val SUM = DataFrame.Variable("..sum..", STAT, "sum")
     val PROP = DataFrame.Variable("..prop..", STAT, "prop")
 
@@ -58,7 +57,6 @@ object Stats {
             WIDTH,
             BIN_WIDTH,
             VIOLIN_WIDTH,
-            RESIDUAL,
             SUM,
             PROP,
             SCALED,
