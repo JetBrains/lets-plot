@@ -9,6 +9,8 @@ from .geom import _geom
 from .util import as_boolean
 from .util import is_ndarray
 
+from time import time
+
 try:
     import png
 except ImportError:
@@ -42,28 +44,27 @@ def _normalize_2D(image_data, norm, vmin, vmax):
     returns 2D array of ints with the target range [0..255].
     Values outside the target range will be later clipped.
     """
+    image_data = image_data.astype(numpy.float32)
+    vmin = float(vmin if vmin is not None else image_data.min())
+    vmax = float(vmax if vmax is not None else image_data.max())
+    if vmin > vmax:
+        raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
+
+    image_data = image_data.clip(vmin, vmax)
+
     normaize = as_boolean(norm, default=True)
     if normaize:
-        vmin = float(vmin) if vmin else image_data.min()
-        vmax = float(vmax) if vmax else image_data.max()
-        if vmin > vmax:
-            raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
-
         if vmin == vmax:
-            def scaler(v):
-                return 127
+            image_data[True] = 127.
         else:
             ratio = 255. / (vmax - vmin)
-
-            def scaler(v):
-                return int((v - vmin) * ratio + .5)
+            image_data = image_data - vmin
+            image_data = image_data * ratio + 0.5
     else:
         # no normalization - just round values to the nearest int.
-        def scaler(v):
-            return int(v + .5)
+        image_data = image_data + 0.5
 
-    scaler_v = numpy.vectorize(scaler)
-    return scaler_v(image_data)
+    return image_data
 
 
 def _normalize_RGBa(image_data):
@@ -197,6 +198,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
 
     """
 
+    start = time()
+
     if png == None:
         raise ValueError("pypng is not installed")
 
@@ -225,12 +228,14 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
                 "Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(
                     nchannels))
 
-    # Make sure all values are ints in range 0-255.
-    def clip_value_0_255(v):
-        return max(0, min(255, int(v + .5)))
+    norm_end = time()
+    print("Normalization: {}".format(norm_end - start))
 
-    clip_value_0_255_v = numpy.vectorize(clip_value_0_255)
-    image_data = clip_value_0_255_v(image_data)
+    # Make sure all values are ints in range 0-255.
+    image_date = image_data.clip(0, 255)
+
+    clip_end = time()
+    print("Clipping: {}".format(clip_end - norm_end))
 
     if cmap and image_type == 'gray':
         # colormap via palettable
@@ -241,15 +246,24 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         cmap_256 = palettable.get_map(cmap + "_256")
         cmap_rgb_256 = [_hex2rgb_np_int8(c) for c in cmap_256.hex_colors]
 
-        def map2rgb(v):
-            # v is in range [0,255]
-            i = max(0, min(255, int(v + .5)))
-            return cmap_rgb_256[i]
+        # def map2rgb(v):
+        #     # v is in range [0,255]
+        #     i = max(0, min(255, int(v + .5)))
+        #     return cmap_rgb_256[i]
+        #
+        # cmapper = numpy.vectorize(map2rgb, signature='()->(n)')
+        # image_data = cmapper(image_data)
+        image_data_rgb = numpy.zeros((numpy.shape(image_data)[0], numpy.shape(image_data)[1],3), dtype=numpy.int8)
+        it = numpy.nditer(image_data, flags=['multi_index'], op_flags=['readonly'])
+        for x in it:
+            image_data_rgb[it.multi_index] = cmap_rgb_256[int(x)]
 
-        cmapper = numpy.vectorize(map2rgb, signature='()->(n)')
-        image_data = cmapper(image_data)
+        image_data = image_data_rgb
         image_type = "rgb"  # it's color image now
         nchannels = 3
+
+    cmap_end = time()
+    print("cmap: {}".format(cmap_end - clip_end))
 
     # Image extent with possible axis flipping.
     # The default image bounds include 1/2 unit size expand in all directions.
@@ -273,14 +287,16 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
 
     # Make sure each value is 1 byte and the type is numpy.int8.
     # Otherwise, pypng will produce broken colors.
-    def to_byte(v):
-        return int(v + .5) & 0xff
+    if image_data.dtype != numpy.int8:
+        # Can't cast directly from np.float32 to np.int8.
+        image_data = image_data.astype(numpy.int16).astype(numpy.int8)
 
-    to_byte_v = numpy.vectorize(to_byte, otypes=[numpy.int8])
-    image_data = to_byte_v(image_data)
     # Reshape to 2d-array:
     # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
     image_2d = image_data.reshape(-1, width * nchannels)
+
+    image_2d_end = time()
+    print("image_2d: {}".format(image_2d_end - cmap_end))
 
     png_bytes = io.BytesIO()
     png.Writer(
@@ -290,6 +306,9 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         alpha=(image_type == 'rgba'),
         bitdepth=8
     ).write(png_bytes, image_2d)
+
+    png_writer_done = time()
+    print("png.Writer: {}".format(png_writer_done - image_2d_end))
 
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
 
