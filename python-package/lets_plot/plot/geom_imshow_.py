@@ -77,11 +77,12 @@ def _normalize_RGBa(image_data):
     Values outside the target range will be later clipped.
     """
     if image_data.dtype.kind == 'f':
-        def scaler(v):
-            return int(v * 255 + .5)
-
-        scaler_v = numpy.vectorize(scaler)
-        image_data = scaler_v(image_data)
+        # def scaler(v):
+        #     return int(v * 255 + .5)
+        #
+        # scaler_v = numpy.vectorize(scaler)
+        # image_data = scaler_v(image_data)
+        image_data = image_data * 255 + .5
 
     return image_data
 
@@ -232,7 +233,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
     print("Normalization: {}".format(norm_end - start))
 
     # Make sure all values are ints in range 0-255.
-    image_date = image_data.clip(0, 255)
+    image_data = image_data.clip(0, 255)
 
     clip_end = time()
     print("Clipping: {}".format(clip_end - norm_end))
@@ -289,7 +290,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
     # Otherwise, pypng will produce broken colors.
     if image_data.dtype != numpy.int8:
         # Can't cast directly from np.float32 to np.int8.
-        image_data = image_data.astype(numpy.int16).astype(numpy.int8)
+        arr = image_data.astype(numpy.int16)
+        image_data = arr.astype(numpy.int8)
 
     # Reshape to 2d-array:
     # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
