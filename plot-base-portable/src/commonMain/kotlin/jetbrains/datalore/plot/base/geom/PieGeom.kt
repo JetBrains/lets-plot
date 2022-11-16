@@ -51,7 +51,7 @@ class PieGeom : GeomBase() {
             .values
             .flatten()
 
-        sectors.forEach { buildHint(it, getFillColor(it.p), ctx.targetCollector) }
+        sectors.forEach { buildHint(it, ctx.targetCollector) }
         appendNodes(sectors.map(::buildSvgSector), root)
     }
 
@@ -87,7 +87,7 @@ class PieGeom : GeomBase() {
         }
     }
 
-    private fun buildHint(sector: Sector, color: Color, targetCollector: GeomTargetCollector) {
+    private fun buildHint(sector: Sector, targetCollector: GeomTargetCollector) {
         fun resampleArc(outerArc: Boolean): List<DoubleVector> {
             val arcPoint = when (outerArc) {
                 true -> sector::outerArcPoint
@@ -121,7 +121,7 @@ class PieGeom : GeomBase() {
         targetCollector.addPolygon(
             points = resampleArc(outerArc = true) + resampleArc(outerArc = false).reversed(),
             localToGlobalIndex = { sector.p.index() },
-            GeomTargetCollector.TooltipParams(markerColors = listOf(color))
+            GeomTargetCollector.TooltipParams(markerColors = listOf(getFillColor(sector.p)))
         )
     }
 
