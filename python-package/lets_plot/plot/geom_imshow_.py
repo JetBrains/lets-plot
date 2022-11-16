@@ -4,12 +4,11 @@
 #
 import base64
 import io
+from time import time
 
 from .geom import _geom
 from .util import as_boolean
 from .util import is_ndarray
-
-from time import time
 
 try:
     import png
@@ -34,8 +33,11 @@ def _hex2rgb(hex_c):
     return [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
 
 
-def _hex2rgb_np_int8(hex_c):
-    return numpy.array(_hex2rgb(hex_c), dtype=numpy.int8)
+def _hex2rgb_arr_uint8(hex_c):
+    """
+    Creates 'palette' for PyPNG PNG writer
+    """
+    return numpy.array(_hex2rgb(hex_c), dtype=numpy.uint8)
 
 
 def _normalize_2D(image_data, norm, vmin, vmax):
@@ -50,6 +52,7 @@ def _normalize_2D(image_data, norm, vmin, vmax):
     if vmin > vmax:
         raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
 
+    # ToDo: in-place
     image_data = image_data.clip(vmin, vmax)
 
     normaize = as_boolean(norm, default=True)
@@ -77,12 +80,7 @@ def _normalize_RGBa(image_data):
     Values outside the target range will be later clipped.
     """
     if image_data.dtype.kind == 'f':
-        # def scaler(v):
-        #     return int(v * 255 + .5)
-        #
-        # scaler_v = numpy.vectorize(scaler)
-        # image_data = scaler_v(image_data)
-        image_data = image_data * 255 + .5
+        return image_data * 255 + .5
 
     return image_data
 
@@ -232,39 +230,12 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
     norm_end = time()
     print("Normalization: {}".format(norm_end - start))
 
+    # ToDo: in-place
     # Make sure all values are ints in range 0-255.
     image_data = image_data.clip(0, 255)
 
     clip_end = time()
     print("Clipping: {}".format(clip_end - norm_end))
-
-    if cmap and image_type == 'gray':
-        # colormap via palettable
-        if not palettable:
-            raise ValueError(
-                "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your Python environment."
-            )
-        cmap_256 = palettable.get_map(cmap + "_256")
-        cmap_rgb_256 = [_hex2rgb_np_int8(c) for c in cmap_256.hex_colors]
-
-        # def map2rgb(v):
-        #     # v is in range [0,255]
-        #     i = max(0, min(255, int(v + .5)))
-        #     return cmap_rgb_256[i]
-        #
-        # cmapper = numpy.vectorize(map2rgb, signature='()->(n)')
-        # image_data = cmapper(image_data)
-        image_data_rgb = numpy.zeros((numpy.shape(image_data)[0], numpy.shape(image_data)[1],3), dtype=numpy.int8)
-        it = numpy.nditer(image_data, flags=['multi_index'], op_flags=['readonly'])
-        for x in it:
-            image_data_rgb[it.multi_index] = cmap_rgb_256[int(x)]
-
-        image_data = image_data_rgb
-        image_type = "rgb"  # it's color image now
-        nchannels = 3
-
-    cmap_end = time()
-    print("cmap: {}".format(cmap_end - clip_end))
 
     # Image extent with possible axis flipping.
     # The default image bounds include 1/2 unit size expand in all directions.
@@ -298,21 +269,39 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
     image_2d = image_data.reshape(-1, width * nchannels)
 
     image_2d_end = time()
-    print("image_2d: {}".format(image_2d_end - cmap_end))
+    print("image_2d: {}".format(image_2d_end - clip_end))
+
+    # PNG writer
+    greyscale = (image_type == 'gray')
+    palette = None
+    if cmap and image_type == 'gray':
+        greyscale = False
+
+        # colormap via palettable
+        if not palettable:
+            raise ValueError(
+                "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your Python environment."
+            )
+        cmap_256 = palettable.get_map(cmap + "_256")
+        palette = [_hex2rgb_arr_uint8(c) for c in cmap_256.hex_colors]
 
     png_bytes = io.BytesIO()
     png.Writer(
         width=width,
         height=height,
-        greyscale=(image_type == 'gray'),
+        greyscale=greyscale,
         alpha=(image_type == 'rgba'),
-        bitdepth=8
+        bitdepth=8,
+        palette=palette
     ).write(png_bytes, image_2d)
 
     png_writer_done = time()
     print("png.Writer: {}".format(png_writer_done - image_2d_end))
 
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
+
+    base64_done = time()
+    print("base64: {}".format(base64_done - png_writer_done))
 
     return _geom('image',
                  href=href,
