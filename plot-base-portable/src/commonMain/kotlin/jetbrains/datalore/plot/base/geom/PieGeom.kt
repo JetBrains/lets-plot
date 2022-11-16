@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.algorithms.AdaptiveResampler
 import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.*
@@ -24,6 +24,8 @@ import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 class PieGeom : GeomBase() {
     var holeSize: Double = 0.0
@@ -46,86 +48,47 @@ class PieGeom : GeomBase() {
         val pies = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
             .groupBy { p -> geomHelper.toClient(p.x()!!, p.y()!!, p) }
             .filterNotNullKeys()
-            .mapValues { (pieCenter, dataPoints) -> buildSectors(pieCenter, dataPoints) }
+            .mapValues { (pieCenter, dataPoints) -> computeSectors(pieCenter, dataPoints) }
+            .values
 
-        val svgPies = pies.flatMap { (center, sectors) -> buildSvgPie(center, sectors, ctx) }
+        pies.forEach { sectors -> sectors.forEach { buildHint(it, getFillColor(it.p), ctx.targetCollector) } }
 
+        val svgPies = pies.flatMap { sectors -> sectors.map(::buildSvgSector) }
         appendNodes(svgPies, root)
     }
 
-    private fun buildSvgPie(
-        pieCenter: DoubleVector, // todo: remove
-        sectors: List<Sector>,
-        ctx: GeomContext
-    ): List<LinePath> {
-        val result = ArrayList<LinePath>()
-        sectors.forEach { sector ->
-            val middleAngle = (sector.startAngle + sector.endAngle) / 2
-            //val sectorCenter = shift(pieCenter, sector.explode, middleAngle)
-            val sectorCenter = getCoordinate(pieCenter, middleAngle, sector.explode)
-
-            val linePath = buildSvgSector(sectorCenter, sector)
-            result.add(linePath)
-
-            buildHint(sectorCenter, sector, getFillColor(sector.p), ctx)
-        }
-        return result
-    }
-
-    private fun shift(v: DoubleVector, l: Double, angle: Double): DoubleVector {
-        return DoubleVector(0.0, l).rotate(angle).add(v)
-    }
-
-    private fun getCoordinate(center: DoubleVector, angle: Double, radius: Double): DoubleVector {
-        return center
-            .add(DoubleVector(0.0, -radius).rotate(angle)
-        )
-    }
-
-    private fun buildSvgSector(
-        location: DoubleVector, // todo: remove
-        sector: Sector
-    ): LinePath {
-
+    private fun buildSvgSector(sector: Sector): LinePath {
         // Fix full circle drawing
         var endAngle = sector.endAngle
         if ((sector.endAngle - sector.startAngle) % (2 * PI) == 0.0) {
             endAngle -= 0.0001
         }
-        //val innerPnt1 = shift(sector.sectorCenter, sector.startAngle, sector.holeRadius)
-        //val outerPnt1 = shift(sector.sectorCenter, sector.startAngle, sector.radius)
-        //val outerPnt2 = shift(sector.sectorCenter, endAngle, sector.radius)
-        //val innerPnt2 = shift(sector.sectorCenter, endAngle, sector.holeRadius)
-        val innerPnt1 = getCoordinate(location, sector.startAngle, sector.holeRadius)
-        val outerPnt1 = getCoordinate(location, sector.startAngle, sector.radius)
-        val outerPnt2 = getCoordinate(location, endAngle, sector.radius)
-        val innerPnt2 = getCoordinate(location, endAngle, sector.holeRadius)
 
         val largeArc = (sector.endAngle - sector.startAngle) > PI
 
-        val builder = SvgPathDataBuilder().apply {
-            moveTo(innerPnt1)
-            lineTo(outerPnt1)
-            ellipticalArc(
-                rx = sector.radius,
-                ry = sector.radius,
-                xAxisRotation = 0.0,
-                largeArc = largeArc,
-                sweep = true,
-                to = outerPnt2
-            )
-            lineTo(innerPnt2)
-            ellipticalArc(
-                rx = sector.holeRadius,
-                ry = sector.holeRadius,
-                xAxisRotation = 0.0,
-                largeArc = largeArc,
-                sweep = false,
-                to = innerPnt1
-            )
-        }
-
-        return LinePath(builder).apply {
+        return LinePath(
+            SvgPathDataBuilder().apply {
+                moveTo(sector.innerStart)
+                lineTo(sector.outerStart)
+                ellipticalArc(
+                    rx = sector.radius,
+                    ry = sector.radius,
+                    xAxisRotation = 0.0,
+                    largeArc = largeArc,
+                    sweep = true,
+                    to = sector.outerEnd
+                )
+                lineTo(sector.innerEnd)
+                ellipticalArc(
+                    rx = sector.holeRadius,
+                    ry = sector.holeRadius,
+                    xAxisRotation = 0.0,
+                    largeArc = largeArc,
+                    sweep = false,
+                    to = sector.innerStart
+                )
+            }
+        ).apply {
             val fill = getFillColor(sector.p)
             val fillAlpha = AestheticsUtil.alpha(fill, sector.p)
             fill().set(Colors.withOpacity(fill, fillAlpha))
@@ -134,16 +97,39 @@ class PieGeom : GeomBase() {
         }
     }
 
-    private fun buildHint(location: DoubleVector, sector: Sector, color: Color, ctx: GeomContext) {
-        val step = toRadians(15.0)
-        val middleAngles =
-            generateSequence(sector.startAngle) { it + step }.takeWhile { it < sector.endAngle } + sector.endAngle
-        val points = listOf(getCoordinate(location, sector.startAngle, sector.holeRadius)) +
-                middleAngles.map { getCoordinate(location, angle = it, sector.radius) } +
-                middleAngles.toList().reversed().map { getCoordinate(location, angle = it, sector.holeRadius) }
+    private fun buildHint(sector: Sector, color: Color, targetCollector: GeomTargetCollector) {
+        fun arcResampler(sector: Sector, innerArc: Boolean): (DoubleVector) -> DoubleVector {
+            val transform = when(innerArc) {
+                true -> sector::innerArcPoint
+                false -> sector::outerArcPoint
+            }
 
-        ctx.targetCollector.addPolygon(
-            points = points,
+            val segmentLength = when(innerArc) {
+                true -> sector.innerStart.subtract(sector.innerEnd).length()
+                false -> sector.outerStart.subtract(sector.outerEnd).length()
+            }
+
+            val startPoint = when(innerArc) {
+                true -> sector.innerStart
+                false -> sector.outerStart
+            }
+
+            return { p: DoubleVector ->
+                val ratio = p.subtract(startPoint).length() / segmentLength
+                if (ratio.isFinite()) {
+                    val angle = sector.startAngle + sector.angle * ratio
+                    transform(angle)
+                } else {
+                    p
+                }
+            }
+        }
+
+        val outerArc = AdaptiveResampler.forDoubleVector(arcResampler(sector, innerArc = false), 2.0).resample(sector.outerStart, sector.outerEnd)
+        val innerArc = AdaptiveResampler.forDoubleVector(arcResampler(sector, innerArc = true), 2.0).resample(sector.innerStart, sector.innerEnd)
+
+        targetCollector.addPolygon(
+            points = outerArc + innerArc.reversed(),
             localToGlobalIndex = { sector.p.index() },
             GeomTargetCollector.TooltipParams(markerColors = listOf(color))
         )
@@ -183,12 +169,27 @@ class PieGeom : GeomBase() {
         val endAngle: Double
     ) {
         val radius: Double = AesScaling.pieDiameter(p) / 2
+        private val direction = (endAngle - startAngle) / 2
+        private val explode = radius * p.explode()!!
+        private val sectorCenter = DoubleVector(0.0, explode).rotate(direction).add(pieCenter)
         val holeRadius = radius * holeSize
-        val explode = radius * p.explode()!!
-        val sectorCenter = shift(pieCenter, explode, (startAngle + endAngle) / 2)
+        val angle = abs(endAngle - startAngle)
+
+        val outerStart = outerArcPoint(startAngle)
+        val outerEnd = outerArcPoint(endAngle)
+
+        val innerStart = innerArcPoint(startAngle)
+        val innerEnd = innerArcPoint(endAngle)
+
+        fun outerArcPoint(angle: Double) = arcPoint(radius, angle)
+        fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
+
+        private fun arcPoint(radius: Double, angle: Double): DoubleVector {
+            return sectorCenter.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
+        }
     }
 
-    private fun buildSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
+    private fun computeSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
         val values = dataPoints.map { it.slice()!! }
         var currentAngle = Double.NaN
         return transformValues2Angles(values).withIndex()
