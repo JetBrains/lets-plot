@@ -46,28 +46,23 @@ class PieGeom : GeomBase() {
         val pies = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
             .groupBy { p -> geomHelper.toClient(p.x()!!, p.y()!!, p) }
             .filterNotNullKeys()
-            .mapValues { (pieCenter, dataPoints) -> buildSectors(pieCenter, dataPoints) }
+            .map { (pieCenter, dataPoints) -> buildSectors(pieCenter, dataPoints) }
 
-        val svgPies = pies.flatMap { (center, sectors) -> buildSvgPie(center, sectors, ctx) }
+        val svgPies = pies.flatMap { sectors -> buildSvgPie(sectors, ctx) }
 
         appendNodes(svgPies, root)
     }
 
     private fun buildSvgPie(
-        pieCenter: DoubleVector, // todo: remove
         sectors: List<Sector>,
         ctx: GeomContext
     ): List<LinePath> {
         val result = ArrayList<LinePath>()
         sectors.forEach { sector ->
-            val middleAngle = (sector.startAngle + sector.endAngle) / 2
-            //val sectorCenter = shift(pieCenter, sector.explode, middleAngle)
-            val sectorCenter = getCoordinate(pieCenter, middleAngle, sector.explode)
-
-            val linePath = buildSvgSector(sectorCenter, sector)
+            val linePath = buildSvgSector(sector)
             result.add(linePath)
 
-            buildHint(sectorCenter, sector, getFillColor(sector.p), ctx)
+            buildHint(sector, getFillColor(sector.p), ctx)
         }
         return result
     }
@@ -76,30 +71,17 @@ class PieGeom : GeomBase() {
         return DoubleVector(0.0, l).rotate(angle).add(v)
     }
 
-    private fun getCoordinate(center: DoubleVector, angle: Double, radius: Double): DoubleVector {
-        return center
-            .add(DoubleVector(0.0, -radius).rotate(angle)
-        )
-    }
-
-    private fun buildSvgSector(
-        location: DoubleVector, // todo: remove
-        sector: Sector
-    ): LinePath {
+    private fun buildSvgSector(sector: Sector): LinePath {
 
         // Fix full circle drawing
         var endAngle = sector.endAngle
         if ((sector.endAngle - sector.startAngle) % (2 * PI) == 0.0) {
             endAngle -= 0.0001
         }
-        //val innerPnt1 = shift(sector.sectorCenter, sector.startAngle, sector.holeRadius)
-        //val outerPnt1 = shift(sector.sectorCenter, sector.startAngle, sector.radius)
-        //val outerPnt2 = shift(sector.sectorCenter, endAngle, sector.radius)
-        //val innerPnt2 = shift(sector.sectorCenter, endAngle, sector.holeRadius)
-        val innerPnt1 = getCoordinate(location, sector.startAngle, sector.holeRadius)
-        val outerPnt1 = getCoordinate(location, sector.startAngle, sector.radius)
-        val outerPnt2 = getCoordinate(location, endAngle, sector.radius)
-        val innerPnt2 = getCoordinate(location, endAngle, sector.holeRadius)
+        val innerPnt1 = shift(sector.sectorCenter, -sector.holeRadius, sector.startAngle)
+        val outerPnt1 = shift(sector.sectorCenter, -sector.radius, sector.startAngle)
+        val outerPnt2 = shift(sector.sectorCenter, -sector.radius, endAngle)
+        val innerPnt2 = shift(sector.sectorCenter, -sector.holeRadius, endAngle)
 
         val largeArc = (sector.endAngle - sector.startAngle) > PI
 
@@ -134,13 +116,13 @@ class PieGeom : GeomBase() {
         }
     }
 
-    private fun buildHint(location: DoubleVector, sector: Sector, color: Color, ctx: GeomContext) {
+    private fun buildHint(sector: Sector, color: Color, ctx: GeomContext) {
         val step = toRadians(15.0)
         val middleAngles =
             generateSequence(sector.startAngle) { it + step }.takeWhile { it < sector.endAngle } + sector.endAngle
-        val points = listOf(getCoordinate(location, sector.startAngle, sector.holeRadius)) +
-                middleAngles.map { getCoordinate(location, angle = it, sector.radius) } +
-                middleAngles.toList().reversed().map { getCoordinate(location, angle = it, sector.holeRadius) }
+        val points = listOf(shift(sector.sectorCenter, -sector.holeRadius, sector.startAngle)) +
+                middleAngles.map { shift(sector.sectorCenter, -sector.radius, angle = it) } +
+                middleAngles.toList().reversed().map { shift(sector.sectorCenter, -sector.holeRadius, angle = it) }
 
         ctx.targetCollector.addPolygon(
             points = points,
@@ -185,7 +167,7 @@ class PieGeom : GeomBase() {
         val radius: Double = AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val explode = radius * p.explode()!!
-        val sectorCenter = shift(pieCenter, explode, (startAngle + endAngle) / 2)
+        val sectorCenter = shift(pieCenter, -explode, (startAngle + endAngle) / 2)
     }
 
     private fun buildSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
