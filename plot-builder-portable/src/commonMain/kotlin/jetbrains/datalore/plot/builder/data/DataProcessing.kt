@@ -62,7 +62,7 @@ object DataProcessing {
         val groupSizeListAfterStat: List<Int>
 
         // if only one group no need to modify
-        if (groups === GroupUtil.SINGLE_GROUP) {
+        if (groups === GroupUtil.SINGLE_GROUP || statInput.data.rowCount() == 0) {
             val statData = applyStat(
                 statInput.data,
                 stat,
