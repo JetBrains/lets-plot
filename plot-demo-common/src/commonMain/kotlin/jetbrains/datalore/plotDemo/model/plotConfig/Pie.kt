@@ -13,6 +13,7 @@ class Pie {
             pie(hole = 0.0, useCountStat = false),
             pie(hole = 0.2),
             pie(hole = 0.5, withOrdering = true),
+            withExplodes(),
         )
     }
 
@@ -67,4 +68,30 @@ class Pie {
         return plotSpec
     }
 
+    private fun withExplodes(): MutableMap<String, Any> {
+        val length = mapOf(
+            "group_names" to listOf("2-3 km", "3-5 km", "5-7 km", "7-10 km", "10-20 km", "20-50 km", "50-75 km", "75-100 km", ">100 km"),
+            "count" to listOf(1109, 696, 353, 192, 168, 86, 74, 65, 53),
+            "explode" to listOf(0, 0, 0, 0.1, 0.1, 0.2, 0.3, 0.4, 0.6),
+        )
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'ggsize': {'width': 400, 'height': 300}," +
+                "   'theme': { 'axis':'blank', 'line':'blank' } ," +
+                "   'mapping': { 'slice' : 'count', 'fill': 'group_names', 'explode': 'explode' }," +
+                "   'layers': [" +
+                "               {" +
+                "                  'geom': 'pie', " +
+                "                  'stat': 'identity', " +
+                "                  'size': 15, " +
+               // "                  'hole': 0.2," +
+                "                  'stroke': 1.0," +
+                "                  'stroke_color': 'black'" +
+                "               }" +
+                "             ]" +
+                "}"
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = length
+        return plotSpec
+    }
 }
