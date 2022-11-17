@@ -12,7 +12,6 @@ import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.UNDEFINED
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.getTargetUnderCoord
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
 import jetbrains.livemap.Client
-import jetbrains.livemap.api.transformValues2Angles
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.DonutChart
 import jetbrains.livemap.chart.PieSpecComponent
@@ -24,6 +23,8 @@ import jetbrains.livemap.searching.IndexComponent
 import org.junit.Ignore
 import org.junit.Test
 import java.util.*
+import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.test.assertEquals
 
 class PieLocatorHelperTest {
@@ -43,7 +44,7 @@ class PieLocatorHelperTest {
                 + PieSpecComponent().apply {
                     radius = r
                     indices = vals.indices.toList()
-                    values = transformValues2Angles(vals)
+                    sliceValues = transformValues2Angles(vals)
                     colors = vals.indices.map { Color.BLACK }
                 }
                 + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
@@ -115,5 +116,15 @@ class PieLocatorHelperTest {
     fun mouseOutOfPie() {
         checkMouseInPieSector(UNDEFINED_SECTOR, point(10, 7))
         checkMouseInPieSector(UNDEFINED_SECTOR, point(9, 14))
+    }
+
+    private fun transformValues2Angles(values: List<Double>): List<Double> {
+        val sum = values.sumOf(::abs)
+
+        return if (sum == 0.0) {
+            MutableList(values.size) { 2 * PI / values.size }
+        } else {
+            values.map { 2 * PI * abs(it) / sum }
+        }
     }
 }

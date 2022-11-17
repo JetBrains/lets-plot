@@ -197,7 +197,7 @@ object LayerConverter {
                         indices = it.indices
                         values = it.valueArray
                         colors = it.colorArray
-                        explodeValues = it.explodeArray
+                        explodes = it.explodeArray
                     }
                 }
             }

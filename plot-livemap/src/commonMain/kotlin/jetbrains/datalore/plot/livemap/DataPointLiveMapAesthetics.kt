@@ -39,7 +39,7 @@ internal class DataPointLiveMapAesthetics {
         myP = p
         indices = emptyList<Int>()
         valueArray = emptyList()
-        explodeArray = null
+        explodeArray = emptyList()
     }
 
     constructor(p: MultiDataPoint, layerKind: MapLayerKind) {
@@ -55,7 +55,7 @@ internal class DataPointLiveMapAesthetics {
     private var myColorArray: List<Color> = emptyList()
     val indices: List<Int>
     val valueArray: List<Double>
-    val explodeArray: List<Double>?
+    val explodeArray: List<Double>
 
     val myLayerKind: MapLayerKind
 

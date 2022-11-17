@@ -23,8 +23,6 @@ import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import kotlin.math.PI
-import kotlin.math.abs
 
 @LiveMapDsl
 class Pies(
@@ -70,7 +68,7 @@ class PieBuilder(
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
-    var explodeValues: List<Double>? = null
+    var explodes: List<Double> = emptyList()
 
     fun build(): EcsEntity {
         return when {
@@ -94,10 +92,12 @@ class PieBuilder(
                 + PieSpecComponent().apply {
                     radius = this@PieBuilder.radius
                     holeSize = this@PieBuilder.holeSize
-                    values = transformValues2Angles(this@PieBuilder.values)
+                    sliceValues = this@PieBuilder.values
                     colors = this@PieBuilder.colors
                     indices = this@PieBuilder.indices
-                    explodeValues = this@PieBuilder.explodeValues
+                    explodeValues = this@PieBuilder.explodes.let {
+                        it.ifEmpty { List(this@PieBuilder.values.size) {0.0} }
+                    }
                 }
                 +WorldOriginComponent(worldPoint)
                 +ScreenDimensionComponent()
@@ -105,15 +105,5 @@ class PieBuilder(
                 +ScreenOriginComponent()
             }
         }
-    }
-}
-
-internal fun transformValues2Angles(values: List<Double>): List<Double> {
-    val sum = values.sumOf(::abs)
-
-    return if (sum == 0.0) {
-        MutableList(values.size) { 2 * PI / values.size }
-    } else {
-        values.map { 2 * PI * abs(it) / sum }
     }
 }
