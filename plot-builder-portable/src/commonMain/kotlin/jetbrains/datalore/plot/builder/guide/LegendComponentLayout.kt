@@ -15,10 +15,9 @@ import kotlin.math.max
 abstract class LegendComponentLayout(
     title: String,
     protected val breaks: List<LegendBreak>,
-    val maxKeySize: DoubleVector,
+    val keySizes: List<DoubleVector>,
     legendDirection: LegendDirection,
-    theme: LegendTheme,
-    val keySizes: List<DoubleVector>? = null
+    theme: LegendTheme
 ) : LegendBoxLayout(title, legendDirection, theme) {
 
     private var myContentSize: DoubleVector? = null
@@ -64,14 +63,14 @@ abstract class LegendComponentLayout(
     private fun doLayout() {
         val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
         val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
-        val labelHOffset = maxKeySize.x + labelLeftMargin
 
         val contentOrigin = DoubleVector.ZERO
         var breakBoxBounds: DoubleRectangle? = null
         for (i in breaks.indices) {
             val labelSize = labelSize(i)
-            val keySize = keySizes?.get(i) ?: maxKeySize
+            val keySize = keySizes[i]
             val labelVOffset = (keySize.y - labelHeight) / 2
+            val labelHOffset = keySize.x + labelLeftMargin
             val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, keySize.y)
             breakBoxBounds = DoubleRectangle(
                 breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
@@ -97,14 +96,12 @@ abstract class LegendComponentLayout(
     private class MyHorizontal internal constructor(
         title: String,
         breaks: List<LegendBreak>,
-        keySize: DoubleVector,
-        theme: LegendTheme,
-        keySizes: List<DoubleVector> = breaks.map { keySize }
+        keySizes: List<DoubleVector>,
+        theme: LegendTheme
     ) : LegendComponentLayout(
-        title, breaks, keySize,
+        title, breaks, keySizes,
         LegendDirection.HORIZONTAL,
-        theme,
-        keySizes
+        theme
     ) {
         init {
             colCount = breaks.size
@@ -124,10 +121,10 @@ abstract class LegendComponentLayout(
     private class MyHorizontalMultiRow internal constructor(
         title: String,
         breaks: List<LegendBreak>,
-        keySize: DoubleVector,
+        keySizes: List<DoubleVector>,
         theme: LegendTheme
     ) : MyMultiRow(
-        title, breaks, keySize,
+        title, breaks, keySizes,
         LegendDirection.HORIZONTAL,
         theme
     ) {
@@ -140,14 +137,12 @@ abstract class LegendComponentLayout(
     private class MyVertical internal constructor(
         title: String,
         breaks: List<LegendBreak>,
-        keySize: DoubleVector,
-        theme: LegendTheme,
-        keySizes: List<DoubleVector>?
+        keySizes: List<DoubleVector>,
+        theme: LegendTheme
     ) : MyMultiRow(
-        title, breaks, keySize,
+        title, breaks, keySizes,
         LegendDirection.VERTICAL,
-        theme,
-        keySizes
+        theme
     ) {
         init {
             colCount = 1
@@ -158,11 +153,10 @@ abstract class LegendComponentLayout(
     private abstract class MyMultiRow internal constructor(
         title: String,
         breaks: List<LegendBreak>,
-        keySize: DoubleVector,
+        keySizes: List<DoubleVector>,
         legendDirection: LegendDirection,
-        theme: LegendTheme,
-        keySizes: List<DoubleVector>? = null
-    ) : LegendComponentLayout(title, breaks, keySize, legendDirection, theme, keySizes) {
+        theme: LegendTheme
+    ) : LegendComponentLayout(title, breaks, keySizes, legendDirection, theme) {
         private var myMaxLabelWidth = 0.0
 
         init {
@@ -191,31 +185,30 @@ abstract class LegendComponentLayout(
     }
 
     companion object {
-        fun horizontal(title: String, breaks: List<LegendBreak>, keySize: DoubleVector, theme: LegendTheme): LegendComponentLayout {
+        fun horizontal(title: String, breaks: List<LegendBreak>, keySizes: List<DoubleVector>, theme: LegendTheme): LegendComponentLayout {
             return MyHorizontal(
                 title,
                 breaks,
-                keySize,
+                keySizes,
                 theme
             )
         }
 
-        fun horizontalMultiRow(title: String, breaks: List<LegendBreak>, keySize: DoubleVector, theme: LegendTheme): LegendComponentLayout {
+        fun horizontalMultiRow(title: String, breaks: List<LegendBreak>, keySizes: List<DoubleVector>, theme: LegendTheme): LegendComponentLayout {
             return MyHorizontalMultiRow(
                 title,
                 breaks,
-                keySize,
+                keySizes,
                 theme
             )
         }
 
-        fun vertical(title: String, breaks: List<LegendBreak>, keySize: DoubleVector, theme: LegendTheme, keySizes: List<DoubleVector>?): LegendComponentLayout {
+        fun vertical(title: String, breaks: List<LegendBreak>, keySizes: List<DoubleVector>, theme: LegendTheme): LegendComponentLayout {
             return MyVertical(
                 title,
                 breaks,
-                keySize,
-                theme,
-                keySizes
+                keySizes,
+                theme
             )
         }
     }

@@ -26,14 +26,11 @@ class LegendComponent(
 
         val keyLabelBoxes = layout.keyLabelBoxes.iterator()
         val labelBoxes = layout.labelBoxes.iterator()
-        val curKeySize = layout.keySizes?.iterator()
+        val keySizes = layout.keySizes.iterator()
         for (br in spec.breaks) {
             val keyLabelBox = keyLabelBoxes.next()
             val labelBox = labelBoxes.next()
-            val keySize = DoubleVector(
-                layout.maxKeySize.x,
-                curKeySize?.next()?.y ?: layout.maxKeySize.y,
-            )
+            val keySize = keySizes.next()
             val breakElement = createBreakElement(br, keySize, keyLabelBox, labelBox)
             contentRoot.children().add(breakElement)
         }
