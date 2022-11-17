@@ -186,17 +186,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     tiles = _prepare_tiles(tiles)
     geocoding = _prepare_geocoding()
 
-    _display_mode = 'display_mode'
-
-    if _display_mode in other_args.keys():
-        other_args.pop(_display_mode)
-
-    if mapping is not None and symbol is None:
-        raise ValueError('The `symbol` parameter is required for `geom_livemap()` with mappings.')
-
-    if map is not None and symbol is None:
-        raise ValueError('The `symbol` parameter is required for `geom_livemap()` with `map` parameter.')
-
     return _geom('livemap',
                  mapping=mapping,
                  data=data,
