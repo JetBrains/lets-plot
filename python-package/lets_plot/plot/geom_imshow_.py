@@ -57,8 +57,8 @@ def _normalize_2D(image_data, norm, vmin, vmax):
     # ToDo: in-place
     image_data = image_data.clip(vmin, vmax)
 
-    normaize = as_boolean(norm, default=True)
-    if normaize:
+    normalize = as_boolean(norm, default=True)
+    if normalize:
         if vmin == vmax:
             image_data[True] = 127.
         else:
@@ -122,7 +122,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         Specifies image type, size and pixel values.
         Supported array shapes are:
 
-        - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization. See parameters `norm`, `cmap`, `vmin`, `vmax`.
+        - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization.
+        See parameters `norm`, `cmap`, `vmin`, `vmax`.
         - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
         - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int).
 
@@ -201,7 +202,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
 
     start = time()
 
-    if png == None:
+    if png is None:
         raise ValueError("pypng is not installed")
 
     if not is_ndarray(image_data):
@@ -256,7 +257,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
     # Image extent with possible axis flipping.
     # The default image bounds include 1/2 unit size expand in all directions.
     ext_x0, ext_x1, ext_y0, ext_y1 = -.5, width - .5, -.5, height - .5
-    if (extent):
+    if extent:
         try:
             ext_x0, ext_x1, ext_y0, ext_y1 = [float(v) for v in extent]
         except ValueError as e:
@@ -264,12 +265,12 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
                 "Invalid `extent`: list of 4 numbers expected: {}".format(e)
             )
 
-    if (ext_x0 > ext_x1):
+    if ext_x0 > ext_x1:
         # copy after flip to work around this numpy issue: https://github.com/drj11/pypng/issues/91
         image_data = numpy.flip(image_data, axis=1).copy()
         ext_x0, ext_x1 = ext_x1, ext_x0
 
-    if (ext_y0 > ext_y1):
+    if ext_y0 > ext_y1:
         image_data = numpy.flip(image_data, axis=0)
         ext_y0, ext_y1 = ext_y1, ext_y0
 
@@ -298,7 +299,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         # colormap via palettable
         if not palettable:
             raise ValueError(
-                "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your Python environment."
+                "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your "
+                "Python environment. "
             )
         cmap_256 = palettable.get_map(cmap + "_256")
         palette = [_hex2rgb_arr_uint8(c) for c in cmap_256.hex_colors]
