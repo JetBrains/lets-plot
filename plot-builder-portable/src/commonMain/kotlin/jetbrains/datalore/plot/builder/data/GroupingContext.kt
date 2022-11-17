@@ -21,7 +21,7 @@ class GroupingContext constructor(
 ) {
 
     internal val optionalGroupingVar: Variable? = findOptionalVariable(data, explicitGroupingVarName)
-    private val groupingVariables: List<Variable> = when(optionalGroupingVar) {
+    private val groupingVariables: List<Variable> = when (optionalGroupingVar) {
         null -> defaultGroupingVariables
         else -> {
             // The explicit grouping var was 1-st in list before so we just keep this invariant.
@@ -32,14 +32,17 @@ class GroupingContext constructor(
     private var _groupMapper: ((Int) -> Int)? = null
 
     val groupMapper: (Int) -> Int
-        get() = { index ->
-            if (_groupMapper == null) {
-                _groupMapper = computeGroups()
-            }
-            _groupMapper!!(index)
+        get() = getInitializedGroupMapper()
+
+    private fun getInitializedGroupMapper(): (Int) -> Int {
+        if (_groupMapper == null) {
+            _groupMapper = computeGroups()
         }
+        return _groupMapper!!
+    }
 
     private fun computeGroups(): (Int) -> Int {
+        if (data.isEmpty || data.rowCount() == 0) return GroupUtil.SINGLE_GROUP
         if (data.has(Stats.GROUP)) {
             val list = data.getNumeric(Stats.GROUP)
             return GroupUtil.wrap(list)
