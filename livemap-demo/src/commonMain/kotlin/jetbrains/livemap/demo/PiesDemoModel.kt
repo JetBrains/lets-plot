@@ -37,7 +37,7 @@ class PiesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         radius = 50.0
                         values = listOf(3.0, 1.0, 2.0)
                         colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                        explodeValues = listOf(.0, .2, .0)
+                        explodes = listOf(.0, .2, .0)
                     }
                 }
             }
