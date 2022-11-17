@@ -308,7 +308,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         width=width,
         height=height,
         greyscale=greyscale,
-        alpha=(image_type == 'rgba'),
+        alpha=(image_type == 'rgba' or image_type == 'gray' and nchannels == 2),
         bitdepth=8,
         palette=palette
     ).write(png_bytes, image_2d)
