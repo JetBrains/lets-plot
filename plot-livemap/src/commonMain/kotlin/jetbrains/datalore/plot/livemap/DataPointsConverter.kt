@@ -47,9 +47,14 @@ internal class DataPointsConverter(
     )
     private fun pieConverter(geom: Geom): List<DataPointLiveMapAesthetics> {
         val pieOptions = (geom as? PieGeom)?.let {
-            PieOptions(it.strokeColor, it.strokeWidth, it.holeRatio)
+            PieOptions(it.strokeColor, it.strokeWidth, it.holeSize)
         }
-        return MultiDataPointHelper.getPoints(aesthetics)
+        val fillWithColor = (geom as? PieGeom)?.fillWithColor ?: false
+        val colorGetter: (DataPointAesthetics) -> Color =  { p: DataPointAesthetics ->
+            if (fillWithColor) p.color()!! else p.fill()!!
+        }
+
+        return MultiDataPointHelper.getPoints(aesthetics, colorGetter)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE)
                     .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
@@ -335,14 +340,13 @@ internal class DataPointsConverter(
 
     internal class MultiDataPointHelper private constructor(
     ) {
-
         companion object {
-            fun getPoints(aesthetics: Aesthetics): List<MultiDataPoint> {
+            fun getPoints(aesthetics: Aesthetics, colorGetter: (DataPointAesthetics) -> Color): List<MultiDataPoint> {
                 val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
 
                 fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
                     val coord = explicitVec<LonLat>(p.x()!!, p.y()!!)
-                    return builders.getOrPut(coord) { MultiDataPointBuilder(p) }
+                    return builders.getOrPut(coord) { MultiDataPointBuilder(p, colorGetter) }
                 }
 
                 aesthetics.dataPoints()
@@ -352,7 +356,8 @@ internal class DataPointsConverter(
         }
 
         private class MultiDataPointBuilder(
-            private val myAes: DataPointAesthetics
+            private val myAes: DataPointAesthetics,
+            private val myColorGetter: (DataPointAesthetics) -> Color
         ) {
             private val myPoints = ArrayList<DataPointAesthetics>()
 
@@ -365,7 +370,7 @@ internal class DataPointsConverter(
                     aes = myAes,
                     indices = myPoints.map { it.index() },
                     values = myPoints.map { it.slice()!! },
-                    colors = myPoints.map { it.fill()!! },
+                    colors = myPoints.map { myColorGetter(it) },
                     explodeValues = myPoints.map { it.explode()!! }
                 )
             }
