@@ -28,19 +28,22 @@ except ImportError:
 __all__ = ['geom_imshow', 'geom_image']
 
 
-def _hex2rgb(hex_c):
+def _hex2rgb(hex_c, alpha):
     hex_s = hex_c.lstrip('#')
-    return [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
+    list_rgb = [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
+    if alpha is not None:
+        list_rgb.append(int(alpha))
+    return list_rgb
 
 
-def _hex2rgb_arr_uint8(hex_c):
+def _hex2rgb_arr_uint8(hex_c, alpha=None):
     """
     Creates 'palette' for PyPNG PNG writer
     """
-    return numpy.array(_hex2rgb(hex_c), dtype=numpy.uint8)
+    return numpy.array(_hex2rgb(hex_c, alpha), dtype=numpy.uint8)
 
 
-def _normalize_2D(image_data, norm, vmin, vmax):
+def _normalize_2D(image_data, norm, vmin, vmax, max_lum):
     """
     Takes numpy 2D array of float or int-s and
     returns 2D array of ints with the target range [0..255].
@@ -62,7 +65,7 @@ def _normalize_2D(image_data, norm, vmin, vmax):
         if vmin == vmax:
             image_data[True] = 127.
         else:
-            ratio = 255. / (vmax - vmin)
+            ratio = max_lum / (vmax - vmin)
             image_data = image_data - vmin
             image_data = image_data * ratio + 0.5
     else:
@@ -214,14 +217,17 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
 
     # Figure out the type of the image
     if image_data.ndim == 2:
-        image_data = _normalize_2D(image_data, norm, vmin, vmax)
+        has_nan = numpy.isnan(image_data.max())
+        max_lum = 255 if not (has_nan and cmap) else 254  # index 255 reserved for NaN-s
+
+        image_data = _normalize_2D(image_data, norm, vmin, vmax, max_lum)
         height, width = image_data.shape
         image_type = 'gray'
         nchannels = 1
 
-        # Add alpha-channel if data contains NaN values.
         has_nan = numpy.isnan(image_data.max())
-        if has_nan:
+        if has_nan and not cmap:
+            # add alpha-channel (LA)
             start_la = time()
             is_nan = numpy.isnan(image_data)
             im_shape = numpy.shape(image_data)
@@ -231,6 +237,9 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
             image_data = numpy.dstack((image_data, alpha_ch))
             print("LA add alpha: {}".format(time() - start_la))
             nchannels = 2
+        elif has_nan and cmap:
+            # replace all NaN-s with 255 (palette[255] will contain transparent color)
+            numpy.nan_to_num(image_data, copy=False, nan=255)
 
     else:
         image_data = _normalize_RGBa(image_data)
@@ -302,8 +311,14 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
                 "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your "
                 "Python environment. "
             )
-        cmap_256 = palettable.get_map(cmap + "_256")
-        palette = [_hex2rgb_arr_uint8(c) for c in cmap_256.hex_colors]
+        if not has_nan:
+            cmap_256 = palettable.get_map(cmap + "_256")
+            palette = [_hex2rgb_arr_uint8(c) for c in cmap_256.hex_colors]
+        else:
+            cmap_255 = palettable.get_map(cmap + "_255")
+            palette = [_hex2rgb_arr_uint8(c, alpha=255) for c in cmap_255.hex_colors]
+            # add transparent color to palette at index 255
+            palette.append(numpy.array([0, 0, 0, 0], dtype=numpy.uint8))
 
     png_bytes = io.BytesIO()
     png.Writer(
