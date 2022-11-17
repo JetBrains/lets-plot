@@ -481,6 +481,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
+        If value of `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
     n : int
         Number of points to evaluate smoother at.
     se : bool, default=True
