@@ -32,14 +32,12 @@ class GroupingContext constructor(
     private var _groupMapper: ((Int) -> Int)? = null
 
     val groupMapper: (Int) -> Int
-        get() = getInitializedGroupMapper()
-
-    private fun getInitializedGroupMapper(): (Int) -> Int {
-        if (_groupMapper == null) {
-            _groupMapper = computeGroups()
+        get() {
+            if (_groupMapper == null) {
+                _groupMapper = computeGroups()
+            }
+            return _groupMapper!!
         }
-        return _groupMapper!!
-    }
 
     private fun computeGroups(): (Int) -> Int {
         if (data.isEmpty || data.rowCount() == 0) return GroupUtil.SINGLE_GROUP
