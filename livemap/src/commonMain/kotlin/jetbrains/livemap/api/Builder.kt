@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.values.Color
 import jetbrains.gis.geoprotocol.FeatureLevel
 import jetbrains.gis.geoprotocol.GeoTransportImpl
 import jetbrains.gis.geoprotocol.GeocodingService
@@ -123,24 +122,6 @@ class LayersBuilder(
     val mapProjection: MapProjection,
     val textMeasurer: TextMeasurer
 )
-
-@LiveMapDsl
-class Symbol {
-    var sizeScalingRange: ClosedRange<Int>? = null
-    var alphaScalingEnabled: Boolean = false
-    var layerIndex: Int? = null
-    var radius: Double = 0.0
-    var holeSize: Double = 0.0
-    var point: Vec<LonLat>? = null
-
-    var strokeColor: Color = Color.BLACK
-    var strokeWidth: Double = 0.0
-
-    var indices: List<Int> = emptyList()
-    var values: List<Double> = emptyList()
-    var colors: List<Color> = emptyList()
-    var explodeValues: List<Double>? = null
-}
 
 fun geometry(
     points: List<LonLatPoint>,

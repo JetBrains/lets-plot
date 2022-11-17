@@ -189,24 +189,18 @@ object LayerConverter {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
-                        fromDataPoint(it)
+                        holeSize = it.holeRatio
+                        point = it.point
+                        radius = it.radius
                         strokeWidth = it.strokeWidth
                         strokeColor = it.strokeColor
-                        holeSize = it.holeRatio
+                        indices = it.indices
+                        values = it.valueArray
+                        colors = it.colorArray
+                        explodeValues = it.explodeArray
                     }
                 }
             }
         }
-    }
-
-    private fun Symbol.fromDataPoint(p: DataPointLiveMapAesthetics) {
-        point = p.point
-        radius = p.radius
-        strokeColor = p.strokeColor
-        strokeWidth = 1.0
-        indices = p.indices
-        values = p.valueArray
-        colors = p.colorArray
-        explodeValues = p.explodeArray
     }
 }

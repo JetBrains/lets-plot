@@ -5,6 +5,9 @@
 
 package jetbrains.livemap.api
 
+import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.DonutChart
 import jetbrains.livemap.chart.PieSpecComponent
@@ -12,6 +15,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
+import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
@@ -23,9 +27,10 @@ import kotlin.math.PI
 import kotlin.math.abs
 
 @LiveMapDsl
-class Pies(factory: MapEntityFactory) {
-    val piesFactory = PiesFactory(factory)
-}
+class Pies(
+    val factory: MapEntityFactory,
+    val mapProjection: MapProjection
+)
 
 fun LayersBuilder.pies(block: Pies.() -> Unit) {
     val layerEntity = myComponentManager
@@ -35,60 +40,70 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Pies(MapEntityFactory(layerEntity)).apply {
-        block()
-        piesFactory.produce()
-    }
+    Pies(
+        MapEntityFactory(layerEntity),
+        mapProjection
+    ).apply(block)
 }
 
-fun Pies.pie(block: Symbol.() -> Unit) {
-    piesFactory.add(Symbol().apply(block))
+fun Pies.pie(block: PieBuilder.() -> Unit) {
+    PieBuilder(factory)
+        .apply(block)
+        .build()
 }
 
 @LiveMapDsl
-class PiesFactory(
+class PieBuilder(
     private val myFactory: MapEntityFactory
 ) {
-    private val mySymbols = ArrayList<Symbol>()
+    var sizeScalingRange: ClosedRange<Int>? = null
+    var alphaScalingEnabled: Boolean = false
 
-    fun add(source: Symbol) {
-        mySymbols.add(source)
-    }
+    var layerIndex: Int? = null
+    var radius: Double = 0.0
+    var holeSize: Double = 0.0
+    var point: Vec<LonLat>? = null
 
-    fun produce(): List<EcsEntity> {
-        return mySymbols.map(this::symbolToEntity)
-    }
+    var strokeColor: Color = Color.WHITE
+    var strokeWidth: Double = 0.0
 
-    private fun symbolToEntity(symbol: Symbol): EcsEntity {
+    var indices: List<Int> = emptyList()
+    var values: List<Double> = emptyList()
+    var colors: List<Color> = emptyList()
+    var explodeValues: List<Double>? = null
+
+    fun build(): EcsEntity {
         return when {
-            symbol.point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", symbol.point!!)
+            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", point!!)
             else -> error("Can't create pieSector entity. Coord is null.")
-        }.setInitializer { worldPoint ->
-            if (symbol.layerIndex != null) {
-                + IndexComponent(symbol.layerIndex!!, 0)
+        }.run {
+            setInitializer { worldPoint ->
+                if (layerIndex != null) {
+                    +IndexComponent(layerIndex!!, 0)
+                }
+                +LocatorComponent(DonutChart.Locator())
+                +RenderableComponent().apply {
+                    renderer = DonutChart.Renderer()
+                }
+                +ChartElementComponent().apply {
+                    sizeScalingRange = this@PieBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PieBuilder.alphaScalingEnabled
+                    strokeColor = this@PieBuilder.strokeColor
+                    strokeWidth = this@PieBuilder.strokeWidth
+                }
+                + PieSpecComponent().apply {
+                    radius = this@PieBuilder.radius
+                    holeSize = this@PieBuilder.holeSize
+                    values = transformValues2Angles(this@PieBuilder.values)
+                    colors = this@PieBuilder.colors
+                    indices = this@PieBuilder.indices
+                    explodeValues = this@PieBuilder.explodeValues
+                }
+                +WorldOriginComponent(worldPoint)
+                +ScreenDimensionComponent()
+                +ScreenLoopComponent()
+                +ScreenOriginComponent()
             }
-            + LocatorComponent(DonutChart.Locator())
-            + RenderableComponent().apply {
-                renderer = DonutChart.Renderer()
-            }
-            + ChartElementComponent().apply {
-                sizeScalingRange = symbol.sizeScalingRange
-                alphaScalingEnabled = symbol.alphaScalingEnabled
-                strokeColor = symbol.strokeColor
-                strokeWidth = symbol.strokeWidth
-            }
-            + PieSpecComponent().apply {
-                radius = symbol.radius
-                holeSize = symbol.holeSize
-                values = transformValues2Angles(symbol.values)
-                colors = symbol.colors
-                indices = symbol.indices
-                explodeValues = symbol.explodeValues
-            }
-            + WorldOriginComponent(worldPoint)
-            + ScreenDimensionComponent()
-            + ScreenLoopComponent()
-            + ScreenOriginComponent()
         }
     }
 }
