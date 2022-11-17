@@ -46,9 +46,11 @@ def _normalize_2D(image_data, norm, vmin, vmax):
     returns 2D array of ints with the target range [0..255].
     Values outside the target range will be later clipped.
     """
-    image_data = image_data.astype(numpy.float32)
-    vmin = float(vmin if vmin is not None else image_data.min())
-    vmax = float(vmax if vmax is not None else image_data.max())
+    if image_data.dtype.kind != 'f':
+        image_data = image_data.astype(numpy.float32)
+
+    vmin = float(vmin if vmin is not None else numpy.nanmin(image_data))
+    vmax = float(vmax if vmax is not None else numpy.nanmax(image_data))
     if vmin > vmax:
         raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
 
@@ -215,6 +217,20 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         height, width = image_data.shape
         image_type = 'gray'
         nchannels = 1
+
+        # Add alpha-channel if data contains NaN values.
+        has_nan = numpy.isnan(image_data.max())
+        if has_nan:
+            start_la = time()
+            is_nan = numpy.isnan(image_data)
+            im_shape = numpy.shape(image_data)
+            alpha_ch = numpy.zeros(im_shape, dtype=image_data.dtype)
+            alpha_ch[is_nan == False] = 255.
+            image_data[is_nan] = vmin
+            image_data = numpy.dstack((image_data, alpha_ch))
+            print("LA add alpha: {}".format(time() - start_la))
+            nchannels = 2
+
     else:
         image_data = _normalize_RGBa(image_data)
         height, width, nchannels = image_data.shape
@@ -265,7 +281,9 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         image_data = arr.astype(numpy.int8)
 
     # Reshape to 2d-array:
-    # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
+    # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..] for RGB(A)
+    # or from [[[L, A], [L, A]], ...] to [[L, A, L, A],..] for greyscale–alpha (LA)
+    # or pypng will fail
     image_2d = image_data.reshape(-1, width * nchannels)
 
     image_2d_end = time()
