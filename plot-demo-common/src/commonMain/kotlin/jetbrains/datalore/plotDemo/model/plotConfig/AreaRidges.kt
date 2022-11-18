@@ -14,7 +14,8 @@ class AreaRidges {
             withGroups(),
             flipCoord(),
             withNegativeHeight(),
-            withStat()
+            withStat(),
+            invisibleQuantiles(),
         )
     }
 
@@ -159,6 +160,35 @@ class AreaRidges {
                 "                 'color': 'white'," +
                 "                 'mapping': {" +
                 "                   'fill': '..quantile..'" +
+                "                 }" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun invisibleQuantiles(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': [0, 0, 1, 1, 0, 0, 0, 1]," +
+                "             'y': [0, 0, 0, 0, 1, 1, 1, 1]" +
+                "            }," +
+                "   'mapping': {" +
+                "                'x': 'x'," +
+                "                'y': 'y'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Invisible quantiles'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'area_ridges'," +
+                "                 'quantiles': [0.25, 0.5, 0.75]," +
+                "                 'size': 2," +
+                "                 'mapping': {" +
+                "                   'color': '..quantile..'" +
                 "                 }" +
                 "               }" +
                 "             ]" +

@@ -41,9 +41,7 @@ class AreaRidgesGeom : GeomBase() {
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
             .forEach { (_, dataPoints) ->
-                splitDataToQuantiles(dataPoints).forEach { quantileDataPoints ->
-                    splitDataPointsByMinHeight(quantileDataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
-                }
+                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
             }
     }
 
@@ -59,6 +57,34 @@ class AreaRidgesGeom : GeomBase() {
             }
         if (dataPointsBunch.any()) result.add(dataPointsBunch)
         return result
+    }
+
+    private fun buildRidge(
+        root: SvgRoot,
+        dataPoints: Iterable<DataPointAesthetics>,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
+        val helper = LinesHelper(pos, coord, ctx)
+        val boundTransform = toLocationBound()
+        val splitDataPoints = splitDataToQuantiles(dataPoints)
+
+        val bandDataPoints = if (ctx.isMappedAes(Aes.FILL)) splitDataPoints else listOf(dataPoints)
+        for (points in bandDataPoints) {
+            val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
+            appendNodes(paths, root)
+        }
+
+        helper.setAlphaEnabled(false)
+        val lineDataPoints = if (ctx.isMappedAes(Aes.COLOR)) splitDataPoints else listOf(dataPoints)
+        for (points in lineDataPoints) appendNodes(helper.createLines(points, boundTransform), root)
+
+        if (quantileLines) {
+            for (points in splitDataPoints) drawQuantileLines(root, points, pos, coord, ctx)
+        }
+
+        buildHints(dataPoints, ctx, helper, boundTransform)
     }
 
     private fun splitDataToQuantiles(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
@@ -82,27 +108,6 @@ class AreaRidgesGeom : GeomBase() {
         if (current != null) dataPointsBunch.add(current)
         if (dataPointsBunch.any()) result.add(dataPointsBunch)
         return result
-    }
-
-    private fun buildRidge(
-        root: SvgRoot,
-        dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
-    ) {
-        val helper = LinesHelper(pos, coord, ctx)
-        val boundTransform = toLocationBound()
-
-        val paths = helper.createBands(dataPoints, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
-        appendNodes(paths, root)
-
-        helper.setAlphaEnabled(false)
-        appendNodes(helper.createLines(dataPoints, boundTransform), root)
-
-        if (quantileLines) drawQuantileLines(root, dataPoints, pos, coord, ctx)
-
-        buildHints(dataPoints, ctx, helper, boundTransform)
     }
 
     private fun drawQuantileLines(
