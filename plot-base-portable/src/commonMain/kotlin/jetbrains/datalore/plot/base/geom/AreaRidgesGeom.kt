@@ -66,22 +66,27 @@ class AreaRidgesGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        var splitDataPoints: List<Iterable<DataPointAesthetics>>? = null
+        val getSplitDataPoints: () -> List<Iterable<DataPointAesthetics>> = {
+            if (splitDataPoints == null) splitDataPoints = splitDataToQuantiles(dataPoints)
+            splitDataPoints!!
+        }
+
         val helper = LinesHelper(pos, coord, ctx)
         val boundTransform = toLocationBound()
-        val splitDataPoints = splitDataToQuantiles(dataPoints)
 
-        val bandDataPoints = if (ctx.isMappedAes(Aes.FILL)) splitDataPoints else listOf(dataPoints)
+        val bandDataPoints = if (ctx.isMappedAes(Aes.FILL)) getSplitDataPoints() else listOf(dataPoints)
         for (points in bandDataPoints) {
             val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
             appendNodes(paths, root)
         }
 
         helper.setAlphaEnabled(false)
-        val lineDataPoints = if (ctx.isMappedAes(Aes.COLOR)) splitDataPoints else listOf(dataPoints)
+        val lineDataPoints = if (ctx.isMappedAes(Aes.COLOR)) getSplitDataPoints() else listOf(dataPoints)
         for (points in lineDataPoints) appendNodes(helper.createLines(points, boundTransform), root)
 
         if (quantileLines) {
-            for (points in splitDataPoints) drawQuantileLines(root, points, pos, coord, ctx)
+            for (points in getSplitDataPoints()) drawQuantileLines(root, points, pos, coord, ctx)
         }
 
         buildHints(dataPoints, ctx, helper, boundTransform)
@@ -89,7 +94,8 @@ class AreaRidgesGeom : GeomBase() {
 
     private fun splitDataToQuantiles(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
-        val pointsItr = dataPoints.sortedBy(DataPointAesthetics::x).iterator()
+        val sortedDataPoints = dataPoints.sortedWith(compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, DataPointAesthetics::x))
+        val pointsItr = sortedDataPoints.iterator()
         var current: DataPointAesthetics? = null
         var prev: DataPointAesthetics? = null
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
@@ -98,8 +104,8 @@ class AreaRidgesGeom : GeomBase() {
             current = pointsItr.next()
             if (prev == null) continue
             dataPointsBunch.add(prev)
-            if ((prev.quantile()?.isFinite() != true && current.quantile()?.isFinite() != true) ||
-                prev.quantile() == current.quantile())
+            if (prev.quantile() == current.quantile() ||
+                (prev.quantile()?.isFinite() != true && current.quantile()?.isFinite() != true))
                 continue
             dataPointsBunch.add(current)
             result.add(dataPointsBunch)
