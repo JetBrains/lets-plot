@@ -40,7 +40,7 @@ class GroupingContext constructor(
         }
 
     private fun computeGroups(): (Int) -> Int {
-        if (data.isEmpty || data.rowCount() == 0) return GroupUtil.SINGLE_GROUP
+        if (data.rowCount() == 0) return GroupUtil.SINGLE_GROUP
         if (data.has(Stats.GROUP)) {
             val list = data.getNumeric(Stats.GROUP)
             return GroupUtil.wrap(list)
