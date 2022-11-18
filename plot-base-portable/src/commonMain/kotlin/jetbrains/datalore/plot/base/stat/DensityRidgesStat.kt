@@ -72,7 +72,7 @@ class DensityRidgesStat(
 
     companion object {
         const val DEF_TRIM = false
-        val DEF_QUANTILES = emptyList<Double>()
+        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.Y,
