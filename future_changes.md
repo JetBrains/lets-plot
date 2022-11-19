@@ -2,6 +2,14 @@
 
 ### Added
 
+- `geom_imshow()`:
+
+    - Improved performance by orders of magnitude
+    - Transparency of `NaN` values in grayscale images ([[#630](https://github.com/JetBrains/lets-plot/issues/630)])
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
+
+
 ### Changed
         
 - Java/Swing platf.: Apache Batik upgraded to v.1.16 [[#624](https://github.com/JetBrains/lets-plot/issues/624)], [[LPK #140](https://github.com/JetBrains/lets-plot-kotlin/issues/140)].
