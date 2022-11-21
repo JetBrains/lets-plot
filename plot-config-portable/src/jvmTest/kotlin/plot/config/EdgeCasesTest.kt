@@ -110,9 +110,7 @@ class EdgeCasesTest {
             if (GeomName.LIVE_MAP == geomName || GeomName.IMAGE == geomName) {
                 continue
             }
-            if(geomName == "density") {
-                checkWithNaNInXYSeries(geomName)
-            }
+            checkWithNaNInXYSeries(geomName)
         }
     }
 
