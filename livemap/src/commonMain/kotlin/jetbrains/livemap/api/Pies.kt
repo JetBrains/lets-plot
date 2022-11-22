@@ -68,7 +68,7 @@ class PieBuilder(
     var indices: List<Int> = emptyList()
     var values: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
-    var explodes: List<Double> = emptyList()
+    var explodes: List<Double>? = null
 
     fun build(): EcsEntity {
         return when {
@@ -95,9 +95,7 @@ class PieBuilder(
                     sliceValues = this@PieBuilder.values
                     colors = this@PieBuilder.colors
                     indices = this@PieBuilder.indices
-                    explodeValues = this@PieBuilder.explodes.let {
-                        it.ifEmpty { List(this@PieBuilder.values.size) {0.0} }
-                    }
+                    explodeValues = this@PieBuilder.explodes
                 }
                 +WorldOriginComponent(worldPoint)
                 +ScreenDimensionComponent()

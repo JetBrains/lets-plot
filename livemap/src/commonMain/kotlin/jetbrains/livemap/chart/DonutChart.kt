@@ -74,7 +74,7 @@ object DonutChart {
                 index = pieSpec.indices[index],
                 radius = radius,
                 holeRadius = radius * pieSpec.holeSize,
-                explode = radius * pieSpec.explodeValues[index],
+                explode = pieSpec.explodeValues?.get(index)?.let { radius * it } ?: 0.0,
                 fillColor = pieSpec.colors[index],
                 startAngle = currentAngle,
                 endAngle = currentAngle + angle(pieSpec.sliceValues[index])

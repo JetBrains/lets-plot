@@ -34,5 +34,5 @@ class PieSpecComponent : EcsComponent {
     var indices: List<Int> = emptyList()
     var sliceValues: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
-    var explodeValues: List<Double> = emptyList()
+    var explodeValues: List<Double>? = null
 }
