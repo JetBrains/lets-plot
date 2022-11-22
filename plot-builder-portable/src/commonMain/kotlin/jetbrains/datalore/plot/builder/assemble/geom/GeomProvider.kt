@@ -414,5 +414,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 supplier
             ).build()
         }
+
+        fun pie(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.PIE,
+                AestheticsDefaults.pie(),
+                PieGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
+        }
     }
 }

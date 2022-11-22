@@ -30,6 +30,8 @@ object Stats {
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
     val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
+    val SUM = DataFrame.Variable("..sum..", STAT, "sum")
+    val PROP = DataFrame.Variable("..prop..", STAT, "prop")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -55,6 +57,8 @@ object Stats {
             WIDTH,
             BIN_WIDTH,
             VIOLIN_WIDTH,
+            SUM,
+            PROP,
             SCALED,
             GROUP,
         )
@@ -88,6 +92,10 @@ object Stats {
 
     fun count(): Stat {
         return CountStat()
+    }
+
+    fun pieCount(): Stat {
+        return Count2dStat()
     }
 
     fun bin(

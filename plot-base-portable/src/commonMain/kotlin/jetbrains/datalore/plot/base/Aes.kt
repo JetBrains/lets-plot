@@ -81,6 +81,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val SYM_X: Aes<Double> = Aes("sym_x")
         val SYM_Y: Aes<Double> = Aes("sym_y")
 
+        // pie geom - defines size of sector
+        val SLICE: Aes<Double> = Aes("slice")
+        // pie geom - to explode sector from center point, detaching it from the main pie
+        val EXPLODE: Aes<Double> = Aes("explode")
 
         fun numeric(unfiltered: Iterable<Aes<*>>): List<Aes<Double>> {
             // safe to cast all 'numeric' aesthetics are 'Double'
@@ -179,6 +183,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == LINEHEIGHT ||
                     aes == SYM_X ||
                     aes == SYM_Y ||
+                    aes == SLICE ||
+                    aes == EXPLODE ||
                     isPositional(aes)
         }
 

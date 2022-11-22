@@ -208,6 +208,7 @@ object GeomInteractionUtil {
                     }
                 }
             }
+            GeomKind.PIE,
             GeomKind.H_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
@@ -237,6 +238,7 @@ object GeomInteractionUtil {
                     GeomMeta.renders(layerConfig.geomProto.geomKind) - axisAes
                 }
             }
+            GeomKind.PIE -> listOf(Aes.EXPLODE)
             else -> emptyList()
         }
     }

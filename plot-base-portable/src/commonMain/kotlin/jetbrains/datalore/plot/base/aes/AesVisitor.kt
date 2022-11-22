@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -27,6 +28,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
@@ -198,6 +200,14 @@ abstract class AesVisitor<T> {
             return symY()
         }
 
+        if (aes == SLICE) {
+            return slice()
+        }
+
+        if (aes == EXPLODE) {
+            return explode()
+        }
+
         throw IllegalArgumentException("Unexpected aes: $aes")
     }
 
@@ -284,4 +294,8 @@ abstract class AesVisitor<T> {
     protected abstract fun symX(): T
 
     protected abstract fun symY(): T
+
+    protected abstract fun slice(): T
+
+    protected abstract fun explode(): T
 }

@@ -23,7 +23,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
-           'geom_text', 'geom_label']
+           'geom_text', 'geom_label', 'geom_pie']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -5334,6 +5334,159 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_padding=label_padding,
                  label_r=label_r,
                  label_size=label_size,
+                 **other_args)
+
+
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+             map=None, map_join=None, use_crs=None,
+             hole=None, fill_by=None, stroke=None, stroke_color=None,
+             **other_args):
+    """
+    Draw pie chart.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='count2d'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count2d' (counts number of points with same x,y coordinate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of coordinate reference system (CRS).
+        All coordinates in GeoDataFrame (see the 'map' parameter)
+        will be projected to this CRS.
+    hole : float, default=0.0
+        A multiplicative factor applied to the pie diameter to draw donut-like chart.
+    fill_by : string, default='fill'
+        Defines the source aesthetic for geometry filling.
+    stroke : float, default=0.0
+        Width of slice borders.
+    stroke_color : str, default='white'.
+        Color of slice borders.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..count.. : number of points with same (x,y) coordinate.
+    - ..sum.. : total number of points with same (x,y) coordinate.
+    - ..prop.. : groupwise proportion.
+
+    `geom_pie()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - slice : values associated to pie sectors.
+    - explode : values to explode slices away from their center point, detaching it from the main pie.
+    - size : pie diameter.
+    - fill : color of geometry filling (by default).
+    - color (colour) : color of geometry filling if `fill_by='color'`.
+    - alpha : transparency level of the pie. Accepts values between 0 and 1.
+
+    |
+
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    |
+
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    |
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+        ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=10, stat='identity')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5-8
+
+        from lets_plot import *
+        from lets_plot.mapping import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), size=10, \\
+                                tooltips=layer_tooltips().format('@{..prop..}', '.0%')
+                                                         .line('count|@{..count..} (@{..prop..})')
+                                                         .line('total|@{..sum..}'))
+
+    |
+    """
+
+    return _geom('pie',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 map=map, map_join=map_join, use_crs=use_crs,
+                 hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
                  **other_args)
 
 

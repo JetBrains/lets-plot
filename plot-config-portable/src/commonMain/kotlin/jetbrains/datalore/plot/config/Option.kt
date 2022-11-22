@@ -237,6 +237,13 @@ object Option {
             const val LABEL_SIZE = "label_size"
         }
 
+        object Pie {
+            const val FILL_BY = "fill_by"
+            const val HOLE = "hole"
+            const val STROKE = "stroke"
+            const val STROKE_COLOR = "stroke_color"
+        }
+
         object LiveMap {
             const val DISPLAY_MODE = "display_mode"
             const val INTERACTIVE = "interactive"
@@ -611,6 +618,7 @@ object Option {
         const val LABEL = "label"
         private const val RASTER = "raster"
         const val IMAGE = "image"
+        const val PIE = "pie"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -658,6 +666,7 @@ object Option {
             map[LABEL] = GeomKind.LABEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
+            map[PIE] = GeomKind.PIE
             GEOM_KIND_MAP = map
         }
 

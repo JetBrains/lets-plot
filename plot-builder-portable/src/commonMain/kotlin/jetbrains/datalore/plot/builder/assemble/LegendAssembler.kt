@@ -169,11 +169,19 @@ class LegendAssembler(
                 )
             }
 
-            var keySize = DoubleVector(theme.keySize(), theme.keySize())
-            for (br in breaks) {
-                val minimumKeySize = br.minimumKeySize
-                keySize = keySize.max(pretty(minimumKeySize))
-            }
+            val themeKeySize = DoubleVector(theme.keySize(), theme.keySize())
+            val keySizes = breaks
+                .map { br -> themeKeySize.max(pretty(br.minimumKeySize)) }
+                .let { sizes ->
+                    // Use max height for horizontal and max width for vertical legend for better (central) alignment
+                    if (legendDirection == LegendDirection.HORIZONTAL) {
+                        val maxKeyHeight = sizes.maxOf(DoubleVector::y)
+                        sizes.map { DoubleVector(it.x, maxKeyHeight) }
+                    } else {
+                        val maxKeyWidth = sizes.maxOf(DoubleVector::x)
+                        sizes.map { DoubleVector(maxKeyWidth, it.y) }
+                    }
+                }
 
             // row, col count
             val breakCount = breaks.size
@@ -205,14 +213,14 @@ class LegendAssembler(
                     layout = LegendComponentLayout.horizontalMultiRow(
                         title,
                         breaks,
-                        keySize,
+                        keySizes,
                         theme
                     )
                 } else {
-                    layout = LegendComponentLayout.horizontal(title, breaks, keySize, theme)
+                    layout = LegendComponentLayout.horizontal(title, breaks, keySizes, theme)
                 }
             } else {
-                layout = LegendComponentLayout.vertical(title, breaks, keySize, theme)
+                layout = LegendComponentLayout.vertical(title, breaks, keySizes, theme)
             }
 
             layout.colCount = colCount
