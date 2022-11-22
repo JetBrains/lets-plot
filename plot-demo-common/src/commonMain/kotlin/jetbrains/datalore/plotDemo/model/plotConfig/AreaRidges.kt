@@ -6,6 +6,7 @@
 package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
+import jetbrains.datalore.plotDemo.data.Iris
 
 class AreaRidges {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -15,7 +16,7 @@ class AreaRidges {
             flipCoord(),
             withNegativeHeight(),
             withStat(),
-            invisibleQuantiles(),
+            quantiles(),
         )
     }
 
@@ -154,13 +155,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
-                "                 'quantiles': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]," +
-                "                 'quantile_lines': true," +
-                "                 'scale': 0.75," +
-                "                 'color': 'white'," +
-                "                 'mapping': {" +
-                "                   'fill': '..quantile..'" +
-                "                 }" +
+                "                 'color': 'white'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -169,31 +164,29 @@ class AreaRidges {
 
     }
 
-    private fun invisibleQuantiles(): MutableMap<String, Any> {
+    private fun quantiles(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [0, 0, 1, 1, 0, 0, 0, 1]," +
-                "             'y': [0, 0, 0, 0, 1, 1, 1, 1]" +
-                "            }," +
                 "   'mapping': {" +
-                "                'x': 'x'," +
-                "                'y': 'y'" +
-                "              }," +
+                "             'x': 'sepal length (cm)'," +
+                "             'y': 'target'," +
+                "             'fill': '..quantile..'" +
+                "           }," +
                 "   'ggtitle': {" +
-                "                'text': 'Invisible quantiles'" +
+                "                'text': 'Quantiles'" +
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'area_ridges'," +
-                "                 'size': 2," +
-                "                 'mapping': {" +
-                "                   'color': '..quantile..'" +
-                "                 }" +
+                "                  'geom': 'area_ridges'," +
+                "                  'quantiles': [0.1, 0.25, 0.5, 0.75, 0.9]," +
+                "                  'color': 'black'" +
                 "               }" +
-                "             ]" +
+                "           ]" +
                 "}"
 
-        return HashMap(parsePlotSpec(spec))
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
 
     }
 }

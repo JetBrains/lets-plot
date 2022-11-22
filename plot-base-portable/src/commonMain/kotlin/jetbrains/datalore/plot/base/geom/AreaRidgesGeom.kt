@@ -77,7 +77,7 @@ class AreaRidgesGeom : GeomBase() {
 
         val bandDataPoints = if (ctx.isMappedAes(Aes.FILL)) getSplitDataPoints() else listOf(dataPoints)
         for (points in bandDataPoints) {
-            val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
+            val paths = helper.createBands(points, boundTransform, { p -> DoubleVector(p.x()!!, p.y()!!) }, lowerIsConst = true)
             appendNodes(paths, root)
         }
 

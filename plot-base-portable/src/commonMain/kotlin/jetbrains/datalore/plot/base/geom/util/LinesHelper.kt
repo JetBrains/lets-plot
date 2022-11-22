@@ -124,7 +124,9 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
-        toLocationLower: (DataPointAesthetics) -> DoubleVector?
+        toLocationLower: (DataPointAesthetics) -> DoubleVector?,
+        upperIsConst: Boolean = false,
+        lowerIsConst: Boolean = false
     ): MutableList<LinePath> {
 
         val lines = ArrayList<LinePath>()
@@ -132,12 +134,13 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
         // draw line for each group
         for (group in Ordering.natural<Int>().sortedCopy(pointsByGroup.keys)) {
-            val groupDataPoints = pointsByGroup[group]
+            val groupDataPoints = pointsByGroup[group]!!
             // upper margin points
-            val points = ArrayList(project(groupDataPoints!!) { toLocationUpper(it) })
+            val upperPoints = if (upperIsConst) dropInnerPoints(groupDataPoints) else groupDataPoints
+            val points = ArrayList(project(upperPoints) { toLocationUpper(it) })
 
             // lower margin point in reversed order
-            val lowerPoints = groupDataPoints.reversed()
+            val lowerPoints = if (lowerIsConst) dropInnerPoints(groupDataPoints.reversed()) else groupDataPoints.reversed()
             points.addAll(project(lowerPoints) { toLocationLower(it) })
 
             if (!points.isEmpty()) {
@@ -148,6 +151,10 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             }
         }
         return lines
+    }
+
+    private fun dropInnerPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        return if (dataPoints.count() > 1) listOf(dataPoints.first(), dataPoints.last()) else dataPoints
     }
 
     protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean) {
