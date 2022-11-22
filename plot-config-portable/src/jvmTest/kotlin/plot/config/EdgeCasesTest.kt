@@ -8,6 +8,8 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.assertion.assertDoesNotFail
 import jetbrains.datalore.plot.DemoAndTest
 import jetbrains.datalore.plot.config.Option.GeomName
+import jetbrains.datalore.plot.config.Option.GeomName.IMAGE
+import jetbrains.datalore.plot.config.Option.GeomName.LIVE_MAP
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 
@@ -107,11 +109,28 @@ class EdgeCasesTest {
     @Test
     fun allWithNaNInXYSeries() {
         for (geomName in GeomName.values()) {
-            if (GeomName.LIVE_MAP == geomName || GeomName.IMAGE == geomName) {
+            if (LIVE_MAP == geomName || IMAGE == geomName) {
                 continue
             }
             checkWithNaNInXYSeries(geomName)
         }
+    }
+
+    @Test
+    fun allWithEmptyData() {
+        fun checkGeom(geom: String) {
+            val spec = """
+            |{
+            |    'kind': 'plot',
+            |    'data': { 'x': [], 'y': [] },
+            |    'mapping': { 'x': 'x', 'y': 'y' },
+            |    'layers': [ { 'geom':  { 'name': '$geom' } } ]
+            |}""".trimMargin()
+
+            assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+        }
+
+        (GeomName.values() - listOf(LIVE_MAP, IMAGE)).forEach(::checkGeom)
     }
 
     private fun checkWithNaNInXYSeries(geom: String) {
