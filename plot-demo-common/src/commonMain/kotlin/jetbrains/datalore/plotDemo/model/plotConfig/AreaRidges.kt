@@ -38,8 +38,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
-                "                 'stat': 'identity'," +
-                "                 'color': 'black'" +
+                "                 'stat': 'identity'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -97,8 +96,7 @@ class AreaRidges {
                 "               {" +
                 "                 'geom': 'area_ridges'," +
                 "                 'stat': 'identity'," +
-                "                 'scale': 0.5," +
-                "                 'color': 'white'" +
+                "                 'scale': 0.5" +
                 "               }" +
                 "             ]," +
                 "   'coord': {" +
@@ -130,7 +128,9 @@ class AreaRidges {
                 "               {" +
                 "                 'geom': 'area_ridges'," +
                 "                 'min_height': -0.5," +
-                "                 'stat': 'identity'" +
+                "                 'stat': 'identity'," +
+                "                 'color': 'black'," +
+                "                 'fill': 'red'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -154,8 +154,7 @@ class AreaRidges {
                 "              }," +
                 "   'layers': [" +
                 "               {" +
-                "                 'geom': 'area_ridges'," +
-                "                 'color': 'white'" +
+                "                 'geom': 'area_ridges'" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -179,6 +178,7 @@ class AreaRidges {
                 "               {" +
                 "                  'geom': 'area_ridges'," +
                 "                  'quantiles': [0.1, 0.25, 0.5, 0.75, 0.9]," +
+                "                  'n': 64," +
                 "                  'color': 'black'" +
                 "               }" +
                 "           ]" +
