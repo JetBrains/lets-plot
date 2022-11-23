@@ -178,7 +178,6 @@ class AreaRidges {
                 "               {" +
                 "                  'geom': 'area_ridges'," +
                 "                  'quantiles': [0.1, 0.25, 0.5, 0.75, 0.9]," +
-                "                  'n': 64," +
                 "                  'color': 'black'" +
                 "               }" +
                 "           ]" +

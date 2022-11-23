@@ -128,21 +128,22 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         toLocationLower: (DataPointAesthetics) -> DoubleVector?
     ): MutableList<LinePath> {
 
+        val weightLimit = 0.25 // in px for Douglas–Peucker algorithm
         val lines = ArrayList<LinePath>()
         val pointsByGroup = GeomUtil.createGroups(dataPoints)
 
         // draw line for each group
         for (group in Ordering.natural<Int>().sortedCopy(pointsByGroup.keys)) {
             val groupDataPoints = pointsByGroup[group]!!
-            val countLimit = groupDataPoints.size
+
             // upper margin points
             val upperPoints = ArrayList(project(groupDataPoints) { toLocationUpper(it) })
-            val points = ArrayList(PolylineSimplifier.douglasPeucker(upperPoints).setCountLimit(countLimit).points)
+            val points = ArrayList(PolylineSimplifier.douglasPeucker(upperPoints).setWeightLimit(weightLimit).points)
 
             // lower margin point in reversed order
             val reversedPoints = groupDataPoints.reversed()
             val lowerPoints = ArrayList(project(reversedPoints) { toLocationLower(it) })
-            points.addAll(PolylineSimplifier.douglasPeucker(lowerPoints).setCountLimit(countLimit).points)
+            points.addAll(PolylineSimplifier.douglasPeucker(lowerPoints).setWeightLimit(weightLimit).points)
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
