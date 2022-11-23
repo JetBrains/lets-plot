@@ -227,14 +227,14 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
             raise ValueError(
                 "Invalid alpha: expected float in range [0..1] but was {}".format(alpha))
 
-    # Figure out the type of the image
-    if image_data.ndim == 2:
+    greyscale = (image_data.ndim == 2)
+    if greyscale:
+        # Greyscale image
         has_nan = numpy.isnan(image_data.max())
         min_lum = 0 if not (has_nan and cmap) else 1  # index 0 reserved for NaN-s
 
         image_data = _normalize_2D(image_data, norm, vmin, vmax, min_lum)
         height, width = image_data.shape
-        image_type = 'gray'
         nchannels = 1
 
         has_nan = numpy.isnan(image_data.max())
@@ -261,16 +261,13 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
             nchannels = 2
 
     else:
+        # Color RGB/RGBA image
         image_data = _normalize_RGBa(image_data)
         height, width, nchannels = image_data.shape
-        if nchannels == 3:
-            image_type = 'rgb'
-        elif nchannels == 4:
-            image_type = 'rgba'
-        else:
-            raise ValueError(
-                "Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(
-                    nchannels))
+
+        if alpha is not None:
+            pass
+
 
     norm_end = time()
     print("Normalization: {}".format(norm_end - start))
@@ -319,9 +316,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     print("image_2d: {}".format(image_2d_end - clip_end))
 
     # PNG writer
-    greyscale = (image_type == 'gray')
     palette = None
-    if cmap and image_type == 'gray':
+    if cmap and greyscale:
         greyscale = False
 
         # colormap via palettable
@@ -346,7 +342,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         width=width,
         height=height,
         greyscale=greyscale,
-        alpha=(image_type == 'rgba' or image_type == 'gray' and nchannels == 2),
+        alpha=(nchannels == 4 or nchannels == 2),  # RGBA or LA
         bitdepth=8,
         palette=palette
     ).write(png_bytes, image_2d)
