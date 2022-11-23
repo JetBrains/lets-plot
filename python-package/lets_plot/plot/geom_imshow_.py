@@ -32,7 +32,7 @@ def _hex2rgb(hex_c, alpha):
     hex_s = hex_c.lstrip('#')
     list_rgb = [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
     if alpha is not None:
-        list_rgb.append(int(alpha+0.5))
+        list_rgb.append(int(alpha + 0.5))
     return list_rgb
 
 
@@ -266,8 +266,17 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         height, width, nchannels = image_data.shape
 
         if alpha is not None:
-            pass
+            if nchannels == 3:
+                # RGB image: add alpha channel (RGBA)
+                alpha_ch = numpy.full((height, width, 1), 255 * alpha, dtype=image_data.dtype)
+                image_data = numpy.dstack((image_data, alpha_ch))
+                nchannels = 4
+            elif nchannels == 4:
+                # RGBA image: apply alpha scaling
+                if image_data.dtype.kind != 'f':
+                    image_data = image_data.astype(numpy.float32)
 
+                image_data[:,:,3] *= alpha
 
     norm_end = time()
     print("Normalization: {}".format(norm_end - start))
