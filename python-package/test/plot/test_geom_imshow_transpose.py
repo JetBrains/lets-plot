@@ -25,10 +25,6 @@ def _image_spec(href):
     )
 
 
-def _append_test_params(params_list: list, image_data, expected_spec: dict):
-    params_list.append((image_data, expected_spec))
-
-
 class Test:
     test_params_list = []
 

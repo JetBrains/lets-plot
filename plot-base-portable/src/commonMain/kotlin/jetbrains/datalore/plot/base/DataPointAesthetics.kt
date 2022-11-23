@@ -184,6 +184,14 @@ abstract class DataPointAesthetics {
         return get(Aes.EXPLODE)
     }
 
+    fun slice(): Double? {
+        return get(Aes.SLICE)
+    }
+
+    fun explode(): Double? {
+        return get(Aes.EXPLODE)
+    }
+
     fun numeric(aes: Aes<Double>): Double? {
         return get(aes)
     }

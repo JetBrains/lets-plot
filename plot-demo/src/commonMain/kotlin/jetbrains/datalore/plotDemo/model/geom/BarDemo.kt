@@ -5,8 +5,9 @@
 
 package jetbrains.datalore.plotDemo.model.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
@@ -16,6 +17,7 @@ import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.geom.BarGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
@@ -23,9 +25,9 @@ open class BarDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                simple(),
-                dodgePos(),
-                stackPos()
+            simple(),
+            dodgePos(),
+            stackPos()
         )
     }
 
@@ -38,7 +40,14 @@ open class BarDemo : SimpleDemoBase() {
     }
 
     private fun color6(): Array<Color> {
-        return arrayOf(Color.DARK_BLUE, Color.DARK_GREEN, Color.DARK_BLUE, Color.DARK_GREEN, Color.DARK_BLUE, Color.DARK_GREEN)
+        return arrayOf(
+            Color.DARK_BLUE,
+            Color.DARK_GREEN,
+            Color.DARK_BLUE,
+            Color.DARK_GREEN,
+            Color.DARK_BLUE,
+            Color.DARK_GREEN
+        )
     }
 
 
@@ -49,11 +58,11 @@ open class BarDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .x(array(x))
-                .y(array(y))
-                .fill(constant(Color.DARK_BLUE))
-                .width(constant(0.75))
-                .build()
+            .x(array(x))
+            .y(array(y))
+            .fill(constant(Color.DARK_BLUE))
+            .width(constant(0.75))
+            .build()
 
         val pos = PositionAdjustments.dodge(aes, 1, 0.75)
         return createGeomLayer(aes, pos)
@@ -66,12 +75,12 @@ open class BarDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .x(array(x6()))
-                .y(array(y6()))
-                .fill(array(color6()))
-                .width(constant(0.9))
-                .group(array(group))
-                .build()
+            .x(array(x6()))
+            .y(array(y6()))
+            .fill(array(color6()))
+            .width(constant(0.9))
+            .group(array(group))
+            .build()
 
         val bandWidthRatio = 0.75
         val pos = PositionAdjustments.dodge(aes, groupCount, bandWidthRatio)
@@ -83,11 +92,11 @@ open class BarDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .x(array(x6()))
-                .y(array(y6()))
-                .fill(array(color6()))
-                .width(constant(0.75))
-                .build()
+            .x(array(x6()))
+            .y(array(y6()))
+            .fill(array(color6()))
+            .width(constant(0.75))
+            .build()
 
         val pos = PositionAdjustments.stack(aes, vjust = null)
         return createGeomLayer(aes, pos)
@@ -95,10 +104,17 @@ open class BarDemo : SimpleDemoBase() {
 
     private fun createGeomLayer(aes: Aesthetics, pos: PositionAdjustment): GroupComponent {
         val groupComponent = GroupComponent()
-        val coord = Coords.create(DoubleVector(0.0, demoInnerSize.y / 2))
-        val layer =
-            jetbrains.datalore.plot.builder.SvgLayerRenderer(aes,
-                BarGeom(), pos, coord, DemoUtil.geomContext(aes))
+        val domainX = aes.range(Aes.X)!!
+        val domainY = aes.range(Aes.Y)!!
+        val coord = Coords.DemoAndTest.create(
+            DoubleSpan(domainX.lowerEnd - 50, domainX.upperEnd + 50),
+            DoubleSpan(domainY.lowerEnd - 50, domainY.upperEnd + 50),
+            demoInnerSize
+        )
+        val layer = SvgLayerRenderer(
+            aes,
+            BarGeom(), pos, coord, DemoUtil.geomContext(aes)
+        )
         groupComponent.add(layer.rootGroup)
         return groupComponent
     }

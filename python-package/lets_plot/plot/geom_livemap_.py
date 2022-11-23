@@ -51,7 +51,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.

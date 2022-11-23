@@ -55,7 +55,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -217,7 +217,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -361,7 +361,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -472,7 +472,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -481,6 +481,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
+        If value of `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
     n : int
         Number of points to evaluate smoother at.
     se : bool, default=True
@@ -634,7 +635,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -769,7 +770,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -910,7 +911,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1055,7 +1056,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1192,7 +1193,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1302,7 +1303,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1387,7 +1388,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1497,7 +1498,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1615,7 +1616,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1731,7 +1732,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1837,7 +1838,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1954,7 +1955,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2069,7 +2070,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2243,7 +2244,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2380,7 +2381,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     slope : float
         The line slope.
     intercept : float
@@ -2481,7 +2482,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2579,7 +2580,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2683,7 +2684,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2864,7 +2865,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3040,7 +3041,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3195,7 +3196,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3305,7 +3306,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3422,7 +3423,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3594,7 +3595,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3786,7 +3787,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3981,7 +3982,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4097,7 +4098,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4215,7 +4216,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4310,7 +4311,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4430,7 +4431,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4519,7 +4520,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4628,7 +4629,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
@@ -4726,7 +4727,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4874,7 +4875,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4982,7 +4983,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -5170,7 +5171,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -5363,7 +5364,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.

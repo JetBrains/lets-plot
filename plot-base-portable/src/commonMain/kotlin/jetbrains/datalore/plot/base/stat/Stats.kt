@@ -94,7 +94,7 @@ object Stats {
         return CountStat()
     }
 
-    fun pieCount(): Stat {
+    fun count2d(): Stat {
         return Count2dStat()
     }
 

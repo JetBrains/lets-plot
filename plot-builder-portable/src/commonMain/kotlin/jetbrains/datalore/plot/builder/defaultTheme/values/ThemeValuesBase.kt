@@ -17,11 +17,14 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBTITLE
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
@@ -62,8 +65,15 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.Margin.BOTTOM to 4.0,
                 Elem.Margin.LEFT to 0.0
             ),
+            PLOT_TITLE to mapOf(
+                Elem.SIZE to Defaults.FONT_LARGE
+            ),
+            PLOT_SUBTITLE to mapOf(
+                Elem.SIZE to Defaults.FONT_MEDIUM
+            ),
             PLOT_CAPTION to mapOf(
                 Elem.HJUST to 1.0,
+                Elem.SIZE to Defaults.FONT_SMALL
             ),
 //            TEXT_WIDTH_FACTOR to 1.0,
             PANEL_BORDER_RECT to ELEMENT_BLANK,
@@ -89,6 +99,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             AXIS_TITLE to mapOf(
+                Elem.SIZE to Defaults.FONT_MEDIUM,
                 Elem.HJUST to 0.5,
                 Elem.Margin.TOP to 4.0,
                 Elem.Margin.RIGHT to 4.0,
@@ -101,6 +112,9 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             ),
 
             // Legend
+            LEGEND_TITLE to mapOf(
+                Elem.SIZE to Defaults.FONT_MEDIUM
+            ),
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
             LEGEND_DIRECTION to LegendDirection.AUTO,

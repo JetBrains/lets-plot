@@ -5,81 +5,32 @@
 
 package jetbrains.datalore.plot.base.coord
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 object Coords {
     fun create(
         coordMapper: CoordinatesMapper,
     ): CoordinateSystem {
-        val clientBounds = coordMapper.clientBounds
-        val origin = DoubleVector(
-            originX(clientBounds.xRange()),
-            originY(clientBounds.yRange())
-        )
-        return create(origin, coordMapper)
+        return DefaultCoordinateSystem(coordMapper)
     }
 
-    private fun create(
-        origin: DoubleVector,
-        coordMapper: CoordinatesMapper
-    ): CoordinateSystem {
-        return DefaultCoordinateSystem(
-            toClientOffsetX(origin.x),
-            toClientOffsetY(origin.y),
-            coordMapper
-        )
-    }
-
-    fun toClientOffsetX(xRange: DoubleSpan): (Double) -> Double {
-        return toClientOffsetX(
-            originX(
-                xRange
+    object DemoAndTest {
+        fun create(
+            xDomain: DoubleSpan,
+            yDomain: DoubleSpan,
+            clientSize: DoubleVector
+        ): CoordinateSystem {
+            val mapper = CoordinatesMapper.create(
+                adjustedDomain = DoubleRectangle.hvRange(xDomain, yDomain),
+                clientSize = clientSize,
+                projection = identity(),
+                flipAxis = false
             )
-        )
+            return DefaultCoordinateSystem(mapper)
+        }
     }
-
-    fun toClientOffsetY(yRange: DoubleSpan): (Double) -> Double {
-        return toClientOffsetY(
-            originY(
-                yRange
-            )
-        )
-    }
-
-    private fun originX(xRange: DoubleSpan): Double {
-        return -xRange.lowerEnd
-    }
-
-    private fun originY(yRange: DoubleSpan): Double {
-        return yRange.upperEnd
-    }
-
-    private fun toClientOffsetX(originX: Double): (Double) -> Double {
-        return { x -> originX + x }
-    }
-
-    private fun toClientOffsetY(originY: Double): (Double) -> Double {
-        // y-axis is inverted
-        return { y -> originY - y }
-    }
-
-
-    // ToDo: Old signature used in demos: ned to update demos.
-    fun create(
-        xRange: DoubleSpan,
-        yRange: DoubleSpan,
-    ): CoordinateSystem {
-        UNSUPPORTED()
-    }
-
-    // ToDo: Old signature used in demos: ned to update demos.
-    fun create(
-        origin: DoubleVector,
-    ): CoordinateSystem {
-        UNSUPPORTED()
-    }
-
 }

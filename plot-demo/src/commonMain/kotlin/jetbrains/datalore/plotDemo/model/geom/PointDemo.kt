@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.geom
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
@@ -21,7 +21,7 @@ open class PointDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-                simple()
+            simple()
         )
     }
 
@@ -38,16 +38,20 @@ open class PointDemo : SimpleDemoBase() {
 
         // layer
         val aes = AestheticsBuilder(count)
-                .x(array(x))
-                .y(array(y))
-                .color(constant(Color.RED))
-                .shape(constant(NamedShape.FILLED_CIRCLE))
-                .size(array(size))
-                .build()
+            .x(array(x))
+            .y(array(y))
+            .color(constant(Color.RED))
+            .shape(constant(NamedShape.FILLED_CIRCLE))
+            .size(array(size))
+            .build()
 
         val groupComponent = GroupComponent()
 
-        val coord = Coords.create(DoubleVector(0.0, demoInnerSize.y / 2))
+        val coord = Coords.DemoAndTest.create(
+            DoubleSpan(x.min() - 20, x.max() + 20),
+            DoubleSpan(y.min() - 20, y.max() + 20),
+            demoInnerSize
+        )
         val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
             aes,
             PointGeom(),

@@ -13,7 +13,7 @@ import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgTextElement
 
 
-class MultilineLabel(text: String) : SvgComponent() {
+class MultilineLabel(val text: String) : SvgComponent() {
     private val myLines: List<SvgTextElement> = splitLines(text).map(::SvgTextElement)
     private var myTextColor: Color? = null
     private var myFontSize = 0.0

@@ -18,6 +18,7 @@ class Dotplot {
             withGroups(),
             dotplotParams(),
             statIdentity(),
+            //emptyData(),
         )
     }
 
@@ -191,6 +192,27 @@ class Dotplot {
                 "               {" +
                 "                 'geom': 'dotplot'," +
                 "                 'stat': 'identity'" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun emptyData(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'data' : {'x': []}," +
+                "   'mapping': {" +
+                "                'x': 'x'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Empty dataset'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'dotplot'" +
                 "               }" +
                 "             ]" +
                 "}"
