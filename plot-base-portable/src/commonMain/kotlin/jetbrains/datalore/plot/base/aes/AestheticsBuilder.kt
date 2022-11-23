@@ -184,14 +184,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(EXPLODE, v)
     }
 
-    fun slice(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(SLICE, v)
-    }
-
-    fun explode(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(EXPLODE, v)
-    }
-
     fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {
         myConstantAes.add(aes)
         myIndexFunctionMap[aes] = constant(v)
