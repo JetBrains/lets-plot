@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.base.geom.StepGeom
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
 import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
 
 open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
     GeomHelper(pos, coord, ctx) {
@@ -124,9 +125,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
-        toLocationLower: (DataPointAesthetics) -> DoubleVector?,
-        upperIsConst: Boolean = false,
-        lowerIsConst: Boolean = false
+        toLocationLower: (DataPointAesthetics) -> DoubleVector?
     ): MutableList<LinePath> {
 
         val lines = ArrayList<LinePath>()
@@ -135,13 +134,15 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         // draw line for each group
         for (group in Ordering.natural<Int>().sortedCopy(pointsByGroup.keys)) {
             val groupDataPoints = pointsByGroup[group]!!
+            val countLimit = groupDataPoints.size
             // upper margin points
-            val upperPoints = if (upperIsConst) dropInnerPoints(groupDataPoints) else groupDataPoints
-            val points = ArrayList(project(upperPoints) { toLocationUpper(it) })
+            val upperPoints = ArrayList(project(groupDataPoints) { toLocationUpper(it) })
+            val points = ArrayList(PolylineSimplifier.douglasPeucker(upperPoints).setCountLimit(countLimit).points)
 
             // lower margin point in reversed order
-            val lowerPoints = if (lowerIsConst) dropInnerPoints(groupDataPoints.reversed()) else groupDataPoints.reversed()
-            points.addAll(project(lowerPoints) { toLocationLower(it) })
+            val reversedPoints = groupDataPoints.reversed()
+            val lowerPoints = ArrayList(project(reversedPoints) { toLocationLower(it) })
+            points.addAll(PolylineSimplifier.douglasPeucker(lowerPoints).setCountLimit(countLimit).points)
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
@@ -151,10 +152,6 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             }
         }
         return lines
-    }
-
-    private fun dropInnerPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        return if (dataPoints.count() > 1) listOf(dataPoints.first(), dataPoints.last()) else dataPoints
     }
 
     protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean) {
