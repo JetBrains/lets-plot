@@ -39,14 +39,17 @@ abstract class AbstractCountStat(defaultMappings: Map<Aes<*>, DataFrame.Variable
 
         val sumStatCount = ArrayList<Double>()
         val prop = ArrayList<Double>()
+        val propPercent = ArrayList<Double>()
         for (i in counts.indices) {
             val sum = computedCount[values[i]]!!.get()
             sumStatCount.add(sum)
             prop.add(counts[i] / sum)
+            propPercent.add(counts[i] * 100 / sum)
         }
         return dataAfterStat.builder()
             .putNumeric(Stats.SUM, sumStatCount)
             .putNumeric(Stats.PROP, prop)
+            .putNumeric(Stats.PROPPCT, propPercent)
             .build()
     }
 
