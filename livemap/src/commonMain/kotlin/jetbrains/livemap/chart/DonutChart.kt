@@ -31,24 +31,21 @@ object DonutChart {
         val index: Int,
         val radius: Double,
         val holeRadius: Double,
-        val explode: Double,
         val fillColor: Color,
         val startAngle: Double,
-        val endAngle: Double
+        val endAngle: Double,
+        explode: Double
     ) {
-        private val pieCenter: DoubleVector = DoubleVector.ZERO
-
         private val angle = endAngle - startAngle
         private val direction = startAngle + angle / 2
 
-        val sectorCenter = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
-        private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
+        val sectorCenter = DoubleVector(explode * cos(direction), explode * sin(direction))
 
         val outerArcStart = outerArcPoint(startAngle)
-        val outerArcEnd = outerArcPoint(endAngle - fullCircleDrawingFix)
+        val outerArcEnd = outerArcPoint(endAngle)
 
         val innerArcStart = innerArcPoint(startAngle)
-        val innerArcEnd = innerArcPoint(endAngle - fullCircleDrawingFix)
+        val innerArcEnd = innerArcPoint(endAngle)
 
         fun outerArcPoint(angle: Double) = arcPoint(radius, angle)
         fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
@@ -74,10 +71,10 @@ object DonutChart {
                 index = pieSpec.indices[index],
                 radius = radius,
                 holeRadius = radius * pieSpec.holeSize,
-                explode = pieSpec.explodeValues?.get(index)?.let { radius * it } ?: 0.0,
                 fillColor = pieSpec.colors[index],
                 startAngle = currentAngle,
-                endAngle = currentAngle + angle(pieSpec.sliceValues[index])
+                endAngle = currentAngle + angle(pieSpec.sliceValues[index]),
+                explode = pieSpec.explodeValues?.get(index)?.let { radius * it } ?: 0.0,
             ).also { sector -> currentAngle = sector.endAngle }
         }
     }
