@@ -32,7 +32,7 @@ def _hex2rgb(hex_c, alpha):
     hex_s = hex_c.lstrip('#')
     list_rgb = [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
     if alpha is not None:
-        list_rgb.append(int(alpha))
+        list_rgb.append(int(alpha+0.5))
     return list_rgb
 
 
@@ -43,7 +43,7 @@ def _hex2rgb_arr_uint8(hex_c, alpha=None):
     return numpy.array(_hex2rgb(hex_c, alpha), dtype=numpy.uint8)
 
 
-def _normalize_2D(image_data, norm, vmin, vmax, max_lum):
+def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     """
     Takes numpy 2D array of float or int-s and
     returns 2D array of ints with the target range [0..255].
@@ -51,6 +51,9 @@ def _normalize_2D(image_data, norm, vmin, vmax, max_lum):
     """
     if image_data.dtype.kind != 'f':
         image_data = image_data.astype(numpy.float32)
+
+    min_lum = max(0, min_lum)
+    max_lum = 255 - min_lum
 
     vmin = float(vmin if vmin is not None else numpy.nanmin(image_data))
     vmax = float(vmax if vmax is not None else numpy.nanmax(image_data))
@@ -67,9 +70,11 @@ def _normalize_2D(image_data, norm, vmin, vmax, max_lum):
         else:
             ratio = max_lum / (vmax - vmin)
             image_data = image_data - vmin
-            image_data = image_data * ratio + 0.5
+            image_data = image_data * ratio + 0.5 + min_lum
     else:
         # no normalization - just round values to the nearest int.
+        # ToDo: in-place
+        image_data = image_data.clip(min_lum, max_lum)
         image_data = image_data + 0.5
 
     return image_data
@@ -108,7 +113,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
                        )
 
 
-def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, extent=None):
+def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax=None, extent=None):
     """
     Displays image specified by ndarray with shape
 
@@ -215,12 +220,17 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         raise ValueError(
             "Invalid image_data: 2d or 3d array is expected but was {}-dimensional".format(image_data.ndim))
 
+    if alpha is not None:
+        if not (0 <= alpha <= 1):
+            raise ValueError(
+                "Invalid alpha: expected float in range [0..1] but was {}".format(alpha))
+
     # Figure out the type of the image
     if image_data.ndim == 2:
         has_nan = numpy.isnan(image_data.max())
-        max_lum = 255 if not (has_nan and cmap) else 254  # index 255 reserved for NaN-s
+        min_lum = 0 if not (has_nan and cmap) else 1  # index 0 reserved for NaN-s
 
-        image_data = _normalize_2D(image_data, norm, vmin, vmax, max_lum)
+        image_data = _normalize_2D(image_data, norm, vmin, vmax, min_lum)
         height, width = image_data.shape
         image_type = 'gray'
         nchannels = 1
@@ -229,17 +239,24 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         if has_nan and not cmap:
             # add alpha-channel (LA)
             start_la = time()
+            alpha_ch_scaler = 1 if alpha is None else alpha
             is_nan = numpy.isnan(image_data)
             im_shape = numpy.shape(image_data)
             alpha_ch = numpy.zeros(im_shape, dtype=image_data.dtype)
-            alpha_ch[is_nan == False] = 255.
-            image_data[is_nan] = vmin
+            alpha_ch[is_nan == False] = 255. * alpha_ch_scaler
+            image_data[is_nan] = 0.
             image_data = numpy.dstack((image_data, alpha_ch))
             print("LA add alpha: {}".format(time() - start_la))
             nchannels = 2
         elif has_nan and cmap:
-            # replace all NaN-s with 255 (palette[255] will contain transparent color)
-            numpy.nan_to_num(image_data, copy=False, nan=255)
+            # replace all NaN-s with 0 (index 0 for transparent color)
+            numpy.nan_to_num(image_data, copy=False, nan=0)
+        elif not cmap and alpha is not None:
+            # add alpha-channel (LA)
+            im_shape = numpy.shape(image_data)
+            alpha_ch = numpy.full(im_shape, 255 * alpha, dtype=image_data.dtype)
+            image_data = numpy.dstack((image_data, alpha_ch))
+            nchannels = 2
 
     else:
         image_data = _normalize_RGBa(image_data)
@@ -312,13 +329,15 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
                 "Python environment. "
             )
         if not has_nan:
+            alpha_ch_val = None if alpha is None else 255 * alpha
             cmap_256 = palettable.get_map(cmap + "_256")
-            palette = [_hex2rgb_arr_uint8(c) for c in cmap_256.hex_colors]
+            palette = [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in cmap_256.hex_colors]
         else:
+            alpha_ch_val = 255 if alpha is None else 255 * alpha
             cmap_255 = palettable.get_map(cmap + "_255")
-            palette = [_hex2rgb_arr_uint8(c, alpha=255) for c in cmap_255.hex_colors]
-            # add transparent color to palette at index 255
-            palette.append(numpy.array([0, 0, 0, 0], dtype=numpy.uint8))
+            # transparent color at index 0
+            palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] + [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in
+                                                                        cmap_255.hex_colors]
 
     png_bytes = io.BytesIO()
     png.Writer(
