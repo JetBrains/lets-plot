@@ -145,6 +145,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         True - luminance values in grey-scale image will be scaled to [0-255] range using a linear scaler.
         False - disables scaling of luminance values in grey-scale image.
         This parameter is ignored for RGB(A) images.
+    alpha: float, optional
+        The alpha blending value, between 0 (transparent) and 1 (opaque).    
     vmin, vmax : number, optional
         Define the data range used for luminance normalization in grey-scale images.
         This parameter is ignored for RGB(A) images or if parameter `norm=False`.
