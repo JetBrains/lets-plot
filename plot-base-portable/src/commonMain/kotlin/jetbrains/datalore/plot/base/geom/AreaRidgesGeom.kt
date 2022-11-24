@@ -66,53 +66,24 @@ class AreaRidgesGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        var splitDataPoints: List<Iterable<DataPointAesthetics>>? = null
-        val getSplitDataPoints: () -> List<Iterable<DataPointAesthetics>> = {
-            if (splitDataPoints == null) splitDataPoints = splitDataToQuantiles(dataPoints)
-            splitDataPoints!!
-        }
-        val pointsBunches = if (ctx.isMappedAes(Aes.FILL) || ctx.isMappedAes(Aes.COLOR)) getSplitDataPoints() else listOf(dataPoints)
-
         val helper = LinesHelper(pos, coord, ctx)
         val boundTransform = toLocationBound()
-
-        for (points in pointsBunches) {
+        val group = when {
+            ctx.isMappedAes(Aes.FILL) -> DataPointAesthetics::fill
+            ctx.isMappedAes(Aes.COLOR) -> DataPointAesthetics::color
+            else -> DataPointAesthetics::group
+        }
+        dataPoints.groupBy(group).forEach { (_, points) ->
             val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
             appendNodes(paths, root)
+
+            helper.setAlphaEnabled(false)
+            appendNodes(helper.createLines(points, boundTransform), root)
+
+            if (quantileLines) drawQuantileLines(root, points, pos, coord, ctx)
+
+            buildHints(dataPoints, ctx, helper, boundTransform)
         }
-
-        helper.setAlphaEnabled(false)
-        for (points in pointsBunches) appendNodes(helper.createLines(points, boundTransform), root)
-
-        if (quantileLines) {
-            for (points in getSplitDataPoints()) drawQuantileLines(root, points, pos, coord, ctx)
-        }
-
-        buildHints(dataPoints, ctx, helper, boundTransform)
-    }
-
-    private fun splitDataToQuantiles(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
-        val result = mutableListOf<Iterable<DataPointAesthetics>>()
-        val sortedDataPoints = dataPoints.sortedWith(compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, DataPointAesthetics::x))
-        val pointsItr = sortedDataPoints.iterator()
-        var current: DataPointAesthetics? = null
-        var prev: DataPointAesthetics? = null
-        var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
-        while (pointsItr.hasNext()) {
-            if (current != null) prev = current
-            current = pointsItr.next()
-            if (prev == null) continue
-            dataPointsBunch.add(prev)
-            if (prev.quantile() == current.quantile() ||
-                (prev.quantile()?.isFinite() != true && current.quantile()?.isFinite() != true))
-                continue
-            dataPointsBunch.add(current)
-            result.add(dataPointsBunch)
-            dataPointsBunch = mutableListOf()
-        }
-        if (current != null) dataPointsBunch.add(current)
-        if (dataPointsBunch.any()) result.add(dataPointsBunch)
-        return result
     }
 
     private fun drawQuantileLines(

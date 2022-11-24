@@ -83,14 +83,46 @@ object DensityStatUtil {
             statQuantile += calculateQuantiles(binStatY, binStatCount, quantiles)
         }
 
-        return mutableMapOf(
-            Stats.X to statX,
-            Stats.Y to statY,
-            Stats.DENSITY to statDensity,
-            Stats.COUNT to statCount,
-            Stats.SCALED to statScaled,
-            Stats.QUANTILE to statQuantile
+        val statData = mutableMapOf(
+            Stats.X to statX.toList(),
+            Stats.Y to statY.toList(),
+            Stats.DENSITY to statDensity.toList(),
+            Stats.COUNT to statCount.toList(),
+            Stats.SCALED to statScaled.toList(),
+            Stats.QUANTILE to statQuantile.toList()
         )
+
+        return expandByGroupEnds(statData, Stats.Y, Stats.QUANTILE, Stats.X)
+    }
+
+    fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {
+        val mySize = valuesX.size
+
+        @Suppress("UNCHECKED_CAST")
+        val valuesXFinite = valuesX.filter { SeriesUtil.isFinite(it) } as List<Double>
+        val dataSummary = FiveNumberSummary(valuesXFinite)
+        val myIQR = dataSummary.thirdQuartile - dataSummary.firstQuartile
+        val myStdD = stdDev(valuesXFinite)
+
+        when (bw) {
+            DensityStat.BandWidthMethod.NRD0 -> {
+                if (myIQR > 0) {
+                    return 0.9 * min(myStdD, myIQR / 1.34) * mySize.toDouble().pow(-0.2)
+                }
+                if (myStdD > 0) {
+                    return 0.9 * myStdD * mySize.toDouble().pow(-0.2)
+                }
+            }
+            DensityStat.BandWidthMethod.NRD -> {
+                if (myIQR > 0) {
+                    return 1.06 * min(myStdD, myIQR / 1.34) * mySize.toDouble().pow(-0.2)
+                }
+                if (myStdD > 0) {
+                    return 1.06 * myStdD * mySize.toDouble().pow(-0.2)
+                }
+            }
+        }
+        return 1.0
     }
 
     private fun calculateQuantiles(
@@ -131,34 +163,39 @@ object DensityStatUtil {
         }
     }
 
-    fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {
-        val mySize = valuesX.size
-
-        @Suppress("UNCHECKED_CAST")
-        val valuesXFinite = valuesX.filter { SeriesUtil.isFinite(it) } as List<Double>
-        val dataSummary = FiveNumberSummary(valuesXFinite)
-        val myIQR = dataSummary.thirdQuartile - dataSummary.firstQuartile
-        val myStdD = stdDev(valuesXFinite)
-
-        when (bw) {
-            DensityStat.BandWidthMethod.NRD0 -> {
-                if (myIQR > 0) {
-                    return 0.9 * min(myStdD, myIQR / 1.34) * mySize.toDouble().pow(-0.2)
-                }
-                if (myStdD > 0) {
-                    return 0.9 * myStdD * mySize.toDouble().pow(-0.2)
+    private fun expandByGroupEnds(
+        statData: MutableMap<DataFrame.Variable, List<Double>>,
+        axisVar: DataFrame.Variable,
+        groupVar: DataFrame.Variable,
+        binVar: DataFrame.Variable? = null
+    ): MutableMap<DataFrame.Variable, List<Double>> {
+        require(statData.values.map { it.size }.toSet().size == 1) { "All data series in stat data must have equal size" }
+        require(axisVar in statData.keys) { "Stat data should contain variable $axisVar" }
+        require(groupVar in statData.keys) { "Stat data should contain variable $groupVar" }
+        if (binVar != null) require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
+        val expandedStatData: MutableMap<DataFrame.Variable, List<Double>> = mutableMapOf(*statData.keys.map { it to listOf<Double>() }.toTypedArray())
+        for (i in 0 until statData.getValue(axisVar).size) {
+            if (i > 0) {
+                val prevBin = if (binVar == null) 0.0 else statData.getValue(binVar)[i - 1]
+                val currBin = if (binVar == null) 0.0 else statData.getValue(binVar)[i]
+                val prevGroup = statData.getValue(groupVar)[i - 1]
+                val currGroup = statData.getValue(groupVar)[i]
+                val prevAxis = statData.getValue(axisVar)[i - 1]
+                val currAxis = statData.getValue(axisVar)[i]
+                if (prevBin == currBin) require(prevAxis <= currAxis) { "Data series $axisVar should be ordered" }
+                if (prevBin == currBin && prevGroup != currGroup) {
+                    if (prevBin == currBin) require(prevGroup <= currGroup) { "Data series $groupVar should be ordered" }
+                    statData.keys.forEach {
+                        if (it == groupVar)
+                            expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i])
+                        else
+                            expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i - 1])
+                    }
                 }
             }
-            DensityStat.BandWidthMethod.NRD -> {
-                if (myIQR > 0) {
-                    return 1.06 * min(myStdD, myIQR / 1.34) * mySize.toDouble().pow(-0.2)
-                }
-                if (myStdD > 0) {
-                    return 1.06 * myStdD * mySize.toDouble().pow(-0.2)
-                }
-            }
+            statData.keys.forEach { expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i]) }
         }
-        return 1.0
+        return expandedStatData
     }
 
     fun kernel(ker: DensityStat.Kernel): (Double) -> Double {
