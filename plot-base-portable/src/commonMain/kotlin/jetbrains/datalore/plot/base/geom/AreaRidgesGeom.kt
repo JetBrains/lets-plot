@@ -68,22 +68,20 @@ class AreaRidgesGeom : GeomBase() {
     ) {
         val helper = LinesHelper(pos, coord, ctx)
         val boundTransform = toLocationBound()
-        val group = when {
-            ctx.isMappedAes(Aes.FILL) -> DataPointAesthetics::fill
-            ctx.isMappedAes(Aes.COLOR) -> DataPointAesthetics::color
-            else -> DataPointAesthetics::group
-        }
-        dataPoints.groupBy(group).forEach { (_, points) ->
+
+        dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
             val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
             appendNodes(paths, root)
-
-            helper.setAlphaEnabled(false)
-            appendNodes(helper.createLines(points, boundTransform), root)
-
-            if (quantileLines) drawQuantileLines(root, points, pos, coord, ctx)
-
-            buildHints(dataPoints, ctx, helper, boundTransform)
         }
+
+        helper.setAlphaEnabled(false)
+        dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+            appendNodes(helper.createLines(points, boundTransform), root)
+        }
+
+        if (quantileLines) drawQuantileLines(root, dataPoints, pos, coord, ctx)
+
+        buildHints(dataPoints, ctx, helper, boundTransform)
     }
 
     private fun drawQuantileLines(
@@ -93,10 +91,13 @@ class AreaRidgesGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val p = dataPoints.first()
-        if (p.quantile()?.isFinite() == true) {
-            drawQuantileLine(root, p, pos, coord, ctx)
-            if (p.quantile() == 1.0) drawQuantileLine(root, dataPoints.last(), pos, coord, ctx)
+        val pIt = dataPoints.sortedWith(compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, DataPointAesthetics::x)).iterator()
+        if (!pIt.hasNext()) return
+        var pPrev = pIt.next()
+        while (pIt.hasNext()) {
+            val pCurr = pIt.next()
+            if (pPrev.quantile() != pCurr.quantile()) drawQuantileLine(root, pCurr, pos, coord, ctx)
+            pPrev = pCurr
         }
     }
 
