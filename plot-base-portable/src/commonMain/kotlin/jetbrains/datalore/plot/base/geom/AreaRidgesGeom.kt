@@ -96,7 +96,9 @@ class AreaRidgesGeom : GeomBase() {
         var pPrev = pIt.next()
         while (pIt.hasNext()) {
             val pCurr = pIt.next()
-            if (pPrev.quantile() != pCurr.quantile()) drawQuantileLine(root, pCurr, pos, coord, ctx)
+            val quantilesAreSame = pPrev.quantile() == pCurr.quantile() ||
+                    (pPrev.quantile()?.isFinite() != true && pCurr.quantile()?.isFinite() != true)
+            if (!quantilesAreSame) drawQuantileLine(root, pCurr, pos, coord, ctx)
             pPrev = pCurr
         }
     }
