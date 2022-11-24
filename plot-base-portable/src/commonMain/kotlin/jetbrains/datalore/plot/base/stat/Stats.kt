@@ -32,6 +32,7 @@ object Stats {
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
     val SUM = DataFrame.Variable("..sum..", STAT, "sum")
     val PROP = DataFrame.Variable("..prop..", STAT, "prop")
+    val PROPPCT = DataFrame.Variable("..proppct..", STAT, "proppct")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -59,6 +60,7 @@ object Stats {
             VIOLIN_WIDTH,
             SUM,
             PROP,
+            PROPPCT,
             SCALED,
             GROUP,
         )
