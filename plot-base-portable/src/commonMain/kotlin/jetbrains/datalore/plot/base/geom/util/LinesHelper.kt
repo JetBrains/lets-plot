@@ -75,10 +75,11 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
     internal fun createPaths(aes: DataPointAesthetics, points: List<DoubleVector>, closePath: Boolean): List<LinePath> {
         val paths = ArrayList<LinePath>()
+        val simplifiedPoints = simplify(points)
         if (closePath) {
-            paths.add(LinePath.polygon(insertPathSeparators(splitRings(points))))
+            paths.add(LinePath.polygon(insertPathSeparators(splitRings(simplifiedPoints))))
         } else {
-            paths.add(LinePath.line(points))
+            paths.add(LinePath.line(simplifiedPoints))
         }
         paths.forEach { path -> decorate(path, aes, closePath) }
         return paths
@@ -128,7 +129,6 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         toLocationLower: (DataPointAesthetics) -> DoubleVector?
     ): MutableList<LinePath> {
 
-        val weightLimit = 0.25 // in px for Douglas–Peucker algorithm
         val lines = ArrayList<LinePath>()
         val pointsByGroup = GeomUtil.createGroups(dataPoints)
 
@@ -137,13 +137,12 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             val groupDataPoints = pointsByGroup[group]!!
 
             // upper margin points
-            val upperPoints = ArrayList(project(groupDataPoints) { toLocationUpper(it) })
-            val points = ArrayList(PolylineSimplifier.douglasPeucker(upperPoints).setWeightLimit(weightLimit).points)
+            val upperPoints = project(groupDataPoints) { toLocationUpper(it) }
+            val points = ArrayList(simplify(upperPoints))
 
             // lower margin point in reversed order
-            val reversedPoints = groupDataPoints.reversed()
-            val lowerPoints = ArrayList(project(reversedPoints) { toLocationLower(it) })
-            points.addAll(PolylineSimplifier.douglasPeucker(lowerPoints).setWeightLimit(weightLimit).points)
+            val lowerPoints = ArrayList(project(groupDataPoints.reversed()) { toLocationLower(it) })
+            points.addAll(simplify(lowerPoints))
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
@@ -153,6 +152,11 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             }
         }
         return lines
+    }
+
+    private fun simplify(points: List<DoubleVector>): List<DoubleVector> {
+        val weightLimit = 0.25 // in px for Douglas–Peucker algorithm
+        return PolylineSimplifier.douglasPeucker(points).setWeightLimit(weightLimit).points
     }
 
     protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean) {

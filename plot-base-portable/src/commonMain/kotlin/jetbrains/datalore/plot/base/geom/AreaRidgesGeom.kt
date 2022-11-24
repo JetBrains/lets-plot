@@ -71,19 +71,18 @@ class AreaRidgesGeom : GeomBase() {
             if (splitDataPoints == null) splitDataPoints = splitDataToQuantiles(dataPoints)
             splitDataPoints!!
         }
+        val pointsBunches = if (ctx.isMappedAes(Aes.FILL) || ctx.isMappedAes(Aes.COLOR)) getSplitDataPoints() else listOf(dataPoints)
 
         val helper = LinesHelper(pos, coord, ctx)
         val boundTransform = toLocationBound()
 
-        val bandDataPoints = if (ctx.isMappedAes(Aes.FILL)) getSplitDataPoints() else listOf(dataPoints)
-        for (points in bandDataPoints) {
+        for (points in pointsBunches) {
             val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
             appendNodes(paths, root)
         }
 
         helper.setAlphaEnabled(false)
-        val lineDataPoints = if (ctx.isMappedAes(Aes.COLOR)) getSplitDataPoints() else listOf(dataPoints)
-        for (points in lineDataPoints) appendNodes(helper.createLines(points, boundTransform), root)
+        for (points in pointsBunches) appendNodes(helper.createLines(points, boundTransform), root)
 
         if (quantileLines) {
             for (points in getSplitDataPoints()) drawQuantileLines(root, points, pos, coord, ctx)
