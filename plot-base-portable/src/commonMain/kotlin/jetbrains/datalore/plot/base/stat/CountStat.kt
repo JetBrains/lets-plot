@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 
 /**
- * Counts the number of cases at each x position.
- * (or if the weight aesthetic is supplied, the sum of the weights)
+ * Counts the number of cases at each x position
+ * (or if the weight aesthetic is supplied, the sum of the weights and the proportion)
  */
 internal class CountStat : AbstractCountStat(DEF_MAPPING) {
 
