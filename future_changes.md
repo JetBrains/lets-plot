@@ -5,10 +5,13 @@
 - `geom_imshow()`:
 
     - Improved performance by orders of magnitude
-    - Transparency of `NaN` values in grayscale images ([[#630](https://github.com/JetBrains/lets-plot/issues/630)])
+    - Transparency of `NaN` values in grayscale images ([[#631](https://github.com/JetBrains/lets-plot/issues/631)])
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
 
+    - `alpha` parameter ([[#630](https://github.com/JetBrains/lets-plot/issues/630)])
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_alpha_param.ipynb).
 
 - New variables computed by `'count'` and `'count2d'` statistics: `'..sum..'`, `'..prop..'`, `'..proppct..'`.
 
