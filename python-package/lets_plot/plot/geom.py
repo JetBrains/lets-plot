@@ -3184,8 +3184,8 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                     draw_quantiles=None,
-                     scale=None,
+                     trim=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
+                     min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      **other_args):
     """
     Plots the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
@@ -3214,11 +3214,32 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    draw_quantiles : list of float
-        Draw vertical lines at the given quantiles of the density estimate.
-    scale : float, default=1.0
+    trim : bool, default=False
+        Trim the tails of the ridges to the range of the data.
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+    n : int, default=512
+        The number of sampled points for plotting the function.
+    fs_max : int, default=500
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+    min_height : float, default=0.0
+        A height cutoff on the drawn ridges.
+        All values that fall below this cutoff will be removed.
+    scale : float, default=3.0
         A multiplicative factor applied to height aesthetic.
         If `scale = 1.0`, the heights of a ridges are automatically scaled such that the ridge with `height = 1.0` just touches the one above.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=false
+        Show the quantile lines.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3232,6 +3253,13 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
 
     Notes
     -----
+    Computed variables:
+
+    - ..height.. : density scaled for the ridges, according to area, counts or to a constant maximum height.
+    - ..density.. : density estimate.
+    - ..count.. : density * number of points.
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+
     `geom_area_ridges()` understands the following aesthetics mappings:
 
     - x : x-axis coordinates.
@@ -3247,36 +3275,53 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
-        n, m = 30, 3
+        n, m = 10, 3
         np.random.seed(42)
-        x = np.tile(np.arange(n), m)
+        x = np.random.normal(size=n*m)
         y = np.repeat(np.arange(m), n)
-        h = np.random.uniform(size=m*n)
-        ggplot({'x': x, 'y': y, 'h': h}) + \\
-            geom_area_ridges(aes('x', 'y', height='h'))
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_area_ridges()
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 9-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            "x": [1, 2, 3, 4, 5, 6],
+            "y": ['a', 'a', 'a', 'a', 'a', 'a'],
+            "h": [1, -2, 3, -4, 5, 4],
+        }
+        ggplot(data) + \\
+            geom_area_ridges(aes("x", "y", height="h"), \\
+                             stat='identity', min_height=-2, \\
+                             color="#756bb1", fill="#bcbddc")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-11
 
         import numpy as np
         from lets_plot import *
-        from lets_plot.mapping import as_discrete
         LetsPlot.setup_html()
-        n, m = 501, 3
-        x = np.linspace(0, (m * np.pi)**2, n)[:-1]
-        y = np.floor(np.sqrt(x) / np.pi)
-        h = np.abs(np.sin(np.sqrt(x)))
-        ggplot({'x': x, 'y': y, 'h': h}) + \\
-            geom_area_ridges(aes('x', 'y', height='h', fill=as_discrete('y')), \\
-                             color='black', scale=.75, draw_quantiles=[.25, .5, .75])
+        n, m = 50, 3
+        np.random.seed(42)
+        x = np.random.normal(size=n*m)
+        y = np.repeat(['a', 'b', 'c'], n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_area_ridges(aes(fill='..quantile..'), \\
+                             quantiles=[.05, .25, .5, .75, .95], quantile_lines=True, \\
+                             scale=1.5, kernel='triangular', color='black')
 
     """
     return _geom('area_ridges',
@@ -3287,8 +3332,16 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 draw_quantiles=draw_quantiles,
+                 trim=trim,
+                 kernel=kernel,
+                 adjust=adjust,
+                 bw=bw,
+                 n=n,
+                 fs_max=fs_max,
+                 min_height=min_height,
                  scale=scale,
+                 quantiles=quantiles,
+                 quantile_lines=quantile_lines,
                  **other_args)
 
 
