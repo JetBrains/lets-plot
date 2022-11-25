@@ -6,25 +6,10 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-class DensityRidgesStatTest {
-    private fun statContext(d: DataFrame): StatContext {
-        return SimpleStatContext(d)
-    }
-
-    private fun dataFrame(dataMap: Map<DataFrame.Variable, List<Double?>>): DataFrame {
-        val builder = DataFrame.Builder()
-        for (key in dataMap.keys) {
-            builder.put(key, dataMap.getValue(key))
-        }
-        return builder.build()
-    }
+class DensityRidgesStatTest : BaseStatTest() {
 
     private fun densityRidgesStat(trim: Boolean = true, quantiles: List<Double>? = null): DensityRidgesStat {
         return DensityRidgesStat(
@@ -39,38 +24,9 @@ class DensityRidgesStatTest {
         )
     }
 
-    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
-        assertTrue(statDf.has(variable), "Has var " + variable.name)
-    }
-
-    private fun checkStatVarAndValuesDomain(statDf: DataFrame, variable: DataFrame.Variable, expectedValuesDomain: Set<Double?>) {
-        checkStatVar(statDf, variable)
-        assertEquals(statDf.getNumeric(variable).toSet(), expectedValuesDomain, "Unique values of var " + variable.name)
-    }
-
-    private fun checkStatVarAndValuesRange(statDf: DataFrame, variable: DataFrame.Variable, expectedValuesRange: DoubleSpan) {
-        checkStatVar(statDf, variable)
-        val actualMinValue = statDf.getNumeric(variable).minByOrNull { it!! }!!
-        assertEquals(expectedValuesRange.lowerEnd, actualMinValue, "Min value of var " + variable.name)
-        val actualMaxValue = statDf.getNumeric(variable).maxByOrNull { it!! }!!
-        assertEquals(expectedValuesRange.upperEnd, actualMaxValue, "Max value of var " + variable.name)
-    }
-
-    private fun checkStatVarAndMaxValue(statDf: DataFrame, variable: DataFrame.Variable, expectedMaxValue: Double) {
-        checkStatVar(statDf, variable)
-        val actualMaxValue = statDf.getNumeric(variable).maxByOrNull { it!! }!!
-        assertEquals(expectedMaxValue, actualMaxValue, "Max value of var " + variable.name)
-    }
-
     @Test
     fun emptyDataFrame() {
-        val df = dataFrame(emptyMap())
-        val stat = densityRidgesStat()
-        val statDf = stat.normalize(stat.apply(df, statContext(df)))
-
-        checkStatVarAndValuesDomain(statDf, Stats.X, emptySet())
-        checkStatVarAndValuesDomain(statDf, Stats.Y, emptySet())
-        checkStatVarAndValuesDomain(statDf, Stats.HEIGHT, emptySet())
+        testEmptyDataFrame(densityRidgesStat())
     }
 
     @Test
@@ -82,8 +38,8 @@ class DensityRidgesStatTest {
         val stat = densityRidgesStat()
         val statDf = stat.normalize(stat.apply(df, statContext(df)))
 
-        checkStatVarAndValuesDomain(statDf, Stats.Y, setOf(0.0))
-        checkStatVarAndMaxValue(statDf, Stats.HEIGHT, 1.0)
+        checkStatVarDomain(statDf, Stats.Y, setOf(0.0))
+        checkStatVarMaxValue(statDf, Stats.HEIGHT, 1.0)
     }
 
     @Test
@@ -95,9 +51,9 @@ class DensityRidgesStatTest {
         val stat = densityRidgesStat()
         val statDf = stat.normalize(stat.apply(df, statContext(df)))
 
-        checkStatVarAndValuesRange(statDf, Stats.X, DoubleSpan(2.71, 3.14))
-        checkStatVarAndValuesDomain(statDf, Stats.Y, setOf(0.0))
-        checkStatVarAndMaxValue(statDf, Stats.HEIGHT, 1.0)
+        checkStatVarRange(statDf, Stats.X, DoubleSpan(2.71, 3.14))
+        checkStatVarDomain(statDf, Stats.Y, setOf(0.0))
+        checkStatVarMaxValue(statDf, Stats.HEIGHT, 1.0)
     }
 
     @Test
@@ -111,8 +67,8 @@ class DensityRidgesStatTest {
         val stat = densityRidgesStat()
         val statDf = stat.normalize(stat.apply(df, statContext(df)))
 
-        checkStatVarAndValuesRange(statDf, Stats.X, DoubleSpan(0.0, 3.0))
-        checkStatVarAndValuesDomain(statDf, Stats.Y, setOf(1.0, 2.0, 3.0))
-        checkStatVarAndMaxValue(statDf, Stats.HEIGHT, 1.0)
+        checkStatVarRange(statDf, Stats.X, DoubleSpan(0.0, 3.0))
+        checkStatVarDomain(statDf, Stats.Y, setOf(1.0, 2.0, 3.0))
+        checkStatVarMaxValue(statDf, Stats.HEIGHT, 1.0)
     }
 }
