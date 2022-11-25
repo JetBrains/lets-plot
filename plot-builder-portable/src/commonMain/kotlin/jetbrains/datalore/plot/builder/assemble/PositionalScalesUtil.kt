@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.AreaRidgesGeom
 import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
@@ -276,14 +277,20 @@ internal object PositionalScalesUtil {
                 layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
                 else -> null
             }?.let { widthAes ->
-                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx)
+                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx.getResolution(widthAes))
             },
             heightAxis to when {
                 Aes.HEIGHT in renderedAes -> Aes.HEIGHT
                 layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
                 else -> null
             }?.let { heightAes ->
-                computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx)
+                when (layer.geomKind) {
+                    GeomKind.AREA_RIDGES -> {
+                        val geom = layer.geom as AreaRidgesGeom
+                        computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geom.scale, geom.minHeight)
+                    }
+                    else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
+                }
             }
         )
 
@@ -291,12 +298,11 @@ internal object PositionalScalesUtil {
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
-        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext
+        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, resolution: Double, lowerBound: Double? = null
     ): DoubleSpan? {
         val locations = aesthetics.numericValues(locationAes).iterator()
         val sizes = aesthetics.numericValues(sizeAes).iterator()
 
-        val resolution = geomCtx.getResolution(locationAes)
         val minMax = doubleArrayOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)
 
         for (i in 0 until aesthetics.dataPointCount()) {
@@ -309,8 +315,8 @@ internal object PositionalScalesUtil {
             val loc = locations.next()
             val size = sizes.next()
             if (SeriesUtil.isFinite(loc) && SeriesUtil.isFinite(size)) {
-                val expand = resolution * (size!! / 2)
-                updateExpandedMinMax(loc!!, expand, minMax)
+                val expand = resolution * size!!
+                updateExpandedMinMax(loc!!, expand, resolution, lowerBound, minMax)
             }
         }
 
@@ -320,11 +326,12 @@ internal object PositionalScalesUtil {
             null
     }
 
-    private fun updateExpandedMinMax(value: Double, expand: Double, expandedMinMax: DoubleArray) {
-        expandedMinMax[0] = min(value - expand, expandedMinMax[0])
-        expandedMinMax[1] = max(value + expand, expandedMinMax[1])
+    private fun updateExpandedMinMax(value: Double, expand: Double, resolution: Double, lowerBound: Double?, expandedMinMax: DoubleArray) {
+        val lowerValue = if (lowerBound == null) -expand / 2 else resolution * lowerBound
+        val upperValue = if (lowerBound == null) expand / 2 else expand
+        expandedMinMax[0] = min(value + lowerValue, expandedMinMax[0])
+        expandedMinMax[1] = max(value + upperValue, expandedMinMax[1])
     }
-
 
     private object RangeUtil {
         fun initialRange(transform: Transform): DoubleSpan? {

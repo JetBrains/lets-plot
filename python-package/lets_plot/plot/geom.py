@@ -19,6 +19,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
+           'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
@@ -2844,6 +2845,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
+                show_half=None,
                 draw_quantiles=None,
                 scale=None, trim=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
@@ -2875,6 +2877,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     orientation : str, default='x'
         Specifies the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
+    show_half : float, default=0
+        If -1 then it's drawing only half of each violin.
+        If 1 then it's drawing other half.
+        If 0 then violins looking as usual.
     draw_quantiles : list of float
         Draw horizontal lines at the given quantiles of the density estimate.
     scale : {'area', 'count', 'width'}, default='area'
@@ -2996,6 +3002,26 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                         size=2, alpha=.5, scale='width') + \\
             geom_boxplot(aes(fill='variable'), width=.2)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-13
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(["a", "b", "c", "d"], size=n)
+        y1 = np.random.normal(size=n)
+        y2 = np.random.normal(size=n)
+        ggplot({'x': x, 'y1': y1, 'y2': y2}) + \\
+            geom_violin(aes('x', 'y1'), show_half=-1, \\
+                        trim=False, fill='#ffffb2') + \\
+            geom_violin(aes('x', 'y2'), show_half=1, \\
+                        trim=False, fill='#74c476')
+
     """
     return _geom('violin',
                  mapping=mapping,
@@ -3006,6 +3032,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
+                 show_half=show_half,
                  draw_quantiles=draw_quantiles,
                  scale=scale, trim=trim, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
@@ -3173,6 +3200,168 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                  stackgroups=stackgroups,
                  center=center,
                  boundary=boundary,
+                 **other_args)
+
+
+def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                     trim=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
+                     min_height=None, scale=None, quantiles=None, quantile_lines=None,
+                     **other_args):
+    """
+    Plots the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='densityridges'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'densityridges' (computes and draws kernel density estimate for each ridge).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    trim : bool, default=False
+        Trim the tails of the ridges to the range of the data.
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+    n : int, default=512
+        The number of sampled points for plotting the function.
+    fs_max : int, default=500
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+    min_height : float, default=0.0
+        A height cutoff on the drawn ridges.
+        All values that fall below this cutoff will be removed.
+    scale : float, default=3.0
+        A multiplicative factor applied to height aesthetic.
+        If `scale = 1.0`, the heights of a ridges are automatically scaled such that the ridge with `height = 1.0` just touches the one above.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=false
+        Show the quantile lines.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..height.. : density scaled for the ridges, according to area, counts or to a constant maximum height.
+    - ..density.. : density estimate.
+    - ..count.. : density * number of points.
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+
+    `geom_area_ridges()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : y-axis coordinates.
+    - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
+    - alpha : transparency level of a layer. Accepts values between 0 and 1.
+    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+    - size : lines width.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 10, 3
+        np.random.seed(42)
+        x = np.random.normal(size=n*m)
+        y = np.repeat(np.arange(m), n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_area_ridges()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            "x": [1, 2, 3, 4, 5, 6],
+            "y": ['a', 'a', 'a', 'a', 'a', 'a'],
+            "h": [1, -2, 3, -4, 5, 4],
+        }
+        ggplot(data) + \\
+            geom_area_ridges(aes("x", "y", height="h"), \\
+                             stat='identity', min_height=-2, \\
+                             color="#756bb1", fill="#bcbddc")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 50, 3
+        np.random.seed(42)
+        x = np.random.normal(size=n*m)
+        y = np.repeat(['a', 'b', 'c'], n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_area_ridges(aes(fill='..quantile..'), \\
+                             quantiles=[.05, .25, .5, .75, .95], quantile_lines=True, \\
+                             scale=1.5, kernel='triangular', color='black')
+
+    """
+    return _geom('area_ridges',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 trim=trim,
+                 kernel=kernel,
+                 adjust=adjust,
+                 bw=bw,
+                 n=n,
+                 fs_max=fs_max,
+                 min_height=min_height,
+                 scale=scale,
+                 quantiles=quantiles,
+                 quantile_lines=quantile_lines,
                  **other_args)
 
 

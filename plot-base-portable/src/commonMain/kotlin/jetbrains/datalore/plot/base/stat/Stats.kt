@@ -23,11 +23,13 @@ object Stats {
     val THEORETICAL = DataFrame.Variable("..theoretical..", STAT, "theoretical")
     val SE = DataFrame.Variable("..se..", STAT, "standard error")
     val LEVEL = DataFrame.Variable("..level..", STAT, "level")
+    val QUANTILE = DataFrame.Variable("..quantile..", STAT, "quantile")
 
     val LOWER = DataFrame.Variable("..lower..", STAT, "lower")
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
     val WIDTH = DataFrame.Variable("..width..", STAT, "width")
+    val HEIGHT = DataFrame.Variable("..height..", STAT, "height")
     val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
     val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
     val SUM = DataFrame.Variable("..sum..", STAT, "sum")
@@ -52,10 +54,12 @@ object Stats {
             THEORETICAL,
             SE,
             LEVEL,
+            QUANTILE,
             LOWER,
             MIDDLE,
             UPPER,
             WIDTH,
+            HEIGHT,
             BIN_WIDTH,
             VIOLIN_WIDTH,
             SUM,

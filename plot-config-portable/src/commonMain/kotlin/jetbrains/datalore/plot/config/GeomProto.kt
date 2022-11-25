@@ -47,6 +47,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
+            AREA_RIDGES -> DefaultSampling.AREA_RIDGES
             VIOLIN -> DefaultSampling.VIOLIN
             Y_DOT_PLOT -> DefaultSampling.Y_DOT_PLOT
             RIBBON -> DefaultSampling.RIBBON
@@ -131,6 +132,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             DEFAULTS[CONTOURF] = contourfDefaults()
             DEFAULTS[CROSS_BAR] = crossBarDefaults()
             DEFAULTS[BOX_PLOT] = boxplotDefaults()
+            DEFAULTS[AREA_RIDGES] = areaRidgesDefaults()
             DEFAULTS[VIOLIN] = violinDefaults()
             DEFAULTS[Y_DOT_PLOT] = yDotplotDefaults()
             DEFAULTS[AREA] = areaDefaults()
@@ -209,6 +211,12 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 Meta.NAME to PosProto.DODGE,
                 Pos.Dodge.WIDTH to 0.95
             )
+            return defaults
+        }
+
+        private fun areaRidgesDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "densityridges"
             return defaults
         }
 

@@ -24,6 +24,7 @@ enum class GeomKind {
     H_LINE,
     V_LINE,
     BOX_PLOT,
+    AREA_RIDGES,
     VIOLIN,
     Y_DOT_PLOT,
     LIVE_MAP,

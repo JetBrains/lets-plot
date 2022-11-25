@@ -51,6 +51,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val MIDDLE: Aes<Double> = Aes("middle")
         val UPPER: Aes<Double> = Aes("upper")
         val SAMPLE: Aes<Double> = Aes("sample")
+        val QUANTILE: Aes<Double> = Aes("quantile")
 
         val XMIN: Aes<Double> = Aes("xmin")
         val XMAX: Aes<Double> = Aes("xmax")
@@ -175,6 +176,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == HEIGHT ||
                     aes == BINWIDTH ||
                     aes == VIOLINWIDTH ||
+                    aes == QUANTILE ||
                     aes == HJUST ||
                     aes == VJUST ||
                     aes == ANGLE ||

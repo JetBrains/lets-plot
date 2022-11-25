@@ -14,6 +14,7 @@ class Violin {
             basic(),
             withNan(),
             withGroups(),
+            halfViolins(),
         )
     }
 
@@ -105,13 +106,44 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
-                "                 'draw_quantiles': [0.25, 0.5, 0.75]," +
-                "                 'trim': false" +
+                "                 'draw_quantiles': [0.25, 0.5, 0.75]" +
                 "               }" +
                 "             ]" +
                 "}"
 
         return HashMap(parsePlotSpec(spec))
+
+    }
+
+    private fun halfViolins(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot'," +
+                "   'mapping': {" +
+                "                'x': 'target'," +
+                "                'y': 'sepal length (cm)'," +
+                "                'fill': 'target'" +
+                "              }," +
+                "   'ggtitle': {" +
+                "                'text': 'Ridgeline'" +
+                "              }," +
+                "   'layers': [" +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'show_half': -1," +
+                "                 'trim': false" +
+                "               }," +
+                "               {" +
+                "                 'geom': 'violin'," +
+                "                 'show_half': 1," +
+                "                 'fill': '#ffffb2'," +
+                "                 'trim': false" +
+                "               }" +
+                "             ]" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
 
     }
 }

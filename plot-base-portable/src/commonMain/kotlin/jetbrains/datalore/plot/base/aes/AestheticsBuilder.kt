@@ -33,6 +33,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
+import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.X
 import jetbrains.datalore.plot.base.Aes.Companion.XMAX
 import jetbrains.datalore.plot.base.Aes.Companion.XMIN
@@ -103,6 +104,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun width(v: (Int) -> Double?): AestheticsBuilder {
         return aes(WIDTH, v)
+    }
+
+    fun height(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(HEIGHT, v)
     }
 
     fun violinwidth(v: (Int) -> Double?): AestheticsBuilder {

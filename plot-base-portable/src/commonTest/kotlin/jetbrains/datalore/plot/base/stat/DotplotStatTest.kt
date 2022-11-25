@@ -17,44 +17,44 @@ class DotplotStatTest : BaseStatTest() {
     @Test
     fun oneElementDataFrame() {
         val xValue = 3.14
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to listOf(xValue)
         ))
         val stat = Stats.dotplot()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(xValue))
-        checkStatVar(statDf, Stats.COUNT, listOf(1.0))
-        checkStatVar(statDf, Stats.DENSITY, listOf(1.0))
-        checkStatVar(statDf, Stats.BIN_WIDTH, listOf(1.0))
+        checkStatVarValues(statDf, Stats.X, listOf(xValue))
+        checkStatVarValues(statDf, Stats.COUNT, listOf(1.0))
+        checkStatVarValues(statDf, Stats.DENSITY, listOf(1.0))
+        checkStatVarValues(statDf, Stats.BIN_WIDTH, listOf(1.0))
     }
 
     @Test
     fun oneStackDataFrame() {
         val xValue = 2.71
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to listOf(xValue, xValue, xValue)
         ))
         val stat = Stats.dotplot()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(xValue))
-        checkStatVar(statDf, Stats.COUNT, listOf(3.0))
-        checkStatVar(statDf, Stats.DENSITY, listOf(1.0))
-        checkStatVar(statDf, Stats.BIN_WIDTH, listOf(1.0))
+        checkStatVarValues(statDf, Stats.X, listOf(xValue))
+        checkStatVarValues(statDf, Stats.COUNT, listOf(3.0))
+        checkStatVarValues(statDf, Stats.DENSITY, listOf(1.0))
+        checkStatVarValues(statDf, Stats.BIN_WIDTH, listOf(1.0))
     }
 
     @Test
     fun withNanValues() {
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to listOf(0.0, 1.0, 2.0, null)
         ))
         val stat = Stats.dotplot(binWidth = 1.5)
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(0.5, 2.0))
-        checkStatVar(statDf, Stats.COUNT, listOf(2.0, 1.0))
-        checkStatVar(statDf, Stats.DENSITY, listOf(2.0 / 3, 1.0 / 3))
-        checkStatVar(statDf, Stats.BIN_WIDTH, listOf(1.5, 1.5))
+        checkStatVarValues(statDf, Stats.X, listOf(0.5, 2.0))
+        checkStatVarValues(statDf, Stats.COUNT, listOf(2.0, 1.0))
+        checkStatVarValues(statDf, Stats.DENSITY, listOf(2.0 / 3, 1.0 / 3))
+        checkStatVarValues(statDf, Stats.BIN_WIDTH, listOf(1.5, 1.5))
     }
 }
