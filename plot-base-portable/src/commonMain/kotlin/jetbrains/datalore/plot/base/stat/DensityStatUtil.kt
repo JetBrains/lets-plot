@@ -29,9 +29,9 @@ object DensityStatUtil {
     }
 
     fun binnedStat(
-        xs: List<Double?>,
-        ys: List<Double?>,
-        ws: List<Double?>,
+        bins: List<Double?>,
+        values: List<Double?>,
+        weights: List<Double?>,
         trim: Boolean,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
@@ -39,60 +39,62 @@ object DensityStatUtil {
         kernel: DensityStat.Kernel,
         n: Int,
         fullScanMax: Int,
-        quantiles: List<Double> = emptyList()
+        quantiles: List<Double> = emptyList(),
+        binVarName: DataFrame.Variable = Stats.X,
+        valueVarName: DataFrame.Variable = Stats.Y
     ): MutableMap<DataFrame.Variable, List<Double>> {
-        val binnedData = (xs zip (ys zip ws))
+        val binnedData = (bins zip (values zip weights))
             .filter { it.first?.isFinite() == true }
             .groupBy({ it.first!! }, { it.second })
             .mapValues { it.value.unzip() }
 
-        val statX = ArrayList<Double>()
-        val statY = ArrayList<Double>()
+        val statBin = ArrayList<Double>()
+        val statValue = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statScaled = ArrayList<Double>()
         val statQuantile = ArrayList<Double>()
 
-        for ((x, bin) in binnedData) {
-            val (filteredY, filteredW) = SeriesUtil.filterFinite(bin.first, bin.second)
-            val (binY, binW) = (filteredY zip filteredW)
+        for ((bin, binData) in binnedData) {
+            val (filteredValue, filteredWeight) = SeriesUtil.filterFinite(binData.first, binData.second)
+            val (binValue, binWeight) = (filteredValue zip filteredWeight)
                 .sortedBy { it.first }
                 .unzip()
-            if (binY.isEmpty()) continue
-            val ySummary = FiveNumberSummary(binY)
+            if (binValue.isEmpty()) continue
+            val valueSummary = FiveNumberSummary(binValue)
             val modifier = if (trim) 0.0 else 3.0
-            val bw = bandWidth ?: bandWidth(bandWidthMethod, binY)
-            val rangeY = DoubleSpan(
-                ySummary.min - modifier * bw,
-                ySummary.max + modifier * bw
+            val bw = bandWidth ?: bandWidth(bandWidthMethod, binValue)
+            val valueRange = DoubleSpan(
+                valueSummary.min - modifier * bw,
+                valueSummary.max + modifier * bw
             )
-            val binStatY = createStepValues(rangeY, n)
+            val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
-                binY, binW,
+                binValue, binWeight,
                 bandWidth, bandWidthMethod, adjust, kernel, fullScanMax
             )
-            val binStatCount = binStatY.map { densityFunction(it) }
-            val widthsSum = binW.sum()
+            val binStatCount = binStatValue.map { densityFunction(it) }
+            val widthsSum = binWeight.sum()
             val maxBinCount = binStatCount.maxOrNull()!!
 
-            statX += MutableList(binStatY.size) { x }
-            statY += binStatY
+            statBin += MutableList(binStatValue.size) { bin }
+            statValue += binStatValue
             statDensity += binStatCount.map { it / widthsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
-            statQuantile += calculateQuantiles(binStatY, binStatCount, quantiles)
+            statQuantile += calculateQuantiles(binStatValue, binStatCount, quantiles)
         }
 
         val statData = mutableMapOf(
-            Stats.X to statX.toList(),
-            Stats.Y to statY.toList(),
+            binVarName to statBin.toList(),
+            valueVarName to statValue.toList(),
             Stats.DENSITY to statDensity.toList(),
             Stats.COUNT to statCount.toList(),
             Stats.SCALED to statScaled.toList(),
             Stats.QUANTILE to statQuantile.toList()
         )
 
-        return expandByGroupEnds(statData, Stats.Y, Stats.QUANTILE, Stats.X)
+        return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
     }
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {
