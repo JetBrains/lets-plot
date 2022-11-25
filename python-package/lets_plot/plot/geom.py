@@ -663,6 +663,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     Computed variables:
 
     - ..count.. : number of points with same x-axis coordinate.
+    - ..sum.. : total number of points with same x-axis coordinate.
+    - ..prop.. : groupwise proportion.
+    - ..proppct.. : groupwise proportion in percent.
 
     `geom_bar()` understands the following aesthetics mappings:
 
@@ -5404,6 +5407,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - ..count.. : number of points with same (x,y) coordinate.
     - ..sum.. : total number of points with same (x,y) coordinate.
     - ..prop.. : groupwise proportion.
+    - ..proppct.. : groupwise proportion in percent.
 
     `geom_pie()` understands the following aesthetics mappings:
 

@@ -9,14 +9,12 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.util.MutableDouble
-import jetbrains.datalore.plot.common.data.SeriesUtil
 
 /**
- * Counts the number of cases at each x position.
- * (or if the weight aesthetic is supplied, the sum of the weights)
+ * Counts the number of cases at each x position
+ * (or if the weight aesthetic is supplied, the sum of the weights and the proportion)
  */
-internal class CountStat : BaseStat(DEF_MAPPING) {
+internal class CountStat : AbstractCountStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.WEIGHT)
@@ -26,23 +24,17 @@ internal class CountStat : BaseStat(DEF_MAPPING) {
         if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }
+        return super.apply(data, statCtx, messageConsumer)
+    }
 
-        val valuesX = data.getNumeric(TransformVar.X)
-        val weight = BinStatUtil.weightVector(valuesX.size, data)
+    override fun getValuesToAggregateBy(data: DataFrame, fromStatVars: Boolean): List<Any?> {
+        val xVar = if (fromStatVars) Stats.X else TransformVar.X
+        return data[xVar]
+    }
 
-        val statX = ArrayList<Double>()
-        val statCount = ArrayList<Double>()
-
-        val countByX = countByX(valuesX, weight)
-        for (x in countByX.keys) {
-            statX.add(x)
-            statCount.add(countByX[x]!!.get())
-        }
-
-        return DataFrame.Builder()
-            .putNumeric(Stats.X, statX)
-            .putNumeric(Stats.COUNT, statCount)
-            .build()
+    override fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
+        val statX = values.map { it as Double }
+        return mapOf(Stats.X to statX)
     }
 
     companion object {
@@ -50,19 +42,5 @@ internal class CountStat : BaseStat(DEF_MAPPING) {
             Aes.X to Stats.X,
             Aes.Y to Stats.COUNT
         )
-
-        private fun countByX(valuesX: List<Double?>, weight: List<Double?>): Map<Double, MutableDouble> {
-            val result = LinkedHashMap<Double, MutableDouble>()
-            for (i in valuesX.indices) {
-                val x = valuesX[i]
-                if (SeriesUtil.isFinite(x)) {
-                    if (!result.containsKey(x!!)) {
-                        result[x] = MutableDouble(0.0)
-                    }
-                    result[x]!!.getAndAdd(SeriesUtil.asFinite(weight[i], 0.0))
-                }
-            }
-            return result
-        }
     }
 }

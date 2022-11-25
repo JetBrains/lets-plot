@@ -8,6 +8,8 @@ import pytest
 
 from lets_plot.plot.geom_imshow_ import geom_imshow
 
+# See notebook:
+#       docs/testing/testing_imshow_nan_values.ipynb
 
 def _image_spec(href, width, height):
     return dict(
