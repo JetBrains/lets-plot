@@ -142,8 +142,8 @@ class AreaRidges {
     private fun withStat(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [0, 0, 1, 1, 0, 0, 0, 1]," +
-                "             'y': [0, 0, 0, 0, 1, 1, 1, 1]" +
+                "   'data' : {'x': [2, 3, 0, 1, 1, 2]," +
+                "             'y': [3, 3, 1, 1, 2, 2]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
