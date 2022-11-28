@@ -3250,7 +3250,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     fs_max : int, default=500
         Maximum size of data to use density computation with 'full scan'.
         For bigger data, less accurate but more efficient density computation is applied.
-    min_height : float
+    min_height : float, default=0.0
         A height cutoff on the drawn ridges.
         All values that fall below this cutoff will be removed.
     scale : float, default=1.0
