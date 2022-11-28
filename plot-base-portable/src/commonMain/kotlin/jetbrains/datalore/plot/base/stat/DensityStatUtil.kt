@@ -39,6 +39,7 @@ object DensityStatUtil {
         kernel: DensityStat.Kernel,
         n: Int,
         fullScanMax: Int,
+        tailsRange: DoubleSpan? = null,
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
         valueVarName: DataFrame.Variable = Stats.Y
@@ -62,12 +63,14 @@ object DensityStatUtil {
                 .unzip()
             if (binValue.isEmpty()) continue
             val valueSummary = FiveNumberSummary(binValue)
-            val modifier = if (trim) 0.0 else 3.0
-            val bw = bandWidth ?: bandWidth(bandWidthMethod, binValue)
-            val valueRange = DoubleSpan(
-                valueSummary.min - modifier * bw,
-                valueSummary.max + modifier * bw
-            )
+            val valueRange = if (trim) {
+                DoubleSpan(valueSummary.min, valueSummary.max)
+            } else if (tailsRange != null) {
+                tailsRange
+            } else {
+                val bw = bandWidth ?: bandWidth(bandWidthMethod, binValue)
+                DoubleSpan(valueSummary.min - 3 * bw, valueSummary.max + 3 * bw)
+            }
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
                 binValue, binWeight,
