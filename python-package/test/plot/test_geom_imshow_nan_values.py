@@ -62,6 +62,8 @@ class Test:
 
     @pytest.mark.parametrize('image_data, cmap, expected', test_params_list)
     def test_image_spec(self, image_data, cmap, expected):
+        image_data.flags.writeable = False
+
         # spec = geom_imshow(image_data, extent=_extent)
         spec = geom_imshow(image_data, cmap=cmap)
         assert spec.as_dict() == expected

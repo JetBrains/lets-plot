@@ -49,9 +49,6 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     returns 2D array of ints with the target range [0..255].
     Values outside the target range will be later clipped.
     """
-    if image_data.dtype.kind != 'f':
-        image_data = image_data.astype(numpy.float32)
-
     min_lum = max(0, min_lum)
     max_lum = 255 - min_lum
 
@@ -60,37 +57,33 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     if vmin > vmax:
         raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
 
-    # ToDo: in-place
-    image_data = image_data.clip(vmin, vmax)
-
     normalize = as_boolean(norm, default=True)
+
+    # Make a copy via `numpy.copy()` or via `arr.astype()`
+    #   - prevent modification of the original image
+    #   - work around read-only flag in the original image
+
     if normalize:
         if vmin == vmax:
-            image_data[True] = 127.
+            image_data = numpy.copy(image_data)
+            image_data[True] = 127
         else:
+            # float array for scaling
+            if image_data.dtype.kind == 'f':
+                image_data = numpy.copy(image_data)
+            else:
+                image_data = image_data.astype(numpy.float32)
+
+            image_data.clip(vmin, vmax, out=image_data)
+
             ratio = max_lum / (vmax - vmin)
-            image_data = image_data - vmin
-            image_data = image_data * ratio + 0.5 + min_lum
+            image_data -= vmin
+            image_data *= ratio
+            image_data += min_lum
     else:
-        # no normalization - just round values to the nearest int.
-        # ToDo: in-place
-        image_data = image_data.clip(min_lum, max_lum)
-        image_data = image_data + 0.5
-
-    return image_data
-
-
-def _normalize_RGBa(image_data):
-    """
-    Takes numpy 3D array of float or int-s:
-    - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
-    - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int).
-
-    returns 3D array of ints with the target range [0..255].
-    Values outside the target range will be later clipped.
-    """
-    if image_data.dtype.kind == 'f':
-        return image_data * 255 + .5
+        # no normalization
+        image_data = numpy.copy(image_data)
+        image_data.clip(min_lum, max_lum, out=image_data)
 
     return image_data
 
@@ -230,6 +223,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     greyscale = (image_data.ndim == 2)
     if greyscale:
         # Greyscale image
+
         has_nan = numpy.isnan(image_data.max())
         min_lum = 0 if not (has_nan and cmap) else 1  # index 0 reserved for NaN-s
 
@@ -245,8 +239,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
             is_nan = numpy.isnan(image_data)
             im_shape = numpy.shape(image_data)
             alpha_ch = numpy.zeros(im_shape, dtype=image_data.dtype)
-            alpha_ch[is_nan == False] = 255. * alpha_ch_scaler
-            image_data[is_nan] = 0.
+            alpha_ch[is_nan == False] = 255 * alpha_ch_scaler
+            image_data[is_nan] = 0
             image_data = numpy.dstack((image_data, alpha_ch))
             print("LA add alpha: {}".format(time() - start_la))
             nchannels = 2
@@ -262,7 +256,13 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
 
     else:
         # Color RGB/RGBA image
-        image_data = _normalize_RGBa(image_data)
+        # Make a copy:
+        #   - prevent modification of the original image
+        #   - drop read-only flag
+        image_data = numpy.copy(image_data)
+        if image_data.dtype.kind == 'f':
+            image_data *= 255
+
         height, width, nchannels = image_data.shape
 
         if alpha is not None:
@@ -273,17 +273,13 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
                 nchannels = 4
             elif nchannels == 4:
                 # RGBA image: apply alpha scaling
-                if image_data.dtype.kind != 'f':
-                    image_data = image_data.astype(numpy.float32)
-
                 image_data[:,:,3] *= alpha
 
     norm_end = time()
     print("Normalization: {}".format(norm_end - start))
 
-    # ToDo: in-place
     # Make sure all values are ints in range 0-255.
-    image_data = image_data.clip(0, 255)
+    image_data.clip(0, 255, out=image_data)
 
     clip_end = time()
     print("Clipping: {}".format(clip_end - norm_end))
@@ -310,10 +306,13 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
 
     # Make sure each value is 1 byte and the type is numpy.int8.
     # Otherwise, pypng will produce broken colors.
+    if image_data.dtype.kind == 'f':
+        # Can't cast directly from float to np.int8.
+        image_data += 0.5
+        image_data = image_data.astype(numpy.int16)
+
     if image_data.dtype != numpy.int8:
-        # Can't cast directly from np.float32 to np.int8.
-        arr = image_data.astype(numpy.int16)
-        image_data = arr.astype(numpy.int8)
+        image_data = image_data.astype(numpy.int8)
 
     # Reshape to 2d-array:
     # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..] for RGB(A)
