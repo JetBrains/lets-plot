@@ -4,7 +4,6 @@
 #
 import base64
 import io
-from time import time
 
 from .geom import _geom
 from .util import as_boolean
@@ -106,7 +105,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
                        )
 
 
-def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax=None, extent=None):
+def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax=None, extent=None, compression=None):
     """
     Displays image specified by ndarray with shape
 
@@ -150,6 +149,11 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         - `bottom, top`: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
 
         The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
+    compression : integer, optional
+        The compression level to be used by the ``zlib`` module.
+        Values from 0 (no compression) to 9 (highest).
+        Value `None` means that the `zlib` module uses
+        the default level of compression (which is generally acceptable).
 
     Returns
     -------
@@ -203,8 +207,6 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
 
     """
 
-    start = time()
-
     if png is None:
         raise ValueError("pypng is not installed")
 
@@ -220,6 +222,11 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
             raise ValueError(
                 "Invalid alpha: expected float in range [0..1] but was {}".format(alpha))
 
+    if compression is not None:
+        if not (0 <= compression <= 9):
+            raise ValueError(
+                "Invalid compression: expected integer in range [0..9] but was {}".format(compression))
+
     greyscale = (image_data.ndim == 2)
     if greyscale:
         # Greyscale image
@@ -234,7 +241,6 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         has_nan = numpy.isnan(image_data.max())
         if has_nan and not cmap:
             # add alpha-channel (LA)
-            start_la = time()
             alpha_ch_scaler = 1 if alpha is None else alpha
             is_nan = numpy.isnan(image_data)
             im_shape = numpy.shape(image_data)
@@ -242,7 +248,6 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
             alpha_ch[is_nan == False] = 255 * alpha_ch_scaler
             image_data[is_nan] = 0
             image_data = numpy.dstack((image_data, alpha_ch))
-            print("LA add alpha: {}".format(time() - start_la))
             nchannels = 2
         elif has_nan and cmap:
             # replace all NaN-s with 0 (index 0 for transparent color)
@@ -275,14 +280,8 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
                 # RGBA image: apply alpha scaling
                 image_data[:,:,3] *= alpha
 
-    norm_end = time()
-    print("Normalization: {}".format(norm_end - start))
-
     # Make sure all values are ints in range 0-255.
     image_data.clip(0, 255, out=image_data)
-
-    clip_end = time()
-    print("Clipping: {}".format(clip_end - norm_end))
 
     # Image extent with possible axis flipping.
     # The default image bounds include 1/2 unit size expand in all directions.
@@ -320,9 +319,6 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     # or pypng will fail
     image_2d = image_data.reshape(-1, width * nchannels)
 
-    image_2d_end = time()
-    print("image_2d: {}".format(image_2d_end - clip_end))
-
     # PNG writer
     palette = None
     if cmap and greyscale:
@@ -352,16 +348,11 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         greyscale=greyscale,
         alpha=(nchannels == 4 or nchannels == 2),  # RGBA or LA
         bitdepth=8,
-        palette=palette
+        palette=palette,
+        compression=compression
     ).write(png_bytes, image_2d)
 
-    png_writer_done = time()
-    print("png.Writer: {}".format(png_writer_done - image_2d_end))
-
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
-
-    base64_done = time()
-    print("base64: {}".format(base64_done - png_writer_done))
 
     return _geom('image',
                  href=href,
