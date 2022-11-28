@@ -3253,9 +3253,10 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     min_height : float, default=0.0
         A height cutoff on the drawn ridges.
         All values that fall below this cutoff will be removed.
-    scale : float, default=3.0
+    scale : float, default=1.0
         A multiplicative factor applied to height aesthetic.
-        If `scale = 1.0`, the heights of a ridges are automatically scaled such that the ridge with `height = 1.0` just touches the one above.
+        If `scale = 1.0`, the heights of a ridges are automatically scaled
+        such that the ridge with `height = 1.0` just touches the one above.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=false
