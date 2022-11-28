@@ -3205,7 +3205,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                      trim=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
-                     min_height=None, rel_min_height=None, scale=None, quantiles=None, quantile_lines=None,
+                     min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      **other_args):
     """
     Plots the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
@@ -3253,9 +3253,6 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     min_height : float
         A height cutoff on the drawn ridges.
         All values that fall below this cutoff will be removed.
-    rel_min_height : float, default=0.0
-        This cutoff height cutoff is measured relative to the overall maximum.
-        Has a lower priority than the `min_height` parameter (if both are specified).
     scale : float, default=1.0
         A multiplicative factor applied to height aesthetic.
         If `scale = 1.0`, the heights of a ridges are automatically scaled
@@ -3363,7 +3360,6 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  n=n,
                  fs_max=fs_max,
                  min_height=min_height,
-                 rel_min_height=rel_min_height,
                  scale=scale,
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,

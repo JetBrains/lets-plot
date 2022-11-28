@@ -14,8 +14,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 class AreaRidgesGeom : GeomBase() {
     var scale: Double = DEF_SCALE
-    var relMinHeight: Double = DEF_REL_MIN_HEIGHT
-    var minHeight: Double? = null
+    var minHeight: Double = DEF_MIN_HEIGHT
     var quantileLines: Boolean = DEF_QUANTILE_LINES
 
     override fun buildIntern(
@@ -37,22 +36,20 @@ class AreaRidgesGeom : GeomBase() {
     ) {
         val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.HEIGHT)
         if (!definedDataPoints.any()) return
-        val maxHeight = definedDataPoints.maxOf { it.height()!! }
         definedDataPoints
             .sortedByDescending(DataPointAesthetics::y)
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
             .forEach { (_, dataPoints) ->
-                splitDataPointsByMinHeight(dataPoints, maxHeight).forEach { buildRidge(root, it, pos, coord, ctx) }
+                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
             }
     }
 
-    private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>, overallMaxHeight: Double): List<Iterable<DataPointAesthetics>> {
+    private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
-        val ridgeMinHeight = minHeight ?: (overallMaxHeight * relMinHeight)
         for (p in dataPoints)
-            if (p.height()!! >= ridgeMinHeight)
+            if (p.height()!! >= minHeight)
                 dataPointsBunch.add(p)
             else {
                 if (dataPointsBunch.any()) result.add(dataPointsBunch)
@@ -162,7 +159,6 @@ class AreaRidgesGeom : GeomBase() {
 
     companion object {
         const val DEF_SCALE = 1.0
-        const val DEF_REL_MIN_HEIGHT = 0.0
         const val DEF_MIN_HEIGHT = 0.0
         const val DEF_QUANTILE_LINES = false
 
