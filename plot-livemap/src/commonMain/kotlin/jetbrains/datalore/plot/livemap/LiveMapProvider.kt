@@ -12,6 +12,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
@@ -25,6 +26,7 @@ import jetbrains.datalore.plot.config.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DEV_PARAMS
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.LOCATION
+import jetbrains.datalore.plot.config.Option.Geom.LiveMap.ONTOP
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.PROJECTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.TILES
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile
@@ -81,7 +83,11 @@ object LiveMapProvider {
         }
 
         override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
-            val plotLayers = letsPlotLayers.drop(1)
+            val plotLayers = when {
+                !letsPlotLayers.first().geom.let { it as LiveMapGeom }.useDisplayMode -> letsPlotLayers.drop(1)
+                myLiveMapOptions.getBool(ONTOP) == true -> letsPlotLayers.toMutableList().apply { add(removeAt(0)) }
+                else -> letsPlotLayers
+            }
 
             val liveMapBuilder: LiveMapBuilder = LiveMapBuilder().apply {
                 size = bounds.dimension

@@ -34,6 +34,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=None,
                  data_size_zoomin=None,
                  const_size_zoomin=None,
+                 ontop=None,
                  **other_args):
     """
     Display an interactive map.
@@ -94,6 +95,9 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         `-1` - size will be increasing without limits;
         `n` - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
+    ontop : bool, default=False
+        Whether geometry objects created by aesthetics mappings specified in directly in `geom_livemap()`
+        appear below (False) or ontop (True) of objects of other plot layers.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -180,6 +184,10 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                     'by great circle distance since 2020')
 
     """
+    if 'symbol' in other_args:
+        print("WARN: The parameter 'symbol' is deprecated and does not need to be specified "
+              "(point markers will be used to display the data).")
+
     if location is not None:
         location = _prepare_location(location)
 
@@ -204,6 +212,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=show_coord_pick_tools,
                  data_size_zoomin=data_size_zoomin,
                  const_size_zoomin=const_size_zoomin,
+                 ontop=ontop,
                  **other_args
     )
 

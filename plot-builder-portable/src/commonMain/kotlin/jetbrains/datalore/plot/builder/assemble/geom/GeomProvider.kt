@@ -255,12 +255,12 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
-        fun livemap(): GeomProvider {
+        fun livemap(useDisplayMode: Boolean): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
-                AestheticsDefaults.livemap(),
+                AestheticsDefaults.livemap(useDisplayMode),
                 LiveMapGeom.HANDLES_GROUPS,
-            ) { LiveMapGeom() }.build()
+            ) { LiveMapGeom(useDisplayMode) }.build()
         }
 
         fun ribbon(): GeomProvider {
