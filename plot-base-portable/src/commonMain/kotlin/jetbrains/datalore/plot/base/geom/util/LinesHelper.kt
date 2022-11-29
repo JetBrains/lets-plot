@@ -47,15 +47,17 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
     fun createLines(
         dataPoints: Iterable<DataPointAesthetics>,
-        toLocation: (DataPointAesthetics) -> DoubleVector?
+        toLocation: (DataPointAesthetics) -> DoubleVector?,
+        simplifyLines: Boolean = false
     ): MutableList<LinePath> {
-        return createPaths(dataPoints, toLocation, false)
+        return createPaths(dataPoints, toLocation, false, simplifyLines)
     }
 
     private fun createPaths(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
-        closePath: Boolean
+        closePath: Boolean,
+        simplifyPaths: Boolean = false
     ): MutableList<LinePath> {
         val paths = ArrayList<LinePath>()
         val multiPointDataList =
@@ -67,15 +69,20 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
         // draw line for each group
         for (multiPointData in multiPointDataList) {
-            paths.addAll(createPaths(multiPointData.aes, multiPointData.points, closePath))
+            paths.addAll(createPaths(multiPointData.aes, multiPointData.points, closePath, simplifyPaths))
         }
 
         return paths
     }
 
-    internal fun createPaths(aes: DataPointAesthetics, points: List<DoubleVector>, closePath: Boolean): List<LinePath> {
+    internal fun createPaths(
+        aes: DataPointAesthetics,
+        points: List<DoubleVector>,
+        closePath: Boolean,
+        simplifyPaths: Boolean = false
+    ): List<LinePath> {
         val paths = ArrayList<LinePath>()
-        val simplifiedPoints = simplify(points)
+        val simplifiedPoints = if (simplifyPaths) simplify(points) else points
         if (closePath) {
             paths.add(LinePath.polygon(insertPathSeparators(splitRings(simplifiedPoints))))
         } else {
@@ -126,7 +133,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
-        toLocationLower: (DataPointAesthetics) -> DoubleVector?
+        toLocationLower: (DataPointAesthetics) -> DoubleVector?,
+        simplifyBorders: Boolean = false
     ): MutableList<LinePath> {
 
         val lines = ArrayList<LinePath>()
@@ -138,11 +146,11 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
             // upper margin points
             val upperPoints = project(groupDataPoints) { toLocationUpper(it) }
-            val points = ArrayList(simplify(upperPoints))
+            val points = ArrayList(if (simplifyBorders) simplify(upperPoints) else upperPoints)
 
             // lower margin point in reversed order
             val lowerPoints = ArrayList(project(groupDataPoints.reversed()) { toLocationLower(it) })
-            points.addAll(simplify(lowerPoints))
+            points.addAll(if (simplifyBorders) simplify(lowerPoints) else lowerPoints)
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)

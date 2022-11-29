@@ -70,13 +70,13 @@ class AreaRidgesGeom : GeomBase() {
         val boundTransform = toLocationBound()
 
         dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
-            val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
+            val paths = helper.createBands(points, boundTransform, { p -> DoubleVector(p.x()!!, p.y()!!) }, simplifyBorders = true)
             appendNodes(paths, root)
         }
 
         helper.setAlphaEnabled(false)
         dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
-            appendNodes(helper.createLines(points, boundTransform), root)
+            appendNodes(helper.createLines(points, boundTransform, simplifyLines = false), root)
         }
 
         if (quantileLines) drawQuantileLines(root, dataPoints, pos, coord, ctx)
