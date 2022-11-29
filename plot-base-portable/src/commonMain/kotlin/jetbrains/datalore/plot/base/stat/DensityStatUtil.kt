@@ -32,14 +32,14 @@ object DensityStatUtil {
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
-        trim: Boolean,
+        trim: DensityRidgesStat.Trim,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
         adjust: Double,
         kernel: DensityStat.Kernel,
         n: Int,
         fullScanMax: Int,
-        tailsRange: DoubleSpan? = null,
+        overallValuesRange: DoubleSpan,
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
         valueVarName: DataFrame.Variable = Stats.Y
@@ -62,15 +62,7 @@ object DensityStatUtil {
                 .sortedBy { it.first }
                 .unzip()
             if (binValue.isEmpty()) continue
-            val valueSummary = FiveNumberSummary(binValue)
-            val valueRange = if (trim) {
-                DoubleSpan(valueSummary.min, valueSummary.max)
-            } else if (tailsRange != null) {
-                tailsRange
-            } else {
-                val bw = bandWidth ?: bandWidth(bandWidthMethod, binValue)
-                DoubleSpan(valueSummary.min - 3 * bw, valueSummary.max + 3 * bw)
-            }
+            val valueRange = trimValueRange(binValue, trim, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
                 binValue, binWeight,
@@ -98,6 +90,30 @@ object DensityStatUtil {
         )
 
         return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
+    }
+
+    private fun trimValueRange(
+        values: List<Double>,
+        trim: DensityRidgesStat.Trim,
+        bandWidth: Double?,
+        bandWidthMethod: DensityStat.BandWidthMethod,
+        overallValuesRange: DoubleSpan
+    ): DoubleSpan {
+        val valueSummary = FiveNumberSummary(values)
+        val bw = bandWidth ?: bandWidth(bandWidthMethod, values)
+        val extend = 3.0 * bw
+        return when (trim) {
+            DensityRidgesStat.Trim.NONE -> overallValuesRange
+            DensityRidgesStat.Trim.EXTBW -> {
+                DoubleSpan(valueSummary.min - extend, valueSummary.max + extend)
+            }
+            DensityRidgesStat.Trim.BW -> {
+                val minValue = max(overallValuesRange.lowerEnd, valueSummary.min - extend)
+                val maxValue = min(overallValuesRange.upperEnd, valueSummary.max + extend)
+                DoubleSpan(minValue, maxValue)
+            }
+            DensityRidgesStat.Trim.ALL -> DoubleSpan(valueSummary.min, valueSummary.max)
+        }
     }
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {

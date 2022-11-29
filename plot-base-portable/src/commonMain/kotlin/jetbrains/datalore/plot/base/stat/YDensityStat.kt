@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -48,7 +49,9 @@ class YDensityStat(
             List(ys.size) { 1.0 }
         }
 
-        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax)
+        val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
+        val trimCase: DensityRidgesStat.Trim = if (trim) DensityRidgesStat.Trim.ALL else DensityRidgesStat.Trim.EXTBW
+        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trimCase, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {

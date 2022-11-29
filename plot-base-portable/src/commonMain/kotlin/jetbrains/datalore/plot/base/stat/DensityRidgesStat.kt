@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 
 class DensityRidgesStat(
-    private val trim: Boolean,
+    private val trim: Trim,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -49,10 +49,10 @@ class DensityRidgesStat(
             List(ys.size) { 1.0 }
         }
 
-        val tailsRange = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
+        val overallXRange = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
         val statData = DensityStatUtil.binnedStat(
             ys, xs, ws,
-            trim, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, tailsRange, quantiles,
+            trim, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallXRange, quantiles,
             binVarName = Stats.Y, valueVarName = Stats.X
         )
 
@@ -76,8 +76,15 @@ class DensityRidgesStat(
             .build()
     }
 
+    enum class Trim {
+        NONE,
+        EXTBW,
+        BW,
+        ALL
+    }
+
     companion object {
-        const val DEF_TRIM = false
+        val DEF_TRIM = Trim.NONE
         val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
