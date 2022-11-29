@@ -3234,8 +3234,12 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    trim : bool, default=False
-        Trim the tails of the ridges to the range of the data.
+    trim : {'none', 'extbw', 'bw', 'all'}, default='none'
+        Trim the tails of the ridges.
+        'none' - do not trim at all;
+        'extbw' - trim a bit wider then data range for current ridge;
+        'bw' - trim as for 'extbw' but not wider than over all data range;
+        'all' - trim by data range for current bin.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
