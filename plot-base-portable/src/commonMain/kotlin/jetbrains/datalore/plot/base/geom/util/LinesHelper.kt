@@ -47,17 +47,15 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
     fun createLines(
         dataPoints: Iterable<DataPointAesthetics>,
-        toLocation: (DataPointAesthetics) -> DoubleVector?,
-        simplifyLines: Boolean = false
+        toLocation: (DataPointAesthetics) -> DoubleVector?
     ): MutableList<LinePath> {
-        return createPaths(dataPoints, toLocation, false, simplifyLines)
+        return createPaths(dataPoints, toLocation, false)
     }
 
     private fun createPaths(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?,
-        closePath: Boolean,
-        simplifyPaths: Boolean = false
+        closePath: Boolean
     ): MutableList<LinePath> {
         val paths = ArrayList<LinePath>()
         val multiPointDataList =
@@ -69,7 +67,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
         // draw line for each group
         for (multiPointData in multiPointDataList) {
-            paths.addAll(createPaths(multiPointData.aes, multiPointData.points, closePath, simplifyPaths))
+            paths.addAll(createPaths(multiPointData.aes, multiPointData.points, closePath))
         }
 
         return paths
@@ -78,15 +76,13 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     internal fun createPaths(
         aes: DataPointAesthetics,
         points: List<DoubleVector>,
-        closePath: Boolean,
-        simplifyPaths: Boolean = false
+        closePath: Boolean
     ): List<LinePath> {
         val paths = ArrayList<LinePath>()
-        val simplifiedPoints = if (simplifyPaths) simplify(points) else points
         if (closePath) {
-            paths.add(LinePath.polygon(insertPathSeparators(splitRings(simplifiedPoints))))
+            paths.add(LinePath.polygon(insertPathSeparators(splitRings(points))))
         } else {
-            paths.add(LinePath.line(simplifiedPoints))
+            paths.add(LinePath.line(points))
         }
         paths.forEach { path -> decorate(path, aes, closePath) }
         return paths

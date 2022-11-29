@@ -76,7 +76,7 @@ class AreaRidgesGeom : GeomBase() {
 
         helper.setAlphaEnabled(false)
         dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
-            appendNodes(helper.createLines(points, boundTransform, simplifyLines = false), root)
+            appendNodes(helper.createLines(points, boundTransform), root)
         }
 
         if (quantileLines) drawQuantileLines(root, dataPoints, pos, coord, ctx)
