@@ -150,11 +150,7 @@ open class AestheticsDefaults {
         }
 
         fun areaRidges(): AestheticsDefaults {
-            return object : AestheticsDefaults() {
-                override fun rangeIncludesZero(aes: Aes<*>): Boolean {
-                    return aes == Aes.Y || super.rangeIncludesZero(aes)
-                }
-            }
+            return base()
                 .update(Aes.COLOR, Color.BLACK)
                 .update(Aes.FILL, Color.parseHex("#8CBBE4"))
         }
