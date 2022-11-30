@@ -25,3 +25,4 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 - Themes: can't change plot background after applying a "flavor" [[#623](https://github.com/JetBrains/lets-plot/issues/623)].
 - Layout: uneven left/right, top/bottom plot margins [[#625](https://github.com/JetBrains/lets-plot/issues/625)].
 - A plot building error with empty data on various geoms.
+- Precision error in gradient [[#634](https://github.com/JetBrains/lets-plot/issues/634)].
