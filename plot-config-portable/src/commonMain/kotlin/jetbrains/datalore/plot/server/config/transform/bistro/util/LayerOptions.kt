@@ -70,8 +70,6 @@ class LayerOptions : Options() {
     var hjust: Any? by map(Aes.HJUST)
     var vjust: Any? by map(Aes.VJUST)
     var angle: Double? by map(Aes.ANGLE)
-    var symX: Double? by map(Aes.SYM_X)
-    var symY: Double? by map(Aes.SYM_Y)
     var slice: Double? by map(Aes.SLICE)
     var explode: Double? by map(Aes.EXPLODE)
 

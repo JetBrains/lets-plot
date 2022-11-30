@@ -180,14 +180,6 @@ abstract class DataPointAesthetics {
         return get(Aes.ANGLE)
     }
 
-    fun symX(): Double? {
-        return get(Aes.SYM_X)
-    }
-
-    fun symY(): Double? {
-        return get(Aes.SYM_Y)
-    }
-
     fun slice(): Double? {
         return get(Aes.SLICE)
     }

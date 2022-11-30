@@ -13,5 +13,4 @@ enum class MapLayerKind {
     V_LINE,
     TEXT,
     PIE,
-    BAR,
 }

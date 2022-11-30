@@ -45,8 +45,8 @@ object Renderers {
 
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElement = entity.get<ChartElementComponent>()
-            val symbolData = entity.get<SymbolComponent>()
-            val radius = symbolData.size.x * chartElement.scalingSizeFactor / 2.0
+            val pointData = entity.get<PointComponent>()
+            val radius = pointData.size * chartElement.scalingSizeFactor / 2.0
 
             ctx.beginPath()
             drawPath(ctx, radius, shape)

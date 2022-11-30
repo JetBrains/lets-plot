@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.livemap.LivemapConstants
 
 open class AestheticsDefaults {
 
@@ -166,19 +165,8 @@ open class AestheticsDefaults {
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun livemap(displayMode: LivemapConstants.DisplayMode?): AestheticsDefaults {
-            return when (displayMode) {
-                null -> base()
-                LivemapConstants.DisplayMode.POINT -> point()
-                    .updateInLegend(Aes.SIZE, 5.0)
-                LivemapConstants.DisplayMode.BAR -> base()
-                    .update(Aes.SIZE, 40.0)
-                    .update(Aes.COLOR, Color.TRANSPARENT)
-                LivemapConstants.DisplayMode.PIE -> base()
-                    .update(Aes.SIZE, 20.0)
-                    .update(Aes.COLOR, Color.TRANSPARENT)
-                    .updateInLegend(Aes.SIZE, 5.0)
-            }
+        fun livemap(): AestheticsDefaults {
+            return base()
         }
 
         fun ribbon(): AestheticsDefaults {

@@ -12,10 +12,9 @@ import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.UNDEFINED
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.getTargetUnderCoord
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
 import jetbrains.livemap.Client
-import jetbrains.livemap.api.transformValues2Angles
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.DonutChart
-import jetbrains.livemap.chart.SymbolComponent
+import jetbrains.livemap.chart.PieSpecComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
@@ -23,6 +22,8 @@ import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.IndexComponent
 import org.junit.Test
 import java.util.*
+import kotlin.math.PI
+import kotlin.math.abs
 import kotlin.test.assertEquals
 
 class PieLocatorHelperTest {
@@ -39,10 +40,10 @@ class PieLocatorHelperTest {
             .addComponents {
                 + IndexComponent(1, 1)
                 + ChartElementComponent()
-                + SymbolComponent().apply {
-                    size = explicitVec(r * 2, r * 2)
+                + PieSpecComponent().apply {
+                    radius = r
                     indices = vals.indices.toList()
-                    values = transformValues2Angles(vals)
+                    sliceValues = transformValues2Angles(vals)
                     colors = vals.indices.map { Color.BLACK }
                 }
                 + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
@@ -84,30 +85,39 @@ class PieLocatorHelperTest {
 
     @Test
     fun mouseInFirstPieSector() {
-        checkMouseInPieSector(0, point(4, -4))
+        checkMouseInPieSector(0, point(-4, -4))
     }
 
     @Test
     fun mouseInSecondPieSector() {
-        checkMouseInPieSector(1, point(4, 4))
-        checkMouseInPieSector(1, point(9, 1))
+        checkMouseInPieSector(1, point(4, -4))
+        checkMouseInPieSector(1, point(9, -1))
     }
 
     @Test
     fun mouseInThirdPieSector() {
-        checkMouseInPieSector(2, point(-5, 2))
-        checkMouseInPieSector(2, point(-2, 7))
+        checkMouseInPieSector(2, point(5, 2))
+        checkMouseInPieSector(2, point(2, 7))
     }
 
     @Test
     fun mouseInFourthPieSector() {
-        checkMouseInPieSector(3, point(-4, -4))
-        checkMouseInPieSector(3, point(-10, 0))
+        checkMouseInPieSector(3, point(-4, 4))
+        checkMouseInPieSector(3, point(-9, 1))
     }
 
     @Test
     fun mouseOutOfPie() {
         checkMouseInPieSector(UNDEFINED_SECTOR, point(10, 7))
         checkMouseInPieSector(UNDEFINED_SECTOR, point(9, 14))
+    }
+
+    private fun transformValues2Angles(values: List<Double>): List<Double> {
+        val sum = values.sumOf(::abs)
+        return if (sum == 0.0) {
+            MutableList(values.size) { 2 * PI / values.size }
+        } else {
+            values.map { 2 * PI * abs(it) / sum }
+        }
     }
 }

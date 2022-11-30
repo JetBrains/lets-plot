@@ -52,8 +52,6 @@ object TransformVar {
     val HJUST = DataFrame.Variable("transform.HJUST", TRANSFORM)
     val VJUST = DataFrame.Variable("transform.VJUST", TRANSFORM)
     val ANGLE = DataFrame.Variable("transform.ANGLE", TRANSFORM)
-    val SYM_X = DataFrame.Variable("transform.SYM_X", TRANSFORM)
-    val SYM_Y = DataFrame.Variable("transform.SYM_Y", TRANSFORM)
     val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
     val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
 
@@ -253,14 +251,6 @@ object TransformVar {
 
         override fun angle(): DataFrame.Variable {
             return ANGLE
-        }
-
-        override fun symX(): DataFrame.Variable {
-            return SYM_X
-        }
-
-        override fun symY(): DataFrame.Variable {
-            return SYM_Y
         }
 
         override fun slice(): DataFrame.Variable {

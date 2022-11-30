@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.chart
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.typedGeometry.times
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -12,6 +13,7 @@ import jetbrains.livemap.core.ecs.onEachEntity2
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.toClientPoint
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.pow
@@ -46,8 +48,8 @@ class ChartElementScalingSystem(
                     }
                 }
 
-                entity.tryGet<SymbolComponent>()?.let {
-                    entity.provide(::ScreenDimensionComponent).dimension = it.size * scalingSizeFactor
+                entity.tryGet<PointComponent>()?.let {
+                    entity.provide(::ScreenDimensionComponent).dimension = DoubleVector(it.size, it.size).toClientPoint() * scalingSizeFactor
                 }
             }
         }

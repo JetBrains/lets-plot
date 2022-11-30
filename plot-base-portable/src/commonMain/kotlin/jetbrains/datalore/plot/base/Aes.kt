@@ -79,9 +79,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         val ANGLE: Aes<Double> = Aes("angle")
 
-        val SYM_X: Aes<Double> = Aes("sym_x")
-        val SYM_Y: Aes<Double> = Aes("sym_y")
-
         // pie geom - defines size of sector
         val SLICE: Aes<Double> = Aes("slice")
         // pie geom - to explode sector from center point, detaching it from the main pie
@@ -183,8 +180,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == FAMILY ||
                     aes == FONTFACE ||
                     aes == LINEHEIGHT ||
-                    aes == SYM_X ||
-                    aes == SYM_Y ||
                     aes == SLICE ||
                     aes == EXPLODE ||
                     isPositional(aes)

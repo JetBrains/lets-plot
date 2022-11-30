@@ -11,6 +11,10 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
     - `alpha` parameter [[#630](https://github.com/JetBrains/lets-plot/issues/630)]. 
 See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_alpha_param.ipynb).
 
+- New geometry `geom_pie()`.
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
+
 - New variables computed by `'count'` and `'count2d'` statistics: `'..sum..'`, `'..prop..'`, `'..proppct..'`.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/stat_count(2d)_vars.ipynb).

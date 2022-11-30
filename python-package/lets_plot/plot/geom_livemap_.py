@@ -24,9 +24,7 @@ except ImportError:
 __all__ = ['geom_livemap']
 
 
-def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
-                 map=None, map_join=None,
-                 symbol=None,
+def geom_livemap(*,
                  location=None,
                  zoom=None,
                  projection=None,
@@ -35,38 +33,12 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=None,
                  data_size_zoomin=None,
                  const_size_zoomin=None,
-                 ontop=None,
                  **other_args):
     """
     Display an interactive map.
 
     Parameters
     ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
-        Aesthetic mappings describe the way that variables in the data are
-        mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
-        The data to be displayed in this layer. If None, the default, the data
-        is inherited from the plot data as specified in the call to ggplot.
-    show_legend : bool, default=True
-        False - do not show legend for this layer.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
-        To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
-    map : `GeoDataFrame` or `Geocoder`
-        Data containing coordinates of points.
-    map_join : str or list
-        Keys used to join map coordinates with data.
-        First value in pair - column/columns in `data`.
-        Second value in pair - column/columns in `map`.
-    symbol : str, default=None
-        The marker used for displaying the data. There are:
-        'point' for circles of different size and color;
-        None for map without markers.
     location : list
         Initial position of the map. If not set, displays the United States.
         There are [lon1, lat1, lon2, lat2,..., lonN, latN]:
@@ -84,30 +56,24 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         Tiles provider, either as a string - URL for a standard raster ZXY tile provider
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
         or the result of a call to a `maptiles_xxx()` functions.
-    show_coord_pick_tools : bool, defafult=False
+    show_coord_pick_tools : bool, default=False
         Show buttons "copy location" and "draw geometry"
-    data_size_zoomin : int, defafult=0
+    data_size_zoomin : int, default=0
         Controls how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is set by means of mapping between the data and the `size` aesthetic.
         `0` - size never increases;
         `-1` - size will be increasing without limits;
         `n` - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
-    const_size_zoomin : int, defafult=-1
+    const_size_zoomin : int, default=-1
         Controls how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is not linked to a data (i.e. constant size).
         `0` - size never increases;
         `-1` - size will be increasing without limits;
         `n` - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
-    ontop : bool, default=False
-        Whether geometry objects created by aesthetics mappings specified in directly in `geom_livemap()`
-        appear below (False) or ontop (True) of  objects of other plot layers.
     other_args
         Other arguments passed on to the layer.
-        These are often aesthetics settings used to set an aesthetic to a fixed value,
-        like color='red', fill='blue', size=3 or shape=21.
-        They may also be parameters to the paired geom/stat.
 
     Returns
     -------
@@ -117,47 +83,6 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
     Notes
     -----
     `geom_livemap()` draws a map, which can be dragged and zoomed.
-
-    `geom_livemap()` understands the following aesthetics mappings:
-
-    - x : x-axis value, i.e. longitude in this context.
-    - y : y-axis value, i.e. latitude in this context.
-    - alpha : transparency level of the point. Accepts values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : radius for point, pie chart.
-    - sym_x : value order for pie chart and bar chart.
-    - sym_y : value specifying the sector size for pie chart and the heigth for bar chart.
-
-    |
-
-    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
-
-    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
-
-    |
-
-    The conventions for the values of `map_join` parameter are as follows.
-
-    - Joining data and `GeoDataFrame` object
-
-      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
-
-      - map_join=['State_Name', 'state']
-      - map_join=[['State_Name'], ['state']]
-
-    - Joining data and `Geocoder` object
-
-      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
-
-      - map_join='State_Name'
-      - map_join=['State_Name']
-
-    - Joining data by composite key
-
-      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
-
-      - map_join=['County_name', 'State_Name']
 
     Examples
     --------
@@ -173,7 +98,7 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9-12
+        :emphasize-lines: 9-10
 
         from lets_plot import *
         LetsPlot.setup_html()
@@ -184,41 +109,43 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
             geom_livemap(geodesic=False, projection='epsg4326', \\
-                         symbol='point', color='white', \\
-                         tiles=maptiles_lets_plot(theme='dark'), \\
-                         tooltips=layer_tooltips().line('@city')) + \\
+                         tiles=maptiles_lets_plot(theme='dark')) + \\
             geom_path(color='white') + \\
+            geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle('SQ23 - the longest scheduled airline flight '
                     'by great circle distance since 2020')
 
     """
+    if 'symbol' in other_args:
+        print("WARN: The parameter 'symbol' is no longer supported on the livemap. Use geom_point() to display markers.")
+        other_args.pop('symbol')
+
+    deprecated_params = set.intersection(
+        {'data', 'mapping', 'map', 'map_join', 'ontop', 'stat', 'position', 'show_legend', 'sampling', 'tooltips'},
+        other_args
+    )
+    if len(deprecated_params) > 0:
+        print(f"WARN: These parameters are not supported and will be ignored: {str(deprecated_params):s}. "
+              "Specify a separate geometry layer to display data on the livemap.")
+
+    for param in deprecated_params:
+        other_args.pop(param)
+
     if location is not None:
         location = _prepare_location(location)
 
     tiles = _prepare_tiles(tiles)
     geocoding = _prepare_geocoding()
 
-    _display_mode = 'display_mode'
-
-    if _display_mode in other_args.keys():
-        other_args.pop(_display_mode)
-
-    if mapping is not None and symbol is None:
-        raise ValueError('The `symbol` parameter is required for `geom_livemap()` with mappings.')
-
-    if map is not None and symbol is None:
-        raise ValueError('The `symbol` parameter is required for `geom_livemap()` with `map` parameter.')
-
     return _geom('livemap',
-                 mapping=mapping,
-                 data=data,
+                 mapping=None,
+                 data=None,
                  stat=None,
                  position=None,
-                 show_legend=show_legend,
-                 sampling=sampling,
-                 tooltips=tooltips,
-                 map=map, map_join=map_join,
-                 display_mode=symbol,
+                 show_legend=None,
+                 sampling=None,
+                 tooltips=None,
+                 map=None, map_join=None,
                  location=location,
                  zoom=zoom,
                  projection=projection,
@@ -228,9 +155,8 @@ def geom_livemap(mapping=None, *, data=None, show_legend=None, sampling=None, to
                  show_coord_pick_tools=show_coord_pick_tools,
                  data_size_zoomin=data_size_zoomin,
                  const_size_zoomin=const_size_zoomin,
-                 ontop=ontop,
                  **other_args
-    )
+                 )
 
 
 LOCATION_COORDINATE_COLUMNS = {'lon', 'lat'}

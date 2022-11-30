@@ -6,11 +6,6 @@
 package jetbrains.datalore.plot.base.livemap
 
 interface LivemapConstants {
-    enum class DisplayMode {
-        POINT,
-        PIE,
-        BAR
-    }
 
     enum class Theme {
         COLOR,

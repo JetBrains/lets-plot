@@ -7,11 +7,10 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers
-import jetbrains.livemap.chart.SymbolComponent
+import jetbrains.livemap.chart.PointComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
@@ -110,11 +109,8 @@ class PointBuilder(
                         else -> error("Not supported shape: ${this@PointBuilder.shape}")
                     }
                 }
-                +SymbolComponent().apply {
-                    size = explicitVec(d, d)
-                    indices = index?.let { listOf(it) } ?: emptyList()
-                    values = emptyList()
-                    colors = emptyList()
+                +PointComponent().apply {
+                    size = d
                 }
 
                 +WorldOriginComponent(worldPoint)
