@@ -12,18 +12,11 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 
-class LiveMapGeom(
-    val useDisplayMode: Boolean //  display the data on the map as point markers
-) : Geom {
+class LiveMapGeom: Geom {
     private lateinit var myMapProvider: LiveMapProvider
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() {
-            return when {
-                useDisplayMode -> PointLegendKeyElementFactory()
-                else -> GenericLegendKeyElementFactory()
-            }
-        }
+        get() = GenericLegendKeyElementFactory()
 
     override fun build(
         root: SvgRoot,

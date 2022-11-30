@@ -139,12 +139,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
-            GeomKind.LIVE_MAP -> {
-                val useDisplayMode = opts.getMap(Option.PlotBase.DATA).isNotEmpty() ||
-                        opts.getMap(Option.Geom.Choropleth.GEO_POSITIONS).isNotEmpty()
-                 return GeomProvider.livemap(useDisplayMode)
-            }
-
             GeomKind.STEP -> return GeomProvider.step {
                 val geom = StepGeom()
                 if (opts.hasOwn(Step.DIRECTION)) {
@@ -282,6 +276,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
             // image - special case
             // pie - special case
+            PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

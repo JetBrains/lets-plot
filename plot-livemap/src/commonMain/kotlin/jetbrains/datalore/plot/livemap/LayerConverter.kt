@@ -40,7 +40,6 @@ object LayerConverter {
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
                 PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom)
-                LIVE_MAP -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
