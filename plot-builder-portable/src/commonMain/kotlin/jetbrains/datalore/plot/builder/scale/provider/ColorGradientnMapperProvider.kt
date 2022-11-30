@@ -43,36 +43,6 @@ class ColorGradientnMapperProvider(
 
 
     companion object {
-//        internal fun createGradient(
-//            domain: DoubleSpan,
-//            colors: List<Color>,
-//            naValue: Color,
-//            alpha: Double = 1.0
-//        ): (Double?) -> Color {
-//            val subdomainsCount = colors.size - 1
-//            val subdomainLength = domain.length / subdomainsCount
-//
-//            val mappers = (0..subdomainsCount)
-//                .map { domain.lowerEnd + subdomainLength * it }
-//                .zip(colors)
-//                .windowed(2)
-//                .map { (low, high) ->
-//                    val (lowValue, lowColor) = low
-//                    val (highValue, highColor) = high
-//                    val subdomain = DoubleSpan(lowValue, highValue)
-//                    subdomain to ColorMapper.gradient(subdomain, lowColor, highColor, naValue, alpha)
-//                }
-//
-//            return { value ->
-//                value?.let {
-//                    mappers
-//                        .firstOrNull { (subdomain, _) -> value in subdomain }
-//                        ?.let { (_, gradient) -> gradient(value) }
-//                        ?: naValue
-//                } ?: naValue
-//            }
-//        }
-
         internal fun createGradient(
             domain: DoubleSpan,
             colors: List<Color>,
@@ -82,7 +52,9 @@ class ColorGradientnMapperProvider(
             val subdomainsCount = colors.size - 1
             val subdomainLength = domain.length / subdomainsCount
 
-            val subdomainEnds = (0..subdomainsCount).map { domain.lowerEnd + subdomainLength * it }
+            val subdomainEnds = (0 until subdomainsCount)
+                .map { domain.lowerEnd + subdomainLength * it } +
+                    listOf(domain.upperEnd) // The last "end" should be exact.
             val mappers = subdomainEnds.zip(colors)
                 .windowed(2)
                 .map { (low, high) ->

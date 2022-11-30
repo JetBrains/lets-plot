@@ -37,6 +37,13 @@ object Transforms {
         return BreaksGeneratorForTransformedDomain(transform, breaksGenerator)
     }
 
+    /**
+     * Use with caution!
+     *
+     * Do not use this method on transformed data ranges. (see 'SeriesUtil.ensureApplicableRange()')
+     *
+     * Only use on original data ranges.
+     */
     fun ensureApplicableDomain(
         dataRange: DoubleSpan?,
         transform: ContinuousTransform
