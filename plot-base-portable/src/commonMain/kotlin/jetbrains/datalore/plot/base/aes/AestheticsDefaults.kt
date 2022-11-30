@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.livemap.LivemapConstants
 
 open class AestheticsDefaults {
 
