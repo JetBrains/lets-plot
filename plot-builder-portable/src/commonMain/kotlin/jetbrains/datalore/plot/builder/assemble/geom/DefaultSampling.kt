@@ -55,6 +55,7 @@ object DefaultSampling {
     val RIBBON = systematic(5000)
     val AREA = systematic(5000)
     val DENSITY = systematic(5000)
+    val AREA_RIDGES = systematic(5000)
     val VIOLIN = pick(50)
     val FREQPOLY = systematic(5000)
     val STEP = systematic(5000)

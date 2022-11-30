@@ -195,6 +195,7 @@ object GeomInteractionUtil {
             GeomKind.Q_Q_2,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
+            GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,
@@ -226,6 +227,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
+            GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
@@ -250,6 +252,7 @@ object GeomInteractionUtil {
     ): List<Aes<*>> {
         return when {
             !isAxisTooltipEnabled -> emptyList()
+            geomKind == GeomKind.AREA_RIDGES ||
             geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
             else -> axisAesFromFunctionKind
         }

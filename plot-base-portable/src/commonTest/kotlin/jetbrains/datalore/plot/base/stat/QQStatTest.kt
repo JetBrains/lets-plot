@@ -17,41 +17,41 @@ class QQStatTest : BaseStatTest() {
     @Test
     fun oneElementQQDataFrame() {
         val sampleValue = 3.14
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.SAMPLE to listOf(sampleValue)
         ))
         val stat = Stats.qq()
         val statDf = stat.apply(df, statContext(df))
 
         val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
-        checkStatVar(statDf, Stats.SAMPLE, listOf(sampleValue))
-        checkStatVar(statDf, Stats.THEORETICAL, listOf(dist.inverseCumulativeProbability(0.5)))
+        checkStatVarValues(statDf, Stats.SAMPLE, listOf(sampleValue))
+        checkStatVarValues(statDf, Stats.THEORETICAL, listOf(dist.inverseCumulativeProbability(0.5)))
     }
 
     @Test
     fun withOnlyNanValuesQQ() {
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.SAMPLE to listOf(null, null, null)
         ))
         val stat = Stats.qq()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.SAMPLE, emptyList())
-        checkStatVar(statDf, Stats.THEORETICAL, emptyList())
+        checkStatVarValues(statDf, Stats.SAMPLE, emptyList())
+        checkStatVarValues(statDf, Stats.THEORETICAL, emptyList())
     }
 
     @Test
     fun withFewNanValuesQQ() {
         val sampleValues = listOf(1.0, null, null, -1.0)
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.SAMPLE to sampleValues
         ))
         val stat = Stats.qq()
         val statDf = stat.apply(df, statContext(df))
 
         val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
-        checkStatVar(statDf, Stats.SAMPLE, listOf(-1.0, 1.0))
-        checkStatVar(statDf, Stats.THEORETICAL, listOf(
+        checkStatVarValues(statDf, Stats.SAMPLE, listOf(-1.0, 1.0))
+        checkStatVarValues(statDf, Stats.THEORETICAL, listOf(
             dist.inverseCumulativeProbability(0.25),
             dist.inverseCumulativeProbability(0.75),
         ))
@@ -65,15 +65,15 @@ class QQStatTest : BaseStatTest() {
     @Test
     fun oneElementQQLineDataFrame() {
         val sampleValue = 3.14
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.SAMPLE to listOf(sampleValue)
         ))
         val stat = Stats.qqline()
         val statDf = stat.apply(df, statContext(df))
 
         val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
-        checkStatVar(statDf, Stats.SAMPLE, listOf(sampleValue, sampleValue))
-        checkStatVar(statDf, Stats.THEORETICAL, listOf(
+        checkStatVarValues(statDf, Stats.SAMPLE, listOf(sampleValue, sampleValue))
+        checkStatVarValues(statDf, Stats.THEORETICAL, listOf(
             dist.inverseCumulativeProbability(0.5),
             dist.inverseCumulativeProbability(0.5),
         ))
@@ -82,28 +82,28 @@ class QQStatTest : BaseStatTest() {
     @Test
     fun withOnlyNanValuesQQLine() {
         val sampleValues = listOf(null, null, null)
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.SAMPLE to sampleValues
         ))
         val stat = Stats.qqline()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.SAMPLE, emptyList())
-        checkStatVar(statDf, Stats.THEORETICAL, emptyList())
+        checkStatVarValues(statDf, Stats.SAMPLE, emptyList())
+        checkStatVarValues(statDf, Stats.THEORETICAL, emptyList())
     }
 
     @Test
     fun withFewNanValuesQQLine() {
         val sampleValues = listOf(1.0, null, null, -1.0)
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.SAMPLE to sampleValues
         ))
         val stat = Stats.qqline()
         val statDf = stat.apply(df, statContext(df))
 
         val dist = QQStatUtil.getDistribution(QQStat.DEF_DISTRIBUTION, QQStat.DEF_DISTRIBUTION_PARAMETERS)
-        checkStatVar(statDf, Stats.SAMPLE, listOf(0.0, 0.0))
-        checkStatVar(statDf, Stats.THEORETICAL, listOf(
+        checkStatVarValues(statDf, Stats.SAMPLE, listOf(0.0, 0.0))
+        checkStatVarValues(statDf, Stats.THEORETICAL, listOf(
             dist.inverseCumulativeProbability(0.25),
             dist.inverseCumulativeProbability(0.75)
         ))
@@ -118,15 +118,15 @@ class QQStatTest : BaseStatTest() {
     fun oneElementQQ2DataFrame() {
         val xSampleValue = 3.14
         val ySampleValue = 2.72
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to listOf(xSampleValue),
             TransformVar.Y to listOf(ySampleValue)
         ))
         val stat = Stats.qq2()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(xSampleValue))
-        checkStatVar(statDf, Stats.Y, listOf(ySampleValue))
+        checkStatVarValues(statDf, Stats.X, listOf(xSampleValue))
+        checkStatVarValues(statDf, Stats.Y, listOf(ySampleValue))
     }
 
     @Test
@@ -138,15 +138,15 @@ class QQStatTest : BaseStatTest() {
             Pair(nonNanValues, nanValues),
             Pair(nanValues, nanValues),
         )) {
-            val df = df(mapOf(
+            val df = dataFrame(mapOf(
                 TransformVar.X to xValues,
                 TransformVar.Y to yValues
             ))
             val stat = Stats.qq2()
             val statDf = stat.apply(df, statContext(df))
 
-            checkStatVar(statDf, Stats.X, emptyList())
-            checkStatVar(statDf, Stats.Y, emptyList())
+            checkStatVarValues(statDf, Stats.X, emptyList())
+            checkStatVarValues(statDf, Stats.Y, emptyList())
         }
     }
 
@@ -154,15 +154,15 @@ class QQStatTest : BaseStatTest() {
     fun withFewNanValuesQQ2() {
         val xValues = listOf(1.0, 0.0, null, null)
         val yValues = listOf(null, null, null, -1.0)
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to xValues,
             TransformVar.Y to yValues
         ))
         val stat = Stats.qq2()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(0.5, 0.5))
-        checkStatVar(statDf, Stats.Y, listOf(-1.0, -1.0))
+        checkStatVarValues(statDf, Stats.X, listOf(0.5, 0.5))
+        checkStatVarValues(statDf, Stats.Y, listOf(-1.0, -1.0))
     }
 
     @Test
@@ -174,15 +174,15 @@ class QQStatTest : BaseStatTest() {
     fun oneElementQQ2LineDataFrame() {
         val xSampleValue = 3.14
         val ySampleValue = 2.72
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to listOf(xSampleValue),
             TransformVar.Y to listOf(ySampleValue)
         ))
         val stat = Stats.qq2line()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(xSampleValue, xSampleValue))
-        checkStatVar(statDf, Stats.Y, listOf(ySampleValue, ySampleValue))
+        checkStatVarValues(statDf, Stats.X, listOf(xSampleValue, xSampleValue))
+        checkStatVarValues(statDf, Stats.Y, listOf(ySampleValue, ySampleValue))
     }
 
     @Test
@@ -194,15 +194,15 @@ class QQStatTest : BaseStatTest() {
             Pair(nonNanValues, nanValues),
             Pair(nanValues, nanValues),
         )) {
-            val df = df(mapOf(
+            val df = dataFrame(mapOf(
                 TransformVar.X to xValues,
                 TransformVar.Y to yValues
             ))
             val stat = Stats.qq2line()
             val statDf = stat.apply(df, statContext(df))
 
-            checkStatVar(statDf, Stats.X, emptyList())
-            checkStatVar(statDf, Stats.Y, emptyList())
+            checkStatVarValues(statDf, Stats.X, emptyList())
+            checkStatVarValues(statDf, Stats.Y, emptyList())
         }
     }
 
@@ -210,14 +210,14 @@ class QQStatTest : BaseStatTest() {
     fun withFewNanValuesQQ2Line() {
         val xSampleValues = listOf(-1.0, null, null, 1.0)
         val ySampleValues = listOf(null, -2.0, 2.0, null)
-        val df = df(mapOf(
+        val df = dataFrame(mapOf(
             TransformVar.X to xSampleValues,
             TransformVar.Y to ySampleValues
         ))
         val stat = Stats.qq2line()
         val statDf = stat.apply(df, statContext(df))
 
-        checkStatVar(statDf, Stats.X, listOf(0.0, 0.0))
-        checkStatVar(statDf, Stats.Y, listOf(-2.0, 2.0))
+        checkStatVarValues(statDf, Stats.X, listOf(0.0, 0.0))
+        checkStatVarValues(statDf, Stats.Y, listOf(-2.0, 2.0))
     }
 }

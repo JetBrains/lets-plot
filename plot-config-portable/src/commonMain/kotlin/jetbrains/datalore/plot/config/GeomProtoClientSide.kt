@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
+import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
@@ -111,10 +112,27 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
+            GeomKind.AREA_RIDGES -> return GeomProvider.arearidges {
+                val geom = AreaRidgesGeom()
+                if (opts.hasOwn(AreaRidges.SCALE)) {
+                    geom.scale = opts.getDoubleDef(AreaRidges.SCALE, AreaRidgesGeom.DEF_SCALE)
+                }
+                if (opts.hasOwn(AreaRidges.MIN_HEIGHT)) {
+                    geom.minHeight = opts.getDoubleDef(AreaRidges.MIN_HEIGHT, AreaRidgesGeom.DEF_MIN_HEIGHT)
+                }
+                if (opts.hasOwn(AreaRidges.QUANTILE_LINES)) {
+                    geom.quantileLines = opts.getBoolean(AreaRidges.QUANTILE_LINES, AreaRidgesGeom.DEF_QUANTILE_LINES)
+                }
+                geom
+            }
+
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
                 if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
                     geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
+                }
+                if (opts.hasOwn(Violin.SHOW_HALF)) {
+                    geom.showHalf = opts.getDouble(Violin.SHOW_HALF)!!
                 }
                 geom
             }
@@ -257,6 +275,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
+            // area ridges - special case
             // violin - special case
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()

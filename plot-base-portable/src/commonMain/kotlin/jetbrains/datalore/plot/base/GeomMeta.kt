@@ -221,6 +221,19 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
+            GeomKind.AREA_RIDGES -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.HEIGHT,
+                Aes.QUANTILE,
+
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
             GeomKind.VIOLIN -> listOf(
                 Aes.X,
                 Aes.Y,

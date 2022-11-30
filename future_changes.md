@@ -5,14 +5,15 @@
 - `geom_imshow()`:
 
     - Improved performance by orders of magnitude
-    - Transparency of `NaN` values in grayscale images ([[#630](https://github.com/JetBrains/lets-plot/issues/630)])
+    - Transparency of `NaN` values in grayscale images [[#631](https://github.com/JetBrains/lets-plot/issues/631)]. 
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
+    - `alpha` parameter [[#630](https://github.com/JetBrains/lets-plot/issues/630)]. 
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_alpha_param.ipynb).
 
 - New geometry `geom_pie()`.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
-
 
 - New variables computed by `'count'` and `'count2d'` statistics: `'..sum..'`, `'..prop..'`, `'..proppct..'`.
 
@@ -28,3 +29,4 @@
 - Themes: can't change plot background after applying a "flavor" [[#623](https://github.com/JetBrains/lets-plot/issues/623)].
 - Layout: uneven left/right, top/bottom plot margins [[#625](https://github.com/JetBrains/lets-plot/issues/625)].
 - A plot building error with empty data on various geoms.
+- Precision error in gradient [[#634](https://github.com/JetBrains/lets-plot/issues/634)].

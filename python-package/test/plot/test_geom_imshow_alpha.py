@@ -31,12 +31,6 @@ class Test:
     # Grayscale images
 
     # Basic
-    expected_gray_2_x_3 = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAAFklEQVR4nGNgqF9V/7+e4X99aD1DPQAq+gX4q3PHhwAAAABJRU5ErkJggg==',
-        width=3,
-        height=2
-    )
-
     test_params_list.append((
         np.array([
             [50, 150, 200],
@@ -44,16 +38,14 @@ class Test:
         ]),
         None,  # cmap
         None,  # norm
-        expected_gray_2_x_3
+        _image_spec(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAAFklEQVR4nGNgaFjV8L+B4X9DaANDAwArIQX+DAv9MwAAAABJRU5ErkJggg==',
+            width=3,
+            height=2
+        )
     ))
 
     # No normalization
-    expected_gray_2_x_3_no_norm = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAAFklEQVR4nGMwqp9Wf6Ke4UR9Sr1RPQAqDwXpfKkizQAAAABJRU5ErkJggg==',
-        width=3,
-        height=2
-    )
-
     test_params_list.append((
         np.array([
             [50, 150, 200],
@@ -61,16 +53,14 @@ class Test:
         ]),
         None,  # cmap
         False,  # norm
-        expected_gray_2_x_3_no_norm
+        _image_spec(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAAFklEQVR4nGMwqp9Wf6Ke4UR9Sr1RPQAqDwXpfKkizQAAAABJRU5ErkJggg==',
+            width=3,
+            height=2
+        )
     ))
 
     # With NaN-s
-    expected_gray_2_x_3_nans = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAAFElEQVR4nGNgqGdg+A/EDKH1DPUAFkEDUUekJCoAAAAASUVORK5CYII=',
-        width=3,
-        height=2
-    )
-
     test_params_list.append((
         np.array([
             [50., np.nan, 200.],
@@ -78,7 +68,11 @@ class Test:
         ]),
         None,  # cmap
         None,  # norm
-        expected_gray_2_x_3_nans
+        _image_spec(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAQAAAA3fa6RAAAAFElEQVR4nGNgaGBg+A/EDKENDA0AFlkDVW4xkmQAAAAASUVORK5CYII=',
+            width=3,
+            height=2
+        )
     ))
 
     # with 'cmap'
@@ -118,12 +112,6 @@ class Test:
     # Color images
 
     # RGB
-    expected_gray_2_x_3_RGB = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGElEQVR4nGP4z8BQz/AfiBn+gzCEARIEAHMECPW+3yLrAAAAAElFTkSuQmCC',
-        width=3,
-        height=2
-    )
-
     test_params_list.append((
         np.array([
             [[255, 0, 0], [0, 255, 0], [0, 0, 255]],
@@ -131,16 +119,14 @@ class Test:
         ]),
         None,  # cmap
         None,  # norm
-        expected_gray_2_x_3_RGB
+        _image_spec(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGElEQVR4nGP4z8BQz/AfiBn+gzCEARIEAHMECPW+3yLrAAAAAElFTkSuQmCC',
+            width=3,
+            height=2
+        )
     ))
 
     # RGBA
-    expected_gray_2_x_3_RGBA = _image_spec(
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAHElEQVR4nGP4z8BQz/AfiBn+gzCDGpBQAwqqAQBtzQfqy3kO8gAAAABJRU5ErkJggg==',
-        width=3,
-        height=2
-    )
-
     test_params_list.append((
         np.array([
             [[1, 0, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1]],
@@ -148,11 +134,16 @@ class Test:
         ]),
         None,  # cmap
         None,  # norm
-        expected_gray_2_x_3_RGBA
+        _image_spec(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAHElEQVR4nGP4z8DQwPAfiBn+gzCDGpBQAwqqAQBuAwft32FBFAAAAABJRU5ErkJggg==',
+            width=3,
+            height=2
+        )
     ))
 
     @pytest.mark.parametrize('image_data, cmap, norm, expected', test_params_list)
     def test_image_spec(self, image_data, cmap, norm, expected):
+        image_data.flags.writeable = False
         # spec = geom_imshow(image_data, extent=_extent)
         spec = geom_imshow(image_data, cmap=cmap, norm=norm, alpha=0.5)
         assert spec.as_dict() == expected
