@@ -116,14 +116,19 @@ def geom_livemap(*,
                     'by great circle distance since 2020')
 
     """
+    if 'symbol' in other_args:
+        print("WARN: The parameter 'symbol' is no longer supported on the livemap. Use geom_point() to display markers.")
+        other_args.pop('symbol')
 
-    unused_params = set.intersection({'data', 'mapping', 'map', 'map_join', 'symbol', 'ontop',
-                                      'stat', 'position', 'show_legend', 'sampling', 'tooltips'}, other_args)
-    if len(unused_params) > 0:
-        print(f"WARN: These parameters are not supported and will be ignored: {str(unused_params):s}. "
+    deprecated_params = set.intersection(
+        {'data', 'mapping', 'map', 'map_join', 'ontop', 'stat', 'position', 'show_legend', 'sampling', 'tooltips'},
+        other_args
+    )
+    if len(deprecated_params) > 0:
+        print(f"WARN: These parameters are not supported and will be ignored: {str(deprecated_params):s}. "
               "Specify a separate geometry layer to display data on the livemap.")
 
-    for param in unused_params:
+    for param in deprecated_params:
         other_args.pop(param)
 
     if location is not None:
