@@ -117,7 +117,8 @@ def geom_livemap(*,
 
     """
     if 'symbol' in other_args:
-        print("WARN: The parameter 'symbol' is no longer supported on the livemap. Use geom_point() to display markers.")
+        print("WARN: The parameter 'symbol' is no longer supported. "
+              "Use separate geom_point() or geom_pie() geometry layers to display markers on the map.")
         other_args.pop('symbol')
 
     deprecated_params = set.intersection(
