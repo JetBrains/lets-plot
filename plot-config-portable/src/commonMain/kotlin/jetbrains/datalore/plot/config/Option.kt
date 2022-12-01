@@ -114,17 +114,15 @@ object Option {
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
         const val TOOLTIPS = "tooltips"
-        const val TOOLTIP_LINES = "tooltip_lines"
-        const val TOOLTIP_VARIABLES = "tooltip_variables"
-        const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
-        const val TOOLTIP_TITLE = "tooltip_title"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
         const val USE_CRS = "use_crs"
         const val ORIENTATION = "orientation"
         const val MARGINAL = "marginal"
+
+        const val ANNOTATIONS = "annotations"
 
         object Marginal {
             const val SIZE = "margin_size"
@@ -137,9 +135,16 @@ object Option {
         }
     }
 
-    object TooltipFormat {
-        const val FIELD = "field"
-        const val FORMAT = "format"
+    object LinesSpec {
+        const val LINES = "lines"
+        const val FORMATS = "formats"
+        const val VARIABLES = "variables"
+        const val TITLE = "title"
+
+        object Format {
+            const val FIELD = "field"
+            const val FORMAT = "format"
+        }
     }
 
     object Geom {

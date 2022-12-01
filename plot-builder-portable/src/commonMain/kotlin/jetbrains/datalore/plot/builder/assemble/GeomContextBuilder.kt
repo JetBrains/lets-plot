@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
@@ -25,6 +26,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var aesBounds: DoubleRectangle? = null
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
     private var fontFamilyRegistry: FontFamilyRegistry? = null
+    private var annotations: Annotations? = null
 
     constructor()
 
@@ -34,6 +36,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         aestheticMappers = ctx.aestheticMappers
         aesBounds = ctx._aesBounds
         geomTargetCollector = ctx.targetCollector
+        annotations = ctx.annotations
     }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
@@ -66,6 +69,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun annotations(annotations: Annotations?): ImmutableGeomContext.Builder {
+        this.annotations = annotations
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -78,6 +86,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
+        override val annotations = b.annotations
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 

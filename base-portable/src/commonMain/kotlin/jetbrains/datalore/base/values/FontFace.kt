@@ -13,6 +13,13 @@ class FontFace(
         return FontFace(bold || other.bold, italic || other.italic)
     }
 
+    override fun toString(): String {
+        var s = ""
+        if (bold) s += "bold"
+        if (italic) s += " italic"
+        return s
+    }
+
     companion object {
         val NORMAL = FontFace()
         val BOLD = FontFace(bold = true)

@@ -742,7 +742,7 @@ class DropUnusedDataTest {
                         "y": "x"
                       },
                       "tooltips": {
-                        "tooltip_lines": [
+                        "lines": [
                           "@name"
                         ]
                       }
@@ -768,7 +768,7 @@ class DropUnusedDataTest {
                 "geom": "bar",
                 "data": { "x": [0, 0],  "g": ['a', 'b'] },
                 "mapping": { "x": "x" },
-                "tooltips": { "tooltip_lines": [ "@g" ] }
+                "tooltips": { "lines": [ "@g" ] }
               }
             ]
         }""".trimIndent()

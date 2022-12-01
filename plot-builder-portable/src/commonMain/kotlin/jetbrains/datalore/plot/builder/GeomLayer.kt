@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
@@ -69,5 +70,7 @@ interface GeomLayer {
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider)
 
-    fun createConextualMapping(): ContextualMapping
+    fun createContextualMapping(): ContextualMapping
+
+    fun createAnnotations(): Annotations?
 }

@@ -21,4 +21,6 @@ interface ValueSource {
     fun getDataPoint(index: Int, ctx: PlotContext): DataPoint?
 
     fun copy(): ValueSource
+
+    fun getDataPointFormattedText(index: Int): String?
 }

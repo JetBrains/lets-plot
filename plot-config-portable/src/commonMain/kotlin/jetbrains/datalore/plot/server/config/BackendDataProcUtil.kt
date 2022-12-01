@@ -48,7 +48,7 @@ internal object BackendDataProcUtil {
         } else {
             // Need to keep variables without bindings (used in tooltips and for ordering)
             val varsWithoutBinding = layerConfig.run {
-                tooltips.valueSources
+                (tooltips.valueSources + annotations.valueSources)
                     .filterIsInstance<DataFrameValue>()
                     .map(DataFrameValue::getVariableName) +
                         orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable)

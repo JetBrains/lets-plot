@@ -9,6 +9,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.geom.GeomBase
@@ -24,6 +25,8 @@ import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.annotation.AnnotationLine
+import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
@@ -33,6 +36,7 @@ import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
 class GeomLayerBuilder constructor(
     private val geomProvider: GeomProvider,
@@ -57,6 +61,8 @@ class GeomLayerBuilder constructor(
     private var isMarginal: Boolean = false
     private var marginalSide: MarginSide = MarginSide.LEFT
     private var marginalSize: Double = Double.NaN
+
+    private var annotationSpecification: AnnotationSpecification = AnnotationSpecification.NONE
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)
@@ -117,6 +123,11 @@ class GeomLayerBuilder constructor(
         this.isMarginal = isMarginal
         this.marginalSide = marginalSide
         this.marginalSize = marginalSize
+        return this
+    }
+
+    fun annotationSpecification(annotations: AnnotationSpecification, textStyle: ThemeTextStyle): GeomLayerBuilder {
+        this.annotationSpecification = annotations
         return this
     }
 
@@ -202,6 +213,7 @@ class GeomLayerBuilder constructor(
             marginalSide = marginalSide,
             marginalSize = marginalSize,
             fontFamilyRegistry = fontFamilyRegistry,
+            annotationSpecification = annotationSpecification
         )
     }
 
@@ -227,7 +239,8 @@ class GeomLayerBuilder constructor(
         override val isMarginal: Boolean,
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
-        override val fontFamilyRegistry: FontFamilyRegistry
+        override val fontFamilyRegistry: FontFamilyRegistry,
+        private val annotationSpecification: AnnotationSpecification,
 
     ) : GeomLayer {
 
@@ -299,9 +312,14 @@ class GeomLayerBuilder constructor(
             }
         }
 
-        override fun createConextualMapping(): ContextualMapping {
+        override fun createContextualMapping(): ContextualMapping {
             val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
             return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
+        }
+
+        override fun createAnnotations(): Annotations? {
+            val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, isYOrientation)
+            return AnnotationLine.createAnnotations(annotationSpecification, dataAccess, dataFrame)
         }
     }
 

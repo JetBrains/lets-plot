@@ -45,6 +45,11 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
         theme = ThemeConfig(getMap(THEME), fontFamilyRegistry).theme
 
+        layerConfigs.forEach {
+            // to use the plot's text style for annotations
+            it.annotations.textStyle = theme.plot().textStyle()
+        }
+
         val mappersByAes = PlotConfigScaleMappers.createMappers(
             layerConfigs,
             transformByAes,

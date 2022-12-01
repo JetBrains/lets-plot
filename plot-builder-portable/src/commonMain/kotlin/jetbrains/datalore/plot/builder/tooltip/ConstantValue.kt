@@ -67,4 +67,8 @@ class ConstantValue(
             format
         )
     }
+
+    override fun getDataPointFormattedText(index: Int): String? {
+        return formattedValue
+    }
 }

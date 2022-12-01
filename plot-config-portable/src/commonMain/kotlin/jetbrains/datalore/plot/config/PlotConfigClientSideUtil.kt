@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import jetbrains.datalore.plot.builder.theme.Theme
 
 object PlotConfigClientSideUtil {
     internal fun createGuideOptionsMap(scaleConfigs: List<ScaleConfig<*>>): Map<Aes<*>, GuideOptions> {
@@ -128,7 +129,9 @@ object PlotConfigClientSideUtil {
                         )
                     }
 
-                    layerBuilders.add(createLayerBuilder(layerConfig, plotConfig.fontFamilyRegistry, geomInteraction))
+                    layerBuilders.add(
+                        createLayerBuilder(layerConfig, plotConfig.fontFamilyRegistry, geomInteraction, plotConfig.theme)
+                    )
                 }
 
                 val layer = layerBuilders[layerIndex].build(
@@ -168,7 +171,8 @@ object PlotConfigClientSideUtil {
     private fun createLayerBuilder(
         layerConfig: LayerConfig,
         fontFamilyRegistry: FontFamilyRegistry,
-        geomInteraction: GeomInteraction?
+        geomInteraction: GeomInteraction?,
+        theme: Theme
     ): GeomLayerBuilder {
         val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
 
@@ -211,6 +215,8 @@ object PlotConfigClientSideUtil {
                 .locatorLookupSpec(it.createLookupSpec())
                 .contextualMappingProvider(it)
         }
+        // annotations
+        layerBuilder.annotationSpecification(layerConfig.annotations, theme.plot().textStyle())
 
         return layerBuilder
     }
