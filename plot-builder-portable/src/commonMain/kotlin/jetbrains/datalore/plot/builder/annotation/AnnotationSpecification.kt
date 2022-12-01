@@ -14,13 +14,16 @@ import jetbrains.datalore.plot.builder.tooltip.ValueSource
 class AnnotationSpecification(
     val valueSources: List<ValueSource>,
     val linePatterns: List<AnnotationLine>,
+    // other settings
+    val textSize: Double?
 ) {
     var textStyle: ThemeTextStyle = DEFAULT_STYLE
 
     companion object {
         val NONE = AnnotationSpecification(
             valueSources = emptyList(),
-            linePatterns = emptyList()
+            linePatterns = emptyList(),
+            textSize = null
         )
         private val DEFAULT_STYLE = ThemeTextStyle(
             family = FontFamily.SERIF,

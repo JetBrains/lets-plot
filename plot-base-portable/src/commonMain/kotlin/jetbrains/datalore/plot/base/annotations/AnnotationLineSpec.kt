@@ -6,5 +6,5 @@
 package jetbrains.datalore.plot.base.annotations
 
 interface AnnotationLineSpec {
-    fun getDataPointAnnotation(index: Int): String?
+    fun getAnnotationText(index: Int): String?
 }

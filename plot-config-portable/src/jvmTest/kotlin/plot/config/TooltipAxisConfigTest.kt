@@ -15,11 +15,11 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.common.time.TimeUtil
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
+import jetbrains.datalore.plot.config.Option.LinesSpec.FORMATS
+import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD
+import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FORMAT
+import jetbrains.datalore.plot.config.Option.LinesSpec.LINES
 import jetbrains.datalore.plot.config.Option.Scale
-import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
-import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -47,9 +47,9 @@ class TooltipAxisConfigTest {
             additionalScaleOption
         ).toMap()
         val tooltipConfig = listOfNotNull(
-            TOOLTIP_LINES to listOf(if (useVarNameInTooltip) "@v" else "^y"),
+            LINES to listOf(if (useVarNameInTooltip) "@v" else "^y"),
             tooltipFormat?.let { format ->
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to if (useTooltipFormatForVarName) "v" else "^y",
                         FORMAT to format
@@ -300,7 +300,7 @@ class TooltipAxisConfigTest {
 
         private fun assertGeneralTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val generalTooltip = dataPoints
                 .filterNot(TooltipLineSpec.DataPoint::isOutlier)
                 .map(TooltipLineSpec.DataPoint::value)
@@ -310,7 +310,7 @@ class TooltipAxisConfigTest {
 
         private fun assertYAxisTooltip(geomLayer: GeomLayer, expected: String, method: (String) -> Unit = ::fail) {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val yAxisTooltip = dataPoints
                 .filter(TooltipLineSpec.DataPoint::isAxis)
                 .filter { it.aes == Aes.Y }

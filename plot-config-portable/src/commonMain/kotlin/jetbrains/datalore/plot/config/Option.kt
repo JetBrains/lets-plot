@@ -123,6 +123,7 @@ object Option {
         const val MARGINAL = "marginal"
 
         const val ANNOTATIONS = "annotations"
+        const val ANNOTATION_SIZE = "annotation_size"
 
         object Marginal {
             const val SIZE = "margin_size"

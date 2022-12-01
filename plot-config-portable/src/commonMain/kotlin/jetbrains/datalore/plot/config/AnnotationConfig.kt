@@ -21,7 +21,8 @@ class AnnotationConfig(
         return create().run {
             AnnotationSpecification(
                 valueSources = valueSources,
-                linePatterns = linePatterns?.map(::AnnotationLine) ?: emptyList()
+                linePatterns = linePatterns?.map(::AnnotationLine) ?: emptyList(),
+                textSize = getDouble(Option.Layer.ANNOTATION_SIZE)
             )
         }
     }

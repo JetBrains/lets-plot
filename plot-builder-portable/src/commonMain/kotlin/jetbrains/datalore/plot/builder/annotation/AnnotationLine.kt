@@ -28,9 +28,9 @@ class AnnotationLine(
         fields.forEach { it.initDataContext(data, mappedDataAccess) }
     }
 
-    override fun getDataPointAnnotation(index: Int): String? {
+    override fun getAnnotationText(index: Int): String? {
         val dataValues = fields.map { dataValue ->
-            dataValue.getDataPointFormattedText(index) ?: return null
+            dataValue.getAnnotationText(index) ?: return null
         }
         return myLineFormatter.format(dataValues.map { it })
     }
@@ -54,7 +54,7 @@ class AnnotationLine(
                 textStyle = TextStyle(
                     spec.textStyle.family.name,
                     spec.textStyle.face,
-                    spec.textStyle.size,
+                    spec.textSize ?: spec.textStyle.size,
                     spec.textStyle.color
                 )
             )

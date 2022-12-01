@@ -22,5 +22,5 @@ interface ValueSource {
 
     fun copy(): ValueSource
 
-    fun getDataPointFormattedText(index: Int): String?
+    fun getAnnotationText(index: Int): String?
 }

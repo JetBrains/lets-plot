@@ -11,7 +11,7 @@ class Annotations(
     private val lines: List<AnnotationLineSpec>,
     val textStyle: TextStyle
 ) {
-    fun getDataPointAnnotation(index: Int): String {
-         return lines.mapNotNull { it.getDataPointAnnotation(index) }.joinToString("\n")
+    fun getAnnotationText(index: Int): String {
+         return lines.mapNotNull { it.getAnnotationText(index) }.joinToString("\n")
     }
 }
