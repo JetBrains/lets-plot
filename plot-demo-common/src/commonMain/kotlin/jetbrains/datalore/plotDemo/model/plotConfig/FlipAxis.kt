@@ -10,9 +10,9 @@ import jetbrains.datalore.plot.parsePlotSpec
 class FlipAxis {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            pointsAndSmooth(false),
+            pointsAndSmooth(false),
             pointsAndSmooth(true),
-//            pointsAndSmooth(false, yOrientation = true),
+            pointsAndSmooth(false, yOrientation = true),
         )
     }
 
