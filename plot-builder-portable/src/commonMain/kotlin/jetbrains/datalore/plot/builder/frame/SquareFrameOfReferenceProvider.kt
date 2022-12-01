@@ -59,15 +59,15 @@ internal class SquareFrameOfReferenceProvider(
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
             hAxisSpec.theme,
-//            Orientation.BOTTOM
-            hAxisOrientation
+            Orientation.BOTTOM
+//            hAxisOrientation
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
             vAxisSpec.theme,
-//            Orientation.LEFT
-            vAxisOrientation
+            Orientation.LEFT
+//            vAxisOrientation
         )
 
         return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)
