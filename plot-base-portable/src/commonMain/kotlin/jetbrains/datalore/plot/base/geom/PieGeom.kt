@@ -7,18 +7,23 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.algorithms.AdaptiveResampler
 import jetbrains.datalore.base.collections.filterNotNullKeys
+import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.geom.util.DataPointAestheticsDelegate
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.TextUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.SvgCircleElement
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
@@ -53,6 +58,10 @@ class PieGeom : GeomBase() {
 
         sectors.forEach { buildHint(it, ctx.targetCollector) }
         appendNodes(sectors.map(::buildSvgSector), root)
+
+        if (ctx.annotations != null) {
+            buildAnnotations(root, sectors, ctx)
+        }
     }
 
     private fun buildSvgSector(sector: Sector): LinePath {
@@ -159,9 +168,9 @@ class PieGeom : GeomBase() {
         val angle = endAngle - startAngle
         val radius: Double = AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
-        private val direction = startAngle + angle / 2
+        val direction = startAngle + angle / 2
         private val explode = radius * p.explode()!!
-        private val sectorCenter = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
+        val sectorCenter = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 
         val outerArcStart = outerArcPoint(startAngle)
@@ -202,6 +211,86 @@ class PieGeom : GeomBase() {
         }
 
         private fun shapeSize(p: DataPointAesthetics) = AesScaling.pieDiameter(p)
+    }
+
+    private fun buildAnnotations(
+        root: SvgRoot,
+        sectors: List<Sector>,
+        ctx: GeomContext
+    ) {
+        fun toTextDataPointAesthetics(p: DataPointAesthetics, color: Color? = null): DataPointAesthetics {
+            return object : DataPointAestheticsDelegate(p) {
+                val textStyle: TextStyle = ctx.annotations!!.textStyle
+
+                override operator fun <T> get(aes: Aes<T>): T? {
+                    val value: Any? = when (aes) {
+                        Aes.SIZE -> textStyle.size
+                        Aes.FAMILY -> textStyle.family
+                        Aes.FONTFACE -> textStyle.face.toString()
+                        Aes.COLOR -> color ?: p.color()
+                        else -> super.get(aes)
+                    }
+                    @Suppress("UNCHECKED_CAST")
+                    return value as T?
+                }
+            }
+        }
+        val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector =
+            { text, p -> TextUtil.measure(text, toTextDataPointAesthetics(p), ctx) }
+
+        val annotationGeom = TextGeom()
+
+        sectors.forEach { sector ->
+            val text = ctx.annotations!!.getAnnotationText(sector.p.index())
+            val (location, isOutside) = placeAnnotation(sector, textSizeGetter(text, sector.p))
+
+            // choose color for text
+            val textColor = when {
+                isOutside -> ctx.annotations!!.textStyle.color // or use sector's color?
+                Colors.luminance(getFillColor(sector.p)) < 0.5 -> Color.WHITE // if fill is dark
+                else -> Color.BLACK
+            }
+
+            val g = annotationGeom.buildTextComponent(
+                toTextDataPointAesthetics(sector.p, textColor),
+                location,
+                text,
+                sizeUnitRatio = 1.0,
+                ctx,
+                boundsCenter = null
+            )
+            root.add(g)
+        }
+    }
+
+    private fun placeAnnotation(
+        sector: Sector,
+        textSize: DoubleVector
+    ): Pair<DoubleVector, Boolean> {
+        val placeOutside: Boolean
+        val location = run {
+            // center of the pie slice geometry:
+            val centralPos = with(sector) {
+                val offset = 0.5 * (sector.radius - sector.holeRadius)
+                sectorCenter.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
+                    .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
+            }
+
+            val textRect = DoubleRectangle(centralPos.subtract(textSize.mul(0.5)), textSize)
+            val side1 = DoubleSegment(sector.innerArcStart, sector.outerArcStart)
+            val side2 = DoubleSegment(sector.innerArcEnd, sector.outerArcEnd)
+            placeOutside = textRect.parts.any { side1.intersection(it) != null || side2.intersection(it) != null }
+
+            if (placeOutside) {
+                val offset = 1.25 * sector.radius
+                with(sector) {
+                    sectorCenter.add(DoubleVector(offset * cos(direction), offset * sin(direction)))
+                }
+            } else {
+                centralPos
+            }
+        }
+        return location to placeOutside
     }
 
     companion object {
