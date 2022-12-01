@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.scale
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.builder.guide.Orientation
 
 // ToDo: remove <T>
 interface ScaleProvider<T> {
@@ -16,6 +17,7 @@ interface ScaleProvider<T> {
     val breaks: List<Any>?
     val limits: List<Any?>? // when 'continuous' limits, NULL means undefined upper or lower limit.
     val continuousTransform: ContinuousTransform
+    val axisOrientation: Orientation?
 
     /**
      * Create scale for discrete input (domain)

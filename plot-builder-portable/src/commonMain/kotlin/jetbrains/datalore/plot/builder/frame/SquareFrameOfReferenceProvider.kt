@@ -28,6 +28,8 @@ internal class SquareFrameOfReferenceProvider(
     private val vScaleProto: Scale<Double>,
     private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
+    private val hAxisOrientation: Orientation,
+    private val vAxisOrientation: Orientation,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
     private val domainByMargin: Map<MarginSide, DoubleSpan>,
@@ -57,13 +59,15 @@ internal class SquareFrameOfReferenceProvider(
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
             hAxisSpec.theme,
-            Orientation.BOTTOM
+//            Orientation.BOTTOM
+            hAxisOrientation
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
             vAxisSpec.theme,
-            Orientation.LEFT
+//            Orientation.LEFT
+            vAxisOrientation
         )
 
         return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)

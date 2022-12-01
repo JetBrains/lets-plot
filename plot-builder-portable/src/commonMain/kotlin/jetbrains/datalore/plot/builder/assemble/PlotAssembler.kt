@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.frame.BogusFrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.frame.SquareFrameOfReferenceProvider
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayout
@@ -32,6 +33,8 @@ class PlotAssembler private constructor(
     private val scaleMap: TypedScaleMap,
     private val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
     private val coordProvider: CoordProvider,
+    private val xAxisOrientation: Orientation,
+    private val yAxisOrientation: Orientation,
     private val theme: Theme
 ) {
 
@@ -71,8 +74,6 @@ class PlotAssembler private constructor(
 
         val legendsBoxInfos = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
-//                layersByTile,
-//                scaleMap,
                 plotContext,
                 scaleMappersNP,
                 guideOptionsMap,
@@ -114,6 +115,11 @@ class PlotAssembler private constructor(
                 else -> scaleXProto to scaleYProto
             }
 
+            val (hAxisOrientation, vAxisOrientation) = when (flipAxis) {
+                true -> yAxisOrientation to xAxisOrientation
+                else -> xAxisOrientation to yAxisOrientation
+            }
+
             // Marginal layers.
             // Marginal layers share "marginal domain" and layout across all tiles.
             val marginalLayers = marginalLayersByTile.flatten()
@@ -128,6 +134,7 @@ class PlotAssembler private constructor(
                         hScaleProto, vScaleProto,
                         adjustedDomain,
                         flipAxis,
+                        hAxisOrientation, vAxisOrientation,
                         theme,
                         marginsLayout,
                         domainByMargin
@@ -183,13 +190,14 @@ class PlotAssembler private constructor(
     }
 
     companion object {
-        // Note: 'singleTile' is only used in demos.
-        fun singleTile(
+        fun demoAndTest(
             plotLayers: List<GeomLayer>,
             scaleMap: TypedScaleMap,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
-            theme: Theme
+            theme: Theme,
+            xAxisOrientation: Orientation = Orientation.BOTTOM,
+            yAxisOrientation: Orientation = Orientation.LEFT,
         ): PlotAssembler {
             val layersByTile = ArrayList<List<GeomLayer>>()
             layersByTile.add(plotLayers)
@@ -198,6 +206,8 @@ class PlotAssembler private constructor(
                 scaleMap,
                 scaleMappersNP,
                 coordProvider,
+                xAxisOrientation,
+                yAxisOrientation,
                 theme
             )
         }
@@ -207,6 +217,8 @@ class PlotAssembler private constructor(
             scaleMap: TypedScaleMap,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
+            xAxisOrientation: Orientation,
+            yAxisOrientation: Orientation,
             theme: Theme
         ): PlotAssembler {
             return PlotAssembler(
@@ -214,6 +226,8 @@ class PlotAssembler private constructor(
                 scaleMap,
                 scaleMappersNP,
                 coordProvider,
+                xAxisOrientation,
+                yAxisOrientation,
                 theme
             )
         }

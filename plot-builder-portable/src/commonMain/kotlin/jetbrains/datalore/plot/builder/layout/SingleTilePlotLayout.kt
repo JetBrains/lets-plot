@@ -16,6 +16,7 @@ internal class SingleTilePlotLayout(
 ) : PlotLayoutBase() {
 
     init {
+        // ToDo: axis position
         val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) PADDING else 0.0
         val bottomPadding = if(!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) PADDING else 0.0
         setPadding(top = PADDING, right = PADDING, bottomPadding, leftPadding)

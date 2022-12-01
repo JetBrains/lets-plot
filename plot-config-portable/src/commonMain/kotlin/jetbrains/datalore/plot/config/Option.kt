@@ -423,6 +423,13 @@ object Option {
         const val GUIDE = "guide"
         const val FORMAT = "format"
 
+        // position: left, right, top, bottom  (axis position - only X/Y scales)
+        const val POSITION = "position"
+        const val POSITION_L = "left"
+        const val POSITION_R = "right"
+        const val POSITION_T = "top"
+        const val POSITION_B = "bottom"
+
         // continuous scale
         const val CONTINUOUS_TRANSFORM = "trans"
 

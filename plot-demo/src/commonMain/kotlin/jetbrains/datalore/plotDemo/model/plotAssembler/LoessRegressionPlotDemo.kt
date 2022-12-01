@@ -46,7 +46,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .map { it.scaleMapppersNP }
             .reduce { sum, el -> sum + el }
 
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             layers,
             scaleByAes,
             scaleMappersNP,
@@ -387,7 +387,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
                 .addBinding(VarBinding(varY, Aes.Y))
                 .build(data, scaleByAes, emptyMap())
         }
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             layers,
             scaleByAes,
             emptyMap(),

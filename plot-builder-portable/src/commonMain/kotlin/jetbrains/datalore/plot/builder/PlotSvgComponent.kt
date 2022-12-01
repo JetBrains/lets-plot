@@ -158,7 +158,6 @@ class PlotSvgComponent constructor(
             })
         }
 
-        @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
         }
@@ -221,7 +220,7 @@ class PlotSvgComponent constructor(
             val plotOuterOrigin = overallRect.origin.add(deltaApplied)
             DoubleRectangle(plotOuterOrigin, plotOuterSize)
         }
-        @Suppress("ConstantConditionIf")
+
         if (DEBUG_DRAWING) {
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
@@ -234,7 +233,7 @@ class PlotSvgComponent constructor(
                 plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
             )
         }
-        @Suppress("ConstantConditionIf")
+
         if (DEBUG_DRAWING) {
             drawDebugRect(
                 plotOuterBoundsWithoutTitleAndCaption,
@@ -249,7 +248,6 @@ class PlotSvgComponent constructor(
             .add(
                 axisTitleSizeDelta(
                     axisTitleLeft = axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-//                    axisTitleBottom = null to PlotLabelSpec(Font(FONT_FAMILY_NORMAL, 0)),
                     axisTitleBottom = null to PlotLabelSpec.DUMMY,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
@@ -307,13 +305,11 @@ class PlotSvgComponent constructor(
                 axisOrigin = DoubleVector(geomOuterBoundsAbsolute.left, geomOuterBoundsAbsolute.bottom)
             )
 
-            @Suppress("ConstantConditionIf")
             if (DEBUG_DRAWING) {
                 drawDebugRect(geomInnerBoundsAbsolute, Color.ORANGE, "ORANGE: geomInnerBoundsAbsolute")
             }
         }
 
-        @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
         }
@@ -425,7 +421,6 @@ class PlotSvgComponent constructor(
         val overallTileBounds = PlotLayoutUtil.overallTileBounds(plotInfo)
             .add(plotInnerOrigin)
 
-        @Suppress("ConstantConditionIf")
         if (DEBUG_DRAWING) {
             drawDebugRect(overallTileBounds, Color.DARK_MAGENTA, "DARK_MAGENTA: overallTileBounds")
         }
@@ -433,9 +428,11 @@ class PlotSvgComponent constructor(
         // add axis titles
         if (axisEnabled) {
             if (axisTitleLeft != null) {
+                val vAxisOrientation = plotInfo.tiles.first().vAxisInfo!!.orientation
                 addAxisTitle(
                     axisTitleLeft,
-                    Orientation.LEFT,
+//                    Orientation.LEFT,
+                    vAxisOrientation,
                     overallTileBounds,
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
@@ -445,9 +442,11 @@ class PlotSvgComponent constructor(
                 )
             }
             if (axisTitleBottom != null) {
+                val hAxisOrientation = plotInfo.tiles.first().hAxisInfo!!.orientation
                 addAxisTitle(
                     axisTitleBottom,
-                    Orientation.BOTTOM,
+//                    Orientation.BOTTOM,
+                    hAxisOrientation,
                     overallTileBounds,
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
@@ -515,6 +514,7 @@ class PlotSvgComponent constructor(
                     overallTileBounds.left, overallGeomBounds.top,
                     overallTileBounds.width, overallGeomBounds.height
                 )
+
             Orientation.TOP,
             Orientation.BOTTOM ->
                 DoubleRectangle(
@@ -540,6 +540,7 @@ class PlotSvgComponent constructor(
                     textHeight + margins.width(),
                     referenceRect.height
                 )
+
             Orientation.RIGHT ->
                 DoubleRectangle(
                     referenceRect.right,
@@ -547,12 +548,14 @@ class PlotSvgComponent constructor(
                     textHeight + margins.width(),
                     referenceRect.height
                 )
+
             Orientation.TOP -> DoubleRectangle(
                 referenceRect.left,
                 referenceRect.top - textHeight - margins.height(),
                 referenceRect.width,
                 textHeight + margins.height()
             )
+
             Orientation.BOTTOM -> DoubleRectangle(
                 referenceRect.left,
                 referenceRect.bottom,
@@ -570,6 +573,7 @@ class PlotSvgComponent constructor(
                     bottomMargin = margins.bottom
                 )
             }
+
             else -> {
                 createTextRectangle(
                     axisTitleElementRect,

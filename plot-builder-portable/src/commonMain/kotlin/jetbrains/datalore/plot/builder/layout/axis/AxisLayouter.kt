@@ -9,13 +9,14 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 import jetbrains.datalore.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 abstract class AxisLayouter(
-    val orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+    val orientation: Orientation,
     private val domainRange: DoubleSpan,
     private val labelsLayout: AxisLabelsLayout
 ) {
@@ -47,7 +48,7 @@ abstract class AxisLayouter(
 
     companion object {
         fun create(
-            orientation: jetbrains.datalore.plot.builder.guide.Orientation,
+            orientation: Orientation,
             axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
         ): AxisLayouter {
 

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.builder.guide.Orientation
 
 class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
@@ -26,6 +27,12 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
+
+    var axisOrientation: Orientation? = when (aes) {
+        Aes.X -> Orientation.BOTTOM
+        Aes.Y -> Orientation.LEFT
+        else -> null
+    }
 
     fun name(name: String): ScaleProviderBuilder<T> {
         myName = name
@@ -136,6 +143,22 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         override val limits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
 
         override val continuousTransform: ContinuousTransform = b.myContinuousTransform
+        override val axisOrientation: Orientation? = when (b.aes) {
+            Aes.X -> {
+                val orientation = b.axisOrientation!!
+                require(orientation.isHorizontal) { "Illegal X-axis position: $orientation" }
+                orientation
+            }
+
+            Aes.Y -> {
+                val orientation = b.axisOrientation!!
+                require(!orientation.isHorizontal) { "Illegal Y-axis position: $orientation" }
+                orientation
+            }
+
+            else -> null
+        }
+
 
         private fun scaleName(variable: DataFrame.Variable): String {
             return myName ?: variable.label

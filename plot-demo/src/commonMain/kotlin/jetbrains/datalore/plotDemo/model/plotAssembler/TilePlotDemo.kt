@@ -89,7 +89,7 @@ open class TilePlotDemo : SimpleDemoBase() {
         //
         // Plot
         //
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(tilesLayer),
             scaleByAes,
             scaleMappersNP,

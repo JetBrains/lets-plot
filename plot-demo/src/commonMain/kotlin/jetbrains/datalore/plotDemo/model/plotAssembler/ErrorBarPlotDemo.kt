@@ -214,7 +214,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
             //
             // Plot
             //
-            val assembler = PlotAssembler.singleTile(
+            val assembler = PlotAssembler.demoAndTest(
                 listOf(
                     errorBarsLayer,
                     linesLayer,
