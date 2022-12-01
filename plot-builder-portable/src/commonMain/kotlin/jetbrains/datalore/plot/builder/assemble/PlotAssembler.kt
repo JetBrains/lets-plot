@@ -116,7 +116,7 @@ class PlotAssembler private constructor(
             }
 
             val (hAxisOrientation, vAxisOrientation) = when (flipAxis) {
-                true -> yAxisOrientation to xAxisOrientation
+                true -> yAxisOrientation.flip() to xAxisOrientation.flip()
                 else -> xAxisOrientation to yAxisOrientation
             }
 
