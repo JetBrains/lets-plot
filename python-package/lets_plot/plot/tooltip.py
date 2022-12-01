@@ -119,7 +119,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_min_width'] = self._tooltip_min_width
         d['tooltip_color'] = self._tooltip_color
         d['variables'] = self._tooltip_variables
-        d['tooltip_title'] = self._tooltip_title
+        d['title'] = self._tooltip_title
         return _filter_none(d)
 
     def format(self, field=None, format=None):

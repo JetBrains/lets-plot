@@ -43,7 +43,7 @@ class LongTooltipText {
               "geom": "point",
               "color": "#94ccd1",
               "tooltips": {
-                "tooltip_lines": [
+                "lines": [
                   "@|@type",
                   "@|@description",
                   "@|@text"

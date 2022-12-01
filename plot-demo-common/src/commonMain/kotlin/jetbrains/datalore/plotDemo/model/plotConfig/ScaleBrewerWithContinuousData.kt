@@ -56,7 +56,7 @@ open class ScaleBrewerWithContinuousData {
             {
                 'mapping':{},
                 'geom':'tile',
-                'tooltips': {'tooltip_formats': [], 'tooltip_lines': ['^fill']}
+                'tooltips': {'formats': [], 'lines': ['^fill']}
             }
         ]
 }                

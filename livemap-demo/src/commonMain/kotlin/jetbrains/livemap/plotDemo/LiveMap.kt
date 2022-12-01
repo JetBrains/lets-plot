@@ -1609,12 +1609,12 @@ class LiveMap {
       },
       "mapping": {},
       "tooltips": {
-        "tooltip_formats": [],
-        "tooltip_lines": [
+        "formats": [],
+        "lines": [
           "Elevation | @Elevation_meters(m)/@Elevation_ft(ft)"
         ],
         "tooltip_color": "black",
-        "tooltip_variables": [
+        "variables": [
           "Name",
           "Region",
           "Last_eruption"
@@ -1903,7 +1903,7 @@ class LiveMap {
         "size": "passengers"
       },
       "tooltips": {
-        "tooltip_formats": [
+        "formats": [
           {
             "field": "passengers",
             "format": "{.1f} m"
@@ -1917,7 +1917,7 @@ class LiveMap {
             "format": ".2f"
           }
         ],
-        "tooltip_lines": [
+        "lines": [
           "@|@IATA",
           "Passengers|@passengers",
           "City|@city",
@@ -2484,10 +2484,10 @@ class LiveMap {
                     "y": "lat"
                   },
                   "tooltips": {
-                    "tooltip_lines": [
+                    "lines": [
                         "^x"
                      ],
-                     "tooltip_formats": [
+                     "formats": [
                         { "field": "^x", "format": "mean = {.4f}" }
                      ]
                   },

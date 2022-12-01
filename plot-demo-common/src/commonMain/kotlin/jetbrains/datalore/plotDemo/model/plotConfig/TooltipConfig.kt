@@ -46,19 +46,19 @@ class TooltipConfig {
                         {
                            'geom': 'point',
                            'tooltips' : {
-                               'tooltip_lines': [  
+                               'lines': [  
                                     '$aesColor (miles per gallon)',
                                     '@|$modelYear',
                                     'x/y|$aesX x $aesY',                                    
                                     '',
                                     '#mpg data set'
                                ],
-                               'tooltip_formats': [
+                               'formats': [
                                     { 'field' : '$aesX', 'format' : '.1f' }, 
                                     { 'field' : '$aesY', 'format' : '.2f' }, 
                                     { 'field' : 'model year', 'format' : '19{.0f}' }
                                ],                           
-                               'tooltip_title': 'car \'$vehicleName\' ($originCar)'
+                               'title': 'car \'$vehicleName\' ($originCar)'
                            }
                         }
                      ]
@@ -84,7 +84,7 @@ class TooltipConfig {
                            'geom': 'area',
                            'stat': 'density',
                            'tooltips' : {
-                                'tooltip_formats': [
+                                'formats': [
                                     { 'field' : '$aesColor', 'format' : 'is {.4f} (cm)' }
                                  ]
                             }
@@ -136,7 +136,7 @@ class TooltipConfig {
                         {
                            'geom': 'area',
                            'tooltips' : {
-                               'tooltip_lines': [  
+                               'lines': [  
                                     '@|$aesFill',   
                                     'length (x)|$aesX',
                                     'density (y)|$aesY',
@@ -196,11 +196,11 @@ class TooltipConfig {
         {
           'geom': 'boxplot',
           'tooltips': {
-            'tooltip_formats': [
+            'formats': [
               { 'field' : '^middle', 'format' : '{{mid}} = {.3f}' },
               { 'field' : '^Y', 'format' : '.2f' }
             ],
-            'tooltip_lines': [   
+            'lines': [   
                'min, max|^ymin, ^ymax'
             ]
           }

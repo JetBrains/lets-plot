@@ -86,10 +86,10 @@ class ThemeFlavors {
                     {
                         "geom": "point",
                         "tooltips": {
-                            "tooltip_lines": [
+                            "lines": [
                                 "label|value", "The static text"
                             ],
-                            "tooltip_title": "Title"
+                            "title": "Title"
                         }
                    }
                 ]

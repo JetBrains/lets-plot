@@ -131,8 +131,7 @@ class FacetGridDemo {
             |    {
             |      "geom": "histogram",
             |      "tooltips": {
-            |        "tooltip_formats": [],
-            |        "tooltip_lines": ["@|@c"]
+            |        "lines": ["@|@c"]
             |      }
             |    }
             |  ]
