@@ -277,7 +277,7 @@ internal object PositionalScalesUtil {
                 layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
                 else -> null
             }?.let { widthAes ->
-                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx.getResolution(widthAes))
+                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx.getResolution(widthAxis))
             },
             heightAxis to when {
                 Aes.HEIGHT in renderedAes -> Aes.HEIGHT
@@ -289,7 +289,7 @@ internal object PositionalScalesUtil {
                         val geom = layer.geom as AreaRidgesGeom
                         computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geom.scale, geom.minHeight)
                     }
-                    else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAes))
+                    else -> computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx.getResolution(heightAxis))
                 }
             }
         )
