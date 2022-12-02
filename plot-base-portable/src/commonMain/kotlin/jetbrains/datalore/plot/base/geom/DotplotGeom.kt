@@ -26,7 +26,7 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 
-open class DotplotGeom : GeomBase() {
+open class DotplotGeom : GeomBase(), WithWidth {
     var dotSize: Double = DEF_DOTSIZE
     var stackRatio: Double = DEF_STACKRATIO
     var stackGroups: Boolean = DEF_STACKGROUPS
@@ -232,6 +232,15 @@ open class DotplotGeom : GeomBase() {
                 )
             }
         }
+    }
+
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
+        return PointDimensionsUtil.dimensionSpan(
+            p,
+            coordAes,
+            sizeAes = Aes.BINWIDTH,
+            resolution
+        )
     }
 
     companion object {
