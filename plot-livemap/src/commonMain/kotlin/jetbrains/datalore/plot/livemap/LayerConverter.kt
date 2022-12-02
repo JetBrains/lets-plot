@@ -10,8 +10,6 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.livemap.api.*
 
@@ -41,12 +39,7 @@ object LayerConverter {
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
-                LIVE_MAP -> when ((layer.geom as LiveMapGeom).displayMode) {
-                    DisplayMode.POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
-                    DisplayMode.PIE -> MapLayerKind.PIE to dataPointsConverter.toPie()
-                    DisplayMode.BAR -> MapLayerKind.BAR to dataPointsConverter.toBar()
-                    else -> error("Unexpected livemap display mode.")
-                }
+                PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom)
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
@@ -196,31 +189,18 @@ object LayerConverter {
                         this.sizeScalingRange = sizeScalingRange
                         this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
-                        fromDataPoint(it)
-                    }
-                }
-            }
-
-            MapLayerKind.BAR -> bars {
-                liveMapDataPoints.forEach {
-                    bar {
-                        this.sizeScalingRange = sizeScalingRange
-                        this.alphaScalingEnabled = alphaScalingEnabled
-                        layerIndex = layerIdx
-                        fromDataPoint(it)
+                        holeSize = it.holeRatio
+                        point = it.point
+                        radius = it.radius
+                        strokeWidth = it.strokeWidth
+                        strokeColor = it.strokeColor
+                        indices = it.indices
+                        values = it.valueArray
+                        colors = it.colorArray
+                        explodes = it.explodeArray
                     }
                 }
             }
         }
-    }
-
-    private fun Symbol.fromDataPoint(p: DataPointLiveMapAesthetics) {
-        point = p.point
-        radius = p.radius
-        strokeColor = p.strokeColor
-        strokeWidth = 1.0
-        indices = p.indices
-        values = p.valueArray
-        colors = p.colorArray
     }
 }

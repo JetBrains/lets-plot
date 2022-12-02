@@ -14,6 +14,7 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 import jetbrains.datalore.plot.base.scale.transform.TimeBreaksGen
 import jetbrains.datalore.plot.base.scale.transform.Transforms
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
@@ -118,12 +119,14 @@ class ScaleConfig<T> constructor(
             null -> {} // Nothing
             IDENTITY ->
                 mapperProvider = createIdentityMapperProvider(aes, naValue)
+
             COLOR_GRADIENT ->
                 mapperProvider = ColorGradientMapperProvider(
                     getColor(LOW),
                     getColor(HIGH),
                     (naValue as Color)
                 )
+
             COLOR_GRADIENT2 ->
                 mapperProvider = ColorGradient2MapperProvider(
                     getColor(LOW),
@@ -131,11 +134,13 @@ class ScaleConfig<T> constructor(
                     getColor(HIGH),
                     getDouble(MIDPOINT), naValue as Color
                 )
+
             COLOR_GRADIENTN ->
                 mapperProvider = ColorGradientnMapperProvider(
                     getStringList(COLORS).map(Colors::parseColor),
                     naValue as Color
                 )
+
             COLOR_HUE ->
                 mapperProvider = ColorHueMapperProvider(
                     getDoubleList(HUE_RANGE),
@@ -144,12 +149,14 @@ class ScaleConfig<T> constructor(
                     getDouble(START_HUE),
                     getDouble(DIRECTION), naValue as Color
                 )
+
             COLOR_GREY ->
                 mapperProvider = GreyscaleLightnessMapperProvider(
                     getDouble(START),
                     getDouble(END),
                     naValue as Color
                 )
+
             COLOR_BREWER ->
                 mapperProvider = ColorBrewerMapperProvider(
                     getString(PALETTE_TYPE),
@@ -157,6 +164,7 @@ class ScaleConfig<T> constructor(
                     getDouble(DIRECTION),
                     naValue as Color
                 )
+
             COLOR_CMAP ->
                 mapperProvider = ColormapMapperProvider(
                     getString(Viridis.CMAP_NAME),
@@ -166,11 +174,13 @@ class ScaleConfig<T> constructor(
                     getDouble(Viridis.DIRECTION),
                     naValue as Color
                 )
+
             SIZE_AREA ->
                 mapperProvider = SizeAreaMapperProvider(
                     getDouble(MAX_SIZE),
                     naValue as Double
                 )
+
             else ->
                 throw IllegalArgumentException("Aes '" + aes.name + "' - unexpected scale mapper kind: '" + scaleMapperKind + "'")
         }
@@ -220,6 +230,10 @@ class ScaleConfig<T> constructor(
             b.continuousTransform(transform)
         }
 
+        if (aes in listOf<Aes<*>>(Aes.X, Aes.Y) && has(Option.Scale.POSITION)) {
+            b.axisOrientation = getAxisOrientation()
+        }
+
         return applyCommons(b)
     }
 
@@ -260,6 +274,17 @@ class ScaleConfig<T> constructor(
 
     fun getGuideOptions(): GuideConfig {
         return GuideConfig.create(get(GUIDE)!!)
+    }
+
+    fun getAxisOrientation(): Orientation {
+        val s = getStringSafe(Option.Scale.POSITION)
+        return when (s.trim().lowercase()) {
+            Option.Scale.POSITION_L -> Orientation.LEFT
+            Option.Scale.POSITION_R -> Orientation.RIGHT
+            Option.Scale.POSITION_T -> Orientation.TOP
+            Option.Scale.POSITION_B -> Orientation.BOTTOM
+            else -> throw IllegalArgumentException("'${Option.Scale.POSITION}' - unexpected value: '$s'. Valid values: left|right|top|bottom.")
+        }
     }
 
     companion object {

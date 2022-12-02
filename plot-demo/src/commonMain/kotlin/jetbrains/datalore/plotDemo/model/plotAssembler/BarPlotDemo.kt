@@ -73,7 +73,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             .addConstantAes(Aes.WIDTH, 0.75)
             .build(data, scaleByAes, emptyMap())
 
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
             emptyMap(),
@@ -156,7 +156,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             .addConstantAes(Aes.WIDTH, if (stacked) 0.75 else 0.9)
             .build(data, scaleByAes, scaleMappersNP)
 
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,

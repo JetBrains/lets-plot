@@ -180,8 +180,12 @@ object SeriesUtil {
     }
 
     /**
-     * ToDo: Use with caution.
-     * ToDo: The correct method of domain validation is temporarily in 'Transforms.ensureApplicableDomain'.
+     * Use with caution!
+     *
+     * Do not use this method on original data ranges (i.e. before transform).
+     * The correct method for validation of original data ranges is 'Transforms.ensureApplicableDomain'.
+     *
+     * Can only be used on transformed data ranges or when "transform" is irrelevant.
      */
     fun ensureApplicableRange(
         range: DoubleSpan?,

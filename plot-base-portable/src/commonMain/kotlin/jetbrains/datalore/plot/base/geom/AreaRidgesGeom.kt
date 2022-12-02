@@ -6,13 +6,15 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
-class AreaRidgesGeom : GeomBase() {
+class AreaRidgesGeom : GeomBase(), WithHeight {
     var scale: Double = DEF_SCALE
     var minHeight: Double = DEF_MIN_HEIGHT
     var quantileLines: Boolean = DEF_QUANTILE_LINES
@@ -70,7 +72,12 @@ class AreaRidgesGeom : GeomBase() {
         val boundTransform = toLocationBound()
 
         dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
-            val paths = helper.createBands(points, boundTransform) { p -> DoubleVector(p.x()!!, p.y()!!) }
+            val paths = helper.createBands(
+                points,
+                boundTransform,
+                { p -> DoubleVector(p.x()!!, p.y()!!) },
+                simplifyBorders = true
+            )
             appendNodes(paths, root)
         }
 
@@ -91,7 +98,13 @@ class AreaRidgesGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val pIt = dataPoints.sortedWith(compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, DataPointAesthetics::x)).iterator()
+        val pIt = dataPoints.sortedWith(
+            compareBy(
+                DataPointAesthetics::group,
+                DataPointAesthetics::quantile,
+                DataPointAesthetics::x
+            )
+        ).iterator()
         if (!pIt.hasNext()) return
         var pPrev = pIt.next()
         while (pIt.hasNext()) {
@@ -154,6 +167,30 @@ class AreaRidgesGeom : GeomBase() {
                     TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                 }
             )
+        }
+    }
+
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
+        val sizeAes = Aes.HEIGHT
+        @Suppress("NAME_SHADOWING")
+        val resolution = this.scale
+        val lowerBound: Double = this.minHeight
+
+        val loc = p[coordAes]
+        val size = p[sizeAes]
+
+        return if (SeriesUtil.allFinite(loc, size)) {
+            loc!!
+            val expand = resolution * size!!
+
+            val lowerValue = resolution * lowerBound
+            val upperValue = expand
+            DoubleSpan(
+                loc + lowerValue,
+                loc + upperValue
+            )
+        } else {
+            null
         }
     }
 

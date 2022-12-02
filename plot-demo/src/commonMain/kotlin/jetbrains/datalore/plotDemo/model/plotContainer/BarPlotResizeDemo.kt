@@ -105,7 +105,7 @@ class BarPlotResizeDemo private constructor(
         //    };
         //  }
         //};
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,

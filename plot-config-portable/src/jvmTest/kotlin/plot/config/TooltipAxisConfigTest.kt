@@ -213,8 +213,8 @@ class TooltipAxisConfigTest {
 
         run {
             val geomLayer = log10(scaleFormat = null, tooltipFormat = null)
-            assertGeneralTooltip(geomLayer, "0.34")
-            assertYAxisTooltip(geomLayer, "0.34")
+            assertGeneralTooltip(geomLayer, "0.344")
+            assertYAxisTooltip(geomLayer, "0.344")
             assertEquals("0.32", getYTick(geomLayer, closedRange))
         }
         run {

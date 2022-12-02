@@ -5,7 +5,9 @@
 
 package jetbrains.livemap.chart
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.toDoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
@@ -16,75 +18,147 @@ import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorHelper
 import jetbrains.livemap.searching.LocatorUtil
 import jetbrains.livemap.searching.SearchResult
+import jetbrains.livemap.toClientPoint
 import kotlin.math.PI
-import kotlin.math.floor
+import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
 
 object DonutChart {
 
-    private data class Sector(
+    private class Sector(
         val index: Int,
         val radius: Double,
+        val holeRadius: Double,
+        val fillColor: Color,
         val startAngle: Double,
         val endAngle: Double,
-        val color: Color,
-    )
+        explode: Double
+    ) {
+        private val angle = endAngle - startAngle
+        private val direction = startAngle + angle / 2
 
-    private fun splitSectors(symbol: SymbolComponent, scaleFactor: Double): List<Sector> {
-        var currentAngle = -PI / 2
-        return symbol.values.indices.map {
-            val endAngle = currentAngle + symbol.values[it]
+        val sectorCenter = DoubleVector(explode * cos(direction), explode * sin(direction))
+
+        val outerArcStart = outerArcPoint(startAngle)
+        val outerArcEnd = outerArcPoint(endAngle)
+
+        val innerArcStart = innerArcPoint(startAngle)
+        val innerArcEnd = innerArcPoint(endAngle)
+
+        fun outerArcPoint(angle: Double) = arcPoint(radius, angle)
+        fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
+
+        private fun arcPoint(radius: Double, angle: Double): DoubleVector {
+            return sectorCenter.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
+        }
+    }
+
+    private fun computeSectors(pieSpec: PieSpecComponent, scaleFactor: Double): List<Sector> {
+        val sum = pieSpec.sliceValues.sum()
+        fun angle(slice: Double) = when (sum) {
+            0.0 -> 1.0 / pieSpec.sliceValues.size
+            else -> abs(slice) / sum
+        }.let { PI * 2.0 * it }
+
+        var currentAngle = -PI / 2.0
+        currentAngle -= angle(pieSpec.sliceValues.first())
+
+        val radius = pieSpec.radius * scaleFactor
+        return pieSpec.sliceValues.indices.map { index ->
             Sector(
-                index = symbol.indices[it],
-                radius = symbol.size.x * scaleFactor / 2.0,
+                index = pieSpec.indices[index],
+                radius = radius,
+                holeRadius = radius * pieSpec.holeSize,
+                fillColor = pieSpec.colors[index],
                 startAngle = currentAngle,
-                endAngle = endAngle,
-                color = symbol.colors[it]
-            ).also { currentAngle = endAngle }
+                endAngle = currentAngle + angle(pieSpec.sliceValues[index]),
+                explode = pieSpec.explodeValues?.get(index)?.let { radius * it } ?: 0.0,
+            ).also { sector -> currentAngle = sector.endAngle }
         }
     }
 
     class Renderer : jetbrains.livemap.mapengine.Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d) {
             val chartElement = entity.get<ChartElementComponent>()
-            val symbol = entity.get<SymbolComponent>()
+            val pieSpec = entity.get<PieSpecComponent>()
 
-            splitSectors(symbol, chartElement.scalingSizeFactor).forEach { sector ->
-                val holeRadius = floor(sector.radius * 0.55)
-                if (chartElement.strokeColor != null && chartElement.strokeWidth > 0.0) {
-
-                    ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
-                    ctx.setLineWidth(chartElement.strokeWidth)
-
-                    // draw inner arc
-                    ctx.beginPath()
-                    ctx.arc(
-                        x = 0.0, y = 0.0,
-                        radius = max(0.0, holeRadius - chartElement.strokeWidth / 2),
-                        startAngle = sector.startAngle,
-                        endAngle = sector.endAngle
-                    )
-                    ctx.stroke()
-
-                    // draw outer arc
-                    ctx.beginPath()
-                    ctx.arc(
-                        x = 0.0, y = 0.0,
-                        radius = sector.radius + chartElement.strokeWidth / 2,
-                        startAngle = sector.startAngle,
-                        endAngle = sector.endAngle
-                    )
-                    ctx.stroke()
-                }
-                // fill sector
-                ctx.setFillStyle(changeAlphaWithMin(sector.color, chartElement.scalingAlphaValue))
+            fun fillSector(sector: Sector) {
+                ctx.setFillStyle(changeAlphaWithMin(sector.fillColor, chartElement.scalingAlphaValue))
                 ctx.beginPath()
-                ctx.arc(0.0, 0.0, holeRadius, sector.startAngle, sector.endAngle)
-                ctx.arc(0.0, 0.0, sector.radius, sector.endAngle, sector.startAngle, anticlockwise = true)
+                with(sector) {
+                    ctx.arc(
+                        sectorCenter.x,
+                        sectorCenter.y,
+                        holeRadius,
+                        startAngle,
+                        endAngle
+                    )
+                    ctx.arc(
+                        sectorCenter.x,
+                        sectorCenter.y,
+                        radius,
+                        endAngle,
+                        startAngle,
+                        anticlockwise = true
+                    )
+                }
                 ctx.fill()
             }
-        }
 
+            fun strokeSector(sector: Sector) {
+                if (chartElement.strokeColor == null || chartElement.strokeWidth == 0.0) {
+                    return
+                }
+                ctx.apply {
+                    setStrokeStyle(
+                        changeAlphaWithMin(
+                            chartElement.strokeColor!!,
+                            chartElement.scalingAlphaValue
+                        )
+                    )
+                    setLineWidth(chartElement.strokeWidth)
+
+                    // draw inner arc
+                    beginPath()
+                    arc(
+                        sector.sectorCenter.x, sector.sectorCenter.y,
+                        radius = max(0.0, sector.holeRadius),
+                        startAngle = sector.startAngle,
+                        endAngle = sector.endAngle
+                    )
+                    stroke()
+
+                    // draw outer arc
+                    beginPath()
+                    arc(
+                        sector.sectorCenter.x, sector.sectorCenter.y,
+                        radius = sector.radius,
+                        startAngle = sector.startAngle,
+                        endAngle = sector.endAngle
+                    )
+                    stroke()
+
+                    // sides
+                    beginPath()
+                    moveTo(sector.innerArcStart.x, sector.innerArcStart.y)
+                    lineTo(sector.outerArcStart.x, sector.outerArcStart.y)
+                    stroke()
+
+                    beginPath()
+                    moveTo(sector.innerArcEnd.x, sector.innerArcEnd.y)
+                    lineTo(sector.outerArcEnd.x, sector.outerArcEnd.y)
+                    stroke()
+
+                }
+            }
+
+            computeSectors(pieSpec, chartElement.scalingSizeFactor).forEach { sector ->
+                fillSector(sector)
+                strokeSector(sector)
+            }
+        }
     }
 
 
@@ -95,39 +169,46 @@ object DonutChart {
             }
 
             val chartElement = target.get<ChartElementComponent>()
-            val symbol = target.get<SymbolComponent>()
+            val pieSpec = target.get<PieSpecComponent>()
 
-            splitSectors(symbol, chartElement.scalingSizeFactor).forEach { (index, radius, startAngle, endAngle, color) ->
-                    target.get<ScreenLoopComponent>().origins.forEach { origin ->
-                        if (isCoordinateInPieSector(coord, origin, radius, startAngle, endAngle)) {
-                            return SearchResult(
-                                layerIndex = target.get<IndexComponent>().layerIndex,
-                                index = index
-                            )
-                        }
+            computeSectors(pieSpec, chartElement.scalingSizeFactor).forEach { sector ->
+                target.get<ScreenLoopComponent>().origins.forEach { origin ->
+                    val loc = origin.toDoubleVector().add(sector.sectorCenter)
+                    if (isCoordinateInPieSector(coord, loc.toClientPoint(), sector.holeRadius, sector.radius, sector.startAngle, sector.endAngle)) {
+                        return SearchResult(
+                            layerIndex = target.get<IndexComponent>().layerIndex,
+                            index = sector.index
+                        )
                     }
                 }
+            }
 
             return null
         }
 
         override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity) = throw NotImplementedError()
 
-        private fun isCoordinateInPieSector(coord: Vec<Client>, origin: Vec<Client>, radius: Double, startAngle: Double, endAngle: Double): Boolean {
-            if (LocatorUtil.distance(coord, origin) > radius) {
+        private fun isCoordinateInPieSector(
+            coord: Vec<Client>,
+            origin: Vec<Client>,
+            holeRadius: Double,
+            radius: Double,
+            startAngle: Double,
+            endAngle: Double
+        ): Boolean {
+            if (LocatorUtil.distance(coord, origin) !in holeRadius..radius) {
                 return false
             }
 
             var angle = LocatorUtil.calculateAngle(origin, coord)
-            if (angle < - PI / 2) {
-                angle += 2 * PI
+            if (angle in -PI / 2..PI && abs(startAngle) > PI) {
+                angle -= 2 * PI
             }
-
             return startAngle <= angle && angle < endAngle
         }
 
         companion object {
-            val LOCATABLE_COMPONENTS = listOf(SymbolComponent::class, ScreenLoopComponent::class)
+            val LOCATABLE_COMPONENTS = listOf(PieSpecComponent::class, ScreenLoopComponent::class)
         }
     }
 }

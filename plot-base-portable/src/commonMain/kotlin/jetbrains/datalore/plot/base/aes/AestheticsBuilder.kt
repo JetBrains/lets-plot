@@ -27,8 +27,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
@@ -181,14 +179,6 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun ymax(v: (Int) -> Double?): AestheticsBuilder {
         return aes(YMAX, v)
-    }
-
-    fun symX(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(SYM_X, v)
-    }
-
-    fun symY(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(SYM_Y, v)
     }
 
     fun slice(v: (Int) -> Double?): AestheticsBuilder {

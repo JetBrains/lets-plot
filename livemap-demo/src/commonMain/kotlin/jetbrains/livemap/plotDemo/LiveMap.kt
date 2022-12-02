@@ -1645,28 +1645,12 @@ class LiveMap {
     'layers': [
     {
         'geom': 'livemap',
-        'map': {
-            'city': ['Southampton', 'Cherbourg', 'Cobh'],
-            'found name': ['Southampton', 'Cherbourg', 'Cobh'],
-            'geometry': [
-                '{\"type\": \"Point\", \"coordinates\": [-1.40253666522018, 50.9183686226606]}', 
-                '{\"type\": \"Point\", \"coordinates\": [-1.60901494773099, 49.6272752434015]}', 
-                '{\"type\": \"Point\", \"coordinates\": [-8.29427875578403, 51.8531472980976]}'
-            ]
-        },
         'tiles': {'kind': 'raster_zxy',
         'url': 'https://cartocdn_c.global.ssl.fastly.net/base-antique/{z}/{x}/{y}@2x.png',
         'attribution': '<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a> <a href=\"https://carto.com/attributions#basemaps\">© CARTO</a>, <a href=\"https://carto.com/attributions\">© CARTO</a>'},
-        'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'},
-        'display_mode': 'point',
-        'size': 7,
-        'shape': 21,
-        'color': 'black',
-        'fill': 'yellow',
-        'ontop': true,
-        'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
+        'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'}
     },
-   {
+    {
         'geom': 'path',
         'map': {
             'geometry': [
@@ -1676,8 +1660,9 @@ class LiveMap {
         'color': 'dark-blue',
         'linetype': 'dotted',
         'size': 1.2,
-        'map_data_meta': {'geodataframe': {'geometry': 'geometry'}}},
-  {
+        'map_data_meta': {'geodataframe': {'geometry': 'geometry'}}
+   },
+   {
         'geom': 'segment',
         'x': -38.056641,
         'y': 46.920255,
@@ -1703,7 +1688,24 @@ class LiveMap {
         'size': 10,
         'shape': 9,
         'color': 'red'
-  }
+  },
+  {
+        'geom': 'point',
+        'map': {
+            'city': ['Southampton', 'Cherbourg', 'Cobh'],
+            'found name': ['Southampton', 'Cherbourg', 'Cobh'],
+            'geometry': [
+                '{\"type\": \"Point\", \"coordinates\": [-1.40253666522018, 50.9183686226606]}', 
+                '{\"type\": \"Point\", \"coordinates\": [-1.60901494773099, 49.6272752434015]}', 
+                '{\"type\": \"Point\", \"coordinates\": [-8.29427875578403, 51.8531472980976]}'
+            ]
+        },
+        'size': 7,
+        'shape': 21,
+        'color': 'black',
+        'fill': 'yellow',
+        'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
+  }  
 ]}"""
         return parsePlotSpec(spec)
     }

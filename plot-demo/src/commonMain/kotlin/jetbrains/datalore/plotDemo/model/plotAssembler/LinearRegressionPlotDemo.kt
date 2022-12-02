@@ -155,7 +155,7 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
         //
         // Plot
         //
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(
                 scatterLayer,
                 trueLineLayer,

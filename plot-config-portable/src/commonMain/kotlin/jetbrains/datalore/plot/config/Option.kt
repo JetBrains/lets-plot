@@ -252,7 +252,6 @@ object Option {
         }
 
         object LiveMap {
-            const val DISPLAY_MODE = "display_mode"
             const val INTERACTIVE = "interactive"
             const val LOCATION = "location"
             const val ZOOM = "zoom"
@@ -265,7 +264,6 @@ object Option {
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val DATA_SIZE_ZOOMIN = "data_size_zoomin"
             const val CONST_SIZE_ZOOMIN = "const_size_zoomin"
-            const val ONTOP = "ontop"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -424,6 +422,13 @@ object Option {
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
         const val FORMAT = "format"
+
+        // position: left, right, top, bottom  (axis position - only X/Y scales)
+        const val POSITION = "position"
+        const val POSITION_L = "left"
+        const val POSITION_R = "right"
+        const val POSITION_T = "top"
+        const val POSITION_B = "bottom"
 
         // continuous scale
         const val CONTINUOUS_TRANSFORM = "trans"

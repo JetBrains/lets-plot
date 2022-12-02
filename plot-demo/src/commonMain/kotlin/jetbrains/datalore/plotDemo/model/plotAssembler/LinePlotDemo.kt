@@ -79,7 +79,7 @@ open class LinePlotDemo : SimpleDemoBase() {
             )
             .build(data, scaleByAes, emptyMap())
 
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
             emptyMap(),
@@ -170,7 +170,7 @@ open class LinePlotDemo : SimpleDemoBase() {
             build(data, scaleByAes, scaleMappersNP)
         }
 
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,

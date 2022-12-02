@@ -14,6 +14,15 @@ enum class Orientation(private val id: String) {
     val isHorizontal: Boolean
         get() = this == TOP || this == BOTTOM
 
+    fun flip(): Orientation {
+        return when (this) {
+            LEFT -> BOTTOM
+            RIGHT -> TOP
+            TOP -> RIGHT
+            BOTTOM -> LEFT
+        }
+    }
+
     override fun toString(): String {
         return "Orientation $id"
     }

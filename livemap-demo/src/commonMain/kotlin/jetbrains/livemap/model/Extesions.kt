@@ -24,18 +24,18 @@ fun LineBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 
-fun Symbol.coord(geoObj: GeoObject) {
-    point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
-}
-
-fun Symbol.coord(lon: Double, lat: Double) {
-    point = explicitVec(lon, lat)
-}
-
 fun TextBuilder.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
 fun TextBuilder.coord(lon: Double, lat: Double) {
+    point = explicitVec(lon, lat)
+}
+
+fun PieBuilder.coord(geoObj: GeoObject) {
+    point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
+}
+
+fun PieBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }

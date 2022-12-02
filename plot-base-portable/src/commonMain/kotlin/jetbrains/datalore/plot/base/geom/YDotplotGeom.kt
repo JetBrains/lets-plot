@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
@@ -18,7 +19,7 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import kotlin.math.abs
 
-class YDotplotGeom : DotplotGeom() {
+class YDotplotGeom : DotplotGeom(), WithHeight {
     var yStackDir: YStackdir = DEF_YSTACKDIR
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -171,6 +172,15 @@ class YDotplotGeom : DotplotGeom() {
                 )
             }
         }
+    }
+
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
+        return PointDimensionsUtil.dimensionSpan(
+            p,
+            coordAes,
+            sizeAes = Aes.BINWIDTH,
+            resolution
+        )
     }
 
     companion object {

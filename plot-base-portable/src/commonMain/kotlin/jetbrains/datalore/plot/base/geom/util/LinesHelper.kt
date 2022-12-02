@@ -73,13 +73,16 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return paths
     }
 
-    internal fun createPaths(aes: DataPointAesthetics, points: List<DoubleVector>, closePath: Boolean): List<LinePath> {
+    internal fun createPaths(
+        aes: DataPointAesthetics,
+        points: List<DoubleVector>,
+        closePath: Boolean
+    ): List<LinePath> {
         val paths = ArrayList<LinePath>()
-        val simplifiedPoints = simplify(points)
         if (closePath) {
-            paths.add(LinePath.polygon(insertPathSeparators(splitRings(simplifiedPoints))))
+            paths.add(LinePath.polygon(insertPathSeparators(splitRings(points))))
         } else {
-            paths.add(LinePath.line(simplifiedPoints))
+            paths.add(LinePath.line(points))
         }
         paths.forEach { path -> decorate(path, aes, closePath) }
         return paths
@@ -126,7 +129,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
     fun createBands(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationUpper: (DataPointAesthetics) -> DoubleVector?,
-        toLocationLower: (DataPointAesthetics) -> DoubleVector?
+        toLocationLower: (DataPointAesthetics) -> DoubleVector?,
+        simplifyBorders: Boolean = false
     ): MutableList<LinePath> {
 
         val lines = ArrayList<LinePath>()
@@ -138,11 +142,11 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
             // upper margin points
             val upperPoints = project(groupDataPoints) { toLocationUpper(it) }
-            val points = ArrayList(simplify(upperPoints))
+            val points = ArrayList(if (simplifyBorders) simplify(upperPoints) else upperPoints)
 
             // lower margin point in reversed order
             val lowerPoints = ArrayList(project(groupDataPoints.reversed()) { toLocationLower(it) })
-            points.addAll(simplify(lowerPoints))
+            points.addAll(if (simplifyBorders) simplify(lowerPoints) else lowerPoints)
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)

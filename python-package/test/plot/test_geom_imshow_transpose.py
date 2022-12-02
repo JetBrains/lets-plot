@@ -75,5 +75,7 @@ class Test:
 
     @pytest.mark.parametrize('image_data,expected', test_params_list)
     def test_image_spec(self, image_data, expected):
+        image_data.flags.writeable = False
+
         spec = geom_imshow(image_data, extent=_extent)
         assert spec.as_dict() == expected
