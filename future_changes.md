@@ -12,6 +12,11 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
     - `alpha` parameter [[#630](https://github.com/JetBrains/lets-plot/issues/630)]. 
 See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_alpha_param.ipynb).
 
+- `geom_violin()`:
+
+  - `extend_scale` parameter.
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/violin_extend_scale.ipynb).
+
 - Ridgeline plot through the `geom_area_ridges()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/ridgeline_plot.ipynb).

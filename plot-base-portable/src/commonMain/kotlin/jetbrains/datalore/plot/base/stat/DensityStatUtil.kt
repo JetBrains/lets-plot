@@ -32,7 +32,8 @@ object DensityStatUtil {
         bins: List<Double?>,
         values: List<Double?>,
         weights: List<Double?>,
-        trim: DensityRidgesStat.Trim,
+        trim: Boolean,
+        extendScale: Double?,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
         adjust: Double,
@@ -62,7 +63,7 @@ object DensityStatUtil {
                 .sortedBy { it.first }
                 .unzip()
             if (binValue.isEmpty()) continue
-            val valueRange = trimValueRange(binValue, trim, bandWidth, bandWidthMethod, overallValuesRange)
+            val valueRange = trimValueRange(binValue, trim, extendScale, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
                 binValue, binWeight,
@@ -94,25 +95,23 @@ object DensityStatUtil {
 
     private fun trimValueRange(
         values: List<Double>,
-        trim: DensityRidgesStat.Trim,
+        trim: Boolean,
+        extendScale: Double?,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
         overallValuesRange: DoubleSpan
     ): DoubleSpan {
         val valueSummary = FiveNumberSummary(values)
         val bw = bandWidth ?: bandWidth(bandWidthMethod, values)
-        val extend = 3.0 * bw
-        return when (trim) {
-            DensityRidgesStat.Trim.NONE -> overallValuesRange
-            DensityRidgesStat.Trim.EXTBW -> {
+        return if (trim) {
+            DoubleSpan(valueSummary.min, valueSummary.max)
+        } else {
+            if (extendScale == null) {
+                overallValuesRange
+            } else {
+                val extend = extendScale * bw
                 DoubleSpan(valueSummary.min - extend, valueSummary.max + extend)
             }
-            DensityRidgesStat.Trim.BW -> {
-                val minValue = max(overallValuesRange.lowerEnd, valueSummary.min - extend)
-                val maxValue = min(overallValuesRange.upperEnd, valueSummary.max + extend)
-                DoubleSpan(minValue, maxValue)
-            }
-            DensityRidgesStat.Trim.ALL -> DoubleSpan(valueSummary.min, valueSummary.max)
         }
     }
 

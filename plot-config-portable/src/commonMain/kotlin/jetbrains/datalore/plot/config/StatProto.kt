@@ -168,19 +168,6 @@ object StatProto {
     }
 
     private fun configureDensityRidgesStat(options: OptionsAccessor): DensityRidgesStat {
-        val trim = options.getString(DensityRidges.TRIM)?.let {
-            when (it.lowercase()) {
-                "none" -> DensityRidgesStat.Trim.NONE
-                "extbw" -> DensityRidgesStat.Trim.EXTBW
-                "bw" -> DensityRidgesStat.Trim.BW
-                "all" -> DensityRidgesStat.Trim.ALL
-                else -> throw IllegalArgumentException(
-                    "Unsupported trim: '$it'\n " +
-                    "Use one of: none, extbw, bw, all."
-                )
-            }
-        }
-
         var bwValue: Double? = null
         var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
         options[Density.BAND_WIDTH]?.run {
@@ -200,7 +187,8 @@ object StatProto {
         } else DensityRidgesStat.DEF_QUANTILES
 
         return DensityRidgesStat(
-            trim = trim ?: DensityRidgesStat.DEF_TRIM,
+            trim = options.getBoolean(DensityRidges.TRIM, DensityRidgesStat.DEF_TRIM),
+            extendScale = options.getDouble(DensityRidges.EXTEND_SCALE),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
@@ -241,6 +229,7 @@ object StatProto {
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
             trim = options.getBoolean(YDensity.TRIM, YDensityStat.DEF_TRIM),
+            extendScale = options.getDoubleDef(YDensity.EXTEND_SCALE, YDensityStat.DEF_EXTEND_SCALE),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

@@ -11,9 +11,10 @@ import kotlin.test.Test
 
 class DensityRidgesStatTest : BaseStatTest() {
 
-    private fun densityRidgesStat(trim: DensityRidgesStat.Trim = DensityRidgesStat.Trim.ALL, quantiles: List<Double>? = null): DensityRidgesStat {
+    private fun densityRidgesStat(trim: Boolean = true, quantiles: List<Double>? = null): DensityRidgesStat {
         return DensityRidgesStat(
             trim = trim,
+            extendScale = null,
             bandWidth = null,
             bandWidthMethod = DensityStat.DEF_BW,
             adjust = DensityStat.DEF_ADJUST,
