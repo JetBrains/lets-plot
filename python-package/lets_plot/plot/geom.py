@@ -2847,7 +2847,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                 orientation=None,
                 show_half=None,
                 draw_quantiles=None,
-                scale=None, trim=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
+                scale=None, trim=None, extend_scale=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
@@ -2889,6 +2889,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 'width', all violins have the same maximum width.
     trim : bool, default=True
         Trim the tails of the violins to the range of the data.
+    extend_scale : float, default=3.0
+        Extend domain of each violin on `extend_scale * bw` if `trim=False`.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -3034,7 +3036,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  orientation=orientation,
                  show_half=show_half,
                  draw_quantiles=draw_quantiles,
-                 scale=scale, trim=trim, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
+                 scale=scale, trim=trim, extend_scale=extend_scale, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
 
 
@@ -3204,7 +3206,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
 
 
 def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                     trim=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
+                     trim=None, extend_scale=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      **other_args):
     """
@@ -3234,8 +3236,11 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
-    trim : bool, default=False
+    trim : bool, default=false
         Trim the tails of the ridges to the range of the data.
+    extend_scale : float
+        Extend domain of each ridge on `extend_scale * bw` if `trim=False`.
+        `extend_scale=None` (default) extends domain to maximum (domain overall ridges).
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -3253,9 +3258,10 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     min_height : float, default=0.0
         A height cutoff on the drawn ridges.
         All values that fall below this cutoff will be removed.
-    scale : float, default=3.0
+    scale : float, default=1.0
         A multiplicative factor applied to height aesthetic.
-        If `scale = 1.0`, the heights of a ridges are automatically scaled such that the ridge with `height = 1.0` just touches the one above.
+        If `scale = 1.0`, the heights of a ridges are automatically scaled
+        such that the ridge with `height = 1.0` just touches the one above.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=false
@@ -3353,6 +3359,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  sampling=sampling,
                  tooltips=tooltips,
                  trim=trim,
+                 extend_scale=extend_scale,
                  kernel=kernel,
                  adjust=adjust,
                  bw=bw,

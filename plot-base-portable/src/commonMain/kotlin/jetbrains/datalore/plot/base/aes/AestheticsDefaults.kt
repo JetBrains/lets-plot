@@ -150,7 +150,8 @@ open class AestheticsDefaults {
 
         fun areaRidges(): AestheticsDefaults {
             return base()
-                .update(Aes.ALPHA, 0.75)
+                .update(Aes.COLOR, Color.BLACK)
+                .update(Aes.FILL, Color.parseHex("#8CBBE4"))
         }
 
         fun violin(): AestheticsDefaults {

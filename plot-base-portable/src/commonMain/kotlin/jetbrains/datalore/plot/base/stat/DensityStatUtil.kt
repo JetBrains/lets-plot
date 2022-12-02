@@ -33,12 +33,14 @@ object DensityStatUtil {
         values: List<Double?>,
         weights: List<Double?>,
         trim: Boolean,
+        extendScale: Double?,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
         adjust: Double,
         kernel: DensityStat.Kernel,
         n: Int,
         fullScanMax: Int,
+        overallValuesRange: DoubleSpan,
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
         valueVarName: DataFrame.Variable = Stats.Y
@@ -61,13 +63,7 @@ object DensityStatUtil {
                 .sortedBy { it.first }
                 .unzip()
             if (binValue.isEmpty()) continue
-            val valueSummary = FiveNumberSummary(binValue)
-            val modifier = if (trim) 0.0 else 3.0
-            val bw = bandWidth ?: bandWidth(bandWidthMethod, binValue)
-            val valueRange = DoubleSpan(
-                valueSummary.min - modifier * bw,
-                valueSummary.max + modifier * bw
-            )
+            val valueRange = trimValueRange(binValue, trim, extendScale, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
                 binValue, binWeight,
@@ -95,6 +91,28 @@ object DensityStatUtil {
         )
 
         return expandByGroupEnds(statData, valueVarName, Stats.QUANTILE, binVarName)
+    }
+
+    private fun trimValueRange(
+        values: List<Double>,
+        trim: Boolean,
+        extendScale: Double?,
+        bandWidth: Double?,
+        bandWidthMethod: DensityStat.BandWidthMethod,
+        overallValuesRange: DoubleSpan
+    ): DoubleSpan {
+        val valueSummary = FiveNumberSummary(values)
+        val bw = bandWidth ?: bandWidth(bandWidthMethod, values)
+        return if (trim) {
+            DoubleSpan(valueSummary.min, valueSummary.max)
+        } else {
+            if (extendScale == null) {
+                overallValuesRange
+            } else {
+                val extend = extendScale * bw
+                DoubleSpan(valueSummary.min - extend, valueSummary.max + extend)
+            }
+        }
     }
 
     fun bandWidth(bw: DensityStat.BandWidthMethod, valuesX: List<Double?>): Double {

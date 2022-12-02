@@ -358,12 +358,14 @@ object Option {
 
         object DensityRidges {
             const val TRIM = "trim"
+            const val EXTEND_SCALE = "extend_scale"
             const val QUANTILES = "quantiles"
         }
 
         object YDensity {
             const val SCALE = "scale"
             const val TRIM = "trim"
+            const val EXTEND_SCALE = "extend_scale"
         }
 
         object QQ {

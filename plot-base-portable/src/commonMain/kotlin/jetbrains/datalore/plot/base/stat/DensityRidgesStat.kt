@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -12,6 +13,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 
 class DensityRidgesStat(
     private val trim: Boolean,
+    private val extendScale: Double?,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -48,9 +50,10 @@ class DensityRidgesStat(
             List(ys.size) { 1.0 }
         }
 
+        val overallXRange = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
         val statData = DensityStatUtil.binnedStat(
             ys, xs, ws,
-            trim, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, quantiles,
+            trim, extendScale, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallXRange, quantiles,
             binVarName = Stats.Y, valueVarName = Stats.X
         )
 
