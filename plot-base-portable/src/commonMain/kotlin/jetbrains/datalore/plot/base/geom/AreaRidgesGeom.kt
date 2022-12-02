@@ -185,10 +185,14 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
 
             val lowerValue = resolution * lowerBound
             val upperValue = expand
-            DoubleSpan(
-                loc + lowerValue,
-                loc + upperValue
-            )
+            if (lowerValue <= upperValue) {
+                DoubleSpan(
+                    loc + lowerValue,
+                    loc + upperValue
+                )
+            } else {
+                null
+            }
         } else {
             null
         }
