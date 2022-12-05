@@ -33,7 +33,7 @@ object DensityStatUtil {
         values: List<Double?>,
         weights: List<Double?>,
         trim: Boolean,
-        extendScale: Double?,
+        tailsCutoff: Double?,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
         adjust: Double,
@@ -63,7 +63,7 @@ object DensityStatUtil {
                 .sortedBy { it.first }
                 .unzip()
             if (binValue.isEmpty()) continue
-            val valueRange = trimValueRange(binValue, trim, extendScale, bandWidth, bandWidthMethod, overallValuesRange)
+            val valueRange = trimValueRange(binValue, trim, tailsCutoff, bandWidth, bandWidthMethod, overallValuesRange)
             val binStatValue = createStepValues(valueRange, n)
             val densityFunction = densityFunction(
                 binValue, binWeight,
@@ -96,7 +96,7 @@ object DensityStatUtil {
     private fun trimValueRange(
         values: List<Double>,
         trim: Boolean,
-        extendScale: Double?,
+        tailsCutoff: Double?,
         bandWidth: Double?,
         bandWidthMethod: DensityStat.BandWidthMethod,
         overallValuesRange: DoubleSpan
@@ -106,10 +106,10 @@ object DensityStatUtil {
         return if (trim) {
             DoubleSpan(valueSummary.min, valueSummary.max)
         } else {
-            if (extendScale == null) {
+            if (tailsCutoff == null) {
                 overallValuesRange
             } else {
-                val extend = extendScale * bw
+                val extend = tailsCutoff * bw
                 DoubleSpan(valueSummary.min - extend, valueSummary.max + extend)
             }
         }

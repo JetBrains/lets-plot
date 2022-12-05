@@ -156,7 +156,7 @@ class AreaRidges {
                 "               {" +
                 "                 'geom': 'area_ridges'," +
                 "                 'scale': 2," +
-                "                 'extend_scale': 3" +
+                "                 'tails_cutoff': 3" +
                 "               }" +
                 "             ]" +
                 "}"

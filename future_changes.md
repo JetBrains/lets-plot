@@ -14,8 +14,8 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 
 - `geom_violin()`:
 
-  - `extend_scale` parameter.
-See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/violin_extend_scale.ipynb).
+  - `tails_cutoff` parameter.
+See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/violin_tails_cutoff.ipynb).
 
 - Ridgeline plot through the `geom_area_ridges()`.
 

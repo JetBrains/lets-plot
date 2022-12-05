@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 class YDensityStat(
     private val scale: Scale,
     private val trim: Boolean,
-    private val extendScale: Double?,
+    private val tailsCutoff: Double?,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -51,7 +51,7 @@ class YDensityStat(
         }
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
-        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, extendScale, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange)
+        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -99,7 +99,7 @@ class YDensityStat(
     companion object {
         val DEF_SCALE = Scale.AREA
         const val DEF_TRIM = true
-        const val DEF_EXTEND_SCALE = 3.0
+        const val DEF_TAILS_CUTOFF = 3.0
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

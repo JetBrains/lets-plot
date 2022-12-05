@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 
 class DensityRidgesStat(
     private val trim: Boolean,
-    private val extendScale: Double?,
+    private val tailsCutoff: Double?,
     private val bandWidth: Double?,
     private val bandWidthMethod: DensityStat.BandWidthMethod,
     private val adjust: Double,
@@ -53,7 +53,7 @@ class DensityRidgesStat(
         val overallXRange = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
         val statData = DensityStatUtil.binnedStat(
             ys, xs, ws,
-            trim, extendScale, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallXRange, quantiles,
+            trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallXRange, quantiles,
             binVarName = Stats.Y, valueVarName = Stats.X
         )
 

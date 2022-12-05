@@ -188,7 +188,7 @@ object StatProto {
 
         return DensityRidgesStat(
             trim = options.getBoolean(DensityRidges.TRIM, DensityRidgesStat.DEF_TRIM),
-            extendScale = options.getDouble(DensityRidges.EXTEND_SCALE),
+            tailsCutoff = options.getDouble(DensityRidges.TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
@@ -229,7 +229,7 @@ object StatProto {
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
             trim = options.getBoolean(YDensity.TRIM, YDensityStat.DEF_TRIM),
-            extendScale = options.getDoubleDef(YDensity.EXTEND_SCALE, YDensityStat.DEF_EXTEND_SCALE),
+            tailsCutoff = options.getDoubleDef(YDensity.TAILS_CUTOFF, YDensityStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
