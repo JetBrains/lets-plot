@@ -228,8 +228,8 @@ class PieGeom : GeomBase() {
         val leftBorder = sectors.minOf { it.pieCenter.x - it.radius } - expand
         val rightBorder = sectors.maxOf { it.pieCenter.x + it.radius } + expand
 
-        val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector =  { text, p -> TextUtil.measure(text,
-            toTextDataPointAesthetics(p, ctx.annotations!!.textStyle), ctx)
+        val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector = { text, p ->
+            TextUtil.measure(text, toTextDataPointAesthetics(p, ctx.annotations!!.textStyle), ctx)
         }
 
         createAnnotationElements(
