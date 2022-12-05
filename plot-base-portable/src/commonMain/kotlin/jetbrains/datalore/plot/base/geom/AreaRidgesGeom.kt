@@ -180,9 +180,8 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         return if (SeriesUtil.allFinite(loc, size)) {
             loc!!
             val expand = scaledResolution * size!!
-            val limitValue = loc + expand
             if (size >= this.minHeight) {
-                DoubleSpan(limitValue, limitValue)
+                DoubleSpan(loc, loc + expand)
             } else {
                 null
             }
