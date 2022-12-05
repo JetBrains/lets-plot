@@ -261,7 +261,13 @@ class PieGeom : GeomBase() {
             if (v.length() !in sector.holeRadius..sector.radius) {
                 return false
             }
-            val angle = atan2(v.y, v.x)
+            val angle = atan2(v.y, v.x).let {
+                when {
+                    it in -PI / 2..PI && abs(sector.startAngle) > PI -> it - 2 * PI
+                    it in -PI..-PI / 2 && abs(sector.endAngle) > PI -> it + 2 * PI
+                    else -> it
+                }
+            }
             return sector.startAngle <= angle && angle < sector.endAngle
         }
 

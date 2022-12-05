@@ -200,9 +200,12 @@ object DonutChart {
                 return false
             }
 
-            var angle = LocatorUtil.calculateAngle(origin, coord)
-            if (angle in -PI / 2..PI && abs(startAngle) > PI) {
-                angle -= 2 * PI
+            val angle = LocatorUtil.calculateAngle(origin, coord).let {
+                when {
+                    it in -PI / 2..PI && abs(startAngle) > PI -> it - 2 * PI
+                    it in -PI..-PI / 2 && abs(endAngle) > PI -> it + 2 * PI
+                    else -> it
+                }
             }
             return startAngle <= angle && angle < endAngle
         }
