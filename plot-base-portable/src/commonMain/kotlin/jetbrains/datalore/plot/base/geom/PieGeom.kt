@@ -8,13 +8,15 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.algorithms.AdaptiveResampler
 import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
+import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.geom.util.DataPointAestheticsDelegate
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
@@ -26,9 +28,11 @@ import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.SvgCircleElement
 import jetbrains.datalore.vis.svg.SvgGElement
+import jetbrains.datalore.vis.svg.SvgLineElement
 import jetbrains.datalore.vis.svg.SvgPathDataBuilder
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -49,19 +53,16 @@ class PieGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val sectors = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
             .groupBy { p -> geomHelper.toClient(p.x()!!, p.y()!!, p) }
             .filterNotNullKeys()
-            .mapValues { (pieCenter, dataPoints) -> computeSectors(pieCenter, dataPoints) }
-            .values
-            .flatten()
+            .forEach { (pieCenter, dataPoints) ->
+                val pieSectors = computeSectors(pieCenter, dataPoints)
+                appendNodes(pieSectors.map(::buildSvgSector), root)
+                pieSectors.forEach { buildHint(it, ctx.targetCollector) }
 
-        sectors.forEach { buildHint(it, ctx.targetCollector) }
-        appendNodes(sectors.map(::buildSvgSector), root)
-
-        if (ctx.annotations != null) {
-            buildAnnotations(root, sectors, ctx)
-        }
+                ctx.annotations?.let { buildAnnotations(root, pieCenter, pieSectors, ctx) }
+            }
     }
 
     private fun buildSvgSector(sector: Sector): LinePath {
@@ -213,21 +214,122 @@ class PieGeom : GeomBase() {
         private fun shapeSize(p: DataPointAesthetics) = AesScaling.pieDiameter(p)
     }
 
+    /// Annotations
+
     private fun buildAnnotations(
         root: SvgRoot,
+        pieCenter: DoubleVector,
         sectors: List<Sector>,
         ctx: GeomContext
     ) {
-        fun toTextDataPointAesthetics(p: DataPointAesthetics, color: Color? = null): DataPointAesthetics {
-            return object : DataPointAestheticsDelegate(p) {
-                val textStyle: TextStyle = ctx.annotations!!.textStyle
+        if (ctx.annotations == null) return
 
+        val expand = 20.0
+        val leftBorder = sectors.minOf { it.pieCenter.x - it.radius } - expand
+        val rightBorder = sectors.maxOf { it.pieCenter.x + it.radius } + expand
+
+        val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector =  { text, p -> TextUtil.measure(text,
+            toTextDataPointAesthetics(p, ctx.annotations!!.textStyle), ctx)
+        }
+
+        createAnnotationElements(
+            pieCenter,
+            annotationLabels = sectors.map { sector -> getAnnotationLabel(sector, ctx.annotations!!, textSizeGetter) },
+            textStyle = ctx.annotations!!.textStyle,
+            xRange = DoubleSpan(leftBorder, rightBorder),
+            ctx
+        ).forEach { root.add(it) }
+    }
+
+    private fun getAnnotationLabel(
+        sector: Sector,
+        annotations: Annotations,
+        textSizeGetter: (String, DataPointAesthetics) -> DoubleVector
+    ): AnnotationLabel {
+        val text = annotations.getAnnotationText(sector.p.index())
+        val textSize = textSizeGetter(text, sector.p)
+
+        // center of the pie slice geometry:
+        val centralPos = with(sector) {
+            val offset = 0.5 * (sector.radius - sector.holeRadius)
+            sectorCenter.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
+                .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
+        }
+
+        fun isPointInsideSector(pnt: DoubleVector): Boolean {
+            val v = pnt.subtract(sector.sectorCenter)
+            if (v.length() !in sector.holeRadius..sector.radius) {
+                return false
+            }
+            val angle = atan2(v.y, v.x)
+            return sector.startAngle <= angle && angle < sector.endAngle
+        }
+
+        val textRect = DoubleRectangle(centralPos.subtract(textSize.mul(0.5)), textSize)
+        val canBePlacedInside =
+            textRect.parts.flatMap { listOf(it.start, it.end) }.distinct().all(::isPointInsideSector)
+
+        val location = if (canBePlacedInside) {
+            centralPos
+        } else {
+            val offset = sector.holeRadius + 0.8 * (sector.radius - sector.holeRadius)
+            sector.sectorCenter.add(DoubleVector(offset * cos(sector.direction), offset * sin(sector.direction)))
+
+        }
+        val outerCoord: DoubleVector? = if (canBePlacedInside) {
+            null
+        } else {
+            val outerOffs = sector.holeRadius + 1.2 * (sector.radius - sector.holeRadius)
+            sector.sectorCenter.add(
+                DoubleVector(
+                    outerOffs * cos(sector.direction),
+                    outerOffs * sin(sector.direction)
+                )
+            )
+        }
+
+        val side = when {
+            canBePlacedInside -> Side.INSIDE
+            location.x < sector.pieCenter.x -> Side.LEFT
+            else -> Side.RIGHT
+        }
+        val textColor = when {
+            side != Side.INSIDE -> annotations.textStyle.color
+            Colors.luminance(getFillColor(sector.p)) < 0.5 -> Color.WHITE // if fill is dark
+            else -> Color.BLACK
+        }
+        return AnnotationLabel(
+            text,
+            textSize,
+            location = location,
+            outerCoord,
+            textColor,
+            side
+        )
+    }
+
+    companion object {
+        const val HANDLES_GROUPS = false
+
+        // For annotations
+
+        private const val INTERVAL_BETWEEN_ANNOTATIONS = 4.0
+
+        private fun toTextDataPointAesthetics(
+            p: DataPointAesthetics = AestheticsBuilder().build().dataPointAt(0),
+            textStyle: TextStyle,
+            color: Color? = null,
+            hjust: String? = null
+        ): DataPointAesthetics {
+            return object : DataPointAestheticsDelegate(p) {
                 override operator fun <T> get(aes: Aes<T>): T? {
                     val value: Any? = when (aes) {
                         Aes.SIZE -> textStyle.size
                         Aes.FAMILY -> textStyle.family
                         Aes.FONTFACE -> textStyle.face.toString()
-                        Aes.COLOR -> color ?: p.color()
+                        Aes.COLOR -> color
+                        Aes.HJUST -> hjust ?: "middle"
+                        Aes.VJUST -> "center"
                         else -> super.get(aes)
                     }
                     @Suppress("UNCHECKED_CAST")
@@ -235,65 +337,137 @@ class PieGeom : GeomBase() {
                 }
             }
         }
-        val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector =
-            { text, p -> TextUtil.measure(text, toTextDataPointAesthetics(p), ctx) }
 
-        val annotationGeom = TextGeom()
+        /// side around pie to place annotation label
+        private enum class Side {
+            INSIDE {
+                override fun getHJust() = "middle"
+            },
+            LEFT {
+                override fun getHJust() = "right"
+            },
+            RIGHT {
+                override fun getHJust() = "left"
+            };
 
-        sectors.forEach { sector ->
-            val text = ctx.annotations!!.getAnnotationText(sector.p.index())
-            val (location, isOutside) = placeAnnotation(sector, textSizeGetter(text, sector.p))
+            abstract fun getHJust(): String
+        }
 
-            // choose color for text
-            val textColor = when {
-                isOutside -> ctx.annotations!!.textStyle.color // or use sector's color?
-                Colors.luminance(getFillColor(sector.p)) < 0.5 -> Color.WHITE // if fill is dark
-                else -> Color.BLACK
+        private data class AnnotationLabel(
+            val text: String,
+            val textSize: DoubleVector,
+            val location: DoubleVector,      // for text element or for pointer
+            val outerCoord: DoubleVector?,   // position for middle point of pointer line
+            val textColor: Color,
+            val side: Side
+        )
+
+        private fun createAnnotationElements(
+            pieCenter: DoubleVector,
+            annotationLabels: List<AnnotationLabel>,
+            textStyle: TextStyle,
+            xRange: DoubleSpan,
+            ctx: GeomContext
+        ): List<SvgGElement> {
+
+            fun createForSide(side: Side): List<SvgGElement> {
+                if (side == Side.INSIDE) {
+                    return annotationLabels
+                        .filter { it.side == side }
+                        .map { createAnnotationElement(label = it, textLocation = it.location, textStyle, ctx) }
+                }
+
+                val startFromTheTop: Boolean
+                val outsideLabels = annotationLabels.filter { it.side == side }.let { l ->
+                    // if top y position is in the bottom side => start from the bottom
+                    startFromTheTop = l.minOfOrNull { it.location.y }?.let { it < pieCenter.y } ?: false
+                    if (startFromTheTop) {
+                        l.sortedBy { it.location.y }
+                    } else {
+                        l.sortedByDescending { it.location.y }
+                    }
+                }
+
+                if (outsideLabels.isEmpty()) {
+                    return emptyList()
+                }
+
+                val startPosition = DoubleVector(
+                    if (side == Side.LEFT) xRange.lowerEnd else xRange.upperEnd,
+                    outsideLabels.first().outerCoord!!.y
+                )
+
+                var yOffset = 0.0
+                return outsideLabels.map { label ->
+                    val loc = if (startFromTheTop) {
+                        DoubleVector(startPosition.x, startPosition.y + yOffset)
+                    } else {
+                        DoubleVector(startPosition.x, startPosition.y - yOffset)
+                    }
+                    yOffset += label.textSize.y + INTERVAL_BETWEEN_ANNOTATIONS
+
+                    createAnnotationElement(label, loc, textStyle, ctx)
+                }
             }
 
-            val g = annotationGeom.buildTextComponent(
-                toTextDataPointAesthetics(sector.p, textColor),
-                location,
-                text,
+            return Side.values().flatMap { side -> createForSide(side) }
+        }
+
+        private fun createAnnotationElement(
+            label: AnnotationLabel,
+            textLocation: DoubleVector,
+            textStyle: TextStyle,
+            ctx: GeomContext
+        ): SvgGElement {
+
+            val g = TextGeom().buildTextComponent(
+                toTextDataPointAesthetics(
+                    textStyle = textStyle,
+                    color = label.textColor,
+                    hjust = label.side.getHJust()
+                ),
+                textLocation,
+                label.text,
                 sizeUnitRatio = 1.0,
                 ctx,
                 boundsCenter = null
             )
-            root.add(g)
-        }
-    }
 
-    private fun placeAnnotation(
-        sector: Sector,
-        textSize: DoubleVector
-    ): Pair<DoubleVector, Boolean> {
-        val placeOutside: Boolean
-        val location = run {
-            // center of the pie slice geometry:
-            val centralPos = with(sector) {
-                val offset = 0.5 * (sector.radius - sector.holeRadius)
-                sectorCenter.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
-                    .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
-            }
+            if (label.outerCoord == null) return g
 
-            val textRect = DoubleRectangle(centralPos.subtract(textSize.mul(0.5)), textSize)
-            val side1 = DoubleSegment(sector.innerArcStart, sector.outerArcStart)
-            val side2 = DoubleSegment(sector.innerArcEnd, sector.outerArcEnd)
-            placeOutside = textRect.parts.any { side1.intersection(it) != null || side2.intersection(it) != null }
+            // Add pointer line
 
-            if (placeOutside) {
-                val offset = 1.25 * sector.radius
-                with(sector) {
-                    sectorCenter.add(DoubleVector(offset * cos(direction), offset * sin(direction)))
-                }
+            // add offset - stop line before text
+            val startXPos = if (label.side == Side.LEFT) {
+                textLocation.x + 5.0
             } else {
-                centralPos
+                textLocation.x - 5.0
             }
-        }
-        return location to placeOutside
-    }
 
-    companion object {
-        const val HANDLES_GROUPS = false
+            val midXPos = if ((label.side == Side.RIGHT && label.outerCoord.x > startXPos) ||
+                (label.side == Side.LEFT && label.outerCoord.x < startXPos)
+            ) {
+                startXPos
+            } else {
+                label.outerCoord.x
+            }
+            val middlePoint = DoubleVector(midXPos, textLocation.y)
+
+            listOf(
+                SvgLineElement(startXPos, textLocation.y, middlePoint.x, middlePoint.y),
+                SvgLineElement(middlePoint.x, middlePoint.y, label.location.x, label.location.y),
+            ).forEach { line ->
+                line.strokeColor().set(label.textColor)
+                line.strokeWidth().set(0.7)
+                g.children().add(line)
+            }
+
+            g.children().add(
+                SvgCircleElement(label.location.x, label.location.y, 1.5).apply {
+                    fillColor().set(label.textColor)
+                }
+            )
+            return g
+        }
     }
 }
