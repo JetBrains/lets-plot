@@ -330,7 +330,7 @@ class PieGeom : GeomBase() {
             return object : DataPointAestheticsDelegate(p) {
                 override operator fun <T> get(aes: Aes<T>): T? {
                     val value: Any? = when (aes) {
-                        Aes.SIZE -> textStyle.size
+                        Aes.SIZE -> textStyle.size / 2
                         Aes.FAMILY -> textStyle.family
                         Aes.FONTFACE -> textStyle.face.toString()
                         Aes.COLOR -> color
