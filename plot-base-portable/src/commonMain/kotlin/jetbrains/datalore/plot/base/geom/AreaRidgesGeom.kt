@@ -172,8 +172,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
 
     override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
         val sizeAes = Aes.HEIGHT
-        val scaledResolution = this.scale * resolution
-        val lowerBound: Double = this.minHeight
+        val scaledResolution = resolution * this.scale
 
         val loc = p[coordAes]
         val size = p[sizeAes]
@@ -181,14 +180,9 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         return if (SeriesUtil.allFinite(loc, size)) {
             loc!!
             val expand = scaledResolution * size!!
-
-            val lowerValue = scaledResolution * lowerBound
-            val upperValue = expand
-            if (lowerValue <= upperValue) {
-                DoubleSpan(
-                    loc + lowerValue,
-                    loc + upperValue
-                )
+            val limitValue = loc + expand
+            if (size >= this.minHeight) {
+                DoubleSpan(limitValue, limitValue)
             } else {
                 null
             }
