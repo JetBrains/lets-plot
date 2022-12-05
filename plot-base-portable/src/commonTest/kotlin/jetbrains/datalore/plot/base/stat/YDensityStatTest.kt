@@ -16,7 +16,7 @@ class YDensityStatTest : BaseStatTest() {
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
             trim = YDensityStat.DEF_TRIM,
-            extendScale = YDensityStat.DEF_EXTEND_SCALE,
+            tailsCutoff = YDensityStat.DEF_TAILS_CUTOFF,
             bandWidth = null,
             bandWidthMethod = DensityStat.DEF_BW,
             adjust = DensityStat.DEF_ADJUST,

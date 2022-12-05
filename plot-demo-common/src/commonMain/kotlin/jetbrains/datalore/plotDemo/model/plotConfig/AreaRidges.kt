@@ -112,9 +112,9 @@ class AreaRidges {
     private fun withNegativeHeight(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [0, 1, 1.5, 2, 3, 4, 5, 6, 7, 8]," +
-                "             'y': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]," +
-                "             'h': [0.3, 1.0, -0.5, 0.4, 0.6, -0.1, -0.6, 0.6, 0.1, 0.6]" +
+                "   'data' : {'x': [0, 1, 2, 3, 4, 0, 1, 2, 3, 4]," +
+                "             'y': [-1.0, -1.0, -1.0, -1.0, -1.0, -0.5, -0.5, -0.5, -0.5, -0.5]," +
+                "             'h': [1.0, -0.5, 0.5, -1.0, 1.0, 1.0, -1.0, 0.5, -0.5, 1.0]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
@@ -127,7 +127,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
-                "                 'min_height': -0.5," +
+                "                 'min_height': -0.9," +
                 "                 'stat': 'identity'," +
                 "                 'color': 'black'," +
                 "                 'fill': 'red'" +
@@ -142,8 +142,8 @@ class AreaRidges {
     private fun withStat(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [2, 3, 0, 1, 1, 2]," +
-                "             'y': [3, 3, 1, 1, 2, 2]" +
+                "   'data' : {'x': [1, 2, 0, 1, 2, 3]," +
+                "             'y': [1.2, 1.2, 1.1, 1.1, 1.4, 1.4]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
@@ -155,7 +155,8 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
-                "                 'extend_scale': 3" +
+                "                 'scale': 2," +
+                "                 'tails_cutoff': 3" +
                 "               }" +
                 "             ]" +
                 "}"
