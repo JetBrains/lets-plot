@@ -69,7 +69,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
-        val boundTransform = toLocationBound()
+        val boundTransform = toLocationBound(ctx)
 
         dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
             val paths = helper.createBands(
@@ -124,16 +124,16 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         ctx: GeomContext
     ) {
         val svgElementHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
-        val start = toLocationBound()(dataPoint)
+        val start = toLocationBound(ctx)(dataPoint)
         val end = DoubleVector(dataPoint.x()!!, dataPoint.y()!!)
         val line = svgElementHelper.createLine(start, end, dataPoint)!!
         root.add(line)
     }
 
-    private fun toLocationBound(): (p: DataPointAesthetics) -> DoubleVector {
+    private fun toLocationBound(ctx: GeomContext): (p: DataPointAesthetics) -> DoubleVector {
         return fun(p: DataPointAesthetics): DoubleVector {
             val x = p.x()!!
-            val y = p.y()!! + scale * p.height()!!
+            val y = p.y()!! + ctx.getResolution(Aes.Y) * scale * p.height()!!
             return DoubleVector(x, y)
         }
     }
@@ -172,8 +172,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
 
     override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
         val sizeAes = Aes.HEIGHT
-        @Suppress("NAME_SHADOWING")
-        val resolution = this.scale
+        val scaledResolution = this.scale * resolution
         val lowerBound: Double = this.minHeight
 
         val loc = p[coordAes]
@@ -181,9 +180,9 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
 
         return if (SeriesUtil.allFinite(loc, size)) {
             loc!!
-            val expand = resolution * size!!
+            val expand = scaledResolution * size!!
 
-            val lowerValue = resolution * lowerBound
+            val lowerValue = scaledResolution * lowerBound
             val upperValue = expand
             if (lowerValue <= upperValue) {
                 DoubleSpan(

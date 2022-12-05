@@ -142,8 +142,8 @@ class AreaRidges {
     private fun withStat(): MutableMap<String, Any> {
         val spec = "{" +
                 "   'kind': 'plot'," +
-                "   'data' : {'x': [2, 3, 0, 1, 1, 2]," +
-                "             'y': [3, 3, 1, 1, 2, 2]" +
+                "   'data' : {'x': [1, 2, 0, 1, 2, 3]," +
+                "             'y': [1.2, 1.2, 1.1, 1.1, 1.4, 1.4]" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
@@ -155,6 +155,7 @@ class AreaRidges {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'area_ridges'," +
+                "                 'scale': 2," +
                 "                 'extend_scale': 3" +
                 "               }" +
                 "             ]" +
