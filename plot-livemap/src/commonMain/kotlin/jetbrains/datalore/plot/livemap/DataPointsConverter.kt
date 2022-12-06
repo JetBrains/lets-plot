@@ -33,12 +33,11 @@ import kotlin.math.min
 
 internal class DataPointsConverter(
     private val layerIndex: Int,
-    private val aesthetics: Aesthetics,
-    private val geodesic: Boolean
+    private val aesthetics: Aesthetics
 ) {
     private val pointFeatureConverter get() = PointFeatureConverter(aesthetics)
-    private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics, geodesic)
-    private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics, geodesic)
+    private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics)
+    private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics)
 
     data class PieOptions(
         val strokeColor: Color,
@@ -74,8 +73,7 @@ internal class DataPointsConverter(
     fun toPie(geom: Geom): List<DataPointLiveMapAesthetics> = pieConverter(geom)
 
     private abstract class PathFeatureConverterBase internal constructor(
-        internal val aesthetics: Aesthetics,
-        private val myGeodesic: Boolean
+        internal val aesthetics: Aesthetics
     ) {
         private var myArrowSpec: ArrowSpec? = null
         private var myAnimation: Int? = null
@@ -100,7 +98,7 @@ internal class DataPointsConverter(
                     else -> MapLayerKind.PATH
                 }
             )
-                .setGeometryData(points, isClosed, myGeodesic)
+                .setGeometryData(points, isClosed)
                 .setArrowSpec(myArrowSpec)
                 .setAnimation(myAnimation)
 
@@ -115,9 +113,8 @@ internal class DataPointsConverter(
     }
 
     private inner class MultiPathFeatureConverter(
-        aes: Aesthetics,
-        geodesic: Boolean
-    ) : PathFeatureConverterBase(aes, geodesic) {
+        aes: Aesthetics
+    ) : PathFeatureConverterBase(aes) {
 
         internal fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
             setAnimation((geom as? PathGeom)?.animation)
@@ -156,9 +153,8 @@ internal class DataPointsConverter(
     }
 
     private inner class SinglePathFeatureConverter(
-        aesthetics: Aesthetics,
-        geodesic: Boolean
-    ) : PathFeatureConverterBase(aesthetics, geodesic) {
+        aesthetics: Aesthetics
+    ) : PathFeatureConverterBase(aesthetics) {
         internal fun tile(): List<DataPointLiveMapAesthetics> {
             val d = getMinXYNonZeroDistance(aesthetics)
             return process(isClosed = true, dataPointToGeometry = { p ->

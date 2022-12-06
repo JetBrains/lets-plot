@@ -65,13 +65,13 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 paths {
                     path {
-                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid), isGeodesic = false)
+                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid))
 
                         strokeWidth = 1.0
                     }
 
                     path {
-                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid), isGeodesic = true)
+                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid))
 
                         strokeWidth = 1.0
                         //animation = 2
@@ -102,7 +102,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 polygons {
                     polygon {
-                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid), isGeodesic = false)
+                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid))
 
                         fillColor = Color.LIGHT_CYAN
                     }

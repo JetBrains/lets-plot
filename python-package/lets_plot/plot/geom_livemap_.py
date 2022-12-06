@@ -28,7 +28,6 @@ def geom_livemap(*,
                  location=None,
                  zoom=None,
                  projection=None,
-                 geodesic=None,
                  tiles=None,
                  show_coord_pick_tools=None,
                  data_size_zoomin=None,
@@ -50,8 +49,6 @@ def geom_livemap(*,
         The map projection. There are: 'epsg3857' for Mercator projection;
         'epsg4326' for Equirectangular projection. `projection` only works
         with vector map tiles (i.e. Lets-Plot map tiles).
-    geodesic : bool, default=True
-        Enables geodesic type of all paths and segments.
     tiles : str
         Tiles provider, either as a string - URL for a standard raster ZXY tile provider
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
@@ -108,7 +105,7 @@ def geom_livemap(*,
             'lat': [40.6408, 1.3256],
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
-            geom_livemap(geodesic=False, projection='epsg4326', \\
+            geom_livemap(projection='epsg4326', \\
                          tiles=maptiles_lets_plot(theme='dark')) + \\
             geom_path(color='white') + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
@@ -150,7 +147,6 @@ def geom_livemap(*,
                  location=location,
                  zoom=zoom,
                  projection=projection,
-                 geodesic=geodesic,
                  tiles=tiles,
                  geocoding=geocoding,
                  show_coord_pick_tools=show_coord_pick_tools,

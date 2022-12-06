@@ -18,15 +18,13 @@ object LayerConverter {
     fun convert(
         letsPlotLayers: List<LayerRendererData>,
         aesScalingLimit: Int,
-        constScalingLimit: Int,
-        geodesic: Boolean
+        constScalingLimit: Int
     ): List<LayersBuilder.() -> Unit> {
         return letsPlotLayers
             .mapIndexed { index, layer ->
             val dataPointsConverter = DataPointsConverter(
                 layerIndex = index,
-                aesthetics = layer.aesthetics,
-                geodesic = geodesic
+                aesthetics = layer.aesthetics
             )
 
             val (layerKind, dataPointLiveMapAesthetics) = when (layer.geomKind) {
