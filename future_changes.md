@@ -17,7 +17,11 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
   - `tails_cutoff` parameter.
 See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/violin_tails_cutoff.ipynb).
 
-- Ridgeline plot through the `geom_area_ridges()`.
+- New 'bistro' plot - `residual_plot()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/residual_plot.ipynb). 
+
+- New geometry `geom_area_ridges()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/ridgeline_plot.ipynb).
 
