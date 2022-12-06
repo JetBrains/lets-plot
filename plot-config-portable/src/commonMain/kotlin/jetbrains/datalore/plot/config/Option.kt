@@ -260,7 +260,6 @@ object Option {
             const val LABELS = "labels"
             const val THEME = "theme"
             const val PROJECTION = "projection"
-            const val GEODESIC = "geodesic"
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val DATA_SIZE_ZOOMIN = "data_size_zoomin"
             const val CONST_SIZE_ZOOMIN = "const_size_zoomin"

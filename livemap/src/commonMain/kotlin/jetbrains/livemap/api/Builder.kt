@@ -125,15 +125,13 @@ class LayersBuilder(
 
 fun geometry(
     points: List<LonLatPoint>,
-    isClosed: Boolean,
-    isGeodesic: Boolean
+    isClosed: Boolean
 ): MultiPolygon<LonLat> {
     val coord = points.map(::limitCoord)
-
     return when {
         isClosed -> createMultiPolygon(coord)
         else -> coord
-            .run { if (isGeodesic) createArcPath(this) else this }
+            .run(::createArcPath)
             .run(::splitPathByAntiMeridian)
             .map { path -> Polygon(listOf(Ring(path))) }
             .run(::MultiPolygon)

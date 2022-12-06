@@ -21,7 +21,7 @@ class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                 polygons {
                     polygon {
 //                        geometry(rect(-104.032789, 35.309947, -80.237456, 48.979166), isGeodesic = false)
-                        geometry(rect(25.0, 69.0, 26.0, 70.0), isGeodesic = false)
+                        geometry(rect(25.0, 69.0, 26.0, 70.0))
 
                         fillColor = Color(255, 175, 175, 153)
                         strokeColor = Color(128, 0, 128, 153)

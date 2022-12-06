@@ -86,8 +86,7 @@ internal object ConverterDataHelper {
             val aesthetics = build()
             return DataPointsConverter(
                 0,
-                aesthetics,
-                true
+                aesthetics
             )
         }
 

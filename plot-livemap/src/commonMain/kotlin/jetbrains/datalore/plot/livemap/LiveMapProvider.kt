@@ -113,8 +113,7 @@ object LiveMapProvider {
                 layers = LayerConverter.convert(
                     plotLayers,
                     myLiveMapOptions.getInt(DATA_SIZE_ZOOMIN) ?: 0,
-                    myLiveMapOptions.getInt(CONST_SIZE_ZOOMIN) ?: -1,
-                    myLiveMapOptions.getBool(Option.Geom.LiveMap.GEODESIC) ?: true
+                    myLiveMapOptions.getInt(CONST_SIZE_ZOOMIN) ?: -1
                 )
             }
 
