@@ -6,10 +6,14 @@
 package jetbrains.datalore.plot.builder.annotation
 
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
+import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.annotations.AnnotationLineSpec
 import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import jetbrains.datalore.plot.builder.tooltip.MappingValue
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
@@ -36,10 +40,18 @@ class AnnotationLine(
     }
 
     companion object {
+        private val DEFAULT_STYLE = ThemeTextStyle(
+            family = FontFamily.SERIF,
+            face = FontFace.NORMAL,
+            size = 10.0,
+            color = Color.BLACK
+        )
+
         fun createAnnotations(
             spec: AnnotationSpecification,
             dataAccess: MappedDataAccess,
-            dataFrame: DataFrame
+            dataFrame: DataFrame,
+            themeTextStyle: ThemeTextStyle?
         ): Annotations? {
             if (spec.linePatterns.isEmpty()) {
                 return null
@@ -52,10 +64,10 @@ class AnnotationLine(
             return Annotations(
                 mappedLines,
                 textStyle = TextStyle(
-                    spec.textStyle.family.name,
-                    spec.textStyle.face,
-                    spec.textSize ?: spec.textStyle.size,
-                    spec.textStyle.color
+                    themeTextStyle?.family?.name ?: DEFAULT_STYLE.family.name,
+                    themeTextStyle?.face ?: DEFAULT_STYLE.face,
+                    spec.textSize ?: themeTextStyle?.size ?: DEFAULT_STYLE.size,
+                    themeTextStyle?.color ?: DEFAULT_STYLE.color
                 )
             )
         }
