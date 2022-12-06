@@ -11,7 +11,7 @@ enable_python_package: no
 # -------------------------------------------------------------------
 python:
   bin_path: /anaconda3/bin
-  include_path: /anaconda3/include/python3.7m
+  include_path: /anaconda3/include/python3.8
 
 
 # -------------------------------------------------------------------
