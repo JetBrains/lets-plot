@@ -147,8 +147,9 @@ class PieGeom : GeomBase() {
             else -> abs(p.slice()!!) / sum
         }.let { PI * 2.0 * it }
 
+        // the first slice goes to the left of 12 o'clock and others go clockwise
         var currentAngle = -PI / 2.0
-        currentAngle -= angle(dataPoints.first()) // not sure why
+        currentAngle -= angle(dataPoints.first())
 
         return dataPoints.map { p ->
             Sector(
