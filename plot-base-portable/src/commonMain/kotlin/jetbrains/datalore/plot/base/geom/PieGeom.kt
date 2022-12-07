@@ -34,6 +34,7 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.max
 import kotlin.math.sin
 
 class PieGeom : GeomBase() {
@@ -172,7 +173,7 @@ class PieGeom : GeomBase() {
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
         private val explode = radius * p.explode()!!
-        val sectorCenter = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
+        val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 
         val outerArcStart = outerArcPoint(startAngle)
@@ -185,8 +186,15 @@ class PieGeom : GeomBase() {
         fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
 
         private fun arcPoint(radius: Double, angle: Double): DoubleVector {
-            return sectorCenter.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
+            return position.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
         }
+
+        val sectorCenter: DoubleVector // center of the pie slice geometry
+            get() {
+                val offset = 0.5 * (radius - holeRadius)
+                return position.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
+                    .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
+            }
     }
 
     private inner class PieLegendKeyElementFactory : LegendKeyElementFactory {
@@ -223,19 +231,40 @@ class PieGeom : GeomBase() {
         sectors: List<Sector>,
         ctx: GeomContext
     ) {
-        if (ctx.annotations == null) return
+        if (ctx.annotations == null || sectors.isEmpty()) return
+
+        // split sectors for lefts and rights...
+        val leftSectors = sectors
+            .filter { it.outerArcStart.x < pieCenter.x || it.outerArcEnd.x < pieCenter.x || it.sectorCenter.x < pieCenter.x }
+            .ifEmpty { sectors }
+        val rightSectors = sectors
+            .filter { it.outerArcStart.x > pieCenter.x || it.outerArcEnd.x > pieCenter.x || it.sectorCenter.x > pieCenter.x  }
+            .ifEmpty { sectors }
 
         val expand = 20.0
-        val leftBorder = sectors.minOf { it.pieCenter.x - it.radius } - expand
-        val rightBorder = sectors.maxOf { it.pieCenter.x + it.radius } + expand
+        val leftBorder = leftSectors.minOf { it.pieCenter.x - it.radius } - expand
+        val rightBorder = rightSectors.maxOf { it.pieCenter.x + it.radius } + expand
 
         val textSizeGetter: (String, DataPointAesthetics) -> DoubleVector = { text, p ->
             TextUtil.measure(text, toTextDataPointAesthetics(p, ctx.annotations!!.textStyle), ctx)
         }
 
+        // Use max radius of the largest sector on a given side
+        val leftMaxOffsetForOuter =
+            leftSectors.maxBy(Sector::radius).let { it.holeRadius + 1.2 * (it.radius - it.holeRadius) }
+        val rightMaxOffsetForOuter =
+            rightSectors.maxBy(Sector::radius).let { it.holeRadius + 1.2 * (it.radius - it.holeRadius) }
+        val annotationLabels = sectors.map { sector ->
+            val offsetForPointer = when {
+                sector in leftSectors && sector in rightSectors -> max(leftMaxOffsetForOuter, rightMaxOffsetForOuter)
+                sector in leftSectors -> leftMaxOffsetForOuter
+                else -> rightMaxOffsetForOuter
+            }
+            getAnnotationLabel(sector, ctx.annotations!!, textSizeGetter, offsetForPointer)
+        }
         createAnnotationElements(
             pieCenter,
-            annotationLabels = sectors.map { sector -> getAnnotationLabel(sector, ctx.annotations!!, textSizeGetter) },
+            annotationLabels,
             textStyle = ctx.annotations!!.textStyle,
             xRange = DoubleSpan(leftBorder, rightBorder),
             ctx
@@ -245,20 +274,14 @@ class PieGeom : GeomBase() {
     private fun getAnnotationLabel(
         sector: Sector,
         annotations: Annotations,
-        textSizeGetter: (String, DataPointAesthetics) -> DoubleVector
+        textSizeGetter: (String, DataPointAesthetics) -> DoubleVector,
+        offsetForPointer: Double
     ): AnnotationLabel {
         val text = annotations.getAnnotationText(sector.p.index())
         val textSize = textSizeGetter(text, sector.p)
 
-        // center of the pie slice geometry:
-        val centralPos = with(sector) {
-            val offset = 0.5 * (sector.radius - sector.holeRadius)
-            sectorCenter.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
-                .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
-        }
-
         fun isPointInsideSector(pnt: DoubleVector): Boolean {
-            val v = pnt.subtract(sector.sectorCenter)
+            val v = pnt.subtract(sector.position)
             if (v.length() !in sector.holeRadius..sector.radius) {
                 return false
             }
@@ -272,34 +295,34 @@ class PieGeom : GeomBase() {
             return sector.startAngle <= angle && angle < sector.endAngle
         }
 
-        val textRect = DoubleRectangle(centralPos.subtract(textSize.mul(0.5)), textSize)
+        val textRect = DoubleRectangle(sector.sectorCenter.subtract(textSize.mul(0.5)), textSize)
         val canBePlacedInside =
             textRect.parts.flatMap { listOf(it.start, it.end) }.distinct().all(::isPointInsideSector)
 
-        val location = if (canBePlacedInside) {
-            centralPos
+        val pointerLocation = if (canBePlacedInside) {
+            sector.sectorCenter
         } else {
             val offset = sector.holeRadius + 0.8 * (sector.radius - sector.holeRadius)
-            sector.sectorCenter.add(DoubleVector(offset * cos(sector.direction), offset * sin(sector.direction)))
+            sector.position.add(DoubleVector(offset * cos(sector.direction), offset * sin(sector.direction)))
 
         }
-        val outerCoord: DoubleVector? = if (canBePlacedInside) {
+        val side = when {
+            canBePlacedInside -> Side.INSIDE
+            pointerLocation.x < sector.pieCenter.x -> Side.LEFT
+            else -> Side.RIGHT
+        }
+
+        val outerPointerCoord: DoubleVector? = if (canBePlacedInside) {
             null
         } else {
-            val outerOffs = sector.holeRadius + 1.2 * (sector.radius - sector.holeRadius)
-            sector.sectorCenter.add(
+            sector.position.add(
                 DoubleVector(
-                    outerOffs * cos(sector.direction),
-                    outerOffs * sin(sector.direction)
+                    offsetForPointer * cos(sector.direction),
+                    offsetForPointer * sin(sector.direction)
                 )
             )
         }
 
-        val side = when {
-            canBePlacedInside -> Side.INSIDE
-            location.x < sector.pieCenter.x -> Side.LEFT
-            else -> Side.RIGHT
-        }
         val textColor = when {
             side != Side.INSIDE -> annotations.textStyle.color
             Colors.luminance(getFillColor(sector.p)) < 0.5 -> Color.WHITE // if fill is dark
@@ -308,8 +331,8 @@ class PieGeom : GeomBase() {
         return AnnotationLabel(
             text,
             textSize,
-            location = location,
-            outerCoord,
+            pointerLocation,
+            outerPointerCoord,
             textColor,
             side
         )
@@ -364,7 +387,7 @@ class PieGeom : GeomBase() {
             val text: String,
             val textSize: DoubleVector,
             val location: DoubleVector,      // for text element or for pointer
-            val outerCoord: DoubleVector?,   // position for middle point of pointer line
+            val outerPointerCoord: DoubleVector?,   // position for middle point of pointer line
             val textColor: Color,
             val side: Side
         )
@@ -401,7 +424,7 @@ class PieGeom : GeomBase() {
 
                 val startPosition = DoubleVector(
                     if (side == Side.LEFT) xRange.lowerEnd else xRange.upperEnd,
-                    outsideLabels.first().outerCoord!!.y
+                    outsideLabels.first().outerPointerCoord!!.y
                 )
 
                 var yOffset = 0.0
@@ -440,7 +463,7 @@ class PieGeom : GeomBase() {
                 boundsCenter = null
             )
 
-            if (label.outerCoord == null) return g
+            if (label.outerPointerCoord == null) return g
 
             // Add pointer line
 
@@ -451,12 +474,12 @@ class PieGeom : GeomBase() {
                 textLocation.x - 5.0
             }
 
-            val midXPos = if ((label.side == Side.RIGHT && label.outerCoord.x > startXPos) ||
-                (label.side == Side.LEFT && label.outerCoord.x < startXPos)
+            val midXPos = if ((label.side == Side.RIGHT && label.outerPointerCoord.x > startXPos) ||
+                (label.side == Side.LEFT && label.outerPointerCoord.x < startXPos)
             ) {
                 startXPos
             } else {
-                label.outerCoord.x
+                label.outerPointerCoord.x
             }
             val middlePoint = DoubleVector(midXPos, textLocation.y)
 
