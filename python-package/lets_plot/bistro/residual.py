@@ -6,16 +6,6 @@ try:
 except ImportError:
     np = None
 
-try:
-    import statsmodels.api as sm
-except ImportError:
-    sm = None
-
-try:
-    import scipy
-except ImportError:
-    scipy = None
-
 from lets_plot.plot.core import PlotSpec, aes
 from lets_plot.plot.geom import *
 from lets_plot.plot.label import ylab
@@ -59,8 +49,7 @@ def _poly_transform(deg):
     return _transform
 
 def _get_lm_predictor(xs_train, ys_train, deg):
-    if sm is None:
-        raise ValueError("Module 'statsmodels' is required for 'lm' method")
+    import statsmodels.api as sm
 
     X_train = xs_train.reshape(-1, 1)
     transform = _poly_transform(deg)
@@ -69,10 +58,8 @@ def _get_lm_predictor(xs_train, ys_train, deg):
     return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
 
 def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
-    if sm is None:
-        raise ValueError("Module 'statsmodels' is required for 'loess' method")
-    if scipy is None:
-        raise ValueError("Module 'scipy' is required for 'loess' method")
+    import statsmodels.api as sm
+    from scipy.interpolate import interp1d
 
     if max_n is not None:
         np.random.seed(seed)
@@ -82,7 +69,7 @@ def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
     lowess = sm.nonparametric.lowess(ys_train, xs_train, frac=span)
     lowess_x = list(zip(*lowess))[0]
     lowess_y = list(zip(*lowess))[1]
-    model = scipy.interpolate.interp1d(lowess_x, lowess_y, bounds_error=False)
+    model = interp1d(lowess_x, lowess_y, bounds_error=False)
 
     return lambda xs: np.array([model(x) for x in xs])
 
