@@ -35,18 +35,6 @@ _COLOR_DEF = "#118ed8"
 _HLINE_DEF = True
 
 
-def _require_numpy(msg):
-    if np is None:
-        raise ValueError(msg)
-
-def _require_statsmodels(msg):
-    if sm is None:
-        raise ValueError(msg)
-
-def _require_scipy(msg):
-    if scipy is None:
-        raise ValueError(msg)
-
 def _extract_data_series(data, x, y):
     xs = np.array(data[x])
     ys = np.array(data[y])
@@ -71,7 +59,8 @@ def _poly_transform(deg):
     return _transform
 
 def _get_lm_predictor(xs_train, ys_train, deg):
-    _require_statsmodels("Module 'statsmodels' is required for 'lm' method")
+    if sm is None:
+        raise ValueError("Module 'statsmodels' is required for 'lm' method")
 
     X_train = xs_train.reshape(-1, 1)
     transform = _poly_transform(deg)
@@ -80,8 +69,10 @@ def _get_lm_predictor(xs_train, ys_train, deg):
     return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
 
 def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
-    _require_statsmodels("Module 'statsmodels' is required for 'loess' method")
-    _require_scipy("Module 'scipy' is required for 'loess' method")
+    if sm is None:
+        raise ValueError("Module 'statsmodels' is required for 'loess' method")
+    if scipy is None:
+        raise ValueError("Module 'scipy' is required for 'loess' method")
 
     if max_n is not None:
         np.random.seed(seed)
@@ -299,7 +290,8 @@ def residual_plot(data=None, x=None, y=None, *,
 
     """
     # requirements
-    _require_numpy("Module 'numpy' is required for residual plot")
+    if np is None:
+        raise ValueError("Module 'numpy' is required for residual plot")
     # prepare residuals
     residual_data = data.copy()
     xs, ys = _extract_data_series(residual_data, x, y)
