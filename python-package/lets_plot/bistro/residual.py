@@ -25,7 +25,6 @@ from lets_plot.plot.theme_ import *
 __all__ = ['residual_plot']
 
 
-_ERROR_MESSAGE_NUMPY_REQUIRED = "Module 'numpy' is required"
 _METHOD_DEF = "lm"
 _METHOD_LM_DEG_DEF = 1
 _METHOD_LOESS_SPAN_DEF = .5
@@ -36,9 +35,9 @@ _COLOR_DEF = "#118ed8"
 _HLINE_DEF = True
 
 
-def _require_numpy():
+def _require_numpy(msg):
     if np is None:
-        raise ValueError(_ERROR_MESSAGE_NUMPY_REQUIRED)
+        raise ValueError(msg)
 
 def _require_statsmodels(msg):
     if sm is None:
@@ -49,8 +48,6 @@ def _require_scipy(msg):
         raise ValueError(msg)
 
 def _extract_data_series(data, x, y):
-    _require_numpy()
-
     xs = np.array(data[x])
     ys = np.array(data[y])
     if xs.size != ys.size:
@@ -67,8 +64,6 @@ def _extract_data_series(data, x, y):
     return xs, ys
 
 def _poly_transform(deg):
-    _require_numpy()
-
     def _transform(X):
         assert len(X.shape) > 1 and X.shape[1] == 1
         return np.concatenate([np.power(X, d) for d in range(deg + 1)], axis=1).astype(float)
@@ -85,7 +80,6 @@ def _get_lm_predictor(xs_train, ys_train, deg):
     return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
 
 def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
-    _require_numpy()
     _require_statsmodels("Module 'statsmodels' is required for 'loess' method")
     _require_scipy("Module 'scipy' is required for 'loess' method")
 
@@ -102,8 +96,6 @@ def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
     return lambda xs: np.array([model(x) for x in xs])
 
 def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
-    _require_numpy()
-
     if method == 'lm':
         return _get_lm_predictor(xs_train, ys_train, deg)
     if method in ['loess', 'lowess']:
@@ -306,6 +298,8 @@ def residual_plot(data=None, x=None, y=None, *,
             ggmarginal('r', layer=geom_area(stat='density', color=color, fill=fill))
 
     """
+    # requirements
+    _require_numpy("Module 'numpy' is required for residual plot")
     # prepare residuals
     residual_data = data.copy()
     xs, ys = _extract_data_series(residual_data, x, y)
