@@ -4,7 +4,7 @@
 try:
     import numpy as np
 except ImportError:
-    raise ValueError("Module 'numpy' is required for residual plot")
+    np = None
 
 from lets_plot.plot.core import PlotSpec, aes
 from lets_plot.plot.geom import *
@@ -26,6 +26,9 @@ HLINE_DEF = True
 
 
 def _extract_data_series(data, x, y):
+    if np is None:
+        raise ValueError("Module 'numpy' is required")
+
     xs = np.array(data[x])
     ys = np.array(data[y])
     if xs.size != ys.size:
@@ -42,6 +45,9 @@ def _extract_data_series(data, x, y):
     return xs, ys
 
 def _poly_transform(deg):
+    if np is None:
+        raise ValueError("Module 'numpy' is required")
+
     def _transform(X):
         assert len(X.shape) > 1 and X.shape[1] == 1
         return np.concatenate([np.power(X, d) for d in range(deg + 1)], axis=1).astype(float)
@@ -61,6 +67,9 @@ def _get_lm_predictor(xs_train, ys_train, deg):
     return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
 
 def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
+    if np is None:
+        raise ValueError("Module 'numpy' is required")
+
     try:
         import statsmodels.api as sm
     except ImportError:
@@ -84,6 +93,9 @@ def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
     return lambda xs: np.array([model(x) for x in xs])
 
 def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
+    if np is None:
+        raise ValueError("Module 'numpy' is required")
+
     if method == 'lm':
         return _get_lm_predictor(xs_train, ys_train, deg)
     if method in ['loess', 'lowess']:
