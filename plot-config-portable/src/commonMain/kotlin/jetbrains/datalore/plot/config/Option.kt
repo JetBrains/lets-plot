@@ -134,6 +134,10 @@ object Option {
             const val SIDE_TOP = "t"
             const val SIDE_BOTTOM = "b"
         }
+
+        object CRS {
+            const val PROVIDED = "provided"
+        }
     }
 
     object LinesSpec {
