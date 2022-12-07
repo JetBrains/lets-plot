@@ -305,6 +305,7 @@ internal class SquareFrameOfReference(
                 .aesBounds(xyAesBounds)
                 .geomTargetCollector(targetCollector)
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
+                .annotations(rendererData.annotations)
                 .build()
 
             val pos = rendererData.pos

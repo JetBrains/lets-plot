@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Font
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
@@ -21,6 +22,7 @@ import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    override val annotations: Annotations? = null
 
     override fun getResolution(aes: Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")

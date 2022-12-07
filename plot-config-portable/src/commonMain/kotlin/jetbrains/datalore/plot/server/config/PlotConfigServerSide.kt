@@ -240,7 +240,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
                     facets.variables +
                     listOfNotNull(layerConfig.explicitGroupingVarName) +
-                    layerConfig.tooltips.valueSources
+                    (layerConfig.tooltips.valueSources + layerConfig.annotations.valueSources)
                         .filterIsInstance<DataFrameValue>()
                         .map(DataFrameValue::getVariableName) +
                     layerConfig.orderOptions.mapNotNull(OrderOption::byVariable)

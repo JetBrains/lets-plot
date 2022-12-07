@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -50,8 +51,9 @@ object LayerRendererUtil {
             aesthetics = aestheticsAfterOrientation,
             aestheticMappers = aestheticMappersAfterOrientation,
             pos = pos,
-            contextualMapping = layer.createConextualMapping(),
-            mappedAes = mappedAes
+            contextualMapping = layer.createContextualMapping(),
+            mappedAes = mappedAes,
+            annotations = layer.createAnnotations()
         )
     }
 
@@ -63,5 +65,6 @@ object LayerRendererUtil {
         val pos: PositionAdjustment,
         val contextualMapping: ContextualMapping,
         val mappedAes: Set<Aes<*>>,
+        val annotations: Annotations?
     )
 }

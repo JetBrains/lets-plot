@@ -84,4 +84,9 @@ class MappingValue(
             format = format
         )
     }
+
+    override fun getAnnotationText(index: Int): String? {
+        val originalValue = myDataAccess.getOriginalValue(aes, index) ?: return null
+        return myFormatter?.format(originalValue) ?: originalValue.toString()
+    }
 }

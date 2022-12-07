@@ -113,13 +113,13 @@ class layer_tooltips(FeatureSpec):
 
         """
         d = super().as_dict()
-        d['tooltip_formats'] = self._tooltip_formats
-        d['tooltip_lines'] = self._tooltip_lines
+        d['formats'] = self._tooltip_formats
+        d['lines'] = self._tooltip_lines
         d['tooltip_anchor'] = self._tooltip_anchor
         d['tooltip_min_width'] = self._tooltip_min_width
         d['tooltip_color'] = self._tooltip_color
-        d['tooltip_variables'] = self._tooltip_variables
-        d['tooltip_title'] = self._tooltip_title
+        d['variables'] = self._tooltip_variables
+        d['title'] = self._tooltip_title
         return _filter_none(d)
 
     def format(self, field=None, format=None):

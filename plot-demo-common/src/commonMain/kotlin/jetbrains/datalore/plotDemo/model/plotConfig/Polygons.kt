@@ -83,9 +83,9 @@ open class Polygons {
         "fill": "pop_est"
       },
       "tooltips": {
-        "tooltip_formats": [],
-        "tooltip_title": "@country",
-        "tooltip_lines": [
+        "formats": [],
+        "title": "@country",
+        "lines": [
           "Population|^fill"
         ]
       },
