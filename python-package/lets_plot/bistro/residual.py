@@ -1,13 +1,10 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-import pkg_resources
-installed_packages_names = [pkg.key for pkg in pkg_resources.working_set]
-for pkg_name in ['numpy', 'statsmodels', 'scipy']:
-    if pkg_name not in installed_packages_names:
-        raise Exception("To use this module you need to install '{0}' package".format(pkg_name))
-
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    raise ValueError("Module 'numpy' is required for residual plot")
 
 from lets_plot.plot.core import PlotSpec, aes
 from lets_plot.plot.geom import *
@@ -51,33 +48,53 @@ def _poly_transform(deg):
 
     return _transform
 
-def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
-    import statsmodels.api as sm
-    from scipy.interpolate import interp1d
+def _get_lm_predictor(xs_train, ys_train, deg):
+    try:
+        import statsmodels.api as sm
+    except ImportError:
+        raise ValueError("Module 'statsmodels' is required for 'lm' method")
 
+    X_train = xs_train.reshape(-1, 1)
+    transform = _poly_transform(deg)
+    model = sm.OLS(ys_train, transform(X_train)).fit()
+
+    return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
+
+def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
+    try:
+        import statsmodels.api as sm
+    except ImportError:
+        raise ValueError("Module 'statsmodels' is required for 'loess' method")
+
+    try:
+        from scipy.interpolate import interp1d
+    except ImportError:
+        raise ValueError("Module 'scipy' is required for 'loess' method")
+
+    if max_n is not None:
+        np.random.seed(seed)
+        indices = np.random.choice(range(xs_train.size), size=max_n, replace=False)
+        xs_train = xs_train[indices]
+        ys_train = ys_train[indices]
+    lowess = sm.nonparametric.lowess(ys_train, xs_train, frac=span)
+    lowess_x = list(zip(*lowess))[0]
+    lowess_y = list(zip(*lowess))[1]
+    model = interp1d(lowess_x, lowess_y, bounds_error=False)
+
+    return lambda xs: np.array([model(x) for x in xs])
+
+def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
     if method == 'lm':
-        X_train = xs_train.reshape(-1, 1)
-        transform = _poly_transform(deg)
-        model = sm.OLS(ys_train, transform(X_train)).fit()
-        return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
+        return _get_lm_predictor(xs_train, ys_train, deg)
     if method in ['loess', 'lowess']:
-        if max_n is not None:
-            np.random.seed(seed)
-            indices = np.random.choice(range(xs_train.size), size=max_n, replace=False)
-            xs_train = xs_train[indices]
-            ys_train = ys_train[indices]
-        lowess = sm.nonparametric.lowess(ys_train, xs_train, frac=span)
-        lowess_x = list(zip(*lowess))[0]
-        lowess_y = list(zip(*lowess))[1]
-        model = interp1d(lowess_x, lowess_y, bounds_error=False)
-        return lambda xs: np.array([model(x) for x in xs])
+        return _get_loess_predictor(xs_train, ys_train, span, seed, max_n)
     if method == 'none':
         return lambda xs: np.array([0] * xs.size)
     else:
         raise Exception("Unknown method '{0}'".format(method))
 
 def _get_binwidth(xs, ys, binwidth, bins):
-    if binwidth != None or bins != None:
+    if binwidth is not None or bins is not None:
         return binwidth
     binwidth_x = (xs.max() - xs.min()) / BINS_DEF
     binwidth_y = (ys.max() - ys.min()) / BINS_DEF
@@ -147,8 +164,8 @@ def residual_plot(data=None, x=None, y=None, *,
         Random seed for 'loess' sampling.
     max_n : int
         Maximum number of data-points for 'loess' method. If this quantity exceeded random sampling is applied to data.
-    geom : {'point', 'tile', 'blank'}, default='point'
-        The geometric object to use to display the data. No object will be used if `geom='blank'`.
+    geom : {'point', 'tile', 'none'}, default='point'
+        The geometric object to use to display the data. No object will be used if `geom='none'`.
     bins : int or list of int
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
         If only one value given - interpret it as list of two equal values.
@@ -179,6 +196,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Second parameter is a string specifying which sides of the plot the marginal layer will appear on.
         Possible values: 't' (top), 'b' (bottom), 'l' (left), 'r' (right).
         Third parameter (optional) is size of marginal.
+        To suppress marginals use `marginal='none'`.
         Examples:
         "hist:tr:0.3",
         "dens:tr,hist:bl",
@@ -262,7 +280,7 @@ def residual_plot(data=None, x=None, y=None, *,
             'x': np.random.uniform(size=n),
             'y': np.random.normal(size=n)
         }
-        residual_plot(data, 'x', 'y', geom='blank', hline=False, marginal='none') + \\
+        residual_plot(data, 'x', 'y', geom='none', hline=False, marginal='none') + \\
             geom_hline(yintercept=0, size=1, color=color) + \\
             geom_point(shape=21, color=color, fill=fill) + \\
             ggmarginal('r', layer=geom_area(stat='density', color=color, fill=fill))
@@ -282,7 +300,7 @@ def residual_plot(data=None, x=None, y=None, *,
     binwidth = _get_binwidth(xs, ys, binwidth, bins)
     # prepare mapping
     mapping_dict = {'x': x, 'y': residual_col}
-    if color_by != None:
+    if color_by is not None:
         mapping_dict['color'] = color_by
     # prepare scales
     scales = []
@@ -301,7 +319,7 @@ def residual_plot(data=None, x=None, y=None, *,
             color=color, size=size, alpha=alpha,
             show_legend=show_legend
         ))
-    elif geom == 'blank':
+    elif geom == 'none':
         pass
     else:
         raise Exception("Unknown geom '{0}'".format(geom))
