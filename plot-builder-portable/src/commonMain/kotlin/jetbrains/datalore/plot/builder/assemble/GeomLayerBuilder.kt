@@ -196,7 +196,6 @@ class GeomLayerBuilder constructor(
         )
 
         val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
-
         return MyGeomLayer(
             data,
             geomProvider,

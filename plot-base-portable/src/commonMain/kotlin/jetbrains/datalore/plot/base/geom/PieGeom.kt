@@ -233,7 +233,7 @@ class PieGeom : GeomBase() {
     ) {
         if (ctx.annotations == null || sectors.isEmpty()) return
 
-        // split sectors for lefts and rights...
+        // split sectors into left and right...
         val leftSectors = sectors
             .filter { it.outerArcStart.x < pieCenter.x || it.outerArcEnd.x < pieCenter.x || it.sectorCenter.x < pieCenter.x }
             .ifEmpty { sectors }
@@ -311,7 +311,6 @@ class PieGeom : GeomBase() {
             pointerLocation.x < sector.pieCenter.x -> Side.LEFT
             else -> Side.RIGHT
         }
-
         val outerPointerCoord: DoubleVector? = if (canBePlacedInside) {
             null
         } else {
@@ -322,7 +321,6 @@ class PieGeom : GeomBase() {
                 )
             )
         }
-
         val textColor = when {
             side != Side.INSIDE -> annotations.textStyle.color
             Colors.luminance(getFillColor(sector.p)) < 0.5 -> Color.WHITE // if fill is dark
@@ -386,7 +384,7 @@ class PieGeom : GeomBase() {
         private data class AnnotationLabel(
             val text: String,
             val textSize: DoubleVector,
-            val location: DoubleVector,      // for text element or for pointer
+            val location: DoubleVector,             // to place text element or pointer
             val outerPointerCoord: DoubleVector?,   // position for middle point of pointer line
             val textColor: Color,
             val side: Side
