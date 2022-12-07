@@ -14,5 +14,5 @@ import lets_plot as gg
 ])
 def test_map_join(args, expected):
     # ggplot is required - it normalizes map_join on before_append
-    spec = gg.ggplot() + gg.geom_livemap(map_join=args, tooltips=gg.layer_tooltips())
+    spec = gg.ggplot() + gg.geom_point(map_join=args, tooltips=gg.layer_tooltips())
     assert spec.as_dict()['layers'][0]['map_join'] == expected

@@ -87,14 +87,6 @@ def test_geom_text_fetches_centroids():
     assert geocoder.get_test_point_dict() == get_map(plot_spec)
 
 
-def test_geom_livemap_fetches_centroids():
-    geocoder = mock_geocoder()
-    plot_spec = ggplot() + geom_livemap(map=geocoder, symbol='point')
-
-    assert_map_data_meta(plot_spec)
-    assert geocoder.get_test_point_dict() == get_map(plot_spec)
-
-
 def test_data_should_call_to_dataframe():
     geocoder = mock_geocoder()
     plot_spec = ggplot() + geom_map(data=geocoder)
