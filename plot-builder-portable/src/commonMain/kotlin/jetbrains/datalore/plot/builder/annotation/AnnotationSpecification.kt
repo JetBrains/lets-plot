@@ -5,10 +5,6 @@
 
 package jetbrains.datalore.plot.builder.annotation
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 
 class AnnotationSpecification(
