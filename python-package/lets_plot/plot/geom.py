@@ -236,7 +236,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         will be projected to this CRS.
         Or 'provided' to keep original coordinates.
     flat : Boolean, default=False.
-        True - disables geodesic type of paths.
+        True - keeps a line flat, False - allows projection to curve a line.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5090,7 +5090,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : Boolean, default=False.
-        True - disables geodesic type of segments.
+        True - keeps a line flat, False - allows projection to curve a line.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,

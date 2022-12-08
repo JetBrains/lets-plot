@@ -43,7 +43,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
             layers {
                 paths {
                     path {
-                        geometry(path1, isGeodesic = true)
+                        geometry(path1, flat = false)
 
                         strokeColor = Color.DARK_GREEN
                         strokeWidth = 6.0
@@ -51,7 +51,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                     }
 
                     path {
-                        geometry(path2, isGeodesic = true)
+                        geometry(path2, flat = false)
 
                         strokeColor = Color.BLUE
                         strokeWidth = 6.0
@@ -59,7 +59,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                     }
 
                     path {
-                        geometry(path3, isGeodesic = true)
+                        geometry(path3, flat = false)
 
                         strokeColor = Color.RED
                         strokeWidth = 3.0
@@ -67,7 +67,7 @@ class PathsDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         arrow(length = 20.0, ends = "both") // type = "open"
                     }
                     path {
-                        geometry(path4, isGeodesic = true)
+                        geometry(path4, flat = false)
 
                         strokeColor = Color.RED
                         strokeWidth = 3.0

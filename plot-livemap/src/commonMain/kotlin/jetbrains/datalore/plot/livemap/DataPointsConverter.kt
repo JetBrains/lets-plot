@@ -100,7 +100,7 @@ internal class DataPointsConverter(
                     else -> MapLayerKind.PATH
                 }
             )
-                .setGeometryData(points, isClosed, isGeodesic = !myFlat)
+                .setGeometryData(points, isClosed, flat = myFlat)
                 .setArrowSpec(myArrowSpec)
                 .setAnimation(myAnimation)
 

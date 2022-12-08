@@ -153,5 +153,5 @@ class PolygonsBuilder(
 }
 
 fun PolygonsBuilder.geometry(points: List<LonLatPoint>) {
-    multiPolygon = geometry(points, isClosed = true, isGeodesic = false)
+    multiPolygon = geometry(points, isClosed = true, flat = true)
 }
