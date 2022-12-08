@@ -32,7 +32,7 @@ def ggtitle(label, subtitle=None):
 
     Notes
     -----
-    Split a long title/subtitle into two lines or more using `\\n` as a text separator.
+    Split a long title/subtitle into two lines or more using `\\\\n` as a text separator.
 
     Examples
     --------
