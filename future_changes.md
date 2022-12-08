@@ -54,3 +54,4 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 - Layout: uneven left/right, top/bottom plot margins [[#625](https://github.com/JetBrains/lets-plot/issues/625)].
 - A plot building error with empty data on various geoms.
 - Precision error in gradient [[#634](https://github.com/JetBrains/lets-plot/issues/634)].
+- geom_livemap: wrong position when datapoints geodesic line goes close to the N.P. [[#645](https://github.com/JetBrains/lets-plot/issues/645)].
