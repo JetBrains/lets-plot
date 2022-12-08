@@ -14,7 +14,21 @@ __all__ = ['annotations']
 
 class annotations(FeatureSpec):
     """
-    Configure annotations.
+    Configure annotations (for pie chart).
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+        ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=15, hole=0.4, \\
+                                stat='identity', tooltips = 'none', \\
+                                annotations=annotations().line('@value'))
+
     """
 
     def __init__(self, variables: List[str] = None):
@@ -42,6 +56,20 @@ class annotations(FeatureSpec):
         -------
         dict
             Dictionary of properties.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 6
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            annotations().format('@{..prop..}', '.0%') \\
+                         .line('@name') \\
+                         .line('(@{..prop..})') \\
+                         .as_dict()
+
         """
         d = super().as_dict()
         d['formats'] = self._formats
@@ -77,6 +105,43 @@ class annotations(FeatureSpec):
         -----
         For more info see https://lets-plot.org/pages/formats.html.
 
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 8
+
+            from lets_plot import *
+            from lets_plot.mapping import *
+            LetsPlot.setup_html()
+            data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+            ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
+                                    size=15, tooltips='none', \\
+                                    annotations=annotations(['..proppct..']) \\
+                                                    .format('..proppct..', '{.1f}%'))
+
+        |
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 8, 10, 12, 14
+
+            from lets_plot import *
+            from lets_plot.mapping import *
+            LetsPlot.setup_html()
+            data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+            ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..', order=1), weight='value'), \\
+                                    size=15, tooltips='none', \\
+                                    annotations=annotations() \\
+                                                    .format('^fill', '{{{}}}') \\
+                                                    .line('^fill') \\
+                                                    .format('..count..', 'd') \\
+                                                    .line('@{..count..}') \\
+                                                    .format('..prop..', '.1%') \\
+                                                    .line('@{..prop..}') \\
+                                                    .format('..sum..', 'of {d}') \\
+                                                    .line('@{..sum..}'))
+
         """
         self._formats.append({"field": field, "format": format})
         return self
@@ -111,6 +176,23 @@ class annotations(FeatureSpec):
         - 'x\^2' -> "x^2"
         - '{{x}}' -> "{x}"
 
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 7-9
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+            ggplot(data) + geom_pie(aes(fill='name', weight='value'), size=15, \\
+                                    tooltips='none', \\
+                                    annotations=annotations() \\
+                                                    .line('\'^fill\'') \\
+                                                    .line('@{..count..}') \\
+                                                    .line('@{..prop..}\n(@{..sum..})') \\
+                                                    .format('..prop..', '.1%'))
+
         """
         if self._lines is None:
             self._lines = []
@@ -130,6 +212,22 @@ class annotations(FeatureSpec):
         -------
         `annotations`
             Annotations specification.
+
+        Examples
+        --------
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 7
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+            ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=15, hole=0.4, \\
+                                    stat='identity', tooltips = 'none', \\
+                                    annotations=annotations().line('@value')
+                                                             .size(25))
+
         """
 
         self._size = value
