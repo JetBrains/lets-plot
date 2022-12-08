@@ -139,7 +139,7 @@ def residual_plot(data=None, x=None, y=None, *,
         The data to be displayed.
     x : str
         Name of independent variable.
-    x : str
+    y : str
         Name of dependent variable that will be fitted.
     method : {'lm', 'loess', 'lowess', 'none'}, default='lm'
         Fitting method: 'lm' (Linear Model) or 'loess'/'lowess' (Locally Estimated Scatterplot Smoothing).
@@ -257,7 +257,7 @@ def residual_plot(data=None, x=None, y=None, *,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 11
+        :emphasize-lines: 12
 
         import numpy as np
         from lets_plot import *

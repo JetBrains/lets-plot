@@ -460,7 +460,7 @@ def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.6.
+        Defaults: multiplicative = 0, additive = 0.2.
     na_value
         Missing values will be replaced with this value.
     reverse : bool
@@ -528,7 +528,7 @@ def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.6.
+        Defaults: multiplicative = 0, additive = 0.2.
     na_value
         Missing values will be replaced with this value.
     format : str
@@ -583,7 +583,7 @@ def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=No
     expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.6.
+        Defaults: multiplicative = 0, additive = 0.2.
     na_value
         Missing values will be replaced with this value.
     reverse : bool
@@ -651,7 +651,7 @@ def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, 
     expand : list of two numbers
         A numeric vector of length two giving multiplicative and additive expansion constants.
         The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.6.
+        Defaults: multiplicative = 0, additive = 0.2.
     na_value
         Missing values will be replaced with this value.
     format : str

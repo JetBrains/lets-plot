@@ -5664,7 +5664,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
         ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=10, stat='identity')
 
     |
@@ -5676,7 +5676,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         from lets_plot import *
         from lets_plot.mapping import *
         LetsPlot.setup_html()
-        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), size=10, \\
                                 tooltips=layer_tooltips().format('@{..prop..}', '.0%')
                                                          .line('count|@{..count..} (@{..prop..})')
