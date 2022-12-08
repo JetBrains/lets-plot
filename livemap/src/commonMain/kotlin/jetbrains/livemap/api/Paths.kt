@@ -158,8 +158,8 @@ class PathBuilder(
     }
 }
 
-fun PathBuilder.geometry(points: List<LonLatPoint>) {
-    multiPolygon = geometry(points, isClosed = false)
+fun PathBuilder.geometry(points: List<LonLatPoint>, flat: Boolean) {
+    multiPolygon = geometry(points, isClosed = false, flat = flat)
 }
 
 /**

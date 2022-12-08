@@ -174,6 +174,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.has(Segment.ANIMATION)) {
                     geom.animation = opts[Segment.ANIMATION]
                 }
+                if (opts.has(Segment.FLAT)) {
+                    geom.flat = opts.getBoolean(Segment.FLAT)
+                }
                 geom
             }
 
@@ -181,6 +184,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 val geom = PathGeom()
                 if (opts.has(Path.ANIMATION)) {
                     geom.animation = opts[Path.ANIMATION]
+                }
+                if (opts.has(Path.FLAT)) {
+                    geom.flat = opts.getBoolean(Path.FLAT)
                 }
                 geom
             }

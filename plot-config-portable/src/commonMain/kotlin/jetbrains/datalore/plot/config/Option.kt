@@ -217,10 +217,12 @@ object Option {
         object Segment {
             const val ARROW = "arrow"
             const val ANIMATION = "animation"
+            const val FLAT = "flat"
         }
 
         object Path {
             const val ANIMATION = "animation"
+            const val FLAT = "flat"
         }
 
         object Point {

@@ -77,6 +77,8 @@ internal class DataPointsConverter(
     ) {
         private var myArrowSpec: ArrowSpec? = null
         private var myAnimation: Int? = null
+        private var myFlat: Boolean = false
+
         private fun parsePathAnimation(animation: Any?): Int? {
             when (animation) {
                 null -> return null
@@ -98,7 +100,7 @@ internal class DataPointsConverter(
                     else -> MapLayerKind.PATH
                 }
             )
-                .setGeometryData(points, isClosed)
+                .setGeometryData(points, isClosed, flat = myFlat)
                 .setArrowSpec(myArrowSpec)
                 .setAnimation(myAnimation)
 
@@ -110,6 +112,10 @@ internal class DataPointsConverter(
         internal fun setAnimation(animation: Any?) {
             myAnimation = parsePathAnimation(animation)
         }
+
+        internal fun setFlat(flat: Boolean) {
+            myFlat = flat
+        }
     }
 
     private inner class MultiPathFeatureConverter(
@@ -118,6 +124,7 @@ internal class DataPointsConverter(
 
         internal fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
             setAnimation((geom as? PathGeom)?.animation)
+            (geom as? PathGeom)?.flat?.let(::setFlat)
 
             return process(multiPointDataByGroup(singlePointAppender(TO_LOCATION_X_Y)), false)
         }
@@ -176,6 +183,7 @@ internal class DataPointsConverter(
         internal fun segment(geom: Geom): List<DataPointLiveMapAesthetics> {
             setArrowSpec((geom as? SegmentGeom)?.arrowSpec)
             setAnimation((geom as? SegmentGeom)?.animation)
+            (geom as? SegmentGeom)?.flat?.let(::setFlat)
 
             return process(isClosed = false) {
                 if (SeriesUtil.allFinite(it.x(), it.y(), it.xend(), it.yend())) {
