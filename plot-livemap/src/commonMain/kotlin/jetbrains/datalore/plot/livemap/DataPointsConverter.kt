@@ -13,11 +13,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
-import jetbrains.datalore.plot.base.geom.LabelGeom
-import jetbrains.datalore.plot.base.geom.PathGeom
-import jetbrains.datalore.plot.base.geom.PieGeom
-import jetbrains.datalore.plot.base.geom.PointGeom
-import jetbrains.datalore.plot.base.geom.SegmentGeom
+import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
@@ -55,9 +51,10 @@ internal class DataPointsConverter(
 
         return MultiDataPointHelper.getPoints(aesthetics, colorGetter)
             .map {
-                DataPointLiveMapAesthetics(it, MapLayerKind.PIE)
-                    .setGeometryPoint(explicitVec(it.aes.x()!!, it.aes.y()!!))
-                    .setPieOptions(pieOptions)
+                DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {
+                    point = Vec(it.aes.x()!!, it.aes.y()!!)
+                    setPieOptions(pieOptions)
+                }
             }
     }
 
@@ -72,8 +69,8 @@ internal class DataPointsConverter(
     fun toText(geom: Geom) = pointFeatureConverter.text(geom)
     fun toPie(geom: Geom): List<DataPointLiveMapAesthetics> = pieConverter(geom)
 
-    private abstract class PathFeatureConverterBase internal constructor(
-        internal val aesthetics: Aesthetics
+    private abstract class PathFeatureConverterBase(
+        val aesthetics: Aesthetics
     ) {
         private var myArrowSpec: ArrowSpec? = null
         private var myAnimation: Int? = null
@@ -99,11 +96,12 @@ internal class DataPointsConverter(
                     isClosed -> MapLayerKind.POLYGON
                     else -> MapLayerKind.PATH
                 }
-            )
-                .setGeometryData(points, isClosed, flat = myFlat)
-                .setArrowSpec(myArrowSpec)
-                .setAnimation(myAnimation)
-
+            ).apply {
+                this.geometry = points
+                this.flat = myFlat
+                setArrowSpec(myArrowSpec)
+                setAnimation(myAnimation)
+            }
 
         internal fun setArrowSpec(arrowSpec: ArrowSpec?) {
             myArrowSpec = arrowSpec
@@ -327,10 +325,11 @@ internal class DataPointsConverter(
             val mapObjects = ArrayList<DataPointLiveMapAesthetics>(myAesthetics.dataPointCount())
             for (p in myAesthetics.dataPoints()) {
                 dataPointToGeometry(p)?.let { v ->
-                    DataPointLiveMapAesthetics(p, layerKind)
-                        .setGeometryPoint(v)
-                        .setAnimation(myAnimation)
-                        .setLabelOptions(myLabelOptions)
+                    DataPointLiveMapAesthetics(p, layerKind).apply {
+                        point = v
+                        setAnimation(myAnimation)
+                        setLabelOptions(myLabelOptions)
+                    }
                 }?.let(mapObjects::add)
             }
 

@@ -1,9 +1,15 @@
 package jetbrains.livemap.chart
 
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.Renderers.PathRenderer.ArrowSpec
 import jetbrains.livemap.core.ecs.EcsComponent
 
+// Predefined location of a chart element, used by map to initialize its viewport initial state
+class ChartElementLocationComponent : EcsComponent {
+    lateinit var location: Rect<World>
+}
 
 // Common rendering data - used for lines, polygons, pies, bars, points.
 class ChartElementComponent : EcsComponent {

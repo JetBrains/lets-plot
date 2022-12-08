@@ -8,6 +8,7 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
@@ -65,14 +66,14 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 paths {
                     path {
-                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid), flat = true)
-
+                        points = listOf(MOSCOW, SPB).map(GeoObject::centroid)
+                        flat = true
                         strokeWidth = 1.0
                     }
 
                     path {
-                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid), flat = false)
-
+                        points = listOf(BOSTON, FRISCO).map(GeoObject::centroid)
+                        flat = false
                         strokeWidth = 1.0
                         //animation = 2
                     }
@@ -102,7 +103,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 polygons {
                     polygon {
-                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid))
+                        geometry = createMultiPolygon(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid))
 
                         fillColor = Color.LIGHT_CYAN
                     }

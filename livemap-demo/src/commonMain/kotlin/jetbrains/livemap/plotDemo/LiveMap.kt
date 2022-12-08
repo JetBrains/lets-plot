@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.config.getList
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.random.Random
 
+@Suppress("unused")
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
@@ -75,6 +76,71 @@ class LiveMap {
 
     private fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any>) = apply {
         getList("layers")!!.asMaps().first().asMutable().putAll(tilesSpec)
+    }
+
+    private fun airflight(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "city": ["New York City", "Singapore"],
+                "lon": [-73.7997, 104.0012],
+                "lat": [40.6408, 1.3256]
+              },
+              "mapping": {
+                "x": "lon",
+                "y": "lat"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "projection": "epsg4326",
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "wss://tiles.datalore.jetbrains.com",
+                    "theme": "dark",
+                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+                  },
+                  "geocoding": {
+                    "url": "http://10.0.0.127:3020/map_data/geocoding"
+                  },
+                  "geodesic": false,
+                  "color": "white"
+                },
+                {
+                  "geom": "path",
+                  "color": "white"
+                },
+                {
+                  "geom": "label",
+                  "mapping": {
+                    "label": "city"
+                  },
+                  "label_padding": 0.6,
+                  "label_r": 0.5,
+                  "label_size": 1.5,
+                  "fill": "black",
+                  "color": "white",
+                  "size": 8,
+                  "angle": 10,
+                  "hjust": 0,
+                  "vjust": 1
+                },
+                {
+                  "geom": "text",
+                  "x": 40,
+                  "y": 50,
+                  "label": "First flight: November 9th 2020\nFlight distance: 15,349 km\nFlight time: 18 Hours, 50 Minutes\nAircraft: Airbus A350-900ULR",
+                  "size": 7,
+                  "hjust": 0,
+                  "lineheight": 2,
+                  "color": "white"
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun volcanos(): MutableMap<String, Any> {

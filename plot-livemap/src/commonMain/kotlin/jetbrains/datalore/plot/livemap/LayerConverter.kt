@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
@@ -97,7 +98,7 @@ object LayerConverter {
                         this.alphaScalingEnabled = alphaScalingEnabled
                         layerIndex = layerIdx
                         index = it.index
-                        multiPolygon = it.geometry
+                        geometry = createMultiPolygon(it.geometry!!)
                         geoObject = it.geoObject
                         lineDash = it.lineDash
                         fillColor = it.fillColor
@@ -115,7 +116,8 @@ object LayerConverter {
                             this.alphaScalingEnabled = alphaScalingEnabled
                             layerIndex = layerIdx
                             index = it.index
-                            multiPolygon = it.geometry!!
+                            points = it.geometry!!
+                            flat = it.flat
                             lineDash = it.lineDash
                             strokeColor = it.strokeColor
                             strokeWidth = AestheticsUtil.strokeWidth(it.myP)

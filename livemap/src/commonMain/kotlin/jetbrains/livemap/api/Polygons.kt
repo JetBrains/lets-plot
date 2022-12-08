@@ -6,7 +6,6 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
 import jetbrains.datalore.base.typedGeometry.bbox
@@ -80,22 +79,22 @@ class PolygonsBuilder(
     var strokeWidth: Double = 0.0
     var fillColor: Color = Color.GREEN
 
-    var multiPolygon: MultiPolygon<LonLat>? = null
+    var geometry: MultiPolygon<LonLat>? = null
 
     fun build(): EcsEntity? {
 
         return when {
             geoObject != null -> createGeoObjectEntity()
-            multiPolygon != null -> createStaticEntity()
+            geometry != null -> createStaticEntity()
             else -> null
         }
     }
 
     private fun createStaticEntity(): EcsEntity {
-        val geometry = multiPolygon!!
+        val worldGeometry = geometry!!
             .run { transformMultiPolygon(this, myMapProjection::project) }
 
-        val bbox = bbox(geometry) ?: error("Polygon bbox can't be null")
+        val worldBbox = bbox(worldGeometry) ?: error("Polygon bbox can't be null")
 
         return myFactory
             .createMapEntity("map_ent_s_polygon")
@@ -113,9 +112,9 @@ class PolygonsBuilder(
                     strokeColor = this@PolygonsBuilder.strokeColor
                     strokeWidth = this@PolygonsBuilder.strokeWidth
                 }
-                + WorldOriginComponent(bbox.origin)
-                + WorldGeometryComponent().apply { this.geometry = geometry }
-                + WorldDimensionComponent(bbox.dimension)
+                + WorldOriginComponent(worldBbox.origin)
+                + WorldGeometryComponent().apply { this.geometry = worldGeometry }
+                + WorldDimensionComponent(worldBbox.dimension)
                 + ScreenLoopComponent()
                 + ScreenOriginComponent()
                 + ScaleComponent()
@@ -150,8 +149,4 @@ class PolygonsBuilder(
                 get<ScreenLoopComponent>().origins = listOf(Client.ZERO_VEC)
             }
     }
-}
-
-fun PolygonsBuilder.geometry(points: List<LonLatPoint>) {
-    multiPolygon = geometry(points, isClosed = true, flat = true)
 }

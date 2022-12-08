@@ -8,7 +8,8 @@ package jetbrains.datalore.plot.livemap
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.spatial.limitLat
+import jetbrains.datalore.base.spatial.normalizeLon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
@@ -29,8 +30,6 @@ import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.
 import jetbrains.datalore.plot.livemap.DataPointsConverter.PieOptions
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
-import jetbrains.livemap.api.geometry
-import jetbrains.livemap.api.limitCoord
 import kotlin.math.ceil
 
 internal class DataPointLiveMapAesthetics {
@@ -59,8 +58,17 @@ internal class DataPointLiveMapAesthetics {
 
     val myLayerKind: MapLayerKind
 
-    var geometry: MultiPolygon<LonLat>? = null
+    var geometry: List<Vec<LonLat>>? = null
+        set(value) {
+            field = value?.map(::trimLonLat)
+        }
+
     var point: Vec<LonLat>? = null
+        set(value) {
+            field = value?.let(::trimLonLat)
+        }
+
+    var flat: Boolean = false
     var animation = 0
 
     private var myArrowSpec: ArrowSpec? = null
@@ -186,17 +194,6 @@ internal class DataPointLiveMapAesthetics {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
     }
 
-    fun setGeometryPoint(lonlat: Vec<LonLat>): DataPointLiveMapAesthetics {
-        point = limitCoord(lonlat)
-        return this
-    }
-
-    fun setGeometryData(points: List<Vec<LonLat>>, isClosed: Boolean, flat: Boolean): DataPointLiveMapAesthetics {
-        geometry = geometry(points, isClosed, flat)
-
-        return this
-    }
-
     fun setArrowSpec(arrowSpec: ArrowSpec?): DataPointLiveMapAesthetics {
         myArrowSpec = arrowSpec
         return this
@@ -217,5 +214,10 @@ internal class DataPointLiveMapAesthetics {
     fun setPieOptions(pieOptions: PieOptions?): DataPointLiveMapAesthetics {
        myPieOptions = pieOptions
        return this
+    }
+
+    // Limit Lon Lat to -180, 180; -90, 90
+    private fun trimLonLat(p: Vec<LonLat>): Vec<LonLat> {
+        return Vec(normalizeLon(p.x), limitLat(p.y))
     }
 }
