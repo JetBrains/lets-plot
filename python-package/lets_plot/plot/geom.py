@@ -192,6 +192,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, use_crs=None,
+              flat=None,
               **other_args):
     """
     Connects observations in the order, how they appear in the data.
@@ -234,6 +235,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         All coordinates in GeoDataFrame (see the 'map' parameter)
         will be projected to this CRS.
         Or 'provided' to keep original coordinates.
+    flat : Boolean, default=False.
+        True - disables geodesic type of paths.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -331,6 +334,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 flat=flat,
                  **other_args)
 
 
@@ -5052,7 +5056,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 arrow=None, **other_args):
+                 arrow=None, flat=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -5085,6 +5089,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specifies appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
+    flat : Boolean, default=False.
+        True - disables geodesic type of segments.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5152,6 +5158,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
+                 flat=flat,
                  **other_args)
 
 

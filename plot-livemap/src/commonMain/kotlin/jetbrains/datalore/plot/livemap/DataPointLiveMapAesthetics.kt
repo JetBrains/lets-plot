@@ -191,8 +191,8 @@ internal class DataPointLiveMapAesthetics {
         return this
     }
 
-    fun setGeometryData(points: List<Vec<LonLat>>, isClosed: Boolean): DataPointLiveMapAesthetics {
-        geometry = geometry(points, isClosed)
+    fun setGeometryData(points: List<Vec<LonLat>>, isClosed: Boolean, isGeodesic: Boolean): DataPointLiveMapAesthetics {
+        geometry = geometry(points, isClosed, isGeodesic)
 
         return this
     }

@@ -65,13 +65,13 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 paths {
                     path {
-                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid))
+                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid), isGeodesic = false)
 
                         strokeWidth = 1.0
                     }
 
                     path {
-                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid))
+                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid), isGeodesic = true)
 
                         strokeWidth = 1.0
                         //animation = 2
