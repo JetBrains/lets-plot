@@ -29,6 +29,10 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
 
+- Annotations for pie chart:
+
+  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/annotations_for_pie.ipynb).
+
 - New variables computed by `'count'` and `'count2d'` statistics: `'..sum..'`, `'..prop..'`, `'..proppct..'`.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/stat_count(2d)_vars.ipynb).
@@ -42,6 +46,7 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 ### Changed
         
 - Java/Swing platf.: Apache Batik upgraded to v.1.16 [[#624](https://github.com/JetBrains/lets-plot/issues/624)], [[LPK #140](https://github.com/JetBrains/lets-plot-kotlin/issues/140)].
+- The default size is increased for the plot title and decreased for the caption.
 
 ### Fixed
 
