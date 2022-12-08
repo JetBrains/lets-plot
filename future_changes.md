@@ -1,4 +1,4 @@
-## [2.5.2] - 2022-??-??
+## [3.0.0] - 2022-12-??
 
 ### Added
 
@@ -32,7 +32,12 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 - New variables computed by `'count'` and `'count2d'` statistics: `'..sum..'`, `'..prop..'`, `'..proppct..'`.
 
   See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/stat_count(2d)_vars.ipynb).
+        
+- Static maps:
 
+  - The value "provided" for `use_crs` parameter. 
+
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/projection_provided.ipynb).
 
 ### Changed
         
