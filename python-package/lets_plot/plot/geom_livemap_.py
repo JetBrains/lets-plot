@@ -95,22 +95,20 @@ def geom_livemap(*,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9-10
+        :emphasize-lines: 9
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {
-            'city': ['New York City', 'Singapore'],
-            'lon': [-73.7997, 104.0012],
-            'lat': [40.6408, 1.3256],
+            'city': ['New York City', 'Prague'],
+            'lon': [-73.7997, 14.418540],
+            'lat': [40.6408, 50.073658],
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
-            geom_livemap(projection='epsg4326', \\
-                         tiles=maptiles_lets_plot(theme='dark')) + \\
+            geom_livemap(projection='epsg4326', tiles=maptiles_lets_plot(theme='dark')) + \\
             geom_path(color='white') + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
-            ggtitle('SQ23 - the longest scheduled airline flight '
-                    'by great circle distance since 2020')
+            ggtitle("The shortest path between New York and Prague")
 
     """
     if 'symbol' in other_args:
