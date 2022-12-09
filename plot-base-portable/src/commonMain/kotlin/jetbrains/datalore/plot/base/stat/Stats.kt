@@ -96,11 +96,11 @@ object Stats {
         return map
     }
 
-    fun count(): AbstractCountStat {
+    fun count(): Stat {
         return CountStat()
     }
 
-    fun count2d(): AbstractCountStat {
+    fun count2d(): Stat {
         return Count2dStat()
     }
 
