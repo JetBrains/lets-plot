@@ -21,3 +21,5 @@ dependencies:
       - ipywidgets
       - sklearn
       - cartopy
+      - rasterio
+      - statsmodels                 # for 'residual plot'
