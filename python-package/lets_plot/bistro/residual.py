@@ -133,6 +133,9 @@ def residual_plot(data=None, x=None, y=None, *,
     """
     Produces a residual plot that shows the difference between the observed response and the fitted response values.
 
+    To use `residual_plot()`, the `numpy` library is required.
+    Also, `statsmodels` and `scipy` are required for 'lm' and 'loess' methods.
+
     Parameters
     ----------
     data : dict or `DataFrame`
