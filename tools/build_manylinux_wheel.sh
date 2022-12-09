@@ -9,7 +9,7 @@ set -e -x
 working_dir="/tmp/python-package/"
 build_dir="build/"
 dist_dir="dist/"
-python_bin_version="cp3[7-9,10]*"
+python_bin_version="cp3[7-9,10,11]*"
 
 
 cd $working_dir
