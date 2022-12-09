@@ -54,24 +54,19 @@ abstract class AbstractCountStat(defaultMappings: Map<Aes<*>, DataFrame.Variable
     }
 
     companion object {
-        private fun computeCount(
-            data: List<Any?>,
+        private fun <T> computeCount(
+            data: List<T?>,
             weight: List<Double?>
-        ): Map<Any, MutableDouble> {
+        ): Map<T, MutableDouble> {
 
-            fun isFinite(v: Any?) = when (v) {
+            fun isFinite(v: T?) = when (v) {
                 is Double -> SeriesUtil.isFinite(v)
-                is Pair<*, *> -> {
-                    val (first, second) = v
-                    when {
-                        first is Double && second is Double -> SeriesUtil.allFinite(first, second)
-                        else -> first != null && second != null
-                    }
-                }
+                //is DoubleVector -> SeriesUtil.allFinite(v.x, v.y)
+                is Pair<*, *> -> SeriesUtil.allFinite(v.first as Double?, v.second as Double?)
                 else -> v != null
             }
 
-            val result = LinkedHashMap<Any, MutableDouble>()
+            val result = LinkedHashMap<T, MutableDouble>()
             for (i in data.indices) {
                 val key = data[i]
                 if (isFinite(key)) {

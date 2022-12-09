@@ -33,7 +33,7 @@ internal class CountStat : AbstractCountStat(DEF_MAPPING) {
     }
 
     override fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
-        val statX = values.filterIsInstance<Double>()
+        val statX = values.map { it as Double }
         return mapOf(Stats.X to statX)
     }
 
