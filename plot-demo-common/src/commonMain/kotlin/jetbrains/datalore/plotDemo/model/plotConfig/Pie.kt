@@ -10,11 +10,41 @@ import jetbrains.datalore.plot.parsePlotSpec
 class Pie {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            strValsInX(),
             pie(hole = 0.0, useCountStat = false),
             pie(hole = 0.2),
             pie(hole = 0.5, withOrdering = true),
             withExplodes(),
         )
+    }
+
+    private fun strValsInX(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "x": [ "a", "a", "a", "a", "a", "b", "b", "c", "c", "c"],
+                "y": [ 1, 1, 1, 1, 1, 2, 2, 1.5, 1.5, 1.5],
+                "s": [ 3, 1, 2, 1, 4, 1, 3, 3, 3, 1],
+                "n": [ "a", "b", "a", "c", "a", "a", "b", "c", "a", "b"]
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "pie",
+                  "mapping": {
+                    "x": "x",
+                    "y": "y",
+                    "slice": "s",
+                    "fill": "n"
+                  },
+                  "hole": 0.3,
+                  "size": 10
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private val data = mapOf(
