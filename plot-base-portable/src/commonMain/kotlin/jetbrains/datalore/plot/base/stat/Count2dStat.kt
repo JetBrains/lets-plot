@@ -20,23 +20,22 @@ internal class Count2dStat : AbstractCountStat(DEF_MAPPING) {
     }
 
     override fun getValuesToAggregateBy(data: DataFrame, fromStatVars: Boolean): List<Any?> {
-        fun getNumerics(variable: DataFrame.Variable) = if (data.has(variable)) {
-            data.getNumeric(variable)
+        fun getValues(variable: DataFrame.Variable) = if (data.has(variable)) {
+            data[variable]
         } else {
             List(data.rowCount()) { 0.0 }
         }
-        val xs = getNumerics(if (fromStatVars) Stats.X else TransformVar.X)
-        val ys = getNumerics(if (fromStatVars) Stats.Y else TransformVar.Y)
+        val xs = getValues(if (fromStatVars) Stats.X else TransformVar.X)
+        val ys = getValues(if (fromStatVars) Stats.Y else TransformVar.Y)
         return xs.mapIndexed { index, x -> x to ys[index] }
     }
 
     override fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
-        values.forEach {
-            it as Pair<*, *>
-            statX += it.first as Double
-            statY += it.second as Double
+        values.filterIsInstance<Pair<Double, Double>>().forEach { (x, y) ->
+            statX += x
+            statY += y
         }
         return mapOf(
             Stats.X to statX,
