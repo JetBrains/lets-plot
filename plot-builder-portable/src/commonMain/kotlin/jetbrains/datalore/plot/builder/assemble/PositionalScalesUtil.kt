@@ -280,8 +280,8 @@ internal object PositionalScalesUtil {
             widthAxis to when {
                 geom is WithWidth -> {
                     val resolution = geomCtx.getResolution(widthAxis)
+                    val isDiscrete = layer.scaleMap.get(widthAxis).transform is DiscreteTransform
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        val isDiscrete = layer.scaleMap.get(Aes.X).transform is DiscreteTransform
                         geom.widthSpan(p, widthAxis, resolution, isDiscrete)
                     }
                 }
@@ -298,8 +298,8 @@ internal object PositionalScalesUtil {
             heightAxis to when {
                 geom is WithHeight -> {
                     val resolution = geomCtx.getResolution(heightAxis)
+                    val isDiscrete = layer.scaleMap.get(heightAxis).transform is DiscreteTransform
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        val isDiscrete = layer.scaleMap.get(Aes.Y).transform is DiscreteTransform
                         geom.heightSpan(p, heightAxis, resolution, isDiscrete)
                     }
                 }
