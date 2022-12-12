@@ -515,13 +515,13 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, discrete: Boolean): DoubleSpan? {
-        if (!discrete) return null
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+        if (!isDiscrete) return null
         return dimensionSpan(p, coordAes)
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, discrete: Boolean): DoubleSpan? {
-        if (!discrete) return null
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+        if (!isDiscrete) return null
         return dimensionSpan(p, coordAes)
     }
 }
