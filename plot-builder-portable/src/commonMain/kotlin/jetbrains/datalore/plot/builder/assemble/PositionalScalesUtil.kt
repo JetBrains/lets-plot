@@ -280,8 +280,9 @@ internal object PositionalScalesUtil {
             widthAxis to when {
                 geom is WithWidth -> {
                     val resolution = geomCtx.getResolution(widthAxis)
+                    val isDiscrete = !layer.scaleMap.get(widthAxis).isContinuousDomain
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        geom.widthSpan(p, widthAxis, resolution)
+                        geom.widthSpan(p, widthAxis, resolution, isDiscrete)
                     }
                 }
 
@@ -297,8 +298,9 @@ internal object PositionalScalesUtil {
             heightAxis to when {
                 geom is WithHeight -> {
                     val resolution = geomCtx.getResolution(heightAxis)
+                    val isDiscrete = !layer.scaleMap.get(heightAxis).isContinuousDomain
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        geom.heightSpan(p, heightAxis, resolution)
+                        geom.heightSpan(p, heightAxis, resolution, isDiscrete)
                     }
                 }
 

@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.TextStyle
 import jetbrains.datalore.vis.svg.SvgCircleElement
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -37,7 +38,7 @@ import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.sin
 
-class PieGeom : GeomBase() {
+class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
     var strokeWidth: Double = 0.0
     var strokeColor: Color = Color.WHITE
@@ -497,5 +498,30 @@ class PieGeom : GeomBase() {
             )
             return g
         }
+    }
+
+    private fun dimensionSpan(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {
+        val loc = p[coordAes]
+        val size = p[Aes.SIZE]
+        return if (SeriesUtil.allFinite(loc, size)) {
+            loc!!
+            val expand = size!! / 2.0
+            DoubleSpan(
+                loc - expand,
+                loc + expand
+            )
+        } else {
+            null
+        }
+    }
+
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+        if (!isDiscrete) return null
+        return dimensionSpan(p, coordAes)
+    }
+
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+        if (!isDiscrete) return null
+        return dimensionSpan(p, coordAes)
     }
 }
