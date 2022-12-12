@@ -101,7 +101,8 @@ class Count2dStatTest : BaseStatTest() {
     @Test
     fun normalizeByNotNumericValues() {
         val dataAfterStat = mapOf(
-            Stats.X to listOf("0.0"),
+            Stats.X to listOf("a"),
+            Stats.Y to listOf("b"),
             Stats.COUNT to listOf(1.0),
         )
         val builder = DataFrame.Builder()

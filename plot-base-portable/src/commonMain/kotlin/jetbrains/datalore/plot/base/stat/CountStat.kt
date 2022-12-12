@@ -8,13 +8,12 @@ package jetbrains.datalore.plot.base.stat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
-import jetbrains.datalore.plot.base.data.TransformVar
 
 /**
  * Counts the number of cases at each x position
  * (or if the weight aesthetic is supplied, the sum of the weights and the proportion)
  */
-internal class CountStat : AbstractCountStat(DEF_MAPPING) {
+internal class CountStat : AbstractCountStat(DEF_MAPPING, count2d = false) {
 
     override fun consumes(): List<Aes<*>> {
         return listOf(Aes.X, Aes.WEIGHT)
@@ -25,11 +24,6 @@ internal class CountStat : AbstractCountStat(DEF_MAPPING) {
             return withEmptyStatValues()
         }
         return super.apply(data, statCtx, messageConsumer)
-    }
-
-    override fun getValuesToAggregateBy(data: DataFrame, fromStatVars: Boolean): List<Any?> {
-        val xVar = if (fromStatVars) Stats.X else TransformVar.X
-        return data[xVar]
     }
 
     override fun addToStatVars(values: Set<Any>): Map<DataFrame.Variable, List<Double>> {

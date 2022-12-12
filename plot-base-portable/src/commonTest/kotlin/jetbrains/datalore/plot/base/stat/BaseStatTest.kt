@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.stat
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.StatContext
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -25,7 +26,7 @@ open class BaseStatTest {
         return builder.build()
     }
 
-    protected fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
+    private fun checkStatVar(statDf: DataFrame, variable: DataFrame.Variable) {
         assertTrue(statDf.has(variable), "Has var " + variable.name)
     }
 
@@ -36,7 +37,11 @@ open class BaseStatTest {
             assertEquals(expectedValues[i], statDf[variable][i], "Get var " + variable.name)
     }
 
-    protected fun checkStatVarDomain(statDf: DataFrame, variable: DataFrame.Variable, expectedValuesDomain: Set<Double?>) {
+    protected fun checkStatVarDomain(
+        statDf: DataFrame,
+        variable: DataFrame.Variable,
+        expectedValuesDomain: Set<Double?>
+    ) {
         checkStatVar(statDf, variable)
         assertEquals(statDf.getNumeric(variable).toSet(), expectedValuesDomain, "Unique values of var " + variable.name)
     }
@@ -61,7 +66,7 @@ open class BaseStatTest {
         assertTrue(expectedMaxLimit - actualMaxValue > 0, "Max value of var " + variable.name + " limited")
     }
 
-    protected fun testEmptyDataFrame(stat: BaseStat) {
+    protected fun testEmptyDataFrame(stat: Stat) {
         val df = dataFrame(emptyMap())
         val statDf = stat.apply(df, statContext(df))
 
