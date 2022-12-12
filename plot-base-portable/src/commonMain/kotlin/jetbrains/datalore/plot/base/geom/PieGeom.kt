@@ -500,7 +500,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun dimensionSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
+    private fun dimensionSpan(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {
         val loc = p[coordAes]
         val size = p[Aes.SIZE]
         return if (SeriesUtil.allFinite(loc, size)) {
@@ -515,11 +515,13 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
-        return dimensionSpan(p, coordAes, resolution)
+    override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, discrete: Boolean): DoubleSpan? {
+        if (!discrete) return null
+        return dimensionSpan(p, coordAes)
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
-        return dimensionSpan(p, coordAes, resolution)
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, discrete: Boolean): DoubleSpan? {
+        if (!discrete) return null
+        return dimensionSpan(p, coordAes)
     }
 }

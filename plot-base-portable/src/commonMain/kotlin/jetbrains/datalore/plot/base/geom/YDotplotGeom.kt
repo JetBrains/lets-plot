@@ -174,7 +174,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
         }
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double): DoubleSpan? {
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, discrete: Boolean): DoubleSpan? {
         return PointDimensionsUtil.dimensionSpan(
             p,
             coordAes,

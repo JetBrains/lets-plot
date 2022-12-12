@@ -10,5 +10,5 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
 interface WithWidth {
-    fun widthSpan(p: DataPointAesthetics, coordAes:Aes<Double>, resolution: Double): DoubleSpan?
+    fun widthSpan(p: DataPointAesthetics, coordAes:Aes<Double>, resolution: Double, discrete: Boolean): DoubleSpan?
 }
