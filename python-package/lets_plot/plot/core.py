@@ -512,7 +512,7 @@ class LayerSpec(FeatureSpec):
                 map_data_meta = {'georeference': {}}
             else:
                 # Fetch proper GeoDataFrame. Further processing is the same as if map was a GDF.
-                if name in ['point', 'text', 'livemap']:
+                if name in ['point', 'pie', 'text', 'livemap']:
                     map = map.get_centroids()
                 elif name in ['map', 'polygon']:
                     map = map.get_boundaries()
