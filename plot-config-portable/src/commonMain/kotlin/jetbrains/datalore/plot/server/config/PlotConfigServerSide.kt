@@ -31,7 +31,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
-        plotOrderOptions: List<OrderOption>
+        plotOrderOptions: List<OrderOption>,
+        isMapPlot: Boolean
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -43,7 +44,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             plotDataMeta,
             plotOrderOptions,
             GeomProto(geomKind),
-            false
+            clientSide = false,
+            isMapPlot
         )
     }
 
