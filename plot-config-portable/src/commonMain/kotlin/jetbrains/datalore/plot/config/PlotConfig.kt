@@ -114,10 +114,10 @@ abstract class PlotConfig(
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
 
-        val isLiveMapPlot = layerOptionsList
+        val isMapPlot = layerOptionsList
             .mapNotNull { layerOptions -> (layerOptions as? Map<*, *>)?.getString(Option.Layer.GEOM) }
             .map(Option.GeomName::toGeomKind)
-            .any { it == GeomKind.LIVE_MAP }
+            .any { it in listOf(GeomKind.LIVE_MAP, GeomKind.MAP) }
 
         for (layerOptions in layerOptionsList) {
             require(layerOptions is Map<*, *>) { "Layer options: expected Map but was ${layerOptions!!::class.simpleName}" }
@@ -130,7 +130,7 @@ abstract class PlotConfig(
                 getMap(MAPPING),
                 getMap(DATA_META),
                 DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
-                isLiveMapPlot
+                isMapPlot
             )
             layerConfigs.add(layerConfig)
         }
@@ -143,7 +143,7 @@ abstract class PlotConfig(
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
-        isLiveMapPlot: Boolean
+        isMapPlot: Boolean
     ): LayerConfig
 
 

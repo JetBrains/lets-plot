@@ -473,7 +473,7 @@ class GeoConfigTest {
     }
 
     @Test
-    fun `should not trigger when positional mapping exist and it is not the livemap plot`() {
+    fun `should not trigger when positional mapping exist and it is not the map plot`() {
         singleGeomLayer(
             """
             |{
@@ -506,7 +506,7 @@ class GeoConfigTest {
     }
 
     @Test
-    fun `when livemap - should trigger even if positional mapping exist`() {
+    fun `for map plot - should trigger even if positional mapping exist`() {
         val orangeCoord = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
         val appleCoord = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
 

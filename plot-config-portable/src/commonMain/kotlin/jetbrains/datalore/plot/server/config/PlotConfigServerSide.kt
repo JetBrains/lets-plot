@@ -32,7 +32,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOption>,
-        isLiveMapPlot: Boolean
+        isMapPlot: Boolean
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -45,7 +45,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             plotOrderOptions,
             GeomProto(geomKind),
             clientSide = false,
-            isLiveMapPlot
+            isMapPlot
         )
     }
 
