@@ -67,10 +67,10 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -231,10 +231,10 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     flat : Boolean, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
     other_args
@@ -2091,10 +2091,10 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2266,10 +2266,10 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4945,10 +4945,10 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5205,10 +5205,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5394,10 +5394,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5588,10 +5588,10 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
-        Or 'provided' to keep original coordinates.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
     fill_by : string, default='fill'
