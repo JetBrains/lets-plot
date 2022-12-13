@@ -122,7 +122,7 @@ object Option {
         const val ORIENTATION = "orientation"
         const val MARGINAL = "marginal"
 
-        const val ANNOTATIONS = "annotations"
+        const val ANNOTATIONS = "labels"
         const val ANNOTATION_SIZE = "annotation_size"
 
         object Marginal {
