@@ -33,7 +33,7 @@ Learn more about *Lets-Plot for Python* installation and usage at the documentat
   <img src="https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin"/>
 </a>
 
-*Lets-Plot for Kotlin* adds plotting capabilities to scientific notebooks built on the Jupyter [Kotlin Kermel](https://github.com/Kotlin/kotlin-jupyter).
+*Lets-Plot for Kotlin* adds plotting capabilities to scientific notebooks built on the Jupyter [Kotlin Kernel](https://github.com/Kotlin/kotlin-jupyter).
 
 You can use this API to embed charts into Kotlin/JVM and Kotlin/JS applications as well.
 
