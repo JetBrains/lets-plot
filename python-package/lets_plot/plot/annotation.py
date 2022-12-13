@@ -9,10 +9,10 @@ from lets_plot.plot.core import FeatureSpec, _filter_none
 # Annotations
 #
 
-__all__ = ['annotations']
+__all__ = ['layer_annotations']
 
 
-class annotations(FeatureSpec):
+class layer_annotations(FeatureSpec):
     """
     Configure annotations (for pie chart).
 
@@ -27,7 +27,7 @@ class annotations(FeatureSpec):
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
         ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=15, hole=0.4, \\
                                 stat='identity', tooltips = 'none', \\
-                                annotations=annotations().line('@value'))
+                                annotations=layer_annotations().line('@value'))
 
     """
 
@@ -65,7 +65,7 @@ class annotations(FeatureSpec):
 
             from lets_plot import *
             LetsPlot.setup_html()
-            annotations().format('@{..prop..}', '.0%') \\
+            layer_annotations().format('@{..prop..}', '.0%') \\
                          .line('@name') \\
                          .line('(@{..prop..})') \\
                          .as_dict()
@@ -98,7 +98,7 @@ class annotations(FeatureSpec):
 
         Returns
         -------
-        `annotations`
+        `layer_annotations`
             Annotations specification.
 
         Notes
@@ -117,7 +117,7 @@ class annotations(FeatureSpec):
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
                                     size=15, tooltips='none', \\
-                                    annotations=annotations(['..proppct..']) \\
+                                    annotations=layer_annotations(['..proppct..']) \\
                                                     .format('..proppct..', '{.1f}%'))
 
         |
@@ -132,7 +132,7 @@ class annotations(FeatureSpec):
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..', order=1), weight='value'), \\
                                     size=15, tooltips='none', \\
-                                    annotations=annotations() \\
+                                    annotations=layer_annotations() \\
                                                     .format('^fill', '{{{}}}') \\
                                                     .line('^fill') \\
                                                     .format('..count..', 'd') \\
@@ -157,7 +157,7 @@ class annotations(FeatureSpec):
 
         Returns
         -------
-        `annotations`
+        `layer_annotations`
             Annotations specification.
 
         Notes
@@ -187,7 +187,7 @@ class annotations(FeatureSpec):
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(fill='name', weight='value'), size=15, \\
                                     tooltips='none', \\
-                                    annotations=annotations() \\
+                                    annotations=layer_annotations() \\
                                                     .line('\'^fill\'') \\
                                                     .line('@{..count..}') \\
                                                     .line('@{..prop..}\n(@{..sum..})') \\
@@ -210,7 +210,7 @@ class annotations(FeatureSpec):
 
         Returns
         -------
-        `annotations`
+        `layer_annotations`
             Annotations specification.
 
         Examples
@@ -225,7 +225,7 @@ class annotations(FeatureSpec):
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=15, hole=0.4, \\
                                     stat='identity', tooltips = 'none', \\
-                                    annotations=annotations().line('@value')
+                                    annotations=layer_annotations().line('@value')
                                                              .size(25))
 
         """
