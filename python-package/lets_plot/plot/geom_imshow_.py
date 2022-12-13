@@ -110,7 +110,9 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     Displays image specified by ndarray with shape
 
     - (M, N) - grey-scale image
+
     - (M, N, 3) - color RGB image
+
     - (M, N, 4) - color RGB image with alpha channel
 
     This geom is not as flexible as `geom_raster()` or `geom_tile()`
@@ -124,7 +126,9 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
 
         - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization.
         See parameters `norm`, `cmap`, `vmin`, `vmax`.
+
         - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
+
         - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int).
 
         The first two dimensions (M, N) define the rows and columns of the image.
@@ -146,6 +150,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         Define image's bounding box in terms of the "data coordinates".
 
         - `left, right`: coordinates of pixels' outer edge along the x-axis for pixels in the 1-st and the last column.
+
         - `bottom, top`: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
 
         The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
