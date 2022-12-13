@@ -62,8 +62,8 @@ configurations {
 
 allprojects {
     group = 'org.jetbrains.lets-plot'
-    version = "3.0.1-alpha1"
-    project.ext.js_artifact_version = "3.0.1.dev1"
+    version = "3.0.0-rc2"
+    project.ext.js_artifact_version = "3.0.0rc2"
     // see also: python-package/lets_plot/_version.py
 
     // Generate JVM 1.8 bytecode
