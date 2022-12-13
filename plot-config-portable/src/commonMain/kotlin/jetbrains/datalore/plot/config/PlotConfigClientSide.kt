@@ -85,7 +85,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
-        plotOrderOptions: List<OrderOptionUtil.OrderOption>
+        plotOrderOptions: List<OrderOptionUtil.OrderOption>,
+        isLiveMapPlot: Boolean
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -97,7 +98,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
             plotDataMeta,
             plotOrderOptions,
             GeomProtoClientSide(geomKind),
-            true
+            clientSide = true,
+            isLiveMapPlot
         )
     }
 

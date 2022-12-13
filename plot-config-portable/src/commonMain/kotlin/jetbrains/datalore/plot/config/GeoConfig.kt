@@ -66,8 +66,8 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>): Boolean {
-            if (combinedMappings.keys
+        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>, isLiveMapPlot: Boolean): Boolean {
+            if (!isLiveMapPlot && combinedMappings.keys
                     .mapNotNull { it as? String }
                     .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
                     .any(Aes.Companion::isPositional)

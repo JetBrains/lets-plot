@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
@@ -112,6 +113,12 @@ abstract class PlotConfig(
 
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
+
+        val isLiveMapPlot = layerOptionsList
+            .mapNotNull { layerOptions -> (layerOptions as? Map<*, *>)?.getString(Option.Layer.GEOM) }
+            .map(Option.GeomName::toGeomKind)
+            .any { it == GeomKind.LIVE_MAP }
+
         for (layerOptions in layerOptionsList) {
             require(layerOptions is Map<*, *>) { "Layer options: expected Map but was ${layerOptions!!::class.simpleName}" }
             @Suppress("UNCHECKED_CAST")
@@ -122,7 +129,8 @@ abstract class PlotConfig(
                 sharedData,
                 getMap(MAPPING),
                 getMap(DATA_META),
-                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING))
+                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
+                isLiveMapPlot
             )
             layerConfigs.add(layerConfig)
         }
@@ -134,7 +142,8 @@ abstract class PlotConfig(
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
-        plotOrderOptions: List<OrderOptionUtil.OrderOption>
+        plotOrderOptions: List<OrderOptionUtil.OrderOption>,
+        isLiveMapPlot: Boolean
     ): LayerConfig
 
 

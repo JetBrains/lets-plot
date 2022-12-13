@@ -49,7 +49,8 @@ class LayerConfig constructor(
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
-    private val clientSide: Boolean
+    private val clientSide: Boolean,
+    isLiveMapPlot: Boolean
 ) : OptionsAccessor(
     layerOptions,
     initDefaultOptions(layerOptions, geomProto)
@@ -175,7 +176,7 @@ class LayerConfig constructor(
         val dropData: Boolean = (combinedMappingOptions.isEmpty() &&
                 // Do not touch GeoDataframe - empty mapping is OK in this case.
                 !GeoConfig.isGeoDataframe(layerOptions, DATA) &&
-                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions)
+                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isLiveMapPlot)
                 )
 
         var combinedData = when {
@@ -193,7 +194,7 @@ class LayerConfig constructor(
         }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions)) {
+        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isLiveMapPlot)) {
             val geoConfig = GeoConfig(
                 geomProto.geomKind,
                 combinedData,
