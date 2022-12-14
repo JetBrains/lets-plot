@@ -45,6 +45,10 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/projection_provided.ipynb).
 
+- The `flat` parameter for `geom_path()` and `geom_segment()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/flat_param.ipynb).
+
 ### Changed
 
 - [BREAKING] Dropped support for Python 3.6 as it is in the ["end-of-life"](https://devguide.python.org/versions/) of its release cycle. 
