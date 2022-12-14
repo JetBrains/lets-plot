@@ -62,7 +62,7 @@ Also read:
 
 - ### Breaking Changes
 
-  - Python 3.6 is no longer supported as it is in the ["end-of-life"](https://devguide.python.org/versions/) of its release cycle.
+  - `Python 3.6` is no longer supported as it is in the ["end-of-life"](https://devguide.python.org/versions/) release cycle stage.
   
   - `geom_livemap()` is now a pure basemap layer. The following options are no longer supported:
     `symbol`, `data`, `mapping`, `map`, `map_join`, `ontop`, `stat`, `position`, `show_legend`, `sampling`, `tooltips`.
@@ -72,46 +72,41 @@ Also read:
 
 - ### New Features
 
-  - `residual_plot()`
+  - #### `residual_plot()`
     <br>
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/residual-light.png" alt="f-22e/images/residual-light.png" width="200" height="133">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/residual-dark.png" alt="f-22e/images/residual-dark.png" width="200" height="133">
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/residual_plot.ipynb).
-                 
 
-  - `geom_area_ridges()`
+  - #### `geom_area_ridges()`
     <br>
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/ridges-dark.png" alt="f-22e/images/ridges-dark.png" width="400" height="130">
 
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/ridgeline_plot.ipynb).
       
-
-  - `geom_pie()`
+  - #### `geom_pie()`
     <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie.png" alt="f-22e/images/pie.png" width="474" height="133">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie.png" alt="f-22e/images/pie.png" width="379" height="106">
 
     See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
-              
 
-  - Annotation labels on Pie-chart
+  - #### Annotation labels on Pie-chart
     <br>
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-explode.png" alt="f-22e/images/pie-labels-explode.png" width="195" height="133">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-titanic.png" alt="f-22e/images/pie-labels-titanic.png" width="366" height="133">
 
     See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/annotations_for_pie.ipynb).
-                                  
 
-  - Spatial Pies
+  - #### Spatial Pies
     <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/spatial-pies-titanic.png" alt="f-22e/images/spatial-pies-titanic.png">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/spatial_pies_titanic.png" alt="f-22e/images/spatial_pies_titanic.png" width="293" height="133">
 
     See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
 
-
-  - New parameters in `geom_imshow()`:
+  - #### New parameters in `geom_imshow()`:
     <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/imshow-alpha-jp.png" alt="f-22e/images/imshow-alpha-jp.png">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/imshow-alpha-jp.png" alt="f-22e/images/imshow-alpha-jp.png" width="180" height="172">
 
     - Transparency of `NaN` values in grayscale images: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
 
