@@ -52,8 +52,8 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 ### Changed
 
 - [BREAKING] Dropped support for Python 3.6 as it is in the ["end-of-life"](https://devguide.python.org/versions/) of its release cycle. 
-- [BREAKING] `geom_livemap()` itself no longer draws geometries, so the following options are no longer used:
-  `'symbol', 'data', 'mapping', 'map', 'map_join', 'ontop', 'stat', 'position', 'show_legend', 'sampling', 'tooltips'`.
+- [BREAKING] `geom_livemap()` itself no longer draws geometries, so the following options are not expected:
+  `symbol`, `data`, `mapping`, `map`, `map_join`, `ontop`, `stat`, `position`, `show_legend`, `sampling`, `tooltips`.
   To draw points and pies, please, use the `geom_point()` and `geom_pie()` functions.
 - Java/Swing platf.: Apache Batik upgraded to v.1.16 [[#624](https://github.com/JetBrains/lets-plot/issues/624)], [[LPK #140](https://github.com/JetBrains/lets-plot-kotlin/issues/140)].
 - The default size is increased for the plot title and decreased for the caption.
