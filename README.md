@@ -97,7 +97,7 @@ Also read:
 
     See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
 
-  - #### Annotation labels on Pie-chart
+  - #### Annotation Labels on Pie-Chart
     <br>
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-explode.png" alt="f-22e/images/pie-labels-explode.png" width="195" height="133">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-titanic.png" alt="f-22e/images/pie-labels-titanic.png" width="366" height="133">
@@ -110,7 +110,7 @@ Also read:
 
     See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
 
-  - #### New parameters in `geom_imshow()`:
+  - #### New Parameters in `geom_imshow()`:
     <br>
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/imshow-alpha-jp.png" alt="f-22e/images/imshow-alpha-jp.png" width="180" height="172">
 
