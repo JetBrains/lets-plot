@@ -47,7 +47,7 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
 
 - The `flat` parameter for `geom_path()` and `geom_segment()`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/flat_param.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/param_flat.ipynb).
 
 ### Changed
 
