@@ -53,6 +53,7 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
   If you need to render points or pies, please, use `geom_point()` and `geom_pie()` functions.
 - Java/Swing platf.: Apache Batik upgraded to v.1.16 [[#624](https://github.com/JetBrains/lets-plot/issues/624)], [[LPK #140](https://github.com/JetBrains/lets-plot-kotlin/issues/140)].
 - The default size is increased for the plot title and decreased for the caption.
+- Upgraded Kotlin version to 1.7.21 (was 1.7.20).
 
 ### Fixed
 
