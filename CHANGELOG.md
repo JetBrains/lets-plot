@@ -1,4 +1,4 @@
-# Lets-Plot changelog
+# Lets-Plot Changelog
 
 All notable changes to this project will be documented in this file.
 
