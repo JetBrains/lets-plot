@@ -2,6 +2,8 @@
 
 ### Added
 
+- Python wheel for Python 3.11.
+
 - `geom_imshow()`:
 
     - Improved performance by orders of magnitude.
@@ -44,7 +46,9 @@ See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/
     See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/projection_provided.ipynb).
 
 ### Changed
-        
+
+- [BREAKING] Dropped support for Python 3.6 as it is in the ["end-of-life"](https://devguide.python.org/versions/) of its release cycle. 
+- [BREAKING] Clean-up in `geom_livemap()` (TODO)     
 - Java/Swing platf.: Apache Batik upgraded to v.1.16 [[#624](https://github.com/JetBrains/lets-plot/issues/624)], [[LPK #140](https://github.com/JetBrains/lets-plot-kotlin/issues/140)].
 - The default size is increased for the plot title and decreased for the caption.
 
