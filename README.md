@@ -65,10 +65,16 @@ Also read:
   - `Python 3.6` is no longer supported as it is in the ["end-of-life"](https://devguide.python.org/versions/) release cycle stage.
   
   - `geom_livemap()` is now a pure basemap layer. The following options are no longer supported:
-    `symbol`, `data`, `mapping`, `map`, `map_join`, `ontop`, `stat`, `position`, `show_legend`, `sampling`, `tooltips`.
-    To draw **point** and **pie** markers on map, please, use the `geom_point()` and `geom_pie()` geometry layers.
+    `symbol`, `data`, `mapping`, `map`, `map_join`, `ontop`, `stat`, `position`, `show_legend`, `sampling`, `tooltips`, `geodesic`.
+ 
+>    To draw **point** and **pie** markers on map, please, use the `geom_point()` and `geom_pie()` geometry layers.
+>
+>    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
+>    In place of the former `geodetic` parameter in `geom_livemap` please use the new parameter `flat` in **path** and **segment**
+>    geometry layers. 
+>
+>    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/param_flat.ipynb).
 
 - ### New Features
 
