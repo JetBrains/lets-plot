@@ -180,6 +180,7 @@ object GeomInteractionUtil {
             } else {
                 GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             }
+            GeomKind.PIE,
             GeomKind.BOX_PLOT,
             GeomKind.Y_DOT_PLOT,
             GeomKind.BIN_2D,
@@ -209,7 +210,6 @@ object GeomInteractionUtil {
                     }
                 }
             }
-            GeomKind.PIE,
             GeomKind.H_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
