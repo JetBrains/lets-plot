@@ -180,18 +180,19 @@ class layer_labels(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 7-9
+            :emphasize-lines: 8-11
 
             from lets_plot import *
             LetsPlot.setup_html()
             data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ] }
             ggplot(data) + geom_pie(aes(fill='name', weight='value'), size=15, \\
                                     tooltips='none', \\
-                                    labels=layer_labels() \\
-                                                    .line('\'^fill\'') \\
-                                                    .line('@{..count..}') \\
-                                                    .line('@{..prop..}\n(@{..sum..})') \\
-                                                    .format('..prop..', '.1%'))
+                                    labels=layer_labels()\\
+                                          .format('..prop..', '.1%')\\
+                                          .line('"^fill"')\\
+                                          .line('@{..count..}')\\
+                                          .line('@{..prop..}')\\
+                                          .line('(@{..sum..})'))
 
         """
         if self._lines is None:
