@@ -8,7 +8,6 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.livemap.LivemapConstants
 
 open class AestheticsDefaults {
 
@@ -149,6 +148,12 @@ open class AestheticsDefaults {
             return crossBar()
         }
 
+        fun areaRidges(): AestheticsDefaults {
+            return base()
+                .update(Aes.COLOR, Color.BLACK)
+                .update(Aes.FILL, Color.parseHex("#8CBBE4"))
+        }
+
         fun violin(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.BLACK)
@@ -161,19 +166,8 @@ open class AestheticsDefaults {
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun livemap(displayMode: LivemapConstants.DisplayMode?): AestheticsDefaults {
-            return when (displayMode) {
-                null -> base()
-                LivemapConstants.DisplayMode.POINT -> point()
-                    .updateInLegend(Aes.SIZE, 5.0)
-                LivemapConstants.DisplayMode.BAR -> base()
-                    .update(Aes.SIZE, 40.0)
-                    .update(Aes.COLOR, Color.TRANSPARENT)
-                LivemapConstants.DisplayMode.PIE -> base()
-                    .update(Aes.SIZE, 20.0)
-                    .update(Aes.COLOR, Color.TRANSPARENT)
-                    .updateInLegend(Aes.SIZE, 5.0)
-            }
+        fun livemap(): AestheticsDefaults {
+            return base()
         }
 
         fun ribbon(): AestheticsDefaults {
@@ -264,6 +258,14 @@ open class AestheticsDefaults {
 
         fun image(): AestheticsDefaults {
             return base()
+        }
+
+        fun pie(): AestheticsDefaults {
+            return base()
+                .update(Aes.SIZE, 10.0)
+                .updateInLegend(Aes.SIZE, 1.0)
+                .updateInLegend(Aes.FILL, Color.TRANSPARENT)
+                .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }
 
         private fun base(): AestheticsDefaults {

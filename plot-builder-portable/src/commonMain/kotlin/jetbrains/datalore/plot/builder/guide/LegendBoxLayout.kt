@@ -53,7 +53,7 @@ abstract class LegendBoxLayout(
     internal val titleSize: DoubleVector
         get() {
             return when {
-                title.isBlank() -> DoubleVector.ZERO
+                title.isBlank() || !theme.showTitle() -> DoubleVector.ZERO
                 else -> textDimensions(title, PlotLabelSpecFactory.legendTitle(theme))
             }
         }

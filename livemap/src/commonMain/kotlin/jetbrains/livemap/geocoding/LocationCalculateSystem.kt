@@ -8,6 +8,7 @@ package jetbrains.livemap.geocoding
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.livemap.World
+import jetbrains.livemap.chart.ChartElementLocationComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.projections.MapRuler
@@ -34,6 +35,9 @@ class LocationCalculateSystem(
         getMutableEntities(READY_CALCULATE)
             .forEach { entity ->
                 when {
+                    entity.contains<ChartElementLocationComponent>() -> {
+                        mapRuler.calculateBoundingBox(listOf(entity.get<ChartElementLocationComponent>().location))
+                    }
                     entity.contains<WorldGeometryComponent>() -> {
                         entity.get<WorldGeometryComponent>().geometry
                             ?.let { mapRuler.calculateBoundingBox(it.limit()) }

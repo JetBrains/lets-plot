@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class PlotAssemblerPlotContext(
     layersByTile: List<List<GeomLayer>>,
@@ -99,24 +99,24 @@ internal class PlotAssemblerPlotContext(
                 }
             }
 
-            val overallDomainRaw = domainsRaw.reduceOrNull { acc, v -> acc.union(v) }
+            val overallTransformedDomain = domainsRaw.reduceOrNull { acc, v -> acc.union(v) }
 
             val scale = scaleMap.get(aes)
             return if (scale.isContinuousDomain) {
-                finalizeOverallTransformedDomain(overallDomainRaw, scale.transform as ContinuousTransform)
+                finalizeOverallTransformedDomain(overallTransformedDomain, scale.transform as ContinuousTransform)
             } else {
                 // Discrete domain
-                overallDomainRaw ?: DoubleSpan.singleton(0.0)
+                overallTransformedDomain ?: DoubleSpan.singleton(0.0)
             }
         }
 
         private fun finalizeOverallTransformedDomain(
-            domain: DoubleSpan?,
+            transformedDomain: DoubleSpan?,
             transform: ContinuousTransform
         ): DoubleSpan {
-            val (dataLower, dataUpper) = when (domain) {
+            val (dataLower, dataUpper) = when (transformedDomain) {
                 null -> Pair(Double.NaN, Double.NaN)
-                else -> Pair(domain.lowerEnd, domain.upperEnd)
+                else -> Pair(transformedDomain.lowerEnd, transformedDomain.upperEnd)
             }
             val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(transform)
 
@@ -130,7 +130,7 @@ internal class PlotAssemblerPlotContext(
                 else -> null
             }
 
-            return Transforms.ensureApplicableDomain(newRange, transform)
+            return SeriesUtil.ensureApplicableRange(newRange)
         }
 
         fun checkPositionalAes(aes: Aes<*>) {

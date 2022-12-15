@@ -8,6 +8,7 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
@@ -65,14 +66,14 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 paths {
                     path {
-                        geometry(listOf(MOSCOW, SPB).map(GeoObject::centroid), isGeodesic = false)
-
+                        points = listOf(MOSCOW, SPB).map(GeoObject::centroid)
+                        flat = true
                         strokeWidth = 1.0
                     }
 
                     path {
-                        geometry(listOf(BOSTON, FRISCO).map(GeoObject::centroid), isGeodesic = true)
-
+                        points = listOf(BOSTON, FRISCO).map(GeoObject::centroid)
+                        flat = false
                         strokeWidth = 1.0
                         //animation = 2
                     }
@@ -102,7 +103,7 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
                 polygons {
                     polygon {
-                        geometry(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid), isGeodesic = false)
+                        geometry = createMultiPolygon(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid))
 
                         fillColor = Color.LIGHT_CYAN
                     }
@@ -129,27 +130,6 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         coord(0.011590487865875687, 51.324793768104506) // = "UK"
                         strokeColor = Color.PINK
                         strokeWidth = 3.0
-                    }
-                }
-
-                bars {
-                    bar {
-                        indices = listOf(0, 1, 2)
-                        coord(BOSTON)
-
-                        radius = 30.0
-                        values = listOf(3.0, 0.0, 2.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
-                    }
-
-                    bar {
-                        coord(26.642449862865874, 63.339789715873216) // = "Finland"
-
-                        indices = listOf(3, 4, 5)
-
-                        radius = 30.0
-                        values = listOf(-2.0, -1.0, 4.0)
-                        colors = listOf(Color.DARK_GREEN, Color.ORANGE, Color.DARK_MAGENTA)
                     }
                 }
 

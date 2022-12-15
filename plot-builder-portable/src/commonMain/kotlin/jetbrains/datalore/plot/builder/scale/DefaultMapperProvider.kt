@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -26,13 +27,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -115,6 +116,7 @@ object DefaultMapperProvider {
             this.put(MIDDLE, NUMERIC_IDENTITY)
             this.put(UPPER, NUMERIC_IDENTITY)
             this.put(SAMPLE, NUMERIC_IDENTITY)
+            this.put(QUANTILE, NUMERIC_IDENTITY)
 
             this.put(MAP_ID, createObjectIdentity())
             this.put(FRAME, createStringIdentity())
@@ -139,8 +141,8 @@ object DefaultMapperProvider {
             this.put(VJUST, createObjectIdentity())
             this.put(ANGLE, NUMERIC_IDENTITY)
 
-            this.put(SYM_X, NUMERIC_IDENTITY)
-            this.put(SYM_Y, NUMERIC_IDENTITY)
+            this.put(SLICE, NUMERIC_IDENTITY)
+            this.put(EXPLODE, NUMERIC_IDENTITY)
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {

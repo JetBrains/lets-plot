@@ -7,13 +7,19 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class SingleTilePlotLayout(
-    private val tileLayout: TileLayout
+    private val tileLayout: TileLayout,
+    hAxisTheme: AxisTheme,
+    vAxisTheme: AxisTheme,
 ) : PlotLayoutBase() {
 
     init {
-        setPadding(10.0, 10.0, 0.0, 0.0)
+        // ToDo: axis position
+        val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) PADDING else 0.0
+        val bottomPadding = if(!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) PADDING else 0.0
+        setPadding(top = PADDING, right = PADDING, bottomPadding, leftPadding)
     }
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
@@ -33,5 +39,9 @@ internal class SingleTilePlotLayout(
             .add(paddingRightBottom)
 
         return PlotLayoutInfo(listOf(tileInfo), plotSize)
+    }
+
+    companion object {
+        private const val PADDING = 10.0
     }
 }

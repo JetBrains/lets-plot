@@ -29,7 +29,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for discrete scale.
         multiplicativeExpand = 0.0
-        additiveExpand = 0.6
+        additiveExpand = 0.2 //0.6
     }
 
     private constructor(b: MyBuilder<T>) : super(b) {

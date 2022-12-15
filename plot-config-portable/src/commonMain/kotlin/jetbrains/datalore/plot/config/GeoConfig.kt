@@ -66,8 +66,8 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>): Boolean {
-            if (combinedMappings.keys
+        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>, isMapPlot: Boolean): Boolean {
+            if (!isMapPlot && combinedMappings.keys
                     .mapNotNull { it as? String }
                     .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
                     .any(Aes.Companion::isPositional)
@@ -233,7 +233,7 @@ class GeoDataFrameProcessor(
 
         val coordinatesCollector = when (geomKind) {
             MAP, POLYGON -> BoundaryCoordinatesCollector(dataFrame, geometries)
-            LIVE_MAP, POINT, TEXT, LABEL -> PointCoordinatesCollector(dataFrame, geometries)
+            LIVE_MAP, POINT, TEXT, LABEL, PIE -> PointCoordinatesCollector(dataFrame, geometries)
             RECT -> BboxCoordinatesCollector(dataFrame, geometries)
             PATH -> PathCoordinatesCollector(dataFrame, geometries)
             else -> error("Unsupported geom: $geomKind")

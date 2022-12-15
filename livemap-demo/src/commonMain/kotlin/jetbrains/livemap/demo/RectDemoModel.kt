@@ -8,10 +8,14 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.spatial.LonLatPoint
+import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.api.*
+import jetbrains.livemap.api.LiveMapBuilder
+import jetbrains.livemap.api.layers
+import jetbrains.livemap.api.polygon
+import jetbrains.livemap.api.polygons
 
 class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
 
@@ -21,7 +25,7 @@ class RectDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                 polygons {
                     polygon {
 //                        geometry(rect(-104.032789, 35.309947, -80.237456, 48.979166), isGeodesic = false)
-                        geometry(rect(25.0, 69.0, 26.0, 70.0), isGeodesic = false)
+                        geometry = createMultiPolygon(rect(25.0, 69.0, 26.0, 70.0))
 
                         fillColor = Color(255, 175, 175, 153)
                         strokeColor = Color(128, 0, 128, 153)

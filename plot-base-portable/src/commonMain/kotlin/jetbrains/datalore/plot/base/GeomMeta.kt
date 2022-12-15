@@ -221,6 +221,19 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
+            GeomKind.AREA_RIDGES -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.HEIGHT,
+                Aes.QUANTILE,
+
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
             GeomKind.VIOLIN -> listOf(
                 Aes.X,
                 Aes.Y,
@@ -317,7 +330,7 @@ object GeomMeta {
                 Aes.LINEHEIGHT
             )
 
-            GeomKind.LIVE_MAP -> listOf( // ToDo: not static - depends on 'display mode'
+            GeomKind.LIVE_MAP -> listOf(
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.FILL,
@@ -325,9 +338,7 @@ object GeomMeta {
                 Aes.SHAPE,
                 Aes.FRAME,
                 Aes.X,
-                Aes.Y,
-                Aes.SYM_X,
-                Aes.SYM_Y
+                Aes.Y
             )
 
             GeomKind.RASTER -> listOf(
@@ -343,6 +354,17 @@ object GeomMeta {
                 Aes.XMAX,
                 Aes.YMIN,
                 Aes.YMAX
+            )
+
+            GeomKind.PIE -> listOf(
+                Aes.X,
+                Aes.Y,
+                Aes.SLICE,
+                Aes.EXPLODE,
+                Aes.SIZE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA
             )
         }
     }

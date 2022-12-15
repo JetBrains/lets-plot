@@ -11,13 +11,15 @@ import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 
 class TooltipLine(
-    private val label: String?,
-    private val pattern: String,
-    val fields: List<ValueSource>
-) : TooltipLineSpec {
-    constructor(other: TooltipLine) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
+    label: String?,
+    pattern: String,
+    fields: List<ValueSource>
+) : LineSpec(label, pattern, fields), TooltipLineSpec {
+
+    constructor(other: LineSpec) : this(other.label, other.pattern, other.fields.map(ValueSource::copy))
 
     private val myLineFormatter = StringFormat.forNArgs(pattern, fields.size, "fields")
 
@@ -58,11 +60,7 @@ class TooltipLine(
 
     companion object {
         fun defaultLineForValueSource(valueSource: ValueSource): TooltipLine = TooltipLine(
-            label = DEFAULT_LABEL_SPECIFIER,
-            pattern = StringFormat.valueInLinePattern(),
-            fields = listOf(valueSource)
+            LineSpec.defaultLineForValueSource(valueSource)
         )
-
-        private const val DEFAULT_LABEL_SPECIFIER = "@"
     }
 }

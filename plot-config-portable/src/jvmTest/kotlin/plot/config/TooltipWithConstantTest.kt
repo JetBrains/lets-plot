@@ -103,7 +103,7 @@ class TooltipWithConstantTest {
 
     private fun getTooltipLines(geomLayer: GeomLayer): List<String> {
         val ctx = TestingPlotContext.create(geomLayer)
-        return geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
+        return geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             .map { dataPoint -> Line.withLabelAndValue(dataPoint.label, dataPoint.value) }
             .map(TooltipSpec.Line::toString)
     }

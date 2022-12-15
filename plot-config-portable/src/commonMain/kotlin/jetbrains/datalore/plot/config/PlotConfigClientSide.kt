@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
@@ -36,6 +37,9 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
 
     val scaleMap: TypedScaleMap
     val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
+
+    internal val xAxisOrientation: Orientation
+    internal val yAxisOrientation: Orientation
 
     init {
         fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -71,6 +75,9 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
 
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
+
+        xAxisOrientation = scaleProviderByAes.getValue(Aes.X).axisOrientation!!
+        yAxisOrientation = scaleProviderByAes.getValue(Aes.Y).axisOrientation!!
     }
 
     override fun createLayerConfig(
@@ -78,7 +85,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
-        plotOrderOptions: List<OrderOptionUtil.OrderOption>
+        plotOrderOptions: List<OrderOptionUtil.OrderOption>,
+        isMapPlot: Boolean
     ): LayerConfig {
 
         val geomName = layerOptions[Option.Layer.GEOM] as String
@@ -90,7 +98,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
             plotDataMeta,
             plotOrderOptions,
             GeomProtoClientSide(geomKind),
-            true
+            clientSide = true,
+            isMapPlot
         )
     }
 

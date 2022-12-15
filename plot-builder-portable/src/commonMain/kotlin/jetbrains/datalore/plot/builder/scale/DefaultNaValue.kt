@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -28,13 +29,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -84,6 +85,7 @@ object DefaultNaValue {
         VALUE_MAP.put(MIDDLE, 0.0)
         VALUE_MAP.put(UPPER, 0.0)
         VALUE_MAP.put(SAMPLE, 0.0)
+        VALUE_MAP.put(QUANTILE, 0.0)
         VALUE_MAP.put(MAP_ID, "empty map_id")
         VALUE_MAP.put(FRAME, "empty frame")
         VALUE_MAP.put(SPEED, 10.0)
@@ -99,8 +101,8 @@ object DefaultNaValue {
         VALUE_MAP.put(HJUST, 0.5)  // 'middle'
         VALUE_MAP.put(VJUST, 0.5)  // 'middle'
         VALUE_MAP.put(ANGLE, 0.0)
-        VALUE_MAP.put(SYM_X, 0.0)
-        VALUE_MAP.put(SYM_Y, 0.0)
+        VALUE_MAP.put(SLICE, 0.0)
+        VALUE_MAP.put(EXPLODE, 0.0)
     }
 
     /**

@@ -5,13 +5,13 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.7
+  - python=3.8
   - numpy
   - pandas
   - matplotlib
   - pip
   - pip:                            # Packages installed from PyPI
-      - lets-plot==2.5.1rc1
+      - lets-plot==3.0.0rc2
 #      - pypng                      # will be installed by lets-plot dependencies
 #      - palettable
       - pillow
@@ -20,3 +20,6 @@ dependencies:
       - requests
       - ipywidgets
       - sklearn
+      - cartopy
+      - rasterio
+      - statsmodels                 # for 'residual plot'

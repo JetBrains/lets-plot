@@ -6,8 +6,6 @@ import json
 
 __all__ = ['aes', 'layer']
 
-from typing import Optional
-
 from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
 
@@ -264,7 +262,8 @@ class PlotSpec(FeatureSpec):
         dup.props().update(other.props())
         return dup
 
-    def __init__(self, data, mapping, scales, layers, metainfo_list=[], is_livemap=False, crs_initialized=False, crs=None, **kwargs):
+    def __init__(self, data, mapping, scales, layers, metainfo_list=[], is_livemap=False, crs_initialized=False,
+                 crs=None, **kwargs):
         """Initialize self."""
         super().__init__('plot', name=None, data=data, mapping=mapping, **kwargs)
         self.__scales = list(scales)
@@ -371,7 +370,8 @@ class PlotSpec(FeatureSpec):
                         or is_geo_data_frame(other.props().get('map')):
                     if plot.__crs_initialized:
                         if plot.__crs != other.props().get('use_crs'):
-                            raise ValueError('All geoms with map parameter should either use same `use_crs` or not use it at all')
+                            raise ValueError(
+                                'All geoms with map parameter should either use same `use_crs` or not use it at all')
                     else:
                         plot.__crs_initialized = True
                         plot.__crs = other.props().get('use_crs')
@@ -390,7 +390,7 @@ class PlotSpec(FeatureSpec):
             if other.kind == 'theme':
                 new_theme_options = {k: v for k, v in other.props().items() if v is not None}
                 if 'name' in new_theme_options:
-                    # pre-configured theme overrides existing theme all together.
+                    # pre-configured theme overrides existing theme altogether.
                     plot.props()['theme'] = new_theme_options
                 else:
                     # merge themes
@@ -512,7 +512,7 @@ class LayerSpec(FeatureSpec):
                 map_data_meta = {'georeference': {}}
             else:
                 # Fetch proper GeoDataFrame. Further processing is the same as if map was a GDF.
-                if name in ['point', 'text', 'livemap']:
+                if name in ['point', 'pie', 'text', 'livemap']:
                     map = map.get_centroids()
                 elif name in ['map', 'polygon']:
                     map = map.get_boundaries()
@@ -522,7 +522,10 @@ class LayerSpec(FeatureSpec):
                     raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
 
         if is_geo_data_frame(map):
-            map = geo_data_frame_to_crs(map, self.props().get('use_crs'))
+            # map = geo_data_frame_to_crs(map, self.props().get('use_crs'))
+            use_crs = self.props().get('use_crs')
+            if use_crs != "provided":
+                map = geo_data_frame_to_crs(map, use_crs)
             map_join = auto_join_geo_names(map_join, map)
             map_data_meta = get_geo_data_frame_meta(map)
 

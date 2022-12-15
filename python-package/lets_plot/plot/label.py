@@ -22,16 +22,17 @@ def ggtitle(label, subtitle=None):
     ----------
     label : str
         The text for the plot title.
-
     subtitle : str
         The text for the plot subtitle.
-
-    Split a long title/subtitle into two lines or more using `\n` as a text separator.
 
     Returns
     -------
     `FeatureSpec`
         Plot title specification.
+
+    Notes
+    -----
+    Split a long title/subtitle into two lines or more using `\\\\n` as a text separator.
 
     Examples
     --------

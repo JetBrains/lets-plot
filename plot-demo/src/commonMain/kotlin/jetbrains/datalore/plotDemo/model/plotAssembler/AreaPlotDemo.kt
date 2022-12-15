@@ -86,11 +86,12 @@ open class AreaPlotDemo : SimpleDemoBase() {
             .build(data, scaleByAes, scaleMappersNP)
 
         val assembler =
-            PlotAssembler.singleTile(
+            PlotAssembler.demoAndTest(
                 listOf(layer),
                 scaleByAes,
                 scaleMappersNP,
-                CoordProviders.cartesian(), DefaultTheme.minimal2()
+                CoordProviders.cartesian(),
+                DefaultTheme.minimal2()
             )
         assembler.disableInteractions()
         return assembler.createPlot()

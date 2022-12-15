@@ -58,11 +58,11 @@ open class TooltipAnchor {
                         {
                              'geom': 'boxplot',
                              'tooltips' : {
-                                 'tooltip_formats': [
+                                 'formats': [
                                     { 'field' : '$allPositionals', 'format' : '.0f' },
                                     { 'field' : '$aesMiddle', 'format' : '.2f' }
                                  ],
-                                 'tooltip_lines': [
+                                 'lines': [
                                     'min/max|$aesYMin/$aesYMax',
                                     'lower/upper|$aesLower/$aesUpper',
                                     '@|$aesMiddle'

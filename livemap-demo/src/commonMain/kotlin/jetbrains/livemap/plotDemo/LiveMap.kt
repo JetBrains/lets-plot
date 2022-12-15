@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.config.getList
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.random.Random
 
+@Suppress("unused")
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
@@ -75,6 +76,71 @@ class LiveMap {
 
     private fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any>) = apply {
         getList("layers")!!.asMaps().first().asMutable().putAll(tilesSpec)
+    }
+
+    private fun airflight(): MutableMap<String, Any> {
+        val spec = """
+            {
+              "data": {
+                "city": ["New York City", "Singapore"],
+                "lon": [-73.7997, 104.0012],
+                "lat": [40.6408, 1.3256]
+              },
+              "mapping": {
+                "x": "lon",
+                "y": "lat"
+              },
+              "kind": "plot",
+              "layers": [
+                {
+                  "geom": "livemap",
+                  "projection": "epsg4326",
+                  "tiles": {
+                    "kind": "vector_lets_plot",
+                    "url": "wss://tiles.datalore.jetbrains.com",
+                    "theme": "dark",
+                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+                  },
+                  "geocoding": {
+                    "url": "http://10.0.0.127:3020/map_data/geocoding"
+                  },
+                  "geodesic": false,
+                  "color": "white"
+                },
+                {
+                  "geom": "path",
+                  "color": "white"
+                },
+                {
+                  "geom": "label",
+                  "mapping": {
+                    "label": "city"
+                  },
+                  "label_padding": 0.6,
+                  "label_r": 0.5,
+                  "label_size": 1.5,
+                  "fill": "black",
+                  "color": "white",
+                  "size": 8,
+                  "angle": 10,
+                  "hjust": 0,
+                  "vjust": 1
+                },
+                {
+                  "geom": "text",
+                  "x": 40,
+                  "y": 50,
+                  "label": "First flight: November 9th 2020\nFlight distance: 15,349 km\nFlight time: 18 Hours, 50 Minutes\nAircraft: Airbus A350-900ULR",
+                  "size": 7,
+                  "hjust": 0,
+                  "lineheight": 2,
+                  "color": "white"
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return parsePlotSpec(spec)
     }
 
     private fun volcanos(): MutableMap<String, Any> {
@@ -1609,12 +1675,12 @@ class LiveMap {
       },
       "mapping": {},
       "tooltips": {
-        "tooltip_formats": [],
-        "tooltip_lines": [
+        "formats": [],
+        "lines": [
           "Elevation | @Elevation_meters(m)/@Elevation_ft(ft)"
         ],
         "tooltip_color": "black",
-        "tooltip_variables": [
+        "variables": [
           "Name",
           "Region",
           "Last_eruption"
@@ -1645,28 +1711,12 @@ class LiveMap {
     'layers': [
     {
         'geom': 'livemap',
-        'map': {
-            'city': ['Southampton', 'Cherbourg', 'Cobh'],
-            'found name': ['Southampton', 'Cherbourg', 'Cobh'],
-            'geometry': [
-                '{\"type\": \"Point\", \"coordinates\": [-1.40253666522018, 50.9183686226606]}', 
-                '{\"type\": \"Point\", \"coordinates\": [-1.60901494773099, 49.6272752434015]}', 
-                '{\"type\": \"Point\", \"coordinates\": [-8.29427875578403, 51.8531472980976]}'
-            ]
-        },
         'tiles': {'kind': 'raster_zxy',
         'url': 'https://cartocdn_c.global.ssl.fastly.net/base-antique/{z}/{x}/{y}@2x.png',
         'attribution': '<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a> <a href=\"https://carto.com/attributions#basemaps\">© CARTO</a>, <a href=\"https://carto.com/attributions\">© CARTO</a>'},
-        'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'},
-        'display_mode': 'point',
-        'size': 7,
-        'shape': 21,
-        'color': 'black',
-        'fill': 'yellow',
-        'ontop': true,
-        'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
+        'geocoding': {'url': 'http://10.0.0.127:3020/map_data/geocoding'}
     },
-   {
+    {
         'geom': 'path',
         'map': {
             'geometry': [
@@ -1676,8 +1726,9 @@ class LiveMap {
         'color': 'dark-blue',
         'linetype': 'dotted',
         'size': 1.2,
-        'map_data_meta': {'geodataframe': {'geometry': 'geometry'}}},
-  {
+        'map_data_meta': {'geodataframe': {'geometry': 'geometry'}}
+   },
+   {
         'geom': 'segment',
         'x': -38.056641,
         'y': 46.920255,
@@ -1703,7 +1754,24 @@ class LiveMap {
         'size': 10,
         'shape': 9,
         'color': 'red'
-  }
+  },
+  {
+        'geom': 'point',
+        'map': {
+            'city': ['Southampton', 'Cherbourg', 'Cobh'],
+            'found name': ['Southampton', 'Cherbourg', 'Cobh'],
+            'geometry': [
+                '{\"type\": \"Point\", \"coordinates\": [-1.40253666522018, 50.9183686226606]}', 
+                '{\"type\": \"Point\", \"coordinates\": [-1.60901494773099, 49.6272752434015]}', 
+                '{\"type\": \"Point\", \"coordinates\": [-8.29427875578403, 51.8531472980976]}'
+            ]
+        },
+        'size': 7,
+        'shape': 21,
+        'color': 'black',
+        'fill': 'yellow',
+        'map_data_meta': { 'geodataframe': { 'geometry': 'geometry' } }
+  }  
 ]}"""
         return parsePlotSpec(spec)
     }
@@ -1901,7 +1969,7 @@ class LiveMap {
         "size": "passengers"
       },
       "tooltips": {
-        "tooltip_formats": [
+        "formats": [
           {
             "field": "passengers",
             "format": "{.1f} m"
@@ -1915,7 +1983,7 @@ class LiveMap {
             "format": ".2f"
           }
         ],
-        "tooltip_lines": [
+        "lines": [
           "@|@IATA",
           "Passengers|@passengers",
           "City|@city",
@@ -2482,10 +2550,10 @@ class LiveMap {
                     "y": "lat"
                   },
                   "tooltips": {
-                    "tooltip_lines": [
+                    "lines": [
                         "^x"
                      ],
-                     "tooltip_formats": [
+                     "formats": [
                         { "field": "^x", "format": "mean = {.4f}" }
                      ]
                   },

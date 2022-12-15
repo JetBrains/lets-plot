@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
@@ -27,6 +28,7 @@ import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
+import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.MAP_JOIN
 import jetbrains.datalore.plot.config.Option.Layer.MARGINAL
@@ -47,7 +49,8 @@ class LayerConfig constructor(
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
-    private val clientSide: Boolean
+    private val clientSide: Boolean,
+    isMapPlot: Boolean
 ) : OptionsAccessor(
     layerOptions,
     initDefaultOptions(layerOptions, geomProto)
@@ -66,6 +69,7 @@ class LayerConfig constructor(
     private val mySamplings: List<Sampling>?
     private val myOrderOptions: List<OrderOption>
     val tooltips: TooltipSpecification
+    val annotations: AnnotationSpecification
 
     var ownData: DataFrame? = null
         private set
@@ -172,7 +176,7 @@ class LayerConfig constructor(
         val dropData: Boolean = (combinedMappingOptions.isEmpty() &&
                 // Do not touch GeoDataframe - empty mapping is OK in this case.
                 !GeoConfig.isGeoDataframe(layerOptions, DATA) &&
-                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions)
+                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isMapPlot)
                 )
 
         var combinedData = when {
@@ -190,7 +194,7 @@ class LayerConfig constructor(
         }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions)) {
+        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isMapPlot)) {
             val geoConfig = GeoConfig(
                 geomProto.geomKind,
                 combinedData,
@@ -260,6 +264,12 @@ class LayerConfig constructor(
             }
         } else {
             TooltipSpecification.defaultTooltip()
+        }
+
+        annotations = if (has(ANNOTATIONS)) {
+            AnnotationConfig(getMap(ANNOTATIONS), constantsMap, explicitGroupingVarName, varBindings).createAnnotations()
+        } else {
+            AnnotationSpecification.NONE
         }
 
         // TODO: handle order options combining to a config parsing stage

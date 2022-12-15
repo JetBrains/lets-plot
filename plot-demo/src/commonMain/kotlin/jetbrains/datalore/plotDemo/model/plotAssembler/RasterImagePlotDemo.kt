@@ -85,7 +85,7 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             .addBinding(VarBinding(varAlpha, Aes.ALPHA))
             .build(df, scaleByAes, scaleMappersNP)
 
-        val assembler = PlotAssembler.singleTile(
+        val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
             scaleMappersNP,

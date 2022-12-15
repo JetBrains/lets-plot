@@ -53,6 +53,9 @@ internal class SquareFrameOfReference(
         val geomOuterBounds: DoubleRectangle = layoutInfo.geomOuterBounds
         val panelTheme = theme.panel()
 
+//        val hAxisOrientation = layoutInfo.hAxisInfo!!.orientation
+//        val vAxisOrientation = layoutInfo.vAxisInfo!!.orientation
+
         // Flip theme
         val hAxisTheme = theme.horizontalAxis(flipAxis)
         val vAxisTheme = theme.verticalAxis(flipAxis)
@@ -97,7 +100,7 @@ internal class SquareFrameOfReference(
                 isDebugDrawing
             )
 
-            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.BOTTOM)
+            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
             hAxis.moveTo(axisOrigin)
             parent.add(hAxis)
         }
@@ -121,7 +124,7 @@ internal class SquareFrameOfReference(
                 isDebugDrawing
             )
 
-            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, Orientation.LEFT)
+            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
             vAxis.moveTo(axisOrigin)
             parent.add(vAxis)
         }
@@ -302,6 +305,7 @@ internal class SquareFrameOfReference(
                 .aesBounds(xyAesBounds)
                 .geomTargetCollector(targetCollector)
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
+                .annotations(rendererData.annotations)
                 .build()
 
             val pos = rendererData.pos

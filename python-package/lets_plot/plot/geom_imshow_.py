@@ -27,60 +27,62 @@ except ImportError:
 __all__ = ['geom_imshow', 'geom_image']
 
 
-def _hex2rgb(hex_c):
+def _hex2rgb(hex_c, alpha):
     hex_s = hex_c.lstrip('#')
-    return [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
+    list_rgb = [int(hex_s[i:i + 2], 16) for i in (0, 2, 4)]
+    if alpha is not None:
+        list_rgb.append(int(alpha + 0.5))
+    return list_rgb
 
 
-def _hex2rgb_np_int8(hex_c):
-    return numpy.array(_hex2rgb(hex_c), dtype=numpy.int8)
+def _hex2rgb_arr_uint8(hex_c, alpha=None):
+    """
+    Creates 'palette' for PyPNG PNG writer
+    """
+    return numpy.array(_hex2rgb(hex_c, alpha), dtype=numpy.uint8)
 
 
-def _normalize_2D(image_data, norm, vmin, vmax):
+def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     """
     Takes numpy 2D array of float or int-s and
     returns 2D array of ints with the target range [0..255].
     Values outside the target range will be later clipped.
     """
-    normaize = as_boolean(norm, default=True)
-    if normaize:
-        vmin = float(vmin) if vmin else image_data.min()
-        vmax = float(vmax) if vmax else image_data.max()
-        if vmin > vmax:
-            raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
+    min_lum = max(0, min_lum)
+    max_lum = 255 - min_lum
 
+    vmin = float(vmin if vmin is not None else numpy.nanmin(image_data))
+    vmax = float(vmax if vmax is not None else numpy.nanmax(image_data))
+    if vmin > vmax:
+        raise ValueError("vmin value must be less then vmax value, was: {} > {}".format(vmin, vmax))
+
+    normalize = as_boolean(norm, default=True)
+
+    # Make a copy via `numpy.copy()` or via `arr.astype()`
+    #   - prevent modification of the original image
+    #   - work around read-only flag in the original image
+
+    if normalize:
         if vmin == vmax:
-            def scaler(v):
-                return 127
+            image_data = numpy.copy(image_data)
+            image_data[True] = 127
         else:
-            ratio = 255. / (vmax - vmin)
+            # float array for scaling
+            if image_data.dtype.kind == 'f':
+                image_data = numpy.copy(image_data)
+            else:
+                image_data = image_data.astype(numpy.float32)
 
-            def scaler(v):
-                return int((v - vmin) * ratio + .5)
+            image_data.clip(vmin, vmax, out=image_data)
+
+            ratio = max_lum / (vmax - vmin)
+            image_data -= vmin
+            image_data *= ratio
+            image_data += min_lum
     else:
-        # no normalization - just round values to the nearest int.
-        def scaler(v):
-            return int(v + .5)
-
-    scaler_v = numpy.vectorize(scaler)
-    return scaler_v(image_data)
-
-
-def _normalize_RGBa(image_data):
-    """
-    Takes numpy 3D array of float or int-s:
-    - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
-    - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int).
-
-    returns 3D array of ints with the target range [0..255].
-    Values outside the target range will be later clipped.
-    """
-    if image_data.dtype.kind == 'f':
-        def scaler(v):
-            return int(v * 255 + .5)
-
-        scaler_v = numpy.vectorize(scaler)
-        image_data = scaler_v(image_data)
+        # no normalization
+        image_data = numpy.copy(image_data)
+        image_data.clip(min_lum, max_lum, out=image_data)
 
     return image_data
 
@@ -103,26 +105,26 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
                        )
 
 
-def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, extent=None):
+def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax=None, extent=None, compression=None):
     """
     Displays image specified by ndarray with shape
-     - (M, N) - grey-scale image
-     - (M, N, 3) - color RGB image
-     - (M, N, 4) - color RGB image with alpha channel
+
+    - (M, N) - grey-scale image
+    - (M, N, 3) - color RGB image
+    - (M, N, 4) - color RGB image with alpha channel
 
     This geom is not as flexible as `geom_raster()` or `geom_tile()`
     but vastly superior in the terms of rendering efficiency.   
 
     Parameters
     ----------
-    image_data : `ndarray`
+    image_data : ndarray
         Specifies image type, size and pixel values.
         Supported array shapes are:
-        - (M, N): an image with scalar data.
-                The values are mapped to colors (greys by default) using normalization.
-                See parameters `norm, cmap, vmin, vmax`.
+
+        - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization. See parameters `norm`, `cmap`, `vmin`, `vmax`.
         - (M, N, 3): an image with RGB values (0-1 float or 0-255 int).
-        - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int)
+        - (M, N, 4): an image with RGBA values (0-1 float or 0-255 int).
 
         The first two dimensions (M, N) define the rows and columns of the image.
         Out-of-range values are clipped.
@@ -134,14 +136,23 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         True - luminance values in grey-scale image will be scaled to [0-255] range using a linear scaler.
         False - disables scaling of luminance values in grey-scale image.
         This parameter is ignored for RGB(A) images.
+    alpha: float, optional
+        The alpha blending value, between 0 (transparent) and 1 (opaque).    
     vmin, vmax : number, optional
         Define the data range used for luminance normalization in grey-scale images.
         This parameter is ignored for RGB(A) images or if parameter `norm=False`.
     extent : list of 4 numbers: [left, right, bottom, top], optional
         Define image's bounding box in terms of the "data coordinates".
+
         - `left, right`: coordinates of pixels' outer edge along the x-axis for pixels in the 1-st and the last column.
         - `bottom, top`: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
+
         The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
+    compression : integer, optional
+        The compression level to be used by the ``zlib`` module.
+        Values from 0 (no compression) to 9 (highest).
+        Value `None` means that the `zlib` module uses
+        the default level of compression (which is generally acceptable).
 
     Returns
     -------
@@ -195,7 +206,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
 
     """
 
-    if png == None:
+    if png is None:
         raise ValueError("pypng is not installed")
 
     if not is_ndarray(image_data):
@@ -205,54 +216,76 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
         raise ValueError(
             "Invalid image_data: 2d or 3d array is expected but was {}-dimensional".format(image_data.ndim))
 
-    # Figure out the type of the image
-    if image_data.ndim == 2:
-        image_data = _normalize_2D(image_data, norm, vmin, vmax)
-        height, width = image_data.shape
-        image_type = 'gray'
-        nchannels = 1
-    else:
-        image_data = _normalize_RGBa(image_data)
-        height, width, nchannels = image_data.shape
-        if nchannels == 3:
-            image_type = 'rgb'
-        elif nchannels == 4:
-            image_type = 'rgba'
-        else:
+    if alpha is not None:
+        if not (0 <= alpha <= 1):
             raise ValueError(
-                "Invalid image_data: num of channels in color image expected 3 (RGB) or 4 (RGBA) but was {}".format(
-                    nchannels))
+                "Invalid alpha: expected float in range [0..1] but was {}".format(alpha))
+
+    if compression is not None:
+        if not (0 <= compression <= 9):
+            raise ValueError(
+                "Invalid compression: expected integer in range [0..9] but was {}".format(compression))
+
+    greyscale = (image_data.ndim == 2)
+    if greyscale:
+        # Greyscale image
+
+        has_nan = numpy.isnan(image_data.max())
+        min_lum = 0 if not (has_nan and cmap) else 1  # index 0 reserved for NaN-s
+
+        image_data = _normalize_2D(image_data, norm, vmin, vmax, min_lum)
+        height, width = image_data.shape
+        nchannels = 1
+
+        has_nan = numpy.isnan(image_data.max())
+        if has_nan and not cmap:
+            # add alpha-channel (LA)
+            alpha_ch_scaler = 1 if alpha is None else alpha
+            is_nan = numpy.isnan(image_data)
+            im_shape = numpy.shape(image_data)
+            alpha_ch = numpy.zeros(im_shape, dtype=image_data.dtype)
+            alpha_ch[is_nan == False] = 255 * alpha_ch_scaler
+            image_data[is_nan] = 0
+            image_data = numpy.dstack((image_data, alpha_ch))
+            nchannels = 2
+        elif has_nan and cmap:
+            # replace all NaN-s with 0 (index 0 for transparent color)
+            numpy.nan_to_num(image_data, copy=False, nan=0)
+        elif not cmap and alpha is not None:
+            # add alpha-channel (LA)
+            im_shape = numpy.shape(image_data)
+            alpha_ch = numpy.full(im_shape, 255 * alpha, dtype=image_data.dtype)
+            image_data = numpy.dstack((image_data, alpha_ch))
+            nchannels = 2
+
+    else:
+        # Color RGB/RGBA image
+        # Make a copy:
+        #   - prevent modification of the original image
+        #   - drop read-only flag
+        image_data = numpy.copy(image_data)
+        if image_data.dtype.kind == 'f':
+            image_data *= 255
+
+        height, width, nchannels = image_data.shape
+
+        if alpha is not None:
+            if nchannels == 3:
+                # RGB image: add alpha channel (RGBA)
+                alpha_ch = numpy.full((height, width, 1), 255 * alpha, dtype=image_data.dtype)
+                image_data = numpy.dstack((image_data, alpha_ch))
+                nchannels = 4
+            elif nchannels == 4:
+                # RGBA image: apply alpha scaling
+                image_data[:,:,3] *= alpha
 
     # Make sure all values are ints in range 0-255.
-    def clip_value_0_255(v):
-        return max(0, min(255, int(v + .5)))
-
-    clip_value_0_255_v = numpy.vectorize(clip_value_0_255)
-    image_data = clip_value_0_255_v(image_data)
-
-    if cmap and image_type == 'gray':
-        # colormap via palettable
-        if not palettable:
-            raise ValueError(
-                "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your Python environment."
-            )
-        cmap_256 = palettable.get_map(cmap + "_256")
-        cmap_rgb_256 = [_hex2rgb_np_int8(c) for c in cmap_256.hex_colors]
-
-        def map2rgb(v):
-            # v is in range [0,255]
-            i = max(0, min(255, int(v + .5)))
-            return cmap_rgb_256[i]
-
-        cmapper = numpy.vectorize(map2rgb, signature='()->(n)')
-        image_data = cmapper(image_data)
-        image_type = "rgb"  # it's color image now
-        nchannels = 3
+    image_data.clip(0, 255, out=image_data)
 
     # Image extent with possible axis flipping.
     # The default image bounds include 1/2 unit size expand in all directions.
     ext_x0, ext_x1, ext_y0, ext_y1 = -.5, width - .5, -.5, height - .5
-    if (extent):
+    if extent:
         try:
             ext_x0, ext_x1, ext_y0, ext_y1 = [float(v) for v in extent]
         except ValueError as e:
@@ -260,33 +293,62 @@ def geom_imshow(image_data, cmap=None, *, norm=None, vmin=None, vmax=None, exten
                 "Invalid `extent`: list of 4 numbers expected: {}".format(e)
             )
 
-    if (ext_x0 > ext_x1):
+    if ext_x0 > ext_x1:
         # copy after flip to work around this numpy issue: https://github.com/drj11/pypng/issues/91
         image_data = numpy.flip(image_data, axis=1).copy()
         ext_x0, ext_x1 = ext_x1, ext_x0
 
-    if (ext_y0 > ext_y1):
+    if ext_y0 > ext_y1:
         image_data = numpy.flip(image_data, axis=0)
         ext_y0, ext_y1 = ext_y1, ext_y0
 
     # Make sure each value is 1 byte and the type is numpy.int8.
     # Otherwise, pypng will produce broken colors.
-    def to_byte(v):
-        return int(v + .5) & 0xff
+    if image_data.dtype.kind == 'f':
+        # Can't cast directly from float to np.int8.
+        image_data += 0.5
+        image_data = image_data.astype(numpy.int16)
 
-    to_byte_v = numpy.vectorize(to_byte, otypes=[numpy.int8])
-    image_data = to_byte_v(image_data)
+    if image_data.dtype != numpy.int8:
+        image_data = image_data.astype(numpy.int8)
+
     # Reshape to 2d-array:
-    # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..], or pypng will fail
+    # from [[[R, G, B], [R, G, B]], ...] to [[R, G, B, R, G, B],..] for RGB(A)
+    # or from [[[L, A], [L, A]], ...] to [[L, A, L, A],..] for greyscale–alpha (LA)
+    # or pypng will fail
     image_2d = image_data.reshape(-1, width * nchannels)
+
+    # PNG writer
+    palette = None
+    if cmap and greyscale:
+        greyscale = False
+
+        # colormap via palettable
+        if not palettable:
+            raise ValueError(
+                "Can't process `cmap`: please install 'Palettable' (https://pypi.org/project/palettable/) to your "
+                "Python environment. "
+            )
+        if not has_nan:
+            alpha_ch_val = None if alpha is None else 255 * alpha
+            cmap_256 = palettable.get_map(cmap + "_256")
+            palette = [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in cmap_256.hex_colors]
+        else:
+            alpha_ch_val = 255 if alpha is None else 255 * alpha
+            cmap_255 = palettable.get_map(cmap + "_255")
+            # transparent color at index 0
+            palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] + [_hex2rgb_arr_uint8(c, alpha_ch_val) for c in
+                                                                        cmap_255.hex_colors]
 
     png_bytes = io.BytesIO()
     png.Writer(
         width=width,
         height=height,
-        greyscale=(image_type == 'gray'),
-        alpha=(image_type == 'rgba'),
-        bitdepth=8
+        greyscale=greyscale,
+        alpha=(nchannels == 4 or nchannels == 2),  # RGBA or LA
+        bitdepth=8,
+        palette=palette,
+        compression=compression
     ).write(png_bytes, image_2d)
 
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')

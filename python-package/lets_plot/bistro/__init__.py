@@ -4,7 +4,9 @@
 from .corr import *
 from .im import *
 from .qq import *
+from .residual import *
 
 __all__ = (im.__all__ +
            corr.__all__ +
-           qq.__all__)
+           qq.__all__ +
+           residual.__all__)

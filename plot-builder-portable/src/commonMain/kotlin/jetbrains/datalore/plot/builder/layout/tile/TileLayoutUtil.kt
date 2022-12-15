@@ -7,10 +7,12 @@ package jetbrains.datalore.plot.builder.layout.tile
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
+import jetbrains.datalore.plot.builder.layout.util.GeomAreaInsets
 import kotlin.math.max
 
 internal object TileLayoutUtil {
@@ -21,6 +23,9 @@ internal object TileLayoutUtil {
         return subtractMargins(0.0, 0.0, plotSize)
     }
 
+    /**
+     * ToDo: remove
+     */
     private fun subtractMargins(
         hAxisThickness: Double,
         vAxisThickness: Double,
@@ -43,18 +48,15 @@ internal object TileLayoutUtil {
     }
 
     fun geomOuterBounds(
-        hAxisThickness: Double,
-        vAxisThickness: Double,
+        geomInsets: GeomAreaInsets,
         plotSize: DoubleVector,
         hDomain: DoubleSpan,
         vDomain: DoubleSpan,
         marginsLayout: GeomMarginsLayout,
         coordProvider: CoordProvider
     ): DoubleRectangle {
-        val plottingArea = subtractMargins(hAxisThickness, vAxisThickness, plotSize)
-        val geomInnerSize = subtractMargins(hAxisThickness, vAxisThickness, plotSize).dimension.let {
-            marginsLayout.toInnerSize(it)
-        }
+        val plottingArea = geomInsets.subtractFrom(DoubleRectangle(ZERO, plotSize))
+        val geomInnerSize = marginsLayout.toInnerSize(plottingArea.dimension)
 
         val geomOuterSizeAdjusted = coordProvider.adjustGeomSize(hDomain, vDomain, geomInnerSize).let {
             marginsLayout.toOuterSize(it)

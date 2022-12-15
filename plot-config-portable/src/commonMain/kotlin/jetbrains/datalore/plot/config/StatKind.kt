@@ -10,6 +10,7 @@ import jetbrains.datalore.base.enums.EnumInfoFactory
 enum class StatKind {
     IDENTITY,
     COUNT,
+    COUNT2D,
     BIN,
     BIN2D,
     DOTPLOT,
@@ -17,6 +18,7 @@ enum class StatKind {
     CONTOUR,
     CONTOURF,
     BOXPLOT,
+    DENSITYRIDGES,
     YDENSITY,
     YDOTPLOT,
     DENSITY,

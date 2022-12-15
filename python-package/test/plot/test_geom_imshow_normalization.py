@@ -98,6 +98,9 @@ class Test:
 
     @pytest.mark.parametrize('params', test_params_list, ids=lambda d: d.descr)
     def test_image_spec(self, params: TestParams):
+        params.image_data_0.flags.writeable = False
+        params.image_data_1.flags.writeable = False
+
         spec_0 = geom_imshow(image_data=params.image_data_0, norm=params.normalize)
         spec_1 = geom_imshow(image_data=params.image_data_1, norm=params.normalize)
 

@@ -22,6 +22,7 @@ class SegmentGeom : GeomBase() {
 
     var arrowSpec: ArrowSpec? = null
     var animation: Any? = null
+    var flat: Boolean = false
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY

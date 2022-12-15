@@ -473,7 +473,7 @@ class GeoConfigTest {
     }
 
     @Test
-    fun `should not trigger when positional mapping exist`() {
+    fun `should not trigger when positional mapping exist and it is not the map plot`() {
         singleGeomLayer(
             """
             |{
@@ -505,6 +505,84 @@ class GeoConfigTest {
             .assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
+    @Test
+    fun `for map plot - should trigger even if positional mapping exist`() {
+        val orangeCoord = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
+        val appleCoord = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
+
+        fun getGeomLayer(spec: String): GeomLayer {
+            val config = transformToClientPlotConfig(spec)
+            val layers = createPlotAssembler(config).coreLayersByTile.single()
+            val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
+            assertTrue(geomLayers.size == 1, "No layers")
+            return geomLayers.single()
+        }
+
+        // add tooltips - just to keep these variable to check stat variables
+        val pieLayer = """
+            |        "geom": "pie",
+            |        "data": {
+            |            "fruit": ["Apple", "Apple", "Orange", "Orange"],
+            |            "values": [4.0, 16.0, 6.0, 9.0],
+            |            "nutrients": ["Fiber", "Carbs", "Fiber", "Carbs"]
+            |        },
+            |        "mapping": {
+            |           "x" : "fruit",
+            |           "weight" : "values", 
+            |           "fill": "nutrients"
+            |        },
+            |        "tooltips": { "variables": ["..count..", "..proppct..", "..sum.." ] },
+            |        "map": {
+            |            "name": ["Orange", "Apple"],
+            |            "coord": ["$orangeCoord", "$appleCoord"]
+            |        },
+            |        "map_data_meta": {"geodataframe": {"geometry": "coord"}},
+            |        "map_join": [["fruit"], ["name"]]            
+        """.trimMargin()
+
+        // without livemap => mapping
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       {
+            |           $pieLayer
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        )
+            .assertValues("fruit", listOf("Apple", "Orange", "Apple", "Orange"))
+            .assertValues("transform.X", listOf(0.0, 1.0, 0.0, 1.0))
+            .assertValues("transform.Y", listOf(0.0, 0.0, 0.0, 0.0))
+            .assertValues("..count..", listOf(4.0, 6.0, 16.0, 9.0))
+            .assertValues("..proppct..", listOf(20.0, 40.0, 80.0, 60.0))
+            .assertValues("..sum..", listOf(20.0, 15.0, 20.0, 15.0))
+
+        // with livemap => geodata
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       {
+            |          "geom": "livemap"
+            |       },
+            |       {
+            |           $pieLayer
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        )
+            .assertValues("fruit", listOf("Apple", "Orange", "Apple", "Orange"))
+            .assertValues("transform.X", listOf(3.0, 1.0, 3.0, 1.0))
+            .assertValues("transform.Y", listOf(4.0, 2.0, 4.0, 2.0))
+            .assertValues("..count..", listOf(4.0, 6.0, 16.0, 9.0))
+            .assertValues("..proppct..", listOf(20.0, 40.0, 80.0, 60.0))
+            .assertValues("..sum..", listOf(20.0, 15.0, 20.0, 15.0))
+    }
 
     @Test
     fun `georeference with limit and oposition`() {
@@ -555,14 +633,14 @@ class GeoConfigTest {
     private fun GeomLayer.assertGroups(expected: Collection<*>): GeomLayer {
         val actualGroups = createLayerRendererData(this/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
             .aesthetics.dataPoints().map(DataPointAesthetics::group)
-        assertEquals(expected, actualGroups, "Aes valeus didn't match")
+        assertEquals(expected, actualGroups, "Aes values didn't match")
         return this
     }
 
     private fun GeomLayer.assertAes(aes: Aes<*>, expected: Collection<*>): GeomLayer {
         val actualGroups = createLayerRendererData(this/*, Mappers.IDENTITY, Mappers.IDENTITY*/)
             .aesthetics.dataPoints().map { it.get(aes) }
-        assertEquals(expected, actualGroups, "Aes valeus didn't match")
+        assertEquals(expected, actualGroups, "Aes values didn't match")
         return this
     }
 }

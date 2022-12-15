@@ -219,7 +219,7 @@ def position_stack(vjust=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 10
 
         from lets_plot import *
         LetsPlot.setup_html()

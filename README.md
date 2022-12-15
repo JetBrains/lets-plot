@@ -33,7 +33,7 @@ Learn more about *Lets-Plot for Python* installation and usage at the documentat
   <img src="https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin"/>
 </a>
 
-*Lets-Plot for Kotlin* adds plotting capabilities to scientific notebooks built on the Jupyter [Kotlin Kermel](https://github.com/Kotlin/kotlin-jupyter).
+*Lets-Plot for Kotlin* adds plotting capabilities to scientific notebooks built on the Jupyter [Kotlin Kernel](https://github.com/Kotlin/kotlin-jupyter).
 
 You can use this API to embed charts into Kotlin/JVM and Kotlin/JS applications as well.
 
@@ -58,71 +58,65 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 2.5.1
+## What is new in 3.0.0
 
-Mostly a maintenance release.
+- ### Breaking Changes
 
-Nevertheless, few new features and improvements were added as well, among them:
-  - New rendering options in `geom_text(), geom_label()`
-  - `geom_imshow()` is now supporting `cmap` and `extent` parameters (also, `norm, vmin` and `vmax` were fixed)
+  - `Python 3.6` is no longer supported as it is in the ["end-of-life"](https://devguide.python.org/versions/) release cycle stage.
+  
+  - `geom_livemap()` is now a pure basemap layer. The following options are no longer supported:
+    `symbol`, `data`, `mapping`, `map`, `map_join`, `ontop`, `stat`, `position`, `show_legend`, `sampling`, `tooltips`, `geodesic`.
+ 
+>    To draw **point** and **pie** markers on map, please, use the `geom_point()` and `geom_pie()` geometry layers.
+>
+>    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
 
-You will find more details about fixes and improvements in the [CHANGELOG.md](https://github.com/JetBrains/lets-plot/blob/master/CHANGELOG.md#251---2022-11-03).
+>    In place of the former `geodetic` parameter in `geom_livemap` please use the new parameter `flat` in **path** and **segment**
+>    geometry layers. 
+>
+>    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/param_flat.ipynb).
 
-## What is new in 2.5.0
+- ### New Features
 
-- ### Plot Theme
+  - #### `residual_plot()`
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/residual-light.png" alt="f-22e/images/residual-light.png" width="200" height="133">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/residual-dark.png" alt="f-22e/images/residual-dark.png" width="200" height="133">
 
-  - #### `theme_bw()`
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/residual_plot.ipynb).
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_bw.ipynb).
-                         
-  - #### Theme Flavors
-    
-    Theme flavor offers an easy way to change the colors of all elements in a theme to match a specific color scheme.
+  - #### `geom_area_ridges()`
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/ridges-dark.png" alt="f-22e/images/ridges-dark.png" width="400" height="130">
 
-    In this release, we have added the following flavors: 
-    - _darcula_
-    - _solarized_light_
-    - _solarized_dark_
-    - _high_contrast_light_
-    - _high_contrast_dark_
-               
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22c/images/theme_flavors.png" alt="f-22c/images/theme_flavors.png" width="1000" height="133">
+    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/ridgeline_plot.ipynb).
+      
+  - #### `geom_pie()`
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie.png" alt="f-22e/images/pie.png" width="379" height="106">
 
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/theme_flavors.ipynb).
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
 
-  - #### New parameters in `element_text()`
-    - `size, family`
-      ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/font_size_and_family.ipynb))
-    - `hjust, vjust` for plot title, subtitle, caption, legend and axis titles
-      ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/hjust_vjust.ipynb))
-    - `margin` for plot title, subtitle, caption, axis titles and tick labels
-      ([example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/text_margins.ipynb))
+  - #### Annotation Labels on Pie-Chart
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-explode.png" alt="f-22e/images/pie-labels-explode.png" width="195" height="133">
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-titanic.png" alt="f-22e/images/pie-labels-titanic.png" width="366" height="133">
 
-- ### New Plot Types
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/annotations_for_pie.ipynb).
 
-    `geom_label()`.
+  - #### Spatial Pies
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/spatial_pies_titanic.png" alt="f-22e/images/spatial_pies_titanic.png" width="293" height="133">
 
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/geom_label.ipynb).
+    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
 
-- ### Color Scales
+  - #### New Parameters in `geom_imshow()`:
+    <br>
+    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/imshow-alpha-jp.png" alt="f-22e/images/imshow-alpha-jp.png" width="180" height="172">
 
-    Viridis color scales: `scale_color_viridis()`, `scale_fill_viridis()`.
+    - Transparency of `NaN` values in grayscale images: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
 
-    Supported colormaps:
-    - _magma_
-    - _inferno_
-    - _plasma_
-    - _viridis_
-    - _cividis_
-    - _turbo_
-    - _twilight_    
-
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22c/images/viridis_plasma.png" alt="f-22c/images/viridis_plasma.png" width="439" height="132">
-
-  See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22c/colors_viridis.ipynb).
+    - `alpha` parameter: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_alpha_param.ipynb).
 
 
 ## Change Log

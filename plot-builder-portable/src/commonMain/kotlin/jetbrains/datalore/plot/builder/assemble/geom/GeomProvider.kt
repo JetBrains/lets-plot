@@ -237,6 +237,15 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
+        fun arearidges(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.AREA_RIDGES,
+                AestheticsDefaults.areaRidges(),
+                AreaRidgesGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
+        }
+
         fun violin(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.VIOLIN,
@@ -255,15 +264,12 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ).build()
         }
 
-        fun livemap(
-            displayMode: LivemapConstants.DisplayMode?
-        ): GeomProvider {
+        fun livemap(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.LIVE_MAP,
-                AestheticsDefaults.livemap(displayMode),
+                AestheticsDefaults.livemap(),
                 LiveMapGeom.HANDLES_GROUPS,
-                myGeomSupplier = { LiveMapGeom(displayMode) }
-            ).build()
+            ) { LiveMapGeom() }.build()
         }
 
         fun ribbon(): GeomProvider {
@@ -411,6 +417,15 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 GeomKind.IMAGE,
                 AestheticsDefaults.image(),
                 ImageGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
+        }
+
+        fun pie(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.PIE,
+                AestheticsDefaults.pie(),
+                PieGeom.HANDLES_GROUPS,
                 supplier
             ).build()
         }

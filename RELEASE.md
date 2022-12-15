@@ -44,7 +44,7 @@
 ##### 3. Edit `build_settings.yml`:
 
  - set both `build_python_extension` and `enable_python_package` options to `yes`
- - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.6
+ - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
  - check and set credentials in the `PyPI settings` and `Sonatype settings` sections
 
 ##### 4. Build the project:
@@ -57,16 +57,16 @@ For Linux without graphical environment add parameter to exclude JFX test:
 
 or tests will stuck in running state.
 
-_As the result you will get artifacts for jvm-package and python-package (python wheel file built with Python 3.6)_
+_As the result you will get artifacts for jvm-package and python-package (python wheel file built with Python 3.7)_
 
-##### 5. Build python wheels with Python 3.7, 3.8, 3.9 and 3.10:
+##### 5. Build python wheels with Python 3.8, 3.9, 3.10 and 3.11:
 
- - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
+ - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.8
  - run `./gradlew python-package-build:build`
  
-Reproduce this steps for Python 3.8, 3.9 and 3.10
+Reproduce this steps for Python 3.9, 3.10 and 3.11
 
-_Then you'll get python wheel files built with Python 3.6, 3.7, 3.8, 3.9 and 3.10._
+_Then you'll get python wheel files built with Python 3.7, 3.8, 3.9, 3.10 and 3.11._
 
 ##### 6. _(for Linux only)_ Build python wheels for Manylinux platform:
 

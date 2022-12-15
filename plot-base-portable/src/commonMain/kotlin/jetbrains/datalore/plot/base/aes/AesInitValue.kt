@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -28,13 +29,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -84,6 +85,7 @@ object AesInitValue {
         VALUE_MAP[MIDDLE] = Double.NaN
         VALUE_MAP[UPPER] = Double.NaN
         VALUE_MAP[SAMPLE] = 0.0
+        VALUE_MAP[QUANTILE] = Double.NaN
         VALUE_MAP[MAP_ID] = "empty map_id"
         VALUE_MAP[FRAME] = "empty frame"
         VALUE_MAP[SPEED] = 10.0
@@ -99,8 +101,8 @@ object AesInitValue {
         VALUE_MAP[HJUST] = 0.5  // 'middle'
         VALUE_MAP[VJUST] = 0.5  // 'middle'
         VALUE_MAP[ANGLE] = 0.0
-        VALUE_MAP[SYM_X] = 0.0
-        VALUE_MAP[SYM_Y] = 0.0
+        VALUE_MAP[SLICE] = 0.0
+        VALUE_MAP[EXPLODE] = 0.0
     }
 
     /**

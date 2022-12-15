@@ -10,12 +10,12 @@ import jetbrains.datalore.plot.config.Option
 class TooltipsOptions : Options() {
     var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)
     var minWidth: String? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
-    var formats: List<Format>? by map(Option.Layer.TOOLTIP_FORMATS)
-    var lines: List<String>? by map(Option.Layer.TOOLTIP_LINES)
+    var formats: List<Format>? by map(Option.LinesSpec.FORMATS)
+    var lines: List<String>? by map(Option.LinesSpec.LINES)
 
     class Format : Options() {
-        var field: String? by map(Option.TooltipFormat.FIELD)
-        var format: String? by map(Option.TooltipFormat.FORMAT)
+        var field: String? by map(Option.LinesSpec.Format.FIELD)
+        var format: String? by map(Option.LinesSpec.Format.FORMAT)
     }
 
     companion object {

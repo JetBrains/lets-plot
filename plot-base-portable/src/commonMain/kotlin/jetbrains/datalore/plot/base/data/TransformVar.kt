@@ -36,6 +36,7 @@ object TransformVar {
     val MIDDLE = DataFrame.Variable("transform.MIDDLE", TRANSFORM)
     val UPPER = DataFrame.Variable("transform.UPPER", TRANSFORM)
     val SAMPLE = DataFrame.Variable("transform.SAMPLE", TRANSFORM)
+    val QUANTILE = DataFrame.Variable("transform.QUANTILE", TRANSFORM)
     val MAP_ID = DataFrame.Variable("transform.MAP_ID", TRANSFORM)
     val FRAME = DataFrame.Variable("transform.FRAME", TRANSFORM)
     val SPEED = DataFrame.Variable("transform.SPEED", TRANSFORM)
@@ -51,8 +52,8 @@ object TransformVar {
     val HJUST = DataFrame.Variable("transform.HJUST", TRANSFORM)
     val VJUST = DataFrame.Variable("transform.VJUST", TRANSFORM)
     val ANGLE = DataFrame.Variable("transform.ANGLE", TRANSFORM)
-    val SYM_X = DataFrame.Variable("transform.SYM_X", TRANSFORM)
-    val SYM_Y = DataFrame.Variable("transform.SYM_Y", TRANSFORM)
+    val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
+    val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
     private val VAR_BY_NAME: Map<String, DataFrame.Variable>
@@ -188,6 +189,10 @@ object TransformVar {
             return SAMPLE
         }
 
+        override fun quantile(): DataFrame.Variable {
+            return QUANTILE
+        }
+
         override fun mapId(): DataFrame.Variable {
             return MAP_ID
         }
@@ -248,12 +253,12 @@ object TransformVar {
             return ANGLE
         }
 
-        override fun symX(): DataFrame.Variable {
-            return SYM_X
+        override fun slice(): DataFrame.Variable {
+            return SLICE
         }
 
-        override fun symY(): DataFrame.Variable {
-            return SYM_Y
+        override fun explode(): DataFrame.Variable {
+            return EXPLODE
         }
     }
 }

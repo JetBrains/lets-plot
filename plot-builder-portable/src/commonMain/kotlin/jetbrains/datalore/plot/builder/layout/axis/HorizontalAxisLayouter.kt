@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.layout.axis
 
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 
@@ -18,10 +17,6 @@ class HorizontalAxisLayouter constructor(
 
     override fun toAxisMapper(axisLength: Double): (Double?) -> Double? {
         val scaleMapper = toScaleMapper(axisLength)
-        val cartesianX = Coords.toClientOffsetX(DoubleSpan(0.0, axisLength))
-        return { v ->
-            val mapped = scaleMapper(v)
-            if (mapped != null) cartesianX(mapped) else null
-        }
+        return { v -> scaleMapper(v) }
     }
 }

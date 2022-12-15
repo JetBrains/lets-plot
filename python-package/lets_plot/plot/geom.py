@@ -19,11 +19,12 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
            'geom_boxplot', 'geom_violin', 'geom_ydotplot',
+           'geom_area_ridges',
            'geom_ribbon', 'geom_area', 'geom_density',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
-           'geom_text', 'geom_label']
+           'geom_text', 'geom_label', 'geom_pie']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -55,7 +56,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -66,9 +67,10 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -190,6 +192,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, use_crs=None,
+              flat=None,
               **other_args):
     """
     Connects observations in the order, how they appear in the data.
@@ -217,7 +220,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -228,9 +231,12 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+    flat : Boolean, default=False.
+        True - keeps a line flat, False - allows projection to curve a line.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -328,6 +334,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 flat=flat,
                  **other_args)
 
 
@@ -361,7 +368,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -472,7 +479,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -481,6 +488,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
+        If value of `deg` parameter is greater than 1 then linear model becomes polynomial of the given degree.
     n : int
         Number of points to evaluate smoother at.
     se : bool, default=True
@@ -634,7 +642,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -662,6 +670,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     Computed variables:
 
     - ..count.. : number of points with same x-axis coordinate.
+    - ..sum.. : total number of points with same x-axis coordinate.
+    - ..prop.. : groupwise proportion.
+    - ..proppct.. : groupwise proportion in percent.
 
     `geom_bar()` understands the following aesthetics mappings:
 
@@ -769,7 +780,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -910,7 +921,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1055,7 +1066,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1192,7 +1203,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1302,7 +1313,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1387,7 +1398,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1497,7 +1508,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1615,7 +1626,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1731,7 +1742,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1837,7 +1848,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -1954,7 +1965,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2069,7 +2080,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2080,9 +2091,10 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2243,7 +2255,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2254,9 +2266,10 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2380,7 +2393,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     slope : float
         The line slope.
     intercept : float
@@ -2481,7 +2494,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2579,7 +2592,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2683,7 +2696,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -2840,8 +2853,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
+                show_half=None,
                 draw_quantiles=None,
-                scale=None, trim=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
+                scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
@@ -2864,13 +2878,17 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     orientation : str, default='x'
         Specifies the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
+    show_half : float, default=0
+        If -1 then it's drawing only half of each violin.
+        If 1 then it's drawing other half.
+        If 0 then violins looking as usual.
     draw_quantiles : list of float
         Draw horizontal lines at the given quantiles of the density estimate.
     scale : {'area', 'count', 'width'}, default='area'
@@ -2879,6 +2897,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If 'width', all violins have the same maximum width.
     trim : bool, default=True
         Trim the tails of the violins to the range of the data.
+    tails_cutoff : float, default=3.0
+        Extend domain of each violin on `tails_cutoff * bw` if `trim=False`.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -2992,6 +3012,26 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                         size=2, alpha=.5, scale='width') + \\
             geom_boxplot(aes(fill='variable'), width=.2)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-13
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        x = np.random.choice(["a", "b", "c", "d"], size=n)
+        y1 = np.random.normal(size=n)
+        y2 = np.random.normal(size=n)
+        ggplot({'x': x, 'y1': y1, 'y2': y2}) + \\
+            geom_violin(aes('x', 'y1'), show_half=-1, \\
+                        trim=False, fill='#ffffb2') + \\
+            geom_violin(aes('x', 'y2'), show_half=1, \\
+                        trim=False, fill='#74c476')
+
     """
     return _geom('violin',
                  mapping=mapping,
@@ -3002,8 +3042,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
+                 show_half=show_half,
                  draw_quantiles=draw_quantiles,
-                 scale=scale, trim=trim, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
+                 scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
 
 
@@ -3040,7 +3081,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3172,6 +3213,173 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
+def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                     trim=None, tails_cutoff=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
+                     min_height=None, scale=None, quantiles=None, quantile_lines=None,
+                     **other_args):
+    """
+    Plots the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='densityridges'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'densityridges' (computes and draws kernel density estimate for each ridge).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        Value None (or 'none') will disable sampling for this layer.
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    trim : bool, default=false
+        Trim the tails of the ridges to the range of the data.
+    tails_cutoff : float
+        Extend domain of each ridge on `tails_cutoff * bw` if `trim=False`.
+        `tails_cutoff=None` (default) extends domain to maximum (domain overall ridges).
+    kernel : str, default='gaussian'
+        The kernel we use to calculate the density function.
+        Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
+        'triangular', 'biweight' (or 'quartic'), 'epanechikov' (or 'parabolic').
+    bw : str or float
+        The method (or exact value) of bandwidth.
+        Either a string (choose among 'nrd0' and 'nrd'), or a float.
+    adjust : float
+        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+    n : int, default=512
+        The number of sampled points for plotting the function.
+    fs_max : int, default=500
+        Maximum size of data to use density computation with 'full scan'.
+        For bigger data, less accurate but more efficient density computation is applied.
+    min_height : float, default=0.0
+        A height cutoff on the drawn ridges.
+        All values that fall below this cutoff will be removed.
+    scale : float, default=1.0
+        A multiplicative factor applied to height aesthetic.
+        If `scale = 1.0`, the heights of a ridges are automatically scaled
+        such that the ridge with `height = 1.0` just touches the one above.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=false
+        Show the quantile lines.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..height.. : density scaled for the ridges, according to area, counts or to a constant maximum height.
+    - ..density.. : density estimate.
+    - ..count.. : density * number of points.
+    - ..scaled.. : density estimate, scaled to maximum of 1.
+
+    `geom_area_ridges()` understands the following aesthetics mappings:
+
+    - x : x-axis coordinates.
+    - y : y-axis coordinates.
+    - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
+    - alpha : transparency level of a layer. Accepts values between 0 and 1.
+    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
+    - size : lines width.
+    - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 10, 3
+        np.random.seed(42)
+        x = np.random.normal(size=n*m)
+        y = np.repeat(np.arange(m), n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_area_ridges()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            "x": [1, 2, 3, 4, 5, 6],
+            "y": ['a', 'a', 'a', 'a', 'a', 'a'],
+            "h": [1, -2, 3, -4, 5, 4],
+        }
+        ggplot(data) + \\
+            geom_area_ridges(aes("x", "y", height="h"), \\
+                             stat='identity', min_height=-2, \\
+                             color="#756bb1", fill="#bcbddc")
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-11
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n, m = 50, 3
+        np.random.seed(42)
+        x = np.random.normal(size=n*m)
+        y = np.repeat(['a', 'b', 'c'], n)
+        ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+            geom_area_ridges(aes(fill='..quantile..'), \\
+                             quantiles=[.05, .25, .5, .75, .95], quantile_lines=True, \\
+                             scale=1.5, kernel='triangular', color='black')
+
+    """
+    return _geom('area_ridges',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 trim=trim,
+                 tails_cutoff=tails_cutoff,
+                 kernel=kernel,
+                 adjust=adjust,
+                 bw=bw,
+                 n=n,
+                 fs_max=fs_max,
+                 min_height=min_height,
+                 scale=scale,
+                 quantiles=quantiles,
+                 quantile_lines=quantile_lines,
+                 **other_args)
+
+
 def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 **other_args):
     """
@@ -3195,7 +3403,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3305,7 +3513,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3422,7 +3630,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3594,7 +3802,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3786,7 +3994,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -3981,7 +4189,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4097,7 +4305,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4215,7 +4423,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4310,7 +4518,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4430,7 +4638,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4519,7 +4727,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4628,7 +4836,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
@@ -4726,7 +4934,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4737,9 +4945,10 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4847,7 +5056,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 arrow=None, **other_args):
+                 arrow=None, flat=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -4874,12 +5083,14 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
+    flat : Boolean, default=False.
+        True - keeps a line flat, False - allows projection to curve a line.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4947,6 +5158,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  sampling=sampling,
                  tooltips=tooltips,
                  arrow=arrow,
+                 flat=flat,
                  **other_args)
 
 
@@ -4982,7 +5194,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -4993,9 +5205,10 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5170,7 +5383,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
@@ -5181,9 +5394,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         First value in pair - column/columns in `data`.
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
-        EPSG code of coordinate reference system (CRS).
-        All coordinates in GeoDataFrame (see the 'map' parameter)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
         will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5333,6 +5547,161 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_padding=label_padding,
                  label_r=label_r,
                  label_size=label_size,
+                 **other_args)
+
+
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+             map=None, map_join=None, use_crs=None,
+             hole=None, fill_by=None, stroke=None, stroke_color=None,
+             **other_args):
+    """
+    Draw pie chart.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame` or `polars.DataFrame` or `GeoDataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='count2d'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count2d' (counts number of points with same x,y coordinate).
+    position : str or `FeatureSpec`
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specifies appearance, style and content.
+    map : `GeoDataFrame` or `Geocoder`
+        Data containing coordinates of points.
+    map_join : str or list
+        Keys used to join map coordinates with data.
+        First value in pair - column/columns in `data`.
+        Second value in pair - column/columns in `map`.
+    use_crs : str, optional, default="EPSG:4326" (aka WGS84)
+        EPSG code of the coordinate reference system (CRS) or the keyword "provided".
+        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        will be projected to this CRS.
+        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+    hole : float, default=0.0
+        A multiplicative factor applied to the pie diameter to draw donut-like chart.
+    fill_by : string, default='fill'
+        Defines the source aesthetic for geometry filling.
+    stroke : float, default=0.0
+        Width of slice borders.
+    stroke_color : str, default='white'.
+        Color of slice borders.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    Computed variables:
+
+    - ..count.. : number of points with same (x,y) coordinate.
+    - ..sum.. : total number of points with same (x,y) coordinate.
+    - ..prop.. : groupwise proportion.
+    - ..proppct.. : groupwise proportion in percent.
+
+    `geom_pie()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - slice : values associated to pie sectors.
+    - explode : values to explode slices away from their center point, detaching it from the main pie.
+    - size : pie diameter.
+    - fill : color of geometry filling (by default).
+    - color (colour) : color of geometry filling if `fill_by='color'`.
+    - alpha : transparency level of the pie. Accepts values between 0 and 1.
+
+    |
+
+    The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
+
+    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+
+    |
+
+    The conventions for the values of `map_join` parameter are as follows.
+
+    - Joining data and `GeoDataFrame` object
+
+      Data has a column named 'State_name' and `GeoDataFrame` has a matching column named 'state':
+
+      - map_join=['State_Name', 'state']
+      - map_join=[['State_Name'], ['state']]
+
+    - Joining data and `Geocoder` object
+
+      Data has a column named 'State_name'. The matching key in `Geocoder` is always 'state' (providing it is a state-level geocoder) and can be omitted:
+
+      - map_join='State_Name'
+      - map_join=['State_Name']
+
+    - Joining data by composite key
+
+      Joining by composite key works like in examples above, but instead of using a string for a simple key you need to use an array of strings for a composite key. The names in the composite key must be in the same order as in the US street addresses convention: 'city', 'county', 'state', 'country'. For example, the data has columns 'State_name' and 'County_name'. Joining with a 2-keys county level `Geocoder` object (the `Geocoder` keys 'county' and 'state' are omitted in this case):
+
+      - map_join=['County_name', 'State_Name']
+
+    |
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
+        ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=10, stat='identity')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5-8
+
+        from lets_plot import *
+        from lets_plot.mapping import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
+        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), size=10, \\
+                                tooltips=layer_tooltips().format('@{..prop..}', '.0%')
+                                                         .line('count|@{..count..} (@{..prop..})')
+                                                         .line('total|@{..sum..}'))
+
+    |
+    """
+
+    return _geom('pie',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 map=map, map_join=map_join, use_crs=use_crs,
+                 hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
                  **other_args)
 
 

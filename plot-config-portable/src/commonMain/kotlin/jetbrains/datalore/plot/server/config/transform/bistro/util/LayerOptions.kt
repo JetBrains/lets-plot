@@ -52,6 +52,7 @@ class LayerOptions : Options() {
     var middle: Double? by map(Aes.MIDDLE)
     var upper: Double? by map(Aes.UPPER)
     var sample: Double? by map(Aes.SAMPLE)
+    var quantile: Double? by map(Aes.QUANTILE)
     var xmin: Double? by map(Aes.XMIN)
     var xmax: Double? by map(Aes.XMAX)
     var ymin: Double? by map(Aes.YMIN)
@@ -69,8 +70,8 @@ class LayerOptions : Options() {
     var hjust: Any? by map(Aes.HJUST)
     var vjust: Any? by map(Aes.VJUST)
     var angle: Double? by map(Aes.ANGLE)
-    var symX: Double? by map(Aes.SYM_X)
-    var symY: Double? by map(Aes.SYM_Y)
+    var slice: Double? by map(Aes.SLICE)
+    var explode: Double? by map(Aes.EXPLODE)
 
     fun <T> setParameter(name: String, v: T) { properties[name] = v }
 }

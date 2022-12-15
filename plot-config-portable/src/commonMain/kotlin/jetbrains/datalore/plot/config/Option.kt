@@ -114,17 +114,16 @@ object Option {
         const val SAMPLING = "sampling"
         const val SHOW_LEGEND = "show_legend"
         const val TOOLTIPS = "tooltips"
-        const val TOOLTIP_LINES = "tooltip_lines"
-        const val TOOLTIP_VARIABLES = "tooltip_variables"
-        const val TOOLTIP_FORMATS = "tooltip_formats"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
-        const val TOOLTIP_TITLE = "tooltip_title"
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
         const val USE_CRS = "use_crs"
         const val ORIENTATION = "orientation"
         const val MARGINAL = "marginal"
+
+        const val ANNOTATIONS = "labels"
+        const val ANNOTATION_SIZE = "annotation_size"
 
         object Marginal {
             const val SIZE = "margin_size"
@@ -135,11 +134,22 @@ object Option {
             const val SIDE_TOP = "t"
             const val SIDE_BOTTOM = "b"
         }
+
+        object CRS {
+            const val PROVIDED = "provided"
+        }
     }
 
-    object TooltipFormat {
-        const val FIELD = "field"
-        const val FORMAT = "format"
+    object LinesSpec {
+        const val LINES = "lines"
+        const val FORMATS = "formats"
+        const val VARIABLES = "variables"
+        const val TITLE = "title"
+
+        object Format {
+            const val FIELD = "field"
+            const val FORMAT = "format"
+        }
     }
 
     object Geom {
@@ -176,8 +186,15 @@ object Option {
             const val SIZE = "outlier_size"
         }
 
+        object AreaRidges {
+            const val SCALE = "scale"
+            const val MIN_HEIGHT = "min_height"
+            const val QUANTILE_LINES = "quantile_lines"
+        }
+
         object Violin {
             const val DRAW_QUANTILES = "draw_quantiles"
+            const val SHOW_HALF = "show_half"
         }
 
         object YDotplot {
@@ -200,10 +217,12 @@ object Option {
         object Segment {
             const val ARROW = "arrow"
             const val ANIMATION = "animation"
+            const val FLAT = "flat"
         }
 
         object Path {
             const val ANIMATION = "animation"
+            const val FLAT = "flat"
         }
 
         object Point {
@@ -237,8 +256,14 @@ object Option {
             const val LABEL_SIZE = "label_size"
         }
 
+        object Pie {
+            const val FILL_BY = "fill_by"
+            const val HOLE = "hole"
+            const val STROKE = "stroke"
+            const val STROKE_COLOR = "stroke_color"
+        }
+
         object LiveMap {
-            const val DISPLAY_MODE = "display_mode"
             const val INTERACTIVE = "interactive"
             const val LOCATION = "location"
             const val ZOOM = "zoom"
@@ -247,11 +272,9 @@ object Option {
             const val LABELS = "labels"
             const val THEME = "theme"
             const val PROJECTION = "projection"
-            const val GEODESIC = "geodesic"
             const val SHOW_COORD_PICK_TOOLS = "show_coord_pick_tools"
             const val DATA_SIZE_ZOOMIN = "data_size_zoomin"
             const val CONST_SIZE_ZOOMIN = "const_size_zoomin"
-            const val ONTOP = "ontop"
             const val TILES = "tiles"
             const val GEOCODING = "geocoding"
             const val DEV_PARAMS = "dev_params"
@@ -344,9 +367,16 @@ object Option {
             const val BINWIDTH = "binwidth"
         }
 
+        object DensityRidges {
+            const val TRIM = "trim"
+            const val TAILS_CUTOFF = "tails_cutoff"
+            const val QUANTILES = "quantiles"
+        }
+
         object YDensity {
             const val SCALE = "scale"
             const val TRIM = "trim"
+            const val TAILS_CUTOFF = "tails_cutoff"
         }
 
         object QQ {
@@ -405,6 +435,13 @@ object Option {
         const val NA_VALUE = "na_value"
         const val GUIDE = "guide"
         const val FORMAT = "format"
+
+        // position: left, right, top, bottom  (axis position - only X/Y scales)
+        const val POSITION = "position"
+        const val POSITION_L = "left"
+        const val POSITION_R = "right"
+        const val POSITION_T = "top"
+        const val POSITION_B = "bottom"
 
         // continuous scale
         const val CONTINUOUS_TRANSFORM = "trans"
@@ -587,6 +624,7 @@ object Option {
         private const val H_LINE = "hline"
         private const val V_LINE = "vline"
         const val BOX_PLOT = "boxplot"
+        private const val AREA_RIDGES = "area_ridges"
         private const val VIOLIN = "violin"
         const val Y_DOT_PLOT = "ydotplot"
         const val LIVE_MAP = "livemap"
@@ -611,6 +649,7 @@ object Option {
         const val LABEL = "label"
         private const val RASTER = "raster"
         const val IMAGE = "image"
+        const val PIE = "pie"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -635,6 +674,7 @@ object Option {
             map[H_LINE] = GeomKind.H_LINE
             map[V_LINE] = GeomKind.V_LINE
             map[BOX_PLOT] = GeomKind.BOX_PLOT
+            map[AREA_RIDGES] = GeomKind.AREA_RIDGES
             map[VIOLIN] = GeomKind.VIOLIN
             map[LIVE_MAP] = GeomKind.LIVE_MAP
             map[POINT] = GeomKind.POINT
@@ -658,6 +698,7 @@ object Option {
             map[LABEL] = GeomKind.LABEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
+            map[PIE] = GeomKind.PIE
             GEOM_KIND_MAP = map
         }
 

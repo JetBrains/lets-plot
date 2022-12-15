@@ -21,7 +21,6 @@ import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
@@ -72,7 +71,6 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-//            .mapper(mapperX)
             .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
             .labels(listOf("-200", "-100", "0", "100", "250"))
             .build()
@@ -83,13 +81,12 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
-//            .mapper(mapperY)
             .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
             .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
             .build()
 
         // coord system
-        val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
+        val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
         // transform and stat always in this order
         data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
@@ -148,8 +145,6 @@ open class ScatterDemo : SimpleDemoBase() {
         // points layer
         run {
             val aes = AestheticsBuilder(count)
-//                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-//                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
                 .x(AestheticsBuilder.listMapper(aesX, mapperX))
                 .y(AestheticsBuilder.listMapper(aesY, mapperY))
                 .color(constant(Color.RED))
@@ -202,7 +197,6 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-//            .mapper(mapperX)
             .breaks(listOf(-200.0, -100.0, 0.0, 100.0, 250.0))
             .labels(listOf("-200", "-100", "0", "100", "250"))
             .build()
@@ -213,7 +207,6 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeY = plotSize.y
         val mapperY = Mappers.mul(domainY, rangeY)
         scaleY = scaleY.with()
-//            .mapper(mapperY)
             .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
             .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
             .build()
@@ -286,7 +279,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val groupComponent = GroupComponent()
 
         // coord system
-        val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
+        val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
         val theme = DefaultTheme(ThemeValuesRClassic().values)
 
@@ -336,8 +329,6 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // points layer
             val aes = AestheticsBuilder(count)
-//                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-//                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
 //                .color(AestheticsBuilder.listMapper(aesColor, scaleColor.mapper))
                 .x(AestheticsBuilder.listMapper(aesX, mapperX))
                 .y(AestheticsBuilder.listMapper(aesY, mapperY))
@@ -385,7 +376,6 @@ open class ScatterDemo : SimpleDemoBase() {
         val rangeX = plotSize.x
         val mapperX = Mappers.mul(domainX, rangeX)
         scaleX = scaleX.with()
-//            .mapper(mapperX)
             .breaks(listOf(-100.0, 0.0, 100.0))
             .labels(listOf("-100", "0", "100"))
             .continuousTransform(Transforms.continuousWithLimits(Transforms.IDENTITY, Pair(-100.0, 100.0)))
@@ -401,7 +391,6 @@ open class ScatterDemo : SimpleDemoBase() {
         val mapperY = Mappers.mul(domainY, rangeY)
 
         scaleY = scaleY.with()
-//            .mapper(mapperY)
             .breaks(listOf(-120.0, -100.0, -50.0, 0.0, 50.0, 100.0))
             .labels(listOf("-120", "-100", "-50", "0", "50", "100"))
             .build()
@@ -418,7 +407,7 @@ open class ScatterDemo : SimpleDemoBase() {
         val groupComponent = GroupComponent()
 
         // coord system
-        val coord = Coords.create(MapperUtil.map(domainX, mapperX), MapperUtil.map(domainY, mapperY))
+        val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
         run {
             // X axis
@@ -466,8 +455,6 @@ open class ScatterDemo : SimpleDemoBase() {
         run {
             // points layer
             val aes = AestheticsBuilder(count)
-//                .x(AestheticsBuilder.listMapper(aesX, scaleX.mapper))
-//                .y(AestheticsBuilder.listMapper(aesY, scaleY.mapper))
                 .x(AestheticsBuilder.listMapper(aesX, mapperX))
                 .y(AestheticsBuilder.listMapper(aesY, mapperY))
                 .color(constant(Color.DARK_BLUE))

@@ -9,17 +9,21 @@ abstract class ThemeValues(
     val values: Map<String, Any>
 ) {
     operator fun plus(other: Map<String, Any>): Map<String, Any> {
-        val result = HashMap<String, Any>(this.values)
-        for ((k, v) in other) {
-            val wasVal = result.put(k, v)
-            if (wasVal is Map<*, *>) {
-                result.put(k, wasVal + (v as Map<*, *>))
-            }
-        }
-        return result
+        return values.mergeWith(other)
     }
 
     companion object {
+        fun Map<String, Any>.mergeWith(other: Map<String, Any>): Map<String, Any> {
+            val result = HashMap<String, Any>(this)
+            for ((k, v) in other) {
+                val wasVal = result.put(k, v)
+                if (wasVal is Map<*, *>) {
+                    result.put(k, wasVal + (v as Map<*, *>))
+                }
+            }
+            return result
+        }
+
         fun forName(theme: String): ThemeValues {
             return when (theme) {
                 ThemeOption.Name.R_GREY -> ThemeValuesRGrey()

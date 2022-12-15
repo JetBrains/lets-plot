@@ -1,12 +1,15 @@
 package jetbrains.livemap.chart
 
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.Client
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.Renderers.PathRenderer.ArrowSpec
 import jetbrains.livemap.core.ecs.EcsComponent
 
+// Predefined location of a chart element, used by map to initialize its viewport initial state
+class ChartElementLocationComponent : EcsComponent {
+    lateinit var location: Rect<World>
+}
 
 // Common rendering data - used for lines, polygons, pies, bars, points.
 class ChartElementComponent : EcsComponent {
@@ -27,10 +30,15 @@ class TextSpecComponent : EcsComponent {
     lateinit var textSpec: TextSpec
 }
 
-// Pie/Bar chart data
-class SymbolComponent : EcsComponent {
-    var size: Vec<Client> = explicitVec(0.0, 0.0)
+class PointComponent : EcsComponent {
+    var size: Double = 0.0
+}
+
+class PieSpecComponent : EcsComponent {
+    var radius: Double = 0.0
+    var holeSize: Double = 0.0
     var indices: List<Int> = emptyList()
-    var values: List<Double> = emptyList()
+    var sliceValues: List<Double> = emptyList()
     var colors: List<Color> = emptyList()
+    var explodeValues: List<Double>? = null
 }

@@ -8,6 +8,9 @@ package jetbrains.datalore.plot.builder.assemble
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.PointDimensionsUtil
+import jetbrains.datalore.plot.base.geom.WithHeight
+import jetbrains.datalore.plot.base.geom.WithWidth
 import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleUtil
@@ -84,6 +87,7 @@ internal object PositionalScalesUtil {
                     SeriesUtil.ensureApplicableRange(domainExpanded)
                 }
             }
+
             else -> {
                 // One domain for all tiles.
                 val domainOverall = domains.filterNotNull().reduceOrNull { r0, r1 ->
@@ -263,27 +267,51 @@ internal object PositionalScalesUtil {
         aesthetics: Aesthetics,
         geomCtx: GeomContext
     ): Pair<DoubleSpan?, DoubleSpan?> {
-        val renderedAes = layer.renderedAes()
 
         val (widthAxis, heightAxis) = when (layer.isYOrientation) {
             true -> Aes.Y to Aes.X
             false -> Aes.X to Aes.Y
         }
 
+        val geom = layer.geom
+        val renderedAes = layer.renderedAes()
+
         val xy = mapOf(
             widthAxis to when {
-                Aes.WIDTH in renderedAes -> Aes.WIDTH
-                layer.geomKind == GeomKind.DOT_PLOT -> Aes.BINWIDTH
+                geom is WithWidth -> {
+                    val resolution = geomCtx.getResolution(widthAxis)
+                    val isDiscrete = !layer.scaleMap.get(widthAxis).isContinuousDomain
+                    computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
+                        geom.widthSpan(p, widthAxis, resolution, isDiscrete)
+                    }
+                }
+
+                Aes.WIDTH in renderedAes -> {
+                    val resolution = geomCtx.getResolution(widthAxis)
+                    computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
+                        PointDimensionsUtil.dimensionSpan(p, widthAxis, Aes.WIDTH, resolution)
+                    }
+                }
+
                 else -> null
-            }?.let { widthAes ->
-                computeLayerDryRunRangeAfterSizeExpand(widthAxis, widthAes, aesthetics, geomCtx)
             },
             heightAxis to when {
-                Aes.HEIGHT in renderedAes -> Aes.HEIGHT
-                layer.geomKind == GeomKind.Y_DOT_PLOT -> Aes.BINWIDTH
+                geom is WithHeight -> {
+                    val resolution = geomCtx.getResolution(heightAxis)
+                    val isDiscrete = !layer.scaleMap.get(heightAxis).isContinuousDomain
+                    computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
+                        geom.heightSpan(p, heightAxis, resolution, isDiscrete)
+                    }
+                }
+
+                Aes.HEIGHT in renderedAes -> {
+                    val resolution = geomCtx.getResolution(heightAxis)
+                    computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
+                        PointDimensionsUtil.dimensionSpan(p, heightAxis, Aes.HEIGHT, resolution)
+                    }
+                }
+
                 else -> null
-            }?.let { heightAes ->
-                computeLayerDryRunRangeAfterSizeExpand(heightAxis, heightAes, aesthetics, geomCtx)
             }
         )
 
@@ -291,40 +319,17 @@ internal object PositionalScalesUtil {
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
-        locationAes: Aes<Double>, sizeAes: Aes<Double>, aesthetics: Aesthetics, geomCtx: GeomContext
+        aesthetics: Aesthetics,
+        pointSpan: (p: DataPointAesthetics) -> DoubleSpan?
     ): DoubleSpan? {
-        val locations = aesthetics.numericValues(locationAes).iterator()
-        val sizes = aesthetics.numericValues(sizeAes).iterator()
+        var minMax: DoubleSpan? = null
 
-        val resolution = geomCtx.getResolution(locationAes)
-        val minMax = doubleArrayOf(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY)
-
-        for (i in 0 until aesthetics.dataPointCount()) {
-            if (!locations.hasNext()) {
-                throw IllegalStateException("Index is out of bounds: $i for $locationAes")
-            }
-            if (!sizes.hasNext()) {
-                throw IllegalStateException("Index is out of bounds: $i for $sizeAes")
-            }
-            val loc = locations.next()
-            val size = sizes.next()
-            if (SeriesUtil.isFinite(loc) && SeriesUtil.isFinite(size)) {
-                val expand = resolution * (size!! / 2)
-                updateExpandedMinMax(loc!!, expand, minMax)
-            }
+        for (p in aesthetics.dataPoints()) {
+            val span = pointSpan(p)
+            minMax = SeriesUtil.span(minMax, span)
         }
-
-        return if (minMax[0] <= minMax[1])
-            DoubleSpan(minMax[0], minMax[1])
-        else
-            null
+        return minMax
     }
-
-    private fun updateExpandedMinMax(value: Double, expand: Double, expandedMinMax: DoubleArray) {
-        expandedMinMax[0] = min(value - expand, expandedMinMax[0])
-        expandedMinMax[1] = max(value + expand, expandedMinMax[1])
-    }
-
 
     private object RangeUtil {
         fun initialRange(transform: Transform): DoubleSpan? {
@@ -335,9 +340,11 @@ internal object PositionalScalesUtil {
                     if (lims.isEmpty()) null
                     else DoubleSpan.encloseAll(lims)
                 }
+
                 is DiscreteTransform -> {
                     DoubleSpan.encloseAll(transform.effectiveDomainTransformed)
                 }
+
                 else -> throw IllegalStateException("Unexpected transform type: ${transform::class.simpleName}")
             }
         }
@@ -360,14 +367,6 @@ internal object PositionalScalesUtil {
         }
 
         private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan? {
-//            if (!Iterables.isEmpty(values)) {
-//                var newRange = DoubleSpan.encloseAll(values)
-//                if (wasRange != null) {
-//                    newRange = wasRange.span(newRange)
-//                }
-//                return newRange
-//            }
-//            return wasRange
             val newRange = DoubleSpan.encloseAll(values)
             return when {
                 wasRange == null -> newRange

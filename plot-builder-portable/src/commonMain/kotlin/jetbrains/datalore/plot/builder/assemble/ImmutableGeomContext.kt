@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
@@ -29,6 +30,8 @@ interface ImmutableGeomContext : GeomContext {
         fun geomTargetCollector(geomTargetCollector: GeomTargetCollector): Builder
 
         fun fontFamilyRegistry(v: FontFamilyRegistry): Builder
+
+        fun annotations(annotations: Annotations?): Builder
 
         fun build(): ImmutableGeomContext
     }

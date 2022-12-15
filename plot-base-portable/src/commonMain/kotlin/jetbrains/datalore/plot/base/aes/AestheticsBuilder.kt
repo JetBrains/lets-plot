@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -24,13 +25,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
 import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
+import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
 import jetbrains.datalore.plot.base.Aes.Companion.X
 import jetbrains.datalore.plot.base.Aes.Companion.XMAX
 import jetbrains.datalore.plot.base.Aes.Companion.XMIN
@@ -101,6 +102,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun width(v: (Int) -> Double?): AestheticsBuilder {
         return aes(WIDTH, v)
+    }
+
+    fun height(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(HEIGHT, v)
     }
 
     fun violinwidth(v: (Int) -> Double?): AestheticsBuilder {
@@ -176,12 +181,12 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(YMAX, v)
     }
 
-    fun symX(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(SYM_X, v)
+    fun slice(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(SLICE, v)
     }
 
-    fun symY(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(SYM_Y, v)
+    fun explode(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(EXPLODE, v)
     }
 
     fun <T> constantAes(aes: Aes<T>, v: T?): AestheticsBuilder {

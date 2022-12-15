@@ -61,6 +61,10 @@ internal class DefaultPlotTheme(
         return getColor(getElemValue(listOf(TEXT)), Elem.COLOR)
     }
 
+    override fun textStyle(): ThemeTextStyle {
+        return getTextStyle(getElemValue(listOf(TEXT)))
+    }
+
     override fun titleJustification(): TextJustification {
         return getTextJustification(getElemValue(titleKey))
     }

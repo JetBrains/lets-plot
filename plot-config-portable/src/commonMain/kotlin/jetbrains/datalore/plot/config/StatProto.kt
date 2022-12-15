@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.config.Option.Stat.Contour
 import jetbrains.datalore.plot.config.Option.Stat.Density
 import jetbrains.datalore.plot.config.Option.Stat.Density2d
 import jetbrains.datalore.plot.config.Option.Stat.Smooth
+import jetbrains.datalore.plot.config.Option.Stat.DensityRidges
 import jetbrains.datalore.plot.config.Option.Stat.YDensity
 import jetbrains.datalore.plot.config.Option.Stat.QQ
 import jetbrains.datalore.plot.config.Option.Stat.QQLine
@@ -34,6 +35,7 @@ object StatProto {
         when (statKind) {
             StatKind.IDENTITY -> return Stats.IDENTITY
             StatKind.COUNT -> return Stats.count()
+            StatKind.COUNT2D -> return Stats.count2d()
             StatKind.BIN -> {
                 return Stats.bin(
                     binCount = options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
@@ -86,6 +88,8 @@ object StatProto {
                     computeWidth = options.getBoolean(Boxplot.VARWIDTH, BoxplotStat.DEF_COMPUTE_WIDTH)
                 )
             }
+
+            StatKind.DENSITYRIDGES -> return configureDensityRidgesStat(options)
 
             StatKind.YDENSITY -> return configureYDensityStat(options)
 
@@ -163,6 +167,38 @@ object StatProto {
         )
     }
 
+    private fun configureDensityRidgesStat(options: OptionsAccessor): DensityRidgesStat {
+        var bwValue: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW
+        options[Density.BAND_WIDTH]?.run {
+            if (this is Number) {
+                bwValue = this.toDouble()
+            } else if (this is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(this)
+            }
+        }
+
+        val kernel = options.getString(Density.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+
+        val drawQuantiles = if (options.hasOwn(DensityRidges.QUANTILES)) {
+            options.getBoundedDoubleList(DensityRidges.QUANTILES, 0.0, 1.0)
+        } else DensityRidgesStat.DEF_QUANTILES
+
+        return DensityRidgesStat(
+            trim = options.getBoolean(DensityRidges.TRIM, DensityRidgesStat.DEF_TRIM),
+            tailsCutoff = options.getDouble(DensityRidges.TAILS_CUTOFF),
+            bandWidth = bwValue,
+            bandWidthMethod = bwMethod,
+            adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),
+            kernel = kernel ?: DensityStat.DEF_KERNEL,
+            n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
+            fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
+            quantiles = drawQuantiles
+        )
+    }
+
     private fun configureYDensityStat(options: OptionsAccessor): YDensityStat {
         val scale = options.getString(YDensity.SCALE)?.let {
             when (it.lowercase()) {
@@ -193,6 +229,7 @@ object StatProto {
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
             trim = options.getBoolean(YDensity.TRIM, YDensityStat.DEF_TRIM),
+            tailsCutoff = options.getDoubleDef(YDensity.TAILS_CUTOFF, YDensityStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

@@ -116,6 +116,10 @@ abstract class DataPointAesthetics {
         return get(Aes.SAMPLE)
     }
 
+    fun quantile(): Double? {
+        return get(Aes.QUANTILE)
+    }
+
     fun mapId(): Any {
         return getNotNull(Aes.MAP_ID)
     }
@@ -176,12 +180,12 @@ abstract class DataPointAesthetics {
         return get(Aes.ANGLE)
     }
 
-    fun symX(): Double? {
-        return get(Aes.SYM_X)
+    fun slice(): Double? {
+        return get(Aes.SLICE)
     }
 
-    fun symY(): Double? {
-        return get(Aes.SYM_Y)
+    fun explode(): Double? {
+        return get(Aes.EXPLODE)
     }
 
     fun numeric(aes: Aes<Double>): Double? {

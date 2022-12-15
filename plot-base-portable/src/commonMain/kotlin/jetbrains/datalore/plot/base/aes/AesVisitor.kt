@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
+import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
@@ -25,13 +26,13 @@ import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
+import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_X
-import jetbrains.datalore.plot.base.Aes.Companion.SYM_Y
 import jetbrains.datalore.plot.base.Aes.Companion.UPPER
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.VJUST
@@ -144,6 +145,9 @@ abstract class AesVisitor<T> {
         if (aes == SAMPLE) {
             return sample()
         }
+        if (aes == QUANTILE) {
+            return quantile()
+        }
         if (aes == MAP_ID) {
             return mapId()
         }
@@ -190,12 +194,12 @@ abstract class AesVisitor<T> {
             return angle()
         }
 
-        if (aes == SYM_X) {
-            return symX()
+        if (aes == SLICE) {
+            return slice()
         }
 
-        if (aes == SYM_Y) {
-            return symY()
+        if (aes == EXPLODE) {
+            return explode()
         }
 
         throw IllegalArgumentException("Unexpected aes: $aes")
@@ -251,6 +255,8 @@ abstract class AesVisitor<T> {
 
     protected abstract fun sample(): T
 
+    protected abstract fun quantile(): T
+
     protected abstract fun mapId(): T
 
     protected abstract fun frame(): T
@@ -281,7 +287,7 @@ abstract class AesVisitor<T> {
 
     protected abstract fun angle(): T
 
-    protected abstract fun symX(): T
+    protected abstract fun slice(): T
 
-    protected abstract fun symY(): T
+    protected abstract fun explode(): T
 }

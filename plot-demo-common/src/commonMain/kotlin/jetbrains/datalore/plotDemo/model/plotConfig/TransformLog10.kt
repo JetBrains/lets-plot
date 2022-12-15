@@ -85,7 +85,7 @@ class TransformLog10 {
          'layers': [
           {'geom': 'point',
            'mapping': {'color': 'z'},
-           'tooltips': {'tooltip_formats': [{'field': '^color', 'format': '.3f'}]}
+           'tooltips': {'formats': [{'field': '^color', 'format': '.3f'}]}
            }]
          }
          """.trimIndent()

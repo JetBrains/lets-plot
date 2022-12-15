@@ -9,11 +9,14 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.AxisLayout
+import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
+import jetbrains.datalore.plot.builder.layout.TileLayout
+import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomOuterBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxHAxisTickLabelsBounds
+import jetbrains.datalore.plot.builder.layout.util.GeomAreaInsets
 import kotlin.math.max
 
 internal class TopDownTileLayout(
@@ -26,7 +29,7 @@ internal class TopDownTileLayout(
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
-        var (hAxisInfo, vAxisInfo) = computeAxisInfos(
+        var geomAreaInsets = computeAxisInfos(
             hAxisLayout,
             vAxisLayout,
             preferredSize,
@@ -35,12 +38,8 @@ internal class TopDownTileLayout(
             coordProvider
         )
 
-        val hAxisThickness = hAxisInfo.axisBounds().dimension.y
-        val vAxisThickness = vAxisInfo.axisBounds().dimension.x
-
         val geomBoundsAfterLayout = geomOuterBounds(
-            hAxisThickness,
-            vAxisThickness,
+            geomAreaInsets,
             preferredSize,
             hDomain,
             vDomain,
@@ -48,24 +47,26 @@ internal class TopDownTileLayout(
             coordProvider
         )
 
+        val (hAxisInfo, vAxisInfo) = geomAreaInsets.hAxisInfo to geomAreaInsets.vAxisInfo
+
         // X-axis labels bounds may exceed axis length - adjust
         val geomOuterBounds = geomBoundsAfterLayout.let {
             val hAxisSpan = marginsLayout.toInnerBounds(it).xRange()
 
             val maxTickLabelsBounds = maxHAxisTickLabelsBounds(
-                Orientation.BOTTOM,
+                hAxisLayout.orientation,
                 0.0,
                 hAxisSpan,
                 preferredSize
             )
             val tickLabelsBounds = hAxisInfo.tickLabelsBounds
-            val leftOverflow = maxTickLabelsBounds.left - tickLabelsBounds.origin.x
-            val rightOverflow = tickLabelsBounds.origin.x + tickLabelsBounds.dimension.x - maxTickLabelsBounds.right
-            var newX = it.origin.x
-            var newW = it.dimension.x
+            val leftOverflow = maxTickLabelsBounds.left - tickLabelsBounds.left
+            val rightOverflow = tickLabelsBounds.left + tickLabelsBounds.width - maxTickLabelsBounds.right
+            var newX = it.left
+            var newW = it.width
             if (leftOverflow > 0) {
-                newX = it.origin.x + leftOverflow
-                newW = it.dimension.x - leftOverflow
+                newX = it.left + leftOverflow
+                newW = it.width - leftOverflow
             }
 
             if (rightOverflow > 0) {
@@ -79,8 +80,8 @@ internal class TopDownTileLayout(
             newW = max(0.0, newW)
 
             val boundsNew = DoubleRectangle(
-                newX, it.origin.y,
-                newW, it.dimension.y
+                newX, it.top,
+                newW, it.height
             )
 
             if (boundsNew != geomBoundsAfterLayout) {
@@ -101,16 +102,16 @@ internal class TopDownTileLayout(
         val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
 
         // sync axis info with new (maybe) geom area size
-        hAxisInfo = hAxisInfo.withAxisLength(geomInnerBounds.width)
-        vAxisInfo = vAxisInfo.withAxisLength(geomInnerBounds.height)
+        val hAxisInfoNew = hAxisInfo.withAxisLength(geomInnerBounds.width)
+        val vAxisInfoNew = vAxisInfo.withAxisLength(geomInnerBounds.height)
 
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
             bounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
-            hAxisInfo,
-            vAxisInfo,
+            hAxisInfoNew,
+            vAxisInfoNew,
             hAxisShown = true,
             vAxisShown = true,
             trueIndex = 0
@@ -147,11 +148,10 @@ internal class TopDownTileLayout(
             vDomain: DoubleSpan,
             marginsLayout: GeomMarginsLayout,
             coordProvider: CoordProvider
-        ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
-            val hAxisThickness = hAxisLayout.initialThickness()
+        ): GeomAreaInsets {
+            val insetsInitial = GeomAreaInsets.init(hAxisLayout, vAxisLayout)
             val geomHeightEstim = geomOuterBounds(
-                hAxisThickness,
-                vAxisLayout.initialThickness(),
+                insetsInitial,
                 plotSize,
                 hDomain,
                 vDomain,
@@ -161,12 +161,9 @@ internal class TopDownTileLayout(
                 marginsLayout.toInnerSize(it).y
             }
 
-            val vAxisInfoEstim = computeVAxisInfo(vAxisLayout, vDomain, geomHeightEstim)
-
-            val vAxisThickness = vAxisInfoEstim.axisBounds().dimension.x
+            val insetsVAxis = insetsInitial.layoutVAxis(vDomain, geomHeightEstim)
             val plottingArea = geomOuterBounds(
-                hAxisThickness,
-                vAxisThickness,
+                insetsVAxis,
                 plotSize,
                 hDomain,
                 vDomain,
@@ -174,18 +171,16 @@ internal class TopDownTileLayout(
                 coordProvider
             )
             val hAxisSpan = marginsLayout.toInnerBounds(plottingArea).xRange()
-            val hAxisInfo = computeHAxisInfo(
-                hAxisLayout,
+            val insetsHVAxis = insetsVAxis.layoutHAxis(
                 hDomain,
                 plotSize,
                 hAxisSpan
             )
 
             // Re-layout y-axis if x-axis became thicker than its 'original thickness'.
-            val vAxisInfo = if (hAxisInfo.axisBounds().dimension.y > hAxisThickness) {
+            val insetsFinal = if (insetsHVAxis.hAxisThickness > insetsInitial.hAxisThickness) {
                 val geomHeight = geomOuterBounds(
-                    hAxisInfo.axisBounds().dimension.y,
-                    vAxisThickness,
+                    insetsHVAxis,
                     plotSize,
                     hDomain,
                     vDomain,
@@ -195,38 +190,12 @@ internal class TopDownTileLayout(
                     marginsLayout.toInnerSize(it).y
                 }
 
-                computeVAxisInfo(vAxisLayout, vDomain, geomHeight)
+                insetsHVAxis.layoutVAxis(vDomain, geomHeight)
             } else {
-                vAxisInfoEstim
+                insetsHVAxis
             }
 
-            return Pair(hAxisInfo, vAxisInfo)
-        }
-
-        private fun computeHAxisInfo(
-            axisLayout: AxisLayout,
-            axisDomain: DoubleSpan,
-            plotSize: DoubleVector,
-            axisSpan: DoubleSpan
-        ): AxisLayoutInfo {
-            val axisLength = axisSpan.length
-            val stretch = axisLength * AXIS_STRETCH_RATIO
-
-            val maxTickLabelsBounds = maxHAxisTickLabelsBounds(
-                Orientation.BOTTOM,
-                stretch,
-                axisSpan,
-                plotSize
-            )
-            return axisLayout.doLayout(axisDomain, axisLength, maxTickLabelsBounds)
-        }
-
-        private fun computeVAxisInfo(
-            axisLayout: AxisLayout,
-            axisDomain: DoubleSpan,
-            axisLength: Double
-        ): AxisLayoutInfo {
-            return axisLayout.doLayout(axisDomain, axisLength, null)
+            return insetsFinal
         }
     }
 }

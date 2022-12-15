@@ -28,7 +28,7 @@ class Rect {
                 |    "kind": "plot",
                 |    "layers": [{
                 |        "geom": "rect",
-                |        "tooltips": { "tooltip_lines": [ "@id"] },
+                |        "tooltips": { "lines": [ "@id"] },
                 |        "mapping": {"fill": "id"},
                 |        "data_meta": {"geodataframe": {"geometry": "coord"}},
                 |        "data": {
@@ -52,7 +52,7 @@ class Rect {
                 |    "kind": "plot",
                 |    "layers": [{
                 |        "geom": "polygon",
-                |        "tooltips": { "tooltip_lines": [ "@id"] },
+                |        "tooltips": { "lines": [ "@id"] },
                 |        "mapping": {"fill": "id"},
                 |        "data_meta": {"geodataframe": {"geometry": "coord"}},
                 |        "data": {

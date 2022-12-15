@@ -9,17 +9,16 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 internal class DefaultCoordinateSystem(
-    val toClientOffsetX: (Double) -> Double,
-    val toClientOffsetY: (Double) -> Double,
     private val coordMapper: CoordinatesMapper,
 ) : CoordinateSystem {
+
+    private val clientLeft = coordMapper.clientBounds.xRange().lowerEnd
+    private val clientBottom = coordMapper.clientBounds.yRange().upperEnd
+
     override fun toClient(p: DoubleVector): DoubleVector? {
         val mapped = coordMapper.toClient(p)
         return if (mapped != null) {
-            DoubleVector(
-                toClientOffsetX(mapped.x),
-                toClientOffsetY(mapped.y)
-            )
+            toScreen(mapped)
         } else {
             null
         }
@@ -31,9 +30,13 @@ internal class DefaultCoordinateSystem(
 
     override fun flip(): CoordinateSystem {
         return DefaultCoordinateSystem(
-            toClientOffsetX,
-            toClientOffsetY,
             coordMapper.flip()
         )
+    }
+
+    private fun toScreen(p: DoubleVector): DoubleVector {
+        val x = p.x - clientLeft
+        val y = clientBottom - p.y
+        return DoubleVector(x, y)
     }
 }

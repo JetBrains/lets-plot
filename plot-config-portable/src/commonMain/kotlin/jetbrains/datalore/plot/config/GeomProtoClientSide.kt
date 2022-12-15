@@ -10,21 +10,22 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.base.spatial.projections.mercator
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.livemap.LivemapConstants.DisplayMode
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
+import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
 import jetbrains.datalore.plot.config.Option.Geom.Label
-import jetbrains.datalore.plot.config.Option.Geom.LiveMap.DISPLAY_MODE
 import jetbrains.datalore.plot.config.Option.Geom.Path
+import jetbrains.datalore.plot.config.Option.Geom.Pie
 import jetbrains.datalore.plot.config.Option.Geom.Point
 import jetbrains.datalore.plot.config.Option.Geom.PointRange
 import jetbrains.datalore.plot.config.Option.Geom.Segment
@@ -111,10 +112,27 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
+            GeomKind.AREA_RIDGES -> return GeomProvider.arearidges {
+                val geom = AreaRidgesGeom()
+                if (opts.hasOwn(AreaRidges.SCALE)) {
+                    geom.scale = opts.getDoubleDef(AreaRidges.SCALE, AreaRidgesGeom.DEF_SCALE)
+                }
+                if (opts.hasOwn(AreaRidges.MIN_HEIGHT)) {
+                    geom.minHeight = opts.getDoubleDef(AreaRidges.MIN_HEIGHT, AreaRidgesGeom.DEF_MIN_HEIGHT)
+                }
+                if (opts.hasOwn(AreaRidges.QUANTILE_LINES)) {
+                    geom.quantileLines = opts.getBoolean(AreaRidges.QUANTILE_LINES, AreaRidgesGeom.DEF_QUANTILE_LINES)
+                }
+                geom
+            }
+
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
                 if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
                     geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
+                }
+                if (opts.hasOwn(Violin.SHOW_HALF)) {
+                    geom.showHalf = opts.getDouble(Violin.SHOW_HALF)!!
                 }
                 geom
             }
@@ -139,10 +157,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
-            GeomKind.LIVE_MAP -> {
-                return GeomProvider.livemap(opts.mergedOptions.getEnum<DisplayMode>(DISPLAY_MODE))
-            }
-
             GeomKind.STEP -> return GeomProvider.step {
                 val geom = StepGeom()
                 if (opts.hasOwn(Step.DIRECTION)) {
@@ -160,6 +174,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.has(Segment.ANIMATION)) {
                     geom.animation = opts[Segment.ANIMATION]
                 }
+                if (opts.has(Segment.FLAT)) {
+                    geom.flat = opts.getBoolean(Segment.FLAT)
+                }
                 geom
             }
 
@@ -167,6 +184,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 val geom = PathGeom()
                 if (opts.has(Path.ANIMATION)) {
                     geom.animation = opts[Path.ANIMATION]
+                }
+                if (opts.has(Path.FLAT)) {
+                    geom.flat = opts.getBoolean(Path.FLAT)
                 }
                 geom
             }
@@ -215,6 +235,19 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 )
             }
 
+            GeomKind.PIE -> return GeomProvider.pie {
+                val geom = PieGeom()
+
+                opts.getDouble(Pie.HOLE)?.let { geom.holeSize = it }
+                opts.getDouble(Pie.STROKE)?.let { geom.strokeWidth = it }
+                opts.getColor(Pie.STROKE_COLOR)?.let { geom.strokeColor = it }
+                if (opts.has(Pie.FILL_BY)) {
+                    val fillBy = opts.getString(Pie.FILL_BY)!!
+                    val aes = Option.Mapping.toAes(fillBy)
+                    geom.fillWithColor = aes == Aes.COLOR
+                }
+                geom
+            }
 
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
@@ -248,6 +281,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
             PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
             // boxplot - special case
+            // area ridges - special case
             // violin - special case
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()
@@ -266,6 +300,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // text, label - special case
             PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
             // image - special case
+            // pie - special case
+            PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

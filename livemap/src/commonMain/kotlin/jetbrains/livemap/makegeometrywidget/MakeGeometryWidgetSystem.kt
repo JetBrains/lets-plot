@@ -10,7 +10,6 @@ import jetbrains.datalore.base.values.Color.Companion.parseHex
 import jetbrains.livemap.api.MapEntityFactory
 import jetbrains.livemap.api.PathBuilder
 import jetbrains.livemap.api.PointBuilder
-import jetbrains.livemap.api.geometry
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -64,7 +63,8 @@ class MakeGeometryWidgetSystem(
                     sizeScalingRange = null
                     strokeColor = DARK_ORANGE
                     strokeWidth = 1.5
-                    geometry(listOf(widgetLayer.last(), lonlat), false)
+                    points = listOf(widgetLayer.last(), lonlat)
+                    flat = true
                 }
                 .build(true)
         }
@@ -72,7 +72,7 @@ class MakeGeometryWidgetSystem(
 
     private fun getWidgetLayer(): EcsEntity? = myComponentManager.tryGetSingletonEntity(WIDGET_COMPONENTS)
     private fun EcsEntity.click(): InputMouseEvent? = get<MouseInputComponent>().clickEvent
-    private fun EcsEntity.count(): Int = get<MakeGeometryWidgetComponent>().points.count()
+    private fun EcsEntity.count(): Int = get<MakeGeometryWidgetComponent>().points.size
     private fun EcsEntity.last(): LonLatPoint = get<MakeGeometryWidgetComponent>().points.last()
     private fun EcsEntity.add(point: LonLatPoint) = get<MakeGeometryWidgetComponent>().points.add(point)
 

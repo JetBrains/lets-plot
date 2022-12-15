@@ -12,15 +12,15 @@ import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_FORMATS
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_LINES
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_TITLE
-import jetbrains.datalore.plot.config.Option.Layer.TOOLTIP_VARIABLES
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
-import jetbrains.datalore.plot.config.Option.TooltipFormat.FIELD
-import jetbrains.datalore.plot.config.Option.TooltipFormat.FORMAT
+import jetbrains.datalore.plot.config.Option.LinesSpec.FORMATS
+import jetbrains.datalore.plot.config.Option.LinesSpec.LINES
+import jetbrains.datalore.plot.config.Option.LinesSpec.TITLE
+import jetbrains.datalore.plot.config.Option.LinesSpec.VARIABLES
+import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD
+import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FORMAT
 import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
 import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
@@ -84,7 +84,7 @@ class TooltipConfigTest {
             "foo@bar" to listOf("foobar with @")
         )
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "^shape",           // aes
                 "@shape",            // variable with name that match to the name of aes
                 "\\^shape",         // '^' is part of the string (it's not the name) => string is "^shape"
@@ -126,7 +126,7 @@ class TooltipConfigTest {
     @Test
     fun changeFormatForTheDefault() {
         val tooltipConfig = mapOf(
-            TOOLTIP_FORMATS to listOf(
+            FORMATS to listOf(
                 mapOf(
                     FIELD to "^color",
                     FORMAT to ".4f"         // number format
@@ -162,7 +162,7 @@ class TooltipConfigTest {
         // redefine format for the 'color' aes
         val geomLayerWithAesInTooltip = buildPointLayer(
             data, mappingWithColor, tooltips = mapOf(
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^color",
                         FORMAT to "{d}"
@@ -178,8 +178,8 @@ class TooltipConfigTest {
         // redefine format for the 'year' variable
         val geomLayerWithVarInTooltip = buildPointLayer(
             data, mappingWithColor, tooltips = mapOf(
-                TOOLTIP_LINES to listOf("@|@year"),
-                TOOLTIP_FORMATS to listOf(
+                LINES to listOf("@|@year"),
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "year",
                         FORMAT to "{d}"
@@ -196,7 +196,7 @@ class TooltipConfigTest {
     @Test
     fun configLabels() {
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "@{model name}",             // no label
                 "|@{model name}",            // empty label
                 "@|@{model name}",           // default = the variable name
@@ -217,13 +217,13 @@ class TooltipConfigTest {
     @Test
     fun userComplicatedTooltipLines() {
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "mpg data set info",             // static text
                 "^color (mpg)",                 // formatted
                 "@{model name} car (@origin)",   // multiple sources in the line
                 "x/y|^x x ^y"                  // specify label
             ),
-            TOOLTIP_FORMATS to listOf(          //define formats
+            FORMATS to listOf(          //define formats
                 mapOf(FIELD to "^color", FORMAT to ".1f"),
                 mapOf(FIELD to "^x", FORMAT to ".3f"),
                 mapOf(FIELD to "^y", FORMAT to ".1f")
@@ -276,10 +276,10 @@ class TooltipConfigTest {
     @Test
     fun configOutlierTooltips() {
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "lower/upper|^lower, ^upper"
             ),
-            TOOLTIP_FORMATS to listOf(
+            FORMATS to listOf(
                 mapOf(
                     FIELD to "^Y",
                     FORMAT to ".1f"
@@ -321,10 +321,10 @@ class TooltipConfigTest {
     @Test
     fun `numeric format for non-numeric value will be ignored`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "class is @class"
             ),
-            TOOLTIP_FORMATS to listOf(
+            FORMATS to listOf(
                 mapOf(
                     FIELD to "class",
                     FORMAT to ".2f"
@@ -359,7 +359,7 @@ class TooltipConfigTest {
             data = mapOf("label" to listOf("my text")),
             mapping = mapOf(Aes.LABEL.name to "label"),
             tooltips = mapOf(
-                TOOLTIP_LINES to listOf("^label")
+                LINES to listOf("^label")
             )
         )
         assertTooltipStrings(
@@ -407,7 +407,7 @@ class TooltipConfigTest {
                 Aes.LABEL.name to "label"
             ),
             tooltips = mapOf(
-                TOOLTIP_LINES to listOf("^label")
+                LINES to listOf("^label")
             )
         )
         assertTooltipStrings(
@@ -421,7 +421,7 @@ class TooltipConfigTest {
     @Test
     fun `wrong tooltip format (no arguments)`() {
         assertFailTooltipSpec(
-            tooltipConfig = mapOf(TOOLTIP_FORMATS to listOf(emptyMap<String, String>())),
+            tooltipConfig = mapOf(FORMATS to listOf(emptyMap<String, String>())),
             expectedMessage = "Invalid 'format' arguments: 'field' and 'format' are expected"
         )
     }
@@ -430,14 +430,14 @@ class TooltipConfigTest {
     fun `wrong tooltip format (list instead of map)`() {
         assertFailTooltipSpec(
             tooltipConfig = mapOf(
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     listOf(
                         FIELD to "^color",
                         FORMAT to ".2f"
                     )
                 )
             ),
-            expectedMessage = "Wrong tooltip 'format' arguments"
+            expectedMessage = "Wrong 'format' arguments"
         )
     }
 
@@ -445,7 +445,7 @@ class TooltipConfigTest {
     fun `wrong tooltip format (wrong number of arguments)`() {
         assertFailTooltipSpec(
             tooltipConfig = mapOf(
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^color",
                         FORMAT to "{.2f} {.2f}"
@@ -479,7 +479,7 @@ class TooltipConfigTest {
     @Test
     fun `tooltip with strings similar to number format`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "^x",   // aes x
                 "x",    // static text "x"
                 "\$x",  // static text "$x"
@@ -511,7 +511,7 @@ class TooltipConfigTest {
                 "group" to "id"
             ),
             tooltips = mapOf(
-                TOOLTIP_LINES to listOf("^group")
+                LINES to listOf("^group")
             )
         )
         assertTooltipStrings(
@@ -523,7 +523,7 @@ class TooltipConfigTest {
     @Test
     fun `specified tooltip format for variable should be applied to the aes`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_FORMATS to listOf(
+            FORMATS to listOf(
                 mapOf(
                     FIELD to "cty",
                     FORMAT to "{.1f} (mpg)"
@@ -544,7 +544,7 @@ class TooltipConfigTest {
     @Test
     fun `variable list to place in a tooltip`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_VARIABLES to listOf(
+            VARIABLES to listOf(
                 "model name",
                 "class",
                 "origin"
@@ -563,11 +563,11 @@ class TooltipConfigTest {
     @Test
     fun `tooltip lines should be formed by variable list and line functions`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_VARIABLES to listOf(
+            VARIABLES to listOf(
                 "model name",
                 "class"
             ),
-            TOOLTIP_LINES to listOf(
+            LINES to listOf(
                 "@|@origin"
             )
         )
@@ -587,7 +587,7 @@ class TooltipConfigTest {
             // use default aes formatting
 
             val tooltipConfig = mapOf(
-                TOOLTIP_VARIABLES to listOf(
+                VARIABLES to listOf(
                     "cty"
                 )
             )
@@ -602,10 +602,10 @@ class TooltipConfigTest {
             // use specified aes formatting
 
             val tooltipConfig = mapOf(
-                TOOLTIP_VARIABLES to listOf(
+                VARIABLES to listOf(
                     "cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^color",
                         FORMAT to ".4f"
@@ -626,7 +626,7 @@ class TooltipConfigTest {
         run {
             // use default aes formatting
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@cty"
                 )
             )
@@ -640,10 +640,10 @@ class TooltipConfigTest {
         run {
             // use specified aes formatting
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^color",
                         FORMAT to ".4f"
@@ -664,10 +664,10 @@ class TooltipConfigTest {
         run {
             // variable list
             val tooltipConfig = mapOf(
-                TOOLTIP_VARIABLES to listOf(
+                VARIABLES to listOf(
                     "cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "cty",
                         FORMAT to "{.1f} (var format)"
@@ -688,10 +688,10 @@ class TooltipConfigTest {
         run {
             // in line function
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@|@cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "cty",
                         FORMAT to "{.1f} (var format)"
@@ -722,7 +722,7 @@ class TooltipConfigTest {
 
         run {
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@|@cty"
                 )
             )
@@ -736,10 +736,10 @@ class TooltipConfigTest {
         run {
             // use color formatting
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@|@cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^color",
                         FORMAT to "{.1f} (color format)"
@@ -756,10 +756,10 @@ class TooltipConfigTest {
         run {
             // use shape formatting
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@|@cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^shape",
                         FORMAT to "{.1f} (shape format)"
@@ -776,10 +776,10 @@ class TooltipConfigTest {
         run {
             // should choose the first alphabetically
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf(
+                LINES to listOf(
                     "@|@cty"
                 ),
-                TOOLTIP_FORMATS to listOf(
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^color",
                         FORMAT to "{.1f} (color format)"
@@ -811,8 +811,8 @@ class TooltipConfigTest {
                 Aes.Y.name to "y",
             ),
             tooltips = mapOf(
-                TOOLTIP_LINES to listOf("^x"),
-                TOOLTIP_FORMATS to listOf(
+                LINES to listOf("^x"),
+                FORMATS to listOf(
                     mapOf(
                         FIELD to "^x",
                         FORMAT to "%d.%m.%y"
@@ -835,7 +835,7 @@ class TooltipConfigTest {
         val expected = listOf("x = 1.6", "y = 160.0")
 
         run {
-            val tooltipConfig = mapOf(TOOLTIP_FORMATS to formats)
+            val tooltipConfig = mapOf(FORMATS to formats)
             val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
             val axisTooltips = getAxisTooltips(geomLayer).map(DataPoint::value)
             assertEquals(expected.size, axisTooltips.size, "Wrong number of axis tooltips")
@@ -846,8 +846,8 @@ class TooltipConfigTest {
         run {
             // with specified lines
             val tooltipConfig = mapOf(
-                TOOLTIP_LINES to listOf("@class"),
-                TOOLTIP_FORMATS to formats
+                LINES to listOf("@class"),
+                FORMATS to formats
             )
             val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
             val axisTooltips = getAxisTooltips(geomLayer).map(DataPoint::value)
@@ -861,7 +861,7 @@ class TooltipConfigTest {
     @Test
     fun `add title to default lines`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_TITLE to "@{model name} car (@origin)"
+            TITLE to "@{model name} car (@origin)"
         )
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
@@ -877,8 +877,8 @@ class TooltipConfigTest {
     @Test
     fun `add title to users lines`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_LINES to listOf("^color (mpg)"),
-            TOOLTIP_TITLE to "@{model name} car (@origin)"
+            LINES to listOf("^color (mpg)"),
+            TITLE to "@{model name} car (@origin)"
         )
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
@@ -894,9 +894,9 @@ class TooltipConfigTest {
     @Test
     fun `last specified title should be used`() {
         val tooltipConfig = mapOf(
-            TOOLTIP_TITLE to "title 1",
-            TOOLTIP_LINES to listOf("^color (mpg)"),
-            TOOLTIP_TITLE to "title 2"
+            TITLE to "title 1",
+            LINES to listOf("^color (mpg)"),
+            TITLE to "title 2"
         )
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
         val expectedLines = listOf(
@@ -934,7 +934,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createConextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -965,7 +965,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createConextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -995,7 +995,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createConextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1003,7 +1003,7 @@ class TooltipConfigTest {
     companion object {
         private fun getTitleString(geomLayer: GeomLayer): String? {
             val ctx = TestingPlotContext.create(geomLayer)
-            return geomLayer.createConextualMapping().getTitle(index = 0, ctx)
+            return geomLayer.createContextualMapping().getTitle(index = 0, ctx)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
@@ -1012,19 +1012,19 @@ class TooltipConfigTest {
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filter(DataPoint::isAxis)
         }
 
         private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createConextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 

@@ -15,9 +15,12 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 internal class PlotAxisLayout constructor(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
     private val theme: AxisTheme,
-    private val orientation: Orientation
+    override val orientation: Orientation
 ) : AxisLayout {
 
+    /**
+     * ToDo: move to GeomAreaInsets
+     */
     override fun initialThickness(): Double {
         return PlotAxisLayoutUtil.initialThickness(orientation, theme)
     }

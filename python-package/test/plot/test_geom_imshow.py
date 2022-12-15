@@ -93,6 +93,9 @@ class Test:
 
     @pytest.mark.parametrize('args_list,args_dict,expected', test_params_list)
     def test_image_spec(self, args_list, args_dict, expected):
+        image_data = args_list[0]
+        image_data.flags.writeable = False
+
         spec = geom_imshow(*args_list, **args_dict)
         assert spec.as_dict() == expected
         # print(json.dumps(spec.as_dict(), indent=2))
