@@ -60,8 +60,8 @@ class Pie {
             "'fill': 'name', 'slice': 'value'"
         }
         val tooltipContent = if (useCountStat) {
-            "'tooltip_lines': [ '@|^fill', 'count|@{..count..} (@{..prop..})', 'total|@{..sum..}' ]," +
-            "'tooltip_formats': [{'field': '@{..prop..}', 'format': '.0%'}]"
+            "'lines': [ '@|^fill', 'count|@{..count..} (@{..prop..})', 'total|@{..sum..}' ]," +
+            "'formats': [{'field': '@{..prop..}', 'format': '.0%'}]"
         } else ""
         val ordering = if (useCountStat && withOrdering) {
                 ",   'data_meta': {" +
