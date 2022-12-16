@@ -5598,7 +5598,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
-    fill_by : string, default='fill'
+        Accepts values between 0 and 1.
+    fill_by : {'fill', 'color'}, default='fill'
         Defines the source aesthetic for geometry filling.
     stroke : float, default=0.0
         Width of slice borders.
