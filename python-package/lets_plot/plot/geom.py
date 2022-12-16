@@ -5550,7 +5550,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
              hole=None, fill_by=None, stroke=None, stroke_color=None,
              **other_args):
@@ -5581,6 +5581,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specifies style and content of the annotations.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -5630,6 +5633,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color of geometry filling (by default).
     - color (colour) : color of geometry filling if `fill_by='color'`.
     - alpha : transparency level of the pie. Accepts values between 0 and 1.
+    - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
     |
 
@@ -5700,6 +5704,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 labels=labels,
                  map=map, map_join=map_join, use_crs=use_crs,
                  hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
                  **other_args)
