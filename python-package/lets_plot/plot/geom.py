@@ -682,6 +682,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines bar line width.
+    - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
     Examples
     --------
@@ -5633,7 +5634,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color of geometry filling (by default).
     - color (colour) : color of geometry filling if `fill_by='color'`.
     - alpha : transparency level of the pie. Accepts values between 0 and 1.
-    - weight : used by 'count' stat to compute weighted sum instead of simple count.
+    - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
 
     |
 
@@ -5675,23 +5676,38 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
-        ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=10, stat='identity')
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(slice='value', fill='name'), stat='identity')
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5-8
+        :emphasize-lines: 5-9
 
         from lets_plot import *
         from lets_plot.mapping import *
         LetsPlot.setup_html()
-        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
-        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), size=10, \\
-                                tooltips=layer_tooltips().format('@{..prop..}', '.0%')
-                                                         .line('count|@{..count..} (@{..prop..})')
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
+                                size=15, hole=0.2, stroke=1.0, \\
+                                tooltips=layer_tooltips().format('@{..prop..}', '.0%') \\
+                                                         .line('count|@{..count..} (@{..prop..})') \\
                                                          .line('total|@{..sum..}'))
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5-7
+
+        from lets_plot import *
+        from lets_plot.mapping import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
+                                size=15, hole=0.2, stroke=1.0, \\
+                                labels=layer_labels(['..proppct..']).format('..proppct..', '{.1f}%'))
 
     |
     """
