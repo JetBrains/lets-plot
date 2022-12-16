@@ -3241,7 +3241,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
-        Value None (or 'none') will disable sampling for this layer.
+        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
