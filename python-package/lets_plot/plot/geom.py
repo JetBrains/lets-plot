@@ -258,7 +258,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -393,7 +393,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -533,7 +533,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : lines width. Defines line width for conditional mean and confidence bounds lines.
 
@@ -679,7 +679,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value (this values will produce cases or bins for bars).
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
@@ -824,7 +824,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis value (this values will produce cases or bins for bars).
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
@@ -973,7 +973,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
 
     Examples
@@ -1103,7 +1103,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling, default: '..count..'. Alternatively: '..density..'.
     - size : lines width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
@@ -1226,7 +1226,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
     - width : width of a tile. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
@@ -1424,7 +1424,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymin : lower bound for error bar.
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines bar line width.
     - width : width of a bar. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -1538,7 +1538,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - middle : position of median bar.
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
     - width : width of a bar. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
@@ -1656,7 +1656,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - ymin : lower bound for error bar.
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -1768,7 +1768,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - ymin : lower bound for line range.
     - ymax : upper bound for line range.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -1881,7 +1881,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -1998,7 +1998,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - fill : color of a geometry areas. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of the geometry areas. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
 
     Examples
     --------
@@ -2117,7 +2117,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - x : x-axis coordinates of the vertices of the polygon.
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2291,8 +2291,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     `geom_map()` understands the following aesthetics:
 
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of a geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of the geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2417,7 +2417,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - slope : line slope.
     - intercept : line y-intercept.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2518,7 +2518,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2616,7 +2616,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - xintercept : line x-intercept.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2749,7 +2749,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ymin : lower whisker.
     - ymax : upper whisker.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -2939,7 +2939,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -3136,7 +3136,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
 
     Examples
@@ -3301,7 +3301,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - y : y-axis coordinates.
     - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -3429,7 +3429,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ymin : y-axis coordinates of the lower bound.
     - ymax : y-axis coordinates of the upper bound.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines line width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -3538,7 +3538,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines line width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -3678,7 +3678,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -3847,7 +3847,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width. Defines line width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -4221,7 +4221,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
@@ -4348,7 +4348,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     - sample : y-axis value.
     - alpha : transparency level of a point. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
@@ -4455,7 +4455,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
@@ -4560,7 +4560,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -4666,7 +4666,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -4759,7 +4759,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -4861,7 +4861,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -4972,7 +4972,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ymin : y-axis value.
     - ymax : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -5114,7 +5114,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - xend : x-axis value.
     - yend : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -5243,7 +5243,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : font size.
     - label : text to add to plot.
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
@@ -5438,7 +5438,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
-    - color (colour) : color of a geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill: background color of the label.
     - size : font size.
     - label : text to add to plot.
