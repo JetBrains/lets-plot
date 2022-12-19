@@ -54,7 +54,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     fill : str
         Color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     alpha : float, default=0.5
-        Transparency level of a points. Accepts values between 0 and 1.
+        Transparency level of a points. Accept values between 0 and 1.
     size : float, default=3.0
         Size of the points.
     shape : int

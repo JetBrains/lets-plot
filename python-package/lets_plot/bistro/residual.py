@@ -173,7 +173,7 @@ def residual_plot(data=None, x=None, y=None, *,
     size : float
         Size of a geometry.
     alpha : float
-        Transparency level of a geometry. Accepts values between 0 and 1.
+        Transparency level of a geometry. Accept values between 0 and 1.
     color_by : str
         Name of grouping variable.
     show_legend : bool, default=True

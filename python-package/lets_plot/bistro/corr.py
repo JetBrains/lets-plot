@@ -151,7 +151,7 @@ class corr_plot:
             If True the y axis is flipped.
         threshold : float, default=0.0
             Minimal correlation abs value to be included in result.
-            Accepts values between 0 and 1.
+            Accept values between 0 and 1.
 
         """
 
