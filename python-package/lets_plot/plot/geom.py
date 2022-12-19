@@ -676,7 +676,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     `geom_bar()` understands the following aesthetics mappings:
 
-    - x : x-axis value (this values will produce cases or bins for bars).
+    - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
@@ -821,7 +821,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
 
     `geom_histogram()` understands the following aesthetics mappings:
 
-    - x : x-axis value (this values will produce cases or bins for bars).
+    - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
