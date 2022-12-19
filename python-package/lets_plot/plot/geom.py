@@ -2118,7 +2118,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     |
@@ -2293,7 +2293,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of the geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     |
@@ -2418,7 +2418,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - intercept : line y-intercept.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -2519,7 +2519,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -2617,7 +2617,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - xintercept : line x-intercept.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -3431,7 +3431,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -3540,7 +3540,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -3680,7 +3680,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density' stat to compute weighted density.
 
@@ -3848,7 +3848,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     |
@@ -4974,7 +4974,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - alpha : transparency level of a layer. Accepts values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width. Defines line width.
+    - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     |
