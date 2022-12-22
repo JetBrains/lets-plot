@@ -3294,6 +3294,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - ..density.. : density estimate.
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : quantile estimate.
 
     `geom_area_ridges()` understands the following aesthetics mappings:
 
@@ -3305,6 +3306,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - fill : color of geometry filling.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
     Examples
     --------
