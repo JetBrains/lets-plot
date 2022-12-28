@@ -42,7 +42,7 @@ def _extract_data_series(df, x, y):
             x_len=xs.size,
             y_len=ys.size
         ))
-    if xs.size < 2:
+    if xs.size == 1:
         raise Exception("Data should have at least two points.")
 
     return xs, ys
@@ -92,10 +92,13 @@ def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
 def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
     def _get_group_stat_data(group_df):
         xs, ys = _extract_data_series(group_df, x, y)
+        if len(xs) == 0:
+            return group_df.assign(**{_RESIDUAL_COL: []}), xs, ys
         predictor = _get_predictor(xs, ys, method, deg, span, seed, max_n)
         return group_df.assign(**{_RESIDUAL_COL: ys - predictor(xs)}), xs, ys
 
     df = data.copy() if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
+    df = df[(df[x].notna()) & df[y].notna()]
     if group_by is None:
         return _get_group_stat_data(df)
     else:
@@ -106,7 +109,7 @@ def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
         return pd.concat(df_list), np.concatenate(xs_list), np.concatenate(ys_list)
 
 def _get_binwidth(xs, ys, binwidth, bins):
-    if binwidth is not None or bins is not None:
+    if binwidth is not None or bins is not None or len(xs) == 0:
         return binwidth
     binwidth_x = (xs.max() - xs.min()) / _BINS_DEF
     binwidth_y = (ys.max() - ys.min()) / _BINS_DEF
