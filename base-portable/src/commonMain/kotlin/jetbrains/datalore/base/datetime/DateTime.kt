@@ -13,7 +13,7 @@ class DateTime @JvmOverloads constructor(val date: Date, val time: Time = Time.D
     val year: Int
         get() = date.year
 
-    val month: Month?
+    val month: Month
         get() = date.month
 
     val day: Int

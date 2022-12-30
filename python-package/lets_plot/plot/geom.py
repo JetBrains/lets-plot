@@ -682,6 +682,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - color (colour) : color of a geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width. Defines bar line width.
+    - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
     Examples
     --------
@@ -5550,7 +5551,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
              hole=None, fill_by=None, stroke=None, stroke_color=None,
              **other_args):
@@ -5581,6 +5582,9 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specifies appearance, style and content.
+    labels : `layer_labels`
+        Result of the call to the `layer_labels()` function.
+        Specifies style and content of the annotations.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -5594,7 +5598,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
-    fill_by : string, default='fill'
+        Accepts values between 0 and 1.
+    fill_by : {'fill', 'color'}, default='fill'
         Defines the source aesthetic for geometry filling.
     stroke : float, default=0.0
         Width of slice borders.
@@ -5630,6 +5635,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color of geometry filling (by default).
     - color (colour) : color of geometry filling if `fill_by='color'`.
     - alpha : transparency level of the pie. Accepts values between 0 and 1.
+    - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
 
     |
 
@@ -5671,23 +5677,38 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
         from lets_plot import *
         LetsPlot.setup_html()
-        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
-        ggplot(data) + geom_pie(aes(slice='value', fill='name'), size=10, stat='identity')
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(slice='value', fill='name'), stat='identity')
 
     |
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 5-8
+        :emphasize-lines: 5-9
 
         from lets_plot import *
         from lets_plot.mapping import *
         LetsPlot.setup_html()
-        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20 ]}
-        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), size=10, \\
-                                tooltips=layer_tooltips().format('@{..prop..}', '.0%')
-                                                         .line('count|@{..count..} (@{..prop..})')
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
+                                size=15, hole=0.2, stroke=1.0, \\
+                                tooltips=layer_tooltips().format('@{..prop..}', '.0%') \\
+                                                         .line('count|@{..count..} (@{..prop..})') \\
                                                          .line('total|@{..sum..}'))
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 5-7
+
+        from lets_plot import *
+        from lets_plot.mapping import *
+        LetsPlot.setup_html()
+        data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
+        ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
+                                size=15, hole=0.2, stroke=1.0, \\
+                                labels=layer_labels(['..proppct..']).format('..proppct..', '{.1f}%'))
 
     |
     """
@@ -5700,6 +5721,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 labels=labels,
                  map=map, map_join=map_join, use_crs=use_crs,
                  hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
                  **other_args)

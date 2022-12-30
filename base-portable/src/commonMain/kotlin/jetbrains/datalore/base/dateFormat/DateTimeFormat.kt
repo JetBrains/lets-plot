@@ -90,7 +90,7 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
                 Pattern.DAY_OF_MONTH -> dateTime.day.toString()
                 Pattern.DAY_OF_MONTH_LEADING_ZERO -> leadZero(dateTime.day)
                 Pattern.DAY_OF_THE_YEAR -> leadZero(dateTime.date.daysFromYearStart(), 3)
-                Pattern.MONTH -> leadZero((dateTime.month?.ordinal() ?: 0) + 1)
+                Pattern.MONTH -> leadZero(dateTime.month.ordinal() + 1)
                 Pattern.MONTH_ABBR -> DateLocale.monthAbbr[dateTime.month] ?: ""
                 Pattern.MONTH_FULL -> DateLocale.monthFull[dateTime.month] ?: ""
                 Pattern.YEAR_SHORT -> dateTime.year.toString().substring(2)

@@ -173,7 +173,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val radius: Double = AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
-        private val explode = radius * p.explode()!!
+        private val explode =  p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 

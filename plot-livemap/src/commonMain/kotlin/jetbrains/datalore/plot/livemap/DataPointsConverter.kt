@@ -10,6 +10,7 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
@@ -45,11 +46,11 @@ internal class DataPointsConverter(
             PieOptions(it.strokeColor, it.strokeWidth, it.holeSize)
         }
         val fillWithColor = (geom as? PieGeom)?.fillWithColor ?: false
-        val colorGetter: (DataPointAesthetics) -> Color =  { p: DataPointAesthetics ->
+        val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics ->
             if (fillWithColor) p.color()!! else p.fill()!!
         }
-
-        return MultiDataPointHelper.getPoints(aesthetics, colorGetter)
+        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+        return MultiDataPointHelper.getPoints(definedDataPoints, colorGetter)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {
                     point = Vec(it.aes.x()!!, it.aes.y()!!)
@@ -344,7 +345,10 @@ internal class DataPointsConverter(
     internal class MultiDataPointHelper private constructor(
     ) {
         companion object {
-            fun getPoints(aesthetics: Aesthetics, colorGetter: (DataPointAesthetics) -> Color): List<MultiDataPoint> {
+            fun getPoints(
+                dataPoints: Iterable<DataPointAesthetics>,
+                colorGetter: (DataPointAesthetics) -> Color
+            ): List<MultiDataPoint> {
                 val builders = HashMap<Vec<LonLat>, MultiDataPointBuilder>()
 
                 fun fetchBuilder(p: DataPointAesthetics): MultiDataPointBuilder {
@@ -352,8 +356,7 @@ internal class DataPointsConverter(
                     return builders.getOrPut(coord) { MultiDataPointBuilder(p, colorGetter) }
                 }
 
-                aesthetics.dataPoints()
-                    .forEach { p -> fetchBuilder(p).add(p) }
+                dataPoints.forEach { p -> fetchBuilder(p).add(p) }
                 return builders.values.map(MultiDataPointBuilder::build)
             }
         }
@@ -374,7 +377,7 @@ internal class DataPointsConverter(
                     indices = myPoints.map { it.index() },
                     values = myPoints.map { it.slice()!! },
                     colors = myPoints.map { myColorGetter(it) },
-                    explodeValues = myPoints.map { it.explode()!! }
+                    explodeValues = myPoints.map { it.explode() ?: 0.0 }
                 )
             }
         }

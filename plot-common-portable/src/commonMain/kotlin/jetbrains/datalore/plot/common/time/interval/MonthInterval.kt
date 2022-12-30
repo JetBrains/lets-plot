@@ -31,7 +31,7 @@ internal class MonthInterval(count: Int) : MeasuredInDays(count) {
     private fun addMonth(toInstant: DateTime): DateTime {
         var year = toInstant.year
         val month = toInstant.month
-        var next = month!!.next()
+        var next = month.next()
         if (next == null) {
             next = Month.JANUARY
             year++
