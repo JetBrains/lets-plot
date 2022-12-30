@@ -256,11 +256,13 @@ subprojects {
                     } else {
                         macosArm64()
                     }
-                } else if (currentOs.linux & project.hasProperty("build_release")) {
-                    linuxX64()
-                    linuxArm64()
                 } else if (currentOs.linux & project.pythonArch == "x86_64") {
-                    linuxX64()
+                    if (project.hasProperty("build_release")) {
+                        linuxX64()
+                        linuxArm64()
+                    } else {
+                        linuxX64()
+                    }
                 } else if (currentOs.windows) {
                     mingwX64()
                 } else {
