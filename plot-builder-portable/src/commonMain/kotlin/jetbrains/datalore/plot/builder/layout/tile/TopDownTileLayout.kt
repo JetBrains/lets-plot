@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.builder.layout.AxisLayout
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomOuterBounds
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxHAxisTickLabelsBounds
 import jetbrains.datalore.plot.builder.layout.util.GeomAreaInsets
@@ -93,11 +92,14 @@ internal class TopDownTileLayout(
         }
 
         // Combine geom area and x/y-axis
-        val geomWithAxisBounds = tileBounds(
-            hAxisInfo.axisBounds(),
-            vAxisInfo.axisBounds(),
-            geomOuterBounds
-        )
+//        val geomWithAxisBounds = tileBounds(
+//            hAxisInfo.axisBounds(),
+//            vAxisInfo.axisBounds(),
+//            geomOuterBounds
+//        )
+        val geomWithAxisBounds = geomOuterBounds
+            .union(hAxisInfo.axisBoundsAbsolute(geomOuterBounds))
+            .union(vAxisInfo.axisBoundsAbsolute(geomOuterBounds))
 
         val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
 
@@ -121,24 +123,24 @@ internal class TopDownTileLayout(
     companion object {
         private const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
 
-        private fun tileBounds(
-            xAxisBounds: DoubleRectangle,
-            yAxisBounds: DoubleRectangle,
-            geomBounds: DoubleRectangle
-        ): DoubleRectangle {
-            // Can't just union bounds because
-            // x-axis has zero origin
-            // y-axis has negative origin
-            val leftTop = DoubleVector(
-                geomBounds.left - yAxisBounds.width,
-                geomBounds.top - GEOM_MARGIN
-            )
-            val rightBottom = DoubleVector(
-                geomBounds.right + GEOM_MARGIN,
-                geomBounds.bottom + xAxisBounds.height
-            )
-            return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
-        }
+//        private fun tileBounds(
+//            xAxisBounds: DoubleRectangle,
+//            yAxisBounds: DoubleRectangle,
+//            geomBounds: DoubleRectangle
+//        ): DoubleRectangle {
+//            // Can't just union bounds because
+//            // x-axis has zero origin
+//            // y-axis has negative origin
+//            val leftTop = DoubleVector(
+//                geomBounds.left - yAxisBounds.width,
+//                geomBounds.top - GEOM_MARGIN
+//            )
+//            val rightBottom = DoubleVector(
+//                geomBounds.right + GEOM_MARGIN,
+//                geomBounds.bottom + xAxisBounds.height
+//            )
+//            return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
+//        }
 
         private fun computeAxisInfos(
             hAxisLayout: AxisLayout,

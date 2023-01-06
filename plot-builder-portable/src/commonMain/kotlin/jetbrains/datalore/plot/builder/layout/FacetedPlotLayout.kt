@@ -9,34 +9,44 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByCol
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByRow
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.plotInsets
 import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
+import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class FacetedPlotLayout constructor(
     private val facets: PlotFacets,
     private val layoutProviderByTile: List<TileLayoutProvider>,
     private val showFacetStrip: Boolean,
+    hAxisOrientation: Orientation,
+    vAxisOrientation: Orientation,
     private val hAxisTheme: AxisTheme,
     private val vAxisTheme: AxisTheme,
-) : PlotLayoutBase() {
+) : PlotLayout {
     private val totalAddedHSize: Double = PANEL_PADDING * (facets.colCount - 1)
     private val totalAddedVSize: Double = PANEL_PADDING * (facets.rowCount - 1)
 
+    private val insets: Insets = plotInsets(
+        hAxisOrientation, vAxisOrientation,
+        hAxisTheme, vAxisTheme
+    )
+
     init {
-        val padding = 10.0
-        val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) padding else 0.0
-        val bottomPadding = if (!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) padding else 0.0
-        setPadding(top = padding, right = padding, bottomPadding, leftPadding)
+//        val padding = 10.0
+//        val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) padding else 0.0
+//        val bottomPadding = if (!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) padding else 0.0
+//        setPadding(top = padding, right = padding, bottomPadding, leftPadding)
         require(facets.isDefined) { "Undefined facets." }
     }
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
-            preferredSize.x - (paddingLeft + paddingRight),
-            preferredSize.y - (paddingTop + paddingBottom)
+            preferredSize.x - (insets.left + insets.right),
+            preferredSize.y - (insets.top + insets.bottom)
         )
 
         val facetTiles = facets.tileInfos()
@@ -157,7 +167,7 @@ internal class FacetedPlotLayout constructor(
 
         // Normalize origin of tilesAreaBounds.
         val originDelta = tilesAreaOrigin.negate()
-        val tilesPaddingLeftTop = DoubleVector(paddingLeft, paddingTop)
+        val tilesPaddingLeftTop = insets.leftTop
 
         val finalLayoutInfos = ArrayList<TileLayoutInfo>()
         for ((index, facetTile) in facetTiles.withIndex()) {
@@ -196,7 +206,7 @@ internal class FacetedPlotLayout constructor(
         val combinedTilesSize = finalLayoutInfos.map { it.bounds }.reduce { b0, b1 -> b0.union(b1) }.dimension
         val plotSize = combinedTilesSize
             .add(tilesPaddingLeftTop)
-            .add(DoubleVector(paddingRight, paddingBottom))
+            .add(insets.rightBottom)
 
         return PlotLayoutInfo(finalLayoutInfos, plotSize)
     }

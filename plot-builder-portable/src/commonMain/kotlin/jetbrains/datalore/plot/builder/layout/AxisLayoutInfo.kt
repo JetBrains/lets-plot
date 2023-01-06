@@ -11,6 +11,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
 
 class AxisLayoutInfo constructor(
     val axisLength: Double,
@@ -45,5 +46,24 @@ class AxisLayoutInfo constructor(
 
     fun axisBounds(): DoubleRectangle {
         return tickLabelsBounds.union(DoubleRectangle(0.0, 0.0, 0.0, 0.0))
+    }
+
+    fun axisBoundsAbsolute(geomOuterBounds: DoubleRectangle): DoubleRectangle {
+        val axisBounds = axisBounds()
+
+        val orig = if (orientation.isHorizontal) {
+            val top = when (orientation) {
+                Orientation.TOP -> geomOuterBounds.top - axisBounds.height - GEOM_MARGIN
+                else -> geomOuterBounds.bottom + GEOM_MARGIN
+            }
+            DoubleVector(geomOuterBounds.left - GEOM_MARGIN, top)
+        } else {
+            val left = when (orientation) {
+                Orientation.LEFT -> geomOuterBounds.left - axisBounds.width - GEOM_MARGIN
+                else -> geomOuterBounds.right + GEOM_MARGIN
+            }
+            DoubleVector(left, geomOuterBounds.top - GEOM_MARGIN)
+        }
+        return DoubleRectangle(orig, axisBounds.dimension)
     }
 }

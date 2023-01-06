@@ -14,6 +14,10 @@ internal open class Insets(
     val right: Double,
     val bottom: Double
 ) {
+
+    val leftTop = DoubleVector(left, top)
+    val rightBottom = DoubleVector(right, bottom)
+
     open fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
         val leftTop = DoubleVector(left, top)
         val rightBottom = DoubleVector(right, bottom)
@@ -29,4 +33,7 @@ internal open class Insets(
         )
     }
 
+    override fun toString(): String {
+        return "Insets(left=$left, top=$top, right=$right, bottom=$bottom)"
+    }
 }

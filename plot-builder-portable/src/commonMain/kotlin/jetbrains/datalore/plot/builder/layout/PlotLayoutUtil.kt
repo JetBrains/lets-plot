@@ -9,8 +9,11 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.guide.LegendPosition
+import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
+import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.PlotTheme
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -19,6 +22,28 @@ import kotlin.math.max
 internal object PlotLayoutUtil {
     private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
     private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
+
+    fun plotInsets(
+        hAxisOrientation: Orientation,
+        vAxisOrientation: Orientation,
+        hAxisTheme: AxisTheme,
+        vAxisTheme: AxisTheme
+    ): Insets {
+        val emptyPadding = 10.0
+
+        val vPadding = if (hAxisTheme.showTitle() || hAxisTheme.showLabels()) 0.0 else emptyPadding
+        val hPadding = if (vAxisTheme.showTitle() || vAxisTheme.showLabels()) 0.0 else emptyPadding
+        val (left, right) = when (vAxisOrientation) {
+            Orientation.LEFT -> Pair(hPadding, emptyPadding)
+            else -> Pair(emptyPadding, hPadding)
+        }
+        val (top, bottom) = when (hAxisOrientation) {
+            Orientation.TOP -> Pair(vPadding, emptyPadding)
+            else -> Pair(emptyPadding, vPadding)
+        }
+
+        return Insets(left, top, right, bottom)
+    }
 
     private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
         if (text.isEmpty()) {
@@ -80,8 +105,8 @@ internal object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
-        axisTitleLeft: String?,
-        axisTitleBottom: String?,
+        hAxisTitle: String?,
+        vAxisTitle: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
@@ -91,8 +116,8 @@ internal object PlotLayoutUtil {
             title,
             subtitle,
             caption,
-            axisTitleLeft,
-            axisTitleBottom,
+            hAxisTitle,
+            vAxisTitle,
             axisEnabled,
             legendsBlockInfo,
             theme,
@@ -110,8 +135,8 @@ internal object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
-        axisTitleLeft: String?,
-        axisTitleBottom: String?,
+        hAxisTitle: String?,
+        vAxisTitle: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
@@ -121,8 +146,8 @@ internal object PlotLayoutUtil {
             title,
             subtitle,
             caption,
-            axisTitleLeft,
-            axisTitleBottom,
+            hAxisTitle,
+            vAxisTitle,
             axisEnabled,
             legendsBlockInfo,
             theme,
@@ -135,17 +160,17 @@ internal object PlotLayoutUtil {
         title: String?,
         subtitle: String?,
         caption: String?,
-        axisTitleLeft: String?,
-        axisTitleBottom: String?,
+        hAxisTitle: String?,
+        vAxisTitle: String?,
         axisEnabled: Boolean,
         legendsBlockInfo: LegendsBlockInfo,
         theme: Theme,
         flippedAxis: Boolean
     ): DoubleVector {
         val titleDelta = titleSizeDelta(title, subtitle, theme.plot())
-        val axisTitlesDelta = axisTitleSizeDelta(
-            axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-            axisTitleBottom to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
+        val axisTitlesDelta = axisTitlesSizeDelta(
+            hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
+            vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
             axisEnabled,
             marginDimensions = axisMarginDimensions(theme, flippedAxis)
         )
@@ -175,28 +200,83 @@ internal object PlotLayoutUtil {
         return DoubleVector(width, height)
     }
 
-    fun axisTitleSizeDelta(
-        axisTitleLeft: Pair<String?, LabelSpec>,
-        axisTitleBottom: Pair<String?, LabelSpec>,
+    private fun axisTitlesSizeDelta(
+        hAxisTitleInfo: Pair<String?, LabelSpec>,
+        vAxisTitleInfo: Pair<String?, LabelSpec>,
         axisEnabled: Boolean,
         marginDimensions: DoubleVector
     ): DoubleVector {
-        if (!axisEnabled) return DoubleVector.ZERO
-
-        val axisTitleLeftDelta = DoubleVector(
-            titleThickness(title = axisTitleLeft.first, labelSpec = axisTitleLeft.second, margin = marginDimensions.x),
-            0.0
-        )
-        val axisTitleBottomDelta = DoubleVector(
-            0.0,
-            titleThickness(
-                title = axisTitleBottom.first,
-                labelSpec = axisTitleBottom.second,
+//        if (!axisEnabled) return DoubleVector.ZERO
+//
+//        val axisTitleLeftDelta = DoubleVector(
+//            titleThickness(
+//                title = vAxisTitleInfo.first,
+//                labelSpec = vAxisTitleInfo.second,
+//                margin = marginDimensions.x
+//            ),
+//            0.0
+//        )
+//        val axisTitleBottomDelta = DoubleVector(
+//            0.0,
+//            titleThickness(
+//                title = hAxisTitleInfo.first,
+//                labelSpec = hAxisTitleInfo.second,
+//                margin = marginDimensions.y
+//            )
+//        )
+//
+//        return axisTitleLeftDelta.add(axisTitleBottomDelta)
+        return if (axisEnabled) {
+            val hAxisThickness = titleThickness(
+                title = hAxisTitleInfo.first,
+                labelSpec = hAxisTitleInfo.second,
                 margin = marginDimensions.y
             )
-        )
+            val vAxisThickness = titleThickness(
+                title = vAxisTitleInfo.first,
+                labelSpec = vAxisTitleInfo.second,
+                margin = marginDimensions.x
+            )
 
-        return axisTitleLeftDelta.add(axisTitleBottomDelta)
+            DoubleVector(hAxisThickness, vAxisThickness)
+        } else {
+            DoubleVector.ZERO
+        }
+    }
+
+    fun axisTitlesOriginOffset(
+        hAxisTitleInfo: Pair<String?, LabelSpec>,
+        vAxisTitleInfo: Pair<String?, LabelSpec>,
+        hAxisOrientation: Orientation,
+        vAxisOrientation: Orientation,
+        axisEnabled: Boolean,
+        marginDimensions: DoubleVector
+    ): DoubleVector {
+        return if (axisEnabled) {
+            val hAxisThickness = when (hAxisOrientation) {
+                Orientation.TOP -> titleThickness(
+                    title = hAxisTitleInfo.first,
+                    labelSpec = hAxisTitleInfo.second,
+                    margin = marginDimensions.y
+                )
+
+                else -> 0.0
+            }
+
+            val vAxisThickness = when (vAxisOrientation) {
+                Orientation.LEFT -> titleThickness(
+                    title = vAxisTitleInfo.first,
+                    labelSpec = vAxisTitleInfo.second,
+                    margin = marginDimensions.x
+                )
+
+                else -> 0.0
+            }
+
+            DoubleVector(vAxisThickness, hAxisThickness)
+        } else {
+            DoubleVector.ZERO
+        }
     }
 
     private fun legendBlockDelta(
@@ -209,6 +289,7 @@ internal object PlotLayoutUtil {
         return when (theme.position()) {
             LegendPosition.LEFT,
             LegendPosition.RIGHT -> DoubleVector(size.x, 0.0)
+
             else -> DoubleVector(0.0, size.y)
         }
     }

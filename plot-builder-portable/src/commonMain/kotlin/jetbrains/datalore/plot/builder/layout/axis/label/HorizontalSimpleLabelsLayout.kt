@@ -54,32 +54,19 @@ internal class HorizontalSimpleLabelsLayout(
             bounds = GeometryUtil.union(labelBounds, bounds)
         }
 
+        val verticalAnchor = when (orientation) {
+            Orientation.BOTTOM -> Text.VerticalAnchor.TOP
+            else -> Text.VerticalAnchor.BOTTOM
+        }
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
             .bounds(applyLabelsMargins(bounds!!))
             .overlap(overlap)
             .labelAdditionalOffsets(null)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            .labelVerticalAnchor(Text.VerticalAnchor.TOP)
+            .labelVerticalAnchor(verticalAnchor)
             .build()
     }
-
-    /*
-  private AxisLabelsLayoutInfo noLabelsLayoutInfo(double axisLength) {
-    DoubleRectangle bounds = new DoubleRectangle(axisLength / 2, 0, 0, 0); // empty bounds in the middle of the axis;
-    bounds = BreakLabelsLayoutUtil.applyLabelsOffset(bounds, myTheme.tickLabelDistance(), getOrientation());
-    return new AxisLabelsLayoutInfo.Builder()
-        .breaks(getBreaks())
-        //.bounds(applyLabelsOffset(bounds))
-        .bounds(bounds)
-        .smallFont(false)
-        .overlap(false)
-        .labelAdditionalOffsets(null)
-        .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-        .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
-        .build();
-  }
-  */
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         return BreakLabelsLayoutUtil.horizontalCenteredLabelBounds(

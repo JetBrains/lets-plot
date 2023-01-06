@@ -26,7 +26,7 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitleSizeDelta
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
@@ -35,7 +35,6 @@ import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJ
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
@@ -77,11 +76,8 @@ class PlotSvgComponent constructor(
     var plotSize: DoubleVector = DEF_PLOT_SIZE
         private set
 
-    // ToDo: remove
-    private val axisTitleLeft: String? = frameProviderByTile[0].vAxisLabel
-
-    // ToDo: remove
-    private val axisTitleBottom: String? = frameProviderByTile[0].hAxisLabel
+    private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
+    private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
 
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
@@ -182,8 +178,8 @@ class PlotSvgComponent constructor(
             title,
             subtitle,
             caption,
-            axisTitleLeft,
-            axisTitleBottom,
+            hAxisTitle,
+            vAxisTitle,
             axisEnabled,
             legendsBlockInfo,
             theme,
@@ -203,8 +199,8 @@ class PlotSvgComponent constructor(
             title,
             subtitle,
             caption,
-            axisTitleLeft,
-            axisTitleBottom,
+            hAxisTitle,
+            vAxisTitle,
             axisEnabled,
             legendsBlockInfo,
             theme,
@@ -246,9 +242,11 @@ class PlotSvgComponent constructor(
         val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
             .add(
-                axisTitleSizeDelta(
-                    axisTitleLeft = axisTitleLeft to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    axisTitleBottom = null to PlotLabelSpec.DUMMY,
+                axisTitlesOriginOffset(
+                    hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
+                    vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
+                    hAxisOrientation = plotInfo.hAxisOrientation,
+                    vAxisOrientation = plotInfo.vAxisOrientation,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
@@ -427,10 +425,10 @@ class PlotSvgComponent constructor(
 
         // add axis titles
         if (axisEnabled) {
-            if (axisTitleLeft != null) {
+            if (vAxisTitle != null) {
                 val vAxisOrientation = plotInfo.tiles.first().vAxisInfo!!.orientation
                 addAxisTitle(
-                    axisTitleLeft,
+                    vAxisTitle,
 //                    Orientation.LEFT,
                     vAxisOrientation,
                     overallTileBounds,
@@ -441,10 +439,10 @@ class PlotSvgComponent constructor(
                     className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
                 )
             }
-            if (axisTitleBottom != null) {
+            if (hAxisTitle != null) {
                 val hAxisOrientation = plotInfo.tiles.first().hAxisInfo!!.orientation
                 addAxisTitle(
-                    axisTitleBottom,
+                    hAxisTitle,
 //                    Orientation.BOTTOM,
                     hAxisOrientation,
                     overallTileBounds,
