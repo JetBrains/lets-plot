@@ -27,8 +27,7 @@ internal class VerticalFixedBreaksLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(

@@ -5,19 +5,24 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.parsePlotSpec
 
-open class AxisPosition {
+open class AxisPositionFixedShortBreaks {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultAxis(),
             yAxis_Right(),
             xAxis_Top(),
             axis_RightTop(),
-        )
+        ).map { setScaleBreaks(it) }
     }
 
     companion object {
+        private val BREAKS = listOf(-0.5, -0.25, 0.0, 0.25, 0.5)
+//        private val LABS = listOf("one", "two", "three", "fore", "five")
+        private val LABS = listOf("o", "t", "t", "f", "f")
+
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
             map["x"] = listOf(0.0)
@@ -46,13 +51,28 @@ open class AxisPosition {
                     ""
         }
 
+        private fun setScaleBreaks(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
+            val scalesNew = (plotSpec["scales"] as List<*>).map { scaleSpec ->
+                val newSpec = HashMap<String, Any>(scaleSpec as Map<String, Any>)
+                newSpec[Option.Scale.BREAKS] = BREAKS
+                newSpec[Option.Scale.LABELS] = LABS
+                newSpec
+            }
+
+            plotSpec["scales"] = scalesNew
+            return plotSpec
+        }
 
         fun defaultAxis(): MutableMap<String, Any> {
             val spec = """
                 {
                     'kind': 'plot',
                     ${layerMapping()},
-                    ${title("Default")}
+                    ${title("Default")},
+                    'scales': [
+                            {'aesthetic': 'x'},
+                            {'aesthetic': 'y'}
+                        ]
                 }
             """.trimIndent()
             val plotSpec = HashMap(parsePlotSpec(spec))
@@ -67,7 +87,10 @@ open class AxisPosition {
                     'kind': 'plot',
                     ${layerMapping()},
                     ${title("Position: right")},
-                    'scales': [{'aesthetic': 'y', 'name': 'right', 'position': 'right'}]
+                    'scales': [
+                            {'aesthetic': 'x'},
+                            {'aesthetic': 'y', 'name': 'right', 'position': 'right'}
+                        ]
                 }
             """.trimIndent()
             val plotSpec = HashMap(parsePlotSpec(spec))
@@ -82,7 +105,10 @@ open class AxisPosition {
                     'kind': 'plot',
                     ${layerMapping()},
                     ${title("Position: top")},
-                    'scales': [{'aesthetic': 'x', 'name': 'top', 'position': 'top'}]
+                    'scales': [
+                            {'aesthetic': 'x', 'name': 'top', 'position': 'top'},
+                            {'aesthetic': 'y'}
+                       ]
                 }
             """.trimIndent()
             val plotSpec = HashMap(parsePlotSpec(spec))

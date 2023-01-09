@@ -27,7 +27,6 @@ abstract class AxisLabelsLayout protected constructor(
     abstract fun doLayout(
         axisLength: Double,
         axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
     ): AxisLabelsLayoutInfo
 
     internal fun mapToAxis(

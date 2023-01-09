@@ -37,8 +37,7 @@ internal class HorizontalVerticalLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         val height = labelSpec.height()

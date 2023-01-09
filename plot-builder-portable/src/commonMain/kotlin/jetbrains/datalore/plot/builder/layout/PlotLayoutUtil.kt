@@ -10,7 +10,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_AREA_PADDING
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_MARGIN
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_PADDING
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -20,26 +23,21 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
 
 internal object PlotLayoutUtil {
-    private val LIVE_MAP_PLOT_PADDING = DoubleVector(10.0, 0.0)
-    private val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
-
     fun plotInsets(
         hAxisOrientation: Orientation,
         vAxisOrientation: Orientation,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme
     ): Insets {
-        val emptyPadding = 10.0
-
-        val vPadding = if (hAxisTheme.showTitle() || hAxisTheme.showLabels()) 0.0 else emptyPadding
-        val hPadding = if (vAxisTheme.showTitle() || vAxisTheme.showLabels()) 0.0 else emptyPadding
+        val vPadding = if (hAxisTheme.showTitle() || hAxisTheme.showLabels()) 0.0 else GEOM_AREA_PADDING
+        val hPadding = if (vAxisTheme.showTitle() || vAxisTheme.showLabels()) 0.0 else GEOM_AREA_PADDING
         val (left, right) = when (vAxisOrientation) {
-            Orientation.LEFT -> Pair(hPadding, emptyPadding)
-            else -> Pair(emptyPadding, hPadding)
+            Orientation.LEFT -> Pair(hPadding, GEOM_AREA_PADDING)
+            else -> Pair(GEOM_AREA_PADDING, hPadding)
         }
         val (top, bottom) = when (hAxisOrientation) {
-            Orientation.TOP -> Pair(vPadding, emptyPadding)
-            else -> Pair(emptyPadding, vPadding)
+            Orientation.TOP -> Pair(vPadding, GEOM_AREA_PADDING)
+            else -> Pair(GEOM_AREA_PADDING, vPadding)
         }
 
         return Insets(left, top, right, bottom)
@@ -125,8 +123,8 @@ internal object PlotLayoutUtil {
         )
         val reduced = baseSize.subtract(delta)
         return DoubleVector(
-            max(reduced.x, TileLayoutUtil.GEOM_MIN_SIZE.x),
-            max(reduced.y, TileLayoutUtil.GEOM_MIN_SIZE.y)
+            max(reduced.x, GEOM_MIN_SIZE.x),
+            max(reduced.y, GEOM_MIN_SIZE.y)
         )
     }
 
@@ -206,26 +204,6 @@ internal object PlotLayoutUtil {
         axisEnabled: Boolean,
         marginDimensions: DoubleVector
     ): DoubleVector {
-//        if (!axisEnabled) return DoubleVector.ZERO
-//
-//        val axisTitleLeftDelta = DoubleVector(
-//            titleThickness(
-//                title = vAxisTitleInfo.first,
-//                labelSpec = vAxisTitleInfo.second,
-//                margin = marginDimensions.x
-//            ),
-//            0.0
-//        )
-//        val axisTitleBottomDelta = DoubleVector(
-//            0.0,
-//            titleThickness(
-//                title = hAxisTitleInfo.first,
-//                labelSpec = hAxisTitleInfo.second,
-//                margin = marginDimensions.y
-//            )
-//        )
-//
-//        return axisTitleLeftDelta.add(axisTitleBottomDelta)
         return if (axisEnabled) {
             val hAxisThickness = titleThickness(
                 title = hAxisTitleInfo.first,

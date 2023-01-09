@@ -27,8 +27,7 @@ internal class HorizontalSimpleLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         if (breaks.isEmpty) {

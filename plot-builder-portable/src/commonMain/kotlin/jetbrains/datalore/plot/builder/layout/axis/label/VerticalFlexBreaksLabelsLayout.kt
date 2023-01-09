@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
@@ -35,8 +34,7 @@ internal class VerticalFlexBreaksLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         require(axisLength > 0) { "axis length: $axisLength" }

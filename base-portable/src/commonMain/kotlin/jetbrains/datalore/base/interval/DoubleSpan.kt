@@ -14,7 +14,7 @@ class DoubleSpan(
 ) : NumSpan() {
     override val lowerEnd: Double = min(lower, upper)
     override val upperEnd: Double = max(lower, upper)
-    val length : Double = upperEnd - lowerEnd
+    val length: Double = upperEnd - lowerEnd
 
     init {
         check(lower.isFinite() && upper.isFinite()) {
@@ -61,6 +61,10 @@ class DoubleSpan(
                 min(upperEnd, other.upperEnd)
             )
         }
+    }
+
+    fun expanded(lowerExpand: Double, upperExpand: Double): DoubleSpan {
+        return DoubleSpan(lowerEnd - lowerExpand, upperEnd + upperExpand)
     }
 
     companion object {

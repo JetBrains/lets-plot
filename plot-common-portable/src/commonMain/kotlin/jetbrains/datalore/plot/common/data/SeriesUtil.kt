@@ -212,7 +212,8 @@ object SeriesUtil {
     }
 
     fun expand(range: DoubleSpan, lowerExpand: Double, upperExpand: Double): DoubleSpan {
-        return DoubleSpan(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
+//        return DoubleSpan(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
+        return range.expanded(lowerExpand, upperExpand)
     }
 
     fun isFinite(range: DoubleSpan): Boolean {

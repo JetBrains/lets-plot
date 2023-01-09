@@ -11,7 +11,6 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
 
 class AxisLayoutInfo constructor(
     val axisLength: Double,
@@ -24,7 +23,6 @@ class AxisLayoutInfo constructor(
     val tickLabelHorizontalAnchor: Text.HorizontalAnchor? = null,
     val tickLabelVerticalAnchor: Text.VerticalAnchor? = null,
     val tickLabelAdditionalOffsets: List<DoubleVector>? = null,
-    private val tickLabelsBoundsMax: DoubleRectangle? = null,                     // debug
     internal val tickLabelsTextBounds: DoubleRectangle? = null                    // without margins - debug
 ) {
 
@@ -39,7 +37,6 @@ class AxisLayoutInfo constructor(
             tickLabelHorizontalAnchor = tickLabelHorizontalAnchor,
             tickLabelVerticalAnchor = tickLabelVerticalAnchor,
             tickLabelAdditionalOffsets = tickLabelAdditionalOffsets,
-            tickLabelsBoundsMax = tickLabelsBoundsMax,
             tickLabelsTextBounds = tickLabelsTextBounds
         )
     }
@@ -48,21 +45,21 @@ class AxisLayoutInfo constructor(
         return tickLabelsBounds.union(DoubleRectangle(0.0, 0.0, 0.0, 0.0))
     }
 
-    fun axisBoundsAbsolute(geomOuterBounds: DoubleRectangle): DoubleRectangle {
+    fun axisBoundsAbsolute(geomBounds: DoubleRectangle): DoubleRectangle {
         val axisBounds = axisBounds()
 
         val orig = if (orientation.isHorizontal) {
             val top = when (orientation) {
-                Orientation.TOP -> geomOuterBounds.top - axisBounds.height - GEOM_MARGIN
-                else -> geomOuterBounds.bottom + GEOM_MARGIN
+                Orientation.TOP -> geomBounds.top - axisBounds.height
+                else -> geomBounds.bottom
             }
-            DoubleVector(geomOuterBounds.left - GEOM_MARGIN, top)
+            DoubleVector(geomBounds.left + axisBounds.left, top)
         } else {
             val left = when (orientation) {
-                Orientation.LEFT -> geomOuterBounds.left - axisBounds.width - GEOM_MARGIN
-                else -> geomOuterBounds.right + GEOM_MARGIN
+                Orientation.LEFT -> geomBounds.left - axisBounds.width
+                else -> geomBounds.right
             }
-            DoubleVector(left, geomOuterBounds.top - GEOM_MARGIN)
+            DoubleVector(left, geomBounds.top + axisBounds.top)
         }
         return DoubleRectangle(orig, axisBounds.dimension)
     }
