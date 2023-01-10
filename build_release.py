@@ -77,7 +77,7 @@ def run_command(command):
 
 def build_python_packages(build_command, arch=None):
     # Runs Python artifacts build commands. If 'arch' argument was passed, adds it to shell command.
-    python_extension_build_command = ["./gradlew", "python-extension:build"]
+    python_extension_build_command = [gradle_script_name, "python-extension:build"]
     if arch is not None:
         python_extension_build_command += [f"-Pbuild_arch={arch}"]
         command = build_command + [arch]
@@ -97,8 +97,17 @@ python_settings = read_settings_file()
 system = platform.system()
 
 # Define basic gradle commands for project build:
-gradle_build_command = ["./gradlew", "build", "-Pbuild_release=true"]
-python_extension_clean_command = ["./gradlew", "python-extension:clean"]
+if system == "Windows":
+    # For Windows Gradle scipt should be called with another path and name:
+    gradle_script_name = ".\gradlew.bat"
+elif system == "Linux" or system == "Darwin":
+    # For Linux and Mac the standard name:
+    gradle_script_name = "./gradlew"
+else:
+    print_error_and_exit(f"Unsupported platform: {system}")
+
+gradle_build_command = [gradle_script_name, "build", "-Pbuild_release=true"]
+python_extension_clean_command = [gradle_script_name, "python-extension:clean"]
 
 # Run project build. JS and JVM artifacts will be built only:
 print_message("Started main Gradle build...")
@@ -139,7 +148,7 @@ elif system == "Darwin" or system == "Windows":
     enable_python_package = "true"
     build_python_extension = "true"
     # Define Gradle command for Python packages build:
-    python_package_build_command = ["./gradlew", "python-package-build:build"]
+    python_package_build_command = [gradle_script_name, "python-package-build:build"]
     # Run Python packages build for all Python host installations, defined in the settings file:
     for python_paths in python_settings.values():
         # Collect all predefined parameters:
@@ -154,8 +163,6 @@ elif system == "Darwin" or system == "Windows":
         build_python_packages(python_package_build_command + build_parameters)
         # And clean Python Extension artifacts before the next iteration:
         run_command(python_extension_clean_command)
-else:
-    print_error_and_exit(f"Unsupported platform: {system}")
 
 # Print final message and exit:
 print_message("Release build finished!")
