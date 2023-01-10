@@ -206,16 +206,6 @@ object SeriesUtil {
         return if (range1 == null) range0 else range0.union(range1)
     }
 
-    fun expand(range: DoubleSpan, newSpan: Double): DoubleSpan {
-        val expand = (newSpan - range.length) / 2
-        return expand(range, expand, expand)
-    }
-
-    fun expand(range: DoubleSpan, lowerExpand: Double, upperExpand: Double): DoubleSpan {
-//        return DoubleSpan(range.lowerEnd - lowerExpand, range.upperEnd + upperExpand)
-        return range.expanded(lowerExpand, upperExpand)
-    }
-
     fun isFinite(range: DoubleSpan): Boolean {
         return !(range.lowerEnd.isInfinite() || range.upperEnd.isInfinite())
     }

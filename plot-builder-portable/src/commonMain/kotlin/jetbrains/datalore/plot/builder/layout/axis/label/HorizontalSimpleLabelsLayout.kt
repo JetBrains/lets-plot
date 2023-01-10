@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
 internal class HorizontalSimpleLabelsLayout(
@@ -48,7 +47,8 @@ internal class HorizontalSimpleLabelsLayout(
         )
         for (labelBounds in boundsList) {
             overlap = overlap || bounds != null && bounds.xRange().connected(
-                SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
+//                SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
+                labelBounds.xRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
             )
             bounds = GeometryUtil.union(labelBounds, bounds)
         }

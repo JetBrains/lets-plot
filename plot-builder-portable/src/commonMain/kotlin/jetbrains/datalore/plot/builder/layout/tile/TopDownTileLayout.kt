@@ -54,7 +54,7 @@ internal class TopDownTileLayout(
             val geomInnerBounds = marginsLayout.toInnerBounds(it)
             val hAxisSpan = geomInnerBounds.xRange()
 
-            val hAxisSpanExpanded = hAxisSpan.expanded(H_AXIS_LABELS_EXPAND, H_AXIS_LABELS_EXPAND)
+            val hAxisSpanExpanded = hAxisSpan.expanded(H_AXIS_LABELS_EXPAND)
             val tickLabelsBounds = hAxisInfo
                 .tickLabelsBounds
                 .add(geomInnerBounds.origin)

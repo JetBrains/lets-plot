@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.base.interval
 
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -63,8 +64,14 @@ class DoubleSpan(
         }
     }
 
-    fun expanded(lowerExpand: Double, upperExpand: Double): DoubleSpan {
-        return DoubleSpan(lowerEnd - lowerExpand, upperEnd + upperExpand)
+    fun expanded(expand: Double): DoubleSpan {
+        @Suppress("NAME_SHADOWING")
+        val expand = if (expand >= 0.0) {
+            expand
+        } else {
+            -(min(this.length / 2, abs(expand)))
+        }
+        return DoubleSpan(lowerEnd - expand, upperEnd + expand)
     }
 
     companion object {
