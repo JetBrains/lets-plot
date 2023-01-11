@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
 internal class HorizontalSimpleLabelsLayout(
@@ -27,8 +26,7 @@ internal class HorizontalSimpleLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         if (breaks.isEmpty) {
@@ -49,37 +47,25 @@ internal class HorizontalSimpleLabelsLayout(
         )
         for (labelBounds in boundsList) {
             overlap = overlap || bounds != null && bounds.xRange().connected(
-                SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
+//                SeriesUtil.expand(labelBounds.xRange(), MIN_TICK_LABEL_DISTANCE / 2, MIN_TICK_LABEL_DISTANCE / 2.0)
+                labelBounds.xRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
             )
             bounds = GeometryUtil.union(labelBounds, bounds)
         }
 
+        val verticalAnchor = when (orientation) {
+            Orientation.BOTTOM -> Text.VerticalAnchor.TOP
+            else -> Text.VerticalAnchor.BOTTOM
+        }
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
             .bounds(applyLabelsMargins(bounds!!))
             .overlap(overlap)
             .labelAdditionalOffsets(null)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            .labelVerticalAnchor(Text.VerticalAnchor.TOP)
+            .labelVerticalAnchor(verticalAnchor)
             .build()
     }
-
-    /*
-  private AxisLabelsLayoutInfo noLabelsLayoutInfo(double axisLength) {
-    DoubleRectangle bounds = new DoubleRectangle(axisLength / 2, 0, 0, 0); // empty bounds in the middle of the axis;
-    bounds = BreakLabelsLayoutUtil.applyLabelsOffset(bounds, myTheme.tickLabelDistance(), getOrientation());
-    return new AxisLabelsLayoutInfo.Builder()
-        .breaks(getBreaks())
-        //.bounds(applyLabelsOffset(bounds))
-        .bounds(bounds)
-        .smallFont(false)
-        .overlap(false)
-        .labelAdditionalOffsets(null)
-        .labelHorizontalAnchor(TextLabel.HorizontalAnchor.MIDDLE)
-        .labelVerticalAnchor(TextLabel.VerticalAnchor.TOP)
-        .build();
-  }
-  */
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         return BreakLabelsLayoutUtil.horizontalCenteredLabelBounds(

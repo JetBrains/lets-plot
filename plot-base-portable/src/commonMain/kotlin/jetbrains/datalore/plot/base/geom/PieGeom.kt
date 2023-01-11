@@ -20,6 +20,7 @@ import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.geom.util.DataPointAestheticsDelegate
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.TextUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -133,7 +134,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         targetCollector.addPolygon(
             points = resampleArc(outerArc = true) + resampleArc(outerArc = false).reversed(),
             localToGlobalIndex = { sector.p.index() },
-            GeomTargetCollector.TooltipParams(markerColors = listOf(getFillColor(sector.p)))
+            GeomTargetCollector.TooltipParams(
+                markerColors = listOf(
+                    HintColorUtil.applyAlpha(getFillColor(sector.p), sector.p.alpha()!!)
+                )
+            )
         )
     }
 
@@ -173,7 +178,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val radius: Double = AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
-        private val explode = radius * p.explode()!!
+        private val explode =  p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 

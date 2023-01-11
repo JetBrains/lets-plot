@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.H_AXIS_LABELS_EXPAND
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
@@ -30,28 +31,30 @@ internal class HorizontalFixedBreaksLabelsLayout(
         require(orientation.isHorizontal) { orientation.toString() }
     }
 
-    private fun overlap(labelsInfo: AxisLabelsLayoutInfo, maxTickLabelsBounds: DoubleRectangle?): Boolean {
-        return labelsInfo.isOverlap || maxTickLabelsBounds != null && !(maxTickLabelsBounds.xRange()
-            .encloses(labelsInfo.bounds!!.xRange()) && maxTickLabelsBounds.yRange()
-            .encloses(labelsInfo.bounds.yRange()))
+    private fun overlap(labelsInfo: AxisLabelsLayoutInfo, axisSpanExpanded: DoubleSpan): Boolean {
+        return labelsInfo.isOverlap || !axisSpanExpanded.encloses(labelsInfo.bounds!!.xRange())
     }
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
         if (!theme.showLabels()) {
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
-        var labelsInfo = simpleLayout().doLayout(axisLength, axisMapper, maxLabelsBounds)
-        if (overlap(labelsInfo, maxLabelsBounds)) {
-            labelsInfo = multilineLayout().doLayout(axisLength, axisMapper, maxLabelsBounds)
-            if (overlap(labelsInfo, maxLabelsBounds)) {
-                labelsInfo = tiltedLayout().doLayout(axisLength, axisMapper, maxLabelsBounds)
-                if (overlap(labelsInfo, maxLabelsBounds)) {
-                    labelsInfo = verticalLayout(labelSpec).doLayout(axisLength, axisMapper, maxLabelsBounds)
+        val axisSpanExpanded = DoubleSpan(
+            lower = -H_AXIS_LABELS_EXPAND,
+            upper = axisLength + H_AXIS_LABELS_EXPAND
+        )
+
+        var labelsInfo = simpleLayout().doLayout(axisLength, axisMapper)
+        if (overlap(labelsInfo, axisSpanExpanded)) {
+            labelsInfo = multilineLayout().doLayout(axisLength, axisMapper)
+            if (overlap(labelsInfo, axisSpanExpanded)) {
+                labelsInfo = tiltedLayout().doLayout(axisLength, axisMapper)
+                if (overlap(labelsInfo, axisSpanExpanded)) {
+                    labelsInfo = verticalLayout(labelSpec).doLayout(axisLength, axisMapper)
                 }
             }
         }

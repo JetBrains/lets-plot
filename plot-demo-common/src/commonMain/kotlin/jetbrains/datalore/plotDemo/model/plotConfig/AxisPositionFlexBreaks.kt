@@ -7,11 +7,13 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 
 import jetbrains.datalore.plot.parsePlotSpec
 
-open class AxisPosition {
+open class AxisPositionFlexBreaks {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            defaultAxis(),
-            yAxis_Right()
+            defaultAxis(),
+            yAxis_Right(),
+            xAxis_Top(),
+            axis_RightTop(),
         )
     }
 
@@ -64,8 +66,41 @@ open class AxisPosition {
                 {
                     'kind': 'plot',
                     ${layerMapping()},
-                    ${title("Default")},
+                    ${title("Position: right")},
                     'scales': [{'aesthetic': 'y', 'name': 'right', 'position': 'right'}]
+                }
+            """.trimIndent()
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = data()
+            return plotSpec
+        }
+
+        @Suppress("FunctionName")
+        fun xAxis_Top(): MutableMap<String, Any> {
+            val spec = """
+                {
+                    'kind': 'plot',
+                    ${layerMapping()},
+                    ${title("Position: top")},
+                    'scales': [{'aesthetic': 'x', 'name': 'top', 'position': 'top'}]
+                }
+            """.trimIndent()
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = data()
+            return plotSpec
+        }
+
+        @Suppress("FunctionName")
+        fun axis_RightTop(): MutableMap<String, Any> {
+            val spec = """
+                {
+                    'kind': 'plot',
+                    ${layerMapping()},
+                    ${title("Position: right, top")},
+                    'scales': [
+                            {'aesthetic': 'x', 'name': 'top', 'position': 'top'},
+                            {'aesthetic': 'y', 'name': 'right', 'position': 'right'}
+                        ]
                 }
             """.trimIndent()
             val plotSpec = HashMap(parsePlotSpec(spec))

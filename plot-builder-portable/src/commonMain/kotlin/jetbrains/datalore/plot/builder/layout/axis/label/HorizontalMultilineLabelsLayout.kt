@@ -37,8 +37,7 @@ internal class HorizontalMultilineLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         val boundsByShelfIndex = HashMap<Int, DoubleRectangle>()

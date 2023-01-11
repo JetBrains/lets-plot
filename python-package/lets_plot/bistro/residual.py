@@ -105,7 +105,7 @@ def _parse_marginal(marginal, color, color_by, show_legend, bins2d, binwidth2d):
         elif geom_name in ["box", "boxplot"]:
             layer = geom_boxplot(color=color, show_legend=show_legend)
         else:
-            raise Exception("Unknown geom '{0}'".format(self.geom))
+            raise Exception("Unknown geom '{0}'".format(geom_name))
 
         return ggmarginal(side, size=size, layer=layer)
 

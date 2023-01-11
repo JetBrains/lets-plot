@@ -11,8 +11,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.AxisLayout
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import kotlin.math.max
 
 internal class GeomAreaInsets private constructor(
@@ -59,56 +58,46 @@ internal class GeomAreaInsets private constructor(
         return DoubleRectangle(
             r.origin,
             DoubleVector(
-                max(r.width, TileLayoutUtil.GEOM_MIN_SIZE.x),
-                max(r.height, TileLayoutUtil.GEOM_MIN_SIZE.y)
+                max(r.width, GEOM_MIN_SIZE.x),
+                max(r.height, GEOM_MIN_SIZE.y)
             )
         )
     }
 
     fun layoutHAxis(axisDomain: DoubleSpan, plotSize: DoubleVector, axisSpan: DoubleSpan): GeomAreaInsets {
         val axisLength = axisSpan.length
-        val stretch = axisLength * AXIS_STRETCH_RATIO
-
-        val maxTickLabelsBounds = TileLayoutUtil.maxHAxisTickLabelsBounds(
-            hAxisLayout.orientation,
-            stretch,
-            axisSpan,
-            plotSize
-        )
-        val info = hAxisLayout.doLayout(axisDomain, axisLength, maxTickLabelsBounds)
+        val hAxisInfo = hAxisLayout.doLayout(axisDomain, axisLength)
         return GeomAreaInsets(
             left = left,
-            top = if (hAxisLayout.orientation == TOP) info.axisBounds().height else top,
+            top = if (hAxisLayout.orientation == TOP) hAxisInfo.axisBounds().height else top,
             right = right,
-            bottom = if (hAxisLayout.orientation == BOTTOM) info.axisBounds().height else bottom,
+            bottom = if (hAxisLayout.orientation == BOTTOM) hAxisInfo.axisBounds().height else bottom,
             hAxisLayout, vAxisLayout,
-            _hAxisInfo = info,
+            _hAxisInfo = hAxisInfo,
             _vAxisInfo = _vAxisInfo
         )
     }
 
     fun layoutVAxis(axisDomain: DoubleSpan, axisLength: Double): GeomAreaInsets {
-        val info = vAxisLayout.doLayout(axisDomain, axisLength, null)
+        val vAxisInfo = vAxisLayout.doLayout(axisDomain, axisLength)
         return GeomAreaInsets(
-            left = if (vAxisLayout.orientation == LEFT) info.axisBounds().width else left,
+            left = if (vAxisLayout.orientation == LEFT) vAxisInfo.axisBounds().width else left,
             top = top,
-            right = if (vAxisLayout.orientation == RIGHT) info.axisBounds().width else right,
+            right = if (vAxisLayout.orientation == RIGHT) vAxisInfo.axisBounds().width else right,
             bottom = bottom,
             hAxisLayout, vAxisLayout,
             _hAxisInfo = _hAxisInfo,
-            _vAxisInfo = info
+            _vAxisInfo = vAxisInfo
         )
     }
 
     companion object {
-        private const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
-
         fun init(hAxisLayout: AxisLayout, vAxisLayout: AxisLayout): GeomAreaInsets {
             return GeomAreaInsets(
-                left = if (vAxisLayout.orientation == LEFT) vAxisLayout.initialThickness() else GEOM_MARGIN,
-                top = if (hAxisLayout.orientation == TOP) hAxisLayout.initialThickness() else GEOM_MARGIN,
-                right = if (vAxisLayout.orientation == RIGHT) vAxisLayout.initialThickness() else GEOM_MARGIN,
-                bottom = if (hAxisLayout.orientation == BOTTOM) hAxisLayout.initialThickness() else GEOM_MARGIN,
+                left = if (vAxisLayout.orientation == LEFT) vAxisLayout.initialThickness() else 0.0,
+                top = if (hAxisLayout.orientation == TOP) hAxisLayout.initialThickness() else 0.0,
+                right = if (vAxisLayout.orientation == RIGHT) vAxisLayout.initialThickness() else 0.0,
+                bottom = if (hAxisLayout.orientation == BOTTOM) hAxisLayout.initialThickness() else 0.0,
                 hAxisLayout, vAxisLayout,
                 null, null
             )

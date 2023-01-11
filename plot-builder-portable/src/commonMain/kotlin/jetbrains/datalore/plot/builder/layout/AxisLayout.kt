@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.guide.Orientation
 
 interface AxisLayout {
@@ -15,7 +14,6 @@ interface AxisLayout {
 
     fun doLayout(
         axisDomain: DoubleSpan,
-        axisLength: Double,
-        maxTickLabelsBoundsStretched: DoubleRectangle?
+        axisLength: Double
     ): AxisLayoutInfo
 }

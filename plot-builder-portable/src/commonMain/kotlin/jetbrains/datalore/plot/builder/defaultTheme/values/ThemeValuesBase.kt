@@ -94,8 +94,11 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
             AXIS_TEXT to mapOf(
                 Elem.Margin.TOP to 3.0,
                 Elem.Margin.RIGHT to 3.0,
-                Elem.Margin.BOTTOM to 0.0,
-                Elem.Margin.LEFT to 0.0
+//                Elem.Margin.BOTTOM to 0.0,
+//                Elem.Margin.LEFT to 0.0
+// All around equal default margins because axis text can appear on either side of a plot tile. (See scale x/y "position")
+                Elem.Margin.BOTTOM to 3.0,
+                Elem.Margin.LEFT to 3.0
             ),
 
             AXIS_TITLE to mapOf(

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
@@ -21,8 +20,10 @@ abstract class AxisLayouter(
     private val labelsLayout: AxisLabelsLayout
 ) {
 
-    fun doLayout(axisLength: Double, maxTickLabelsBounds: DoubleRectangle?): AxisLayoutInfo {
-        val labelsInfo = labelsLayout.doLayout(axisLength, toAxisMapper(axisLength), maxTickLabelsBounds)
+    fun doLayout(
+        axisLength: Double
+    ): AxisLayoutInfo {
+        val labelsInfo = labelsLayout.doLayout(axisLength, toAxisMapper(axisLength))
         val axisBreaks = labelsInfo.breaks!!
         val labelsBounds = labelsInfo.bounds!!
         return AxisLayoutInfo(
@@ -35,8 +36,11 @@ abstract class AxisLayouter(
             tickLabelHorizontalAnchor = labelsInfo.labelHorizontalAnchor,
             tickLabelVerticalAnchor = labelsInfo.labelVerticalAnchor,
             tickLabelAdditionalOffsets = labelsInfo.labelAdditionalOffsets,
-            tickLabelsBoundsMax = maxTickLabelsBounds,
-            tickLabelsTextBounds = BreakLabelsLayoutUtil.textBounds(labelsBounds, labelsLayout.theme.tickLabelMargins(), orientation)
+            tickLabelsTextBounds = BreakLabelsLayoutUtil.textBounds(
+                labelsBounds,
+                labelsLayout.theme.tickLabelMargins(),
+                orientation
+            )
         )
     }
 

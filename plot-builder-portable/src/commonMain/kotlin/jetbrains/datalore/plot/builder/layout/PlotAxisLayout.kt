@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
@@ -28,11 +27,10 @@ internal class PlotAxisLayout constructor(
     override fun doLayout(
         axisDomain: DoubleSpan,
         axisLength: Double,
-        maxTickLabelsBoundsStretched: DoubleRectangle?,
     ): AxisLayoutInfo {
         val breaksProvider = breaksProviderFactory.createAxisBreaksProvider(axisDomain)
         val layouter = AxisLayouter.create(orientation, axisDomain, breaksProvider, theme)
 
-        return layouter.doLayout(axisLength, maxTickLabelsBoundsStretched)
+        return layouter.doLayout(axisLength)
     }
 }

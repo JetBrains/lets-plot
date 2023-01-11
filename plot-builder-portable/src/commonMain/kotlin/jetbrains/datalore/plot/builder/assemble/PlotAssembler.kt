@@ -95,6 +95,8 @@ class PlotAssembler private constructor(
                 layoutProviderByTile,
                 facets,
                 theme.facets(),
+                hAxisOrientation = Orientation.BOTTOM,  // Not used with Live Map
+                vAxisOrientation = Orientation.LEFT,    // Not used with Live Map
                 hAxisTheme = LiveMapAxisTheme(),
                 vAxisTheme = LiveMapAxisTheme(),
             )
@@ -148,6 +150,7 @@ class PlotAssembler private constructor(
                 layoutProviderByTile,
                 facets,
                 theme.facets(),
+                hAxisOrientation, vAxisOrientation,
                 hAxisTheme = theme.horizontalAxis(flipAxis),
                 vAxisTheme = theme.verticalAxis(flipAxis),
             )
