@@ -16,6 +16,5 @@ internal object LayoutConstants {
     val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
     // Horizontal axis labels
-//    const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
     const val H_AXIS_LABELS_EXPAND = 10.0  // Value by which labels can go beyond the axis bounds (px).
 }

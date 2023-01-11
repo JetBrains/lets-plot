@@ -64,9 +64,11 @@ internal class GeomAreaInsets private constructor(
         )
     }
 
-    fun layoutHAxis(axisDomain: DoubleSpan, plotSize: DoubleVector, axisSpan: DoubleSpan): GeomAreaInsets {
-        val axisLength = axisSpan.length
-        val hAxisInfo = hAxisLayout.doLayout(axisDomain, axisLength)
+    fun layoutHAxis(
+        axisDomain: DoubleSpan,
+        axisLength: Double,
+    ): GeomAreaInsets {
+        val hAxisInfo = hAxisLayout.doLayout(axisDomain, axisLength, this)
         return GeomAreaInsets(
             left = left,
             top = if (hAxisLayout.orientation == TOP) hAxisInfo.axisBounds().height else top,
@@ -79,7 +81,7 @@ internal class GeomAreaInsets private constructor(
     }
 
     fun layoutVAxis(axisDomain: DoubleSpan, axisLength: Double): GeomAreaInsets {
-        val vAxisInfo = vAxisLayout.doLayout(axisDomain, axisLength)
+        val vAxisInfo = vAxisLayout.doLayout(axisDomain, axisLength, this)
         return GeomAreaInsets(
             left = if (vAxisLayout.orientation == LEFT) vAxisInfo.axisBounds().width else left,
             top = top,

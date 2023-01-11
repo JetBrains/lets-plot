@@ -12,9 +12,10 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 import jetbrains.datalore.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
+import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-abstract class AxisLayouter(
+internal abstract class AxisLayouter(
     val orientation: Orientation,
     private val domainRange: DoubleSpan,
     private val labelsLayout: AxisLabelsLayout
@@ -53,7 +54,10 @@ abstract class AxisLayouter(
     companion object {
         fun create(
             orientation: Orientation,
-            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
+            axisDomain: DoubleSpan,
+            breaksProvider: AxisBreaksProvider,
+            geomAreaInsets: Insets,
+            theme: AxisTheme
         ): AxisLayouter {
 
             if (orientation.isHorizontal) {
@@ -62,6 +66,7 @@ abstract class AxisLayouter(
                         orientation,
                         axisDomain,
                         breaksProvider.fixedBreaks,
+                        geomAreaInsets,
                         theme
                     )
                 } else {

@@ -36,4 +36,8 @@ internal open class Insets(
     override fun toString(): String {
         return "Insets(left=$left, top=$top, right=$right, bottom=$bottom)"
     }
+
+    companion object {
+        val ZERO = Insets(0.0, 0.0, 0.0, 0.0)
+    }
 }

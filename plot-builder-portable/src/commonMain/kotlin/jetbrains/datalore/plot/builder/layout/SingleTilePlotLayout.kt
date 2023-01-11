@@ -25,17 +25,7 @@ internal class SingleTilePlotLayout(
         hAxisTheme, vAxisTheme
     )
 
-//    init {
-//        // ToDo: axis position
-//        val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) PADDING else 0.0
-//        val bottomPadding = if(!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) PADDING else 0.0
-//        setPadding(top = PADDING, right = PADDING, bottomPadding, leftPadding)
-//    }
-
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-//        val paddingLeftTop = DoubleVector(paddingLeft, paddingTop)
-//        val paddingRightBottom = DoubleVector(paddingRight, paddingBottom)
-
         val tilePreferredSize = preferredSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
@@ -50,31 +40,4 @@ internal class SingleTilePlotLayout(
 
         return PlotLayoutInfo(listOf(tileInfo), plotSize)
     }
-
-//    companion object {
-//
-//        private fun plotInsets(
-//            hAxisOrientation: Orientation,
-//            vAxisOrientation: Orientation,
-//            hAxisTheme: AxisTheme,
-//            vAxisTheme: AxisTheme
-//        ): Insets {
-//            val emptyPadding = 10.0
-//
-//            val hPadding = if (vAxisTheme.showTitle() || vAxisTheme.showLabels()) 0.0 else emptyPadding
-//            val vPadding = if (hAxisTheme.showTitle() || hAxisTheme.showLabels()) 0.0 else emptyPadding
-////        setPadding(top = PADDING, right = PADDING, bottomPadding, leftPadding)
-//
-//            val (left, right) = when (hAxisOrientation) {
-//                Orientation.LEFT -> Pair(hPadding, emptyPadding)
-//                else -> Pair(emptyPadding, hPadding)
-//            }
-//            val (top, bottom) = when (vAxisOrientation) {
-//                Orientation.TOP -> Pair(vPadding, emptyPadding)
-//                else -> Pair(emptyPadding, vPadding)
-//            }
-//
-//            return Insets(left, top, right, bottom)
-//        }
-//    }
 }

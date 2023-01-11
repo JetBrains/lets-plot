@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.parsePlotSpec
 
-open class AxisPositionFixedLongBreaks {
+open class AxisPositionFixedBreaks90Deg {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             defaultAxis(),

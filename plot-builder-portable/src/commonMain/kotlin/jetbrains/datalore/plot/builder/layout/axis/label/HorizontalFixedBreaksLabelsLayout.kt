@@ -11,14 +11,17 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.H_AXIS_LABELS_EXPAND
+import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import kotlin.math.max
 
 internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
     labelSpec: LabelSpec,
     breaks: ScaleBreaks,
+    geomAreaInsets: Insets,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
@@ -27,6 +30,10 @@ internal class HorizontalFixedBreaksLabelsLayout(
     breaks,
     theme
 ) {
+
+    private val axisLeftExpand = max(geomAreaInsets.left, H_AXIS_LABELS_EXPAND)
+    private val axisRightExpand = max(geomAreaInsets.right, H_AXIS_LABELS_EXPAND)
+
     init {
         require(orientation.isHorizontal) { orientation.toString() }
     }
@@ -43,9 +50,11 @@ internal class HorizontalFixedBreaksLabelsLayout(
             return noLabelsLayoutInfo(axisLength, orientation)
         }
 
+//        val axisSpanExpanded = DoubleSpan(0.0, axisLength)
+//            .expanded(H_AXIS_LABELS_EXPAND)
         val axisSpanExpanded = DoubleSpan(
-            lower = -H_AXIS_LABELS_EXPAND,
-            upper = axisLength + H_AXIS_LABELS_EXPAND
+            lower = -axisLeftExpand,
+            upper = axisLength + axisRightExpand
         )
 
         var labelsInfo = simpleLayout().doLayout(axisLength, axisMapper)
@@ -54,6 +63,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
             if (overlap(labelsInfo, axisSpanExpanded)) {
                 labelsInfo = tiltedLayout().doLayout(axisLength, axisMapper)
                 if (overlap(labelsInfo, axisSpanExpanded)) {
+//                    println("Overlap")
                     labelsInfo = verticalLayout(labelSpec).doLayout(axisLength, axisMapper)
                 }
             }

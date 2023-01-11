@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+import jetbrains.datalore.plot.builder.guide.Orientation.TOP
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
@@ -28,11 +29,9 @@ internal class HorizontalTiltedLabelsLayout(
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     private val labelHorizontalAnchor: Text.HorizontalAnchor
-        get() {
-            if (orientation === BOTTOM) {
-                return Text.HorizontalAnchor.RIGHT
-            }
-            throw RuntimeException("Not implemented")
+        get() = when (orientation) {
+            TOP, BOTTOM -> Text.HorizontalAnchor.RIGHT
+            else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
     private val labelVerticalAnchor: Text.VerticalAnchor

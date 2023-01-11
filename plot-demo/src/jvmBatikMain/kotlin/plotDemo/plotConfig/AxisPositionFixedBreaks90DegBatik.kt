@@ -5,12 +5,11 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.AxisPositionFixedLongBreaks
-import jetbrains.datalore.plotDemo.model.plotConfig.AxisPositionFixedShortBreaks
+import jetbrains.datalore.plotDemo.model.plotConfig.AxisPositionFixedBreaks90Deg
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
-    with(AxisPositionFixedLongBreaks()) {
+    with(AxisPositionFixedBreaks90Deg()) {
         PlotSpecsDemoWindowBatik(
             "Axis Position",
             plotSpecList()

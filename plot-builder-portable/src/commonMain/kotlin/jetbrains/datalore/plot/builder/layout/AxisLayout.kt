@@ -7,13 +7,15 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.util.Insets
 
-interface AxisLayout {
+internal interface AxisLayout {
     val orientation: Orientation
     fun initialThickness(): Double
 
     fun doLayout(
         axisDomain: DoubleSpan,
-        axisLength: Double
+        axisLength: Double,
+        geomAreaInsets: Insets
     ): AxisLayoutInfo
 }
