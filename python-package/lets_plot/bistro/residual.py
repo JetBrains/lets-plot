@@ -6,6 +6,11 @@ try:
 except ImportError:
     np = None
 
+try:
+    import pandas as pd
+except ImportError:
+    pd = None
+
 from lets_plot.plot.core import PlotSpec, aes
 from lets_plot.plot.geom import *
 from lets_plot.plot.label import ylab
@@ -23,20 +28,21 @@ _BINS_DEF = 30
 _MARGINAL_DEF = "dens:r"
 _COLOR_DEF = "#118ed8"
 _HLINE_DEF = True
+_RESIDUAL_COL = "..residual.."
 
 
-def _extract_data_series(data, x, y):
-    xs = np.array(data[x])
-    ys = np.array(data[y])
+def _extract_data_series(df, x, y):
+    xs = np.array(df[x])
+    ys = np.array(df[y])
     if xs.size != ys.size:
-        raise Exception("All data series in data frame must have equal size "
+        raise Exception("All data series in dataset must have equal size "
                         "{x_col} : {x_len} {y_col} : {y_len}".format(
             x_col=x,
             y_col=y,
             x_len=xs.size,
             y_len=ys.size
         ))
-    if xs.size < 2:
+    if xs.size == 1:
         raise Exception("Data should have at least two points.")
 
     return xs, ys
@@ -83,8 +89,27 @@ def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
     else:
         raise Exception("Unknown method '{0}'".format(method))
 
+def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
+    def _get_group_stat_data(group_df):
+        xs, ys = _extract_data_series(group_df, x, y)
+        if len(xs) == 0:
+            return group_df.assign(**{_RESIDUAL_COL: []}), xs, ys
+        predictor = _get_predictor(xs, ys, method, deg, span, seed, max_n)
+        return group_df.assign(**{_RESIDUAL_COL: ys - predictor(xs)}), xs, ys
+
+    df = data.copy() if isinstance(data, pd.DataFrame) else pd.DataFrame(data)
+    df = df[(df[x].notna()) & df[y].notna()]
+    if group_by is None:
+        return _get_group_stat_data(df)
+    else:
+        df_list, xs_list, ys_list = zip(*[
+            _get_group_stat_data(df[df[group_by] == group_value])
+            for group_value in df[group_by].unique()
+        ])
+        return pd.concat(df_list), np.concatenate(xs_list), np.concatenate(ys_list)
+
 def _get_binwidth(xs, ys, binwidth, bins):
-    if binwidth is not None or bins is not None:
+    if binwidth is not None or bins is not None or len(xs) == 0:
         return binwidth
     binwidth_x = (xs.max() - xs.min()) / _BINS_DEF
     binwidth_y = (ys.max() - ys.min()) / _BINS_DEF
@@ -133,7 +158,7 @@ def residual_plot(data=None, x=None, y=None, *,
     """
     Produces a residual plot that shows the difference between the observed response and the fitted response values.
 
-    To use `residual_plot()`, the `numpy` library is required.
+    To use `residual_plot()`, the `numpy` and `pandas` libraries are required.
     Also, `statsmodels` and `scipy` are required for 'lm' and 'loess' methods.
 
     Parameters
@@ -282,12 +307,10 @@ def residual_plot(data=None, x=None, y=None, *,
     # requirements
     if np is None:
         raise ValueError("Module 'numpy' is required for residual plot")
-    # prepare residuals
-    residual_data = data.copy()
-    xs, ys = _extract_data_series(residual_data, x, y)
-    residual_col = "..residual.."
-    predictor = _get_predictor(xs, ys, method, deg, span, seed, max_n)
-    residual_data[residual_col] = ys - predictor(xs)
+    if pd is None:
+        raise ValueError("Module 'pandas' is required for residual plot")
+    # prepare data
+    stat_data, xs, ys = _get_stat_data(data, x, y, color_by, method, deg, span, seed, max_n)
     # prepare parameters
     if isinstance(bins, int):
         bins = [bins, bins]
@@ -295,7 +318,7 @@ def residual_plot(data=None, x=None, y=None, *,
         binwidth = [binwidth, binwidth]
     binwidth = _get_binwidth(xs, ys, binwidth, bins)
     # prepare mapping
-    mapping_dict = {'x': x, 'y': residual_col}
+    mapping_dict = {'x': x, 'y': _RESIDUAL_COL}
     if color_by is not None:
         mapping_dict['color'] = color_by
     # prepare scales
@@ -334,4 +357,4 @@ def residual_plot(data=None, x=None, y=None, *,
                         axis_text_y=element_text(),
                         axis_title_y=element_text())
 
-    return PlotSpec(data=residual_data, mapping=aes(**mapping_dict), scales=scales, layers=layers) + theme_layer
+    return PlotSpec(data=stat_data, mapping=aes(**mapping_dict), scales=scales, layers=layers) + theme_layer
