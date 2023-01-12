@@ -22,7 +22,8 @@ class YDensityStatTest : BaseStatTest() {
             adjust = DensityStat.DEF_ADJUST,
             kernel = DensityStat.DEF_KERNEL,
             n = DensityStat.DEF_N,
-            fullScanMax = DensityStat.DEF_FULL_SCAN_MAX
+            fullScanMax = DensityStat.DEF_FULL_SCAN_MAX,
+            quantiles = YDensityStat.DEF_QUANTILES
         )
     }
 
