@@ -20,7 +20,7 @@ open class AxisPositionFixedBreaksTilted {
 
     companion object {
         private val BREAKS = listOf(-0.25, 0.0, 0.25)
-//        private val LABS = listOf("minus twenty five hundredths", "three", "fore")
+
         private val LABS = listOf("minus minus", "zero zero", "plus, plus")
 //        private val LABS = listOf("o", "t", "t", "f", "f")
 

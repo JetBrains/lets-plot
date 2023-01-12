@@ -28,14 +28,15 @@ internal class HorizontalTiltedLabelsLayout(
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
-    private val labelHorizontalAnchor: Text.HorizontalAnchor
-        get() = when (orientation) {
-            TOP, BOTTOM -> Text.HorizontalAnchor.RIGHT
-            else -> throw IllegalStateException("Unsupported orientation $orientation")
-        }
+    private val labelHorizontalAnchor: Text.HorizontalAnchor = when (orientation) {
+        TOP, BOTTOM -> Text.HorizontalAnchor.RIGHT
+        else -> throw IllegalStateException("Unsupported orientation $orientation")
+    }
 
-    private val labelVerticalAnchor: Text.VerticalAnchor
-        get() = Text.VerticalAnchor.TOP
+    private val labelVerticalAnchor: Text.VerticalAnchor = when (orientation) {
+        TOP -> Text.VerticalAnchor.BOTTOM
+        else -> Text.VerticalAnchor.TOP
+    }
 
     override fun doLayout(
         axisLength: Double,
@@ -55,23 +56,18 @@ internal class HorizontalTiltedLabelsLayout(
             ticks, breaks.labels,
             HORIZONTAL_TICK_LOCATION
         )
+        val angle = when (orientation) {
+            TOP -> -ROTATION_DEGREE
+            else -> ROTATION_DEGREE
+        }
         return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
             .labelHorizontalAnchor(labelHorizontalAnchor)
             .labelVerticalAnchor(labelVerticalAnchor)
-            .labelRotationAngle(ROTATION_DEGREE)
+            .labelRotationAngle(angle)
             .build()
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
-        // only works for RIGHT-TOP anchor ang angle 0...-90
-        if (!(ROTATION_DEGREE >= -90 && ROTATION_DEGREE <= 0
-                    && labelHorizontalAnchor === Text.HorizontalAnchor.RIGHT
-                    && labelVerticalAnchor === Text.VerticalAnchor.TOP)
-        ) {
-            throw RuntimeException("Not implemented")
-        }
-
-
         val w = abs(labelNormalSize.x * COS) + 2 * abs(labelNormalSize.y * SIN)
         val h = abs(labelNormalSize.x * SIN) + abs(labelNormalSize.y * COS)
         val x = -(abs(labelNormalSize.x * COS) + abs(labelNormalSize.y * SIN))
