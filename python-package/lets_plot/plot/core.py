@@ -26,7 +26,7 @@ def aes(x=None, y=None, **other):
 
     Notes
     -----
-    Generates aesthetic mappings that describe how variables in the data are projected to visual properties
+    Generate aesthetic mappings that describe how variables in the data are projected to visual properties
     (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
     colour to color.
 
@@ -80,10 +80,10 @@ def layer(geom=None, stat=None, data=None, mapping=None, position=None, **kwargs
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default),
-        'density' (computes and draws kernel density estimate).
+        'count' (count number of points with same x-axis coordinate),
+        'bin' (count number of points with x-axis coordinate in the same bin),
+        'smooth' (perform smoothing - linear default),
+        'density' (compute and draw kernel density estimate).
     data : dict or `DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
@@ -172,7 +172,7 @@ class FeatureSpec():
 
     def props(self):
         """
-        Returns the dictionary of all properties of the object in their initial form.
+        Return the dictionary of all properties of the object in their initial form.
 
         Returns
         -------
@@ -195,7 +195,7 @@ class FeatureSpec():
 
     def as_dict(self):
         """
-        Returns the dictionary of all properties of the object with `as_dict()`
+        Return the dictionary of all properties of the object with `as_dict()`
         applied recursively to all subproperties of `FeatureSpec` type.
 
         Returns
@@ -275,7 +275,7 @@ class PlotSpec(FeatureSpec):
 
     def get_plot_shared_data(self):
         """
-        Extracts the data shared by all layers.
+        Extract the data shared by all layers.
 
         Returns
         -------
@@ -300,7 +300,7 @@ class PlotSpec(FeatureSpec):
 
     def has_layers(self) -> bool:
         """
-        Checks if the `PlotSpec` object has at least one layer.
+        Check if the `PlotSpec` object has at least one layer.
 
         Returns
         -------
@@ -325,7 +325,7 @@ class PlotSpec(FeatureSpec):
 
     def __add__(self, other):
         """
-        Allows to add different specs to the `PlotSpec` object.
+        Allow to add different specs to the `PlotSpec` object.
 
         Examples
         --------
@@ -452,7 +452,7 @@ class PlotSpec(FeatureSpec):
 
     def show(self):
         """
-        Draws a plot.
+        Draw a plot.
 
         Examples
         --------
