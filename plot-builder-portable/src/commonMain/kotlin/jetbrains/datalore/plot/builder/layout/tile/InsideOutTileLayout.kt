@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.*
-import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.FACET_PANEL_AXIS_EXPAND
 
 internal class InsideOutTileLayout constructor(
     private val hAxisLayout: AxisLayout,
@@ -83,7 +83,7 @@ internal class InsideOutTileLayout constructor(
         ): AxisLayoutInfo {
             val axisSpan = geomBounds.xRange()
             val axisLength = axisSpan.length
-            return axisLayout.doLayout(axisDomain, axisLength, Insets.ZERO)
+            return axisLayout.doLayout(axisDomain, axisLength, FACET_PANEL_AXIS_EXPAND)
         }
 
         private fun computeVAxisInfo(
@@ -91,7 +91,7 @@ internal class InsideOutTileLayout constructor(
             axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
-            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, Insets.ZERO)
+            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, FACET_PANEL_AXIS_EXPAND)
         }
     }
 }

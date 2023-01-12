@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout.util
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
-internal open class Insets(
+open class Insets(
     val left: Double,
     val top: Double,
     val right: Double,
