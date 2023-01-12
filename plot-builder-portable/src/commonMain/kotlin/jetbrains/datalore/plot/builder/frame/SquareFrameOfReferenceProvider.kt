@@ -58,16 +58,14 @@ internal class SquareFrameOfReferenceProvider(
     override fun createTileLayoutProvider(): TileLayoutProvider {
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
-            hAxisSpec.theme,
-//            Orientation.BOTTOM
-            hAxisOrientation
+            hAxisOrientation,
+            hAxisSpec.theme
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
-            vAxisSpec.theme,
-//            Orientation.LEFT
-            vAxisOrientation
+            vAxisOrientation,
+            vAxisSpec.theme
         )
 
         return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)

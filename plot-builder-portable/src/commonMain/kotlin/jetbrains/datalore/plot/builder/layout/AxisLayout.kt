@@ -8,10 +8,11 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal interface AxisLayout {
     val orientation: Orientation
-    fun initialThickness(): Double
+    val theme: AxisTheme
 
     fun doLayout(
         axisDomain: DoubleSpan,

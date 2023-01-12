@@ -12,18 +12,11 @@ import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-internal class PlotAxisLayout constructor(
+internal class PlotAxisLayout(
     private val breaksProviderFactory: AxisBreaksProviderFactory,
-    private val theme: AxisTheme,
-    override val orientation: Orientation
+    override val orientation: Orientation,
+    override val theme: AxisTheme
 ) : AxisLayout {
-
-    /**
-     * ToDo: move to GeomAreaInsets
-     */
-    override fun initialThickness(): Double {
-        return PlotAxisLayoutUtil.initialThickness(orientation, theme)
-    }
 
     override fun doLayout(
         axisDomain: DoubleSpan,

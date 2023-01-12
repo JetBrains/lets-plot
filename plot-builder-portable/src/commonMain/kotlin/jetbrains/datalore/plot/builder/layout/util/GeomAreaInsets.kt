@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.AxisLayout
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
+import jetbrains.datalore.plot.builder.layout.PlotAxisLayoutUtil
 import kotlin.math.max
 
 internal class GeomAreaInsets private constructor(
@@ -96,13 +97,17 @@ internal class GeomAreaInsets private constructor(
     companion object {
         fun init(hAxisLayout: AxisLayout, vAxisLayout: AxisLayout): GeomAreaInsets {
             return GeomAreaInsets(
-                left = if (vAxisLayout.orientation == LEFT) vAxisLayout.initialThickness() else 0.0,
-                top = if (hAxisLayout.orientation == TOP) hAxisLayout.initialThickness() else 0.0,
-                right = if (vAxisLayout.orientation == RIGHT) vAxisLayout.initialThickness() else 0.0,
-                bottom = if (hAxisLayout.orientation == BOTTOM) hAxisLayout.initialThickness() else 0.0,
+                left = if (vAxisLayout.orientation == LEFT) initialThickness(vAxisLayout) else 0.0,
+                top = if (hAxisLayout.orientation == TOP) initialThickness(hAxisLayout) else 0.0,
+                right = if (vAxisLayout.orientation == RIGHT) initialThickness(vAxisLayout) else 0.0,
+                bottom = if (hAxisLayout.orientation == BOTTOM) initialThickness(hAxisLayout) else 0.0,
                 hAxisLayout, vAxisLayout,
                 null, null
             )
+        }
+
+        private fun initialThickness(axisLayout: AxisLayout): Double {
+            return PlotAxisLayoutUtil.initialThickness(axisLayout.orientation, axisLayout.theme)
         }
     }
 }
