@@ -238,6 +238,7 @@ object GeomMeta {
                 Aes.X,
                 Aes.Y,
                 Aes.VIOLINWIDTH,
+                Aes.QUANTILE,
 
                 Aes.ALPHA,
                 Aes.COLOR,

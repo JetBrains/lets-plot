@@ -193,7 +193,7 @@ object Option {
         }
 
         object Violin {
-            const val DRAW_QUANTILES = "draw_quantiles"
+            const val QUANTILE_LINES = "quantile_lines"
             const val SHOW_HALF = "show_half"
         }
 
@@ -377,6 +377,7 @@ object Option {
             const val SCALE = "scale"
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
+            const val QUANTILES = "quantiles"
         }
 
         object QQ {

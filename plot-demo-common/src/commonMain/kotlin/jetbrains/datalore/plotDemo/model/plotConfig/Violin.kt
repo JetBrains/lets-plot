@@ -33,7 +33,8 @@ class Violin {
                 "               {" +
                 "                 'geom': 'violin'," +
                 "                 'alpha': 0.7," +
-                "                 'draw_quantiles': [0.1, 0.5, 0.9]" +
+                "                 'quantiles': [0.1, 0.5, 0.9]," +
+                "                 'quantile_lines': true" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -106,7 +107,7 @@ class Violin {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'violin'," +
-                "                 'draw_quantiles': [0.25, 0.5, 0.75]" +
+                "                 'quantile_lines': true" +
                 "               }" +
                 "             ]" +
                 "}"
@@ -130,13 +131,26 @@ class Violin {
                 "               {" +
                 "                 'geom': 'violin'," +
                 "                 'show_half': -1," +
+                "                 'quantile_lines': true," +
                 "                 'trim': false" +
                 "               }," +
                 "               {" +
                 "                 'geom': 'violin'," +
                 "                 'show_half': 1," +
+                "                 'trim': false," +
+                "                 'quantiles': [0.1, 0.5, 0.9]," +
                 "                 'fill': '#ffffb2'," +
-                "                 'trim': false" +
+                "                 'mapping': {" +
+                "                   'color': '..quantile..'" +
+                "                 }" +
+                "               }" +
+                "             ]," +
+                "   'scales': [" +
+                "               {" +
+                "                 'aesthetic': 'color'," +
+                "                 'low': '#d73027'," +
+                "                 'high': '#1a9850'," +
+                "                 'scale_mapper_kind': 'color_gradient'" +
                 "               }" +
                 "             ]" +
                 "}"

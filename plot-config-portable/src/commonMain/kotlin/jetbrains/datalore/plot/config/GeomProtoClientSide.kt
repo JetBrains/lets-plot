@@ -128,8 +128,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
-                if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
-                    geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
+                if (opts.hasOwn(Violin.QUANTILE_LINES)) {
+                    geom.quantileLines = opts.getBoolean(Violin.QUANTILE_LINES, ViolinGeom.DEF_QUANTILE_LINES)
                 }
                 if (opts.hasOwn(Violin.SHOW_HALF)) {
                     geom.showHalf = opts.getDouble(Violin.SHOW_HALF)!!
