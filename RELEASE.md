@@ -7,6 +7,7 @@
  - macOS 11.6+ (Apple Silicon processor)
  - JDK11
  - Python 3.7-3.11
+ - `mingw-w64-x86_64-gcc` MSYS2 package (only for Windows)
 
 **Important!** Linux requires more special setup: [README.md](tools%2FREADME.md)   
 
