@@ -1,13 +1,12 @@
-plugins {
-    id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
-}
-
-
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
+plugins {
+    id "org.jetbrains.kotlin.multiplatform"
+    id "org.jetbrains.gradle.plugin.idea-ext"
+}
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
@@ -15,20 +14,20 @@ def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
 
 kotlin {
     if (project.buildSettings.build_python_extension) {
+
         def target
-        if (currentOs.isMacOsX()) {
-            def currentArch = DefaultNativePlatform.getCurrentArchitecture()
-            if (currentArch.displayName.contains("arm-v8")) {
-                target = macosArm64("native")
-            } else {
-                target = macosX64("native")
-            }
-        } else if (currentOs.isLinux()) {
+        if (currentOs.macOsX & project.pythonArch == "x86_64") {
+            target = macosX64("native")
+        } else if (currentOs.macOsX & project.pythonArch == "arm64") {
+            target = macosArm64("native")
+        } else if (currentOs.linux & project.pythonArch == "x86_64") {
             target = linuxX64("native")
-        } else if (currentOs.isWindows()) {
+        } else if (currentOs.linux & project.pythonArch == "arm64") {
+            target = linuxArm64("native")
+        } else if (currentOs.windows) {
             target = mingwX64("native")
         } else {
-            throw "Unsupported platform " + currentOs.displayName
+            throw new Exception("Unsupported platform.")
         }
 
         target.binaries {
@@ -36,12 +35,12 @@ kotlin {
                 baseName = "lets-plot-${project.name}"
             }
         }
-
         target.compilations.main.cinterops {
             python {
                 compilerOpts "-I${project.buildSettings.python.include_path}"
             }
         }
+
     } else {
         jvm() // at least one target is required by MPP - dummy jvm target will work just fine
     }

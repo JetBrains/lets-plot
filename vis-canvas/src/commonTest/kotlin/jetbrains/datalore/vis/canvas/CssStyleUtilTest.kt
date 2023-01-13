@@ -5,13 +5,12 @@
 
 package jetbrains.datalore.vis.canvas
 
-import jetbrains.datalore.base.annotation.IgnoreJs
 import jetbrains.datalore.vis.canvas.CssStyleUtil.extractStyleFont
 import jetbrains.datalore.vis.canvas.CssStyleUtil.scaleFont
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-
+import kotlin.test.assertTrue
 
 class CssStyleUtilTest {
 
@@ -28,18 +27,19 @@ class CssStyleUtilTest {
     }
 
     @Test
-    @IgnoreJs
     fun scaleSimpleFont() {
+        val commonExpected = "24.0px arial"
+        val jsExpected = "24px arial"
         val actual = scaleFont("12px arial", TEST_SCALE)
-        assertEquals("24.0px arial", actual)
+        assertTrue((commonExpected == actual) || (jsExpected == actual))
     }
 
     @Test
-    @IgnoreJs
     fun scaleFontWithSlash() {
-        assertEquals("24.0px/20.0px sans-serif", scaleFont("12px/10px sans-serif",
-            TEST_SCALE
-        ))
+        val commonExpected = "24.0px/20.0px sans-serif"
+        val jsExpected = "24px/20px sans-serif"
+        val actual = scaleFont("12px/10px sans-serif", TEST_SCALE)
+        assertTrue((commonExpected == actual) || (jsExpected == actual))
     }
 
     @Test
