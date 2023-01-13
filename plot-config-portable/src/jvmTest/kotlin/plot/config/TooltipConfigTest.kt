@@ -800,6 +800,28 @@ class TooltipConfigTest {
     }
 
     @Test
+    fun `use variable mapped to the aes consumed by stat`() {
+        val spec = """
+        {
+            "data": {
+                "name": ["a", "b"],
+                "value": [1, 2 ]
+            },
+            "kind": "plot",
+            "layers": [
+                {
+                    "geom": "pie",
+                    "mapping": { "fill": "name", "weight": "value" },
+                    "tooltips": { "variables": [ "value" ] } 
+                }
+            ]
+        }""".trimIndent()
+        val geomLayer = TestUtil.getSingleGeomLayer(spec)
+        val lines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(listOf("value: 1.0"), lines)
+    }
+
+    @Test
     fun `format() should understand DateTime format`() {
         val geomLayer = buildPointLayer(
             data = mapOf(
