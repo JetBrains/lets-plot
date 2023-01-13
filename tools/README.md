@@ -2,15 +2,15 @@
 
 This directory contains scripts for release build of Python artifacts for Linux platform.
 We use `manylinux2014` ([PEP599](https://peps.python.org/pep-0599/)) for Python Linux distribution:
-https://github.com/pypa/manylinux.
+[Manylinux GitHub repo](https://github.com/pypa/manylinux).
 
 Python packages are built inside Docker containers. For x64 architecture `quay.io/pypa/manylinux2014_x86_64`
 is used.
 
-Due to the lack of Linux aarch64 support from Kotlin Native (https://youtrack.jetbrains.com/issue/KT-36871),
+Due to the lack of Linux aarch64 support from Kotlin Native [KT-36871](https://youtrack.jetbrains.com/issue/KT-36871),
 the Docker image for aarch64 packages build (`quay.io/pypa/manylinux2014_aarch64`) must be run on a x64 host.
-To do this, you need to build the arm64 image manually with the addition of the `qemu-user-static`
-util (https://github.com/multiarch/qemu-user-static).
+To do this, you need to build the arm64 image manually with the addition of the [qemu-user-static](https://github.com/multiarch/qemu-user-static)
+util.
 
 
 ### 1. Directory contains:
@@ -30,7 +30,7 @@ where `<arch>` is `x86_64` or `arm64`
 
 
 ### 2. Prerequisites
-You should have Docker installed on your Linux build host: https://docs.docker.com/engine/install/
+You should have Docker installed on your Linux build host: [Instructions](https://docs.docker.com/engine/install/)
 
 Install QEMU packages on your system (for Ubuntu):
 ```shell
@@ -43,7 +43,7 @@ Run `multiarch/qemu-user-static` Docker image for QEMU script registering:
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 ```
 
-Copy `qemu-aarch64-static` script to [manylinux-arm-image](manylinux-arm-image) folder:
+Copy `qemu-aarch64-static` script to the [manylinux-arm-image](manylinux-arm-image) folder:
 
 ```shell
 cp /usr/bin/qemu-aarch64-static ./manylinux-arm-image/.
