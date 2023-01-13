@@ -29,5 +29,9 @@ kotlin-js-store
 python-package/kotlin-bridge/*.def
 python-package/kotlin-bridge/lets_plot_kotlin_bridge.o
 
-# VSCode service directiry
+# VSCode service directory
 .vscode
+
+# System file for Docker manylinux image
+qemu-arm-static
+qemu-aarch64-static
