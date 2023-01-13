@@ -104,6 +104,12 @@ def guides(**kwargs):
     """
     Set guides for each scale.
 
+    Parameters
+    ----------
+    kwargs
+        Name-guide pairs where name should be an aesthetic.
+        The guide should be a call to a guide function, i.e. `guide_colorbar()` or `guide_legend()`.
+
     Returns
     -------
     `FeatureSpec`
