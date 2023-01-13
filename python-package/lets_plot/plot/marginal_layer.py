@@ -8,7 +8,7 @@ __all__ = ["ggmarginal"]
 
 def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
     """
-    Converts a given geometry layer to a marginal layer.
+    Convert a given geometry layer to a marginal layer.
     You can add one or more marginal layers to a plot to create a marginal plot.
 
     Parameters
@@ -23,7 +23,7 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
     layer : `LayerSpec`
         A marginal geometry layer.
         The result of calling of the `geom_xxx()` / `stat_xxx()` function.
-        Marginal plot works best with `density`,`histogram`,`boxplot`,`violin` ans `freqpoly` geometry layers.
+        Marginal plot works best with `density`,`histogram`,`boxplot`,`violin` and `freqpoly` geometry layers.
 
     Returns
     -------
