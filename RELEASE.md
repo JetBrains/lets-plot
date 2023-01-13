@@ -106,6 +106,8 @@ The directory `python-package/dist` must contain Python release wheels:
 
 ## Publish artifacts
 
+Publish project artifacts from one of build machines.
+
 Put `build_settings.yml` in the project root. See `build_settings.template.yml` for an example.   
 Fill `pypi` and `sonatype` sections with credentials.
 
