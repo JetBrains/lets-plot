@@ -1,9 +1,30 @@
 ## Releasing the project
 
+### Build machine requirements:
+
+ - Windows 10+
+ - Linux Ubuntu 20.04+
+ - macOS 11.6+ (Apple Silicon processor)
+ - JDK11
+ - Python 3.7-3.11
+
+**Important!** Linux requires more special setup: [README.md](tools%2FREADME.md)   
+
+Python libraries are required:
+ - `twine`
+ - `setuptools`
+ - `pyyaml`
+
 
 ### Make version
 
-##### 1. Update CHANGELOG.md file.
+##### 1. Update docs (for release):
+
+For `RC` skip this step.
+
+ - accept a pull request from `docs-x.x.x` branch on GitHub
+ - move new release information from `future_changes.md` to `CHANGELOG.md`
+ - clean up `future_changes.md` leaving the template.
 
 ##### 2. Set release or pre-release version in the properties (remove _"-alpha"_ and _"dev"_): 
 
@@ -32,48 +53,61 @@
 
 ### Build the project for publishing
 
-**The next steps need to be reproduced on all supported platforms (`Mac`, `Linux` and `Windows`).**   
-**On Windows use `.\gradlew.bat` instead of `./gradlew` to run Gradle script.**
+**The next steps need to be reproduced on all supported platforms (`Mac`, `Linux` and `Windows`).**
 
 ##### 1. Checkout repository in a new directory: 
 
  `git clone --branch vX.X.X git@github.com:JetBrains/lets-plot lets-plot-release`
 
-##### 2. Put `build_settings.yml` in the project root. See `build_settings.template.yml` for an example.
+##### 2. Prepare config file with Python paths for release script
 
-##### 3. Edit `build_settings.yml`:
+File must be in the YAML format and contain paths to bin and include directories for
+each Python version: from 3.7 to 3.11. For **Mac arm64**: from 3.8 to 3.11.   
+For **Linux**, it is enough to point one Python version.
 
- - set both `build_python_extension` and `enable_python_package` options to `yes`
- - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.7
- - check and set credentials in the `PyPI settings` and `Sonatype settings` sections
+**Example:**
 
-##### 4. Build the project:
+`release_pythons.yml`
 
-run `./gradlew build`
+```yaml
+py38-arm:
+  bin_path: /Users/letsplotter/anaconda-arm/envs/py38/bin
+  include_path: /Users/letsplotter/anaconda-arm/envs/py37/include/python3.8
+py37-x64:
+  bin_path: /Users/letsplotter/anaconda-x64/envs/py37/bin
+  include_path: /Users/letsplotter/anaconda-x64/envs/py37/include/python3.7m
+...
+```
 
-For Linux without graphical environment add parameter to exclude JFX test:
+##### 3. Run release script
 
-`./gradlew build -x :vis-svg-mapper-jfx:jvmTest`
+For **Linux** check [README.md](tools%2FREADME.md) before build.
 
-or tests will stuck in running state.
+From the project root run Python script for release build. Pass a path to the config file
+from step 2 as a script parameter.
 
-_As the result you will get artifacts for jvm-package and python-package (python wheel file built with Python 3.7)_
+```shell
+./build_release.py ../release_pythons.yml
+```
 
-##### 5. Build python wheels with Python 3.8, 3.9, 3.10 and 3.11:
+For **Windows** the command must be:
 
- - edit `bin` and `include` paths in the `Python settings` section: set paths to Python 3.8
- - run `./gradlew python-package-build:build`
- 
-Reproduce this steps for Python 3.9, 3.10 and 3.11
+```shell
+python .\build_release.py ..\release_pythons.yml
+```
 
-_Then you'll get python wheel files built with Python 3.7, 3.8, 3.9, 3.10 and 3.11._
+##### 4. Check Python artifacts
 
-##### 6. _(for Linux only)_ Build python wheels for Manylinux platform:
-
-run `./gradlew python-package-build:buildManylinuxWheels`
+The directory `python-package/dist` must contain Python release wheels:
+ - Windows: `x64` wheels for Python versions 3.7-3.11
+ - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.7-3.11
+ - Mac: `x64` wheels for Python versions 3.7-3.11 and `arm64` wheel for 3.8-3.11
 
 
 ### Publish artifacts
+
+Put `build_settings.yml` in the project root. See `build_settings.template.yml` for an example.   
+Fill `pypi` and `sonatype` sections with credentials.
 
 ##### 1. Python wheels (PyPi):
 
