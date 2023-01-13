@@ -243,7 +243,7 @@ def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions of ticks.
+        A numeric vector of positions (of ticks).
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -1515,7 +1515,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -1902,8 +1902,8 @@ def scale_fill_discrete(direction=None,
 
     Parameters
     ----------
-    direction : {-1, 1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+    direction : {1, -1}, default=1
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1978,7 +1978,7 @@ def scale_color_discrete(direction=None,
     Parameters
     ----------
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1986,7 +1986,7 @@ def scale_color_discrete(direction=None,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale
@@ -2242,7 +2242,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         If a string, will use that named palette. If a number, will index
         into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2250,7 +2250,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -2339,7 +2339,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         If a string, will use that named palette. If a number, will index
         into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2437,11 +2437,11 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale.
+        Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
@@ -2459,7 +2459,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -2487,7 +2487,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
 
     Notes
     -----
-    Can be used for both, contituous and discrete data.
+    Can be used for both, continuous and discrete data.
 
     Examples
     --------
@@ -2540,11 +2540,11 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale.
+        Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
@@ -2562,7 +2562,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -2590,7 +2590,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 
     Notes
     -----
-    Can be used for both, contituous and discrete data.
+    Can be used for both, continuous and discrete data.
 
     Examples
     --------
