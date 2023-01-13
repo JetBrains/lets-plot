@@ -14,6 +14,7 @@ open class AxisPositionFlexBreaks {
             yAxis_Right(),
             xAxis_Top(),
             axis_RightTop(),
+            axis_AllSides(),
         )
     }
 
@@ -100,6 +101,24 @@ open class AxisPositionFlexBreaks {
                     'scales': [
                             {'aesthetic': 'x', 'name': 'top', 'position': 'top'},
                             {'aesthetic': 'y', 'name': 'right', 'position': 'right'}
+                        ]
+                }
+            """.trimIndent()
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = data()
+            return plotSpec
+        }
+
+        @Suppress("FunctionName")
+        fun axis_AllSides(): MutableMap<String, Any> {
+            val spec = """
+                {
+                    'kind': 'plot',
+                    ${layerMapping()},
+                    ${title("Position: both, both")},
+                    'scales': [
+                            {'aesthetic': 'x', 'name': 'top', 'position': 'both'},
+                            {'aesthetic': 'y', 'name': 'right', 'position': 'both'}
                         ]
                 }
             """.trimIndent()
