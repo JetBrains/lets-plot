@@ -117,7 +117,7 @@ def labs(**kwargs):
     Parameters
     ----------
     kwargs : dict
-        A list of new name-value pairs where name should be an aesthetic,
+        A list of name-value pairs where name should be an aesthetic,
         e.g. title='Plot title' or aesthetic='Scale label'.
 
     Returns

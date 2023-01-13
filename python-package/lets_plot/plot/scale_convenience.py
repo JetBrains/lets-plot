@@ -13,7 +13,7 @@ __all__ = ['lims', 'xlim', 'ylim']
 
 def lims(x, y):
     """
-    This is a shortcut for supplying the `limits` parameter to the x and y scales.
+    This is a shortcut for supplying the `limits` parameter to the x and y axes.
     Observations outside the range will be dropped.
 
     Parameters
