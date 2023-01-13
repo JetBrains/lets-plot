@@ -61,7 +61,8 @@ For `RC` skip this step.
 ### 2. Prepare config file with Python paths for release script
 
 File must be in the YAML format and contain paths to bin and include directories for
-each Python version: from 3.7 to 3.11. For **Mac arm64**: from 3.8 to 3.11.   
+each Python version: from 3.7 to 3.11.     
+For **Mac arm64**: from 3.8 to 3.11.   
 For **Linux**, it is enough to point one Python version.
 
 **Example:**
