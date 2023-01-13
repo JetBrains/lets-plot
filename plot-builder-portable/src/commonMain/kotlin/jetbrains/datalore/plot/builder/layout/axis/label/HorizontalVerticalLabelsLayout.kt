@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
+import jetbrains.datalore.plot.builder.guide.Orientation.TOP
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
@@ -25,20 +26,17 @@ internal class HorizontalVerticalLabelsLayout(
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     val labelHorizontalAnchor: Text.HorizontalAnchor
-        get() {
-            if (orientation === BOTTOM) {
-                return Text.HorizontalAnchor.LEFT
-            }
-            throw RuntimeException("Not implemented")
+        get() = when (orientation) {
+            TOP -> Text.HorizontalAnchor.RIGHT
+            BOTTOM -> Text.HorizontalAnchor.LEFT
+            else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
-    val labelVerticalAnchor: Text.VerticalAnchor
-        get() = Text.VerticalAnchor.CENTER
+    val labelVerticalAnchor: Text.VerticalAnchor = Text.VerticalAnchor.CENTER
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         val height = labelSpec.height()
@@ -62,12 +60,8 @@ internal class HorizontalVerticalLabelsLayout(
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
-        if (!(ROTATION_DEGREE == 90.0
-                    && labelHorizontalAnchor === Text.HorizontalAnchor.LEFT
-                    && labelVerticalAnchor === Text.VerticalAnchor.CENTER)
-        ) {
-            throw RuntimeException("Not implemented")
-        }
+        check(labelVerticalAnchor === Text.VerticalAnchor.CENTER)
+
         val w = labelNormalSize.y
         val h = labelNormalSize.x
         val x = -w / 2

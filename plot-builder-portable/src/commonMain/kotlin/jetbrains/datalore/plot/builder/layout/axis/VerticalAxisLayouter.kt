@@ -9,7 +9,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 
-class VerticalAxisLayouter(
+internal class VerticalAxisLayouter(
     orientation: Orientation,
     domainRange: DoubleSpan,
     labelsLayout: AxisLabelsLayout

@@ -6,16 +6,17 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-interface AxisLayout {
+internal interface AxisLayout {
     val orientation: Orientation
-    fun initialThickness(): Double
+    val theme: AxisTheme
 
     fun doLayout(
         axisDomain: DoubleSpan,
         axisLength: Double,
-        maxTickLabelsBoundsStretched: DoubleRectangle?
+        geomAreaInsets: Insets
     ): AxisLayoutInfo
 }

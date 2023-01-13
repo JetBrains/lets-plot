@@ -9,8 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.FACET_PANEL_AXIS_EXPAND
 
 internal class InsideOutTileLayout constructor(
     private val hAxisLayout: AxisLayout,
@@ -34,11 +34,9 @@ internal class InsideOutTileLayout constructor(
         )
 
         // Combine geom area and x/y-axis
-        val geomWithAxisBounds = tileBounds(
-            hAxisInfo.axisBounds(),
-            vAxisInfo.axisBounds(),
-            geomOuterBounds
-        )
+        val geomWithAxisBounds = geomOuterBounds
+            .union(hAxisInfo.axisBoundsAbsolute(geomOuterBounds))
+            .union(vAxisInfo.axisBoundsAbsolute(geomOuterBounds))
 
 
         return TileLayoutInfo(
@@ -55,27 +53,6 @@ internal class InsideOutTileLayout constructor(
     }
 
     companion object {
-        private const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
-
-        private fun tileBounds(
-            xAxisBounds: DoubleRectangle,
-            yAxisBounds: DoubleRectangle,
-            geomBounds: DoubleRectangle
-        ): DoubleRectangle {
-            // Can't just union bounds because
-            // x-axis has zero origin
-            // y-axis has negative origin
-            val leftTop = DoubleVector(
-                geomBounds.left - yAxisBounds.width,
-                geomBounds.top - TileLayoutUtil.GEOM_MARGIN
-            )
-            val rightBottom = DoubleVector(
-                geomBounds.right + TileLayoutUtil.GEOM_MARGIN,
-                geomBounds.bottom + xAxisBounds.height
-            )
-            return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
-        }
-
         private fun computeAxisInfos(
             hAxisLayout: AxisLayout,
             vAxisLayout: AxisLayout,
@@ -106,14 +83,7 @@ internal class InsideOutTileLayout constructor(
         ): AxisLayoutInfo {
             val axisSpan = geomBounds.xRange()
             val axisLength = axisSpan.length
-            val stretch = axisLength * AXIS_STRETCH_RATIO
-            val maxTickLabelsBounds = TileLayoutUtil.maxHAxisTickLabelsBounds(
-                Orientation.BOTTOM,
-                stretch,
-                axisSpan = axisSpan,
-                maxHorizontalSpan = axisSpan
-            )
-            return axisLayout.doLayout(axisDomain, axisLength, maxTickLabelsBounds)
+            return axisLayout.doLayout(axisDomain, axisLength, FACET_PANEL_AXIS_EXPAND)
         }
 
         private fun computeVAxisInfo(
@@ -121,7 +91,7 @@ internal class InsideOutTileLayout constructor(
             axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
-            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, null)
+            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, FACET_PANEL_AXIS_EXPAND)
         }
     }
 }

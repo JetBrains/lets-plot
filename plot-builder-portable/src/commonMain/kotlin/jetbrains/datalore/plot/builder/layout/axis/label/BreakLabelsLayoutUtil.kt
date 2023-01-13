@@ -68,7 +68,9 @@ internal object BreakLabelsLayoutUtil {
         axisMapper: (Double?) -> Double?,
         theme: AxisTheme
     ): AxisLabelsLayoutInfo {
+        check(!orientation.isHorizontal)
 
+        val tickLength = if (theme.showTickMarks()) theme.tickMarkLength() else 0.0
         val axisBounds = when {
             theme.showLabels() -> {
                 val labelsBounds = verticalAxisLabelsBounds(
@@ -79,26 +81,30 @@ internal object BreakLabelsLayoutUtil {
                 )
                 applyLabelsMargins(
                     labelsBounds,
-                    if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+                    tickLength,
                     theme.tickLabelMargins(),
                     orientation
                 )
             }
+
             theme.showTickMarks() -> {
                 val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
                 applyLabelsMargins(
                     labelsBounds,
-                    if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+                    tickLength,
                     theme.tickLabelMargins(),
                     orientation
                 )
             }
+
             else -> DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
         }
 
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
             .bounds(axisBounds)     // label bounds actually
+//            .labelHorizontalAnchor(), // Default anchors,
+//            .labelVerticalAnchor()    // see: AxisComponent.TickLabelAdjustments
             .build()
     }
 
@@ -155,6 +161,7 @@ internal object BreakLabelsLayoutUtil {
                     elementRect.height - margins.height()
                 )
             }
+
             else -> {
                 DoubleRectangle(
                     elementRect.left + margins.left,

@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
@@ -30,8 +29,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
 
     override fun doLayout(
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
         var targetBreakCount =
@@ -40,7 +38,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 PlotLabelSpecFactory.axisTick(theme)
             )
         var breaks = getBreaks(targetBreakCount, axisLength)
-        var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
+        var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
 
         while (labelsInfo.isOverlap) {
             // reduce tick count
@@ -56,7 +54,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             }
             targetBreakCount = newTargetBreakCount
             breaks = getBreaks(targetBreakCount, axisLength)
-            labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper, maxLabelsBounds)
+            labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
         }
 
         return labelsInfo
@@ -66,7 +64,6 @@ internal class HorizontalFlexBreaksLabelsLayout(
         breaks: ScaleBreaks,
         axisLength: Double,
         axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
     ): AxisLabelsLayoutInfo {
 
         val layout = HorizontalSimpleLabelsLayout(
@@ -76,7 +73,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             breaks,
             theme
         )
-        return layout.doLayout(axisLength, axisMapper, maxLabelsBounds)
+        return layout.doLayout(axisLength, axisMapper)
     }
 
     private fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {

@@ -14,4 +14,8 @@ class Margins(
     fun width() = left + right
 
     fun height() = top + bottom
+
+    override fun toString(): String {
+        return "Margins(top=$top, right=$right, bottom=$bottom, left=$left)"
+    }
 }

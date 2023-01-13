@@ -11,10 +11,11 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
+import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-abstract class AxisLabelsLayout protected constructor(
+internal abstract class AxisLabelsLayout protected constructor(
     val orientation: Orientation,
     val axisDomain: DoubleSpan,
     val labelSpec: LabelSpec,
@@ -27,7 +28,6 @@ abstract class AxisLabelsLayout protected constructor(
     abstract fun doLayout(
         axisLength: Double,
         axisMapper: (Double?) -> Double?,
-        maxLabelsBounds: DoubleRectangle?
     ): AxisLabelsLayoutInfo
 
     internal fun mapToAxis(
@@ -75,7 +75,10 @@ abstract class AxisLabelsLayout protected constructor(
 
         fun horizontalFixedBreaks(
             orientation: Orientation,
-            axisDomain: DoubleSpan, breaks: ScaleBreaks, theme: AxisTheme
+            axisDomain: DoubleSpan,
+            breaks: ScaleBreaks,
+            geomAreaInsets: Insets,
+            theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
@@ -84,6 +87,7 @@ abstract class AxisLabelsLayout protected constructor(
                 axisDomain,
                 tickLabelSpec(theme),
                 breaks,
+                geomAreaInsets,
                 theme
             )
         }

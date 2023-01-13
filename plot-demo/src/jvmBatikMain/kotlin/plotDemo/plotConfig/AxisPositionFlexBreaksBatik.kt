@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.AxisPosition
+import jetbrains.datalore.plotDemo.model.plotConfig.AxisPositionFlexBreaks
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
-    with(AxisPosition()) {
+    with(AxisPositionFlexBreaks()) {
         PlotSpecsDemoWindowBatik(
             "Axis Position",
             plotSpecList()

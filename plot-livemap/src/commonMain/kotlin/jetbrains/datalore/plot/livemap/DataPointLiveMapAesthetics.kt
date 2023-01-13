@@ -175,7 +175,7 @@ internal class DataPointLiveMapAesthetics {
         get() = if (myLayerKind === PIE && valueArray.all(0.0::equals)) {
             List(valueArray.size) { DefaultNaValue[COLOR] }
         } else {
-            myColorArray
+            myColorArray.map(::colorWithAlpha)
         }
 
     private var myLabelOptions: LabelOptions? = null

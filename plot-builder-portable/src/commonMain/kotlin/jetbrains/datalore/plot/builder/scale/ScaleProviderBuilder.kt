@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.builder.guide.Orientation
 
 class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
@@ -28,10 +27,10 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myDiscreteDomain = false
     private var myDiscreteDomainReverse = false
 
-    var axisOrientation: Orientation? = when (aes) {
-        Aes.X -> Orientation.BOTTOM
-        Aes.Y -> Orientation.LEFT
-        else -> null
+    var axisPosition: AxisPosition = when (aes) {
+        Aes.X -> AxisPosition.BOTTOM  //
+        Aes.Y -> AxisPosition.LEFT
+        else -> AxisPosition.BOTTOM  // Doesn't matter - not used for aes other than x,y.
     }
 
     fun name(name: String): ScaleProviderBuilder<T> {
@@ -143,20 +142,18 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         override val limits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
 
         override val continuousTransform: ContinuousTransform = b.myContinuousTransform
-        override val axisOrientation: Orientation? = when (b.aes) {
+        override val axisPosition: AxisPosition = when (b.aes) {
             Aes.X -> {
-                val orientation = b.axisOrientation!!
-                require(orientation.isHorizontal) { "Illegal X-axis position: $orientation" }
-                orientation
+                require(b.axisPosition.isHorizontal) { "Illegal X-axis position: ${b.axisPosition}" }
+                b.axisPosition
             }
 
             Aes.Y -> {
-                val orientation = b.axisOrientation!!
-                require(!orientation.isHorizontal) { "Illegal Y-axis position: $orientation" }
-                orientation
+                require(b.axisPosition.isVertical) { "Illegal Y-axis position: ${b.axisPosition}" }
+                b.axisPosition
             }
 
-            else -> null
+            else -> b.axisPosition  // Doesn't matter for aes other than x,y.
         }
 
 

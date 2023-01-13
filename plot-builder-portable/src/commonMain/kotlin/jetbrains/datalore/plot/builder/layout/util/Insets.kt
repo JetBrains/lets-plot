@@ -8,12 +8,16 @@ package jetbrains.datalore.plot.builder.layout.util
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
-internal open class Insets(
+open class Insets(
     val left: Double,
     val top: Double,
     val right: Double,
     val bottom: Double
 ) {
+
+    val leftTop = DoubleVector(left, top)
+    val rightBottom = DoubleVector(right, bottom)
+
     open fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
         val leftTop = DoubleVector(left, top)
         val rightBottom = DoubleVector(right, bottom)
@@ -29,4 +33,11 @@ internal open class Insets(
         )
     }
 
+    override fun toString(): String {
+        return "Insets(left=$left, top=$top, right=$right, bottom=$bottom)"
+    }
+
+    companion object {
+        val ZERO = Insets(0.0, 0.0, 0.0, 0.0)
+    }
 }

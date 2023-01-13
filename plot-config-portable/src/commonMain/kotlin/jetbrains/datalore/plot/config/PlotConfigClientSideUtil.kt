@@ -49,8 +49,8 @@ object PlotConfigClientSideUtil {
             config.scaleMap,
             config.mappersByAesNP,
             config.coordProvider,
-            config.xAxisOrientation,
-            config.yAxisOrientation,
+            config.xAxisPosition,
+            config.yAxisPosition,
             config.theme
         )
         assembler.title = config.title

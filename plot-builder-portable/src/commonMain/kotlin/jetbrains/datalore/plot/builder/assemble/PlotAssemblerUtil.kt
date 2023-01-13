@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createCo
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -211,18 +212,28 @@ internal object PlotAssemblerUtil {
         layoutProviderByTile: List<TileLayoutProvider>,
         facets: PlotFacets,
         facetsTheme: FacetsTheme,
+        hAxisPosition: AxisPosition,
+        vAxisPosition: AxisPosition,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
     ): PlotLayout {
         if (!facets.isDefined) {
             val topDownLayout = layoutProviderByTile[0].createTopDownTileLayout()
-            return SingleTilePlotLayout(topDownLayout, hAxisTheme, vAxisTheme)
+            return SingleTilePlotLayout(
+                topDownLayout,
+                hAxisPosition,
+                vAxisPosition,
+                hAxisTheme,
+                vAxisTheme
+            )
         }
 
         return FacetedPlotLayout(
             facets,
             layoutProviderByTile,
             facetsTheme.showStrip(),
+            hAxisPosition,
+            vAxisPosition,
             hAxisTheme,
             vAxisTheme,
         )

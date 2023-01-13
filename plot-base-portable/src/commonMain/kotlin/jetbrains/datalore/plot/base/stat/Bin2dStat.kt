@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
-import jetbrains.datalore.plot.common.data.SeriesUtil.expand
 import jetbrains.datalore.plot.common.data.SeriesUtil.isBeyondPrecision
 import jetbrains.datalore.plot.common.util.MutableDouble
 import kotlin.math.floor
@@ -182,12 +181,12 @@ class Bin2dStat(
         private fun adjustRangeFinal(r: DoubleSpan, binWidth: Double): DoubleSpan {
             return if (isBeyondPrecision(r)) {
                 // 0 span allways becomes 1
-                expand(r, 0.5, 0.5)
+                r.expanded(0.5)
             } else {
                 // Expand range by half of bin width (arbitrary choise - can be any positive num) to
                 // avoid data-points on the marginal bin margines.
                 val exp = binWidth / 2.0
-                expand(r, exp, exp)
+                r.expanded(exp)
             }
         }
 

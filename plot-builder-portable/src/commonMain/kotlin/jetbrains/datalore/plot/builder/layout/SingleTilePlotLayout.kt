@@ -7,41 +7,37 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.plotInsets
+import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class SingleTilePlotLayout(
     private val tileLayout: TileLayout,
+    hAxisPosition: AxisPosition,
+    vAxisPosition: AxisPosition,
     hAxisTheme: AxisTheme,
     vAxisTheme: AxisTheme,
-) : PlotLayoutBase() {
+) : PlotLayout {
 
-    init {
-        // ToDo: axis position
-        val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) PADDING else 0.0
-        val bottomPadding = if(!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) PADDING else 0.0
-        setPadding(top = PADDING, right = PADDING, bottomPadding, leftPadding)
-    }
+    private val insets: Insets = plotInsets(
+        hAxisPosition, vAxisPosition,
+        hAxisTheme, vAxisTheme
+    )
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val paddingLeftTop = DoubleVector(paddingLeft, paddingTop)
-        val paddingRightBottom = DoubleVector(paddingRight, paddingBottom)
-
         val tilePreferredSize = preferredSize
-            .subtract(paddingLeftTop)
-            .subtract(paddingRightBottom)
+            .subtract(insets.leftTop)
+            .subtract(insets.rightBottom)
 
         val tileInfo = tileLayout
             .doLayout(tilePreferredSize, coordProvider)
-            .withOffset(paddingLeftTop)
+            .withOffset(insets.leftTop)
 
         val plotSize = tileInfo.bounds.dimension
-            .add(paddingLeftTop)
-            .add(paddingRightBottom)
+            .add(insets.leftTop)
+            .add(insets.rightBottom)
 
         return PlotLayoutInfo(listOf(tileInfo), plotSize)
-    }
-
-    companion object {
-        private const val PADDING = 10.0
     }
 }

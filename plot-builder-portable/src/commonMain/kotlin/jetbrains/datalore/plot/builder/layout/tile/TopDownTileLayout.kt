@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.layout.tile
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
@@ -13,11 +12,8 @@ import jetbrains.datalore.plot.builder.layout.AxisLayout
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.GEOM_MARGIN
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.geomOuterBounds
-import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.maxHAxisTickLabelsBounds
 import jetbrains.datalore.plot.builder.layout.util.GeomAreaInsets
-import kotlin.math.max
 
 internal class TopDownTileLayout(
     private val hAxisLayout: AxisLayout,
@@ -47,57 +43,56 @@ internal class TopDownTileLayout(
             coordProvider
         )
 
-        val (hAxisInfo, vAxisInfo) = geomAreaInsets.hAxisInfo to geomAreaInsets.vAxisInfo
+        val hAxisInfo = geomAreaInsets.hAxisInfo
+        val vAxisInfo = geomAreaInsets.vAxisInfo
 
         // X-axis labels bounds may exceed axis length - adjust
-        val geomOuterBounds = geomBoundsAfterLayout.let {
-            val hAxisSpan = marginsLayout.toInnerBounds(it).xRange()
-
-            val maxTickLabelsBounds = maxHAxisTickLabelsBounds(
-                hAxisLayout.orientation,
-                0.0,
-                hAxisSpan,
-                preferredSize
-            )
-            val tickLabelsBounds = hAxisInfo.tickLabelsBounds
-            val leftOverflow = maxTickLabelsBounds.left - tickLabelsBounds.left
-            val rightOverflow = tickLabelsBounds.left + tickLabelsBounds.width - maxTickLabelsBounds.right
-            var newX = it.left
-            var newW = it.width
-            if (leftOverflow > 0) {
-                newX = it.left + leftOverflow
-                newW = it.width - leftOverflow
-            }
-
-            if (rightOverflow > 0) {
-                newW = newW - rightOverflow
-            }
-
-
-            // Fix for (Batik)
-            //            org.apache.batik.bridge.BridgeException: null:-1
-            //            The attribute "width" of the element <rect> cannot be negative
-            newW = max(0.0, newW)
-
-            val boundsNew = DoubleRectangle(
-                newX, it.top,
-                newW, it.height
-            )
-
-            if (boundsNew != geomBoundsAfterLayout) {
-                val sizeNew = coordProvider.adjustGeomSize(hDomain, vDomain, boundsNew.dimension)
-                DoubleRectangle(boundsNew.origin, sizeNew)
-            } else {
-                boundsNew
-            }
-        }
+        val geomOuterBounds = geomBoundsAfterLayout
+//        val geomOuterBounds = geomBoundsAfterLayout.let {
+//            val geomInnerBounds = marginsLayout.toInnerBounds(it)
+//            val hAxisSpan = geomInnerBounds.xRange()
+//
+//            val hAxisSpanExpanded = hAxisSpan.expanded(H_AXIS_LABELS_EXPAND)
+//            val tickLabelsBounds = hAxisInfo
+//                .tickLabelsBounds
+//                .add(geomInnerBounds.origin)
+//
+//            val leftOverflow = hAxisSpanExpanded.lowerEnd - tickLabelsBounds.left
+//            val rightOverflow = tickLabelsBounds.left + tickLabelsBounds.width - hAxisSpanExpanded.upperEnd
+//            var newX = it.left
+//            var newW = it.width
+//            if (leftOverflow > 0) {
+//                newX = it.left + leftOverflow
+//                newW = it.width - leftOverflow
+//            }
+//
+//            if (rightOverflow > 0) {
+//                newW = newW - rightOverflow
+//            }
+//
+//
+//            // Fix for (Batik)
+//            //            org.apache.batik.bridge.BridgeException: null:-1
+//            //            The attribute "width" of the element <rect> cannot be negative
+//            newW = max(0.0, newW)
+//
+//            val boundsNew = DoubleRectangle(
+//                newX, it.top,
+//                newW, it.height
+//            )
+//
+//            if (boundsNew != geomBoundsAfterLayout) {
+//                val sizeNew = coordProvider.adjustGeomSize(hDomain, vDomain, boundsNew.dimension)
+//                DoubleRectangle(boundsNew.origin, sizeNew)
+//            } else {
+//                boundsNew
+//            }
+//        }
 
         // Combine geom area and x/y-axis
-        val geomWithAxisBounds = tileBounds(
-            hAxisInfo.axisBounds(),
-            vAxisInfo.axisBounds(),
-            geomOuterBounds
-        )
+        val geomWithAxisBounds = geomOuterBounds
+            .union(hAxisInfo.axisBoundsAbsolute(geomOuterBounds))
+            .union(vAxisInfo.axisBoundsAbsolute(geomOuterBounds))
 
         val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
 
@@ -119,27 +114,6 @@ internal class TopDownTileLayout(
     }
 
     companion object {
-        private const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
-
-        private fun tileBounds(
-            xAxisBounds: DoubleRectangle,
-            yAxisBounds: DoubleRectangle,
-            geomBounds: DoubleRectangle
-        ): DoubleRectangle {
-            // Can't just union bounds because
-            // x-axis has zero origin
-            // y-axis has negative origin
-            val leftTop = DoubleVector(
-                geomBounds.left - yAxisBounds.width,
-                geomBounds.top - GEOM_MARGIN
-            )
-            val rightBottom = DoubleVector(
-                geomBounds.right + GEOM_MARGIN,
-                geomBounds.bottom + xAxisBounds.height
-            )
-            return DoubleRectangle(leftTop, rightBottom.subtract(leftTop))
-        }
-
         private fun computeAxisInfos(
             hAxisLayout: AxisLayout,
             vAxisLayout: AxisLayout,
@@ -170,11 +144,11 @@ internal class TopDownTileLayout(
                 marginsLayout,
                 coordProvider
             )
-            val hAxisSpan = marginsLayout.toInnerBounds(plottingArea).xRange()
+//            val hAxisSpan = marginsLayout.toInnerBounds(plottingArea).xRange()
+            val hAxisLength = marginsLayout.toInnerBounds(plottingArea).width
             val insetsHVAxis = insetsVAxis.layoutHAxis(
                 hDomain,
-                plotSize,
-                hAxisSpan
+                hAxisLength
             )
 
             // Re-layout y-axis if x-axis became thicker than its 'original thickness'.

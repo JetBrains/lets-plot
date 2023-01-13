@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.tile.InsideOutTileLayout
 import jetbrains.datalore.plot.builder.layout.tile.TopDownTileLayout
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
@@ -28,8 +29,8 @@ internal class SquareFrameOfReferenceProvider(
     private val vScaleProto: Scale<Double>,
     private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
-    private val hAxisOrientation: Orientation,
-    private val vAxisOrientation: Orientation,
+    private val hAxisPosition: AxisPosition,
+    private val vAxisPosition: AxisPosition,
     private val theme: Theme,
     private val marginsLayout: GeomMarginsLayout,
     private val domainByMargin: Map<MarginSide, DoubleSpan>,
@@ -56,18 +57,31 @@ internal class SquareFrameOfReferenceProvider(
     override val vAxisLabel: String? = if (vAxisSpec.theme.showTitle()) vAxisSpec.label else null
 
     override fun createTileLayoutProvider(): TileLayoutProvider {
+        // ToDo: handle axis on both sides.
+        val hAxisOrientation = when (hAxisPosition) {
+            AxisPosition.TOP -> Orientation.TOP
+            AxisPosition.BOTTOM -> Orientation.BOTTOM
+            AxisPosition.TB -> Orientation.BOTTOM
+            else -> throw IllegalStateException("Horizontal axis position: $hAxisPosition")
+        }
+
+        val vAxisOrientation = when (vAxisPosition) {
+            AxisPosition.LEFT -> Orientation.LEFT
+            AxisPosition.RIGHT -> Orientation.RIGHT
+            AxisPosition.LR -> Orientation.LEFT
+            else -> throw IllegalStateException("Vertical axis position: $vAxisPosition")
+        }
+
         val hAxisLayout = PlotAxisLayout(
             hAxisSpec.breaksProviderFactory,
-            hAxisSpec.theme,
-//            Orientation.BOTTOM
-            hAxisOrientation
+            hAxisOrientation,
+            hAxisSpec.theme
         )
 
         val vAxisLayout = PlotAxisLayout(
             vAxisSpec.breaksProviderFactory,
-            vAxisSpec.theme,
-//            Orientation.LEFT
-            vAxisOrientation
+            vAxisOrientation,
+            vAxisSpec.theme
         )
 
         return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)

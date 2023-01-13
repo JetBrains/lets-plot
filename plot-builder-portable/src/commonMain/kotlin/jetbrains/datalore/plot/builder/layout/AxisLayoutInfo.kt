@@ -23,7 +23,6 @@ class AxisLayoutInfo constructor(
     val tickLabelHorizontalAnchor: Text.HorizontalAnchor? = null,
     val tickLabelVerticalAnchor: Text.VerticalAnchor? = null,
     val tickLabelAdditionalOffsets: List<DoubleVector>? = null,
-    private val tickLabelsBoundsMax: DoubleRectangle? = null,                     // debug
     internal val tickLabelsTextBounds: DoubleRectangle? = null                    // without margins - debug
 ) {
 
@@ -38,12 +37,30 @@ class AxisLayoutInfo constructor(
             tickLabelHorizontalAnchor = tickLabelHorizontalAnchor,
             tickLabelVerticalAnchor = tickLabelVerticalAnchor,
             tickLabelAdditionalOffsets = tickLabelAdditionalOffsets,
-            tickLabelsBoundsMax = tickLabelsBoundsMax,
             tickLabelsTextBounds = tickLabelsTextBounds
         )
     }
 
     fun axisBounds(): DoubleRectangle {
         return tickLabelsBounds.union(DoubleRectangle(0.0, 0.0, 0.0, 0.0))
+    }
+
+    fun axisBoundsAbsolute(geomBounds: DoubleRectangle): DoubleRectangle {
+        val axisBounds = axisBounds()
+
+        val orig = if (orientation.isHorizontal) {
+            val top = when (orientation) {
+                Orientation.TOP -> geomBounds.top - axisBounds.height
+                else -> geomBounds.bottom
+            }
+            DoubleVector(geomBounds.left + axisBounds.left, top)
+        } else {
+            val left = when (orientation) {
+                Orientation.LEFT -> geomBounds.left - axisBounds.width
+                else -> geomBounds.right
+            }
+            DoubleVector(left, geomBounds.top + axisBounds.top)
+        }
+        return DoubleRectangle(orig, axisBounds.dimension)
     }
 }
