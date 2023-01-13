@@ -13,6 +13,7 @@ open class QuantilesHelper(
     pos: PositionAdjustment,
     coord: CoordinateSystem,
     ctx: GeomContext,
+    private val quantiles: List<Double>,
     private val groupAes: Aes<Double>?
 ) : GeomHelper(pos, coord, ctx) {
     fun getQuantileLineElements(
@@ -20,17 +21,11 @@ open class QuantilesHelper(
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
     ): List<SvgLineElement> {
-        val groupComparator: (DataPointAesthetics) -> Comparable<*>? = if (groupAes == null)
-            { _ -> null }
+        val pointsComparator = if (groupAes == null)
+            compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile)
         else
-            { p -> p[groupAes] }
-        val pIt = dataPoints.sortedWith(
-            compareBy(
-                DataPointAesthetics::group,
-                DataPointAesthetics::quantile,
-                groupComparator
-            )
-        ).iterator()
+            compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, { p -> p[groupAes] })
+        val pIt = dataPoints.sortedWith(pointsComparator).iterator()
         val quantileLineElements = mutableListOf<SvgLineElement>()
         if (!pIt.hasNext()) return quantileLineElements
         var pPrev = pIt.next()
@@ -41,6 +36,7 @@ open class QuantilesHelper(
             if (!quantilesAreSame) quantileLineElements.add(getQuantileLineElement(pCurr, toLocationBoundStart, toLocationBoundEnd))
             pPrev = pCurr
         }
+        if (1.0 in quantiles) quantileLineElements.add(getQuantileLineElement(pPrev, toLocationBoundStart, toLocationBoundEnd))
         return quantileLineElements
     }
 

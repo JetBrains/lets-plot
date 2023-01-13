@@ -128,6 +128,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
+                if (opts.hasOwn(Option.Stat.YDensity.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.YDensity.QUANTILES, 0.0, 1.0)
+                }
                 if (opts.hasOwn(Violin.QUANTILE_LINES)) {
                     geom.quantileLines = opts.getBoolean(Violin.QUANTILE_LINES, ViolinGeom.DEF_QUANTILE_LINES)
                 }

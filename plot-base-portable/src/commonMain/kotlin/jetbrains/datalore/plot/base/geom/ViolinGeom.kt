@@ -11,9 +11,11 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.stat.YDensityStat
 
 class ViolinGeom : GeomBase() {
-    var quantileLines: Boolean = AreaRidgesGeom.DEF_QUANTILE_LINES
+    var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
+    var quantileLines: Boolean = DEF_QUANTILE_LINES
     var showHalf: Double = DEF_SHOW_HALF
     private val negativeSign: Double
         get() = if (showHalf > 0.0) 0.0 else -1.0
@@ -80,7 +82,7 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, Aes.X)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(negativeSign, ctx)(p).x, p.y()!!)
         }
