@@ -18,14 +18,14 @@ def lims(x, y):
 
     Parameters
     ----------
-    x : list or None
+    x : list of float
         Limits (2 elements) for the x axis.
         1st element defines lower limit, 2nd element defines upper limit.
-        None means no bounds.
-    y : list or None
+        None value in list means no bounds.
+    y : list of float
         Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
-        None means no bounds.
+        None value in list means no bounds.
 
     Returns
     -------
@@ -56,10 +56,17 @@ def lims(x, y):
     return xlim(*list(x)) + ylim(*list(y))
 
 
-def xlim(*args):
+def xlim(*limits):
     """
-    This is a shortcut for supplying the `limits` parameter to the x scale.
+    This is a shortcut for supplying the `limits` parameter to the x axis.
     Observations outside the range will be dropped.
+
+    Parameters
+    ----------
+    limits
+        Limits (2 parameters) for the x axis.
+        1st parameter defines lower limit, 2nd parameter defines upper limit.
+        None value means no bounds.
 
     Returns
     -------
@@ -83,13 +90,20 @@ def xlim(*args):
             geom_point() + xlim(-1, 1)
 
     """
-    return _limits("x", *args)
+    return _limits("x", *limits)
 
 
-def ylim(*args):
+def ylim(*limits):
     """
-    This is a shortcut for supplying the `limits` parameter to the y scale.
+    This is a shortcut for supplying the `limits` parameter to the y axis.
     Observations outside the range will be dropped.
+    
+    Parameters
+    ----------
+    limits
+        Limits (2 parameters) for the y axis.
+        1st parameter defines lower limit, 2nd parameter defines upper limit.
+        None value means no bounds.
 
     Returns
     -------
@@ -113,7 +127,7 @@ def ylim(*args):
             geom_point() + ylim(-1, 1)
 
     """
-    return _limits("y", *args)
+    return _limits("y", *limits)
 
 
 def _limits(aesthetic, *args):
