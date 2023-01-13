@@ -69,7 +69,7 @@ class ViolinGeom : GeomBase() {
 
         if (quantileLines) buildQuantiles(root, dataPoints, pos, coord, ctx)
 
-        dataPoints.groupBy { Pair(DataPointAesthetics::color, DataPointAesthetics::fill) }.forEach { (_, points) ->
+        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
             buildHints(points, ctx, helper, leftBoundTransform)
             buildHints(points, ctx, helper, rightBoundTransform)
         }
