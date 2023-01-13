@@ -22,9 +22,9 @@ util.
     - `build_image.sh` - builds `manylinux_aarch64` image, which can be run on x64 host.
 
 Normally `run_manylinux_docker.sh` is  launched by `build_release.py` script, but
-it also can be run manually:
+it also can be run manually from the project root:
 ```
-./run_manylinux_docker.sh <arch>
+./tools/run_manylinux_docker.sh <arch>
 ```
 where `<arch>` is `x86_64` or `arm64`
 
