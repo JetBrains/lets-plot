@@ -13,7 +13,7 @@ To do this, you need to build the arm64 image manually with the addition of the 
 util.
 
 
-### 1. Directory contains:
+### Directory contains:
 
 * `run_manylinux_docker.sh` - runs Docker 'manylinux' containers (script runs automatically).
 * `build_manylinux_wheel.sh` - builds Python wheels inside 'manylinux' containers (script runs automatically).
@@ -28,8 +28,9 @@ it also can be run manually:
 ```
 where `<arch>` is `x86_64` or `arm64`
 
+## Build cross-arch manylinux image
 
-### 2. Prerequisites
+### 1. Prerequisites
 You should have Docker installed on your Linux build host: [Instructions](https://docs.docker.com/engine/install/)
 
 Install QEMU packages on your system (for Ubuntu):
@@ -49,7 +50,7 @@ Copy `qemu-aarch64-static` script to the [manylinux-arm-image](manylinux-arm-ima
 cp /usr/bin/qemu-aarch64-static ./manylinux-arm-image/.
 ```
 
-### 3. Build `manylinux_aarch64` image  for release
+### 2. Build `manylinux_aarch64` image  for release
 
 Run `manylinux_aarch64` image build by shell script:
 
@@ -58,6 +59,6 @@ cd manylinux-arm-image
 ./build_image.sh
 ```
 
-### Finally
+### 3. Finally
 
 Your Linux build host is ready for Lets-Plot release build.
