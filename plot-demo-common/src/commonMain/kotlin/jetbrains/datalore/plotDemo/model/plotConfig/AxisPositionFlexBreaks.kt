@@ -117,8 +117,8 @@ open class AxisPositionFlexBreaks {
                     ${layerMapping()},
                     ${title("Position: both, both")},
                     'scales': [
-                            {'aesthetic': 'x', 'name': 'top', 'position': 'both'},
-                            {'aesthetic': 'y', 'name': 'right', 'position': 'both'}
+                            {'aesthetic': 'x', 'position': 'both'},
+                            {'aesthetic': 'y', 'position': 'both'}
                         ]
                 }
             """.trimIndent()

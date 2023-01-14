@@ -57,34 +57,36 @@ internal class SquareFrameOfReferenceProvider(
     override val vAxisLabel: String? = if (vAxisSpec.theme.showTitle()) vAxisSpec.label else null
 
     override fun createTileLayoutProvider(): TileLayoutProvider {
-        // ToDo: handle axis on both sides.
-        val hAxisOrientation = when (hAxisPosition) {
-            AxisPosition.TOP -> Orientation.TOP
-            AxisPosition.BOTTOM -> Orientation.BOTTOM
-            AxisPosition.TB -> Orientation.BOTTOM
-            else -> throw IllegalStateException("Horizontal axis position: $hAxisPosition")
+        fun toAxisLayout(
+            orientation: Orientation,
+            position: AxisPosition,
+            spec: AxisSpec
+        ): AxisLayout? {
+            @Suppress("NAME_SHADOWING")
+            val orientation: Orientation? = when (orientation) {
+                Orientation.LEFT -> if (position.isLeft) orientation else null
+                Orientation.RIGHT -> if (position.isRight) orientation else null
+                Orientation.TOP -> if (position.isTop) orientation else null
+                Orientation.BOTTOM -> if (position.isBottom) orientation else null
+            }
+
+            return orientation?.run {
+                AxisLayout(
+                    spec.breaksProviderFactory,
+                    orientation,
+                    spec.theme
+                )
+            }
         }
 
-        val vAxisOrientation = when (vAxisPosition) {
-            AxisPosition.LEFT -> Orientation.LEFT
-            AxisPosition.RIGHT -> Orientation.RIGHT
-            AxisPosition.LR -> Orientation.LEFT
-            else -> throw IllegalStateException("Vertical axis position: $vAxisPosition")
-        }
-
-        val hAxisLayout = PlotAxisLayout(
-            hAxisSpec.breaksProviderFactory,
-            hAxisOrientation,
-            hAxisSpec.theme
+        val axisLayoutQuad = AxisLayoutQuad(
+            left = toAxisLayout(Orientation.LEFT, vAxisPosition, vAxisSpec),
+            right = toAxisLayout(Orientation.RIGHT, vAxisPosition, vAxisSpec),
+            top = toAxisLayout(Orientation.TOP, hAxisPosition, hAxisSpec),
+            bottom = toAxisLayout(Orientation.BOTTOM, hAxisPosition, hAxisSpec),
         )
 
-        val vAxisLayout = PlotAxisLayout(
-            vAxisSpec.breaksProviderFactory,
-            vAxisOrientation,
-            vAxisSpec.theme
-        )
-
-        return MyTileLayoutProvider(hAxisLayout, vAxisLayout, adjustedDomain, marginsLayout)
+        return MyTileLayoutProvider(axisLayoutQuad, adjustedDomain, marginsLayout)
     }
 
     override fun createTileFrame(
@@ -92,8 +94,17 @@ internal class SquareFrameOfReferenceProvider(
         coordProvider: CoordProvider,
         debugDrawing: Boolean
     ): FrameOfReference {
-        val hAxisLayoutInfo = layoutInfo.hAxisInfo!!
-        val vAxisLayoutInfo = layoutInfo.vAxisInfo!!
+
+        // Below use any of horizontal/vertical axis info in the "quad".
+        // ToDo: with non-rectangular coordinates this might not work as axis length (for example) might be different
+        // for top and botto, axis.
+        val hAxisLayoutInfo = layoutInfo.axisInfos.bottom
+            ?: layoutInfo.axisInfos.top
+            ?: throw IllegalStateException("No top/bottom axis info.")
+
+        val vAxisLayoutInfo = layoutInfo.axisInfos.left
+            ?: layoutInfo.axisInfos.right
+            ?: throw IllegalStateException("No left/right axis info.")
 
         // Set-up scales and coordinate system.
         val client = DoubleVector(
@@ -161,8 +172,17 @@ internal class SquareFrameOfReferenceProvider(
             DoubleRectangle(origin, sizes.getValue(margin))
         }
 
-        val hAxisLayoutInfo = tileLayoutInfo.hAxisInfo!!
-        val vAxisLayoutInfo = tileLayoutInfo.vAxisInfo!!
+        // Below use any of horizontal/vertical axis info in the "quad".
+        // ToDo: with non-rectangular coordinates this might not work as axis length (for example) might be different
+        // for top and botto, axis.
+        val hAxisLayoutInfo = tileLayoutInfo.axisInfos.bottom
+            ?: tileLayoutInfo.axisInfos.top
+            ?: throw IllegalStateException("No top/bottom axis info.")
+
+        val vAxisLayoutInfo = tileLayoutInfo.axisInfos.left
+            ?: tileLayoutInfo.axisInfos.right
+            ?: throw IllegalStateException("No left/right axis info.")
+
         return domainByMargin.mapValues { (side, domain) ->
             val hDomain = when (side) {
                 MarginSide.LEFT, MarginSide.RIGHT -> domain
@@ -197,14 +217,13 @@ internal class SquareFrameOfReferenceProvider(
     )
 
     private class MyTileLayoutProvider(
-        private val hAxisLayout: AxisLayout,
-        private val vAxisLayout: AxisLayout,
+        private val axisLayoutQuad: AxisLayoutQuad,
         private val adjustedDomain: DoubleRectangle,
         private val marginsLayout: GeomMarginsLayout,
     ) : TileLayoutProvider {
         override fun createTopDownTileLayout(): TileLayout {
             return TopDownTileLayout(
-                hAxisLayout, vAxisLayout,
+                axisLayoutQuad,
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
                 marginsLayout
@@ -213,7 +232,7 @@ internal class SquareFrameOfReferenceProvider(
 
         override fun createInsideOutTileLayout(): TileLayout {
             return InsideOutTileLayout(
-                hAxisLayout, vAxisLayout,
+                axisLayoutQuad,
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
                 marginsLayout

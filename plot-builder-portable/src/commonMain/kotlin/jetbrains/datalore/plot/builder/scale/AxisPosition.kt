@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-enum class AxisPosition(private val id: String) {
+enum class AxisPosition(
+    private val id: String
+) {
     LEFT("LEFT"),
     RIGHT("RIGHT"),
     TOP("TOP"),
@@ -25,9 +27,27 @@ enum class AxisPosition(private val id: String) {
             else -> false
         }
 
-    val isDoubleSided: Boolean
+    val isLeft: Boolean
         get() = when (this) {
-            LR, TB -> true
+            LEFT, LR -> true
+            else -> false
+        }
+
+    val isRight: Boolean
+        get() = when (this) {
+            RIGHT, LR -> true
+            else -> false
+        }
+
+    val isTop: Boolean
+        get() = when (this) {
+            TOP, TB -> true
+            else -> false
+        }
+
+    val isBottom: Boolean
+        get() = when (this) {
+            BOTTOM, TB -> true
             else -> false
         }
 
@@ -42,14 +62,6 @@ enum class AxisPosition(private val id: String) {
             TOP -> RIGHT
             BOTTOM -> LEFT
             TB -> LR
-        }
-    }
-
-    fun split(): Pair<AxisPosition, AxisPosition> {
-        check(isDoubleSided)
-        return when (this) {
-            LR -> LEFT to RIGHT
-            else -> TOP to BOTTOM
         }
     }
 

@@ -53,9 +53,6 @@ internal class SquareFrameOfReference(
         val geomOuterBounds: DoubleRectangle = layoutInfo.geomOuterBounds
         val panelTheme = theme.panel()
 
-//        val hAxisOrientation = layoutInfo.hAxisInfo!!.orientation
-//        val vAxisOrientation = layoutInfo.vAxisInfo!!.orientation
-
         // Flip theme
         val hAxisTheme = theme.horizontalAxis(flipAxis)
         val vAxisTheme = theme.verticalAxis(flipAxis)
@@ -83,50 +80,52 @@ internal class SquareFrameOfReference(
         }
 
         if (drawHAxis || drawGridlines) {
-            // X-axis
-            val axisInfo = layoutInfo.hAxisInfo!!
-            val hAxis = buildAxis(
-                hScaleBreaks,
-                axisInfo,
-                hideAxis = !drawHAxis,
-                hideAxisBreaks = !layoutInfo.hAxisShown,
-                hideGridlines = !drawGridlines,
-                coord,
-                flipAxis,
-                hAxisTheme,
-                hGridTheme,
-                gridLineLength = geomBounds.height,
-                gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
-                isDebugDrawing
-            )
+            // Top/Bottom axis
+            listOfNotNull(layoutInfo.axisInfos.top, layoutInfo.axisInfos.bottom).forEach { axisInfo ->
+                val axisComponent = buildAxis(
+                    hScaleBreaks,
+                    axisInfo,
+                    hideAxis = !drawHAxis,
+                    hideAxisBreaks = !layoutInfo.hAxisShown,
+                    hideGridlines = !drawGridlines,
+                    coord,
+                    flipAxis,
+                    hAxisTheme,
+                    hGridTheme,
+                    gridLineLength = geomBounds.height,
+                    gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
+                    isDebugDrawing
+                )
 
-            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
-            hAxis.moveTo(axisOrigin)
-            parent.add(hAxis)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
+                axisComponent.moveTo(axisOrigin)
+                parent.add(axisComponent)
+            }
         }
 
 
         if (drawVAxis || drawGridlines) {
-            // Y-axis
-            val axisInfo = layoutInfo.vAxisInfo!!
-            val vAxis = buildAxis(
-                vScaleBreaks,
-                axisInfo,
-                hideAxis = !drawVAxis,
-                hideAxisBreaks = !layoutInfo.vAxisShown,
-                hideGridlines = !drawGridlines,
-                coord,
-                flipAxis,
-                vAxisTheme,
-                vGridTheme,
-                gridLineLength = geomBounds.width,
-                gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
-                isDebugDrawing
-            )
+            // Left/Right axis
+            listOfNotNull(layoutInfo.axisInfos.left, layoutInfo.axisInfos.right).forEach { axisInfo ->
+                val axisComponent = buildAxis(
+                    vScaleBreaks,
+                    axisInfo,
+                    hideAxis = !drawVAxis,
+                    hideAxisBreaks = !layoutInfo.vAxisShown,
+                    hideGridlines = !drawGridlines,
+                    coord,
+                    flipAxis,
+                    vAxisTheme,
+                    vGridTheme,
+                    gridLineLength = geomBounds.width,
+                    gridLineDistance = gridLineDistance(geomBounds, geomOuterBounds, axisInfo.orientation),
+                    isDebugDrawing
+                )
 
-            val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
-            vAxis.moveTo(axisOrigin)
-            parent.add(vAxis)
+                val axisOrigin = marginsLayout.toAxisOrigin(geomBounds, axisInfo.orientation)
+                axisComponent.moveTo(axisOrigin)
+                parent.add(axisComponent)
+            }
         }
 
         if (drawPanelBorder) {
