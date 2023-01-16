@@ -21,6 +21,8 @@ class DensityGeom : AreaGeom() {
 
     companion object {
 //        val RENDERS: List<Aes<*>> = AreaGeom.RENDERS
+        const val DEF_QUANTILE_LINES =
+            AreaGeom.DEF_QUANTILE_LINES
 
         const val HANDLES_GROUPS =
             AreaGeom.HANDLES_GROUPS

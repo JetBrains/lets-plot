@@ -56,6 +56,7 @@ object GeomMeta {
 
     private val AREA = listOf(
         Aes.X, Aes.Y,
+        Aes.QUANTILE,
         Aes.SIZE,
         Aes.LINETYPE,
         Aes.COLOR,

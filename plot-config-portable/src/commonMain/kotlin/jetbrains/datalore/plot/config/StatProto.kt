@@ -182,7 +182,7 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        val drawQuantiles = if (options.hasOwn(DensityRidges.QUANTILES)) {
+        val quantiles = if (options.hasOwn(DensityRidges.QUANTILES)) {
             options.getBoundedDoubleList(DensityRidges.QUANTILES, 0.0, 1.0)
         } else DensityRidgesStat.DEF_QUANTILES
 
@@ -195,7 +195,7 @@ object StatProto {
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
-            quantiles = drawQuantiles
+            quantiles = quantiles
         )
     }
 
@@ -226,7 +226,7 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        val drawQuantiles = if (options.hasOwn(YDensity.QUANTILES)) {
+        val quantiles = if (options.hasOwn(YDensity.QUANTILES)) {
             options.getBoundedDoubleList(YDensity.QUANTILES, 0.0, 1.0)
         } else YDensityStat.DEF_QUANTILES
 
@@ -240,7 +240,7 @@ object StatProto {
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
-            quantiles = drawQuantiles
+            quantiles = quantiles
         )
     }
 
@@ -274,6 +274,10 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
+        val quantiles = if (options.hasOwn(Density.QUANTILES)) {
+            options.getBoundedDoubleList(Density.QUANTILES, 0.0, 1.0)
+        } else DensityStat.DEF_QUANTILES
+
         return DensityStat(
             trim = options.getBoolean(Density.TRIM, DensityStat.DEF_TRIM),
             bandWidth = bwValue,
@@ -282,6 +286,7 @@ object StatProto {
             kernel = kernel ?: DensityStat.DEF_KERNEL,
             n = options.getIntegerDef(Density.N, DensityStat.DEF_N),
             fullScanMax = options.getIntegerDef(Density.FULL_SCAN_MAX, DensityStat.DEF_FULL_SCAN_MAX),
+            quantiles = quantiles
         )
     }
 

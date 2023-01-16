@@ -26,11 +26,12 @@ class DensityStat(
     private val adjust: Double,
     private val kernel: Kernel,
     private val n: Int,
-    private val fullScanMax: Int
+    private val fullScanMax: Int,
+    private val quantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
 
     init {
-        require(n <= MAX_N) { "The input n = $n  > $MAX_N is too large!" }
+        require(n <= MAX_N) { "The input n = $n > $MAX_N is too large!" }
     }
 
     override fun consumes(): List<Aes<*>> {
@@ -95,11 +96,14 @@ class DensityStat(
             statScaled.add(d / maxm)
         }
 
+        val statQuantile = DensityStatUtil.calculateQuantiles(statX, statCount, quantiles)
+
         return DataFrame.Builder()
             .putNumeric(Stats.X, statX)
             .putNumeric(Stats.DENSITY, statDensity)
             .putNumeric(Stats.COUNT, statCount)
             .putNumeric(Stats.SCALED, statScaled)
+            .putNumeric(Stats.QUANTILE, statQuantile)
             .build()
     }
 
@@ -125,12 +129,14 @@ class DensityStat(
         const val DEF_N = 512
         val DEF_BW = NRD0
         const val DEF_FULL_SCAN_MAX = 5000
+        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
         const val MAX_N = 1024
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.Y to Stats.DENSITY
+            Aes.Y to Stats.DENSITY,
+            Aes.QUANTILE to Stats.QUANTILE
         )
     }
 }

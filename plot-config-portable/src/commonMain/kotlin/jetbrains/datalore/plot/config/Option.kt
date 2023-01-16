@@ -154,6 +154,14 @@ object Option {
 
     object Geom {
 
+        object Area {
+            const val QUANTILE_LINES = "quantile_lines"
+        }
+
+        object Density {
+            const val QUANTILE_LINES = "quantile_lines"
+        }
+
         object Dotplot {
             const val DOTSIZE = "dotsize"
             const val STACKRATIO = "stackratio"
@@ -355,6 +363,7 @@ object Option {
             const val BAND_WIDTH = "bw"     // number or string (method name)
             const val ADJUST = "adjust"
             const val FULL_SCAN_MAX = "fs_max"  // use 'full scan' when the input size is < 'fs_max'
+            const val QUANTILES = "quantiles"
         }
 
         object Density2d {

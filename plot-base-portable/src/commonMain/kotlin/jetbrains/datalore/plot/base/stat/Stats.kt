@@ -240,7 +240,8 @@ object Stats {
         adjust: Double = DensityStat.DEF_ADJUST,
         kernel: DensityStat.Kernel = DensityStat.DEF_KERNEL,
         n: Int = DensityStat.DEF_N,
-        fullScanMax: Int = DensityStat.DEF_FULL_SCAN_MAX
+        fullScanMax: Int = DensityStat.DEF_FULL_SCAN_MAX,
+        quantiles: List<Double> = DensityStat.DEF_QUANTILES
     ): DensityStat {
         return DensityStat(
             trim = trim,
@@ -249,7 +250,8 @@ object Stats {
             adjust = adjust,
             kernel = kernel,
             n = n,
-            fullScanMax = fullScanMax
+            fullScanMax = fullScanMax,
+            quantiles = quantiles
         )
     }
 

@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.geom.AreaGeom
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
@@ -64,7 +65,7 @@ open class AreaPlotDemo : SimpleDemoBase() {
             Aes.FILL to filleMapper
         )
 
-        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.area(), Stats.density())
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.area { AreaGeom() }, Stats.density())
 //            .stat(Stats.density())
 //            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.area())
 //            .pos(PosProvider.wrap(PositionAdjustments.identity()))

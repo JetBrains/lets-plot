@@ -145,7 +145,7 @@ object DensityStatUtil {
         return 1.0
     }
 
-    private fun calculateQuantiles(
+    internal fun calculateQuantiles(
         sample: List<Double>,
         density: List<Double>,
         quantiles: List<Double>

@@ -14,7 +14,7 @@ open class QuantilesHelper(
     coord: CoordinateSystem,
     ctx: GeomContext,
     private val quantiles: List<Double>,
-    private val groupAes: Aes<Double>?
+    private val groupAes: Aes<Double>? = null
 ) : GeomHelper(pos, coord, ctx) {
     fun getQuantileLineElements(
         dataPoints: Iterable<DataPointAesthetics>,
