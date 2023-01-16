@@ -2855,7 +2855,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
                 show_half=None,
-                draw_quantiles=None,
+                quantiles=None, quantile_lines=None,
                 scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
@@ -2890,8 +2890,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If -1 then it's drawing only half of each violin.
         If 1 then it's drawing other half.
         If 0 then violins looking as usual.
-    draw_quantiles : list of float
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=False
+        Show the quantile lines.
     scale : {'area', 'count', 'width'}, default='area'
         If 'area', all violins have the same area.
         If 'count', areas are scaled proportionally to the number of observations.
@@ -2965,7 +2967,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 9-10
 
         import numpy as np
         from lets_plot import *
@@ -2975,7 +2977,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
-            geom_violin(scale='count', draw_quantiles=[.25, .5, .75])
+            geom_violin(aes(fill='..quantile..'), scale='count', \\
+                        quantiles=[.02, .25, .5, .75, .98], quantile_lines=True)
 
     |
 
@@ -3044,7 +3047,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  orientation=orientation,
                  show_half=show_half,
-                 draw_quantiles=draw_quantiles,
+                 quantiles=quantiles,
+                 quantile_lines=quantile_lines,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
 
@@ -3272,8 +3276,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         If `scale = 1.0`, the heights of a ridges are automatically scaled
         such that the ridge with `height = 1.0` just touches the one above.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        Draw horizontal lines at the given quantiles of the density estimate.
-    quantile_lines : bool, default=false
+        Draw vertical lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=False
         Show the quantile lines.
     other_args
         Other arguments passed on to the layer.
