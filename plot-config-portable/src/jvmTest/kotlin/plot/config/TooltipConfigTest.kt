@@ -801,24 +801,46 @@ class TooltipConfigTest {
 
     @Test
     fun `use variable mapped to the aes consumed by stat`() {
-        val spec = """
-        {
-            "data": {
-                "name": ["a", "b"],
-                "value": [1, 2 ]
-            },
-            "kind": "plot",
-            "layers": [
-                {
-                    "geom": "pie",
-                    "mapping": { "fill": "name", "weight": "value" },
-                    "tooltips": { "variables": [ "value" ] } 
-                }
-            ]
-        }""".trimIndent()
-        val geomLayer = TestUtil.getSingleGeomLayer(spec)
-        val lines = getGeneralTooltipStrings(geomLayer)
-        assertTooltipStrings(listOf("value: 1.0"), lines)
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.PIE,
+            data = mapOf(
+                "name" to listOf("a"),
+                "value" to listOf(1)
+            ),
+            mapping = mapOf(
+                Aes.FILL.name to "name",
+                Aes.WEIGHT.name to "value",
+            ),
+            tooltips = mapOf(
+                LINES to listOf("@value")
+            )
+        )
+        assertTooltipStrings(
+            expected = listOf("1.0"),
+            actual = getGeneralTooltipStrings(geomLayer)
+        )
+    }
+
+    @Test
+    fun `use aes consumed by stat in tooltip - will be ignored`() {
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.PIE,
+            data = mapOf(
+                "name" to listOf("a"),
+                "value" to listOf(1)
+            ),
+            mapping = mapOf(
+                Aes.FILL.name to "name",
+                Aes.WEIGHT.name to "value",
+            ),
+            tooltips = mapOf(
+                LINES to listOf("^weight")
+            )
+        )
+        assertTooltipStrings(
+            expected = emptyList(),
+            actual = getGeneralTooltipStrings(geomLayer)
+        )
     }
 
     @Test
