@@ -143,7 +143,7 @@ class corr_plot:
         ----------
         data : dict or `DataFrame`
             Correlation matrix or data (correlation will be calculated for each variable pair).
-            data will be recognized as correlation matrix if it has a square shape and all values are
+            Data will be recognized as correlation matrix if it has a square shape and all values are
             in range -1.0..+1.0 or NaN.
         show_legend : bool, default=True
             If True legend is shown.

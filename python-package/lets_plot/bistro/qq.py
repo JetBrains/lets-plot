@@ -13,7 +13,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
             color=None, fill=None, alpha=None, size=None, shape=None,
             line_color=None, line_size=None, linetype=None) -> PlotSpec:
     """
-    Produces a Q-Q plot (quantile-quantile plot).
+    Produce a Q-Q plot (quantile-quantile plot).
 
     Supply the `sample` parameter to compare distribution of observations with a theoretical distribution
     ('normal' or as otherwise specified by the `distribution` parameter).
@@ -25,7 +25,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     data : dict or `DataFrame`
         The data to be displayed.
     sample : str
-        Name of variable. Specifies a vector of observations used for computing of "sample quantiles".
+        Name of variable specifying a vector of observations used for computing of "sample quantiles".
         Use this parameter to produce a "sample vs. theoretical" Q-Q plot.
     x, y : str
         Names of variables specifying two vectors of observations used for computing of
@@ -54,7 +54,7 @@ def qq_plot(data=None, sample=None, *, x=None, y=None,
     fill : str
         Color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     alpha : float, default=0.5
-        Transparency level of a points. Accept values between 0 and 1.
+        Transparency level of points. Accept values between 0 and 1.
     size : float, default=3.0
         Size of the points.
     shape : int

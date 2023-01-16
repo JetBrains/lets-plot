@@ -38,7 +38,7 @@ def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None
         Define the data range used for luminance normalization in grey-scale images.
         This parameter is ignored for RGB(A) images or if parameter `norm=False`.
     scale : float, default=1.0
-        Specifies the image size magnification factor.
+        Specify the image size magnification factor.
 
     Returns
     -------
