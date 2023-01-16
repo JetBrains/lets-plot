@@ -2935,6 +2935,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ..density.. : density estimate.
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : value of the nearest quantile specified by the `quantiles` parameter.
 
     `geom_violin()` understands the following aesthetics mappings:
 
@@ -3298,6 +3299,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - ..density.. : density estimate.
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : value of the nearest quantile specified by the `quantiles` parameter.
 
     `geom_area_ridges()` understands the following aesthetics mappings:
 
