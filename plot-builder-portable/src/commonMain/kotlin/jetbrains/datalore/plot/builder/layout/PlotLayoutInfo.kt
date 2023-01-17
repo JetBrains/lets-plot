@@ -11,6 +11,6 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 class PlotLayoutInfo(tiles: List<TileLayoutInfo>, val size: DoubleVector) {
     val tiles: List<TileLayoutInfo> = ArrayList(tiles)
 
-    val hAxisOrientation: Orientation = tiles.firstOrNull()?.hAxisInfo?.orientation ?: Orientation.BOTTOM
-    val vAxisOrientation: Orientation = tiles.firstOrNull()?.vAxisInfo?.orientation ?: Orientation.LEFT
+    val hasTopAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.hAxisTitleOrientation == Orientation.TOP
+    val hasLeftAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.vAxisTitleOrientation == Orientation.LEFT
 }

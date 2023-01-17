@@ -9,21 +9,21 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByCol
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil.geomOffsetsByRow
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.plotInsets
 import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-internal class FacetedPlotLayout constructor(
+internal class FacetedPlotLayout(
     private val facets: PlotFacets,
     private val layoutProviderByTile: List<TileLayoutProvider>,
     private val showFacetStrip: Boolean,
-    hAxisOrientation: Orientation,
-    vAxisOrientation: Orientation,
+    hAxisOrientation: AxisPosition,
+    vAxisOrientation: AxisPosition,
     private val hAxisTheme: AxisTheme,
     private val vAxisTheme: AxisTheme,
 ) : PlotLayout {
@@ -187,8 +187,7 @@ internal class FacetedPlotLayout constructor(
                 bounds = tileBounds.add(originDelta),
                 geomOuterBounds = geomOuterBounds.add(originDelta),
                 geomInnerBounds = geomInnerBounds.add(originDelta),
-                layoutInfo.hAxisInfo,
-                layoutInfo.vAxisInfo,
+                layoutInfo.axisInfos,
                 hAxisShown = facetTile.hasHAxis,
                 vAxisShown = facetTile.hasVAxis,
                 trueIndex = facetTile.trueIndex

@@ -14,8 +14,8 @@ plugins {
 // ----------------------------------------
 
 def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
 //def task_group = 'lets plot'
-def tools_dir = "${rootDir}/tools"
 def python_package_dir = "${rootDir}/python-package"
 def python_package_build_dir = "${python_package_dir}/build"
 def python_package_dist_dir = "${python_package_dir}/dist"
@@ -25,43 +25,35 @@ clean {
     delete python_package_dist_dir
     delete "${python_package_dir}/lets_plot/package_data"
     delete "${python_package_dir}/lets_plot.egg-info"
+    delete "${python_package_dir}/kotlin-bridge/kotlin_bridge.o"
+    delete fileTree("${python_package_dir}/kotlin-bridge/"){
+        include "*.def"
+    }
 }
 
 if (project.buildSettings.enable_python_package) {
-
     def python_bin_path = project.buildSettings.python.bin_path
+    def python_twine_commnad = "${python_bin_path}/twine"
+    def python_build_command = ["${python_bin_path}/python",
+                                'setup.py',
+                                'update_js',
+                                'bdist_wheel',
+                                "--dist-dir=${python_package_dist_dir}",]
+
+    if (currentOs.isWindows()) {
+        python_twine_commnad = "${python_bin_path}/Scripts/twine"
+        python_build_command += ['build',
+                                  '-c',
+                                  'mingw32']
+    }
+
 
     task buildPythonPackage(type: Exec) {
         group = project.letsPlotTaskGroup
         description = 'Builds lets-plot wheel distribution (python)'
-
         workingDir python_package_dir
-        if (currentOs.isWindows()) {
-            commandLine "${python_bin_path}/python",
-                    'setup.py',
-                    'update_js',
-                    'bdist_wheel',
-                    "--dist-dir=${python_package_dist_dir}",
-                    'build',
-                    '-c',
-                    'mingw32'
-        } else {
-            commandLine "${python_bin_path}/python3",
-                    'setup.py',
-                    'update_js',
-                    'bdist_wheel',
-                    "--dist-dir=${python_package_dist_dir}"
-        }
+        commandLine python_build_command
     }
-
-    task buildManylinuxWheels(type: Exec) {
-        group = project.letsPlotTaskGroup
-        description = 'Builds lets-plot wheel distribution with Manylinux platform for publication(python)'
-
-        workingDir tools_dir
-        commandLine "./run_manylinux_docker.sh", "${rootDir}"
-    }
-
 
     def pypi_prod = project.buildSettings.pypi.prod
     if (pypi_prod.username != null && pypi_prod.password != null) {
@@ -70,7 +62,7 @@ if (project.buildSettings.enable_python_package) {
             description = 'Publishes lets-plot python package to pypi.org'
 
             workingDir python_package_dist_dir
-            commandLine "${python_bin_path}/twine",
+            commandLine python_twine_commnad,
                     "upload",
                     "-u",
                     pypi_prod.username,
@@ -87,7 +79,7 @@ if (project.buildSettings.enable_python_package) {
             description = 'Publishes lets-plot python package to test.pypi.org'
 
             workingDir python_package_dist_dir
-            commandLine "${python_bin_path}/twine",
+            commandLine python_twine_commnad,
                     "upload",
                     "--repository-url",
                     "https://test.pypi.org/legacy/",
@@ -103,6 +95,4 @@ if (project.buildSettings.enable_python_package) {
     buildPythonPackage.dependsOn(':python-extension:build')
 
     build.dependsOn(buildPythonPackage)
-
-    //publishPythonPackage.dependsOn(buildPythonPackage)
 }

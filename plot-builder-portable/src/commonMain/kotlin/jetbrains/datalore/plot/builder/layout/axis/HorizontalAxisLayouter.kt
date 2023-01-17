@@ -9,7 +9,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 
-class HorizontalAxisLayouter constructor(
+internal class HorizontalAxisLayouter constructor(
     orientation: Orientation,
     domainRange: DoubleSpan,
     labelsLayout: AxisLabelsLayout

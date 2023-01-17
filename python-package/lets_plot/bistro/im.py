@@ -6,7 +6,7 @@ from typing import Any
 
 from lets_plot.plot.geom_imshow_ import geom_imshow
 from lets_plot.plot.plot import ggplot, GGBunch
-from lets_plot.plot.scale import scale_x_continuous, scale_y_continuous
+from lets_plot.plot.scale_position import scale_x_continuous, scale_y_continuous
 from lets_plot.plot.theme_ import theme
 from lets_plot.plot.util import is_ndarray
 

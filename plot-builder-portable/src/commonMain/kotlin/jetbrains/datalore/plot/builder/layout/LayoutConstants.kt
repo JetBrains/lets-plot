@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.layout.util.Insets
 
 internal object LayoutConstants {
     val GEOM_MIN_SIZE = DoubleVector(50.0, 50.0)
@@ -16,6 +17,9 @@ internal object LayoutConstants {
     val LIVE_MAP_PLOT_MARGIN = DoubleVector(10.0, 10.0)
 
     // Horizontal axis labels
-//    const val AXIS_STRETCH_RATIO = 0.1  // allow 10% axis flexibility (on each end)
     const val H_AXIS_LABELS_EXPAND = 10.0  // Value by which labels can go beyond the axis bounds (px).
+
+    // Facets layout
+    // Allow axis labels to exceed dimensions of the panel.
+    val FACET_PANEL_AXIS_EXPAND = Insets(5.0, 5.0, 5.0, 5.0)
 }

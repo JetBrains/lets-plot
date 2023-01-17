@@ -16,10 +16,7 @@ class TileLayoutInfo constructor(
     val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins.
     val geomInnerBounds: DoubleRectangle,  // Tile main geom area.
 
-    // Params xAxisInfo/yAxisInfo can be NULL.
-    // In this case any mapping of positional Aes should be dropped (live map plot).
-    val hAxisInfo: AxisLayoutInfo?,
-    val vAxisInfo: AxisLayoutInfo?,
+    val axisInfos: AxisLayoutInfoQuad,
 
     hAxisShown: Boolean,
     vAxisShown: Boolean,
@@ -29,8 +26,8 @@ class TileLayoutInfo constructor(
 
     val trueIndex: Int     // tile index before re-ordering (in facet wrap)
 ) {
-    val hAxisShown: Boolean = hAxisInfo != null && hAxisShown
-    val vAxisShown: Boolean = vAxisInfo != null && vAxisShown
+    val hAxisShown: Boolean = (axisInfos.top != null || axisInfos.bottom != null) && hAxisShown
+    val vAxisShown: Boolean = (axisInfos.left != null || axisInfos.right != null) && vAxisShown
 
     fun withOffset(offset: DoubleVector): TileLayoutInfo {
         return TileLayoutInfo(
@@ -38,7 +35,7 @@ class TileLayoutInfo constructor(
             this.bounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
-            this.hAxisInfo, this.vAxisInfo,
+            this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             this.facetXLabels, this.facetYLabel,
             this.trueIndex
@@ -51,7 +48,7 @@ class TileLayoutInfo constructor(
             this.bounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
-            this.hAxisInfo, this.vAxisInfo,
+            this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             xLabels, yLabel,
             this.trueIndex
@@ -64,7 +61,7 @@ class TileLayoutInfo constructor(
             this.bounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
-            this.hAxisInfo, this.vAxisInfo,
+            this.axisInfos,
             hAxisShown, vAxisShown,
             this.facetXLabels, this.facetYLabel,
             this.trueIndex

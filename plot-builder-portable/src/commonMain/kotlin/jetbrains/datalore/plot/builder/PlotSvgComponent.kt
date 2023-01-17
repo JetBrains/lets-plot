@@ -245,8 +245,8 @@ class PlotSvgComponent constructor(
                 axisTitlesOriginOffset(
                     hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    hAxisOrientation = plotInfo.hAxisOrientation,
-                    vAxisOrientation = plotInfo.vAxisOrientation,
+                    hasTopAxisTitle = plotInfo.hasTopAxisTitle,
+                    hasLeftAxisTitle = plotInfo.hasLeftAxisTitle,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
@@ -426,11 +426,10 @@ class PlotSvgComponent constructor(
         // add axis titles
         if (axisEnabled) {
             if (vAxisTitle != null) {
-                val vAxisOrientation = plotInfo.tiles.first().vAxisInfo!!.orientation
+                val titleOrientation = plotInfo.tiles.first().axisInfos.vAxisTitleOrientation
                 addAxisTitle(
                     vAxisTitle,
-//                    Orientation.LEFT,
-                    vAxisOrientation,
+                    titleOrientation,
                     overallTileBounds,
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
@@ -440,11 +439,10 @@ class PlotSvgComponent constructor(
                 )
             }
             if (hAxisTitle != null) {
-                val hAxisOrientation = plotInfo.tiles.first().hAxisInfo!!.orientation
+                val titleOrientation = plotInfo.tiles.first().axisInfos.hAxisTitleOrientation
                 addAxisTitle(
                     hAxisTitle,
-//                    Orientation.BOTTOM,
-                    hAxisOrientation,
+                    titleOrientation,
                     overallTileBounds,
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
