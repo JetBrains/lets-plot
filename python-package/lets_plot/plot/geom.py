@@ -484,7 +484,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
@@ -647,7 +647,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     other_args
         Other arguments passed on to the layer.
@@ -786,7 +786,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     bins : int, default=30
         Number of bins. Overridden by `binwidth`.
@@ -2702,7 +2702,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     fatten : float, default=1.0
         A multiplicative factor applied to size of the middle bar.
@@ -2884,7 +2884,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     show_half : float, default=0
         If -1, only half of each violin is drawn.
@@ -3638,7 +3638,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     trim : bool, default=False
         If False, each density is computed on the full range of the data.
@@ -4735,7 +4735,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
     orientation : str, default='x'
-        Specify the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
     other_args
         Other arguments passed on to the layer.
