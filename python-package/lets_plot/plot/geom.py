@@ -1698,7 +1698,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         err_df = df.groupby('x').agg({'y': ['min', 'mean', 'max']}).reset_index()
         err_df.columns = ['x', 'ymin', 'ymean', 'ymax']
         ggplot(err_df, aes(x='x', y='ymean')) + \\
-            geom_pointrange(aes(ymin='ymin', ymax='ymax', fill='x'), \\
+            geom_pointrange(aes(ymin='ymin', ymax='ymax'), \\
                             show_legend=False, fatten=10, shape=4, \\
                             color='red', size=1)
 
@@ -3471,9 +3471,9 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         ggplot({'day': day, 'tmin': tmin, 'tmax': tmax}) + \\
             geom_ribbon(aes(x='day', ymin='tmin', ymax='tmax'), \\
                         color='#bd0026', fill='#fd8d3c', size=2, \\
-                        tooltips=layer_tooltips().line('@|@day')\\
-                            .format('tmin', '.1f').line('min temp|@tmin')\\
-                            .format('tmax', '.1f').line('max temp|@tmax'))
+                        tooltips=layer_tooltips()\\
+                            .format('^ymin', '.1f').line('min temp|^ymin')\\
+                            .format('^ymax', '.1f').line('max temp|^ymax'))
 
     """
     return _geom('ribbon',
@@ -5333,7 +5333,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                        map_join='city', shape=21, color='black') + \\
             geom_text(aes(label='title'), map=centroids, \\
                       map_join='city', size=8, vjust=1, \\
-                      family='Optima', fontface='bold')
+                      family='Optima', fontface='bold') + \\
+            xlim(-130, -60) + ylim(33, 43)
 
     """
     return _geom('text',
