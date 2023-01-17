@@ -156,7 +156,7 @@ def residual_plot(data=None, x=None, y=None, *,
                   show_legend=None,
                   hline=_HLINE_DEF, marginal=_MARGINAL_DEF):
     """
-    Produces a residual plot that shows the difference between the observed response and the fitted response values.
+    Produce a residual plot that shows the difference between the observed response and the fitted response values.
 
     To use `residual_plot()`, the `numpy` and `pandas` libraries are required.
     Also, `statsmodels` and `scipy` are required for 'lm' and 'loess' methods.
@@ -194,11 +194,11 @@ def residual_plot(data=None, x=None, y=None, *,
         If only one value given - interpret it as list of two equal values.
         Applicable simultaneously for 'tile' geom and 'histogram' marginal.
     color : str
-        Color of a geometry.
+        Color of the geometry.
     size : float
-        Size of a geometry.
+        Size of the geometry.
     alpha : float
-        Transparency level of a geometry. Accepts values between 0 and 1.
+        Transparency level of the geometry. Accept values between 0 and 1.
     color_by : str
         Name of grouping variable.
     show_legend : bool, default=True

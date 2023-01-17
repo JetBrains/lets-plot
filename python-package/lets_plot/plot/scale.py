@@ -46,7 +46,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -127,7 +127,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -201,7 +201,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -273,7 +273,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -347,7 +347,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -421,7 +421,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -496,7 +496,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -510,7 +510,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     Notes
     -----
     Create your own discrete scale for alpha (transparency) aesthetic.
-    Accepts values between 0 and 1.
+    Accept values between 0 and 1.
 
     Examples
     --------
@@ -576,7 +576,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -640,7 +640,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -718,7 +718,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -782,7 +782,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -856,7 +856,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -921,7 +921,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -936,7 +936,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1012,7 +1012,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1089,7 +1089,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1172,7 +1172,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1254,7 +1254,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1308,8 +1308,8 @@ def scale_fill_discrete(direction=None,
 
     Parameters
     ----------
-    direction : {-1, 1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+    direction : {1, -1}, default=1
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1329,7 +1329,7 @@ def scale_fill_discrete(direction=None,
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1384,7 +1384,7 @@ def scale_color_discrete(direction=None,
     Parameters
     ----------
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1392,7 +1392,7 @@ def scale_color_discrete(direction=None,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale
@@ -1404,7 +1404,7 @@ def scale_color_discrete(direction=None,
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1483,7 +1483,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1496,7 +1496,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
 
     Notes
     -----
-    Defines sequential grey color scale for filling color aesthetic.
+    Define sequential grey color scale for filling color aesthetic.
 
     Examples
     --------
@@ -1565,7 +1565,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1578,7 +1578,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
 
     Notes
     -----
-    Defines sequential grey color scale for color aesthetic.
+    Define sequential grey color scale for color aesthetic.
 
     Examples
     --------
@@ -1648,7 +1648,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         If a string, will use that named palette. If a number, will index
         into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1656,7 +1656,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -1671,7 +1671,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1684,7 +1684,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
     Notes
     -----
-    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
@@ -1745,7 +1745,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         If a string, will use that named palette. If a number, will index
         into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1768,7 +1768,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1781,7 +1781,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     Notes
     -----
-    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
@@ -1843,11 +1843,11 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at. Accepts values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with. Accepts values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale.
+        Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
@@ -1865,7 +1865,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -1880,7 +1880,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1893,7 +1893,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
 
     Notes
     -----
-    Can be used for both, contituous and discrete data.
+    Can be used for both, continuous and discrete data.
 
     Examples
     --------
@@ -1946,11 +1946,11 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at. Accepts values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with. Accepts values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale.
+        Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
@@ -1968,7 +1968,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -1983,7 +1983,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1996,7 +1996,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 
     Notes
     -----
-    Can be used for both, contituous and discrete data.
+    Can be used for both, continuous and discrete data.
 
     Examples
     --------
@@ -2062,7 +2062,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2131,7 +2131,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2201,7 +2201,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'

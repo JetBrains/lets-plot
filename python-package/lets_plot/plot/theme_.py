@@ -191,13 +191,13 @@ def theme(*,
         `axis_tooltip_text_*` inherits from `axis_tooltip_text` which inherits from `tooltip_text`.
     tooltip : str or dict
         General tooltip.
-        Set `element_rect()` to specify tooltip rectangular parameters. Inherits from `rect`.
+        Set `element_rect()` to specify tooltip rectangular parameters, inherited from `rect`.
     tooltip_text : str or dict
         Text in general tooltip.
         Set `element_text()` to specify tooltip text parameters.
     tooltip_title_text: str or dict
         Tooltip title text.
-        Set `element_text()` to specify tooltip title parameters. Inherits from `tooltip_text`. Bold by default.
+        Set `element_text()` to specify tooltip title parameters, inherited from `tooltip_text`. Bold by default.
     Returns
     -------
     `FeatureSpec`
@@ -270,7 +270,7 @@ def _filter_none(original: dict) -> dict:
 
 def element_blank() -> dict:
     """
-    Specifies how non-data components of the plot are drawn.
+    Specify how non-data components of the plot are drawn.
     This theme element draws nothing, and assigns no space.
 
     Returns
@@ -304,7 +304,7 @@ def element_rect(
         blank=False,
 ) -> dict:
     """
-    Specifies how non-data components of the plot are drawn.
+    Specify how non-data components of the plot are drawn.
     This theme element draws borders and backgrounds.
 
     Parameters
@@ -348,7 +348,7 @@ def element_line(
         blank=False,
 ) -> dict:
     """
-    Specifies how non-data components of the plot are drawn.
+    Specify how non-data components of the plot are drawn.
     This theme element draws lines.
 
     Parameters
@@ -395,7 +395,7 @@ def element_text(
         blank=False,
 ) -> dict:
     """
-    Specifies how non-data components of the plot are drawn.
+    Specify how non-data components of the plot are drawn.
     This theme element draws texts.
 
     Parameters

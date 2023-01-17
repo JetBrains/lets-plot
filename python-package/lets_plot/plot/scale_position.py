@@ -56,7 +56,7 @@ def scale_x_continuous(name=None, *,
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -134,7 +134,7 @@ def scale_y_continuous(name=None, *,
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -197,7 +197,7 @@ def scale_x_log10(name=None, *,
         If None, the default, the name of the scale
         is taken from the first mapping used for that aesthetic.
     breaks : list
-        A numeric vector of positions of ticks.
+        A numeric vector of positions (of ticks).
     labels : list of str
         A vector of labels (on ticks).
     limits : list
@@ -209,7 +209,7 @@ def scale_x_log10(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -280,7 +280,7 @@ def scale_y_log10(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -351,7 +351,7 @@ def scale_x_reverse(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -422,7 +422,7 @@ def scale_y_reverse(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -500,7 +500,7 @@ def scale_x_discrete(name=None, *,
     reverse : bool
         When True the scale is reversed.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -579,7 +579,7 @@ def scale_x_discrete_reversed(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -657,7 +657,7 @@ def scale_y_discrete(name=None, *,
     reverse : bool
         When True the scale is reversed.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -736,7 +736,7 @@ def scale_y_discrete_reversed(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -817,7 +817,7 @@ def scale_x_datetime(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
@@ -898,7 +898,7 @@ def scale_y_datetime(name=None, *,
     na_value
         Missing values will be replaced with this value.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '%d.%m.%y' -> '06.08.19'
         '%B %Y' -> 'August 2019'
         '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'

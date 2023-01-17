@@ -29,7 +29,7 @@ from .frontend_context import _configuration as cfg
 
 class LetsPlot:
     """
-    Initalize the library and its options.
+    Initialize the library and its options.
     """
 
     @classmethod
@@ -39,7 +39,7 @@ class LetsPlot:
                    no_js: bool = None,
                    show_status: bool = False) -> None:
         """
-        Configures Lets-Plot HTML output.
+        Configure Lets-Plot HTML output.
         Depending on the usage, LetsPlot generates different HTML to show plots.
         In most cases LetsPlot will detect type of the environment automatically.
         Auto-detection can be overwritten using this method parameters.

@@ -12,7 +12,7 @@ __all__ = ['maptiles_zxy', 'maptiles_lets_plot', 'maptiles_solid']
 
 def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
     """
-    Makes vector tiles config. Can be used individually in `geom_livemap()`
+    Make vector tiles config. Can be used individually in `geom_livemap()`
     or in every livemap via `LetsPlot.set()`.
 
     Parameters
@@ -78,7 +78,7 @@ def maptiles_lets_plot(url: str = None, theme: str = None) -> dict:
 def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zoom: int = None, subdomains: str = None,
                  **other_args) -> dict:
     """
-    Makes raster tiles config. Can be used individually in `geom_livemap()`
+    Make raster tiles config. Can be used individually in `geom_livemap()`
     or in every livemap via `LetsPlot.set()`.
 
     Parameters
@@ -148,7 +148,7 @@ def maptiles_zxy(url: str, attribution: str = None, min_zoom: int = None, max_zo
 
 def maptiles_solid(color: str):
     """
-    Makes solid color tiles config. Can be used individually in `geom_livemap()`
+    Make solid color tiles config. Can be used individually in `geom_livemap()`
     or in every livemap via `LetsPlot.set()`.
 
     Parameters
@@ -183,7 +183,7 @@ def maptiles_solid(color: str):
 
 def maptiles_chessboard():
     """
-    Makes solid color tiles with chessboard pattern. Can be used individually in `geom_livemap()`
+    Make solid color tiles with chessboard pattern. Can be used individually in `geom_livemap()`
     or in every livemap via `LetsPlot.set()`.
 
     Returns
@@ -209,7 +209,7 @@ def maptiles_chessboard():
 
 def geocoding_service(url: str):
     """
-    Makes geocoding service config.
+    Make geocoding service config.
     Can be applied via LetsPlot.set(...)
 
     Parameters

@@ -16,7 +16,7 @@ _DEF_EXPORT_DIR = "lets-plot-images"
 
 def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True) -> str:
     """
-    Exports plot or "bunch" to a file.
+    Export plot or `bunch` to a file.
     Supported formats: SVG, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
@@ -28,7 +28,7 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
-        to one of the supported formats: svg, html (or htm).
+        to one of the supported formats: SVG, HTML (or HTM).
     path : str
         Path to a directory to save image files in.
         By default it is ${user.dir}/lets-plot-images.
