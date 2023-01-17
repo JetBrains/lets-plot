@@ -3,7 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import DummySpec
-from .scale import scale_x_continuous, scale_y_continuous, scale_x_discrete, scale_y_discrete
+from .scale_position import scale_x_continuous, scale_y_continuous, scale_x_discrete, scale_y_discrete
 
 #
 # Scale convenience functions to set the axis limits
