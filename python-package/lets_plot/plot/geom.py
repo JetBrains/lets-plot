@@ -59,7 +59,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -68,9 +68,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -103,11 +103,11 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
     |
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of `map_join` parameter are as follows:
 
     - Joining data and `GeoDataFrame` object
 
@@ -195,7 +195,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
               flat=None,
               **other_args):
     """
-    Connects observations in the order, how they appear in the data.
+    Connect observations in the order, how they appear in the data.
 
     Parameters
     ----------
@@ -223,7 +223,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame`
         Data containing coordinates of lines.
     map_join : str or list
@@ -232,9 +232,9 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     flat : Boolean, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
     other_args
@@ -259,7 +259,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
+    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
 
     |
@@ -371,7 +371,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -482,9 +482,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     method : str, default='lm'
         Smoothing method: 'lm' (Linear Model) or 'loess' (Locally Estimated Scatterplot Smoothing).
@@ -535,7 +535,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
-    - size : lines width. Defines line width for conditional mean and confidence bounds lines.
+    - size : line width. Define line width for conditional mean and confidence bounds lines.
 
     Examples
     --------
@@ -645,9 +645,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     other_args
         Other arguments passed on to the layer.
@@ -681,7 +681,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width. Defines bar line width.
+    - size : line width. Define bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
     Examples
@@ -755,7 +755,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    boundary=None,
                    **other_args):
     """
-    Displays a 1d distribution by dividing variable mapped to x axis into bins
+    Display a 1d distribution by dividing variable mapped to x axis into bins
     and counting the number of observations in each bin.
 
     Parameters
@@ -784,9 +784,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     bins : int, default=30
         Number of bins. Overridden by `binwidth`.
@@ -795,9 +795,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         the range of the data. You should always override this value,
         exploring multiple widths to find the best to illustrate the stories in your data.
     center : float
-        Specifies x-value to align bin centers to.
+        Specify x-value to align bin centers to.
     boundary : float
-        Specifies x-value to align bin boundary (i.e. point between bins) to.
+        Specify x-value to align bin boundary (i.e. point between bins) to.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -826,7 +826,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width.
+    - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
@@ -925,7 +925,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     binwidth : float
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
@@ -942,7 +942,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     dotsize : float, default=1.0
         The diameter of the dots relative to binwidth.
     stackgroups : bool, default=False
-        Stacks dots across groups when method='histodot'.
+        Stack dots across groups when method='histodot'.
     center : float
         When method is 'histodot', this specifies x-value to align bin centers to.
     boundary : float
@@ -1046,7 +1046,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                drop=None,
                **other_args):
     """
-    Displays a 1d distribution by dividing variable mapped to x axis into bins
+    Display a 1d distribution by dividing variable mapped to x axis into bins
     and counting the number of observations in each bin.
 
     Parameters
@@ -1070,14 +1070,14 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     bins : list of int, default=[30, 30]
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
     binwidth : list of float
         The width of the bins in both directions, vertical and horizontal.
-        Overrides `bins`. The default is to use bin widths that cover the entire range of the data.
+        Override `bins`. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
-        Specifies whether to remove all bins with 0 counts.
+        Specify whether to remove all bins with 0 counts.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1105,7 +1105,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling, default: '..count..'. Alternatively: '..density..'.
-    - size : lines width.
+    - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
     Examples
@@ -1207,7 +1207,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1221,16 +1221,16 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     Notes
     -----
-    Understands the following aesthetics mappings:
+    `geom_tile()` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width.
-    - width : width of a tile. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
-    - height : height of a tile. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
+    - size : line width.
+    - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
+    - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - linetype : type of the line of tile's border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1328,7 +1328,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     Notes
     -----
-    Understands the following aesthetics mappings:
+    `geom_raster()` understands the following aesthetics mappings:
 
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
@@ -1402,7 +1402,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1425,8 +1425,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width. Defines bar line width.
-    - width : width of a bar. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
+    - size : line width. Define bar line width.
+    - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1512,7 +1512,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
     other_args
@@ -1541,7 +1541,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
     - size : lines width.
-    - width : width of a bar. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
+    - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1630,7 +1630,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     fatten : float, default=5.0
         A multiplicative factor applied to size of the middle point.
     other_args
@@ -1658,7 +1658,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
-    - size : lines width, size of mid-point.
+    - size : line width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
 
@@ -1746,7 +1746,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1769,7 +1769,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - ymax : upper bound for line range.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width.
+    - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1852,7 +1852,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     bins : int
         Number of levels.
     binwidth : float
@@ -1969,7 +1969,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     bins : int
         Number of levels.
     binwidth : float
@@ -2084,7 +2084,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Data contains coordinates of polygon vertices on map.
     map_join : str or list
@@ -2093,9 +2093,9 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2118,18 +2118,18 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width.
+    - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     |
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
 
     |
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of `map_join` parameter are as follows:
 
     - Joining data and `GeoDataFrame` object
 
@@ -2259,7 +2259,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Data containing region boundaries (coordinates of polygon vertices on map).
     map_join : str or list
@@ -2268,9 +2268,9 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2293,14 +2293,14 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of the geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width.
+    - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     |
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Polygon` and `MultiPolygon`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `boundaries()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `boundaries()` function.
 
     |
 
@@ -2498,7 +2498,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     yintercept : float
         The value of y at the point where the line crosses the y axis.
     other_args
@@ -2519,7 +2519,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : lines width.
+    - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -2596,7 +2596,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     xintercept : float
         The value of x at the point where the line crosses the x axis.
     other_args
@@ -2700,9 +2700,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     fatten : float, default=1.0
         A multiplicative factor applied to size of the middle bar.
@@ -2715,7 +2715,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     outlier_size : float
         Default size aesthetic for outliers.
     varwidth : bool, default=False
-        If False make a standard box plot.
+        If False, make a standard box plot.
         If True, boxes are drawn with widths proportional to the square-roots
         of the number of observations in the groups.
     whisker_width : float, default=0.5
@@ -2882,14 +2882,14 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     show_half : float, default=0
-        If -1 then it's drawing only half of each violin.
-        If 1 then it's drawing other half.
-        If 0 then violins looking as usual.
+        If -1, only half of each violin is drawn.
+        If 1, another half is drawn.
+        If 0, violins look as usual.
     draw_quantiles : list of float
         Draw horizontal lines at the given quantiles of the density estimate.
     scale : {'area', 'count', 'width'}, default='area'
@@ -2908,7 +2908,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float.
     adjust : float
-        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
     n : int, default=512
         The number of sampled points for plotting the function.
     fs_max : int, default=500
@@ -3085,7 +3085,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     binwidth : float
         When method is 'dotdensity', this specifies maximum bin width.
         When method is 'histodot', this specifies bin width.
@@ -3102,9 +3102,9 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
     dotsize : float, default=1.0
         The diameter of the dots relative to binwidth.
     stackgroups : bool, default=False
-        Separates overlapping stack groups when stackgroups=False.
-        Overlaps stack groups when method='dotdensity' and stackgroups=True.
-        Stacks dots across groups when method='histodot' and stackgroups=True.
+        Separate overlapping stack groups when stackgroups=False.
+        Overlap stack groups when method='dotdensity' and stackgroups=True.
+        Stack dots across groups when method='histodot' and stackgroups=True.
     center : float
         When method is 'histodot', this specifies x-value to align bin centers to.
     boundary : float
@@ -3219,7 +3219,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      **other_args):
     """
-    Plots the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
+    Plot the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
 
     Parameters
     ----------
@@ -3244,8 +3244,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
-    trim : bool, default=false
+        Specify appearance, style and content.
+    trim : bool, default=False
         Trim the tails of the ridges to the range of the data.
     tails_cutoff : float
         Extend domain of each ridge on `tails_cutoff * bw` if `trim=False`.
@@ -3258,7 +3258,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float.
     adjust : float
-        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
     n : int, default=512
         The number of sampled points for plotting the function.
     fs_max : int, default=500
@@ -3273,7 +3273,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         such that the ridge with `height = 1.0` just touches the one above.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
-    quantile_lines : bool, default=false
+    quantile_lines : bool, default=False
         Show the quantile lines.
     other_args
         Other arguments passed on to the layer.
@@ -3409,7 +3409,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3519,7 +3519,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3608,7 +3608,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  fs_max=None,
                  **other_args):
     """
-    Displays kernel density estimate, which is a smoothed version of the histogram.
+    Display kernel density estimate, which is a smoothed version of the histogram.
 
     Parameters
     ----------
@@ -3636,9 +3636,9 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     trim : bool, default=False
         If False, each density is computed on the full range of the data.
@@ -3808,7 +3808,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -3817,7 +3817,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
     adjust : float
-        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
     n : list of int
         The number of sampled points for plotting the function
         (on x and y direction correspondingly).
@@ -4000,7 +4000,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     kernel : str, default='gaussian'
         The kernel we use to calculate the density function.
         Choose among 'gaussian', 'cosine', 'optcosine', 'rectangular' (or 'uniform'),
@@ -4009,7 +4009,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         The method (or exact value) of bandwidth.
         Either a string (choose among 'nrd0' and 'nrd'), or a float array of length 2.
     adjust : float
-        Adjust the value of bandwidth by multiplying it. Changes how smooth the frequency curve is.
+        Adjust the value of bandwidth by multiplying it. Change how smooth the frequency curve is.
     n : list of int
         The number of sampled points for plotting the function
         (on x and y direction correspondingly).
@@ -4195,7 +4195,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     width : float, default=0.4
         Amount of horizontal variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
         Typically ranges between 0 and 0.5. Values that are greater than 0.5 lead to overlapping of the points.
@@ -4311,7 +4311,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use.
     dparams : list
@@ -4429,7 +4429,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4524,7 +4524,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     distribution : {'norm', 'uniform', 't', 'gamma', 'exp', 'chi2'}, default='norm'
         Distribution function to use.
     dparams : list
@@ -4644,7 +4644,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
     other_args
@@ -4733,9 +4733,9 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     orientation : str, default='x'
-        Specifies the axis that the layer' stat and geom should run along.
+        Specify the axis that the layer' stat and geom should run along.
         Possible values: 'x', 'y'.
     other_args
         Other arguments passed on to the layer.
@@ -4940,7 +4940,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Bounding boxes of geometries will be drawn.
     map_join : str or list
@@ -4949,9 +4949,9 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4983,11 +4983,11 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `MultiPoint`, `Line`, `MultiLine`, `Polygon` and `MultiPolygon`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `limits()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `limits()` function.
 
     |
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of `map_join` parameter are as follows:
 
     - Joining data and `GeoDataFrame` object
 
@@ -5089,7 +5089,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
     flat : Boolean, default=False.
@@ -5200,7 +5200,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -5209,9 +5209,9 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5250,10 +5250,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - label : text to add to plot.
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
     - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
-    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
-        There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
-    - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
-        There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - hjust : horizontal text alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical text alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns text towards the plot center) and 'outward' (away from the plot center).
     - angle : text rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
@@ -5261,11 +5259,11 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
     |
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of `map_join` parameter are as follows:
 
     - Joining data and `GeoDataFrame` object
 
@@ -5389,7 +5387,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -5398,9 +5396,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     label_format : str
         Format used to transform label mapping values to a string.
         Examples:
@@ -5415,9 +5413,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     na_text : str, default='n/a'
         Text to show for missing values.
     label_padding : float
-        Amount of padding around label. Defaults to 0.25 of font size.
+        Amount of padding around label. Default is 0.25 of font size.
     label_r : float
-        Radius of rounded corners. Defaults to 0.15 of label height.
+        Radius of rounded corners. Default is 0.15 of label height.
     label_size : float, default = 1.0
         Size of label border.
     other_args
@@ -5433,7 +5431,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Notes
     -----
-    Adds a text directly to the plot and draws a rectangle behind the text, making it easier to read.
+    `geom_label()` adds a text directly to the plot and draws a rectangle behind it, making it easier to read.
 
     `geom_label()` understands the following aesthetics mappings:
 
@@ -5446,10 +5444,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - label : text to add to plot.
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
     - fontface : font style and weight. Possible values: 'plain', 'bold', 'italic', 'bold italic'. The default is 'plain'.
-    - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right').
-        There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
-    - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top').
-        There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
+    - hjust : horizontal alignment. Possible values: 'left', 'middle', 'right' or number between 0 ('left') and 1 ('right'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
+    - vjust : vertical alignment. Possible values: 'bottom', 'center', 'top' or number between 0 ('bottom') and 1 ('top'). There are two special alignments: 'inward' (aligns label towards the plot center) and 'outward' (away from the plot center).
     - angle : rotation angle in degrees.
     - lineheight : line height multiplier applied to the font size in the case of multi-line text.
 
@@ -5457,11 +5453,11 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
     |
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of `map_join` parameter are as follows:
 
     - Joining data and `GeoDataFrame` object
 
@@ -5583,10 +5579,10 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
-        Specifies appearance, style and content.
+        Specify appearance, style and content.
     labels : `layer_labels`
         Result of the call to the `layer_labels()` function.
-        Specifies style and content of the annotations.
+        Specify style and content of the annotations.
     map : `GeoDataFrame` or `Geocoder`
         Data containing coordinates of points.
     map_join : str or list
@@ -5595,14 +5591,14 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Second value in pair - column/columns in `map`.
     use_crs : str, optional, default="EPSG:4326" (aka WGS84)
         EPSG code of the coordinate reference system (CRS) or the keyword "provided".
-        If an EPSG code is given, then all the coordinates in GeoDataFrame (see the `map` parameter)
+        If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
-        Specify "provided" to disable any further re-projection and to keep the GeoDataFrame’s original CRS.
+        Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
         Accept values between 0 and 1.
     fill_by : {'fill', 'color'}, default='fill'
-        Defines the source aesthetic for geometry filling.
+        Define the source aesthetic for geometry filling.
     stroke : float, default=0.0
         Width of slice borders.
     stroke_color : str, default='white'.
@@ -5643,11 +5639,11 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     The `data` and `map` parameters of `GeoDataFrame` type support shapes `Point` and `MultiPoint`.
 
-    The `map` parameter of `Geocoder` type implicitly invoke `centroids()` function.
+    The `map` parameter of `Geocoder` type implicitly invokes `centroids()` function.
 
     |
 
-    The conventions for the values of `map_join` parameter are as follows.
+    The conventions for the values of `map_join` parameter are as follows:
 
     - Joining data and `GeoDataFrame` object
 
