@@ -4,6 +4,8 @@
 
 - `position` parameter in position scales `scale_x_*(), scale_y_*()`.       
 
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_position.ipynb).
+
 ### Changed
 
 - `pandas` library was added to dependencies of the `residual_plot()` function.
