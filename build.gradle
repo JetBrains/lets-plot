@@ -129,6 +129,7 @@ allprojects {
         }
     }
 }
+
 // Read build settings from commandline parameters (for build_release.py script):
 def readSettingsFromParameters() {
     def settings = [
@@ -154,6 +155,7 @@ def readSettingsFromParameters() {
     }
     return settings
 }
+
 // Read build settings from build_settings.yml:
 def readSettingsFromYaml() {
     def build_settings_file = new File(rootDir, "build_settings.yml")
@@ -170,6 +172,7 @@ def readSettingsFromYaml() {
     }
     return settings
 }
+
 // Get Python's arch to define Kotlin targets:
 def getPythonArch() {
     def python_bin_path = project.buildSettings.python.bin_path
@@ -182,6 +185,8 @@ def getPythonArch() {
     }
     return getArchOutput.toString().trim()
 }
+
+
 // For build_release.py settings will be read from commandline parameters.
 // If not, settings will be read from build_settings.yml.
 if (project.hasProperty("build_release")) {
@@ -189,6 +194,7 @@ if (project.hasProperty("build_release")) {
 } else {
     project.ext.buildSettings = readSettingsFromYaml() as LinkedHashMap
 }
+
 // Read Python arch from commandline parameter if used:
 if (project.hasProperty("build_arch")) {
     project.ext.pythonArch = project.getProperty("build_arch")

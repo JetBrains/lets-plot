@@ -119,12 +119,16 @@ if system == "Linux":
     # Python linux packages will be built inside Docker 'manylinux' containers (PEP 599).
     # Docker containers will be run by the external shell script, depending on target arch.
     python_package_build_command = ["./tools/run_manylinux_docker.sh"]
+
     # So the only one Python host installation, defined in the settings file, is needed:
     python_paths = list(python_settings.values())[0]
+
     # And Python package build by Gradle is disabled due the same reason.
     enable_python_package = "false"
+
     # Enable Python Extension. Native artifacts from here are used for Python packages.
     build_python_extension = "true"
+
     # Collect all predefined parameters:
     build_parameters = [
         "-Pbuild_release=true",
@@ -133,12 +137,15 @@ if system == "Linux":
         f"-Penable_python_package={enable_python_package}",
         f"-Pbuild_python_extension={build_python_extension}"
     ]
+
     # Run Python 'manylinux' packages build for x64 arch:
     build_python_packages(python_package_build_command, "x86_64")
+
     # Clean Python Extension artifacts before next Python packages build.
     # Clean is required due to the fact that only one Native target can be built at once.
     print_message("Clean Python extension artifacts before next build...")
     run_command(python_extension_clean_command)
+
     # Run Python 'manylinux' packages build for arm64 arch:
     build_python_packages(python_package_build_command, "arm64")
 elif system == "Darwin" or system == "Windows":
@@ -147,8 +154,10 @@ elif system == "Darwin" or system == "Windows":
     # Enable Python Extension and packages build by Gradle:
     enable_python_package = "true"
     build_python_extension = "true"
+
     # Define Gradle command for Python packages build:
     python_package_build_command = [gradle_script_name, "python-package-build:build"]
+
     # Run Python packages build for all Python host installations, defined in the settings file:
     for python_paths in python_settings.values():
         # Collect all predefined parameters:
@@ -159,8 +168,10 @@ elif system == "Darwin" or system == "Windows":
             f"-Penable_python_package={enable_python_package}",
             f"-Pbuild_python_extension={build_python_extension}"
         ]
+
         # Run Python package build:
         build_python_packages(python_package_build_command + build_parameters)
+
         # And clean Python Extension artifacts before the next iteration:
         run_command(python_extension_clean_command)
 
