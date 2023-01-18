@@ -64,7 +64,7 @@ if this_system == 'Darwin':
 elif this_system == 'Windows':
     stdcpp_lib = 'stdc++'
     # fix python package build with Kotlin v1.7.20 (and later) on Windows.
-    extra_link = ['-lbcrypt']
+    extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread']
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
     distutils.cygwinccompiler.get_msvcr = lambda: []   
