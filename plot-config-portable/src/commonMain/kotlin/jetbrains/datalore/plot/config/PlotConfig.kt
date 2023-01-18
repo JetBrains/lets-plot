@@ -38,7 +38,7 @@ abstract class PlotConfig(
 
     protected val scaleConfigs: List<ScaleConfig<*>>
     protected val mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>
-    protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>
+    protected val scaleProviderByAes: Map<Aes<*>, ScaleProvider>
     protected val transformByAes: Map<Aes<*>, Transform>
 
     protected var sharedData: DataFrame

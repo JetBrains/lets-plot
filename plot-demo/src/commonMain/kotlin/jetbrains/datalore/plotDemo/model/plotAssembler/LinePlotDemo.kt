@@ -119,7 +119,7 @@ open class LinePlotDemo : SimpleDemoBase() {
             .put(varC, c)
             .build()
 
-        val colorScale = Scales.DemoAndTest.pureDiscrete<Double>(
+        val colorScale = Scales.DemoAndTest.pureDiscrete(
             "C",
             listOf("F", "M"),
 //                    listOf(Color.RED, Color.BLUE),

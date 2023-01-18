@@ -15,7 +15,7 @@ import kotlin.math.min
 
 object ScaleUtil {
 
-    fun labelByBreak(scale: Scale<*>): Map<Any, String> {
+    fun labelByBreak(scale: Scale): Map<Any, String> {
         val scaleBreaks = scale.getScaleBreaks()
         return scaleBreaks.domainValues.zip(scaleBreaks.labels).toMap()
     }

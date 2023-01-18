@@ -20,7 +20,7 @@ internal object PlotConfigScales {
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
         mappersByAes: Map<Aes<*>, ScaleMapper<*>>,
-        scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
+        scaleProviderByAes: Map<Aes<*>, ScaleProvider>,
     ): TypedScaleMap {
 
         val setup = PlotConfigUtil.createPlotAesBindingSetup(
@@ -36,7 +36,7 @@ internal object PlotConfigScales {
         val variablesByMappedAes = setup.variablesByMappedAes
 
         // Create scales for all aes.
-        val scaleByAes = HashMap<Aes<*>, Scale<*>>()
+        val scaleByAes = HashMap<Aes<*>, Scale>()
         for (aes in aesSet) {
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
             val scaleProvider = scaleProviderByAes.getValue(aes)

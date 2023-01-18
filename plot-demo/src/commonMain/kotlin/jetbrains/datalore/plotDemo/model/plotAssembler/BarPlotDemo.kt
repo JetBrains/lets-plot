@@ -176,7 +176,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             return values
         }
 
-        private fun colorScale(name: String, domain: List<Any>/*, colors: List<Color>*/): Scale<Color> {
+        private fun colorScale(name: String, domain: List<Any>/*, colors: List<Color>*/): Scale {
             return Scales.DemoAndTest.pureDiscrete(name, domain/*, colors, Color.GRAY*/)
         }
     }

@@ -71,7 +71,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .put(varOrigTarget, Iris.target.data)
             .build()
 
-        val colorScale = Scales.DemoAndTest.pureDiscrete<Double>(
+        val colorScale = Scales.DemoAndTest.pureDiscrete(
             Iris.target.name,
             Iris.targetSet,
 //                    listOf(Color.RED, Color.GREEN, Color.BLUE),
@@ -225,7 +225,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .put(varOrigCut, Diamonds.cut.data)
             .build()
 
-        val colorScale = Scales.DemoAndTest.pureDiscrete<Double>(
+        val colorScale = Scales.DemoAndTest.pureDiscrete(
             Diamonds.cut.name,
             Diamonds.cutSet,
 //                    listOf(Color.RED, Color.GREEN, Color.BLUE, Color.YELLOW, Color.ORANGE),

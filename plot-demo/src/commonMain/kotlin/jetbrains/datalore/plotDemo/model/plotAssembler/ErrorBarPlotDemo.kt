@@ -84,7 +84,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                 .put(varCI, listOf(3.190283, 2.797727, 1.899314, 1.964824, 1.799343, 3.43209))
                 .build()
 
-            val colorScale = Scales.DemoAndTest.pureDiscrete<Color>(
+            val colorScale = Scales.DemoAndTest.pureDiscrete(
                 "Supplement",
                 domainValues = data[varSupp].filterNotNull(),
 //                outputValues = listOf(Color.ORANGE, Color.DARK_GREEN),

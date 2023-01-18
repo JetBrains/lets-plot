@@ -49,14 +49,15 @@ object ResponseJsonParser {
             ResponseStatus.SUCCESS -> success(responseJson)
             ResponseStatus.AMBIGUOUS -> ambiguous(responseJson)
             ResponseStatus.ERROR -> error(responseJson)
-            else -> throw IllegalStateException("Unknown response status: $status")
+//            else -> throw IllegalStateException("Unknown response status: $status")
         }
     }
 
     private fun success(responseJson: FluentObject): GeoResponse {
         val successResponse = GeoResponseBuilder.SuccessResponseBuilder()
         responseJson
-            .getObject(DATA) { data -> data
+            .getObject(DATA) { data ->
+                data
                     .getOptionalEnum(LEVEL, successResponse::setLevel, FeatureLevel.values())
                     .forObjects(ANSWERS) { answerJson ->
                         val answer = GeoResponseBuilder.GeocodingAnswerBuilder()
@@ -72,13 +73,15 @@ object ResponseJsonParser {
                                     .getExistingObject(CENTROID) { feature.setCentroid(parseCentroid(it)) }
                                     .getExistingObject(LIMIT) { feature.setLimit(parseGeoRectangle(it)) }
                                     .getExistingObject(POSITION) { feature.setPosition(parseGeoRectangle(it)) }
-                                    .getExistingObject(FRAGMENTS) { fragments -> fragments
-                                        .forArrEntries() { quadKey, boundary -> feature
-                                            .addFragment(Fragment(
-                                                QuadKey(quadKey),
-                                                boundary.map { readBoundary(it!! as String) }
-                                            ))
-                                        }
+                                    .getExistingObject(FRAGMENTS) { fragments ->
+                                        fragments
+                                            .forArrEntries() { quadKey, boundary ->
+                                                feature
+                                                    .addFragment(Fragment(
+                                                        QuadKey(quadKey),
+                                                        boundary.map { readBoundary(it!! as String) }
+                                                    ))
+                                            }
                                     }
                                 answer.addGeocodedFeature(feature.build())
                             }
@@ -91,26 +94,28 @@ object ResponseJsonParser {
     private fun ambiguous(responseJson: FluentObject): GeoResponse {
         val ambiguousResponse = GeoResponseBuilder.AmbiguousResponseBuilder()
         responseJson
-            .getObject(DATA) { data -> data
-                .getOptionalEnum(LEVEL, { ambiguousResponse.setLevel(it) }, FeatureLevel.values())
-                .forObjects(FEATURES) { featureJson ->
-                    val feature = GeoResponseBuilder.AmbiguousFeatureBuilder()
-                    featureJson
-                        .getString(QUERY) { feature.setQuery(it) }
-                        .getInt(NAMESAKE_COUNT) { feature.setTotalNamesakeCount(it) }
-                        .forObjects(NAMESAKE_EXAMPLES) { namesakeJson ->
-                            val namesake = GeoResponseBuilder.NamesakeBuilder()
-                            namesakeJson
-                                .getString(NAMESAKE_NAME, namesake::setName)
-                                .forObjects(NAMESAKE_PARENTS) { parentJson -> parentJson
-                                    .getString(NAMESAKE_NAME, namesake::addParentName)
-                                    .getEnum(LEVEL, namesake::addParentLevel, FeatureLevel.values())
-                                }
+            .getObject(DATA) { data ->
+                data
+                    .getOptionalEnum(LEVEL, { ambiguousResponse.setLevel(it) }, FeatureLevel.values())
+                    .forObjects(FEATURES) { featureJson ->
+                        val feature = GeoResponseBuilder.AmbiguousFeatureBuilder()
+                        featureJson
+                            .getString(QUERY) { feature.setQuery(it) }
+                            .getInt(NAMESAKE_COUNT) { feature.setTotalNamesakeCount(it) }
+                            .forObjects(NAMESAKE_EXAMPLES) { namesakeJson ->
+                                val namesake = GeoResponseBuilder.NamesakeBuilder()
+                                namesakeJson
+                                    .getString(NAMESAKE_NAME, namesake::setName)
+                                    .forObjects(NAMESAKE_PARENTS) { parentJson ->
+                                        parentJson
+                                            .getString(NAMESAKE_NAME, namesake::addParentName)
+                                            .getEnum(LEVEL, namesake::addParentLevel, FeatureLevel.values())
+                                    }
 
-                            feature.addNamesakeExample(namesake.build())
-                        }
-                    ambiguousResponse.addAmbiguousFeature(feature.build())
-                }
+                                feature.addNamesakeExample(namesake.build())
+                            }
+                        ambiguousResponse.addAmbiguousFeature(feature.build())
+                    }
             }
         return ambiguousResponse.build()
     }

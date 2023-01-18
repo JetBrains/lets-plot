@@ -13,7 +13,7 @@ abstract class AxisBreaksProviderFactory {
     abstract fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider
 
     companion object {
-        fun forScale(scale: Scale<Double>): AxisBreaksProviderFactory {
+        fun forScale(scale: Scale): AxisBreaksProviderFactory {
             return if (scale.hasBreaks()) {
                 FixedBreaksProviderFactory(FixedAxisBreaksProvider(scale.getScaleBreaks()))
             } else {

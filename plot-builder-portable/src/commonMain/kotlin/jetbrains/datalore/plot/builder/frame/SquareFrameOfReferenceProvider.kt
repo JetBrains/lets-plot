@@ -25,8 +25,8 @@ import jetbrains.datalore.plot.builder.theme.Theme
 import kotlin.math.max
 
 internal class SquareFrameOfReferenceProvider(
-    private val hScaleProto: Scale<Double>,
-    private val vScaleProto: Scale<Double>,
+    private val hScaleProto: Scale,
+    private val vScaleProto: Scale,
     private val adjustedDomain: DoubleRectangle,
     override val flipAxis: Boolean,
     private val hAxisPosition: AxisPosition,

@@ -15,9 +15,9 @@ internal object PlotConfigScaleProviders {
         layerConfigs: List<LayerConfig>,
         scaleConfigs: List<ScaleConfig<Any>>,
         excludeStatVariables: Boolean
-    ): Map<Aes<*>, ScaleProvider<*>> {
+    ): Map<Aes<*>, ScaleProvider> {
 
-        val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
+        val scaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
 
         // Create 'configured' scale providers.
         for (scaleConfig in scaleConfigs) {

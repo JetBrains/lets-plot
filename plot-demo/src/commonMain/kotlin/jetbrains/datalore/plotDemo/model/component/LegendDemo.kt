@@ -63,7 +63,7 @@ open class LegendDemo : SimpleDemoBase() {
         val domain = DoubleSpan(0.0, 4.0)
 
         val mapper = jetbrains.datalore.plot.base.ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
-        val scale = Scales.continuousDomain<Color>("color", /*mapper,*/ true)
+        val scale = Scales.continuousDomain("color", /*mapper,*/ true)
             .with()
 //            .lowerLimit(domain.lowerEnd)
 //            .upperLimit(domain.upperEnd)

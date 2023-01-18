@@ -150,8 +150,8 @@ object PlotConfigClientSideUtil {
     private fun createScalesForStatPositionalBindings(
         layerVarBindings: List<VarBinding>,
         isYOrientation: Boolean,
-        commonScaleMap: Map<Aes<*>, Scale<*>>,
-    ): Map<Aes<*>, Scale<*>> {
+        commonScaleMap: Map<Aes<*>, Scale>,
+    ): Map<Aes<*>, Scale> {
         val statPositionalBindings =
             layerVarBindings.filter { it.variable.isStat }
                 .filterNot { it.aes == Aes.X || it.aes == Aes.Y }

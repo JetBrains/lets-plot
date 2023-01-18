@@ -29,8 +29,8 @@ internal object PositionalScalesUtil {
      */
     fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
-        xScaleProto: Scale<*>,
-        yScaleProto: Scale<*>,
+        xScaleProto: Scale,
+        yScaleProto: Scale,
         facets: PlotFacets
     ): List<Pair<DoubleSpan, DoubleSpan>> {
         var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(xScaleProto.transform)
@@ -72,7 +72,7 @@ internal object PositionalScalesUtil {
 
     private fun finalizeDomains(
         aes: Aes<Double>,
-        scaleProto: Scale<*>,
+        scaleProto: Scale,
         domains: List<DoubleSpan?>,
         layersByTile: List<List<GeomLayer>>,
         freeScale: Boolean
@@ -352,7 +352,7 @@ internal object PositionalScalesUtil {
         internal fun expandRange(
             range: DoubleSpan?,
             aes: Aes<Double>,
-            scale: Scale<*>,
+            scale: Scale,
             layers: List<GeomLayer>
         ): DoubleSpan? {
             val includeZero = layers.any { it.rangeIncludesZero(aes) }

@@ -38,8 +38,8 @@ class PlotAssembler private constructor(
     private val theme: Theme
 ) {
 
-    private val scaleXProto: Scale<Double> = scaleMap.get(Aes.X)
-    private val scaleYProto: Scale<Double> = scaleMap.get(Aes.Y)
+    private val scaleXProto: Scale = scaleMap.get(Aes.X)
+    private val scaleYProto: Scale = scaleMap.get(Aes.Y)
 
     val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
         layers.filterNot { it.isMarginal }

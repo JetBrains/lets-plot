@@ -50,8 +50,8 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         val mapperX = Mappers.linear(domainX, rangeX)
         val mapperY = Mappers.linear(domainY, rangeY)
-        var scaleX = Scales.continuousDomain<Double>("X", /*mapperX,*/ true)
-        var scaleY = Scales.continuousDomain<Double>("Y", /*mapperY,*/ true)
+        var scaleX = Scales.continuousDomain("X", /*mapperX,*/ true)
+        var scaleY = Scales.continuousDomain("Y", /*mapperY,*/ true)
 
         scaleX = ScaleBreaksUtil.withBreaks(scaleX, domainX, 10)
         scaleY = ScaleBreaksUtil.withBreaks(scaleY, domainY, 10)
@@ -123,7 +123,7 @@ open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         private fun createAxis(
             axisLength: Double,
-            scale: Scale<Double>,
+            scale: Scale,
             scaleMapper: ScaleMapper<Double>,
             coord: CoordinateSystem,
             orientation: Orientation

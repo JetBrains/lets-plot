@@ -10,7 +10,7 @@ object GeomLayerListUtil {
 //    fun anyBoundXScale(
 //        scaleMap: TypedScaleMap,
 //        layersByTile: List<List<GeomLayer>>
-//    ): Scale<Double>? {
+//    ): Scale? {
 //        for (layer in layersByTile[0]) {
 //            if (layer.hasBinding(Aes.X)) {
 //                return scaleMap[Aes.X]
@@ -22,7 +22,7 @@ object GeomLayerListUtil {
 //    fun anyBoundYScale(
 //        scaleByAes: TypedScaleMap,
 //        layersByTile: List<List<GeomLayer>>
-//    ): Scale<Double>? {
+//    ): Scale? {
 //        for (layer in layersByTile[0]) {
 //            if (layer.hasBinding(Aes.Y)) {
 //                return scaleByAes[Aes.Y]

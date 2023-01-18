@@ -23,7 +23,7 @@ class DiscreteScaleBreaksTest(
 
     @Test
     fun checkBreaksAndLabels() {
-        var scale = Scales.DemoAndTest.discreteDomain<Any>(
+        var scale = Scales.DemoAndTest.discreteDomain(
             "Discr. scale",
             domainValues,
             domainLimits = limits ?: emptyList()

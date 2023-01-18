@@ -10,10 +10,10 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 
 // TopDo: Remove as the scale is no longer need to have generic type.
-class TypedScaleMap constructor(val map: Map<Aes<*>, Scale<*>>) {
-    operator fun <T> get(aes: Aes<T>): Scale<T> {
+class TypedScaleMap constructor(val map: Map<Aes<*>, Scale>) {
+    operator fun <T> get(aes: Aes<T>): Scale {
         @Suppress("UNCHECKED_CAST")
-        return (map[aes] as? Scale<T>) ?: run {
+        return (map[aes] as? Scale) ?: run {
             val message = "No scale found for aes: $aes"
             LOG.error(IllegalStateException(message)) { message }
             error(message)

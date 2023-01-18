@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.Transform
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
-internal class BogusScale : Scale<Double> {
+internal class BogusScale : Scale {
     override val name: String
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
@@ -44,7 +44,7 @@ internal class BogusScale : Scale<Double> {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 
-    override fun with(): Scale.Builder<Double> {
+    override fun with(): Scale.Builder {
         throw IllegalStateException("Bogus scale is not supposed to be used.")
     }
 }

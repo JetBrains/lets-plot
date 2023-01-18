@@ -29,7 +29,7 @@ import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,
-    private val xScale: Scale<*>
+    private val xScale: Scale
 ) {
 
     fun createPlotContainer(plotSize: DoubleVector): PlotContainer {
@@ -44,7 +44,7 @@ class BarPlotResizeDemo private constructor(
 
         val categories = ArrayList(data.distinctValues(varCat))
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
-        val fillScale = Scales.DemoAndTest.pureDiscrete<Color>("C", categories/*, colors, Color.GRAY*/)
+        val fillScale = Scales.DemoAndTest.pureDiscrete("C", categories/*, colors, Color.GRAY*/)
         val fillMapper = Mappers.discrete(
             fillScale.transform as DiscreteTransform,
             colors, Color.GRAY
@@ -128,7 +128,7 @@ class BarPlotResizeDemo private constructor(
             val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
             return BarPlotResizeDemo(
                 sclData,
-                Scales.DemoAndTest.discreteDomain<String>("", sclData.distinctXValues().toList())
+                Scales.DemoAndTest.discreteDomain("", sclData.distinctXValues().toList())
             )
         }
     }

@@ -392,7 +392,7 @@ class ScaleConfigLabelsTest {
         ) = buildGeomLayer(geom, data, mapping, scales = scales).scaleMap
 
         internal fun getScaleLabels(
-            scale: Scale<Double>,
+            scale: Scale,
             targetCount: Int = 5,
             closeRange: DoubleSpan = DoubleSpan(-0.5, 0.5),
         ): List<String> {

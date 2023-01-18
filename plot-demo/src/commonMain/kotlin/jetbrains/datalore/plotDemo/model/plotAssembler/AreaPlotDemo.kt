@@ -39,7 +39,7 @@ open class AreaPlotDemo : SimpleDemoBase() {
             .put(varTarget, targetColumn.data.toList())
             .build()
 
-        var scaleColor = Scales.DemoAndTest.pureDiscrete<Color>(
+        var scaleColor = Scales.DemoAndTest.pureDiscrete(
             "Y",
             listOf("Iris-setosa", "Iris-versicolor", "Iris-virginica"),
 //            listOf(Color.RED, Color.GREEN, Color.BLUE),

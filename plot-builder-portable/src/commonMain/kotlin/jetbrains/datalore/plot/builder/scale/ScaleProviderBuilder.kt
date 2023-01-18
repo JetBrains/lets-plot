@@ -120,11 +120,11 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun build(): ScaleProvider<T> {
+    fun build(): ScaleProvider {
         return MyScaleProvider(this)
     }
 
-    private class MyScaleProvider<T>(b: ScaleProviderBuilder<T>) : ScaleProvider<T> {
+    private class MyScaleProvider<T>(b: ScaleProviderBuilder<T>) : ScaleProvider {
 
         private val myName: String? = b.myName
 
@@ -164,8 +164,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         /**
          * Discrete domain.
          */
-        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale<T> {
-            var scale: Scale<T> = Scales.discreteDomain(
+        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale {
+            var scale: Scale = Scales.discreteDomain(
                 myName ?: defaultName,
                 discreteTransform,
             )
@@ -178,9 +178,9 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             continuousTransform: ContinuousTransform,
             continuousRange: Boolean,
             guideBreaks: WithGuideBreaks<Any>?
-        ): Scale<T> {
+        ): Scale {
             val name = myName ?: defaultName
-            var scale: Scale<T>
+            var scale: Scale
 
             // continuous (numeric) domain
             scale = Scales.continuousDomain(
@@ -208,7 +208,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             return completeScale(scale)
         }
 
-        private fun completeScale(scale: Scale<T>): Scale<T> {
+        private fun completeScale(scale: Scale): Scale {
             val with = scale.with()
             if (breaks != null) {
                 with.breaks(breaks)

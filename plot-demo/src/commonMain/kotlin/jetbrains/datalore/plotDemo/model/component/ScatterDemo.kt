@@ -476,7 +476,7 @@ open class ScatterDemo : SimpleDemoBase() {
     }
 
     private companion object {
-        fun continuousScale(name: String): Scale<Double> {
+        fun continuousScale(name: String): Scale {
             return Scales.DemoAndTest.continuousDomainNumericRange(name)
         }
 

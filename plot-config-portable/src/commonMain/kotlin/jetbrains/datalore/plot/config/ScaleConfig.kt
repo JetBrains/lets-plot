@@ -188,7 +188,7 @@ class ScaleConfig<T> constructor(
         return mapperProvider as MapperProvider<T>
     }
 
-    fun createScaleProvider(): ScaleProvider<T> {
+    fun createScaleProvider(): ScaleProvider {
         return createScaleProviderBuilder().build()
     }
 

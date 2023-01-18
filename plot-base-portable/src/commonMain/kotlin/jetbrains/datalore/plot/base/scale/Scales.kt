@@ -11,17 +11,17 @@ import jetbrains.datalore.plot.base.Scale
 
 object Scales {
 
-    fun <T> continuousDomain(
+    fun continuousDomain(
         name: String,
         continuousRange: Boolean
-    ): Scale<T> {
-        return ContinuousScale<T>(name, continuousRange)
+    ): Scale {
+        return ContinuousScale(name, continuousRange)
     }
 
-    fun <T> discreteDomain(
+    fun discreteDomain(
         name: String,
         discreteTransform: DiscreteTransform,
-    ): Scale<T> {
+    ): Scale {
         return DiscreteScale(name, discreteTransform)
     }
 
@@ -29,34 +29,34 @@ object Scales {
      * Functions to be used in demos and tests only.
      */
     object DemoAndTest {
-        fun <T> discreteDomain(
+        fun discreteDomain(
             name: String,
             domainValues: List<Any>,
             domainLimits: List<Any> = emptyList(),
-        ): Scale<T> {
+        ): Scale {
             return DiscreteScale(
                 name,
                 DiscreteTransform(domainValues, domainLimits),
             )
         }
 
-        fun <T> pureDiscrete(
+        fun pureDiscrete(
             name: String,
             domainValues: List<Any>,
-        ): Scale<T> {
+        ): Scale {
             val transform = DiscreteTransform(domainValues, emptyList())
             return DiscreteScale(name, transform)
         }
 
-        fun <T> continuousDomain(name: String, aes: Aes<T>): Scale<T> {
-            return ContinuousScale<T>(
+        fun continuousDomain(name: String, aes: Aes<*>): Scale {
+            return ContinuousScale(
                 name,
                 aes.isNumeric
             )
         }
 
-        fun continuousDomainNumericRange(name: String): Scale<Double> {
-            return ContinuousScale<Double>(
+        fun continuousDomainNumericRange(name: String): Scale {
+            return ContinuousScale(
                 name,
                 true
             )
