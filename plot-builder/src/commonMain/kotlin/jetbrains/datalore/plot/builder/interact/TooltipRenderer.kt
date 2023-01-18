@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.BORD
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.TooltipsTheme
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
@@ -48,6 +49,8 @@ internal class TooltipRenderer constructor(
     private val tooltipsTheme: TooltipsTheme,
     private val plotBackground: Color,
     private val plotContext: PlotContext,
+    xAxisPosition: AxisPosition,
+    yAxisPosition: AxisPosition,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -59,7 +62,12 @@ internal class TooltipRenderer constructor(
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
-        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
+        myLayoutManager = LayoutManager(
+            viewport,
+            HorizontalAlignment.LEFT,
+            xAxisPosition,
+            yAxisPosition
+        )
 
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
         crosshairStorage = RetainableComponents(

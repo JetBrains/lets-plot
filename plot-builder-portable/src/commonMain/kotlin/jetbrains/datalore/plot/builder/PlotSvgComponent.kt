@@ -36,6 +36,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgElement
@@ -58,7 +59,9 @@ class PlotSvgComponent constructor(
     val interactionsEnabled: Boolean,
     val theme: Theme,
     val styleSheet: StyleSheet,
-    val plotContext: PlotContext
+    val plotContext: PlotContext,
+    val hAxisPosition: AxisPosition,
+    val vAxisPosition: AxisPosition
 ) : SvgComponent() {
 
     val flippedAxis = frameProviderByTile[0].flipAxis
@@ -295,12 +298,17 @@ class PlotSvgComponent constructor(
 
             val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
             val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
+
+            // axis tooltip should appear on 'outer' bounds:
+            val axisOrigin = DoubleVector(
+                x = if (vAxisPosition.isLeft) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
+                y = if (hAxisPosition.isBottom) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
+            )
             interactor?.onTileAdded(
                 geomInnerBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
-                // axis tooltip should appear on 'outer' bounds:
-                axisOrigin = DoubleVector(geomOuterBoundsAbsolute.left, geomOuterBoundsAbsolute.bottom)
+                axisOrigin
             )
 
             if (DEBUG_DRAWING) {
