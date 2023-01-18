@@ -58,13 +58,21 @@ class LayoutManager(
                     desiredPosition.add(positionedTooltip)
 
                     // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
-                    if (myXAxisPosition.isBottom) {
-                        myVerticalSpace = DoubleSpan(
+                    myVerticalSpace = if (myXAxisPosition.isBottom) {
+                         DoubleSpan(
                             myViewport.top,
                             min(
                                 positionedTooltip.stemCoord.y,
                                 positionedTooltip.top
                             )
+                        )
+                    } else {
+                        DoubleSpan(
+                            min(
+                                positionedTooltip.stemCoord.y,
+                                positionedTooltip.bottom
+                            ),
+                            myViewport.bottom
                         )
                     }
                     myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
