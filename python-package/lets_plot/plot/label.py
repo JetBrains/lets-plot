@@ -110,7 +110,7 @@ def ylab(label):
     return labs(y=label)
 
 
-def labs(title=None, subtitle=None, caption=None, **aes_labels):
+def labs(title=None, subtitle=None, caption=None, **labels):
     """
     Change plot title and scale label.
 
@@ -122,8 +122,8 @@ def labs(title=None, subtitle=None, caption=None, **aes_labels):
         The text for the plot subtitle.
     caption : str
         The text for the plot caption.
-    aes_labels
-        Arguments to specify axis and legend labels.
+    labels
+        Arguments to specify labels.
         The argument name corresponds to the aesthetic name.
         The value of each argument sets the label for the aesthetic, e.g. `color='New Color label'`.
 
@@ -157,8 +157,8 @@ def labs(title=None, subtitle=None, caption=None, **aes_labels):
         specs.append(FeatureSpec('caption', name=None, text=caption))
 
     # scales
-    for k, v in aes_labels.items():
-        specs.append(_scale(aesthetic=k, name=v))
+    for aes, label in labels.items():
+        specs.append(_scale(aesthetic=aes, name=label))
 
     if len(specs) == 1:
         return specs[0]
