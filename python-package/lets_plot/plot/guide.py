@@ -117,7 +117,7 @@ def guides(**scale_guides):
     Returns
     -------
     `FeatureSpec`
-        Guides specifications.
+        Guides specification.
 
     Examples
     --------

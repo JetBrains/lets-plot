@@ -23,7 +23,7 @@ def ggtitle(label, subtitle=None):
     label : str
         The text for the plot title.
     subtitle : str
-        The text for the plot subtitle which will be displayed below the plot title.
+        The text for the plot subtitle.
 
     Returns
     -------
@@ -112,16 +112,16 @@ def ylab(label):
 
 def labs(title=None, subtitle=None, caption=None, **aes_labels):
     """
-    Change plot title, subtitle, caption, axis labels and legend titles.
+    Change plot title and scale label.
 
     Parameters
     ----------
     title : str
         The text for the plot title.
     subtitle : str
-        The text for the plot subtitle which will be displayed below the plot title.
+        The text for the plot subtitle.
     caption : str
-        The text for the plot caption which will be displayed in the bottom-right of the plot by default.
+        The text for the plot caption.
     aes_labels
         Arguments to specify axis and legend labels.
         The argument name corresponds to the aesthetic name.
@@ -130,7 +130,7 @@ def labs(title=None, subtitle=None, caption=None, **aes_labels):
     Returns
     -------
     `FeatureSpec` or `FeatureSpecArray`
-        Axis labels, legend and plot titles specifications.
+        Labels specification.
 
     Examples
     --------
