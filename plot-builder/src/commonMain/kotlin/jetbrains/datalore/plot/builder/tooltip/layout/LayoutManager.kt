@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
@@ -20,7 +21,9 @@ import kotlin.math.min
 
 class LayoutManager(
     private val myViewport: DoubleRectangle,
-    private val myPreferredHorizontalAlignment: HorizontalAlignment
+    private val myPreferredHorizontalAlignment: HorizontalAlignment,
+    private val myXAxisPosition: AxisPosition,
+    private val myYAxisPosition: AxisPosition
 ) {
     private val myHorizontalSpace: DoubleSpan = DoubleSpan(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleSpan = DoubleSpan(0.0, 0.0)
@@ -46,18 +49,24 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
             ?.let { xAxisTooltip ->
-                val positionedTooltip = calculateVerticalTooltipPosition(xAxisTooltip, BOTTOM, ignoreCursor = true)
+                val positionedTooltip = calculateVerticalTooltipPosition(
+                    xAxisTooltip,
+                    preferredAlignment = if (myXAxisPosition.isBottom) BOTTOM else TOP,
+                    ignoreCursor = true
+                )
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
                     desiredPosition.add(positionedTooltip)
 
                     // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
-                    myVerticalSpace = DoubleSpan(
-                        myViewport.top,
-                        min(
-                            positionedTooltip.stemCoord.y,
-                            positionedTooltip.top
+                    if (myXAxisPosition.isBottom) {
+                        myVerticalSpace = DoubleSpan(
+                            myViewport.top,
+                            min(
+                                positionedTooltip.stemCoord.y,
+                                positionedTooltip.top
+                            )
                         )
-                    )
+                    }
                     myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
                 }
             }
@@ -66,7 +75,8 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let {
-                val positionedTooltip = calculateHorizontalTooltipPosition(it)
+                val preferredAlignment = if (myYAxisPosition.isLeft) HorizontalAlignment.LEFT else HorizontalAlignment.RIGHT
+                val positionedTooltip = calculateHorizontalTooltipPosition(it, preferredAlignment)
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
                     desiredPosition.add(positionedTooltip)
                 }
@@ -119,14 +129,15 @@ class LayoutManager(
                 VERTICAL_TOOLTIP -> placementList.add(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
-                        TOP,
-                        false
+                        preferredAlignment = TOP,
+                        ignoreCursor = false
                     )
                 )
 
                 HORIZONTAL_TOOLTIP -> placementList.add(
                     calculateHorizontalTooltipPosition(
                         measuredTooltip,
+                        myPreferredHorizontalAlignment,
                         restrictions
                     )
                 )
@@ -141,7 +152,7 @@ class LayoutManager(
                 ROTATED_TOOLTIP -> placementList.add(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
-                        BOTTOM,
+                        preferredAlignment = BOTTOM,
                         ignoreCursor = true,
                         centered = false
                     )
@@ -297,14 +308,15 @@ class LayoutManager(
 
     private fun calculateVerticalTooltipPosition(
         measuredTooltip: MeasuredTooltip,
-        alignment: VerticalAlignment,
+        preferredAlignment: VerticalAlignment,
         ignoreCursor: Boolean,
         centered: Boolean = true
     ): PositionedTooltip {
-        val tooltipX = if (centered)
+        val tooltipX = if (centered) {
             centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
-        else
+        } else {
             measuredTooltip.hintCoord.x
+        }
 
         val stemY: Double
         val tooltipY: Double
@@ -316,30 +328,41 @@ class LayoutManager(
 
             val tooltipHeight = measuredTooltip.size.y
             val topTooltipRange = leftAligned(targetTopPoint, tooltipHeight, stemLength)
+            val bottomTooltipRange = rightAligned(targetBottomPoint, tooltipHeight, stemLength)
 
-            val bottomTooltipRange =
-                rightAligned(targetBottomPoint, tooltipHeight, stemLength).let { bottomTooltipRange ->
-                    // bottom range of the axis tooltip is out of the vertical space => move it to the border
-                    if (measuredTooltip.hintKind == X_AXIS_TOOLTIP && bottomTooltipRange !in myVerticalSpace) {
-                        leftAligned(myVerticalSpace.upperEnd, tooltipHeight, stemLength)
-                    } else {
-                        bottomTooltipRange
-                    }
-                }
-
-            val cursorVerticalRange = if (!ignoreCursor && overlapsCursorHorizontalRange(measuredTooltip, tooltipX))
+            val cursorVerticalRange = if (!ignoreCursor && overlapsCursorHorizontalRange(measuredTooltip, tooltipX)) {
                 DoubleSpan.withLowerEnd(myCursorCoord.y, CURSOR_DIMENSION.y)
-            else
-                EMPTY_DOUBLE_RANGE
-
-            if (targetTopPoint in myVerticalTooltipSpace &&
-                myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, alignment, cursorVerticalRange) === TOP
-            ) {
-                tooltipY = topTooltipRange.lowerEnd
-                stemY = targetTopPoint
             } else {
-                tooltipY = bottomTooltipRange.lowerEnd
-                stemY = targetBottomPoint
+                EMPTY_DOUBLE_RANGE
+            }
+
+            when {
+                measuredTooltip.hintKind == X_AXIS_TOOLTIP && preferredAlignment == TOP -> {
+                    tooltipY = if (topTooltipRange in myVerticalSpace) {
+                        topTooltipRange.lowerEnd
+                    } else {
+                        myVerticalSpace.lowerEnd // move to the plot border
+                    }
+                    stemY = targetTopPoint
+                }
+                measuredTooltip.hintKind == X_AXIS_TOOLTIP && preferredAlignment == BOTTOM -> {
+                    // bottom range of the axis tooltip is out of the vertical space => move it to the border
+                    tooltipY = if (bottomTooltipRange in myVerticalSpace) {
+                        bottomTooltipRange.lowerEnd
+                    } else {
+                        myVerticalSpace.upperEnd - tooltipHeight // move to the plot border
+                    }
+                    stemY = targetBottomPoint
+                }
+                targetTopPoint in myVerticalTooltipSpace &&
+                        myVerticalAlignmentResolver.resolve(topTooltipRange, bottomTooltipRange, preferredAlignment, cursorVerticalRange) === TOP -> {
+                    tooltipY = topTooltipRange.lowerEnd
+                    stemY = targetTopPoint
+                }
+                else -> {
+                    tooltipY = bottomTooltipRange.lowerEnd
+                    stemY = targetBottomPoint
+                }
             }
         }
 
@@ -352,6 +375,7 @@ class LayoutManager(
 
     private fun calculateHorizontalTooltipPosition(
         measuredTooltip: MeasuredTooltip,
+        preferredAlignment: HorizontalAlignment,
         restrictions: List<DoubleRectangle> = emptyList()
     ): PositionedTooltip {
         val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
@@ -384,14 +408,19 @@ class LayoutManager(
             val canFitRight = rightTooltipPlacement in myHorizontalSpace
 
             when {
-                measuredTooltip.hintKind == Y_AXIS_TOOLTIP && !canFitLeft -> {
+                measuredTooltip.hintKind == Y_AXIS_TOOLTIP && preferredAlignment == HorizontalAlignment.LEFT && !canFitLeft -> {
                     // move axis tooltip to the border if it doesn't fit
-                    tooltipX = 0.0
+                    tooltipX = myHorizontalSpace.lowerEnd
+                    stemX = targetLeftPoint
+                }
+                measuredTooltip.hintKind == Y_AXIS_TOOLTIP && preferredAlignment == HorizontalAlignment.RIGHT && !canFitRight -> {
+                    // move axis tooltip to the border if it doesn't fit
+                    tooltipX = myHorizontalSpace.upperEnd - tooltipWidth
                     stemX = targetLeftPoint
                 }
 
                 !(canFitLeft || canFitRight) -> {
-                    when (myPreferredHorizontalAlignment) {
+                    when (preferredAlignment) {
                         HorizontalAlignment.LEFT -> {
                             stemX = targetLeftPoint
                             tooltipX = stemX + stemLength
@@ -407,7 +436,7 @@ class LayoutManager(
                     }
                 }
 
-                myPreferredHorizontalAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight -> {
+                preferredAlignment == HorizontalAlignment.LEFT && canFitLeft || !canFitRight -> {
                     tooltipX = leftTooltipPlacement.lowerEnd
                     stemX = targetLeftPoint
                 }

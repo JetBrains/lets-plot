@@ -30,7 +30,9 @@ class PlotContainer(
                 plotSize = plot.plotSize,
                 flippedAxis = plot.flippedAxis,
                 theme = plot.theme,
-                plotContext = plot.plotContext
+                plotContext = plot.plotContext,
+                hAxisPosition = plot.hAxisPosition,
+                vAxisPosition = plot.vAxisPosition
             )
 
             if (FeatureSwitch.PLOT_VIEW_TOOLBOX) {

@@ -18,6 +18,7 @@ import jetbrains.datalore.plot.builder.interact.tool.InteractionContext
 import jetbrains.datalore.plot.builder.interact.tool.InteractionTarget
 import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.svg.SvgNode
 
@@ -27,7 +28,9 @@ internal class Interactor constructor(
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
     theme: Theme,
-    plotContext: PlotContext
+    plotContext: PlotContext,
+    hAxisPosition: AxisPosition,
+    vAxisPosition: AxisPosition
 ) : PlotInteractor {
     val eventsManager: EventsManager = EventsManager()
 
@@ -49,6 +52,8 @@ internal class Interactor constructor(
             theme.tooltips(),
             theme.plot().backgroundFill(),
             plotContext,
+            hAxisPosition,
+            vAxisPosition,
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))
