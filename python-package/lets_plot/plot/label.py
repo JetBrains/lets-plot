@@ -130,7 +130,7 @@ def labs(title=None, subtitle=None, caption=None, **aes_labels):
     Returns
     -------
     `FeatureSpec` or `FeatureSpecArray`
-        Axis label specification.
+        Axis labels, legend and plot titles specifications.
 
     Examples
     --------
