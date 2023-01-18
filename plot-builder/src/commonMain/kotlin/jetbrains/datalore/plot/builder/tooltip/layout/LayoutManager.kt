@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP
+import kotlin.math.max
 import kotlin.math.min
 
 class LayoutManager(
@@ -68,7 +69,7 @@ class LayoutManager(
                         )
                     } else {
                         DoubleSpan(
-                            min(
+                            max(
                                 positionedTooltip.stemCoord.y,
                                 positionedTooltip.bottom
                             ),
