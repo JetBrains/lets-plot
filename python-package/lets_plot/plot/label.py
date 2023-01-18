@@ -123,7 +123,7 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     caption : str
         The text for the plot caption.
     labels
-        Name-value pairs where name should be an aesthetic and value should be a string, e.g. `color='New Color label'`.
+        Name-value pairs where name should be an aesthetic and value should be a string, e.g. `color="New Color label"`.
 
     Returns
     -------
