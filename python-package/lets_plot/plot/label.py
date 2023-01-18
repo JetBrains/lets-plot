@@ -23,7 +23,7 @@ def ggtitle(label, subtitle=None):
     label : str
         The text for the plot title.
     subtitle : str
-        The text for the plot subtitle.
+        The text for the plot subtitle which will be displayed below the plot title.
 
     Returns
     -------
@@ -110,15 +110,20 @@ def ylab(label):
     return labs(y=label)
 
 
-def labs(**kwargs):
+def labs(title=None, subtitle=None, caption=None, **aes_labels):
     """
     Change plot title, plot subtitle, axis labels and legend titles.
 
     Parameters
     ----------
-    kwargs
-        Name-value pairs where name should be an aesthetic and value should be a string,
-        e.g. `title='Plot title'` or `aesthetic='Scale label'`.
+    title : str
+        The text for the plot title.
+    subtitle : str
+        The text for the plot subtitle which will be displayed below the plot title.
+    caption : str
+        The text for the plot caption which will be displayed in the bottom-right of the plot by default.
+    aes_labels : list of name-value pairs
+        The name should be an aesthetic and the value sets the label for it, e.g. `color='New Color label'`.
 
     Returns
     -------
@@ -142,18 +147,15 @@ def labs(**kwargs):
     specs = []
 
     # handle ggtitle
-    title = kwargs.pop('title', None)
-    subtitle = kwargs.pop('subtitle', None)
     if title is not None or subtitle is not None:
         specs.append(FeatureSpec('ggtitle', name=None, text=title, subtitle=subtitle))
 
     # plot caption
-    caption = kwargs.pop('caption', None)
     if caption is not None:
         specs.append(FeatureSpec('caption', name=None, text=caption))
 
     # scales
-    for k, v in kwargs.items():
+    for k, v in aes_labels.items():
         specs.append(_scale(aesthetic=k, name=v))
 
     if len(specs) == 1:
