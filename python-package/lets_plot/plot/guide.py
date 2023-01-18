@@ -107,9 +107,12 @@ def guides(**scale_guides):
 
     Parameters
     ----------
-    scale_guides: list of scale name-guide pairs
-        The guide can either be a string (i.e. "colorbar" or "legend"),
-        or a call to a guide function (i.e. `guide_colorbar()` or `guide_legend()`) specifying additional arguments.
+    scale_guides
+        Arguments to specify scale guides.
+        The argument name corresponds to the scale name.
+        The value of each argument can either be a string (i.e. "colorbar" or "legend"),
+        or a call to a guide function (i.e. `guide_colorbar()` or `guide_legend()`)
+        specifying additional arguments, or "none" to hide the guide.
 
     Returns
     -------

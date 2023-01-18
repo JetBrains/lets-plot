@@ -112,7 +112,7 @@ def ylab(label):
 
 def labs(title=None, subtitle=None, caption=None, **aes_labels):
     """
-    Change plot title, plot subtitle, axis labels and legend titles.
+    Change plot title, subtitle, caption, axis labels and legend titles.
 
     Parameters
     ----------
@@ -122,8 +122,10 @@ def labs(title=None, subtitle=None, caption=None, **aes_labels):
         The text for the plot subtitle which will be displayed below the plot title.
     caption : str
         The text for the plot caption which will be displayed in the bottom-right of the plot by default.
-    aes_labels : list of name-value pairs
-        The name should be an aesthetic and the value sets the label for it, e.g. `color='New Color label'`.
+    aes_labels
+        Arguments to specify axis and legend labels.
+        The argument name corresponds to the aesthetic name.
+        The value of each argument sets the label for the aesthetic, e.g. `color='New Color label'`.
 
     Returns
     -------
