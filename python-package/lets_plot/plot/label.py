@@ -112,7 +112,7 @@ def ylab(label):
 
 def labs(title=None, subtitle=None, caption=None, **labels):
     """
-    Change plot title and scale label.
+    Change plot title and axis label.
 
     Parameters
     ----------
