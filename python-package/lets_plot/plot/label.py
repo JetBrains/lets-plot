@@ -123,9 +123,7 @@ def labs(title=None, subtitle=None, caption=None, **labels):
     caption : str
         The text for the plot caption.
     labels
-        Arguments to specify labels.
-        The argument name corresponds to the aesthetic name.
-        The value of each argument sets the label for the aesthetic, e.g. `color='New Color label'`.
+        Name-value pairs where name should be an aesthetic and value should be a string, e.g. `color='New Color label'`.
 
     Returns
     -------

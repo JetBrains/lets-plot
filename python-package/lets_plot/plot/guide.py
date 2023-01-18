@@ -101,16 +101,15 @@ def _guide(name, **kwargs):
     return FeatureSpec('guide', name=name, **kwargs)
 
 
-def guides(**scale_guides):
+def guides(**kwargs):
     """
     Set guides for each scale.
 
     Parameters
     ----------
-    scale_guides
-        Arguments to specify scale guides.
-        The argument name corresponds to the scale name.
-        The value of each argument can either be a string ('colorbar', 'legend'),
+    kwargs
+        Name-guide pairs where name should be an aesthetic.
+        The guide can either be a string ('colorbar', 'legend'),
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments, or 'none' to hide the guide.
 
@@ -141,4 +140,4 @@ def guides(**scale_guides):
                    color=guide_colorbar(nbin=8, barwidth=20))
 
     """
-    return FeatureSpec('guides', name=None, **scale_guides)
+    return FeatureSpec('guides', name=None, **kwargs)
