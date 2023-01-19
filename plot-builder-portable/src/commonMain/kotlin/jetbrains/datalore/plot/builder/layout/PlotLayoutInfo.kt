@@ -13,4 +13,7 @@ class PlotLayoutInfo(tiles: List<TileLayoutInfo>, val size: DoubleVector) {
 
     val hasTopAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.hAxisTitleOrientation == Orientation.TOP
     val hasLeftAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.vAxisTitleOrientation == Orientation.LEFT
+
+    val hasBottomAxis: Boolean = tiles.firstOrNull()?.axisInfos?.bottom != null
+    val hasLeftAxis: Boolean = tiles.firstOrNull()?.axisInfos?.left != null
 }

@@ -22,9 +22,7 @@ import kotlin.math.min
 
 class LayoutManager(
     private val myViewport: DoubleRectangle,
-    private val myPreferredHorizontalAlignment: HorizontalAlignment,
-    private val myXAxisPosition: AxisPosition,
-    private val myYAxisPosition: AxisPosition
+    private val myPreferredHorizontalAlignment: HorizontalAlignment
 ) {
     private val myHorizontalSpace: DoubleSpan = DoubleSpan(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleSpan = DoubleSpan(0.0, 0.0)
@@ -36,7 +34,9 @@ class LayoutManager(
     fun arrange(
         tooltips: List<MeasuredTooltip>,
         cursorCoord: DoubleVector,
-        geomBounds: DoubleRectangle
+        geomBounds: DoubleRectangle,
+        hasBottomAxis: Boolean,
+        hasLeftAxis: Boolean,
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleSpan(myViewport.top, myViewport.bottom)
@@ -52,14 +52,15 @@ class LayoutManager(
             ?.let { xAxisTooltip ->
                 val positionedTooltip = calculateVerticalTooltipPosition(
                     xAxisTooltip,
-                    preferredAlignment = if (myXAxisPosition.isBottom) BOTTOM else TOP,
+                    preferredAlignment = if (hasBottomAxis) BOTTOM else TOP,
                     ignoreCursor = true
                 )
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
                     desiredPosition.add(positionedTooltip)
 
-                    // Limit available vertical space for other tooltips by the axis or top side of the tooltip (if not fit under the axis)
-                    myVerticalSpace = if (myXAxisPosition.isBottom) {
+                    // Limit available vertical space for other tooltips by the axis or
+                    // top/bottom side of the tooltip (if not fit under/above the axis)
+                    myVerticalSpace = if (hasBottomAxis) {
                          DoubleSpan(
                             myViewport.top,
                             min(
@@ -84,7 +85,7 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let {
-                val preferredAlignment = if (myYAxisPosition.isLeft) HorizontalAlignment.LEFT else HorizontalAlignment.RIGHT
+                val preferredAlignment = if (hasLeftAxis) HorizontalAlignment.LEFT else HorizontalAlignment.RIGHT
                 val positionedTooltip = calculateHorizontalTooltipPosition(it, preferredAlignment)
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
                     desiredPosition.add(positionedTooltip)
@@ -355,7 +356,6 @@ class LayoutManager(
                     stemY = targetTopPoint
                 }
                 measuredTooltip.hintKind == X_AXIS_TOOLTIP && preferredAlignment == BOTTOM -> {
-                    // bottom range of the axis tooltip is out of the vertical space => move it to the border
                     tooltipY = if (bottomTooltipRange in myVerticalSpace) {
                         bottomTooltipRange.lowerEnd
                     } else {

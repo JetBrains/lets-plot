@@ -17,7 +17,9 @@ interface PlotInteractor : Disposable {
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector
+        axisOrigin: DoubleVector,
+        hasBottomAxis: Boolean,
+        hasLeftAxis: Boolean
     )
 
     fun startToolFeedback(toolFeedback: ToolFeedback): Registration

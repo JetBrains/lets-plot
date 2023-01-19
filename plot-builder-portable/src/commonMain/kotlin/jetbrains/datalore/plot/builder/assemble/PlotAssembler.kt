@@ -103,7 +103,7 @@ class PlotAssembler private constructor(
             val frameProviderByTile = coreLayersByTile.map {
                 BogusFrameOfReferenceProvider()
             }
-            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet, plotContext, AxisPosition.BOTTOM, AxisPosition.LEFT)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet, plotContext)
         } else {
             val flipAxis = coordProvider.flipped
             val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
@@ -155,7 +155,7 @@ class PlotAssembler private constructor(
                 vAxisTheme = theme.verticalAxis(flipAxis),
             )
 
-            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet, plotContext, hAxisPosition, vAxisPosition)
+            createPlot(frameProviderByTile, plotLayout, legendsBoxInfos, styleSheet, plotContext)
         }
     }
 
@@ -164,9 +164,7 @@ class PlotAssembler private constructor(
         plotLayout: PlotLayout,
         legendBoxInfos: List<LegendBoxInfo>,
         styleSheet: StyleSheet,
-        plotContext: PlotContext,
-        hAxisPosition: AxisPosition,
-        vAxisPosition: AxisPosition
+        plotContext: PlotContext
     ): PlotSvgComponent {
         return PlotSvgComponent(
             title = title,
@@ -181,9 +179,7 @@ class PlotAssembler private constructor(
             interactionsEnabled = interactionsEnabled,
             theme = theme,
             styleSheet = styleSheet,
-            plotContext = plotContext,
-            hAxisPosition = hAxisPosition,
-            vAxisPosition = vAxisPosition,
+            plotContext = plotContext
         )
     }
 

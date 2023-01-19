@@ -49,8 +49,6 @@ internal class TooltipRenderer constructor(
     private val tooltipsTheme: TooltipsTheme,
     private val plotBackground: Color,
     private val plotContext: PlotContext,
-    xAxisPosition: AxisPosition,
-    yAxisPosition: AxisPosition,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -62,12 +60,7 @@ internal class TooltipRenderer constructor(
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
-        myLayoutManager = LayoutManager(
-            viewport,
-            HorizontalAlignment.LEFT,
-            xAxisPosition,
-            yAxisPosition
-        )
+        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT)
 
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
         crosshairStorage = RetainableComponents(
@@ -158,7 +151,7 @@ internal class TooltipRenderer constructor(
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds) }
+            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds, tileInfo.hasBottomAxis, tileInfo.hasLeftAxis) }
             .also { tooltips -> showCrosshair(tooltips, geomBounds) }
             .forEach { arranged ->
                 arranged.tooltipBox.apply {
@@ -208,13 +201,17 @@ internal class TooltipRenderer constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector,
+        hasBottomAxis: Boolean,
+        hasLeftAxis: Boolean
     ) {
         val tileInfo = TileInfo(
             geomBounds,
             targetLocators,
             layerYOrientations,
             flippedAxis,
-            axisOrigin
+            axisOrigin,
+            hasBottomAxis,
+            hasLeftAxis
         )
         myTileInfos.add(tileInfo)
     }
@@ -248,7 +245,9 @@ internal class TooltipRenderer constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean,
-        val axisOrigin: DoubleVector
+        val axisOrigin: DoubleVector,
+        val hasBottomAxis: Boolean,
+        val hasLeftAxis: Boolean
     ) {
 
         private val transformedLocators = targetLocators.zip(layerYOrientations)

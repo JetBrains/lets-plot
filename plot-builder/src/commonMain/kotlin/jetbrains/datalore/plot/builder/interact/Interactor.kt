@@ -28,9 +28,7 @@ internal class Interactor constructor(
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
     theme: Theme,
-    plotContext: PlotContext,
-    hAxisPosition: AxisPosition,
-    vAxisPosition: AxisPosition
+    plotContext: PlotContext
 ) : PlotInteractor {
     val eventsManager: EventsManager = EventsManager()
 
@@ -52,8 +50,6 @@ internal class Interactor constructor(
             theme.tooltips(),
             theme.plot().backgroundFill(),
             plotContext,
-            hAxisPosition,
-            vAxisPosition,
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))
@@ -64,8 +60,10 @@ internal class Interactor constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector,
+        hasBottomAxis: Boolean,
+        hasLeftAxis: Boolean
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin)
+        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin, hasBottomAxis, hasLeftAxis)
         geomBoundsList.add(geomBounds)
     }
 
