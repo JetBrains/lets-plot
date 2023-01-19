@@ -227,6 +227,9 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.DOT_PLOT -> listOf(Aes.BINWIDTH)
             GeomKind.Y_DOT_PLOT -> listOf(Aes.BINWIDTH)
+            GeomKind.AREA -> listOf(Aes.QUANTILE)
+            GeomKind.DENSITY -> listOf(Aes.QUANTILE)
+            GeomKind.VIOLIN -> listOf(Aes.QUANTILE)
             GeomKind.AREA_RIDGES -> listOf(Aes.QUANTILE)
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
