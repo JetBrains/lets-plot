@@ -60,12 +60,17 @@ internal class Interactor constructor(
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector,
+        axisOrigin: DoubleVector
+    ) {
+        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin)
+        geomBoundsList.add(geomBounds)
+    }
+
+    override fun setAxisTooltipPositions(
         hAxisTooltipPosition: HorizontalAxisTooltipPosition,
         vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin, hAxisTooltipPosition, vAxisTooltipPosition)
-        geomBoundsList.add(geomBounds)
+        tooltipRenderer.setAxisTooltipPositions(hAxisTooltipPosition, vAxisTooltipPosition)
     }
 
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {

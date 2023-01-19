@@ -32,12 +32,13 @@ class LayoutManager(
     private var myVerticalTooltipSpace = DoubleSpan(myViewport.top, myViewport.bottom)
     private lateinit var myVerticalAlignmentResolver: VerticalAlignmentResolver
 
+    var hAxisTooltipPosition: HorizontalAxisTooltipPosition = HorizontalAxisTooltipPosition.BOTTOM
+    var vAxisTooltipPosition: VerticalAxisTooltipPosition = VerticalAxisTooltipPosition.LEFT
+
     fun arrange(
         tooltips: List<MeasuredTooltip>,
         cursorCoord: DoubleVector,
-        geomBounds: DoubleRectangle,
-        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
-        vAxisTooltipPosition: VerticalAxisTooltipPosition
+        geomBounds: DoubleRectangle
     ): List<PositionedTooltip> {
         myCursorCoord = cursorCoord
         myVerticalSpace = DoubleSpan(myViewport.top, myViewport.bottom)
@@ -53,7 +54,11 @@ class LayoutManager(
             ?.let { xAxisTooltip ->
                 val positionedTooltip = calculateVerticalTooltipPosition(
                     xAxisTooltip,
-                    preferredAlignment = if (hAxisTooltipPosition.isBottom) BOTTOM else TOP,
+                    preferredAlignment = when {
+                        hAxisTooltipPosition.isBottom -> BOTTOM
+                        hAxisTooltipPosition.isTop -> TOP
+                        else -> error("Axis tooltips with BOTTOM or TOP positions are currently supported.")
+                    },
                     ignoreCursor = true
                 )
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
@@ -61,22 +66,26 @@ class LayoutManager(
 
                     // Limit available vertical space for other tooltips by the axis or
                     // top/bottom side of the tooltip (if not fit under/above the axis)
-                    myVerticalSpace = if (hAxisTooltipPosition.isBottom) {
-                         DoubleSpan(
-                            myViewport.top,
-                            min(
-                                positionedTooltip.stemCoord.y,
-                                positionedTooltip.top
+                    myVerticalSpace = when {
+                        hAxisTooltipPosition.isBottom -> {
+                            DoubleSpan(
+                                myViewport.top,
+                                min(
+                                    positionedTooltip.stemCoord.y,
+                                    positionedTooltip.top
+                                )
                             )
-                        )
-                    } else {
-                        DoubleSpan(
-                            max(
-                                positionedTooltip.stemCoord.y,
-                                positionedTooltip.bottom
-                            ),
-                            myViewport.bottom
-                        )
+                        }
+                        hAxisTooltipPosition.isTop -> {
+                            DoubleSpan(
+                                max(
+                                    positionedTooltip.stemCoord.y,
+                                    positionedTooltip.bottom
+                                ),
+                                myViewport.bottom
+                            )
+                        }
+                        else -> error("Axis tooltips with BOTTOM or TOP positions are currently supported.")
                     }
                     myVerticalAlignmentResolver = VerticalAlignmentResolver(myVerticalSpace)
                 }
@@ -86,7 +95,11 @@ class LayoutManager(
         tooltips
             .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
             ?.let {
-                val preferredAlignment = if (vAxisTooltipPosition.isLeft) HorizontalAlignment.LEFT else HorizontalAlignment.RIGHT
+                val preferredAlignment = when {
+                    vAxisTooltipPosition.isLeft -> HorizontalAlignment.LEFT
+                    vAxisTooltipPosition.isRight -> HorizontalAlignment.RIGHT
+                    else -> error("Axis tooltips with LEFT or RIGHT positions are currently supported.")
+                }
                 val positionedTooltip = calculateHorizontalTooltipPosition(it, preferredAlignment)
                 if (isTooltipWithinBounds(positionedTooltip, geomBounds)) {
                     desiredPosition.add(positionedTooltip)
