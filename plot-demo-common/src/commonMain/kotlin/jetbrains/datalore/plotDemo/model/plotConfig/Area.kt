@@ -29,10 +29,10 @@ class Area {
 
                 "   'layers': [" +
                 "               {" +
-                "                  'geom': 'area'," +
-                "                   'stat': 'density'," +
-                "                   'position' : 'identity'," +
-                "                   'alpha': 0.7" +
+                "                 'geom': 'area'," +
+                "                 'stat': 'density'," +
+                "                 'position' : 'identity'," +
+                "                 'alpha': 0.7" +
                 "               }" +
                 "           ]" +
                 "}"
@@ -55,11 +55,11 @@ class Area {
 
                 "   'layers': [" +
                 "               {" +
-                "                  'geom': 'area'," +
-                "                   'stat': 'density'," +
-                "                   'position' : 'identity'," +
-                "                   'alpha': 0.7," +
-                "                   'trim': true" +
+                "                 'geom': 'area'," +
+                "                 'stat': 'density'," +
+                "                 'position' : 'identity'," +
+                "                 'alpha': 0.7," +
+                "                 'trim': true" +
                 "               }" +
                 "           ]" +
                 "}"
@@ -81,7 +81,7 @@ class Area {
                 "               {" +
                 "                 'geom': 'area'," +
                 "                 'stat': 'density'," +
-                "                 'color': 'white'," +
+                "                 'color': 'black'," +
                 "                 'quantiles': [0, 0.02, 0.1, 0.5, 0.9, 0.98, 1]," +
                 "                 'quantile_lines': true," +
                 "                 'mapping': {" +

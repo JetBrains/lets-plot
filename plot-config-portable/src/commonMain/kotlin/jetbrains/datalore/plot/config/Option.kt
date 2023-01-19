@@ -314,6 +314,11 @@ object Option {
     }
 
     object Stat {
+        object DensityCommon {
+            const val TRIM = "trim"
+            const val QUANTILES = "quantiles"
+        }
+
         object Boxplot {
             const val COEF = "coef"
             const val VARWIDTH = "varwidth"
@@ -357,13 +362,11 @@ object Option {
         }
 
         object Density {
-            const val TRIM = "trim"
             const val N = "n"
             const val KERNEL = "kernel"
             const val BAND_WIDTH = "bw"     // number or string (method name)
             const val ADJUST = "adjust"
             const val FULL_SCAN_MAX = "fs_max"  // use 'full scan' when the input size is < 'fs_max'
-            const val QUANTILES = "quantiles"
         }
 
         object Density2d {
@@ -377,16 +380,12 @@ object Option {
         }
 
         object DensityRidges {
-            const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
-            const val QUANTILES = "quantiles"
         }
 
         object YDensity {
             const val SCALE = "scale"
-            const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
-            const val QUANTILES = "quantiles"
         }
 
         object QQ {

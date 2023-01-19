@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
+import jetbrains.datalore.plot.config.Option.Stat.DensityCommon
 import jetbrains.datalore.plot.config.Option.Stat.Bin
 import jetbrains.datalore.plot.config.Option.Stat.Bin2d
 import jetbrains.datalore.plot.config.Option.Stat.Boxplot
@@ -182,12 +183,12 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        val quantiles = if (options.hasOwn(DensityRidges.QUANTILES)) {
-            options.getBoundedDoubleList(DensityRidges.QUANTILES, 0.0, 1.0)
+        val quantiles = if (options.hasOwn(DensityCommon.QUANTILES)) {
+            options.getBoundedDoubleList(DensityCommon.QUANTILES, 0.0, 1.0)
         } else DensityRidgesStat.DEF_QUANTILES
 
         return DensityRidgesStat(
-            trim = options.getBoolean(DensityRidges.TRIM, DensityRidgesStat.DEF_TRIM),
+            trim = options.getBoolean(DensityCommon.TRIM, DensityRidgesStat.DEF_TRIM),
             tailsCutoff = options.getDouble(DensityRidges.TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
@@ -226,13 +227,13 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        val quantiles = if (options.hasOwn(YDensity.QUANTILES)) {
-            options.getBoundedDoubleList(YDensity.QUANTILES, 0.0, 1.0)
+        val quantiles = if (options.hasOwn(DensityCommon.QUANTILES)) {
+            options.getBoundedDoubleList(DensityCommon.QUANTILES, 0.0, 1.0)
         } else YDensityStat.DEF_QUANTILES
 
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
-            trim = options.getBoolean(YDensity.TRIM, YDensityStat.DEF_TRIM),
+            trim = options.getBoolean(DensityCommon.TRIM, YDensityStat.DEF_TRIM),
             tailsCutoff = options.getDoubleDef(YDensity.TAILS_CUTOFF, YDensityStat.DEF_TAILS_CUTOFF),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
@@ -274,12 +275,12 @@ object StatProto {
             DensityStatUtil.toKernel(it)
         }
 
-        val quantiles = if (options.hasOwn(Density.QUANTILES)) {
-            options.getBoundedDoubleList(Density.QUANTILES, 0.0, 1.0)
+        val quantiles = if (options.hasOwn(DensityCommon.QUANTILES)) {
+            options.getBoundedDoubleList(DensityCommon.QUANTILES, 0.0, 1.0)
         } else DensityStat.DEF_QUANTILES
 
         return DensityStat(
-            trim = options.getBoolean(Density.TRIM, DensityStat.DEF_TRIM),
+            trim = options.getBoolean(DensityCommon.TRIM, DensityStat.DEF_TRIM),
             bandWidth = bwValue,
             bandWidthMethod = bwMethod,
             adjust = options.getDoubleDef(Density.ADJUST, DensityStat.DEF_ADJUST),

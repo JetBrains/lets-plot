@@ -61,8 +61,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
         when (geomKind) {
             GeomKind.AREA -> return GeomProvider.area {
                 val geom = AreaGeom()
-                if (opts.hasOwn(Option.Stat.Density.QUANTILES)) {
-                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.Density.QUANTILES, 0.0, 1.0)
+                if (opts.hasOwn(Option.Stat.DensityCommon.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.DensityCommon.QUANTILES, 0.0, 1.0)
                 }
                 if (opts.hasOwn(Area.QUANTILE_LINES)) {
                     geom.quantileLines = opts.getBoolean(Area.QUANTILE_LINES, AreaGeom.DEF_QUANTILE_LINES)
@@ -72,8 +72,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.DENSITY -> return GeomProvider.density {
                 val geom = DensityGeom()
-                if (opts.hasOwn(Option.Stat.Density.QUANTILES)) {
-                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.Density.QUANTILES, 0.0, 1.0)
+                if (opts.hasOwn(Option.Stat.DensityCommon.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.DensityCommon.QUANTILES, 0.0, 1.0)
                 }
                 if (opts.hasOwn(Density.QUANTILE_LINES)) {
                     geom.quantileLines = opts.getBoolean(Density.QUANTILE_LINES, DensityGeom.DEF_QUANTILE_LINES)
@@ -152,8 +152,8 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
-                if (opts.hasOwn(Option.Stat.YDensity.QUANTILES)) {
-                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.YDensity.QUANTILES, 0.0, 1.0)
+                if (opts.hasOwn(Option.Stat.DensityCommon.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.DensityCommon.QUANTILES, 0.0, 1.0)
                 }
                 if (opts.hasOwn(Violin.QUANTILE_LINES)) {
                     geom.quantileLines = opts.getBoolean(Violin.QUANTILE_LINES, ViolinGeom.DEF_QUANTILE_LINES)
