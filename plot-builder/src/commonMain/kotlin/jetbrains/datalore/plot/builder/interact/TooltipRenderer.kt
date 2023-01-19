@@ -211,7 +211,7 @@ internal class TooltipRenderer constructor(
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector,
         hAxisTooltipPosition: HorizontalAxisTooltipPosition,
-        vAxisTooltipPosition: VerticalAxisTooltipPosition,
+        vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
         val tileInfo = TileInfo(
             geomBounds,
@@ -220,7 +220,7 @@ internal class TooltipRenderer constructor(
             flippedAxis,
             axisOrigin,
             hAxisTooltipPosition,
-            vAxisTooltipPosition,
+            vAxisTooltipPosition
         )
         myTileInfos.add(tileInfo)
     }
@@ -256,7 +256,7 @@ internal class TooltipRenderer constructor(
         private val flippedAxis: Boolean,
         val axisOrigin: DoubleVector,
         val hAxisTooltipPosition: HorizontalAxisTooltipPosition,
-        val vAxisTooltipPosition: VerticalAxisTooltipPosition,
+        val vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
 
         private val transformedLocators = targetLocators.zip(layerYOrientations)
