@@ -21,7 +21,6 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
@@ -50,12 +49,10 @@ class BarPlotResizeDemo private constructor(
             colors, Color.GRAY
         )
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to xScale,
-                Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
-                Aes.FILL to fillScale
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to xScale,
+            Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
+            Aes.FILL to fillScale
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(

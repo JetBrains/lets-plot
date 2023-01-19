@@ -64,7 +64,7 @@ fun PlotConfigClientSide.assertScale(
     name: String? = null,
     msg: () -> String = { "" }
 ): PlotConfigClientSide {
-    val scale = scaleMap[aes]
+    val scale = scaleMap.getValue(aes)
     assertEquals(!isDiscrete, scale.isContinuous, msg())
     name?.let { assertEquals(it, scale.name, msg()) }
     return this

@@ -7,10 +7,7 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
@@ -18,7 +15,6 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -54,11 +50,9 @@ open class LinePlotDemo : SimpleDemoBase() {
             .putNumeric(varB, b)
             .build()
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
         )
 
         val layer = GeomLayerBuilder.demoAndTest(GeomProvider.path(), Stats.IDENTITY)
@@ -130,12 +124,10 @@ open class LinePlotDemo : SimpleDemoBase() {
             listOf(Color.RED, Color.BLUE), Color.GRAY
         )
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
-                Aes.COLOR to colorScale
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
+            Aes.COLOR to colorScale
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(

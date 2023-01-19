@@ -139,11 +139,11 @@ class GeomLayerBuilder constructor(
 
     fun build(
         data: DataFrame,
-        scaleMap: TypedScaleMap,
+        scaleMap: Map<Aes<*>, Scale>,
         scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
     ): GeomLayer {
-        val transformByAes: Map<Aes<*>, Transform> = scaleMap.keySet().associateWith {
-            scaleMap[it].transform
+        val transformByAes: Map<Aes<*>, Transform> = scaleMap.keys.associateWith {
+            scaleMap.getValue(it).transform
         }
 
         @Suppress("NAME_SHADOWING")
@@ -234,7 +234,7 @@ class GeomLayerBuilder constructor(
         override val group: (Int) -> Int,
         private val varBindings: Map<Aes<*>, VarBinding>,
         constantByAes: TypedKeyHashMap,
-        override val scaleMap: TypedScaleMap,
+        override val scaleMap: Map<Aes<*>, Scale>,
         override val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider,

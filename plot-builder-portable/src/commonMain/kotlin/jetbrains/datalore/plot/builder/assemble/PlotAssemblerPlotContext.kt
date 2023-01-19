@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class PlotAssemblerPlotContext(
     layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: TypedScaleMap
+    private val scaleMap: Map<Aes<*>, Scale>
 ) : PlotContext {
 
     private val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(layersByTile)
@@ -27,7 +27,7 @@ internal class PlotAssemblerPlotContext(
 
     override fun getScale(aes: Aes<*>): Scale {
         checkPositionalAes(aes)
-        return scaleMap[aes]
+        return scaleMap.getValue(aes)
     }
 
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {
@@ -70,7 +70,7 @@ internal class PlotAssemblerPlotContext(
         fun computeOverallTransformedDomain(
             aes: Aes<*>,
             stitchedLayers: List<StitchedPlotLayer>,
-            scaleMap: TypedScaleMap
+            scaleMap: Map<Aes<*>, Scale>
         ): DoubleSpan {
             checkPositionalAes(aes)
 
@@ -101,7 +101,7 @@ internal class PlotAssemblerPlotContext(
 
             val overallTransformedDomain = domainsRaw.reduceOrNull { acc, v -> acc.union(v) }
 
-            val scale = scaleMap.get(aes)
+            val scale = scaleMap.getValue(aes)
             return if (scale.isContinuousDomain) {
                 finalizeOverallTransformedDomain(overallTransformedDomain, scale.transform as ContinuousTransform)
             } else {

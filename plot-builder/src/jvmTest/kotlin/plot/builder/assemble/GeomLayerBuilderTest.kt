@@ -5,10 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
@@ -56,12 +53,10 @@ class GeomLayerBuilderTest {
             "cat",
             DiscreteTransform(data.distinctValues(cat), emptyList())
         )
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomain("x", Aes.X),
-                Aes.Y to Scales.DemoAndTest.continuousDomain("y", Aes.Y),
-                Aes.FILL to scaleFill
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomain("x", Aes.X),
+            Aes.Y to Scales.DemoAndTest.continuousDomain("y", Aes.Y),
+            Aes.FILL to scaleFill
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(

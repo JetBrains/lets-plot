@@ -6,10 +6,7 @@
 package jetbrains.datalore.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
@@ -20,7 +17,6 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.data.AutoMpg
@@ -57,7 +53,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         return assembler.createPlot()
     }
 
-    private fun getLayersIris(): Pair<TypedScaleMap, List<GeomLayer>> {
+    private fun getLayersIris(): Pair<Map<Aes<*>, Scale>, List<GeomLayer>> {
 
         // scatter
         val valuesX = Iris.sepalLength.data
@@ -82,12 +78,10 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             listOf(Color.RED, Color.GREEN, Color.BLUE), Color.GRAY
         )
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalLength.name),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalWidth.name),
-                Aes.COLOR to colorScale
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalLength.name),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Iris.sepalWidth.name),
+            Aes.COLOR to colorScale
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
@@ -149,7 +143,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
 
-    private fun getLayersMpg(): Pair<TypedScaleMap, List<GeomLayer>> {
+    private fun getLayersMpg(): Pair<Map<Aes<*>, Scale>, List<GeomLayer>> {
 
         // scatter
         val valuesX = AutoMpg.horsepower.data.map(Int::toDouble)
@@ -161,11 +155,9 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varOrigY, valuesY)
             .build()
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.horsepower.name),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.mpg.name)
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.horsepower.name),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(AutoMpg.mpg.name)
         )
 
         val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)
@@ -211,7 +203,7 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
         return Pair(scaleByAes, listOf(scatterLayer, regressionLineLayer))
     }
 
-    private fun getLayersDiamonds(): Pair<TypedScaleMap, List<GeomLayer>> {
+    private fun getLayersDiamonds(): Pair<Map<Aes<*>, Scale>, List<GeomLayer>> {
 
         // scatter
         val valuesX = Diamonds.carat.data
@@ -237,12 +229,10 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             Color.GRAY
         )
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.carat.name),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.price.name),
-                Aes.COLOR to colorScale
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.carat.name),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(Diamonds.price.name),
+            Aes.COLOR to colorScale
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
@@ -318,11 +308,9 @@ open class LoessRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varY, valuesY)
             .build()
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("x"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("y")
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("x"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("y")
         )
 
         val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)

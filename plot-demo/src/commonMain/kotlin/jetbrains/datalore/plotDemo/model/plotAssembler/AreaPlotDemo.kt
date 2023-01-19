@@ -6,17 +6,13 @@
 package jetbrains.datalore.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
@@ -52,12 +48,10 @@ open class AreaPlotDemo : SimpleDemoBase() {
             Color.BLACK
         )
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(xColumn.name),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(""),
-                Aes.FILL to scaleColor
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange(xColumn.name),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange(""),
+            Aes.FILL to scaleColor
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(

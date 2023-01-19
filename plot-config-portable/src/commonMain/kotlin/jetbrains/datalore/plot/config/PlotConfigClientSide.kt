@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
@@ -35,7 +35,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
-    val scaleMap: TypedScaleMap
+    val scaleMap: Map<Aes<*>, Scale>
     val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
 
     internal val xAxisPosition: AxisPosition

@@ -30,7 +30,7 @@ import jetbrains.datalore.vis.StyleSheet
 
 class PlotAssembler private constructor(
     private val layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: TypedScaleMap,
+    private val scaleMap: Map<Aes<*>, Scale>,
     private val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
     private val coordProvider: CoordProvider,
     private val xAxisPosition: AxisPosition,
@@ -38,8 +38,8 @@ class PlotAssembler private constructor(
     private val theme: Theme
 ) {
 
-    private val scaleXProto: Scale = scaleMap.get(Aes.X)
-    private val scaleYProto: Scale = scaleMap.get(Aes.Y)
+    private val scaleXProto: Scale = scaleMap.getValue(Aes.X)
+    private val scaleYProto: Scale = scaleMap.getValue(Aes.Y)
 
     val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
         layers.filterNot { it.isMarginal }
@@ -194,7 +194,7 @@ class PlotAssembler private constructor(
     companion object {
         fun demoAndTest(
             plotLayers: List<GeomLayer>,
-            scaleMap: TypedScaleMap,
+            scaleMap: Map<Aes<*>, Scale>,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme,
@@ -216,7 +216,7 @@ class PlotAssembler private constructor(
 
         fun multiTile(
             layersByTile: List<List<GeomLayer>>,
-            scaleMap: TypedScaleMap,
+            scaleMap: Map<Aes<*>, Scale>,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             xAxisPosition: AxisPosition,

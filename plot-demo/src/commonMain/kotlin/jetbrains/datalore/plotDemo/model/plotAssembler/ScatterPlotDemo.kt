@@ -8,13 +8,13 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -42,11 +42,9 @@ open class ScatterPlotDemo : SimpleDemoBase() {
             .putNumeric(varB, b)
             .build()
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
         )
 
         val layer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)

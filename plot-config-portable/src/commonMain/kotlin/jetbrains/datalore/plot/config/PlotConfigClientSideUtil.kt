@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -83,7 +82,7 @@ object PlotConfigClientSideUtil {
                 val layerConfig = plotConfig.layerConfigs[layerIndex]
                 val layerTileData = tileDataByLayer[layerIndex]
 
-                val commonScaleMap = plotConfig.scaleMap.map
+                val commonScaleMap = plotConfig.scaleMap
                 val layerAddedScales = createScalesForStatPositionalBindings(
                     layerConfig.varBindings,
                     layerConfig.isYOrientation,
@@ -109,7 +108,7 @@ object PlotConfigClientSideUtil {
                     false -> commonScaleMap
                 }
 
-                val layerScaleMap = TypedScaleMap(layerCommonScales + layerAddedScales)
+                val layerScaleMap = layerCommonScales + layerAddedScales
 
                 if (layerBuilders.size == layerIndex) {
                     val otherLayerWithTooltips = plotConfig.layerConfigs
@@ -130,7 +129,12 @@ object PlotConfigClientSideUtil {
                     }
 
                     layerBuilders.add(
-                        createLayerBuilder(layerConfig, plotConfig.fontFamilyRegistry, geomInteraction, plotConfig.theme)
+                        createLayerBuilder(
+                            layerConfig,
+                            plotConfig.fontFamilyRegistry,
+                            geomInteraction,
+                            plotConfig.theme
+                        )
                     )
                 }
 

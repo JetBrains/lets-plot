@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.assemble.PosProvider
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
 interface GeomLayer {
@@ -28,7 +27,7 @@ interface GeomLayer {
 
     val posProvider: PosProvider
 
-    val scaleMap: TypedScaleMap
+    val scaleMap: Map<Aes<*>, Scale>
 
     val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>
 

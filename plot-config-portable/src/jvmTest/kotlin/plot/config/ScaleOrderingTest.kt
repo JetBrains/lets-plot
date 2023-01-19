@@ -730,7 +730,7 @@ class ScaleOrderingTest {
             aes: Aes<*>,
             breaks: List<Any>
         ) {
-            val scaleBreaks = layer.scaleMap[aes].getScaleBreaks()
+            val scaleBreaks = layer.scaleMap.getValue(aes).getScaleBreaks()
             assertEquals(breaks, scaleBreaks.domainValues, "Wrong ticks order on ${aes.name.uppercase()}.")
         }
 
@@ -765,7 +765,7 @@ class ScaleOrderingTest {
             }
 
             expectedOrderInBar.forEach { (aes, expected) ->
-                val breaks = geomLayer.scaleMap[aes].getScaleBreaks().domainValues
+                val breaks = geomLayer.scaleMap.getValue(aes).getScaleBreaks().domainValues
                 val breakColors = breaks.zip(legendColors).map { it.second to it.first }.toMap()
                 val actual: Map<Int, List<Any?>> =
                     getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->
