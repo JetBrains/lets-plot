@@ -19,10 +19,7 @@ interface PlotInteractor : Disposable {
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector
-    )
-
-    fun setAxisTooltipPositions(
+        axisOrigin: DoubleVector,
         hAxisTooltipPosition: HorizontalAxisTooltipPosition,
         vAxisTooltipPosition: VerticalAxisTooltipPosition
     )

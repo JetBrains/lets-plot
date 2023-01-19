@@ -78,14 +78,6 @@ internal class TooltipRenderer constructor(
         regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltips() }))
     }
 
-    fun setAxisTooltipPositions(
-        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
-        vAxisTooltipPosition: VerticalAxisTooltipPosition
-    ) {
-        myLayoutManager.hAxisTooltipPosition = hAxisTooltipPosition
-        myLayoutManager.vAxisTooltipPosition = vAxisTooltipPosition
-    }
-
     override fun dispose() {
         myTileInfos.clear()
         regs.dispose()
@@ -161,7 +153,13 @@ internal class TooltipRenderer constructor(
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
             .run {
-                myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds)
+                myLayoutManager.arrange(
+                    tooltips = this,
+                    cursorCoord = cursor,
+                    geomBounds,
+                    tileInfo.hAxisTooltipPosition,
+                    tileInfo.vAxisTooltipPosition
+                )
             }
             .also { tooltips -> showCrosshair(tooltips, geomBounds) }
             .forEach { arranged ->
@@ -211,14 +209,18 @@ internal class TooltipRenderer constructor(
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector
+        axisOrigin: DoubleVector,
+        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        vAxisTooltipPosition: VerticalAxisTooltipPosition,
     ) {
         val tileInfo = TileInfo(
             geomBounds,
             targetLocators,
             layerYOrientations,
             flippedAxis,
-            axisOrigin
+            axisOrigin,
+            hAxisTooltipPosition,
+            vAxisTooltipPosition,
         )
         myTileInfos.add(tileInfo)
     }
@@ -252,7 +254,9 @@ internal class TooltipRenderer constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean,
-        val axisOrigin: DoubleVector
+        val axisOrigin: DoubleVector,
+        val hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        val vAxisTooltipPosition: VerticalAxisTooltipPosition,
     ) {
 
         private val transformedLocators = targetLocators.zip(layerYOrientations)

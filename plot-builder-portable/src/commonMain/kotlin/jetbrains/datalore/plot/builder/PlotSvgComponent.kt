@@ -307,10 +307,7 @@ class PlotSvgComponent constructor(
                 geomInnerBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
-                axisOrigin
-            )
-
-            interactor?.setAxisTooltipPositions(
+                axisOrigin,
                 hAxisTooltipPosition = if (plotInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
                 vAxisTooltipPosition = if (plotInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
             )
