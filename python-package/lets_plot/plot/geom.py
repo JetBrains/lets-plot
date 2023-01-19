@@ -3610,6 +3610,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  bw=None,
                  n=None,
                  fs_max=None,
+                 quantiles=None,
+                 quantile_lines=None,
                  **other_args):
     """
     Displays kernel density estimate, which is a smoothed version of the histogram.
@@ -3661,6 +3663,10 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     fs_max : int, default=500
         Maximum size of data to use density computation with 'full scan'.
         For bigger data, less accurate but more efficient density computation is applied.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=False
+        Show the quantile lines.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3679,6 +3685,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ..density.. : density estimate (mapped by default).
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : value of the nearest quantile specified by the `quantiles` parameter.
 
     `geom_density()` understands the following aesthetics mappings:
 
@@ -3702,6 +3709,21 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         np.random.seed(42)
         x = np.random.normal(size=1000)
         ggplot({'x': x}, aes(x='x')) + geom_density()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 200
+        np.random.seed(42)
+        ggplot({'x': np.random.normal(size=n)}) + \\
+            geom_density(aes(x='x', fill='..quantile..'), color='black', size=1, \\
+                         quantiles=[0, .02, .1, .5, .9, .98, 1], quantile_lines=True)
 
     |
 
@@ -3777,6 +3799,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=tooltips,
                  orientation=orientation,
                  trim=trim, kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
+                 quantiles=quantiles, quantile_lines=quantile_lines,
                  **other_args)
 
 
