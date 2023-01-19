@@ -18,8 +18,9 @@ import jetbrains.datalore.plot.builder.interact.tool.InteractionContext
 import jetbrains.datalore.plot.builder.interact.tool.InteractionTarget
 import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
-import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.vis.svg.SvgNode
 
 internal class Interactor constructor(
@@ -60,10 +61,10 @@ internal class Interactor constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector,
-        hasBottomAxis: Boolean,
-        hasLeftAxis: Boolean
+        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin, hasBottomAxis, hasLeftAxis)
+        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin, hAxisTooltipPosition, vAxisTooltipPosition)
         geomBoundsList.add(geomBounds)
     }
 

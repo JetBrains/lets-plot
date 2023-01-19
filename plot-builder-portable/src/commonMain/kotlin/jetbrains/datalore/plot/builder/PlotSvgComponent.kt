@@ -37,6 +37,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgNode
@@ -306,8 +308,8 @@ class PlotSvgComponent constructor(
                 tile.targetLocators,
                 tile.layerYOrientations,
                 axisOrigin,
-                plotInfo.hasBottomAxis,
-                plotInfo.hasLeftAxis
+                hAxisTooltipPosition = if (plotInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
+                vAxisTooltipPosition = if (plotInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
             )
 
             if (DEBUG_DRAWING) {

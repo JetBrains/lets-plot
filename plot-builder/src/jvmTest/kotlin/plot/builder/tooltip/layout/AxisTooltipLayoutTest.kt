@@ -9,6 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.RIGHT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
@@ -228,7 +230,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                     .size(DEFAULT_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .xAxisToTopPosition()
+            .horizontalAxisTooltipPosition(HorizontalAxisTooltipPosition.TOP)
             .build()
 
         arrange(layoutManagerController)
@@ -246,7 +248,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                     .size(DEFAULT_NON_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .xAxisToTopPosition()
+            .horizontalAxisTooltipPosition(HorizontalAxisTooltipPosition.TOP)
             .build()
 
         arrange(layoutManagerController)
@@ -268,7 +270,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                     .size(DEFAULT_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .xAxisToTopPosition()
+            .horizontalAxisTooltipPosition(HorizontalAxisTooltipPosition.TOP)
             .build()
 
         arrange(layoutManagerController)
@@ -290,7 +292,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                     .size(DEFAULT_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .yAxisToRightPosition()
+            .verticalAxisTooltipPosition(VerticalAxisTooltipPosition.RIGHT)
             .build()
 
         arrange(layoutManagerController)
@@ -309,7 +311,7 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                     .size(DEFAULT_NON_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .yAxisToRightPosition()
+            .verticalAxisTooltipPosition(VerticalAxisTooltipPosition.RIGHT)
             .build()
 
         arrange(layoutManagerController)
