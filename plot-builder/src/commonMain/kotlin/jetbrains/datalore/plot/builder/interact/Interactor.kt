@@ -18,8 +18,9 @@ import jetbrains.datalore.plot.builder.interact.tool.InteractionContext
 import jetbrains.datalore.plot.builder.interact.tool.InteractionTarget
 import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
-import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.vis.svg.SvgNode
 
 internal class Interactor constructor(
@@ -28,9 +29,7 @@ internal class Interactor constructor(
     val plotSize: DoubleVector,
     flippedAxis: Boolean,
     theme: Theme,
-    plotContext: PlotContext,
-    hAxisPosition: AxisPosition,
-    vAxisPosition: AxisPosition
+    plotContext: PlotContext
 ) : PlotInteractor {
     val eventsManager: EventsManager = EventsManager()
 
@@ -52,8 +51,6 @@ internal class Interactor constructor(
             theme.tooltips(),
             theme.plot().backgroundFill(),
             plotContext,
-            hAxisPosition,
-            vAxisPosition,
             mouseEventPeer
         )
         reg.add(Registration.from(tooltipRenderer))
@@ -64,8 +61,10 @@ internal class Interactor constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector,
+        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
-        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin)
+        tooltipRenderer.addTileInfo(geomBounds, targetLocators, layerYOrientations, axisOrigin, hAxisTooltipPosition, vAxisTooltipPosition)
         geomBoundsList.add(geomBounds)
     }
 

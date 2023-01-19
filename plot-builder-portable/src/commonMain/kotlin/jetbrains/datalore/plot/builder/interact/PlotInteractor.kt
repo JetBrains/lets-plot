@@ -11,13 +11,17 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.tool.ToolFeedback
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 
 interface PlotInteractor : Disposable {
     fun onTileAdded(
         geomBounds: DoubleRectangle,
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
-        axisOrigin: DoubleVector
+        axisOrigin: DoubleVector,
+        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        vAxisTooltipPosition: VerticalAxisTooltipPosition
     )
 
     fun startToolFeedback(toolFeedback: ToolFeedback): Registration

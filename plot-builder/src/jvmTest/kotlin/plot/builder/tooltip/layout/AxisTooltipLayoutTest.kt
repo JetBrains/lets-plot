@@ -9,7 +9,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
-import jetbrains.datalore.plot.builder.scale.AxisPosition
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.RIGHT
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
@@ -219,15 +220,17 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
         )
     }
 
+    // X-axis tooltip with top position
+
     @Test
     fun xAxisTooltipWithTopPosition_WhenFit_ShouldBeAlignedToTheTopOfAxis() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
             .addTooltip(
-                xAxisTip(VIEWPORT.center.x, AxisPosition.TOP)
+                xAxisTip(VIEWPORT.center.x, hasBottomPosition = false)
                     .size(DEFAULT_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .xAxisPosition(AxisPosition.TOP)
+            .horizontalAxisTooltipPosition(HorizontalAxisTooltipPosition.TOP)
             .build()
 
         arrange(layoutManagerController)
@@ -241,11 +244,11 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
     fun whenXAxisTooltipWithTopPosition_AndNotFitToSpace_ShouldBeAlignedToPlotBorder() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
             .addTooltip(
-                xAxisTip(VIEWPORT.center.x, AxisPosition.TOP)
+                xAxisTip(VIEWPORT.center.x, hasBottomPosition = false)
                     .size(DEFAULT_NON_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .xAxisPosition(AxisPosition.TOP)
+            .horizontalAxisTooltipPosition(HorizontalAxisTooltipPosition.TOP)
             .build()
 
         arrange(layoutManagerController)
@@ -256,14 +259,40 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
     }
 
     @Test
-    fun yAxisTooltipWithRightPosition_WhenFit_ShouldBeAlignedToRightOfAxis() {
+    fun whenXAxisTooltipPresentedWithTopPosition_AndSideTipAboveAxis_ShouldAlignSideTipUnderAxis() {
+        // axis tooltip limit the vertical space
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
             .addTooltip(
-                yAxisTip(VIEWPORT.center.y, AxisPosition.RIGHT)
+                defaultHorizontalTip(coord(VIEWPORT.center.x, VIEWPORT.top)).buildTooltip()
+            )
+            .addTooltip(
+                xAxisTip(VIEWPORT.center.x, hasBottomPosition = false)
                     .size(DEFAULT_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .yAxisPosition(AxisPosition.RIGHT)
+            .horizontalAxisTooltipPosition(HorizontalAxisTooltipPosition.TOP)
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect(X_AXIS_TOOLTIP_KEY),
+            expect(HORIZONTAL_TOOLTIP_KEY)
+                .tooltipY(with(tooltip(X_AXIS_TOOLTIP_KEY)) { coord().y + size().y })
+        )
+    }
+
+    // Y-axis with right position
+
+    @Test
+    fun yAxisTooltipWithRightPosition_WhenFit_ShouldBeAlignedToRightOfAxis() {
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .addTooltip(
+                yAxisTip(VIEWPORT.center.y, hasLeftPosition = false)
+                    .size(DEFAULT_FIT_TOOLTIP_SIZE)
+                    .buildTooltip()
+            )
+            .verticalAxisTooltipPosition(VerticalAxisTooltipPosition.RIGHT)
             .build()
 
         arrange(layoutManagerController)
@@ -278,11 +307,11 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
     fun whenYAxisTooltipWithRightPosition_AndNotFitToSpace_ShouldBeAlignedToPlotBorder() {
         val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
             .addTooltip(
-                yAxisTip(VIEWPORT.center.y, AxisPosition.RIGHT)
+                yAxisTip(VIEWPORT.center.y, hasLeftPosition = false)
                     .size(DEFAULT_NON_FIT_TOOLTIP_SIZE)
                     .buildTooltip()
             )
-            .yAxisPosition(AxisPosition.RIGHT)
+            .verticalAxisTooltipPosition(VerticalAxisTooltipPosition.RIGHT)
             .build()
 
         arrange(layoutManagerController)
@@ -349,8 +378,8 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
                 .objectRadius(DEFAULT_OBJECT_RADIUS)
     }
 
-    private fun xAxisTip(x: Double, axisPosition: AxisPosition = AxisPosition.BOTTOM): MeasuredTooltipBuilder {
-        val y = if (axisPosition.isBottom) {
+    private fun xAxisTip(x: Double, hasBottomPosition: Boolean = true): MeasuredTooltipBuilder {
+        val y = if (hasBottomPosition) {
             DEFAULT_AXIS_ORIGIN.y
         } else {
             DEFAULT_X_AXIS_PADDING
@@ -358,8 +387,8 @@ internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
         return factory!!.xAxisTip(X_AXIS_TOOLTIP_KEY, coord(x, y))
     }
 
-    private fun yAxisTip(y: Double, axisPosition: AxisPosition = AxisPosition.LEFT): MeasuredTooltipBuilder {
-        val x = if (axisPosition.isLeft) {
+    private fun yAxisTip(y: Double, hasLeftPosition: Boolean = true): MeasuredTooltipBuilder {
+        val x = if (hasLeftPosition) {
             DEFAULT_AXIS_ORIGIN.x
         } else {
             VIEWPORT.right - DEFAULT_X_AXIS_PADDING

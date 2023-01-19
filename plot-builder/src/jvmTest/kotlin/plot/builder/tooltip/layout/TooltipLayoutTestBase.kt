@@ -10,7 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
-import jetbrains.datalore.plot.builder.scale.AxisPosition
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.*
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
 import kotlin.test.assertEquals
@@ -201,8 +202,8 @@ internal open class TooltipLayoutTestBase {
         private var myHorizontalAlignment: HorizontalAlignment = LEFT
         private var myCursor = DoubleVector.ZERO
         private var myTooltipBounds: DoubleRectangle = myViewport
-        private var myXAxisPosition: AxisPosition = AxisPosition.BOTTOM
-        private var myYAxisPosition: AxisPosition = AxisPosition.LEFT
+        private var myHorizontalAxisTooltipPosition: HorizontalAxisTooltipPosition = HorizontalAxisTooltipPosition.BOTTOM
+        private var myVerticalAxisTooltipPosition: VerticalAxisTooltipPosition = VerticalAxisTooltipPosition.LEFT
 
         fun cursor(cursor: DoubleVector): TipLayoutManagerBuilder {
             myCursor = cursor
@@ -224,21 +225,27 @@ internal open class TooltipLayoutTestBase {
             return this
         }
 
-        fun xAxisPosition(xAxisPosition: AxisPosition): TipLayoutManagerBuilder {
-            myXAxisPosition = xAxisPosition
+        fun horizontalAxisTooltipPosition(hAxisTooltipPosition: HorizontalAxisTooltipPosition = HorizontalAxisTooltipPosition.BOTTOM): TipLayoutManagerBuilder {
+            myHorizontalAxisTooltipPosition = hAxisTooltipPosition
             return this
         }
 
-        fun yAxisPosition(yAxisPosition: AxisPosition): TipLayoutManagerBuilder {
-            myYAxisPosition = yAxisPosition
+        fun verticalAxisTooltipPosition(vAxisTooltipPosition: VerticalAxisTooltipPosition = VerticalAxisTooltipPosition.LEFT): TipLayoutManagerBuilder {
+            myVerticalAxisTooltipPosition = vAxisTooltipPosition
             return this
         }
 
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
-                    LayoutManager(myViewport, myHorizontalAlignment, myXAxisPosition, myYAxisPosition)
-                        .arrange(myTooltipData, myCursor, geomBounds = myTooltipBounds)
+                    LayoutManager(myViewport, myHorizontalAlignment)
+                        .arrange(
+                            myTooltipData,
+                            myCursor,
+                            geomBounds = myTooltipBounds,
+                            myHorizontalAxisTooltipPosition,
+                            myVerticalAxisTooltipPosition
+                        )
             }
         }
 

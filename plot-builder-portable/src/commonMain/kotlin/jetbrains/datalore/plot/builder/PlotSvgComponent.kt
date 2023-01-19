@@ -36,8 +36,9 @@ import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgNode
@@ -59,9 +60,7 @@ class PlotSvgComponent constructor(
     val interactionsEnabled: Boolean,
     val theme: Theme,
     val styleSheet: StyleSheet,
-    val plotContext: PlotContext,
-    val hAxisPosition: AxisPosition,
-    val vAxisPosition: AxisPosition
+    val plotContext: PlotContext
 ) : SvgComponent() {
 
     val flippedAxis = frameProviderByTile[0].flipAxis
@@ -301,14 +300,16 @@ class PlotSvgComponent constructor(
 
             // axis tooltip should appear on 'outer' bounds:
             val axisOrigin = DoubleVector(
-                x = if (vAxisPosition.isLeft) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
-                y = if (hAxisPosition.isBottom) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
+                x = if (plotInfo.hasLeftAxis) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
+                y = if (plotInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
             )
             interactor?.onTileAdded(
                 geomInnerBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
-                axisOrigin
+                axisOrigin,
+                hAxisTooltipPosition = if (plotInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
+                vAxisTooltipPosition = if (plotInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
             )
 
             if (DEBUG_DRAWING) {
