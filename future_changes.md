@@ -9,6 +9,7 @@
 ### Changed
 
 - `pandas` library was added to dependencies of the `residual_plot()` function.
+- Python packages for `Windows` no longer require `MinGW` tools to run.
 
 ### Fixed
 
