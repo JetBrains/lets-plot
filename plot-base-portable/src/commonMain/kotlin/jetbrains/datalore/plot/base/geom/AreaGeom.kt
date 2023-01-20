@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.DensityStat
+import jetbrains.datalore.vis.svg.SvgLineElement
 
 open class AreaGeom : GeomBase() {
     var quantiles: List<Double> = DensityStat.DEF_QUANTILES
@@ -46,20 +47,21 @@ open class AreaGeom : GeomBase() {
             appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y).asReversed(), root)
         }
 
-        if (quantileLines) buildQuantiles(root, dataPoints, pos, coord, ctx)
+        if (quantileLines) getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            root.add(quantileLine)
+        }
 
         dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
             buildHints(points, pos, coord, ctx)
         }
     }
 
-    private fun buildQuantiles(
-        root: SvgRoot,
+    private fun getQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
-    ) {
+    ): List<SvgLineElement> {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val definedPoints = GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
@@ -68,9 +70,7 @@ open class AreaGeom : GeomBase() {
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             GeomUtil.TO_LOCATION_X_ZERO(p)!!
         }
-        for (line in quantilesHelper.getQuantileLineElements(definedPoints, toLocationBoundStart, toLocationBoundEnd)) {
-            root.add(line)
-        }
+        return quantilesHelper.getQuantileLineElements(definedPoints, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun buildHints(dataPoints: Iterable<DataPointAesthetics>, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {

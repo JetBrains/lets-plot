@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.YDensityStat
+import jetbrains.datalore.vis.svg.SvgLineElement
 
 class ViolinGeom : GeomBase() {
     var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
@@ -67,7 +68,9 @@ class ViolinGeom : GeomBase() {
             appendNodes(helper.createLines(points, rightBoundTransform), root)
         }
 
-        if (quantileLines) buildQuantiles(root, dataPoints, pos, coord, ctx)
+        if (quantileLines) getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            root.add(quantileLine)
+        }
 
         dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
             buildHints(points, ctx, helper, leftBoundTransform)
@@ -75,13 +78,12 @@ class ViolinGeom : GeomBase() {
         }
     }
 
-    private fun buildQuantiles(
-        root: SvgRoot,
+    private fun getQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
-    ) {
+    ): List<SvgLineElement> {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(negativeSign, ctx)(p).x, p.y()!!)
@@ -89,9 +91,7 @@ class ViolinGeom : GeomBase() {
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(positiveSign, ctx)(p).x, p.y()!!)
         }
-        for (line in quantilesHelper.getQuantileLineElements(dataPoints, toLocationBoundStart, toLocationBoundEnd)) {
-            root.add(line)
-        }
+        return quantilesHelper.getQuantileLineElements(dataPoints, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun toLocationBound(

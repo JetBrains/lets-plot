@@ -144,6 +144,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(AreaRidges.MIN_HEIGHT)) {
                     geom.minHeight = opts.getDoubleDef(AreaRidges.MIN_HEIGHT, AreaRidgesGeom.DEF_MIN_HEIGHT)
                 }
+                if (opts.hasOwn(Option.Stat.DensityRidges.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.DensityRidges.QUANTILES, 0.0, 1.0)
+                }
                 if (opts.hasOwn(AreaRidges.QUANTILE_LINES)) {
                     geom.quantileLines = opts.getBoolean(AreaRidges.QUANTILE_LINES, AreaRidgesGeom.DEF_QUANTILE_LINES)
                 }
