@@ -2855,7 +2855,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
                 show_half=None,
-                quantiles=None, quantile_lines=None,
+                draw_quantiles=None, quantile_lines=None,
                 scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
@@ -2890,7 +2890,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If -1 then it's drawing only half of each violin.
         If 1 then it's drawing other half.
         If 0 then violins looking as usual.
-    quantiles : list of float, default=[0.25, 0.5, 0.75]
+    draw_quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
@@ -2935,7 +2935,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ..density.. : density estimate.
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
-    - ..quantile.. : value of the nearest quantile specified by the `quantiles` parameter.
+    - ..quantile.. : value of the nearest quantile specified by the `draw_quantiles` parameter.
 
     `geom_violin()` understands the following aesthetics mappings:
 
@@ -2979,7 +2979,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
             geom_violin(aes(fill='..quantile..'), scale='count', \\
-                        quantiles=[.02, .25, .5, .75, .98], quantile_lines=True)
+                        draw_quantiles=[.02, .25, .5, .75, .98], quantile_lines=True)
 
     |
 
@@ -3048,7 +3048,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  orientation=orientation,
                  show_half=show_half,
-                 quantiles=quantiles,
+                 draw_quantiles=draw_quantiles,
                  quantile_lines=quantile_lines,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)

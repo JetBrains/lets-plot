@@ -33,7 +33,7 @@ class Violin {
                 "               {" +
                 "                 'geom': 'violin'," +
                 "                 'alpha': 0.7," +
-                "                 'quantiles': [0, 0.1, 0.5, 0.9, 1]," +
+                "                 'draw_quantiles': [0, 0.1, 0.5, 0.9, 1]," +
                 "                 'quantile_lines': true" +
                 "               }" +
                 "             ]" +
@@ -138,7 +138,7 @@ class Violin {
                 "                 'geom': 'violin'," +
                 "                 'show_half': 1," +
                 "                 'trim': false," +
-                "                 'quantiles': [0.1, 0.5, 0.9]," +
+                "                 'draw_quantiles': [0.1, 0.5, 0.9]," +
                 "                 'fill': '#ffffb2'," +
                 "                 'mapping': {" +
                 "                   'color': '..quantile..'" +

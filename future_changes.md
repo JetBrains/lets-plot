@@ -10,6 +10,6 @@
 
 - `geom_density()`: added two new parameters - `quantiles` and `quantile_lines` - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` aesthetic. 
 
-- In `geom_violin()` parameter `draw_quantiles` renamed to `quantiles`, and also added `quantile_lines` parameter - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` aesthetic.
+- `geom_violin()`: added `quantile_lines` parameter - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` aesthetic.
 
 ### Fixed
