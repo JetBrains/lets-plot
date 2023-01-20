@@ -12,7 +12,7 @@ __all__ = ['facet_grid', 'facet_wrap']
 
 def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=None, y_format=None):
     """
-    Splits data by one or two faceting variables.
+    Split data by one or two faceting variables.
     For each data subset creates a plot panel and lays out panels as grid.
     The grid columns are defined by X faceting variable and rows are defined by Y faceting variable.
 
@@ -23,17 +23,17 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=No
     y : str
         Variable name which defines rows of the facet grid.
     scales : str
-        Specifies whether scales are shared across all facets.
+        Specify whether scales are shared across all facets.
         'fixed' - shared (the default), 'free' - vary across both rows and columns,
         'free_x' or 'free_y' - vary across rows or columns respectively.
     x_order : int, default=1
-        Specifies ordering direction of columns. 1 - ascending, -1 - descending, 0 - no ordering.
+        Specify ordering direction of columns. 1 - ascending, -1 - descending, 0 - no ordering.
     y_order : int, default=1
-        Specifies ordering direction of rows. 1 - ascending, -1 - descending, 0 - no ordering.
+        Specify ordering direction of rows. 1 - ascending, -1 - descending, 0 - no ordering.
     x_format : str
-        Specifies the format pattern for displaying faceting values in columns.
+        Specify the format pattern for displaying faceting values in columns.
     y_format : str
-        Specifies the format pattern for displaying faceting values in rows.
+        Specify the format pattern for displaying faceting values in rows.
 
     Returns
     -------
@@ -98,7 +98,7 @@ def facet_grid(x=None, y=None, *, scales=None, x_order=1, y_order=1, x_format=No
 
 def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=None, dir="h"):
     """
-    Splits data by one or more faceting variables.
+    Split data by one or more faceting variables.
     For each data subset creates a plot panel and lays out panels
     according to the `ncol`, `nrow` and `dir` settings.
 
@@ -111,17 +111,17 @@ def facet_wrap(facets, ncol=None, nrow=None, *, scales=None, order=1, format=Non
     nrow : int
         Number of rows.
     scales : str
-        Specifies whether scales are shared across all facets.
+        Specify whether scales are shared across all facets.
         'fixed' - shared (the default), 'free' - vary across both rows and columns,
         'free_x' or 'free_y' - vary across rows or columns respectively.
     order : int or list, default=1
-        Specifies ordering direction panels. 1 - ascending, -1 - descending, 0 - no ordering.
+        Specify ordering direction panels. 1 - ascending, -1 - descending, 0 - no ordering.
         When a list is given, then values in the list are positionally matched to variables in `facets`.
     format : str or list
-        Specifies the format pattern for displaying faceting values.
+        Specify the format pattern for displaying faceting values.
         The `format` values are positionally matched to variables in `facets`.
     dir : {'h', 'v'}, default='h'
-        Direction: either 'h' for horizontal, or 'v', for vertical.
+        Direction: either 'h' for horizontal, or 'v' for vertical.
 
     Returns
     -------

@@ -15,7 +15,6 @@ import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 internal object PlotGuidesAssemblerUtil {
     fun mappedRenderedAesToCreateGuides(
-//        layerTiles: StitchedPlotLayers,
         layer: PlotContext.Layer,
         guideOptionsMap: Map<Aes<*>, GuideOptions>
     ): List<Aes<*>> {
@@ -51,65 +50,10 @@ internal object PlotGuidesAssemblerUtil {
         return result
     }
 
-//    fun guideTransformedDomainByAes(
-//        stitchedLayers: StitchedPlotLayers,
-//        scaleMap: TypedScaleMap,
-//        guideOptionsMap: Map<Aes<*>, GuideOptions>
-//    ): Map<Aes<*>, DoubleSpan> {
-//        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
-//        val aesSet = mappedRenderedAesToCreateGuides(
-//            stitchedLayers,
-//            guideOptionsMap
-//        )
-//
-//        for (aes in aesSet) {
-//            // Should be only 'tarnsform' variables in bindings at this point.
-//            val transformVariable = stitchedLayers.getBinding(aes).variable
-//            check(transformVariable.isTransform)
-//
-//            val transformedDataRange = stitchedLayers.getDataRange(transformVariable)
-////            val scale = stitchedLayers.getScale(aes)
-//            val scale = scaleMap.get(aes)
-//            if (scale.isContinuousDomain) {
-//                transformedDomainByAes[aes] = refineTransformedDataRangeForContinuousDomain(
-//                    transformedDataRange,
-//                    scale.transform as ContinuousTransform
-//                )
-//            } else if (transformedDataRange != null) {
-//                transformedDomainByAes[aes] = transformedDataRange
-//            }
-//        }
-//
-//        return transformedDomainByAes
-//    }
-
-//    private fun refineTransformedDataRangeForContinuousDomain(
-//        transformedDataRange: DoubleSpan?,
-//        transform: ContinuousTransform
-//    ): DoubleSpan {
-//        val (dataLower, dataUpper) = when (transformedDataRange) {
-//            null -> Pair(Double.NaN, Double.NaN)
-//            else -> Pair(transformedDataRange.lowerEnd, transformedDataRange.upperEnd)
-//        }
-//        val (scaleLower, scaleUpper) = ScaleUtil.transformedDefinedLimits(transform)
-//
-//        val lowerEnd = if (scaleLower.isFinite()) scaleLower else dataLower
-//        val upperEnd = if (scaleUpper.isFinite()) scaleUpper else dataUpper
-//
-//        val newRange = when {
-//            lowerEnd.isFinite() && upperEnd.isFinite() -> DoubleSpan(lowerEnd, upperEnd)
-//            lowerEnd.isFinite() -> DoubleSpan(lowerEnd, lowerEnd)
-//            upperEnd.isFinite() -> DoubleSpan(upperEnd, upperEnd)
-//            else -> null
-//        }
-//
-//        return ensureApplicableDomain(newRange, transform)
-//    }
-
     fun createColorBarAssembler(
         scaleName: String,
         transformedDomain: DoubleSpan,
-        scale: Scale<Color>,
+        scale: Scale,
         scaleMapper: ScaleMapper<Color>,
         options: ColorBarOptions?,
         theme: LegendTheme
@@ -126,11 +70,11 @@ internal object PlotGuidesAssemblerUtil {
         return result
     }
 
-    fun fitsColorBar(aes: Aes<*>, scale: Scale<*>): Boolean {
+    fun fitsColorBar(aes: Aes<*>, scale: Scale): Boolean {
         return aes.isColor && scale.isContinuous
     }
 
-    fun checkFitsColorBar(aes: Aes<*>, scale: Scale<*>) {
+    fun checkFitsColorBar(aes: Aes<*>, scale: Scale) {
         check(aes.isColor) { "Color-bar is not applicable to $aes aesthetic" }
         check(scale.isContinuous) { "Color-bar is only applicable when both domain and color palette are continuous" }
     }

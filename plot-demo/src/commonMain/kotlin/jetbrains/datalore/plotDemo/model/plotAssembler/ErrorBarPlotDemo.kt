@@ -7,10 +7,7 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
@@ -20,7 +17,6 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -84,7 +80,7 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                 .put(varCI, listOf(3.190283, 2.797727, 1.899314, 1.964824, 1.799343, 3.43209))
                 .build()
 
-            val colorScale = Scales.DemoAndTest.pureDiscrete<Color>(
+            val colorScale = Scales.DemoAndTest.pureDiscrete(
                 "Supplement",
                 domainValues = data[varSupp].filterNotNull(),
 //                outputValues = listOf(Color.ORANGE, Color.DARK_GREEN),
@@ -112,14 +108,12 @@ open class ErrorBarPlotDemo : SimpleDemoBase() {
                 .put(varYMax, DemoUtil.add(data.getNumeric(varLen), data.getNumeric(varSE)))
                 .build()
 
-            val scaleByAes = TypedScaleMap(
-                mapOf(
-                    Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("Dose (mg)"),
-                    Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Tooth length"),
-                    Aes.YMIN to Scales.DemoAndTest.continuousDomainNumericRange("Y min"),
-                    Aes.YMAX to Scales.DemoAndTest.continuousDomainNumericRange("Y max"),
-                    Aes.COLOR to colorScale
-                )
+            val scaleByAes = mapOf<Aes<*>, Scale>(
+                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("Dose (mg)"),
+                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Tooth length"),
+                Aes.YMIN to Scales.DemoAndTest.continuousDomainNumericRange("Y min"),
+                Aes.YMAX to Scales.DemoAndTest.continuousDomainNumericRange("Y max"),
+                Aes.COLOR to colorScale
             )
 
             val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(

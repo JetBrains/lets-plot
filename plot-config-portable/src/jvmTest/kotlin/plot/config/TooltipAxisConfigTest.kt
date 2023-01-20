@@ -321,7 +321,7 @@ class TooltipAxisConfigTest {
 
         private fun getYTick(geomLayer: GeomLayer, closedRange: DoubleSpan = DoubleSpan(0.3, 0.4)): String {
             return ScaleConfigLabelsTest.getScaleLabels(
-                geomLayer.scaleMap[Aes.Y],
+                geomLayer.scaleMap.getValue(Aes.Y),
                 targetCount = 1,
                 closedRange
             ).first()

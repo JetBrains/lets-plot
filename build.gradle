@@ -13,6 +13,9 @@ plugins {
     id "io.codearte.nexus-staging"
 }
 
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.yaml.snakeyaml.Yaml
+
 project.ext.letsPlotTaskGroup = 'lets-plot'
 
 def include_sources_letsPlotJvmCommon = [
@@ -127,23 +130,78 @@ allprojects {
     }
 }
 
-import org.yaml.snakeyaml.Yaml
-
-def build_settings_file = new File(rootDir, "build_settings.yml")
-if (!build_settings_file.canRead()) {
-    throw new GradleException("Couldn't read build_settings.yml")
+// Read build settings from commandline parameters (for build_release.py script):
+def readSettingsFromParameters() {
+    def settings = [
+            build_python_extension:false,
+            enable_python_package:false,
+            python:[bin_path:"", include_path:""],
+            pypi:[test:[username:null, password:null],
+                    prod:[username:null, password:null]]
+    ]
+    if (project.hasProperty("build_python_extension")){
+        settings.build_python_extension = project.getProperty("build_python_extension")
+        assert settings.build_python_extension != null
+    }
+    if (project.hasProperty("enable_python_package")){
+        settings.enable_python_package = project.getProperty("enable_python_package")
+        assert settings.enable_python_package != null
+    }
+    if (settings.build_python_extension) {
+        settings.python.bin_path = project.getProperty("python_bin_path")
+        settings.python.include_path = project.getProperty("python_include_path")
+        assert !settings.python.bin_path.isEmpty()
+        assert !settings.python.include_path.isEmpty()
+    }
+    return settings
 }
-def settings = new Yaml().load(build_settings_file.newInputStream())
-if (settings.build_python_extension) {
-    assert settings.python.include_path != null
-}
-if (settings.enable_python_package) {
-    assert settings.build_python_extension
-    assert settings.python.bin_path != null
+
+// Read build settings from build_settings.yml:
+def readSettingsFromYaml() {
+    def build_settings_file = new File(rootDir, "build_settings.yml")
+    if (!build_settings_file.canRead()) {
+        throw new GradleException("Couldn't read build_settings.yml")
+    }
+    def settings = new Yaml().load(build_settings_file.newInputStream())
+    if (settings.build_python_extension) {
+        assert settings.python.include_path != null
+    }
+    if (settings.enable_python_package) {
+        assert settings.build_python_extension
+        assert settings.python.bin_path != null
+    }
+    return settings
 }
 
-project.ext.buildSettings = settings
+// Get Python's arch to define Kotlin targets:
+def getPythonArch() {
+    def python_bin_path = project.buildSettings.python.bin_path
+    def getArchOutput = new ByteArrayOutputStream()
+    exec {
+        commandLine "${python_bin_path}/python",
+                "-c",
+                "import platform; print(platform.machine())"
+        standardOutput = getArchOutput
+    }
+    return getArchOutput.toString().trim()
+}
 
+
+// For build_release.py settings will be read from commandline parameters.
+// If not, settings will be read from build_settings.yml.
+if (project.hasProperty("build_release")) {
+    project.ext.buildSettings = readSettingsFromParameters()
+} else {
+    project.ext.buildSettings = readSettingsFromYaml() as LinkedHashMap
+}
+
+// Read Python arch from commandline parameter if used:
+if (project.hasProperty("build_arch")) {
+    project.ext.pythonArch = project.getProperty("build_arch")
+    assert !project.pythonArch.isEmpty()
+} else if (project.buildSettings.build_python_extension) {
+    project.ext.pythonArch = getPythonArch()
+}
 
 // Maven publication settings
 // define local Maven Repository path:
@@ -177,7 +235,49 @@ task publishKotlinApiDependenciesToMavenRepository {
     group project.letsPlotTaskGroup
 }
 
+
 subprojects {
+    // Configure Kotlin targets.
+    if (name in [
+            'base-portable',
+            'plot-base-portable',
+            'plot-builder-portable',
+            'plot-common-portable',
+            'plot-config-portable',
+            'test-common',
+            'vis-svg-portable',
+    ]) {
+        apply plugin: "org.jetbrains.kotlin.multiplatform"
+
+        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
+
+        kotlin{
+            if (project.buildSettings.build_python_extension) {
+                if (currentOs.macOsX & project.pythonArch == "x86_64") {
+                    macosX64()
+                } else if (currentOs.macOsX & project.pythonArch == "arm64") {
+                    if (project.hasProperty("build_release")){
+                        macosX64()
+                        macosArm64()
+                    } else {
+                        macosArm64()
+                    }
+                } else if (currentOs.linux) {
+                    if (project.hasProperty("build_release")) {
+                        linuxX64()
+                        linuxArm64()
+                    } else if (project.pythonArch == "x86_64") {
+                        linuxX64()
+                    }
+                } else if (currentOs.windows) {
+                    mingwX64()
+                } else {
+                    throw new Exception("Unsupported platform.")
+                }
+            }
+        }
+    }
+
     // Configure publishing for projects which "Lets-Plot Kotlin API" depends on.
     if (name in [
             'plot-base-portable',

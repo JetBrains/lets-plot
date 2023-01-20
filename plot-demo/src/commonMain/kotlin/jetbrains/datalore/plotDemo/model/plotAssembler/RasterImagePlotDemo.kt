@@ -8,6 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.scale.transform.Transforms
@@ -16,7 +17,6 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
@@ -45,22 +45,20 @@ open class RasterImagePlotDemo : SimpleDemoBase() {
             builder.put(variable, data.getValue(variable.name))
         }
         val df = builder.build()
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("X"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Y"),
-                Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
-                    varFill.label,
-                    Transforms.IDENTITY,
-                    continuousRange = false,
-                    guideBreaks = null,
-                ),
-                Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).createScale(
-                    varAlpha.label,
-                    Transforms.IDENTITY,
-                    continuousRange = false,
-                    guideBreaks = null,
-                )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("X"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("Y"),
+            Aes.FILL to ScaleProviderHelper.createDefault(Aes.FILL).createScale(
+                varFill.label,
+                Transforms.IDENTITY,
+                continuousRange = false,
+                guideBreaks = null,
+            ),
+            Aes.ALPHA to ScaleProviderHelper.createDefault(Aes.ALPHA).createScale(
+                varAlpha.label,
+                Transforms.IDENTITY,
+                continuousRange = false,
+                guideBreaks = null,
             )
         )
 

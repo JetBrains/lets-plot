@@ -10,13 +10,13 @@ import jetbrains.datalore.base.random.RandomGaussian
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -51,11 +51,9 @@ open class LinearRegressionPlotDemo : SimpleDemoBase() {
             .putNumeric(varOrigY, valuesY)
             .build()
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
         )
 
         val scatterLayer = GeomLayerBuilder.demoAndTest(GeomProvider.point(), Stats.IDENTITY)

@@ -15,12 +15,13 @@ open class AxisPositionFixedBreaksTilted {
             yAxis_Right(),
             xAxis_Top(),
             axis_RightTop(),
+            axis_AllSides(),
         ).map { setScaleBreaks(it) }
     }
 
     companion object {
         private val BREAKS = listOf(-0.25, 0.0, 0.25)
-//        private val LABS = listOf("minus twenty five hundredths", "three", "fore")
+
         private val LABS = listOf("minus minus", "zero zero", "plus, plus")
 //        private val LABS = listOf("o", "t", "t", "f", "f")
 
@@ -127,6 +128,24 @@ open class AxisPositionFixedBreaksTilted {
                     'scales': [
                             {'aesthetic': 'x', 'name': 'top', 'position': 'top'},
                             {'aesthetic': 'y', 'name': 'right', 'position': 'right'}
+                        ]
+                }
+            """.trimIndent()
+            val plotSpec = HashMap(parsePlotSpec(spec))
+            plotSpec["data"] = data()
+            return plotSpec
+        }
+
+        @Suppress("FunctionName")
+        fun axis_AllSides(): MutableMap<String, Any> {
+            val spec = """
+                {
+                    'kind': 'plot',
+                    ${layerMapping()},
+                    ${title("Position: both, both")},
+                    'scales': [
+                            {'aesthetic': 'x', 'position': 'both'},
+                            {'aesthetic': 'y', 'position': 'both'}
                         ]
                 }
             """.trimIndent()

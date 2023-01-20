@@ -31,7 +31,7 @@ def coord_cartesian(xlim=None, ylim=None, flip=False):
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
     flip : bool
-        Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
+        Flip the coordinate system axis so that horizontal axis becomes vertical and vice versa.
 
     Returns
     -------
@@ -59,7 +59,7 @@ def coord_cartesian(xlim=None, ylim=None, flip=False):
 
 def coord_fixed(ratio=1., xlim=None, ylim=None, flip=False):
     """
-    A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.
+    A fixed scale coordinate system forces a specified ratio between the physical representations of data units on the axes.
 
     Parameters
     ----------
@@ -68,15 +68,15 @@ def coord_fixed(ratio=1., xlim=None, ylim=None, flip=False):
         ratio = 1, ensures that one unit on the x-axis is the same length as one unit on the y-axis.
         Ratios higher than one make units on the y-axis longer than units on the x-axis, and vice versa.
     xlim : list
-        Limits (2 numbers) for the x axis.
+        Limits (2 elements) for the x axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
     ylim : list
-        Limits (2 numbers) for the y axis.
+        Limits (2 elements) for the y axis.
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
     flip : bool
-        Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
+        Flip the coordinate system axis so that horizontal axis becomes vertical and vice versa.
 
     Returns
     -------
@@ -106,7 +106,7 @@ def coord_fixed(ratio=1., xlim=None, ylim=None, flip=False):
 
 def coord_map(xlim=None, ylim=None, flip=False):
     """
-    Projects a portion of the earth, which is approximately spherical,
+    Project a portion of the earth, which is approximately spherical,
     onto a flat 2D plane.
     Map projections generally do not preserve straight lines, so this requires considerable computation.
 
@@ -121,7 +121,7 @@ def coord_map(xlim=None, ylim=None, flip=False):
         1st element defines lower limit, 2nd element defines upper limit.
         None means no lower / upper bound - depending on the index in list.
     flip : bool
-        Flips the coordinate system axisso that horizontal axis becomes vertical and vice versa.
+        Flip the coordinate system axis so that horizontal axis becomes vertical and vice versa.
 
     Returns
     -------

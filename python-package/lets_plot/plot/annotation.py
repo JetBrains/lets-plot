@@ -50,7 +50,7 @@ class layer_labels(FeatureSpec):
 
     def as_dict(self):
         """
-        Returns the dictionary of all properties of the object.
+        Return the dictionary of all properties of the object.
 
         Returns
         -------
@@ -80,7 +80,7 @@ class layer_labels(FeatureSpec):
 
     def format(self, field=None, format=None):
         """
-        Defines the format for displaying the value.
+        Define the format for displaying the value.
         This format will be applied to the corresponding value specified in the 'line' template.
 
         Parameters

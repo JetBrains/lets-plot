@@ -39,7 +39,7 @@ def geom_livemap(*,
     Parameters
     ----------
     location : list
-        Initial position of the map. If not set, displays the United States.
+        Initial position of the map. If not set, display the United States.
         There are [lon1, lat1, lon2, lat2,..., lonN, latN]:
         lon1, lon2,..., lonN are longitudes in degrees (positive in the Eastern hemisphere);
         lat1, lat2,..., latN are latitudes in degrees (positive in the Northern hemisphere).
@@ -54,16 +54,16 @@ def geom_livemap(*,
         with {z}, {x} and {y} wildcards (e.g. 'http://my.tile.com/{z}/{x}/{y}.png')
         or the result of a call to a `maptiles_xxx()` functions.
     show_coord_pick_tools : bool, default=False
-        Show buttons "copy location" and "draw geometry"
+        Show buttons "copy location" and "draw geometry".
     data_size_zoomin : int, default=0
-        Controls how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
+        Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is set by means of mapping between the data and the `size` aesthetic.
         `0` - size never increases;
         `-1` - size will be increasing without limits;
         `n` - a number of zooming-in steps (counting from the initial state of the map widget)
         when size of objects will be increasing. Farther zooming will no longer affect the size.
     const_size_zoomin : int, default=-1
-        Controls how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
+        Control how zooming-in of the map widget increases size of geometry objects (circles, lines etc.) on map
         when the size is not linked to a data (i.e. constant size).
         `0` - size never increases;
         `-1` - size will be increasing without limits;

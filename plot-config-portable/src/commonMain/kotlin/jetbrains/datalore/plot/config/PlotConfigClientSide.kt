@@ -7,14 +7,14 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option.Plot.COORD
 import jetbrains.datalore.plot.config.Option.Plot.GUIDES
@@ -35,11 +35,11 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
     internal val coordProvider: CoordProvider
     internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
 
-    val scaleMap: TypedScaleMap
+    val scaleMap: Map<Aes<*>, Scale>
     val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
 
-    internal val xAxisOrientation: Orientation
-    internal val yAxisOrientation: Orientation
+    internal val xAxisPosition: AxisPosition
+    internal val yAxisPosition: AxisPosition
 
     init {
         fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
@@ -76,8 +76,8 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
 
-        xAxisOrientation = scaleProviderByAes.getValue(Aes.X).axisOrientation!!
-        yAxisOrientation = scaleProviderByAes.getValue(Aes.Y).axisOrientation!!
+        xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
+        yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition
     }
 
     override fun createLayerConfig(

@@ -18,7 +18,7 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ContinuousScaleTest {
-    private fun createScale(): Scale<*> {
+    private fun createScale(): Scale {
         return Scales.DemoAndTest.continuousDomain("Test scale", Aes.X)
     }
 
@@ -107,7 +107,7 @@ class ContinuousScaleTest {
                 labelFormatter(domain, targetCount)
         }
 
-        fun actual(scale: Scale<*>): BreaksGenerator {
+        fun actual(scale: Scale): BreaksGenerator {
             assertTrue(
                 scale.getBreaksGenerator() is Transforms.BreaksGeneratorForTransformedDomain,
                 "Expected BreaksGeneratorForTransformedDomain bu was ${scale.getBreaksGenerator()::class.simpleName}"

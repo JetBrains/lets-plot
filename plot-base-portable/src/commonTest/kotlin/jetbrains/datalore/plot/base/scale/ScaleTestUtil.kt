@@ -11,7 +11,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal object ScaleTestUtil {
-    fun assertExpandValuesPreservedInCopy(scale: Scale<*>) {
+    fun assertExpandValuesPreservedInCopy(scale: Scale) {
         @Suppress("NAME_SHADOWING")
         var scale = scale
         scale = scale.with()
@@ -24,14 +24,14 @@ internal object ScaleTestUtil {
         assertEquals(scale.additiveExpand, copy.additiveExpand, 0.0)
     }
 
-    fun assertValuesInLimits(scale: Scale<*>, vararg domainValues: Any) {
+    fun assertValuesInLimits(scale: Scale, vararg domainValues: Any) {
         for (v in domainValues) {
 //            assertTrue(scale.isInDomainLimits(v), "Not in limits: $v")
             assertTrue(scale.transform.isInDomain(v), "Not in limits: $v")
         }
     }
 
-    fun assertValuesNotInLimits(scale: Scale<*>, vararg values: Any) {
+    fun assertValuesNotInLimits(scale: Scale, vararg values: Any) {
         for (v in values) {
 //            assertFalse(scale.isInDomainLimits(v), "In limits: $v")
             assertFalse(scale.transform.isInDomain(v), "In limits: $v")

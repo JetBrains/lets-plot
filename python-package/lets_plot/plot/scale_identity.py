@@ -38,7 +38,7 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -110,7 +110,7 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -182,7 +182,7 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -252,7 +252,7 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -325,7 +325,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -394,7 +394,7 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
     guide, default='none'
         Guide to use for this scale. Defaults to 'none'.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'

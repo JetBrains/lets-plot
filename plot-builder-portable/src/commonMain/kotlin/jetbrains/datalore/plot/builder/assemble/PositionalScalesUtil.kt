@@ -29,8 +29,8 @@ internal object PositionalScalesUtil {
      */
     fun computePlotXYTransformedDomains(
         layersByTile: List<List<GeomLayer>>,
-        xScaleProto: Scale<*>,
-        yScaleProto: Scale<*>,
+        xScaleProto: Scale,
+        yScaleProto: Scale,
         facets: PlotFacets
     ): List<Pair<DoubleSpan, DoubleSpan>> {
         var xInitialDomain: DoubleSpan? = RangeUtil.initialRange(xScaleProto.transform)
@@ -72,7 +72,7 @@ internal object PositionalScalesUtil {
 
     private fun finalizeDomains(
         aes: Aes<Double>,
-        scaleProto: Scale<*>,
+        scaleProto: Scale,
         domains: List<DoubleSpan?>,
         layersByTile: List<List<GeomLayer>>,
         freeScale: Boolean
@@ -280,7 +280,7 @@ internal object PositionalScalesUtil {
             widthAxis to when {
                 geom is WithWidth -> {
                     val resolution = geomCtx.getResolution(widthAxis)
-                    val isDiscrete = !layer.scaleMap.get(widthAxis).isContinuousDomain
+                    val isDiscrete = !layer.scaleMap.getValue(widthAxis).isContinuousDomain
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
                         geom.widthSpan(p, widthAxis, resolution, isDiscrete)
                     }
@@ -298,7 +298,7 @@ internal object PositionalScalesUtil {
             heightAxis to when {
                 geom is WithHeight -> {
                     val resolution = geomCtx.getResolution(heightAxis)
-                    val isDiscrete = !layer.scaleMap.get(heightAxis).isContinuousDomain
+                    val isDiscrete = !layer.scaleMap.getValue(heightAxis).isContinuousDomain
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
                         geom.heightSpan(p, heightAxis, resolution, isDiscrete)
                     }
@@ -352,7 +352,7 @@ internal object PositionalScalesUtil {
         internal fun expandRange(
             range: DoubleSpan?,
             aes: Aes<Double>,
-            scale: Scale<*>,
+            scale: Scale,
             layers: List<GeomLayer>
         ): DoubleSpan? {
             val includeZero = layers.any { it.rangeIncludesZero(aes) }

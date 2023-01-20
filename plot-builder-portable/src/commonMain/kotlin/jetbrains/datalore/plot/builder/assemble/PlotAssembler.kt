@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.frame.BogusFrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.frame.SquareFrameOfReferenceProvider
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeomMarginsLayout
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayout
@@ -25,21 +24,22 @@ import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.vis.StyleSheet
 
 class PlotAssembler private constructor(
     private val layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: TypedScaleMap,
+    private val scaleMap: Map<Aes<*>, Scale>,
     private val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
     private val coordProvider: CoordProvider,
-    private val xAxisOrientation: Orientation,
-    private val yAxisOrientation: Orientation,
+    private val xAxisPosition: AxisPosition,
+    private val yAxisPosition: AxisPosition,
     private val theme: Theme
 ) {
 
-    private val scaleXProto: Scale<Double> = scaleMap.get(Aes.X)
-    private val scaleYProto: Scale<Double> = scaleMap.get(Aes.Y)
+    private val scaleXProto: Scale = scaleMap.getValue(Aes.X)
+    private val scaleYProto: Scale = scaleMap.getValue(Aes.Y)
 
     val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
         layers.filterNot { it.isMarginal }
@@ -95,8 +95,8 @@ class PlotAssembler private constructor(
                 layoutProviderByTile,
                 facets,
                 theme.facets(),
-                hAxisOrientation = Orientation.BOTTOM,  // Not used with Live Map
-                vAxisOrientation = Orientation.LEFT,    // Not used with Live Map
+                hAxisPosition = AxisPosition.BOTTOM,  // Not used with Live Map
+                vAxisPosition = AxisPosition.LEFT,    // Not used with Live Map
                 hAxisTheme = LiveMapAxisTheme(),
                 vAxisTheme = LiveMapAxisTheme(),
             )
@@ -117,9 +117,9 @@ class PlotAssembler private constructor(
                 else -> scaleXProto to scaleYProto
             }
 
-            val (hAxisOrientation, vAxisOrientation) = when (flipAxis) {
-                true -> yAxisOrientation.flip() to xAxisOrientation.flip()
-                else -> xAxisOrientation to yAxisOrientation
+            val (hAxisPosition, vAxisPosition) = when (flipAxis) {
+                true -> yAxisPosition.flip() to xAxisPosition.flip()
+                else -> xAxisPosition to yAxisPosition
             }
 
             // Marginal layers.
@@ -136,7 +136,7 @@ class PlotAssembler private constructor(
                         hScaleProto, vScaleProto,
                         adjustedDomain,
                         flipAxis,
-                        hAxisOrientation, vAxisOrientation,
+                        hAxisPosition, vAxisPosition,
                         theme,
                         marginsLayout,
                         domainByMargin
@@ -150,7 +150,7 @@ class PlotAssembler private constructor(
                 layoutProviderByTile,
                 facets,
                 theme.facets(),
-                hAxisOrientation, vAxisOrientation,
+                hAxisPosition, vAxisPosition,
                 hAxisTheme = theme.horizontalAxis(flipAxis),
                 vAxisTheme = theme.verticalAxis(flipAxis),
             )
@@ -166,7 +166,6 @@ class PlotAssembler private constructor(
         styleSheet: StyleSheet,
         plotContext: PlotContext
     ): PlotSvgComponent {
-
         return PlotSvgComponent(
             title = title,
             subtitle = subtitle,
@@ -195,12 +194,12 @@ class PlotAssembler private constructor(
     companion object {
         fun demoAndTest(
             plotLayers: List<GeomLayer>,
-            scaleMap: TypedScaleMap,
+            scaleMap: Map<Aes<*>, Scale>,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme,
-            xAxisOrientation: Orientation = Orientation.BOTTOM,
-            yAxisOrientation: Orientation = Orientation.LEFT,
+            xAxisPosition: AxisPosition = AxisPosition.BOTTOM,
+            yAxisPosition: AxisPosition = AxisPosition.LEFT,
         ): PlotAssembler {
             val layersByTile = ArrayList<List<GeomLayer>>()
             layersByTile.add(plotLayers)
@@ -209,19 +208,19 @@ class PlotAssembler private constructor(
                 scaleMap,
                 scaleMappersNP,
                 coordProvider,
-                xAxisOrientation,
-                yAxisOrientation,
+                xAxisPosition,
+                yAxisPosition,
                 theme
             )
         }
 
         fun multiTile(
             layersByTile: List<List<GeomLayer>>,
-            scaleMap: TypedScaleMap,
+            scaleMap: Map<Aes<*>, Scale>,
             scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
-            xAxisOrientation: Orientation,
-            yAxisOrientation: Orientation,
+            xAxisPosition: AxisPosition,
+            yAxisPosition: AxisPosition,
             theme: Theme
         ): PlotAssembler {
             return PlotAssembler(
@@ -229,8 +228,8 @@ class PlotAssembler private constructor(
                 scaleMap,
                 scaleMappersNP,
                 coordProvider,
-                xAxisOrientation,
-                yAxisOrientation,
+                xAxisPosition,
+                yAxisPosition,
                 theme
             )
         }

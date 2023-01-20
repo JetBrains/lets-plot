@@ -10,11 +10,11 @@ import jetbrains.datalore.plot.base.Scale
 
 
 object ScaleBreaksUtil {
-    fun <TargetT> withBreaks(
-        scale: Scale<TargetT>,
+    fun withBreaks(
+        scale: Scale,
         transformedDomain: DoubleSpan,
         breakCount: Int
-    ): Scale<TargetT> {
+    ): Scale {
         val scaleBreaks = scale.getBreaksGenerator().generateBreaks(transformedDomain, breakCount)
         val breaks = scaleBreaks.domainValues
         val labels = scaleBreaks.labels

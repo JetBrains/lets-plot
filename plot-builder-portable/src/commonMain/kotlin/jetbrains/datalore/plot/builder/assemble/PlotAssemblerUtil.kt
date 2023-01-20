@@ -9,14 +9,13 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.checkFitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.createColorBarAssembler
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColorBar
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
@@ -39,69 +38,7 @@ internal object PlotAssemblerUtil {
         }
     }
 
-//    fun createLegends(
-////        layersByPanel: List<List<GeomLayer>>,
-////        scaleMap: TypedScaleMap,
-//        plotContext: PlotContext,
-//        scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-//        guideOptionsMap: Map<Aes<*>, GuideOptions>,
-//        theme: LegendTheme
-//    ): List<LegendBoxInfo> {
-//
-//        // stitch together layers from all panels
-//        var planeCount = 0
-//        if (layersByPanel.isNotEmpty()) {
-//            planeCount = layersByPanel[0].size
-//        }
-//
-//        val stitchedLayersList = ArrayList<StitchedPlotLayers>()
-//        for (i in 0 until planeCount) {
-//            val layersOnPlane = ArrayList<GeomLayer>()
-//
-//            // collect layer[i] chunks from all panels
-//            for (panelLayers in layersByPanel) {
-//                layersOnPlane.add(panelLayers[i])
-//            }
-//
-//            stitchedLayersList.add(
-//                StitchedPlotLayers(
-//                    layersOnPlane
-//                )
-//            )
-//        }
-//
-//        val transformedDomainByAes = HashMap<Aes<*>, DoubleSpan>()
-//        for (stitchedPlotLayers in stitchedLayersList) {
-//            val layerTransformedDomainByAes = guideTransformedDomainByAes(
-//                stitchedPlotLayers,
-//                scaleMap,
-//                guideOptionsMap
-//            )
-//            for ((aes, transformedDomain) in layerTransformedDomainByAes) {
-//                updateAesRangeMap(
-//                    aes,
-//                    transformedDomain,
-//                    transformedDomainByAes
-//                )
-//            }
-//        }
-//
-//        return createLegends(
-//            stitchedLayersList,
-//            transformedDomainByAes,
-//            scaleMap,
-//
-//            scaleMappersNP,
-//            guideOptionsMap,
-//            theme
-//        )
-//    }
-
-    //    private fun createLegends(
     fun createLegends(
-//        stitchedLayersList: List<StitchedPlotLayers>,
-//        transformedDomainByAes: Map<Aes<*>, DoubleSpan>,
-//        scaleMap: TypedScaleMap,
         ctx: PlotContext,
         scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         guideOptionsMap: Map<Aes<*>, GuideOptions>,
@@ -111,7 +48,6 @@ internal object PlotAssemblerUtil {
         val legendAssemblerByTitle = LinkedHashMap<String, LegendAssembler>()
         val colorBarAssemblerByTitle = LinkedHashMap<String, ColorBarAssembler>()
 
-//        for (stitchedLayers in stitchedLayersList) {
         for (contextLayer in ctx.layers) {
             val layerConstantByAes = HashMap<Aes<*>, Any>()
             for (aes in contextLayer.renderedAes()) {
@@ -120,12 +56,10 @@ internal object PlotAssemblerUtil {
                 }
             }
 
-//            val layerBindingsByScaleName = LinkedHashMap<String, MutableList<VarBinding>>()
             val aesListByScaleName = LinkedHashMap<String, MutableList<Aes<*>>>()
             val aesList = mappedRenderedAesToCreateGuides(contextLayer, guideOptionsMap)
             for (aes in aesList) {
                 var colorBar = false
-//                val binding = contextLayer.getBinding(aes)
                 val scale = ctx.getScale(aes)
                 val scaleName = scale.name
                 if (guideOptionsMap.containsKey(aes)) {
@@ -136,9 +70,8 @@ internal object PlotAssemblerUtil {
                         @Suppress("UNCHECKED_CAST")
                         colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                             scaleName,
-//                            transformedDomainByAes.getValue(aes),
                             ctx.overallTransformedDomain(aes),
-                            scale as Scale<Color>,
+                            scale,
                             scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                             guideOptions,
                             theme
@@ -149,9 +82,8 @@ internal object PlotAssemblerUtil {
                     @Suppress("UNCHECKED_CAST")
                     colorBarAssemblerByTitle[scaleName] = createColorBarAssembler(
                         scaleName,
-//                        transformedDomainByAes.getValue(aes),
                         ctx.overallTransformedDomain(aes),
-                        scale as Scale<Color>,
+                        scale,
                         scaleMappersNP.getValue(aes) as ScaleMapper<Color>,
                         null,
                         theme
@@ -159,7 +91,6 @@ internal object PlotAssemblerUtil {
                 }
 
                 if (!colorBar) {
-//                    layerBindingsByScaleName.getOrPut(scaleName) { ArrayList() }.add(binding)
                     aesListByScaleName.getOrPut(scaleName) { ArrayList() }.add(aes)
                 }
             }
@@ -174,18 +105,14 @@ internal object PlotAssemblerUtil {
                     )
                 }
 
-//                val varBindings = layerBindingsByScaleName[scaleName]!!
                 val aesListForScaleName = aesListByScaleName.getValue(scaleName)
                 val legendKeyFactory = contextLayer.legendKeyElementFactory
                 val aestheticsDefaults = contextLayer.aestheticsDefaults
                 legendAssembler.addLayer(
                     legendKeyFactory,
-//                    varBindings.map { it.aes },
                     aesListForScaleName,
                     layerConstantByAes,
                     aestheticsDefaults,
-//                    scaleMap,
-//                    transformedDomainByAes
                     ctx
                 )
             }
@@ -212,8 +139,8 @@ internal object PlotAssemblerUtil {
         layoutProviderByTile: List<TileLayoutProvider>,
         facets: PlotFacets,
         facetsTheme: FacetsTheme,
-        hAxisOrientation: Orientation,
-        vAxisOrientation: Orientation,
+        hAxisPosition: AxisPosition,
+        vAxisPosition: AxisPosition,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
     ): PlotLayout {
@@ -221,8 +148,10 @@ internal object PlotAssemblerUtil {
             val topDownLayout = layoutProviderByTile[0].createTopDownTileLayout()
             return SingleTilePlotLayout(
                 topDownLayout,
-                hAxisOrientation, vAxisOrientation,
-                hAxisTheme, vAxisTheme
+                hAxisPosition,
+                vAxisPosition,
+                hAxisTheme,
+                vAxisTheme
             )
         }
 
@@ -230,8 +159,8 @@ internal object PlotAssemblerUtil {
             facets,
             layoutProviderByTile,
             facetsTheme.showStrip(),
-            hAxisOrientation,
-            vAxisOrientation,
+            hAxisPosition,
+            vAxisPosition,
             hAxisTheme,
             vAxisTheme,
         )

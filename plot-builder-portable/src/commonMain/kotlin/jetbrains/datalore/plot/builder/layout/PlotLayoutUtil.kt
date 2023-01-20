@@ -9,13 +9,13 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.guide.LegendPosition
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_AREA_PADDING
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_MARGIN
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_PADDING
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import jetbrains.datalore.plot.builder.theme.PlotTheme
@@ -24,20 +24,24 @@ import kotlin.math.max
 
 internal object PlotLayoutUtil {
     fun plotInsets(
-        hAxisOrientation: Orientation,
-        vAxisOrientation: Orientation,
+        hAxisPosition: AxisPosition,
+        vAxisPosition: AxisPosition,
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme
     ): Insets {
         val vPadding = if (hAxisTheme.showTitle() || hAxisTheme.showLabels()) 0.0 else GEOM_AREA_PADDING
         val hPadding = if (vAxisTheme.showTitle() || vAxisTheme.showLabels()) 0.0 else GEOM_AREA_PADDING
-        val (left, right) = when (vAxisOrientation) {
-            Orientation.LEFT -> Pair(hPadding, GEOM_AREA_PADDING)
-            else -> Pair(GEOM_AREA_PADDING, hPadding)
+        val (left, right) = when (vAxisPosition) {
+            AxisPosition.LEFT -> Pair(hPadding, GEOM_AREA_PADDING)
+            AxisPosition.RIGHT -> Pair(GEOM_AREA_PADDING, hPadding)
+            AxisPosition.LR -> Pair(hPadding, hPadding)
+            else -> throw IllegalStateException("Illegal vertical axis position: $vAxisPosition")
         }
-        val (top, bottom) = when (hAxisOrientation) {
-            Orientation.TOP -> Pair(vPadding, GEOM_AREA_PADDING)
-            else -> Pair(GEOM_AREA_PADDING, vPadding)
+        val (top, bottom) = when (hAxisPosition) {
+            AxisPosition.TOP -> Pair(vPadding, GEOM_AREA_PADDING)
+            AxisPosition.BOTTOM -> Pair(GEOM_AREA_PADDING, vPadding)
+            AxisPosition.TB -> Pair(vPadding, vPadding)
+            else -> throw IllegalStateException("Illegal horizontal axis position: $hAxisPosition")
         }
 
         return Insets(left, top, right, bottom)
@@ -225,14 +229,14 @@ internal object PlotLayoutUtil {
     fun axisTitlesOriginOffset(
         hAxisTitleInfo: Pair<String?, LabelSpec>,
         vAxisTitleInfo: Pair<String?, LabelSpec>,
-        hAxisOrientation: Orientation,
-        vAxisOrientation: Orientation,
+        hasTopAxisTitle: Boolean,
+        hasLeftAxisTitle: Boolean,
         axisEnabled: Boolean,
         marginDimensions: DoubleVector
     ): DoubleVector {
         return if (axisEnabled) {
-            val hAxisThickness = when (hAxisOrientation) {
-                Orientation.TOP -> titleThickness(
+            val yOffset = when (hasTopAxisTitle) {
+                true -> titleThickness(
                     title = hAxisTitleInfo.first,
                     labelSpec = hAxisTitleInfo.second,
                     margin = marginDimensions.y
@@ -241,8 +245,8 @@ internal object PlotLayoutUtil {
                 else -> 0.0
             }
 
-            val vAxisThickness = when (vAxisOrientation) {
-                Orientation.LEFT -> titleThickness(
+            val xOffset = when (hasLeftAxisTitle) {
+                true -> titleThickness(
                     title = vAxisTitleInfo.first,
                     labelSpec = vAxisTitleInfo.second,
                     margin = marginDimensions.x
@@ -251,7 +255,7 @@ internal object PlotLayoutUtil {
                 else -> 0.0
             }
 
-            DoubleVector(vAxisThickness, hAxisThickness)
+            DoubleVector(xOffset, yOffset)
         } else {
             DoubleVector.ZERO
         }

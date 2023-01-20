@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.PositionalScalesUtil
 
 object MarginalLayerUtil {
-    private val MARGINAL_SCALE = Scales.continuousDomain<Double>("marginal", true)
+    private val MARGINAL_SCALE = Scales.continuousDomain("marginal", true)
     private val MARGINAL_SCALE_REVERSED = MARGINAL_SCALE.with().continuousTransform(Transforms.REVERSE).build()
     private val MARGINAL_SCALES = mapOf(
         MarginSide.LEFT to MARGINAL_SCALE_REVERSED,
@@ -33,8 +33,8 @@ object MarginalLayerUtil {
 
     fun marginalDomainByMargin(
         marginalLayers: List<GeomLayer>,
-        scaleXProto: Scale<*>,
-        scaleYProto: Scale<*>,
+        scaleXProto: Scale,
+        scaleYProto: Scale,
     ): Map<MarginSide, DoubleSpan> {
 
         val scaleXYByMargin = scaleXYByMargin(scaleXProto, scaleYProto)
@@ -60,9 +60,9 @@ object MarginalLayerUtil {
     }
 
     private fun scaleXYByMargin(
-        scaleXProto: Scale<*>,
-        scaleYProto: Scale<*>,
-    ): Map<MarginSide, Pair<Scale<*>, Scale<*>>> {
+        scaleXProto: Scale,
+        scaleYProto: Scale,
+    ): Map<MarginSide, Pair<Scale, Scale>> {
         return mapOf(
             MarginSide.LEFT to Pair(MARGINAL_SCALE_REVERSED, scaleYProto),
             MarginSide.RIGHT to Pair(MARGINAL_SCALE, scaleYProto),
@@ -72,10 +72,10 @@ object MarginalLayerUtil {
     }
 
     fun toMarginalScaleMap(
-        scaleMap: Map<Aes<*>, Scale<*>>,
+        scaleMap: Map<Aes<*>, Scale>,
         margin: MarginSide,
         flipOrientation: Boolean
-    ): Map<Aes<*>, Scale<*>> {
+    ): Map<Aes<*>, Scale> {
 
         fun isXAxis(aes: Aes<*>): Boolean {
             return when (flipOrientation) {

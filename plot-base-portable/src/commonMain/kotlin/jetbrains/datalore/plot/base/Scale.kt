@@ -8,20 +8,7 @@ package jetbrains.datalore.plot.base
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 
-/**
- * Translates input to aesthetics by
- * 1) Transforming data (like x1=log(x)). Must happen before 'stat' is applies to data
- * 2) Mapping data to aesthetic
- *
- *
- * name - (axis/legend title)
- * breaks (domain values) - ticks on axis, items/segments on legends
- * labels - tick labels
- *
- * @param <T> - type of target aesthetic
- *
- */
-interface Scale<T> {   // ToDo: remove <T>: it only make sense for mapper.
+interface Scale {
     val name: String
 
     val labelFormatter: ((Any) -> String)?
@@ -45,25 +32,25 @@ interface Scale<T> {   // ToDo: remove <T>: it only make sense for mapper.
 
     fun getScaleBreaks(): ScaleBreaks
 
-    fun with(): Builder<T>
+    fun with(): Builder
 
-    interface Builder<T> {
-        fun name(v: String): Builder<T>
+    interface Builder {
+        fun name(v: String): Builder
 
-        fun breaks(l: List<Any>): Builder<T>
+        fun breaks(l: List<Any>): Builder
 
-        fun labels(l: List<String>): Builder<T>
+        fun labels(l: List<String>): Builder
 
-        fun labelFormatter(v: (Any) -> String): Builder<T>
+        fun labelFormatter(v: (Any) -> String): Builder
 
-        fun multiplicativeExpand(v: Double): Builder<T>
+        fun multiplicativeExpand(v: Double): Builder
 
-        fun additiveExpand(v: Double): Builder<T>
+        fun additiveExpand(v: Double): Builder
 
-        fun continuousTransform(v: ContinuousTransform): Builder<T>
+        fun continuousTransform(v: ContinuousTransform): Builder
 
-        fun breaksGenerator(v: BreaksGenerator): Builder<T>
+        fun breaksGenerator(v: BreaksGenerator): Builder
 
-        fun build(): Scale<T>
+        fun build(): Scale
     }
 }

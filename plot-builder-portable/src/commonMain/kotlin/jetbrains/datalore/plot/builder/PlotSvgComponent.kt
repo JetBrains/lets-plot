@@ -37,6 +37,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.vis.StyleSheet
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgNode
@@ -245,8 +247,8 @@ class PlotSvgComponent constructor(
                 axisTitlesOriginOffset(
                     hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    hAxisOrientation = plotInfo.hAxisOrientation,
-                    vAxisOrientation = plotInfo.vAxisOrientation,
+                    hasTopAxisTitle = plotInfo.hasTopAxisTitle,
+                    hasLeftAxisTitle = plotInfo.hasLeftAxisTitle,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
@@ -295,12 +297,19 @@ class PlotSvgComponent constructor(
 
             val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
             val geomInnerBoundsAbsolute = tileLayoutInfo.geomInnerBounds.add(plotOriginAbsolute)
+
+            // axis tooltip should appear on 'outer' bounds:
+            val axisOrigin = DoubleVector(
+                x = if (plotInfo.hasLeftAxis) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
+                y = if (plotInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
+            )
             interactor?.onTileAdded(
                 geomInnerBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
-                // axis tooltip should appear on 'outer' bounds:
-                axisOrigin = DoubleVector(geomOuterBoundsAbsolute.left, geomOuterBoundsAbsolute.bottom)
+                axisOrigin,
+                hAxisTooltipPosition = if (plotInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
+                vAxisTooltipPosition = if (plotInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
             )
 
             if (DEBUG_DRAWING) {
@@ -426,11 +435,10 @@ class PlotSvgComponent constructor(
         // add axis titles
         if (axisEnabled) {
             if (vAxisTitle != null) {
-                val vAxisOrientation = plotInfo.tiles.first().vAxisInfo!!.orientation
+                val titleOrientation = plotInfo.tiles.first().axisInfos.vAxisTitleOrientation
                 addAxisTitle(
                     vAxisTitle,
-//                    Orientation.LEFT,
-                    vAxisOrientation,
+                    titleOrientation,
                     overallTileBounds,
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
@@ -440,11 +448,10 @@ class PlotSvgComponent constructor(
                 )
             }
             if (hAxisTitle != null) {
-                val hAxisOrientation = plotInfo.tiles.first().hAxisInfo!!.orientation
+                val titleOrientation = plotInfo.tiles.first().axisInfos.hAxisTitleOrientation
                 addAxisTitle(
                     hAxisTitle,
-//                    Orientation.BOTTOM,
-                    hAxisOrientation,
+                    titleOrientation,
                     overallTileBounds,
                     geomAreaBounds,
                     labelSpec = PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),

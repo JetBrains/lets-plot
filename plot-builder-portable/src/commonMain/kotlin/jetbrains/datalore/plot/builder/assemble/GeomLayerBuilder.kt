@@ -50,7 +50,7 @@ class GeomLayerBuilder constructor(
     private val myConstantByAes = TypedKeyHashMap()
     private var myGroupingVarName: String? = null
     private var myPathIdVarName: String? = null
-    private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider<*>>()
+    private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
 
     private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
@@ -90,7 +90,7 @@ class GeomLayerBuilder constructor(
         return this
     }
 
-    fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider<T>): GeomLayerBuilder {
+    fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider): GeomLayerBuilder {
         myScaleProviderByAes[aes] = scaleProvider
         return this
     }
@@ -127,7 +127,10 @@ class GeomLayerBuilder constructor(
         return this
     }
 
-    fun annotationSpecification(annotationSpec: AnnotationSpecification, themeTextStyle: ThemeTextStyle): GeomLayerBuilder {
+    fun annotationSpecification(
+        annotationSpec: AnnotationSpecification,
+        themeTextStyle: ThemeTextStyle
+    ): GeomLayerBuilder {
         myAnnotationsProvider = { dataAccess, dataFrame ->
             AnnotationLine.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
         }
@@ -136,11 +139,11 @@ class GeomLayerBuilder constructor(
 
     fun build(
         data: DataFrame,
-        scaleMap: TypedScaleMap,
+        scaleMap: Map<Aes<*>, Scale>,
         scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
     ): GeomLayer {
-        val transformByAes: Map<Aes<*>, Transform> = scaleMap.keySet().associateWith {
-            scaleMap[it].transform
+        val transformByAes: Map<Aes<*>, Transform> = scaleMap.keys.associateWith {
+            scaleMap.getValue(it).transform
         }
 
         @Suppress("NAME_SHADOWING")
@@ -202,13 +205,11 @@ class GeomLayerBuilder constructor(
             posProvider,
             geomProvider.renders(),
             groupingContext.groupMapper,
-//            replacementBindings.values,
             replacementBindings,
             myConstantByAes,
             scaleMap,
             scaleMapppersNP,
             myLocatorLookupSpec,
-//            myContextualMappingProvider.createContextualMapping(dataAccess, data),
             myContextualMappingProvider,
             myIsLegendDisabled,
             isYOrientation = isYOrientation,
@@ -233,7 +234,7 @@ class GeomLayerBuilder constructor(
         override val group: (Int) -> Int,
         private val varBindings: Map<Aes<*>, VarBinding>,
         constantByAes: TypedKeyHashMap,
-        override val scaleMap: TypedScaleMap,
+        override val scaleMap: Map<Aes<*>, Scale>,
         override val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider,
@@ -243,7 +244,7 @@ class GeomLayerBuilder constructor(
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
         override val fontFamilyRegistry: FontFamilyRegistry,
-        private val annotationsProvider : ((MappedDataAccess, DataFrame) -> Annotations?)?
+        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()

@@ -23,7 +23,7 @@ def guide_legend(nrow=None, ncol=None, byrow=None):
     Returns
     -------
     `FeatureSpec`
-        Color guide specification.
+        Legend guide specification.
 
     Notes
     -----
@@ -100,14 +100,23 @@ def guide_colorbar(barwidth=None, barheight=None, nbin=None):
 def _guide(name, **kwargs):
     return FeatureSpec('guide', name=name, **kwargs)
 
+
 def guides(**kwargs):
     """
     Set guides for each scale.
 
+    Parameters
+    ----------
+    kwargs
+        Name-guide pairs where name should be an aesthetic.
+        The guide can either be a string ('colorbar', 'legend'),
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments, or 'none' to hide the guide.
+
     Returns
     -------
     `FeatureSpec`
-        Color guide specification.
+        Guides specification.
 
     Examples
     --------

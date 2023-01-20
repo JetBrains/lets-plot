@@ -9,11 +9,11 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
 
 object ScaleProviderHelper {
-    fun <T> createDefault(aes: Aes<T>): ScaleProvider<T> {
+    fun <T> createDefault(aes: Aes<T>): ScaleProvider {
         return ScaleProviderBuilder(aes).build()
     }
 
-    fun <T> createDateTimeScaleProvider(aes: Aes<T>, name: String): ScaleProvider<T> {
+    fun <T> createDateTimeScaleProvider(aes: Aes<T>, name: String): ScaleProvider {
         return ScaleProviderBuilder(aes)
             .name(name)
             .breaksGenerator(DateTimeBreaksGen())

@@ -5,13 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomMeta
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.util.afterOrientation
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomTooltipSetup
@@ -20,7 +16,7 @@ import jetbrains.datalore.plot.builder.theme.Theme
 object GeomInteractionUtil {
     internal fun configGeomTargets(
         layerConfig: LayerConfig,
-        scaleMap: TypedScaleMap,
+        scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         theme: Theme
@@ -30,7 +26,7 @@ object GeomInteractionUtil {
 
     internal fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
-        scaleMap: TypedScaleMap,
+        scaleMap: Map<Aes<*>, Scale>,
         multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         theme: Theme
@@ -46,7 +42,7 @@ object GeomInteractionUtil {
 
     private fun createGeomInteractionBuilder(
         layerConfig: LayerConfig,
-        scaleMap: TypedScaleMap,
+        scaleMap: Map<Aes<*>, Scale>,
         tooltipSetup: GeomTooltipSetup,
         isLiveMap: Boolean,
         theme: Theme
@@ -153,6 +149,7 @@ object GeomInteractionUtil {
                 GeomKind.CONTOUR -> return GeomTooltipSetup.univariateFunction(
                     GeomTargetLocator.LookupStrategy.NEAREST
                 )
+
                 else -> {}
             }
         }
@@ -174,12 +171,14 @@ object GeomInteractionUtil {
                 GeomTargetLocator.LookupStrategy.HOVER,
                 axisTooltipVisibilityFromConfig = true
             )
+
             GeomKind.RIBBON -> return GeomTooltipSetup.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
                 GeomTooltipSetup.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             } else {
                 GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             }
+
             GeomKind.PIE,
             GeomKind.BOX_PLOT,
             GeomKind.Y_DOT_PLOT,
@@ -188,6 +187,7 @@ object GeomInteractionUtil {
                 GeomTooltipSetup.AREA_GEOM,
                 axisTooltipVisibilityFromConfig = true
             )
+
             GeomKind.TEXT,
             GeomKind.LABEL,
             GeomKind.POINT,
@@ -198,6 +198,7 @@ object GeomInteractionUtil {
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
             GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,
             GeomKind.PATH -> {
@@ -205,11 +206,13 @@ object GeomInteractionUtil {
                     StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> GeomTooltipSetup.bivariateFunction(
                         GeomTooltipSetup.NON_AREA_GEOM
                     )
+
                     else -> {
                         GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
                     }
                 }
             }
+
             GeomKind.H_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
@@ -243,6 +246,7 @@ object GeomInteractionUtil {
                     GeomMeta.renders(layerConfig.geomProto.geomKind) - axisAes
                 }
             }
+
             GeomKind.PIE -> listOf(Aes.EXPLODE)
             else -> emptyList()
         }
@@ -256,14 +260,15 @@ object GeomInteractionUtil {
         return when {
             !isAxisTooltipEnabled -> emptyList()
             geomKind == GeomKind.AREA_RIDGES ||
-            geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
+                    geomKind == GeomKind.SMOOTH -> listOf(Aes.X)
+
             else -> axisAesFromFunctionKind
         }
     }
 
     private fun createTooltipAesList(
         layerConfig: LayerConfig,
-        scaleMap: TypedScaleMap,
+        scaleMap: Map<Aes<*>, Scale>,
         layerRendersAes: List<Aes<*>>,
         axisAes: List<Aes<*>>
     ): List<Aes<*>> {
@@ -294,12 +299,14 @@ object GeomInteractionUtil {
                     mappingToShow == null -> {
                         mappingsToShow[variable] = aes
                     }
+
                     !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
                         // If the same variable is mapped twice as continuous and discrete - use the continuous value
                         // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
                         mappingsToShow[variable] = aes
                     }
-                    scaleMap[aes].name != variable.label -> {
+
+                    scaleMap.getValue(aes).name != variable.label -> {
                         // Use variable which is shown by the scale with its name
                         mappingsToShow[variable] = aes
                     }
@@ -315,6 +322,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE,
             GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
+
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()
@@ -325,6 +333,7 @@ object GeomInteractionUtil {
         return when (layerConfig.geomProto.geomKind) {
             GeomKind.H_LINE,
             GeomKind.V_LINE -> layerConfig.constantsMap.filter { (aes, _) -> Aes.isPositional(aes) }
+
             else -> emptyMap()
         }
     }
@@ -354,13 +363,14 @@ object GeomInteractionUtil {
             GeomKind.SEGMENT,
             GeomKind.RIBBON,
             GeomKind.SMOOTH -> true
+
             else -> false
         }
     }
 
     // the number of factors starting from which tooltips can be displayed
     private const val MIN_FACTORS_TO_SHOW_TOOLTIPS = 5
-    private fun isTooltipForAesEnabled(aes: Aes<*>, scaleMap: TypedScaleMap): Boolean {
+    private fun isTooltipForAesEnabled(aes: Aes<*>, scaleMap: Map<Aes<*>, Scale>): Boolean {
         if (isVariableContinuous(scaleMap, aes)) {
             return true
         }
@@ -369,8 +379,8 @@ object GeomInteractionUtil {
     }
 }
 
-private fun <T> TypedScaleMap.safeGet(aes: Aes<T>) = if (containsKey(aes)) get(aes) else null
+private fun <T> Map<Aes<*>, Scale>.safeGet(aes: Aes<T>) = if (containsKey(aes)) get(aes) else null
 
-private fun isVariableContinuous(scaleMap: TypedScaleMap, aes: Aes<*>) =
+private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
     scaleMap.safeGet(aes)?.isContinuousDomain ?: false
 

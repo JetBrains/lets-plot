@@ -30,7 +30,7 @@ GEOFUNC_TYPES = {
 
 def geocode(level=None, names=None, countries=None, states=None, counties=None, scope=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder`. Allows to refine ambiguous request with `where()` method,
+    Create a `NamesGeocoder`. Allow to refine ambiguous request with `where()` method,
     scope that limits area of geocoding or with parents.
 
     Parameters
@@ -101,7 +101,7 @@ def geocode(level=None, names=None, countries=None, states=None, counties=None, 
 
 def geocode_cities(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for cities. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for cities. Allow to refine ambiguous request with
     `where()` method, with a scope that limits area of geocoding or with parents.
 
     Parameters
@@ -135,7 +135,7 @@ def geocode_cities(names=None) -> NamesGeocoder:
 
 def geocode_counties(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for counties. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for counties. Allow to refine ambiguous request with
     `where()` method, with a scope that limits area of geocoding or with parents.
 
     Parameters
@@ -168,7 +168,7 @@ def geocode_counties(names=None) -> NamesGeocoder:
 
 def geocode_states(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for states. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for states. Allow to refine ambiguous request with
     `where()` method, with a scope that limits area of geocoding or with parents.
 
     Parameters
@@ -203,7 +203,7 @@ def geocode_states(names=None) -> NamesGeocoder:
 
 def geocode_countries(names=None) -> NamesGeocoder:
     """
-    Create a `NamesGeocoder` object for countries. Allows to refine ambiguous request with
+    Create a `NamesGeocoder` object for countries. Allow to refine ambiguous request with
     `where()` method.
 
     Parameters
@@ -274,7 +274,7 @@ def reverse_geocode(lon, lat, level=None, scope=None) -> ReverseGeocoder:
 
 def distance(lon0, lat0, lon1, lat1, units='km'):
     """
-    Calculate the distance between two points. Returns result in kilometers or miles.
+    Calculate the distance between two points. Return result in kilometers or miles.
 
     Parameters
     ----------

@@ -296,11 +296,11 @@ class SeriesAnnotationTest {
         isDiscrete: Boolean,
         name: String? = null
     ): PlotConfigClientSide {
-        val scale = scaleMap[aes]
+        val scale = scaleMap.getValue(aes)
         if (scale.isContinuous) {
             val breaksGenerator =
                 (scale.getBreaksGenerator() as Transforms.BreaksGeneratorForTransformedDomain).breaksGenerator
-            assertTrue(breaksGenerator is DateTimeBreaksGen == isDateTime, "Scale '${aes.name}' should be date-time" )
+            assertTrue(breaksGenerator is DateTimeBreaksGen == isDateTime, "Scale '${aes.name}' should be date-time")
         } else {
             assertFalse(isDateTime)
         }

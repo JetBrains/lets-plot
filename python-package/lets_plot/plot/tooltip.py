@@ -91,7 +91,7 @@ class layer_tooltips(FeatureSpec):
 
     def as_dict(self):
         """
-        Returns the dictionary of all properties of the object.
+        Return the dictionary of all properties of the object.
 
         Returns
         -------
@@ -124,7 +124,7 @@ class layer_tooltips(FeatureSpec):
 
     def format(self, field=None, format=None):
         """
-        Defines the format for displaying the value.
+        Define the format for displaying the value.
         This format will be applied to the mapped value in the default tooltip
         or to the corresponding value specified in the 'line' template.
 
@@ -223,7 +223,7 @@ class layer_tooltips(FeatureSpec):
     def line(self, value):
         """
         Line to show in the tooltip.
-        Adds a line template to the tooltip with a label.
+        Add a line template to the tooltip with a label.
 
         Parameters
         ----------
@@ -318,7 +318,7 @@ class layer_tooltips(FeatureSpec):
 
     def anchor(self, value):
         """
-        Specifies a fixed position for a general tooltip.
+        Specify a fixed position for a general tooltip.
 
         Parameters
         ----------
@@ -399,7 +399,7 @@ class layer_tooltips(FeatureSpec):
     def title(self, value):
         """
         Line with title to show in the tooltip.
-        Adds a title template to the tooltip.
+        Add a title template to the tooltip.
 
         Parameters
         ----------

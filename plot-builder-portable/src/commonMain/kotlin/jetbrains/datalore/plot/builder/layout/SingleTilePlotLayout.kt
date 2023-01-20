@@ -7,21 +7,21 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.plotInsets
 import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class SingleTilePlotLayout(
     private val tileLayout: TileLayout,
-    hAxisOrientation: Orientation,
-    vAxisOrientation: Orientation,
+    hAxisPosition: AxisPosition,
+    vAxisPosition: AxisPosition,
     hAxisTheme: AxisTheme,
     vAxisTheme: AxisTheme,
 ) : PlotLayout {
 
     private val insets: Insets = plotInsets(
-        hAxisOrientation, vAxisOrientation,
+        hAxisPosition, vAxisPosition,
         hAxisTheme, vAxisTheme
     )
 

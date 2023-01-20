@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.base.scale.transform.Transforms.createBreaksGeneratorForTransformedDomain
 
-internal class ContinuousScale<T> : AbstractScale<Double, T> {
+internal class ContinuousScale : AbstractScale<Double> {
 
     private val continuousTransform: ContinuousTransform
     private val customBreaksGenerator: BreaksGenerator?
@@ -35,7 +35,7 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         additiveExpand = 0.0
     }
 
-    private constructor(b: MyBuilder<T>) : super(b) {
+    private constructor(b: MyBuilder) : super(b) {
         continuousTransform = b.myContinuousTransform
         customBreaksGenerator = b.myCustomBreaksGenerator
         isContinuous = b.myContinuousOutput
@@ -49,28 +49,28 @@ internal class ContinuousScale<T> : AbstractScale<Double, T> {
         }
     }
 
-    override fun with(): Scale.Builder<T> {
+    override fun with(): Scale.Builder {
         return MyBuilder(this)
     }
 
 
-    private class MyBuilder<T>(scale: ContinuousScale<T>) : AbstractBuilder<Double, T>(scale) {
+    private class MyBuilder(scale: ContinuousScale) : AbstractBuilder<Double>(scale) {
         var myContinuousTransform: ContinuousTransform = scale.continuousTransform
         var myCustomBreaksGenerator: BreaksGenerator? = scale.customBreaksGenerator
 
         val myContinuousOutput: Boolean = scale.isContinuous
 
-        override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {
+        override fun continuousTransform(v: ContinuousTransform): Scale.Builder {
             myContinuousTransform = v
             return this
         }
 
-        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder<T> {
+        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
             myCustomBreaksGenerator = v
             return this
         }
 
-        override fun build(): Scale<T> {
+        override fun build(): Scale {
             return ContinuousScale(this)
         }
     }

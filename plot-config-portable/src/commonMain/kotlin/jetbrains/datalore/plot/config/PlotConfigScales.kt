@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.scale.WithGuideBreaks
@@ -20,8 +19,8 @@ internal object PlotConfigScales {
         layerConfigs: List<LayerConfig>,
         transformByAes: Map<Aes<*>, Transform>,
         mappersByAes: Map<Aes<*>, ScaleMapper<*>>,
-        scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
-    ): TypedScaleMap {
+        scaleProviderByAes: Map<Aes<*>, ScaleProvider>,
+    ): Map<Aes<*>, Scale> {
 
         val setup = PlotConfigUtil.createPlotAesBindingSetup(
             layerConfigs,
@@ -36,7 +35,7 @@ internal object PlotConfigScales {
         val variablesByMappedAes = setup.variablesByMappedAes
 
         // Create scales for all aes.
-        val scaleByAes = HashMap<Aes<*>, Scale<*>>()
+        val scaleByAes = HashMap<Aes<*>, Scale>()
         for (aes in aesSet) {
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
             val scaleProvider = scaleProviderByAes.getValue(aes)
@@ -63,6 +62,6 @@ internal object PlotConfigScales {
             scaleByAes[aes] = scale
         }
 
-        return TypedScaleMap(scaleByAes)
+        return scaleByAes
     }
 }

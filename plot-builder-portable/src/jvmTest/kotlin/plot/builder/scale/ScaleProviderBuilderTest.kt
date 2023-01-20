@@ -42,7 +42,7 @@ internal class ScaleProviderBuilderTest {
             guideBreaks = null,
         )
 
-        fun actual(scale: Scale<*>): BreaksGenerator {
+        fun actual(scale: Scale): BreaksGenerator {
             assertTrue(
                 scale.getBreaksGenerator() is Transforms.BreaksGeneratorForTransformedDomain,
                 "Expected BreaksGeneratorForTransformedDomain bu was ${scale.getBreaksGenerator()::class.simpleName}"

@@ -1,4 +1,7 @@
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+/*
+ * Copyright (c) 2019. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
 
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
@@ -9,23 +12,6 @@ kotlin {
     jvm()
     js {
         browser()
-    }
-
-    if (project.buildSettings.build_python_extension) {
-        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
-
-        if (currentOs.isMacOsX()) {
-            def currentArch = DefaultNativePlatform.getCurrentArchitecture()
-            if (currentArch.displayName.contains("arm-v8")) {
-                macosArm64()
-            } else {
-                macosX64()
-            }
-        } else if (currentOs.isLinux()) {
-            linuxX64()
-        } else if (currentOs.isWindows()) {
-            mingwX64()
-        }
     }
 
     sourceSets {

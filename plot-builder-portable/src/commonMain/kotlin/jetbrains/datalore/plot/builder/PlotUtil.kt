@@ -165,7 +165,7 @@ object PlotUtil {
      */
     internal fun rangeWithExpand(
         range: DoubleSpan?,
-        scale: Scale<*>,
+        scale: Scale,
         includeZero: Boolean
     ): DoubleSpan? {
         if (range == null) return null
@@ -221,7 +221,7 @@ object PlotUtil {
         return DoubleSpan(lowerEndWithExpand, upperEndWithExpand)
     }
 
-    private fun transformIfContinuous(scale: Scale<*>?): ContinuousTransform? {
+    private fun transformIfContinuous(scale: Scale?): ContinuousTransform? {
         if (scale == null) return null
         return if (scale.isContinuousDomain) {
             scale.transform as ContinuousTransform
@@ -230,7 +230,7 @@ object PlotUtil {
         }
     }
 
-    private fun scale(aes: Aes<*>, layer: GeomLayer): Scale<*>? {
+    private fun scale(aes: Aes<*>, layer: GeomLayer): Scale? {
         @Suppress("NAME_SHADOWING")
         val aes = when {
             Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, layer.isYOrientation)

@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.layout.tile
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.layout.AxisLayoutInfoQuad
 import jetbrains.datalore.plot.builder.layout.TileLayout
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.liveMapGeomBounds
@@ -20,7 +21,7 @@ internal class LiveMapTileLayout : TileLayout {
             bounds = geomBounds,
             geomOuterBounds = geomBounds,
             geomInnerBounds = geomBounds,
-            null, null,
+            axisInfos = AxisLayoutInfoQuad.EMPTY,
             hAxisShown = false,
             vAxisShown = false,
             trueIndex = 0

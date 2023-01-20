@@ -10,11 +10,6 @@ from .util import as_boolean
 #
 
 __all__ = ['scale_shape',
-           'scale_x_discrete', 'scale_y_discrete',
-           'scale_x_discrete_reversed', 'scale_y_discrete_reversed',
-           'scale_x_continuous', 'scale_y_continuous',
-           'scale_x_log10', 'scale_y_log10',
-           'scale_x_reverse', 'scale_y_reverse',
            'scale_color_manual', 'scale_fill_manual', 'scale_size_manual',
            'scale_shape_manual', 'scale_linetype_manual', 'scale_alpha_manual',
            'scale_fill_gradient', 'scale_fill_continuous', 'scale_color_gradient', 'scale_color_continuous',
@@ -24,7 +19,6 @@ __all__ = ['scale_shape',
            'scale_fill_grey', 'scale_color_grey',
            'scale_fill_brewer', 'scale_color_brewer',
            'scale_fill_viridis', 'scale_color_viridis',
-           'scale_x_datetime', 'scale_y_datetime', 'scale_x_time', 'scale_y_time',
            'scale_alpha', 'scale_size', 'scale_size_area'
            ]
 
@@ -52,7 +46,7 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -99,594 +93,6 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 
 
 #
-# Continuous Scales
-#
-
-def scale_x_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
-                       format=None):
-    """
-    Continuous position scale x.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
-        Name of built-in transformation.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 7-8
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        x = np.random.randint(-10, 10, size=100)
-        ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=8) + \\
-            scale_x_continuous(name='observations', breaks=[-9, -3, 3, 9], \\
-                               limits=[-8, 11], expand=[.2], format='.1f')
-
-    """
-    return _scale('x',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=trans,
-                  format=format)
-
-
-def scale_y_continuous(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, trans=None,
-                       format=None):
-    """
-    Continuous position scale y.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    trans : {'identity', 'log10', 'sqrt', 'reverse'}
-        Name of built-in transformation.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 7-8
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        x = np.random.randint(-10, 10, size=1000)
-        ggplot({'x': x}, aes(x='x')) + geom_bar(stat='bin', bins=4) + \\
-            scale_y_continuous(name='hundreds', breaks=[100, 200, 300, 400], \\
-                               labels=['one', 'two', 'three', 'four'])
-
-    """
-    return _scale('y',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=trans,
-                  format=format)
-
-
-def scale_x_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
-    """
-    Continuous position scale x where trans='log10'.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions of ticks.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 6
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        x = np.power(10, np.random.randint(9, size=100))
-        ggplot({'x': x}, aes(x='x')) + geom_bar() + scale_x_log10()
-
-    """
-    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
-
-
-def scale_y_log10(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
-    """
-    Continuous position scales y where trans='log10'.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 6
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        x = np.random.poisson(size=100)
-        ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log10()
-
-    """
-    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'log10', format)
-
-
-def scale_x_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
-    """
-    Continuous position scale x where trans='reverse'.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 5
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        x = list(range(10))
-        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
-            geom_point() + scale_x_reverse()
-
-    """
-
-    return scale_x_continuous(name, breaks, labels, limits, expand, na_value, 'reverse', format)
-
-
-def scale_y_reverse(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
-    """
-    Continuous position scale y where trans='reverse'.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 5
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        x = list(range(10))
-        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
-            geom_point() + scale_y_reverse(limits=[2, 6])
-
-    """
-
-    return scale_y_continuous(name, breaks, labels, limits, expand, na_value, 'reverse', format)
-
-
-#
-# Discrete Scales
-#
-
-def scale_x_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
-                     format=None):
-    """
-    Discrete position scale x.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A vector specifying the data range for the scale and the default order of their display in guides.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.2.
-    na_value
-        Missing values will be replaced with this value.
-    reverse : bool
-        When True the scale is reversed.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 7
-
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(43)
-        scores = {'rating': np.random.randint(3, 6, size=10)}
-        ggplot(scores, aes(x='rating')) + geom_bar() + \\
-            scale_x_discrete(name='rating', format='.1f')
-
-    """
-
-    reverse = as_boolean(reverse, default=False)
-    return _scale('x',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  format=format,
-                  #
-                  discrete=True, reverse=reverse)
-
-
-def scale_x_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                              format=None):
-    """
-    Reversed discrete position scale x.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A vector specifying the data range for the scale and the default order of their display in guides.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.2.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 8
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'time': ['Lunch', 'Dinner', 'Night'],
-            'bill': [15.5, 18.13, 30],
-        }
-        ggplot(data, aes('time', 'bill')) + geom_bar(stat='identity') + \\
-            scale_x_discrete_reversed()
-
-    """
-
-    return scale_x_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
-
-
-def scale_y_discrete(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, reverse=None,
-                     format=None):
-    """
-    Discrete position scale y.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A vector specifying the data range for the scale and the default order of their display in guides.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.2.
-    na_value
-        Missing values will be replaced with this value.
-    reverse : bool
-        When True the scale is reversed.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 8
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
-            'bill': [3.25, 15.5, 18.3, 30],
-        }
-        ggplot(data, aes('bill', 'time')) + geom_point(size=5) + \\
-            scale_y_discrete(limits=['Lunch', 'Dinner', 'Night'])
-
-    """
-    reverse = as_boolean(reverse, default=False)
-    return _scale('y',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  format=format,
-                  #
-                  discrete=True, reverse=reverse)
-
-
-def scale_y_discrete_reversed(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None,
-                              format=None):
-    """
-    Reversed discrete position scale y.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A vector specifying the data range for the scale and the default order of their display in guides.
-    expand : list of two numbers
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0, additive = 0.2.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '.2f' -> '12.45'
-        'Num {}' -> 'Num 12.456789'
-        'TTL: {.2f}$' -> 'TTL: 12.45$'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 8
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'time': ['Breakfast', 'Lunch', 'Dinner', 'Night'],
-            'bill': [3.25, 15.5, 18.3, 30],
-        }
-        ggplot(data, aes('bill', 'time')) + geom_line() + \\
-            scale_y_discrete_reversed()
-
-    """
-
-    return scale_y_discrete(name, breaks, labels, limits, expand, na_value, reverse=True, format=format)
-
-
-#
 # Manual Scales
 #
 
@@ -721,7 +127,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -795,7 +201,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -867,7 +273,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -941,7 +347,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1015,7 +421,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1090,7 +496,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     guide
         A result returned by `guide_legend()` function or 'none' to hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1104,7 +510,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
     Notes
     -----
     Create your own discrete scale for alpha (transparency) aesthetic.
-    Accepts values between 0 and 1.
+    Accept values between 0 and 1.
 
     Examples
     --------
@@ -1170,7 +576,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1234,7 +640,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1312,7 +718,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1376,7 +782,7 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1450,7 +856,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1515,7 +921,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -1530,7 +936,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1606,7 +1012,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1683,7 +1089,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1766,7 +1172,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1848,7 +1254,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1902,8 +1308,8 @@ def scale_fill_discrete(direction=None,
 
     Parameters
     ----------
-    direction : {-1, 1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+    direction : {1, -1}, default=1
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1923,7 +1329,7 @@ def scale_fill_discrete(direction=None,
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -1978,7 +1384,7 @@ def scale_color_discrete(direction=None,
     Parameters
     ----------
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -1986,7 +1392,7 @@ def scale_color_discrete(direction=None,
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         A vector specifying the data range for the scale
@@ -1998,7 +1404,7 @@ def scale_color_discrete(direction=None,
         or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
         specifying additional arguments. 'none' will hide the guide.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2077,7 +1483,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2090,7 +1496,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
 
     Notes
     -----
-    Defines sequential grey color scale for filling color aesthetic.
+    Define sequential grey color scale for filling color aesthetic.
 
     Examples
     --------
@@ -2159,7 +1565,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2172,7 +1578,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
 
     Notes
     -----
-    Defines sequential grey color scale for color aesthetic.
+    Define sequential grey color scale for color aesthetic.
 
     Examples
     --------
@@ -2242,7 +1648,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         If a string, will use that named palette. If a number, will index
         into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2250,7 +1656,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -2265,7 +1671,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2278,7 +1684,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 
     Notes
     -----
-    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for filling color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
@@ -2339,7 +1745,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
         If a string, will use that named palette. If a number, will index
         into the list of palettes of appropriate type.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale. If 1, colors are as output by brewer palette.
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
     name : str
         The name of the scale - used as the axis label or the legend title.
@@ -2362,7 +1768,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2375,7 +1781,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     Notes
     -----
-    Defines sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
@@ -2437,11 +1843,11 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at. Accepts values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with. Accepts values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale.
+        Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
@@ -2459,7 +1865,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -2474,7 +1880,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2487,7 +1893,7 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
 
     Notes
     -----
-    Can be used for both, contituous and discrete data.
+    Can be used for both, continuous and discrete data.
 
     Examples
     --------
@@ -2540,11 +1946,11 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     alpha : float, default=1.0
         Alpha transparency channel. (0 means transparent and 1 means opaque).
     begin : float, default=0.0
-        Corresponds to a color hue to start at. Accepts values between 0 and 1. Should be less than `end`.
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
     end : float, default=1.0
-        Corresponds to a color hue to end with. Accepts values between 0 and 1. Should be greater than `begin`.
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
     direction : {1, -1}, default=1
-        Sets the order of colors in the scale.
+        Set the order of colors in the scale.
         If -1, the order of colors is reversed.
     option : str, default="D" (or "viridis")
         The colormap to use:
@@ -2562,7 +1968,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
         is taken from the first mapping used for that aesthetic.
     breaks : list
         A vector specifying values to display as ticks on axis.
-    labels : list of strings
+    labels : list of str
         A vector of labels (on ticks).
     limits : list
         Continuous scale: a numeric vector of length two providing limits of the scale.
@@ -2577,7 +1983,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2590,7 +1996,7 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 
     Notes
     -----
-    Can be used for both, contituous and discrete data.
+    Can be used for both, continuous and discrete data.
 
     Examples
     --------
@@ -2626,274 +2032,6 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
 
 
 #
-# Date-time
-#
-
-
-def scale_x_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
-    """
-    Position scale x for date/time data.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '%d.%m.%y' -> '06.08.19'
-        '%B %Y' -> 'August 2019'
-        '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 12
-
-        import datetime as dt
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        n = 31
-        np.random.seed(42)
-        d = [dt.datetime(2021, 1, 1) + dt.timedelta(days=d)
-             for d in range(n)]
-        t = np.random.normal(loc=-5, scale=6, size=n)
-        ggplot({'d': d, 't': t}, aes('d', 't')) + \\
-            geom_histogram(aes(fill='t'), stat='identity', color='black') + \\
-            scale_x_datetime() + \\
-            scale_fill_gradient2(low='#2c7bb6', high='#d7191c')
-
-    """
-    return _scale('x',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  format=format,
-                  #
-                  datetime=True)
-
-
-def scale_y_datetime(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, format=None):
-    """
-    Position scale y for date/time data.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A vector specifying values to display as ticks on axis.
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A vector of length two providing limits of the scale.
-    expand : list of two numbers
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-    format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
-        '%d.%m.%y' -> '06.08.19'
-        '%B %Y' -> 'August 2019'
-        '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
-        For more info see https://lets-plot.org/pages/formats.html.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 13
-
-        import datetime as dt
-        from lets_plot import *
-        LetsPlot.setup_html()
-        n = 12
-        rcount = lambda m: 1 if m < 2 else rcount(m - 1) + rcount(m - 2)
-        data = {
-            'date': [dt.datetime(2020, m, 1) for m in range(1, n + 1)],
-            'rabbits count': [rcount(m) for m in range(1, n + 1)],
-        }
-        ggplot(data) + \\
-            geom_segment(aes(x=[0] * n, y='date', xend='rabbits count', yend='date'), size=3, \\
-                         tooltips=layer_tooltips().line('@|@{rabbits count}')) + \\
-            scale_y_datetime(format='%b') + \\
-            xlab('rabbits count')
-
-    """
-    return _scale('y',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  format=format,
-                  #
-                  datetime=True)
-
-
-def scale_x_time(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
-    """
-    Position scale x for data representing "time delta" values expressed in milliseconds.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 13
-
-        import datetime as dt
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        n = 31
-        np.random.seed(42)
-        data = {
-            'time': [dt.timedelta(days=v).total_seconds() * 1000 for v in range(n)],
-            'value': np.random.normal(loc=-5, scale=6, size=n)
-        }
-        ggplot(data) + \\
-            geom_line(aes('time', 'value')) + \\
-            scale_x_time()
-
-    """
-    return _scale('x',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  #
-                  time=True)
-
-
-def scale_y_time(name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None):
-    """
-    Position scale y for data representing "time delta" values expressed in milliseconds.
-
-    Parameters
-    ----------
-    name : str
-        The name of the scale - used as the axis label or the legend title.
-        If None, the default, the name of the scale
-        is taken from the first mapping used for that aesthetic.
-    breaks : list
-        A numeric vector of positions (of ticks).
-    labels : list of str
-        A vector of labels (on ticks).
-    limits : list
-        A numeric vector of length two providing limits of the scale.
-    expand : list
-        A numeric vector of length two giving multiplicative and additive expansion constants.
-        The vector size == 1 => only multiplicative expand (and additive expand by default).
-        Defaults: multiplicative = 0.05, additive = 0.
-    na_value
-        Missing values will be replaced with this value.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Scale specification.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 13
-
-        import datetime as dt
-        import numpy as np
-        from lets_plot import *
-        LetsPlot.setup_html()
-        n = 31
-        np.random.seed(42)
-        data = {
-            'time': [dt.timedelta(days=v).total_seconds() * 1000 for v in range(n)],
-            'value': np.random.normal(loc=-5, scale=6, size=n)
-        }
-        ggplot(data) + \\
-            geom_line(aes('value', 'time')) + \\
-            scale_y_time()
-
-    """
-    return _scale('y',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=expand,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  #
-                  time=True)
-
-
-#
 # Range Scale (alpha and size)
 #
 
@@ -2924,7 +2062,7 @@ def scale_alpha(range=None, name=None, breaks=None, labels=None, limits=None, na
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -2993,7 +2131,7 @@ def scale_size(range=None, name=None, breaks=None, labels=None, limits=None, na_
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -3063,7 +2201,7 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
     trans : {'identity', 'log10', 'sqrt', 'reverse'}
         Name of built-in transformation.
     format : str
-        Defines the format for labels on the scale. The syntax resembles Python's:
+        Define the format for labels on the scale. The syntax resembles Python's:
         '.2f' -> '12.45'
         'Num {}' -> 'Num 12.456789'
         'TTL: {.2f}$' -> 'TTL: 12.45$'
@@ -3111,32 +2249,53 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   scale_mapper_kind='size_area')
 
 
-def _scale(aesthetic, *, name=None, breaks=None, labels=None, limits=None, expand=None, na_value=None, guide=None,
-           trans=None, format=None, **other):
+def _scale(aesthetic, *,
+           name=None,
+           breaks=None, labels=None,
+           limits=None,
+           expand=None,
+           na_value=None,
+           trans=None,
+           guide=None,
+           format=None,
+           position=None,
+           **other):
     """
     Create a scale (discrete or continuous)
 
-    :param aesthetic
+    Parameters
+    ----------
+    aesthetic : str
         The name of the aesthetic that this scale works with
-    :param name
+    name : str
         The name of the scale - used as the axis label or the legend title
-    :param breaks
+    breaks : list
         A numeric vector of positions (of ticks)
-    :param labels
+    labels : list
         A vector of labels (on ticks)
-    :param limits
+    limits : list
         A numeric vector of length two providing limits of the scale.
-    :param expand
+    expand : list
         A numeric vector of length two giving multiplicative and additive expansion constants.
-    :param na_value
+    na_value
         Value to use for missing values
-    :param guide
-        Type of legend. Use 'colorbar' for continuous color bar, or 'legend' for discrete values.
-    :param trans
+    trans : str
         Name of built-in transformation.
-    :param format
+    guide
+        Type of legend. Use 'colorbar' for continuous color bar, or 'legend' for discrete values.
+    format : str
         A string of the format for labels on the scale. Supported types are number and date/time.
-    :return:
+    position : str
+        For position scales,
+        The position of the axis:
+         - 'left', 'right' or 'both' for y-axis;
+         - 'top', 'bottom' or 'both' for x-axis.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
     """
 
     # flatten the 'other' sub-dictionary

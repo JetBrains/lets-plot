@@ -21,7 +21,6 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
@@ -29,7 +28,7 @@ import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 
 class BarPlotResizeDemo private constructor(
     private val sclData: SinCosLineData,
-    private val xScale: Scale<*>
+    private val xScale: Scale
 ) {
 
     fun createPlotContainer(plotSize: DoubleVector): PlotContainer {
@@ -44,18 +43,16 @@ class BarPlotResizeDemo private constructor(
 
         val categories = ArrayList(data.distinctValues(varCat))
         val colors = listOf(Color.RED, Color.BLUE, Color.CYAN)
-        val fillScale = Scales.DemoAndTest.pureDiscrete<Color>("C", categories/*, colors, Color.GRAY*/)
+        val fillScale = Scales.DemoAndTest.pureDiscrete("C", categories/*, colors, Color.GRAY*/)
         val fillMapper = Mappers.discrete(
             fillScale.transform as DiscreteTransform,
             colors, Color.GRAY
         )
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to xScale,
-                Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
-                Aes.FILL to fillScale
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to xScale,
+            Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
+            Aes.FILL to fillScale
         )
 
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
@@ -128,7 +125,7 @@ class BarPlotResizeDemo private constructor(
             val sclData = SinCosLineData({ v -> "Group label " + (v + 1) }, 6)
             return BarPlotResizeDemo(
                 sclData,
-                Scales.DemoAndTest.discreteDomain<String>("", sclData.distinctXValues().toList())
+                Scales.DemoAndTest.discreteDomain("", sclData.distinctXValues().toList())
             )
         }
     }

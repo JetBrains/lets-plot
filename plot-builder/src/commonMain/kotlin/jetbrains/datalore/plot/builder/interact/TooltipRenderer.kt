@@ -28,9 +28,11 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.TooltipsTheme
 import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.RetainableComponents
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
@@ -150,7 +152,15 @@ internal class TooltipRenderer constructor(
                     )
                 MeasuredTooltip(tooltipSpec = spec, tooltipBox = tooltipBox, strokeWidth = strokeWidth)
             }
-            .run { myLayoutManager.arrange(tooltips = this, cursorCoord = cursor, geomBounds) }
+            .run {
+                myLayoutManager.arrange(
+                    tooltips = this,
+                    cursorCoord = cursor,
+                    geomBounds,
+                    tileInfo.hAxisTooltipPosition,
+                    tileInfo.vAxisTooltipPosition
+                )
+            }
             .also { tooltips -> showCrosshair(tooltips, geomBounds) }
             .forEach { arranged ->
                 arranged.tooltipBox.apply {
@@ -200,13 +210,17 @@ internal class TooltipRenderer constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         axisOrigin: DoubleVector,
+        hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
         val tileInfo = TileInfo(
             geomBounds,
             targetLocators,
             layerYOrientations,
             flippedAxis,
-            axisOrigin
+            axisOrigin,
+            hAxisTooltipPosition,
+            vAxisTooltipPosition
         )
         myTileInfos.add(tileInfo)
     }
@@ -240,7 +254,9 @@ internal class TooltipRenderer constructor(
         targetLocators: List<GeomTargetLocator>,
         layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean,
-        val axisOrigin: DoubleVector
+        val axisOrigin: DoubleVector,
+        val hAxisTooltipPosition: HorizontalAxisTooltipPosition,
+        val vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
 
         private val transformedLocators = targetLocators.zip(layerYOrientations)

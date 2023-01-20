@@ -10,7 +10,6 @@ import jetbrains.datalore.base.datetime.tz.TimeZone
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CONTINUOUS_TRANSFORM
@@ -33,8 +32,8 @@ class ScaleConfigLabelsTest {
     @Test
     fun `default scale`() {
         val scaleMap = getScaleMap(data, mappingXY, scales = emptyList())
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
-        val yLabels = getScaleLabels(scaleMap[Aes.Y])
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+        val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
         assertEquals(listOf("-0.4", "-0.2", "0.0", "0.2", "0.4"), xLabels)
         assertEquals(listOf("-0.4", "-0.2", "0.0", "0.2", "0.4"), yLabels)
@@ -56,8 +55,8 @@ class ScaleConfigLabelsTest {
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
-        val yLabels = getScaleLabels(scaleMap[Aes.Y])
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+        val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
         assertEquals(listOf("-0.40", "-0.20", "0.00", "0.20", "0.40"), xLabels)
         assertEquals(listOf("-0.400", "-0.200", "0.000", "0.200", "0.400"), yLabels)
@@ -81,8 +80,8 @@ class ScaleConfigLabelsTest {
                     )
                 )
             )
-            val xLabels = getScaleLabels(scaleMap[Aes.X])
-            val yLabels = getScaleLabels(scaleMap[Aes.Y])
+            val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+            val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
             assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), xLabels)
             assertEquals(listOf("0.4", "0.6", "1.0", "1.6", "2.5"), yLabels)
@@ -104,8 +103,8 @@ class ScaleConfigLabelsTest {
                     )
                 )
             )
-            val xLabels = getScaleLabels(scaleMap[Aes.X])
-            val yLabels = getScaleLabels(scaleMap[Aes.Y])
+            val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+            val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
             assertEquals(
                 listOf(
@@ -138,8 +137,8 @@ class ScaleConfigLabelsTest {
                     )
                 )
             )
-            val xLabels = getScaleLabels(scaleMap[Aes.X])
-            val yLabels = getScaleLabels(scaleMap[Aes.Y])
+            val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+            val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
             assertEquals(listOf("0.40", "0.63", "1.00", "1.58", "2.51"), xLabels)
             assertEquals(listOf("0.398", "0.631", "1.000", "1.585", "2.512"), yLabels)
@@ -160,7 +159,7 @@ class ScaleConfigLabelsTest {
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
         assertEquals(listOf("-0.5", "0.5", "1.5"), xLabels)
     }
 
@@ -181,8 +180,8 @@ class ScaleConfigLabelsTest {
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
-        val yLabels = getScaleLabels(scaleMap[Aes.Y])
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
+        val yLabels = getScaleLabels(scaleMap.getValue(Aes.Y))
 
         assertEquals(listOf("x = is a", "x = is b", "x = is c"), xLabels)
         assertEquals(listOf("a", "b", "c"), yLabels)
@@ -201,7 +200,7 @@ class ScaleConfigLabelsTest {
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
         assertEquals(listOf("is a", "is b"), xLabels)
     }
 
@@ -219,7 +218,7 @@ class ScaleConfigLabelsTest {
                 )
             )
         )
-        val xLabels = getScaleLabels(scaleMap[Aes.X])
+        val xLabels = getScaleLabels(scaleMap.getValue(Aes.X))
         assertEquals(listOf("is b", "is a"), xLabels)
     }
 
@@ -252,14 +251,14 @@ class ScaleConfigLabelsTest {
         )
 
         val xLabels = getScaleLabels(
-            scaleMap[Aes.X],
+            scaleMap.getValue(Aes.X),
             targetCount = 1,
             closeRange = DoubleSpan(instant, instant)
         )
         assertEquals(listOf("01-01-2021 10:10"), xLabels)
 
         val yLabels = getScaleLabels(
-            scaleMap[Aes.Y],
+            scaleMap.getValue(Aes.Y),
             targetCount = 1,
             closeRange = DoubleSpan(instant, instant)
         )
@@ -288,7 +287,7 @@ class ScaleConfigLabelsTest {
         )
 
         val xLabels = getScaleLabels(
-            scaleMap[Aes.X],
+            scaleMap.getValue(Aes.X),
             targetCount = 1,
             closeRange = DoubleSpan(instants.first(), instants.last())
         )
@@ -315,7 +314,7 @@ class ScaleConfigLabelsTest {
         )
         val scaleMap = getScaleMap(data, mapping, scales)
 
-        val labels = scaleMap[Aes.COLOR].getScaleBreaks().labels
+        val labels = scaleMap.getValue(Aes.COLOR).getScaleBreaks().labels
         assertEquals(listOf("is red", "is green", "is blue"), labels)
     }
 
@@ -328,7 +327,7 @@ class ScaleConfigLabelsTest {
         )
         val scaleMap = getScaleMap(data, mapping, emptyList(), Option.GeomName.TEXT)
 
-        val labels = scaleMap[Aes.LABEL].getScaleBreaks().labels
+        val labels = scaleMap.getValue(Aes.LABEL).getScaleBreaks().labels
         // identity expected
         assertEquals(serie, labels)
     }
@@ -343,7 +342,7 @@ class ScaleConfigLabelsTest {
 
         val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, emptyList())
 
-        val labelTransform = geomLayer.scaleMap[Aes.LABEL].transform
+        val labelTransform = geomLayer.scaleMap.getValue(Aes.LABEL).transform
         val labelMapper = geomLayer.scaleMapppersNP.getValue(Aes.LABEL)
 
         val inputs = listOf(null, 1.5, -1.5)
@@ -371,7 +370,7 @@ class ScaleConfigLabelsTest {
 
         val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, scales)
 
-        val labelTransform = geomLayer.scaleMap[Aes.LABEL].transform
+        val labelTransform = geomLayer.scaleMap.getValue(Aes.LABEL).transform
         val labelMapper = geomLayer.scaleMapppersNP.getValue(Aes.LABEL)
 
         val inputs = listOf(null, 1.5, -1.5)
@@ -392,7 +391,7 @@ class ScaleConfigLabelsTest {
         ) = buildGeomLayer(geom, data, mapping, scales = scales).scaleMap
 
         internal fun getScaleLabels(
-            scale: Scale<Double>,
+            scale: Scale,
             targetCount: Int = 5,
             closeRange: DoubleSpan = DoubleSpan(-0.5, 0.5),
         ): List<String> {

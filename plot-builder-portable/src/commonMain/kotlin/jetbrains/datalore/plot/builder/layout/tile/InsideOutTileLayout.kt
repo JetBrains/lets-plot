@@ -10,11 +10,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.*
-import jetbrains.datalore.plot.builder.layout.util.Insets
+import jetbrains.datalore.plot.builder.layout.LayoutConstants.FACET_PANEL_AXIS_EXPAND
 
-internal class InsideOutTileLayout constructor(
-    private val hAxisLayout: AxisLayout,
-    private val vAxisLayout: AxisLayout,
+internal class InsideOutTileLayout(
+    private val axisLayoutQuad: AxisLayoutQuad,
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
@@ -26,17 +25,22 @@ internal class InsideOutTileLayout constructor(
         val geomOuterBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
         val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
 
-        var (hAxisInfo, vAxisInfo) = computeAxisInfos(
-            hAxisLayout,
-            vAxisLayout,
+        var axisInfos = computeAxisInfos(
+            axisLayoutQuad,
             geomSize = geomInnerBounds.dimension,
             hDomain, vDomain,
         )
 
         // Combine geom area and x/y-axis
-        val geomWithAxisBounds = geomOuterBounds
-            .union(hAxisInfo.axisBoundsAbsolute(geomOuterBounds))
-            .union(vAxisInfo.axisBoundsAbsolute(geomOuterBounds))
+        val (l, r, t, b) = axisInfos
+        val axisBounds = listOfNotNull(l, r, t, b)
+            .map {
+                it.axisBoundsAbsolute(geomOuterBounds)
+            }
+
+        val geomWithAxisBounds = axisBounds.fold(geomOuterBounds) { a, e ->
+            a.union(e)
+        }
 
 
         return TileLayoutInfo(
@@ -44,8 +48,7 @@ internal class InsideOutTileLayout constructor(
             bounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
-            hAxisInfo,
-            vAxisInfo,
+            axisInfos = axisInfos,
             hAxisShown = true,
             vAxisShown = true,
             trueIndex = 0
@@ -54,26 +57,18 @@ internal class InsideOutTileLayout constructor(
 
     companion object {
         private fun computeAxisInfos(
-            hAxisLayout: AxisLayout,
-            vAxisLayout: AxisLayout,
+            axisLayoutQuad: AxisLayoutQuad,
             geomSize: DoubleVector,
             hDomain: DoubleSpan,
             vDomain: DoubleSpan,
-        ): Pair<AxisLayoutInfo, AxisLayoutInfo> {
+        ): AxisLayoutInfoQuad {
             val geomBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
-            var hAxisInfo = computeHAxisInfo(
-                hAxisLayout,
-                hDomain,
-                geomBounds,
+            return AxisLayoutInfoQuad(
+                left = axisLayoutQuad.left?.let { axisLayout -> computeVAxisInfo(axisLayout, vDomain, geomBounds) },
+                right = axisLayoutQuad.right?.let { axisLayout -> computeVAxisInfo(axisLayout, vDomain, geomBounds) },
+                top = axisLayoutQuad.top?.let { axisLayout -> computeHAxisInfo(axisLayout, hDomain, geomBounds) },
+                bottom = axisLayoutQuad.bottom?.let { axisLayout -> computeHAxisInfo(axisLayout, hDomain, geomBounds) }
             )
-
-            var vAxisInfo = computeVAxisInfo(
-                vAxisLayout,
-                vDomain,
-                geomBounds
-            )
-
-            return Pair(hAxisInfo, vAxisInfo)
         }
 
         private fun computeHAxisInfo(
@@ -83,7 +78,7 @@ internal class InsideOutTileLayout constructor(
         ): AxisLayoutInfo {
             val axisSpan = geomBounds.xRange()
             val axisLength = axisSpan.length
-            return axisLayout.doLayout(axisDomain, axisLength, Insets.ZERO)
+            return axisLayout.doLayout(axisDomain, axisLength, FACET_PANEL_AXIS_EXPAND)
         }
 
         private fun computeVAxisInfo(
@@ -91,7 +86,7 @@ internal class InsideOutTileLayout constructor(
             axisDomain: DoubleSpan,
             geomBounds: DoubleRectangle
         ): AxisLayoutInfo {
-            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, Insets.ZERO)
+            return axisLayout.doLayout(axisDomain, geomBounds.dimension.y, FACET_PANEL_AXIS_EXPAND)
         }
     }
 }

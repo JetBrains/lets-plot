@@ -35,7 +35,7 @@ class LegendAssembler(
         aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-//        scaleByAes: TypedScaleMap,
+//        scaleByAes: Map<Aes<*>, Scale>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
     ) {
@@ -112,7 +112,7 @@ class LegendAssembler(
         internal val aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-//        scaleMap: TypedScaleMap,
+//        scaleMap: Map<Aes<*>, Scale>,
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,

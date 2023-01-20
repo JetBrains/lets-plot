@@ -6,7 +6,7 @@ from typing import Any
 
 from lets_plot.plot.geom_imshow_ import geom_imshow
 from lets_plot.plot.plot import ggplot, GGBunch
-from lets_plot.plot.scale import scale_x_continuous, scale_y_continuous
+from lets_plot.plot.scale_position import scale_x_continuous, scale_y_continuous
 from lets_plot.plot.theme_ import theme
 from lets_plot.plot.util import is_ndarray
 
@@ -38,7 +38,7 @@ def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None
         Define the data range used for luminance normalization in grey-scale images.
         This parameter is ignored for RGB(A) images or if parameter `norm=False`.
     scale : float, default=1.0
-        Specifies the image size magnification factor.
+        Specify the image size magnification factor.
 
     Returns
     -------

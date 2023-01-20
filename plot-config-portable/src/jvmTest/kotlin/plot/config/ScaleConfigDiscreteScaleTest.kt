@@ -54,9 +54,8 @@ internal class ScaleConfigDiscreteScaleTest(
         )
 
         val geomLayer = TestUtil.buildPointLayer(data, mapping, scales = scales)
-        val scale = geomLayer.scaleMap[Aes.COLOR]
+        val scale = geomLayer.scaleMap.getValue(Aes.COLOR)
         val scaleBreaks = scale.getScaleBreaks()
-//        val mappedBreaks = ScaleUtil.map(scaleBreaks.transformedValues, scale)
         val scaleMapper = geomLayer.scaleMapppersNP.getValue(Aes.COLOR)
         val mappedBreaks = scaleBreaks.transformedValues.map { scaleMapper(it) }
 
@@ -65,7 +64,6 @@ internal class ScaleConfigDiscreteScaleTest(
         assertEquals(expectedBreakColors, mappedBreaks, "[Break Colors]")
         assertEquals(
             expectedDataPointColors,
-//            ScaleUtil.map(scale.applyTransform(CAT_DATA, true), scale),
             ScaleUtil.applyTransform(CAT_DATA, scale.transform).map { scaleMapper(it) },
             "[Data Point Colors]"
         )

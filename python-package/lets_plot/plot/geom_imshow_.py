@@ -37,15 +37,15 @@ def _hex2rgb(hex_c, alpha):
 
 def _hex2rgb_arr_uint8(hex_c, alpha=None):
     """
-    Creates 'palette' for PyPNG PNG writer
+    Create 'palette' for PyPNG PNG writer
     """
     return numpy.array(_hex2rgb(hex_c, alpha), dtype=numpy.uint8)
 
 
 def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     """
-    Takes numpy 2D array of float or int-s and
-    returns 2D array of ints with the target range [0..255].
+    Take numpy 2D array of float or int-s and
+    return 2D array of ints with the target range [0..255].
     Values outside the target range will be later clipped.
     """
     min_lum = max(0, min_lum)
@@ -107,7 +107,7 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
 
 def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax=None, extent=None, compression=None):
     """
-    Displays image specified by ndarray with shape
+    Display image specified by ndarray with shape.
 
     - (M, N) - grey-scale image
     - (M, N, 3) - color RGB image
@@ -119,7 +119,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     Parameters
     ----------
     image_data : ndarray
-        Specifies image type, size and pixel values.
+        Specify image type, size and pixel values.
         Supported array shapes are:
 
         - (M, N): an image with scalar data. The values are mapped to colors (greys by default) using normalization. See parameters `norm`, `cmap`, `vmin`, `vmax`.
@@ -148,7 +148,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         - `bottom, top`: coordinates of pixels' outer edge along the y-axis for pixels in the 1-st and the last row.
 
         The default is: [-0.5, ncol-0.5, -0.5, nrow-0.5]
-    compression : integer, optional
+    compression : int, optional
         The compression level to be used by the ``zlib`` module.
         Values from 0 (no compression) to 9 (highest).
         Value `None` means that the `zlib` module uses

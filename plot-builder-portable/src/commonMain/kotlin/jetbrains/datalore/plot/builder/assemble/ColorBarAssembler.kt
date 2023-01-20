@@ -20,7 +20,7 @@ import jetbrains.datalore.plot.builder.theme.LegendTheme
 class ColorBarAssembler(
     private val legendTitle: String,
     private val transformedDomain: DoubleSpan,
-    private val scale: Scale<Color>,
+    private val scale: Scale,
     private val scaleMapper: ScaleMapper<Color>,
     private val theme: LegendTheme
 ) {
@@ -88,7 +88,15 @@ class ColorBarAssembler(
             val reverse = !horizontal
 
             val layout = when {
-                horizontal -> ColorBarComponentLayout.horizontal(title, transformedDomain, breaks, barSize, reverse, theme)
+                horizontal -> ColorBarComponentLayout.horizontal(
+                    title,
+                    transformedDomain,
+                    breaks,
+                    barSize,
+                    reverse,
+                    theme
+                )
+
                 else -> ColorBarComponentLayout.vertical(title, transformedDomain, breaks, barSize, reverse, theme)
             }
 

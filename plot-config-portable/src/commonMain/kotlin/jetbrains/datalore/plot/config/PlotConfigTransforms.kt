@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.config.PlotConfigUtil.createPlotAesBindingSetup
 internal object PlotConfigTransforms {
     internal fun createTransforms(
         layerConfigs: List<LayerConfig>,
-        scaleProviderByAes: Map<Aes<*>, ScaleProvider<*>>,
+        scaleProviderByAes: Map<Aes<*>, ScaleProvider>,
         mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
         excludeStatVariables: Boolean
     ): Map<Aes<*>, Transform> {
@@ -158,7 +158,7 @@ internal object PlotConfigTransforms {
     }
 
     private fun isDiscreteScaleForEmptyData(
-        scaleProvider: ScaleProvider<*>,
+        scaleProvider: ScaleProvider,
         mapperProvider: MapperProvider<*>
     ): Boolean {
         // Empty data is neither 'discrete' nor 'numeric'.

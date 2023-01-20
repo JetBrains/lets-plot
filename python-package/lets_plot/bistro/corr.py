@@ -143,7 +143,7 @@ class corr_plot:
         ----------
         data : dict or `DataFrame`
             Correlation matrix or data (correlation will be calculated for each variable pair).
-            data will be recognized as correlation matrix if it has a square shape and all values are
+            Data will be recognized as correlation matrix if it has a square shape and all values are
             in range -1.0..+1.0 or NaN.
         show_legend : bool, default=True
             If True legend is shown.
@@ -151,7 +151,7 @@ class corr_plot:
             If True the y axis is flipped.
         threshold : float, default=0.0
             Minimal correlation abs value to be included in result.
-            Accepts values between 0 and 1.
+            Accept values between 0 and 1.
 
         """
 

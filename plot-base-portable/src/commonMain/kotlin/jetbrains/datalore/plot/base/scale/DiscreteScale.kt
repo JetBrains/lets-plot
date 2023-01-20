@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.Transform
 
-internal class DiscreteScale<T> : AbstractScale<Any, T> {
+internal class DiscreteScale : AbstractScale<Any> {
 
     private val discreteTransform: DiscreteTransform
 
@@ -32,7 +32,7 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         additiveExpand = 0.2 //0.6
     }
 
-    private constructor(b: MyBuilder<T>) : super(b) {
+    private constructor(b: MyBuilder) : super(b) {
         discreteTransform = b.discreteTransform
     }
 
@@ -74,23 +74,23 @@ internal class DiscreteScale<T> : AbstractScale<Any, T> {
         }
     }
 
-    override fun with(): Scale.Builder<T> {
+    override fun with(): Scale.Builder {
         return MyBuilder(this)
     }
 
-    private class MyBuilder<T>(scale: DiscreteScale<T>) : AbstractBuilder<Any, T>(scale) {
+    private class MyBuilder(scale: DiscreteScale) : AbstractBuilder<Any>(scale) {
         internal val discreteTransform: DiscreteTransform = scale.discreteTransform
 
-        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder<T> {
+        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
             throw IllegalStateException("Not applicable to scale with discrete domain")
         }
 
-        override fun continuousTransform(v: ContinuousTransform): Scale.Builder<T> {
+        override fun continuousTransform(v: ContinuousTransform): Scale.Builder {
             // ignore
             return this
         }
 
-        override fun build(): Scale<T> {
+        override fun build(): Scale {
             return DiscreteScale(this)
         }
     }

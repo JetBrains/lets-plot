@@ -7,14 +7,14 @@ package jetbrains.datalore.plot.builder.assemble.geom
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 
 internal class PointDataAccess(
     private val data: DataFrame,
     private val bindings: Map<Aes<*>, VarBinding>,
-    private val scaleMap: TypedScaleMap,
+    private val scaleMap: Map<Aes<*>, Scale>,
     override val isYOrientation: Boolean
 ) : MappedDataAccess {
 
@@ -26,12 +26,12 @@ internal class PointDataAccess(
         require(isMapped(aes)) { "Not mapped: $aes" }
 
         val binding = bindings.getValue(aes)
-        val scale = scaleMap[aes]
+        val scale = scaleMap.getValue(aes)
 
         return binding.variable
             .let { variable -> data.getNumeric(variable)[index] }
             .let { value -> scale.transform.applyInverse(value) }
     }
 
-    override fun getMappedDataLabel(aes: Aes<*>): String = scaleMap[aes].name
+    override fun getMappedDataLabel(aes: Aes<*>): String = scaleMap.getValue(aes).name
 }

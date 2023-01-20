@@ -3,8 +3,6 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
     id "org.jetbrains.gradle.plugin.idea-ext"
@@ -14,23 +12,6 @@ kotlin {
     jvm()
     js {
         browser()
-    }
-
-    if (project.buildSettings.build_python_extension) {
-        def currentOs = DefaultNativePlatform.getCurrentOperatingSystem()
-
-        if (currentOs.isMacOsX()) {
-            def currentArch = DefaultNativePlatform.getCurrentArchitecture()
-            if (currentArch.displayName.contains("arm-v8")) {
-                macosArm64("native")
-            } else {
-                macosX64("native")
-            }
-        } else if (currentOs.isLinux()) {
-            linuxX64("native")
-        } else if (currentOs.isWindows()) {
-            mingwX64("native")
-        }
     }
 
     sourceSets {

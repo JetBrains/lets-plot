@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PosProvider
-import jetbrains.datalore.plot.builder.assemble.TypedScaleMap
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -46,11 +45,9 @@ open class BarPlotDemo : SimpleDemoBase() {
             .putNumeric(varB, b)
             .build()
 
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B")
         )
 
         val layer = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY)
@@ -115,12 +112,10 @@ open class BarPlotDemo : SimpleDemoBase() {
             listOf("F", "M"),
 //                    listOf(Color.RED, Color.BLUE)
         )
-        val scaleByAes = TypedScaleMap(
-            mapOf(
-                Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
-                Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
-                Aes.FILL to scaleColor
-            )
+        val scaleByAes = mapOf<Aes<*>, Scale>(
+            Aes.X to Scales.DemoAndTest.continuousDomainNumericRange("A"),
+            Aes.Y to Scales.DemoAndTest.continuousDomainNumericRange("B"),
+            Aes.FILL to scaleColor
         )
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
             Aes.FILL to Mappers.discrete(
@@ -176,7 +171,7 @@ open class BarPlotDemo : SimpleDemoBase() {
             return values
         }
 
-        private fun colorScale(name: String, domain: List<Any>/*, colors: List<Color>*/): Scale<Color> {
+        private fun colorScale(name: String, domain: List<Any>/*, colors: List<Color>*/): Scale {
             return Scales.DemoAndTest.pureDiscrete(name, domain/*, colors, Color.GRAY*/)
         }
     }

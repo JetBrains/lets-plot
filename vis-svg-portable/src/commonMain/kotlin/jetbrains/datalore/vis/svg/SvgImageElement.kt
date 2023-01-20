@@ -8,10 +8,7 @@ package jetbrains.datalore.vis.svg
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
-
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
-import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_NAMESPACE_URI
-import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_PREFIX
 import jetbrains.datalore.vis.svg.SvgTransformable.Companion.TRANSFORM
 
 open class SvgImageElement() : SvgGraphicsElement(),
@@ -26,13 +23,8 @@ open class SvgImageElement() : SvgGraphicsElement(),
             SvgAttributeSpec.createSpec(SvgConstants.WIDTH)
         val HEIGHT: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
-
         val HREF: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpecNS(
-                "href",
-                XLINK_PREFIX,
-                XLINK_NAMESPACE_URI
-            )
+            SvgAttributeSpec.createSpec("href")
         val PRESERVE_ASPECT_RATIO: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("preserveAspectRatio")
     }

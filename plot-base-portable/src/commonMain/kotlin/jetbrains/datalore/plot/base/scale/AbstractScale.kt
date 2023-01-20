@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.plot.base.Scale
 
-internal abstract class AbstractScale<DomainT, T> : Scale<T> {
+internal abstract class AbstractScale<DomainT> : Scale {
 
     private val definedBreaks: List<DomainT>?
     private val definedLabels: List<String>?
@@ -20,8 +20,6 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         protected set
     final override val labelFormatter: ((Any) -> String)?
 
-//    override val isContinuousDomain: Boolean = false
-
     protected constructor(name: String, breaks: List<DomainT>? = null) {
         this.name = name
         this.definedBreaks = breaks
@@ -29,7 +27,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         labelFormatter = null
     }
 
-    protected constructor(b: AbstractBuilder<DomainT, T>) {
+    protected constructor(b: AbstractBuilder<DomainT>) {
         name = b.myName
         definedBreaks = b.myBreaks
         definedLabels = b.myLabels
@@ -94,7 +92,7 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         return breaks.map { formatter(it as Any) }
     }
 
-    protected abstract class AbstractBuilder<DomainT, T>(scale: AbstractScale<DomainT, T>) : Scale.Builder<T> {
+    protected abstract class AbstractBuilder<DomainT>(scale: AbstractScale<DomainT>) : Scale.Builder {
         internal var myName: String = scale.name
 
         internal var myBreaks: List<DomainT>? = scale.definedBreaks
@@ -104,12 +102,12 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
         internal var myAdditiveExpand: Double = scale.additiveExpand
 
-        override fun name(v: String): Scale.Builder<T> {
+        override fun name(v: String): Scale.Builder {
             myName = v
             return this
         }
 
-        override fun breaks(l: List<Any>): Scale.Builder<T> {
+        override fun breaks(l: List<Any>): Scale.Builder {
             myBreaks = l.map {
                 @Suppress("UNCHECKED_CAST")
                 it as DomainT
@@ -117,22 +115,22 @@ internal abstract class AbstractScale<DomainT, T> : Scale<T> {
             return this
         }
 
-        override fun labels(l: List<String>): Scale.Builder<T> {
+        override fun labels(l: List<String>): Scale.Builder {
             myLabels = l
             return this
         }
 
-        override fun labelFormatter(v: (Any) -> String): Scale.Builder<T> {
+        override fun labelFormatter(v: (Any) -> String): Scale.Builder {
             myLabelFormatter = v
             return this
         }
 
-        override fun multiplicativeExpand(v: Double): Scale.Builder<T> {
+        override fun multiplicativeExpand(v: Double): Scale.Builder {
             myMultiplicativeExpand = v
             return this
         }
 
-        override fun additiveExpand(v: Double): Scale.Builder<T> {
+        override fun additiveExpand(v: Double): Scale.Builder {
             myAdditiveExpand = v
             return this
         }
