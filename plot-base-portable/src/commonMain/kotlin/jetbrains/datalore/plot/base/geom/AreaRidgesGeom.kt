@@ -93,7 +93,9 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             root.add(quantileLine)
         }
 
-        buildHints(dataPoints, ctx, helper, boundTransform)
+        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
+            buildHints(points, ctx, helper, boundTransform)
+        }
     }
 
     private fun getQuantileLines(
