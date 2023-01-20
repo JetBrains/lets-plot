@@ -35,24 +35,27 @@ open class AreaGeom : GeomBase() {
         val dataPoints = dataPoints(aesthetics)
 
         val helper = LinesHelper(pos, coord, ctx)
-        dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
-            val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO, simplifyBorders = true)
-            // If you want to retain the side edges of area: comment out the following codes,
-            // and switch decorate method in LinesHelper.createBands
-            appendNodes(paths.asReversed(), root)
-        }
 
-        helper.setAlphaEnabled(false)
-        dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
-            appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y).asReversed(), root)
-        }
+        dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group).forEach { (_, groupDataPoints) ->
+            groupDataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
+                val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO, simplifyBorders = true)
+                // If you want to retain the side edges of area: comment out the following codes,
+                // and switch decorate method in LinesHelper.createBands
+                appendNodes(paths, root)
+            }
 
-        if (quantileLines) getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
-            root.add(quantileLine)
-        }
+            helper.setAlphaEnabled(false)
+            groupDataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+                appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y), root)
+            }
 
-        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
-            buildHints(points, pos, coord, ctx)
+            if (quantileLines) getQuantileLines(groupDataPoints, pos, coord, ctx).forEach { quantileLine ->
+                root.add(quantileLine)
+            }
+
+            groupDataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
+                buildHints(points, pos, coord, ctx)
+            }
         }
     }
 
