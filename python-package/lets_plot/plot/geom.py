@@ -2935,7 +2935,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ..density.. : density estimate.
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
-    - ..quantile.. : value of the nearest quantile specified by the `draw_quantiles` parameter.
+    - ..quantile.. : quantile estimate.
 
     `geom_violin()` understands the following aesthetics mappings:
 
@@ -2947,6 +2947,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'ydensity' stat to compute weighted density.
+    - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
     Examples
     --------
@@ -3686,7 +3687,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ..density.. : density estimate (mapped by default).
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
-    - ..quantile.. : value of the nearest quantile specified by the `quantiles` parameter.
+    - ..quantile.. : quantile estimate.
 
     `geom_density()` understands the following aesthetics mappings:
 
@@ -3697,6 +3698,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density' stat to compute weighted density.
+    - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
     Examples
     --------
