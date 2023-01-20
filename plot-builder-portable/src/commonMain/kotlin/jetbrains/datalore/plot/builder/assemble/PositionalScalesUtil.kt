@@ -366,7 +366,7 @@ internal object PositionalScalesUtil {
             return PlotUtil.rangeWithExpand(range, scale, includeZero)
         }
 
-        private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan? {
+        private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan {
             val newRange = DoubleSpan.encloseAll(values)
             return when {
                 wasRange == null -> newRange
