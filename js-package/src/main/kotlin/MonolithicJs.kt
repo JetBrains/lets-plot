@@ -52,7 +52,7 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = processSpecs(plotSpec, frontendOnly = false)
         buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
@@ -250,7 +250,7 @@ private fun showText(message: String, className: String, style: String, parentEl
 
 @Suppress("DuplicatedCode")
 private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-    PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+    PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
     if (PlotConfig.isFailure(plotSpec)) {
         return plotSpec
     }

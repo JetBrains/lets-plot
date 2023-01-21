@@ -15,6 +15,7 @@ class MoveGeomPropertiesToLayerMigrationTest {
     @Test
     fun plotLayers() {
         val input = "{" +
+                "  'kind': 'plot'," +
                 "  'layers': [" +
                 "               {" +
                 "                 'geom':  {" +
@@ -33,6 +34,7 @@ class MoveGeomPropertiesToLayerMigrationTest {
                 "}"
 
         val expected = "{" +
+                "  'kind': 'plot'," +
                 "  'layers': [" +
                 "               {" +
                 "                 'geom': 'point'," +

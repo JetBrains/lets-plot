@@ -6,7 +6,9 @@
 package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.base.logging.PortableLogging
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms
@@ -18,10 +20,10 @@ object BackendSpecTransformUtil {
 
     fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
         return try {
-            if (PlotConfig.isGGBunchSpec(plotSpecRaw)) {
-                processTransformInBunch(plotSpecRaw)
-            } else {
-                processTransformIntern(plotSpecRaw)
+            when (val kind = PlotConfig.figSpecKind(plotSpecRaw)) {
+                FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
+                FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+                FigKind.GG_BUNCH_SPEC -> processTransformInBunch(plotSpecRaw)
             }
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -65,9 +67,13 @@ object BackendSpecTransformUtil {
             // Plot spec
             @Suppress("UNCHECKED_CAST")
             val featureSpec = HashMap<String, Any>(featureSpecRaw as Map<String, Any>)
-            val kind = featureSpec[Option.Meta.KIND]
-            if (Option.Meta.Kind.PLOT != kind) {
-                throw IllegalArgumentException("GGBunch item feature kind not suppotred: $kind")
+//            val kind = featureSpec[Option.Meta.KIND]
+//            if (FigKind.PLOT_SPEC != kind) {
+//                throw IllegalArgumentException("GGBunch item feature kind not suppotred: $kind")
+//            }
+            val kind = PlotConfig.figSpecKind(featureSpec)
+            if (kind != FigKind.PLOT_SPEC) {
+                throw IllegalArgumentException("${FigKind.PLOT_SPEC} expected but was: $kind")
             }
 
             val plotSpec = processTransformIntern(featureSpec)

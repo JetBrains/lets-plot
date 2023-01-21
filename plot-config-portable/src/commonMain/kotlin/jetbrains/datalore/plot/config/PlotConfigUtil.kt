@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DataFrame
@@ -53,16 +54,15 @@ object PlotConfigUtil {
     }
 
     // frontend
-    fun findComputationMessages(spec: Map<String, Any>): List<String> {
-        val result: List<String> = when {
-            PlotConfig.isPlotSpec(spec) -> getComputationMessages(spec)
-            PlotConfig.isGGBunchSpec(spec) -> {
-                val bunchConfig = BunchConfig(spec)
+    fun findComputationMessages(figSpec: Map<String, Any>): List<String> {
+        val result: List<String> = when (val kind = PlotConfig.figSpecKind(figSpec)) {
+            FigKind.PLOT_SPEC -> getComputationMessages(figSpec)
+            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+            FigKind.GG_BUNCH_SPEC -> {
+                val bunchConfig = BunchConfig(figSpec)
                 bunchConfig.bunchItems.flatMap { getComputationMessages(it.featureSpec) }
             }
-            else -> throw RuntimeException("Unexpected plot spec kind: ${PlotConfig.specKind(spec)}")
         }
-
         return result.distinct()
     }
 

@@ -16,7 +16,6 @@ import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
-import jetbrains.datalore.plot.config.Option.Meta.Kind
 import jetbrains.datalore.plot.config.Option.Plot.CAPTION
 import jetbrains.datalore.plot.config.Option.Plot.CAPTION_TEXT
 import jetbrains.datalore.plot.config.Option.Plot.FACET
@@ -162,21 +161,12 @@ abstract class PlotConfig(
             return mapOf(ERROR_MESSAGE to message)
         }
 
-        fun assertPlotSpecOrErrorMessage(opts: Map<String, Any>) {
-            val identified = isFailure(opts) ||
-                    isPlotSpec(opts) ||
-                    isGGBunchSpec(opts)
-
-            if (!identified) {
-                throw IllegalArgumentException("Invalid root feature kind: absent or unsupported  `kind` key")
-            }
+        fun assertFigSpecOrErrorMessage(opts: Map<String, Any>) {
+            check(isFailure(opts) || isFigSpec(opts))
         }
 
-        fun assertPlotSpec(opts: Map<String, Any>) {
-            val identified = isPlotSpec(opts) || isGGBunchSpec(opts)
-            if (!identified) {
-                throw IllegalArgumentException("Invalid root feature kind: absent or unsupported  `kind` key")
-            }
+        fun assertFigSpec(opts: Map<String, Any>) {
+            check(isFigSpec(opts))
         }
 
         fun isFailure(opts: Map<String, Any>): Boolean {
@@ -187,16 +177,22 @@ abstract class PlotConfig(
             return opts[ERROR_MESSAGE].toString()
         }
 
-        fun isPlotSpec(opts: Map<*, *>): Boolean {
-            return Kind.PLOT == specKind(opts)
+        //        fun isPlotSpec(opts: Map<*, *>): Boolean {
+//            return FigKind.PLOT_SPEC == figSpecKind(opts)
+//        }
+//
+//        fun isGGBunchSpec(opts: Map<*, *>): Boolean {
+//            return FigKind.GG_BUNCH_SPEC == figSpecKind(opts)
+//        }
+//
+        fun isFigSpec(opts: Map<*, *>): Boolean {
+            return when (figSpecKind(opts)) {
+                else -> true
+            }
         }
 
-        fun isGGBunchSpec(opts: Map<*, *>): Boolean {
-            return Kind.GG_BUNCH == specKind(opts)
-        }
-
-        fun specKind(opts: Map<*, *>): Any? {
-            return opts[Meta.KIND]
+        fun figSpecKind(opts: Map<*, *>): FigKind {
+            return FigKind.fromOption(opts[Meta.KIND]?.toString())
         }
     }
 }

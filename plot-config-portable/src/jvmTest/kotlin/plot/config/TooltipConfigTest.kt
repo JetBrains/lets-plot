@@ -21,6 +21,8 @@ import jetbrains.datalore.plot.config.Option.LinesSpec.TITLE
 import jetbrains.datalore.plot.config.Option.LinesSpec.VARIABLES
 import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD
 import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FORMAT
+import jetbrains.datalore.plot.config.Option.Meta.KIND
+import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
 import jetbrains.datalore.plot.config.TestUtil.buildPointLayer
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
@@ -461,6 +463,7 @@ class TooltipConfigTest {
         expectedMessage: String
     ) {
         val plotOpts = mutableMapOf(
+            KIND to PLOT,
             DATA to data,
             MAPPING to mapping,
             LAYERS to listOf(

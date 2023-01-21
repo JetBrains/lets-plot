@@ -7,13 +7,12 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.PlotContainerPortable
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.config.BunchConfig
-import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
+import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svgToString.SvgToString
 import kotlin.math.max
@@ -75,33 +74,31 @@ object MonolithicCommon {
             )
         }
 
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
             return PlotsBuildResult.Error(errorMessage)
         }
 
-        return when {
-            PlotConfig.isPlotSpec(plotSpec) -> {
-                PlotsBuildResult.Success(
-                    listOf(
-                        buildSinglePlotFromProcessedSpecs(
-                            plotSpec,
-                            plotSize,
-                            plotMaxWidth,
-                            plotPreferredWidth
-                        )
+        return when (val kind = PlotConfig.figSpecKind(plotSpec)) {
+            FigKind.PLOT_SPEC -> PlotsBuildResult.Success(
+                listOf(
+                    buildSinglePlotFromProcessedSpecs(
+                        plotSpec,
+                        plotSize,
+                        plotMaxWidth,
+                        plotPreferredWidth
                     )
                 )
-            }
+            )
 
-            PlotConfig.isGGBunchSpec(plotSpec) -> buildGGBunchFromProcessedSpecs(
+            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+
+            FigKind.GG_BUNCH_SPEC -> buildGGBunchFromProcessedSpecs(
                 plotSpec,
                 plotMaxWidth,
                 plotPreferredWidth
             )
-
-            else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(plotSpec))
         }
     }
 
@@ -122,15 +119,6 @@ object MonolithicCommon {
         }
 
         val scalingCoef = neededSize.x / naturalSize.x
-//        val scalingCoef = maxWidth?.let {
-//            if (it < naturalBunchSize.x) {
-//                max(Defaults.MIN_PLOT_WIDTH, it) / naturalBunchSize.x
-//            } else {
-//                1.0
-//            }
-//
-//        } ?: 1.0
-
 
         val bunchConfig = BunchConfig(bunchSpec)
         if (bunchConfig.bunchItems.isEmpty()) return PlotsBuildResult.Error(
@@ -218,7 +206,7 @@ object MonolithicCommon {
      */
     @Suppress("DuplicatedCode")
     fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec
         }

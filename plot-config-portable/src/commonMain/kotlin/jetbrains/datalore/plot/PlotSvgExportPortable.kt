@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.PlotSvgHelper.fetchPlotSizeFromSvg
 import jetbrains.datalore.plot.config.BunchConfig
+import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.vis.svgToString.SvgToString
 
@@ -58,7 +59,7 @@ object PlotSvgExportPortable {
         }
 
         // Must be GGBunch
-        if (!PlotConfig.isGGBunchSpec(plotSpec)) {
+        if (PlotConfig.figSpecKind(plotSpec) != FigKind.GG_BUNCH_SPEC) {
             throw IllegalStateException("Can't save multiple SVG images in one file.") // Should never happen
         }
 
