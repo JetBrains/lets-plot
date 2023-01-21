@@ -15,7 +15,7 @@ object JvmDateTimeUtil {
     fun toJavaDate(time: DateTime?): java.util.Date? {
         return if (time == null) null else java.util.Date(
                 time.year - BASE_YEAR,
-                time.month!!.ordinal(), time.day, time.hours, time.minutes, time.seconds
+                time.month.ordinal(), time.day, time.hours, time.minutes, time.seconds
         )
 
     }
