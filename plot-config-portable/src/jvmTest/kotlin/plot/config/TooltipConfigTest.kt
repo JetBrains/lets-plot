@@ -803,6 +803,50 @@ class TooltipConfigTest {
     }
 
     @Test
+    fun `use variable mapped to the aes consumed by stat`() {
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.PIE,
+            data = mapOf(
+                "name" to listOf("a"),
+                "value" to listOf(1)
+            ),
+            mapping = mapOf(
+                Aes.FILL.name to "name",
+                Aes.WEIGHT.name to "value",
+            ),
+            tooltips = mapOf(
+                LINES to listOf("@value")
+            )
+        )
+        assertTooltipStrings(
+            expected = listOf("1.0"),
+            actual = getGeneralTooltipStrings(geomLayer)
+        )
+    }
+
+    @Test
+    fun `use aes consumed by stat in tooltip - will be ignored`() {
+        val geomLayer = buildGeomLayer(
+            geom = Option.GeomName.PIE,
+            data = mapOf(
+                "name" to listOf("a"),
+                "value" to listOf(1)
+            ),
+            mapping = mapOf(
+                Aes.FILL.name to "name",
+                Aes.WEIGHT.name to "value",
+            ),
+            tooltips = mapOf(
+                LINES to listOf("^weight")
+            )
+        )
+        assertTooltipStrings(
+            expected = emptyList(),
+            actual = getGeneralTooltipStrings(geomLayer)
+        )
+    }
+
+    @Test
     fun `format() should understand DateTime format`() {
         val geomLayer = buildPointLayer(
             data = mapOf(
