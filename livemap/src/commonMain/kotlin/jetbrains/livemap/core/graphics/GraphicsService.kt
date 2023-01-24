@@ -7,12 +7,12 @@ package jetbrains.livemap.core.graphics
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.input.CursorStyle
 
 interface GraphicsService {
-    fun measure(text: String, font: Context2d.Font): DoubleVector
+    fun measure(text: String, font: Font): DoubleVector
     fun repaint()
 
     fun addToRenderer(obj: RenderBox)

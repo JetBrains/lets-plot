@@ -6,8 +6,7 @@
 package jetbrains.livemap.canvasDemo
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.*
 
 class SaveRestoreDemoModel(canvas: Canvas) {
     init {
@@ -20,12 +19,12 @@ class SaveRestoreDemoModel(canvas: Canvas) {
             setFillStyle(Color.BLUE)
             setStrokeStyle(Color.RED)
             setGlobalAlpha(0.5)
-            setFont(Context2d.Font(fontStyle = Context2d.Font.FontStyle.ITALIC, fontSize = 15.0, fontFamily = FAMILY))
+            setFont(Font(fontStyle = FontStyle.ITALIC, fontSize = 15.0, fontFamily = FAMILY))
             setLineWidth(4.0)
-            setLineJoin(Context2d.LineJoin.ROUND)
-            setLineCap(Context2d.LineCap.ROUND)
-            setTextBaseline(Context2d.TextBaseline.BOTTOM)
-            setTextAlign(Context2d.TextAlign.CENTER)
+            setLineJoin(LineJoin.ROUND)
+            setLineCap(LineCap.ROUND)
+            setTextBaseline(TextBaseline.BOTTOM)
+            setTextAlign(TextAlign.CENTER)
             setLineDash(doubleArrayOf(8.0))
 
             translate(0.0, 100.0)
@@ -39,12 +38,12 @@ class SaveRestoreDemoModel(canvas: Canvas) {
             setFillStyle(Color.DARK_MAGENTA)
             setStrokeStyle(Color.CYAN)
             setGlobalAlpha(0.8)
-            setFont(Context2d.Font(fontWeight = Context2d.Font.FontWeight.BOLD, fontSize = 40.0, fontFamily = FAMILY))
+            setFont(Font(fontWeight = FontWeight.BOLD, fontSize = 40.0, fontFamily = FAMILY))
             setLineWidth(8.0)
-            setLineJoin(Context2d.LineJoin.MITER)
-            setLineCap(Context2d.LineCap.SQUARE)
-            setTextBaseline(Context2d.TextBaseline.MIDDLE)
-            setTextAlign(Context2d.TextAlign.END)
+            setLineJoin(LineJoin.MITER)
+            setLineCap(LineCap.SQUARE)
+            setTextBaseline(TextBaseline.MIDDLE)
+            setTextAlign(TextAlign.END)
             setLineDash(doubleArrayOf(8.0, 10.0))
 
             scale(0.5, 0.5)
@@ -58,12 +57,12 @@ class SaveRestoreDemoModel(canvas: Canvas) {
             setFillStyle(Color.GREEN)
             setStrokeStyle(Color.ORANGE)
             setGlobalAlpha(1.0)
-            setFont(Context2d.Font(fontSize = 25.0, fontFamily = FAMILY))
+            setFont(Font(fontSize = 25.0, fontFamily = FAMILY))
             setLineWidth(2.0)
-            setLineJoin(Context2d.LineJoin.BEVEL)
-            setLineCap(Context2d.LineCap.BUTT)
-            setTextBaseline(Context2d.TextBaseline.TOP)
-            setTextAlign(Context2d.TextAlign.START)
+            setLineJoin(LineJoin.BEVEL)
+            setLineCap(LineCap.BUTT)
+            setTextBaseline(TextBaseline.TOP)
+            setTextAlign(TextAlign.START)
             setLineDash(doubleArrayOf())
             translate(0.0, 100.0)
             rotate(0.3)

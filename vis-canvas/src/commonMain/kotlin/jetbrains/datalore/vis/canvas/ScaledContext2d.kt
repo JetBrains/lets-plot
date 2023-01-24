@@ -28,7 +28,7 @@ internal class ScaledContext2d(
         return res
     }
 
-    private fun scaled(font: Context2d.Font): Context2d.Font = font.copy(fontSize = scaled(font.fontSize))
+    private fun scaled(font: Font): Font = font.copy(fontSize = scaled(font.fontSize))
 
     override fun drawImage(snapshot: Snapshot) = drawImage(snapshot, 0.0, 0.0)
 
@@ -83,7 +83,7 @@ internal class ScaledContext2d(
     override fun setFillStyle(color: Color?) = ctx.setFillStyle(color)
     override fun setStrokeStyle(color: Color?) = ctx.setStrokeStyle(color)
     override fun setGlobalAlpha(alpha: Double) = ctx.setGlobalAlpha(alpha)
-    override fun setFont(f: Context2d.Font) = ctx.setFont(scaled(f))
+    override fun setFont(f: Font) = ctx.setFont(scaled(f))
     override fun setLineWidth(lineWidth: Double) = ctx.setLineWidth(scaled(lineWidth))
 
     override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
@@ -105,10 +105,10 @@ internal class ScaledContext2d(
         ctx.bezierCurveTo(scaled(cp1x), scaled(cp1y), scaled(cp2x), scaled(cp2y), scaled(x), scaled(y))
     }
 
-    override fun setLineJoin(lineJoin: Context2d.LineJoin) = ctx.setLineJoin(lineJoin)
-    override fun setLineCap(lineCap: Context2d.LineCap) = ctx.setLineCap(lineCap)
-    override fun setTextBaseline(baseline: Context2d.TextBaseline) = ctx.setTextBaseline(baseline)
-    override fun setTextAlign(align: Context2d.TextAlign) = ctx.setTextAlign(align)
+    override fun setLineJoin(lineJoin: LineJoin) = ctx.setLineJoin(lineJoin)
+    override fun setLineCap(lineCap: LineCap) = ctx.setLineCap(lineCap)
+    override fun setTextBaseline(baseline: TextBaseline) = ctx.setTextBaseline(baseline)
+    override fun setTextAlign(align: TextAlign) = ctx.setTextAlign(align)
 
     override fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double) {
         ctx.setTransform(m11, m12, m21, m22, scaled(dx), scaled(dy))

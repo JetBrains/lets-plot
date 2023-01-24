@@ -7,9 +7,10 @@ package jetbrains.livemap.core.graphics
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
 
 class TextMeasurer(private val myContext2d: Context2d) {
-    fun measure(label: String, font: Context2d.Font): DoubleVector {
+    fun measure(label: String, font: Font): DoubleVector {
         myContext2d.save()
         myContext2d.setFont(font)
         val width = myContext2d.measureText(label)
@@ -18,7 +19,7 @@ class TextMeasurer(private val myContext2d: Context2d) {
         return DoubleVector(width, font.fontSize)
     }
 
-    fun measure(label: List<String>, font: Context2d.Font, lineHeight: Double): DoubleVector {
+    fun measure(label: List<String>, font: Font, lineHeight: Double): DoubleVector {
         myContext2d.save()
         myContext2d.setFont(font)
 

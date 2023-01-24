@@ -8,6 +8,7 @@ package jetbrains.livemap.canvasDemo
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.LineCap
 
 class LineDashDemoModel(canvas: Canvas) {
     init {
@@ -30,7 +31,7 @@ class LineDashDemoModel(canvas: Canvas) {
             line()
             stroke()
 
-            setLineCap(Context2d.LineCap.ROUND)
+            setLineCap(LineCap.ROUND)
 
             translate(0.0, 20.0)
             setLineDash(listOf(20.0).toDoubleArray())
@@ -47,7 +48,7 @@ class LineDashDemoModel(canvas: Canvas) {
             line()
             stroke()
 
-            setLineCap(Context2d.LineCap.SQUARE)
+            setLineCap(LineCap.SQUARE)
 
             translate(0.0, 20.0)
             setLineDash(listOf(20.0).toDoubleArray())

@@ -11,44 +11,44 @@ import jetbrains.datalore.base.js.css.enumerables.CssLineJoin
 import jetbrains.datalore.base.js.css.enumerables.CssTextAlign
 import jetbrains.datalore.base.js.css.enumerables.CssTextBaseLine
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
-import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.DomSnapshot
 import org.w3c.dom.*
 
 internal class DomContext2d(
     private val ctx: CanvasRenderingContext2D
 ) : Context2d {
-    private fun convertLineJoin(lineJoin: Context2d.LineJoin): CssLineJoin {
+    private fun convertLineJoin(lineJoin: LineJoin): CssLineJoin {
         return when (lineJoin) {
-            Context2d.LineJoin.BEVEL -> CssLineJoin.BEVEL
-            Context2d.LineJoin.MITER -> CssLineJoin.MITER
-            Context2d.LineJoin.ROUND -> CssLineJoin.ROUND
+            LineJoin.BEVEL -> CssLineJoin.BEVEL
+            LineJoin.MITER -> CssLineJoin.MITER
+            LineJoin.ROUND -> CssLineJoin.ROUND
         }
     }
 
-    private fun convertLineCap(lineCap: Context2d.LineCap): CssLineCap {
+    private fun convertLineCap(lineCap: LineCap): CssLineCap {
         return when (lineCap) {
-            Context2d.LineCap.BUTT -> CssLineCap.BUTT
-            Context2d.LineCap.ROUND -> CssLineCap.ROUND
-            Context2d.LineCap.SQUARE -> CssLineCap.SQUARE
+            LineCap.BUTT -> CssLineCap.BUTT
+            LineCap.ROUND -> CssLineCap.ROUND
+            LineCap.SQUARE -> CssLineCap.SQUARE
         }
     }
 
-    private fun convertTextBaseline(baseline: Context2d.TextBaseline): CssTextBaseLine {
+    private fun convertTextBaseline(baseline: TextBaseline): CssTextBaseLine {
         return when (baseline) {
-            Context2d.TextBaseline.ALPHABETIC -> CssTextBaseLine.ALPHABETIC
-            Context2d.TextBaseline.BOTTOM -> CssTextBaseLine.BOTTOM
-            Context2d.TextBaseline.MIDDLE -> CssTextBaseLine.MIDDLE
-            Context2d.TextBaseline.TOP -> CssTextBaseLine.TOP
+            TextBaseline.ALPHABETIC -> CssTextBaseLine.ALPHABETIC
+            TextBaseline.BOTTOM -> CssTextBaseLine.BOTTOM
+            TextBaseline.MIDDLE -> CssTextBaseLine.MIDDLE
+            TextBaseline.TOP -> CssTextBaseLine.TOP
         }
     }
 
-    private fun convertTextAlign(align: Context2d.TextAlign): CssTextAlign {
+    private fun convertTextAlign(align: TextAlign): CssTextAlign {
         return when (align) {
-            Context2d.TextAlign.CENTER -> CssTextAlign.CENTER
-            Context2d.TextAlign.END -> CssTextAlign.END
-            Context2d.TextAlign.START -> CssTextAlign.START
+            TextAlign.CENTER -> CssTextAlign.CENTER
+            TextAlign.END -> CssTextAlign.END
+            TextAlign.START -> CssTextAlign.START
         }
     }
 
@@ -109,21 +109,21 @@ internal class DomContext2d(
         ctx.globalAlpha = alpha
     }
 
-    private fun Context2d.Font.toCssString(): String {
+    private fun Font.toCssString(): String {
         val weight: String = when (fontWeight) {
-            Context2d.Font.FontWeight.NORMAL -> "normal"
-            Context2d.Font.FontWeight.BOLD -> "bold"
+            FontWeight.NORMAL -> "normal"
+            FontWeight.BOLD -> "bold"
         }
 
         val style: String = when (fontStyle) {
-            Context2d.Font.FontStyle.NORMAL -> "normal"
-            Context2d.Font.FontStyle.ITALIC -> "italic"
+            FontStyle.NORMAL -> "normal"
+            FontStyle.ITALIC -> "italic"
         }
 
         return "$style $weight ${fontSize}px $fontFamily"
     }
 
-    override fun setFont(f: Context2d.Font) {
+    override fun setFont(f: Font) {
         ctx.font = f.toCssString()
     }
 
@@ -146,19 +146,19 @@ internal class DomContext2d(
         ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
-    override fun setLineJoin(lineJoin: Context2d.LineJoin) {
+    override fun setLineJoin(lineJoin: LineJoin) {
         ctx.lineJoin = convertLineJoin(lineJoin)
     }
 
-    override fun setLineCap(lineCap: Context2d.LineCap) {
+    override fun setLineCap(lineCap: LineCap) {
         ctx.lineCap = convertLineCap(lineCap)
     }
 
-    override fun setTextBaseline(baseline: Context2d.TextBaseline) {
+    override fun setTextBaseline(baseline: TextBaseline) {
         ctx.textBaseline = convertTextBaseline(baseline)
     }
 
-    override fun setTextAlign(align: Context2d.TextAlign) {
+    override fun setTextAlign(align: TextAlign) {
         ctx.textAlign = convertTextAlign(align)
     }
 

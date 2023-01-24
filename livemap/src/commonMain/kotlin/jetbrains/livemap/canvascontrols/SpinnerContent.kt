@@ -8,11 +8,9 @@ package jetbrains.livemap.canvascontrols
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.SingleCanvasControl
 import kotlin.math.PI
 
 internal class SpinnerContent : CanvasContent {
@@ -32,8 +30,7 @@ internal class SpinnerContent : CanvasContent {
                 AnimationEventHandler.toHandler { millisTime: Long ->
                     context2d.drawSpinner(millisTime)
 
-                    takeSnapshot()
-                        .onSuccess { canvasControl.context.drawImage(it) }
+                    takeSnapshot().onSuccess(canvasControl.context::drawImage)
                     true
                 }
             )
@@ -47,7 +44,8 @@ internal class SpinnerContent : CanvasContent {
 
     private fun Context2d.drawStaticElements() {
         save()
-        setFont(Context2d.Font(
+        setFont(
+            Font(
             fontSize = FONT_SIZE,
             fontFamily = "Helvetica, Arial, sans-serif")
         )
@@ -62,8 +60,8 @@ internal class SpinnerContent : CanvasContent {
         setFillStyle(BACKGROUND_COLOR)
         fillRect(0.0, 0.0, dimension.x.toDouble(), dimension.y.toDouble())
 
-        setTextBaseline(Context2d.TextBaseline.MIDDLE)
-        setTextAlign(Context2d.TextAlign.START)
+        setTextBaseline(TextBaseline.MIDDLE)
+        setTextAlign(TextAlign.START)
         setFillStyle(FONT_COLOR)
         fillText(LOADING_TEXT, (dimension.x + width) / 2 - textWidth, dimension.y / 2.0)
 

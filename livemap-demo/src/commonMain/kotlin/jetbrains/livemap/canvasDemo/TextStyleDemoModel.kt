@@ -7,7 +7,9 @@ package jetbrains.livemap.canvasDemo
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
+import jetbrains.datalore.vis.canvas.FontStyle
+import jetbrains.datalore.vis.canvas.FontWeight
 
 class TextStyleDemoModel(canvas: Canvas) {
 
@@ -19,7 +21,7 @@ class TextStyleDemoModel(canvas: Canvas) {
             setFillStyle(Color.BLUE)
 
             setFont(
-                Context2d.Font(
+                Font(
                     fontSize = fontSize,
                     fontFamily = fontFamily
                 )
@@ -28,8 +30,8 @@ class TextStyleDemoModel(canvas: Canvas) {
             fillText("Regular", 50.0, 50.0)
 
             setFont(
-                Context2d.Font(
-                    fontWeight = Context2d.Font.FontWeight.BOLD,
+                Font(
+                    fontWeight = FontWeight.BOLD,
                     fontSize = fontSize,
                     fontFamily = fontFamily
                 )
@@ -38,8 +40,8 @@ class TextStyleDemoModel(canvas: Canvas) {
             fillText("Bold", 50.0, 100.0)
 
             setFont(
-                Context2d.Font(
-                    fontStyle = Context2d.Font.FontStyle.ITALIC,
+                Font(
+                    fontStyle = FontStyle.ITALIC,
                     fontSize = fontSize,
                     fontFamily = fontFamily
                 )
@@ -48,9 +50,9 @@ class TextStyleDemoModel(canvas: Canvas) {
             fillText("Italic", 50.0, 150.0)
 
             setFont(
-                Context2d.Font(
-                    fontStyle = Context2d.Font.FontStyle.ITALIC,
-                    fontWeight = Context2d.Font.FontWeight.BOLD,
+                Font(
+                    fontStyle = FontStyle.ITALIC,
+                    fontWeight = FontWeight.BOLD,
                     fontSize = fontSize,
                     fontFamily = fontFamily
                 )
