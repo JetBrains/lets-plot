@@ -48,7 +48,6 @@ class StyleSheet constructor(
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         val UNDEFINED_FONT_COLOR = Color(150, 0, 255)
         private const val DEFAULT_FONT_SIZE = 15.0
-        private const val DEFAULT_FONT_MONOSPACED = false
 
         fun FontFace.toCSS(): String {
             return "font-weight: ${if (bold) "bold" else "normal"};" +
@@ -68,7 +67,7 @@ class StyleSheet constructor(
         //      property: value;
         //      ....
         // }
-        private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^\{\}]*)\}"""
+        private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^{}]*)}"""
 
         fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
