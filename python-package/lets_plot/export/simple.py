@@ -5,7 +5,6 @@ import io
 from os.path import abspath
 from typing import Union
 
-from .._version import __version__
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 
@@ -67,4 +66,33 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
     with io.open(filename, mode="w", encoding="utf-8") as f:
         f.write(html_page)
 
+    return abspath(filename)
+
+
+def export_png(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
+    """
+    Export plot or `bunch` to a file in PNG format (requires `cairosvg`).
+
+    Parameters
+    ----------
+    plot: `PlotSpec` or `GGBunch` object
+            Plot specification to export.
+    filename: str
+            Filename to save PNG under.
+
+    Returns
+    -------
+    str
+        Absolute pathname of created PNG file.
+
+    """
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+
+    import cairosvg
+    from .. import _kbridge as kbr
+
+    svg = kbr._generate_svg(plot.as_dict())
+
+    cairosvg.svg2png(bytestring=svg, write_to=filename)
     return abspath(filename)
