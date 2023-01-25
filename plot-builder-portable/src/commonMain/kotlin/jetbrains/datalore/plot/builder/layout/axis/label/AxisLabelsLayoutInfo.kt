@@ -18,19 +18,17 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
     val labelVerticalAnchor: Text.VerticalAnchor?
     val labelRotationAngle: Double
     internal val isOverlap: Boolean
-
+    val labelBoundsList: List<DoubleRectangle>?
 
     init {
         this.breaks = b.myBreaks
         this.bounds = b.myBounds
         this.isOverlap = b.myOverlap
-        this.labelAdditionalOffsets = if (b.myLabelAdditionalOffsets == null)
-            null
-        else
-            ArrayList(b.myLabelAdditionalOffsets!!)
+        this.labelAdditionalOffsets = b.myLabelAdditionalOffsets
         this.labelHorizontalAnchor = b.myLabelHorizontalAnchor
         this.labelVerticalAnchor = b.myLabelVerticalAnchor
         this.labelRotationAngle = b.myLabelRotationAngle
+        this.labelBoundsList = b.myLabelBoundsList
     }
 
     class Builder {
@@ -41,6 +39,7 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
         internal var myLabelHorizontalAnchor: Text.HorizontalAnchor? = null
         internal var myLabelVerticalAnchor: Text.VerticalAnchor? = null
         internal var myLabelRotationAngle = 0.0
+        internal var myLabelBoundsList: List<DoubleRectangle>? = null
 
         fun breaks(breaks: ScaleBreaks): Builder {
             myBreaks = breaks
@@ -74,6 +73,11 @@ class AxisLabelsLayoutInfo private constructor(b: Builder) {
 
         fun labelRotationAngle(angle: Double): Builder {
             myLabelRotationAngle = angle
+            return this
+        }
+
+        fun labelBoundsList(boundsList: List<DoubleRectangle>) : Builder {
+            myLabelBoundsList = boundsList
             return this
         }
 

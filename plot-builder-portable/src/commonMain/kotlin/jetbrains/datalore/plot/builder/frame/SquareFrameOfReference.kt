@@ -238,6 +238,7 @@ internal class SquareFrameOfReference(
                 }
                 drawDebugRect(info.tickLabelsBounds, Color.GREEN)
                 info.tickLabelsTextBounds?.let { drawDebugRect(it, Color.LIGHT_BLUE) }
+                info.tickLabelBoundsList?.forEach { drawDebugRect(it, Color.LIGHT_MAGENTA) }
             }
             return axis
         }

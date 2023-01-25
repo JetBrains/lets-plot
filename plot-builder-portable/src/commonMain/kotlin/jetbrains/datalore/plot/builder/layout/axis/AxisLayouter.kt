@@ -41,7 +41,8 @@ internal abstract class AxisLayouter(
                 labelsBounds,
                 labelsLayout.theme.tickLabelMargins(),
                 orientation
-            )
+            ),
+            tickLabelBoundsList = labelsInfo.labelBoundsList
         )
     }
 

@@ -85,7 +85,7 @@ internal class HorizontalMultilineLabelsLayout(
             }
         }
 
-        val labelBounds = applyLabelsMargins(bounds)
+        val labelBounds = applyLabelMargins(bounds)
         val verticalAnchor = when (orientation) {
             TOP -> Text.VerticalAnchor.BOTTOM
             else -> Text.VerticalAnchor.TOP

@@ -57,10 +57,7 @@ internal class HorizontalSimpleLabelsLayout(
             Orientation.BOTTOM -> Text.VerticalAnchor.TOP
             else -> Text.VerticalAnchor.BOTTOM
         }
-        return AxisLabelsLayoutInfo.Builder()
-            .breaks(breaks)
-            .bounds(applyLabelsMargins(bounds!!))
-            .overlap(overlap)
+        return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
             .labelAdditionalOffsets(null)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(verticalAnchor)

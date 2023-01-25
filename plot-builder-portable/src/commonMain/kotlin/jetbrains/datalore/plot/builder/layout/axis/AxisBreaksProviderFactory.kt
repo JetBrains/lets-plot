@@ -22,10 +22,10 @@ abstract class AxisBreaksProviderFactory {
         }
     }
 
-    class FixedBreaksProviderFactory(private val breaksBrovider: FixedAxisBreaksProvider) :
+    class FixedBreaksProviderFactory(private val breaksProvider: FixedAxisBreaksProvider) :
         AxisBreaksProviderFactory() {
         override fun createAxisBreaksProvider(axisDomain: DoubleSpan): AxisBreaksProvider {
-            return breaksBrovider
+            return breaksProvider
         }
     }
 

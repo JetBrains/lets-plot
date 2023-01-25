@@ -51,10 +51,7 @@ internal object BreakLabelsLayoutUtil {
         labelToWidth: (String) -> Double = { it.length.toDouble() }
     ): Double {
         val longestLabel = labels.maxByOrNull(labelToWidth)
-        return if (longestLabel == null)
-            0.0
-        else
-            labelToWidth(longestLabel)
+        return longestLabel?.let(labelToWidth) ?: 0.0
     }
 
     fun horizontalCenteredLabelBounds(labelSize: DoubleVector): DoubleRectangle {
@@ -79,7 +76,7 @@ internal object BreakLabelsLayoutUtil {
                     axisMapper,
                     PlotLabelSpecFactory.axisTick(theme)
                 )
-                applyLabelsMargins(
+                applyLabelMargins(
                     labelsBounds,
                     tickLength,
                     theme.tickLabelMargins(),
@@ -89,7 +86,7 @@ internal object BreakLabelsLayoutUtil {
 
             theme.showTickMarks() -> {
                 val labelsBounds = DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
-                applyLabelsMargins(
+                applyLabelMargins(
                     labelsBounds,
                     tickLength,
                     theme.tickLabelMargins(),
@@ -122,16 +119,42 @@ internal object BreakLabelsLayoutUtil {
         return axisBreaks
     }
 
-    fun applyLabelsMargins(
-        labelsBounds: DoubleRectangle,
+    // Expands to borders with margins
+    fun applyLabelMargins(
+        bounds: DoubleRectangle,
+        tickLength: Double,
+        margins: Margins,
+        orientation: Orientation
+    ): DoubleRectangle {
+        val origin = alignToLabelMargin(bounds, tickLength, margins, orientation).let {
+            val offset = when {
+                orientation.isHorizontal -> DoubleVector(0.0, margins.top)
+                else -> DoubleVector(margins.left, 0.0)
+            }
+            it.subtract(offset).origin
+        }
+
+        val dimension = bounds.dimension.add(
+            when {
+                orientation.isHorizontal -> DoubleVector(0.0, margins.height())
+                else -> DoubleVector(margins.width(), 0.0)
+            }
+        )
+        return DoubleRectangle(origin, dimension)
+    }
+
+    // Moves a rectangle on the border (aligns to the margin)
+    fun alignToLabelMargin(
+        bounds: DoubleRectangle,
         tickLength: Double,
         margins: Margins,
         orientation: Orientation
     ): DoubleRectangle {
         val offset = tickLength + when (orientation) {
-            LEFT -> margins.width() + labelsBounds.width
-            TOP -> margins.height() + labelsBounds.height
-            RIGHT, BOTTOM -> 0.0
+            LEFT -> margins.right + bounds.width
+            TOP -> margins.bottom + bounds.height
+            RIGHT-> margins.left
+            BOTTOM -> margins.top
         }
         val offsetVector = when (orientation) {
             LEFT -> DoubleVector(-offset, 0.0)
@@ -139,16 +162,7 @@ internal object BreakLabelsLayoutUtil {
             TOP -> DoubleVector(0.0, -offset)
             BOTTOM -> DoubleVector(0.0, offset)
         }
-        val dimension = labelsBounds.dimension.add(
-            when {
-                orientation.isHorizontal -> DoubleVector(0.0, margins.height())
-                else -> DoubleVector(margins.width(), 0.0)
-            }
-        )
-        return DoubleRectangle(
-            labelsBounds.origin.add(offsetVector),
-            dimension
-        )
+        return bounds.add(offsetVector)
     }
 
     fun textBounds(elementRect: DoubleRectangle, margins: Margins, orientation: Orientation): DoubleRectangle {
