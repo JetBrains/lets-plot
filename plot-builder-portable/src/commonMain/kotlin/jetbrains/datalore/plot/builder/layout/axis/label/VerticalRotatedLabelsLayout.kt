@@ -20,7 +20,7 @@ internal class VerticalRotatedLabelsLayout(
     labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme,
-    private val myAngle: Double
+    private val myRotationAngle: Double
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     override fun doLayout(axisLength: Double, axisMapper: (Double?) -> Double?): AxisLabelsLayoutInfo {
@@ -57,14 +57,14 @@ internal class VerticalRotatedLabelsLayout(
         return createAxisLabelsLayoutInfoBuilder(bounds, overlap = false)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(Text.VerticalAnchor.CENTER)
-            .labelRotationAngle(-myAngle)
+            .labelRotationAngle(-myRotationAngle)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelBoundsList(labelBoundsList.map(::alignToLabelMargin)) // for debug drawing
             .build()
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
-        return BreakLabelsLayoutUtil.rotatedLabelBounds(labelNormalSize, myAngle).let {
+        return BreakLabelsLayoutUtil.rotatedLabelBounds(labelNormalSize, myRotationAngle).let {
             // make vertical centered
             DoubleRectangle(0.0, -it.height / 2, it.width, it.height)
         }

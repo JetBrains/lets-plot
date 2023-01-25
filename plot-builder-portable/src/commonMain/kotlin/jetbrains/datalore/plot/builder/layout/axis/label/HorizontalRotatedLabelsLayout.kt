@@ -21,7 +21,7 @@ internal class HorizontalRotatedLabelsLayout(
     labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme,
-    private val myAngle: Double
+    private val myRotationAngle: Double
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
 
     override fun doLayout(
@@ -32,7 +32,13 @@ internal class HorizontalRotatedLabelsLayout(
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         val labelBoundsList = labelBoundsList(ticks, breaks.labels, HORIZONTAL_TICK_LOCATION)
 
-        val bounds = labelBoundsList.fold(null) { acc: DoubleRectangle?, b -> GeometryUtil.union(b, acc) }
+        var overlap = false
+        val bounds = labelBoundsList.fold(null) { acc: DoubleRectangle?, b ->
+            overlap = overlap || acc != null && acc.xRange().connected(
+                b.xRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
+            )
+            GeometryUtil.union(b, acc)
+        }
 
         // add additional offsets for labels
         val yOffset: (DoubleRectangle) -> Double = when (orientation) {
@@ -42,17 +48,17 @@ internal class HorizontalRotatedLabelsLayout(
         }
         val labelAdditionalOffsets = labelBoundsList.map { DoubleVector(0.0, yOffset(it)) }
 
-        return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap = false)
+        return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(Text.VerticalAnchor.CENTER)
-            .labelRotationAngle(-myAngle)
+            .labelRotationAngle(-myRotationAngle)
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelBoundsList(labelBoundsList.map(::alignToLabelMargin))  // for debug drawing
             .build()
     }
 
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
-        return BreakLabelsLayoutUtil.rotatedLabelBounds(labelNormalSize, myAngle).let {
+        return BreakLabelsLayoutUtil.rotatedLabelBounds(labelNormalSize, myRotationAngle).let {
             BreakLabelsLayoutUtil.horizontalCenteredLabelBounds(it.dimension)
         }
     }

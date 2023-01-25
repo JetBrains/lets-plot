@@ -5,24 +5,19 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.parsePlotSpec
 
-class AxisPositionFixedBreaksRotated  {
+open class AxisPositionFlexBreaksRotated {
+
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            defaultAxisLabelsLayout(), // without angle settings
-            axisWithLabelAngles(xAngle = 30.0, yAngle = 0.0),
-            axisWithLabelAngles(xAngle = 90.0, yPosition = "right", yAngle = 270.0),
-            axisWithLabelAngles(xPosition = "top", yPosition = "right", xAngle = 120.0, yAngle = 45.0),
-            axisWithLabelAngles(xPosition = "both", yPosition = "both", xAngle = 180.0, yAngle = -30.0),
-        ).map(::setScaleBreaks)
+            axisWithLabelAngles(xAngle = 10.0, yAngle = 0.0),
+            axisWithLabelAngles(xAngle = 90.0, yAngle = 0.0)
+        )
     }
 
-    companion object {
-        private val BREAKS = listOf(-0.5, -0.25, 0.0, 0.25, 0.5)
-        private val LABS = listOf("one", "two", "three", "four", "five")
 
+    companion object {
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
             map["x"] = listOf(0.0)
@@ -45,43 +40,11 @@ class AxisPositionFixedBreaksRotated  {
                     "   'layers': [" +
                     "               {" +
                     "                 'geom': 'point'," +
-                    "                 'size': 5" +
+                    "                 'size': 5,     " +
+                    "                  'tooltips': {'lines': ['text']}" +
                     "               }" +
                     "           ]" +
                     ""
-        }
-
-        private fun setScaleBreaks(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
-            val scalesNew = (plotSpec["scales"] as List<*>).map { scaleSpec ->
-                val newSpec = HashMap<String, Any>(scaleSpec as Map<String, Any>)
-                newSpec[Option.Scale.BREAKS] = BREAKS
-                newSpec[Option.Scale.LABELS] = LABS
-                newSpec
-            }
-
-            plotSpec["scales"] = scalesNew
-            return plotSpec
-        }
-
-        private fun defaultAxisLabelsLayout(
-            xPosition: String? = "bottom",
-            yPosition: String? = "left"
-        ): MutableMap<String, Any> {
-            val spec = """
-                {
-                    'kind': 'plot',
-                    'theme': { 'name' : 'classic' },
-                    ${layerMapping()},
-                    ${title("Default - no angles specification. x: $xPosition; y: $yPosition")},                    
-                    'scales': [
-                          {'aesthetic': 'x', 'position': '$xPosition'},
-                          {'aesthetic': 'y', 'position': '$yPosition'}
-                    ]
-                }
-            """.trimIndent()
-            val plotSpec = HashMap(parsePlotSpec(spec))
-            plotSpec["data"] = data()
-            return plotSpec
         }
 
         private fun axisWithLabelAngles(
