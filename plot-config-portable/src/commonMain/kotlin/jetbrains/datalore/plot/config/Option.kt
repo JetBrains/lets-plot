@@ -386,7 +386,7 @@ object Option {
             const val SCALE = "scale"
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
-            const val QUANTILES = "draw_quantiles"
+            const val QUANTILES = "quantiles"
         }
 
         object QQ {

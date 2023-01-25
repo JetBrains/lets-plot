@@ -2855,7 +2855,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
                 show_half=None,
-                draw_quantiles=None, quantile_lines=None,
+                quantiles=None, quantile_lines=None,
                 scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
@@ -2890,7 +2890,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If -1, only half of each violin is drawn.
         If 1, another half is drawn.
         If 0, violins look as usual.
-    draw_quantiles : list of float, default=[0.25, 0.5, 0.75]
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
@@ -2980,7 +2980,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
             geom_violin(aes(fill='..quantile..'), scale='count', \\
-                        draw_quantiles=[.02, .25, .5, .75, .98], quantile_lines=True)
+                        quantiles=[.02, .25, .5, .75, .98], quantile_lines=True)
 
     |
 
@@ -3049,7 +3049,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  orientation=orientation,
                  show_half=show_half,
-                 draw_quantiles=draw_quantiles,
+                 quantiles=quantiles,
                  quantile_lines=quantile_lines,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
