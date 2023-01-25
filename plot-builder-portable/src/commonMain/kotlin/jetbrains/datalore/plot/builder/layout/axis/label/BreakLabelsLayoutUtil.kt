@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.*
@@ -16,8 +17,11 @@ import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
+import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
 
 internal object BreakLabelsLayoutUtil {
 
@@ -185,6 +189,18 @@ internal object BreakLabelsLayoutUtil {
                 )
             }
         }
+    }
+
+    fun rotatedLabelBounds(labelNormalSize: DoubleVector, degreeAngle: Double): DoubleRectangle {
+        val angle = toRadians(degreeAngle)
+        val sin = sin(angle)
+        val cos = cos(angle)
+        val w = abs(labelNormalSize.x * cos) + abs(labelNormalSize.y * sin)
+        val h = abs(labelNormalSize.x * sin) + abs(labelNormalSize.y * cos)
+        val x = -(abs(labelNormalSize.x * cos) + abs(labelNormalSize.y * sin))
+        val y = 0.0
+
+        return DoubleRectangle(x, y, w, h)
     }
 
     private fun verticalAxisLabelsBounds(

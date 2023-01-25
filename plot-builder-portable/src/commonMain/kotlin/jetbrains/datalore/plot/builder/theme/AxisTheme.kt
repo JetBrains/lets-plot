@@ -38,6 +38,8 @@ interface AxisTheme {
 
     fun labelStyle(): ThemeTextStyle
 
+    fun labelAngle(): Double?
+
     fun tickMarkWidth(): Double
 
     fun tickMarkLength(): Double
