@@ -7,12 +7,8 @@ package jetbrains.livemap.canvascontrols
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.vis.canvas.CanvasControl
+import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.drawLater
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.Context2d.TextAlign
-import jetbrains.datalore.vis.canvas.Context2d.TextBaseline
-import jetbrains.datalore.vis.canvas.SingleCanvasControl
 import kotlin.math.max
 
 internal class MessageContent(private val message: String) : CanvasContent {
@@ -50,7 +46,7 @@ internal class MessageContent(private val message: String) : CanvasContent {
             setTextAlign(TextAlign.START)
             setFillStyle(FONT_COLOR)
             setFont(
-                Context2d.Font(
+                Font(
                     fontSize = FONT_SIZE,
                     fontFamily = "Helvetica, Arial, sans-serif"
                 )

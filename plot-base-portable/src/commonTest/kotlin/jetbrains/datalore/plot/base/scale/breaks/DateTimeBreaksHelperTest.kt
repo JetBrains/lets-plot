@@ -200,7 +200,7 @@ class DateTimeBreaksHelperTest {
         private val HOURS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).hours }
         private val DAYS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).day }
         private val WEEKDAYS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).weekDay.ordinal }
-        private val MONTHS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).month!!.ordinal() }
+        private val MONTHS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).month.ordinal() }
         private val YEARS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).year }
 
         private fun assertMilliseconds(expected: IntArray, msCount: Long, targetBreakCount: Int) {

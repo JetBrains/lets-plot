@@ -13,6 +13,8 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.livemap.CursorServiceConfig
+import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
@@ -29,26 +31,33 @@ private val LOG = KotlinLogging.logger {}
 internal object AwtPlotFactoryUtil {
 
     private fun buildPlotComponent(
-        plotBuildInfo: MonolithicCommon.PlotBuildInfo,
+        figureBuilder: FigureBuildInfo,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
-        val assembler = plotBuildInfo.plotAssembler
-
-        if (assembler.containsLiveMap) {
-            return AwtLiveMapFactoryUtil.buildLiveMapComponent(
-                assembler,
-                plotBuildInfo.processedPlotSpec,
-                plotBuildInfo.size,
-                svgComponentFactory,
-                executor
+        var cursorServiceConfig: Any? = null
+        if (figureBuilder.containsLiveMap) {
+            cursorServiceConfig = CursorServiceConfig()
+            LiveMapProviderUtil.injectLiveMapProvider(
+                figureBuilder,
+                cursorServiceConfig
             )
         }
 
-        val plot = assembler.createPlot()
-        val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+        val plot = figureBuilder.createFigure()
+        val plotContainer = PlotContainer(plot, figureBuilder.bounds.dimension)
+        val plotComponent = buildPlotComponent(plotContainer, svgComponentFactory, executor)
+        return if (plot.containsLiveMap) {
+            AwtLiveMapPanel(
+                plotContainer,
+                plotComponent,
+                executor,
+                cursorServiceConfig as CursorServiceConfig
+            )
 
-        return buildPlotComponent(plotContainer, svgComponentFactory, executor)
+        } else {
+            plotComponent
+        }
     }
 
     fun buildPlotFromRawSpecs(
@@ -117,7 +126,7 @@ internal object AwtPlotFactoryUtil {
     }
 
     private fun buildGGBunchComponent(
-        plotInfos: List<MonolithicCommon.PlotBuildInfo>,
+        plotInfos: List<FigureBuildInfo>,
         svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
         executor: (() -> Unit) -> Unit
     ): JComponent {
@@ -140,7 +149,7 @@ internal object AwtPlotFactoryUtil {
                 plotInfo,
                 svgComponentFactory, executor
             )
-            val bounds = plotInfo.bounds()
+            val bounds = plotInfo.bounds
             plotComponent.bounds = Rectangle(
                 bounds.origin.x.toInt(),
                 bounds.origin.y.toInt(),
@@ -150,7 +159,7 @@ internal object AwtPlotFactoryUtil {
             bunchComponent.add(plotComponent)
         }
 
-        val bunchBounds = plotInfos.map { it.bounds() }
+        val bunchBounds = plotInfos.map { it.bounds }
             .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
                 acc.union(bounds)
             }
@@ -182,7 +191,7 @@ internal object AwtPlotFactoryUtil {
 
     @Suppress("SameParameterValue")
     private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec
         }
@@ -281,8 +290,6 @@ internal object AwtPlotFactoryUtil {
                 }
             }
         })
-
-
 
         return plotComponent
     }

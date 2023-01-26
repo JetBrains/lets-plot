@@ -9,10 +9,9 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_X
 import jetbrains.datalore.plot.config.GeoConfig.Companion.POINT_Y
-import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.TestUtil
 import jetbrains.datalore.plot.config.assertBinding
-import jetbrains.datalore.plot.parsePlotSpec
+import jetbrains.datalore.plot.config.transformToClientPlotConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -571,18 +570,20 @@ class DropUnusedDataTest {
         )
     }
 
-    @Test
-    fun `map_join with GeoDataFrame should not drop data variable`() {
-        val spec = """
-{
-  "kind": "plot",
-  "layers": [
-    {
-      "geom": "polygon",
+    private fun specWithGeoData(dataInLayer: Boolean, geom: String): String {
+        val data = """
       "data": {
         "name": ["A", "B", "C"],
         "value": [42, 23, 87]
-      },
+      },"""
+        return """
+{
+  "kind": "plot",
+  ${data.takeIf { !dataInLayer } ?: ""}
+  "layers": [
+    {
+      ${data.takeIf { dataInLayer } ?: ""}
+      "geom": "$geom",
       "mapping": { "fill": "value" },
       "map_data_meta": {
         "geodataframe": {
@@ -602,53 +603,28 @@ class DropUnusedDataTest {
   ]
 }
 }"""
+    }
 
-
-        parsePlotSpec(spec)
-            .let(ServerSideTestUtil::backendSpecTransform)
-            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
-            .let(TestUtil::assertClientWontFail)
-
+    @Test
+    fun `map_join with GeoDataFrame should not drop data variable`() {
+        transformToClientPlotConfig(specWithGeoData(dataInLayer = true, geom = "polygon"))
     }
 
     @Test
     fun `map_join with GeoDataFrame should not drop ggplot data variable`() {
-        val spec = """
-{
-  "kind": "plot",
-    "data": {
-    "name": ["A", "B", "C"],
-    "value": [42, 23, 87]
-  },
-  "layers": [
-    {
-      "geom": "polygon",
-
-      "mapping": { "fill": "value" },
-      "map_data_meta": {
-        "geodataframe": {
-          "geometry": "coord"
-        }
-      },
-      "map": {
-        "id": ["A", "B", "C"],
-        "coord": [
-          "{\"type\": \"Point\", \"coordinates\": [-5.0, 17.0]}",
-          "{\"type\": \"Polygon\", \"coordinates\": [[[1.0, 1.0], [1.0, 9.0], [9.0, 9.0], [9.0, 1.0], [1.0, 1.0]], [[2.0, 2.0], [3.0, 2.0], [3.0, 3.0], [2.0, 3.0], [2.0, 2.0]], [[4.0, 4.0], [6.0, 4.0], [6.0, 6.0], [4.0, 6.0], [4.0, 4.0]]]}",
-          "{\"type\": \"MultiPolygon\", \"coordinates\": [[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [11.0, 12.0]]]]}"
-        ]
-      },
-      "map_join": [["name"], ["id"]]
+        transformToClientPlotConfig(specWithGeoData(dataInLayer = false, geom = "polygon"))
     }
-  ]
-}
-}"""
 
-        parsePlotSpec(spec)
-            .let(ServerSideTestUtil::backendSpecTransform)
-            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
-            .let(TestUtil::assertClientWontFail)
+    // Should not drop 'map_join' variable even after stat applying:
+    // take a pie as an example, where the 'count2d' stat is applied by default
+    @Test
+    fun `map_join with GeoDataFrame should not drop data variable after stat applying`() {
+        transformToClientPlotConfig(specWithGeoData(dataInLayer = true, geom = "pie"))
+    }
 
+    @Test
+    fun `map_join with GeoDataFrame should not drop ggplot data variable after stat applying`() {
+        transformToClientPlotConfig(specWithGeoData(dataInLayer = false, geom = "pie"))
     }
 
     @Test
@@ -681,10 +657,7 @@ class DropUnusedDataTest {
     }
   ]
 }"""
-        parsePlotSpec(spec)
-            .let(ServerSideTestUtil::backendSpecTransform)
-            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
-            .let(TestUtil::assertClientWontFail)
+        transformToClientPlotConfig(spec)
             .assertBinding(Aes.X, POINT_X)
             .assertBinding(Aes.Y, POINT_Y)
 
@@ -720,10 +693,7 @@ class DropUnusedDataTest {
 }                
             """.trimIndent()
 
-        parsePlotSpec(spec)
-            .let(ServerSideTestUtil::backendSpecTransform)
-            .also { require(!PlotConfig.isFailure(it)) { PlotConfig.getErrorMessage(it) } }
-            .let(TestUtil::assertClientWontFail)
+        transformToClientPlotConfig(spec)
     }
 
     @Test

@@ -92,6 +92,7 @@ setup(name='lets-plot',
       description='An open source library for statistical plotting',
       long_description=long_description,
       long_description_content_type='text/markdown',
+      keywords=["ggplot", "ggplot2", "geospatial", "geopandas", "geocoding"],
       classifiers=[
           "License :: OSI Approved :: MIT License",
           "Development Status :: 5 - Production/Stable",

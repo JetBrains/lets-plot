@@ -7,6 +7,7 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.presentation.Defaults.ASPECT_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
@@ -14,6 +15,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.OptionsAccessor
 import jetbrains.datalore.plot.config.PlotConfig
 import kotlin.math.ceil
@@ -31,13 +33,22 @@ object PlotSizeHelper {
         containerWidth: Int,
         containerHeight: Int
     ): Pair<Int, Int> {
-        return when {
-            PlotConfig.isGGBunchSpec(figureSpec) -> {
+
+        if (PlotConfig.isFailure(figureSpec)) {
+            // just keep given size
+            return Pair(containerWidth, containerHeight)
+        }
+
+        return when (val kind = PlotConfig.figSpecKind(figureSpec)) {
+            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+
+            FigKind.GG_BUNCH_SPEC -> {
                 // don't scale GGBunch size
                 val bunchSize = plotBunchSize(figureSpec)
                 Pair(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
             }
-            PlotConfig.isPlotSpec(figureSpec) -> {
+
+            FigKind.PLOT_SPEC -> {
                 // for single plot: scale component to fit in requested size
                 val aspectRatio = figureAspectRatio(figureSpec)
                 if (aspectRatio >= 1.0) {
@@ -50,9 +61,6 @@ object PlotSizeHelper {
                     Pair(floor(plotWidth * scaling).toInt(), floor(containerHeight * scaling).toInt())
                 }
             }
-            else ->
-                // was failure - just keep given size
-                Pair(containerWidth, containerHeight)
         }
     }
 
@@ -149,24 +157,26 @@ object PlotSizeHelper {
      * @return Figure dimatsions width/height ratio.
      */
     fun figureAspectRatio(figureFpec: Map<*, *>): Double {
-        return when {
-            PlotConfig.isPlotSpec(figureFpec) -> {
+        return when (val kind = PlotConfig.figSpecKind(figureFpec)) {
+            FigKind.PLOT_SPEC -> {
                 // single plot
                 getSizeOptionOrNull(figureFpec)?.let { it.x / it.y } ?: ASPECT_RATIO
             }
-            PlotConfig.isGGBunchSpec(figureFpec) -> {
+
+            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+
+            FigKind.GG_BUNCH_SPEC -> {
                 // bunch
                 @Suppress("UNCHECKED_CAST")
                 val bunchSize = plotBunchSize(figureFpec as Map<String, Any>)
                 bunchSize.x / bunchSize.y
             }
-            else -> throw RuntimeException("Unexpected plot spec kind: " + PlotConfig.specKind(figureFpec))
         }
     }
 
     fun plotBunchSize(plotBunchFpec: Map<String, Any>): DoubleVector {
-        require(PlotConfig.isGGBunchSpec(plotBunchFpec)) {
-            "Plot Bunch is expected but was kind: ${PlotConfig.specKind(plotBunchFpec)}"
+        require(PlotConfig.figSpecKind(plotBunchFpec) == FigKind.GG_BUNCH_SPEC) {
+            "Plot Bunch is expected but was kind: ${PlotConfig.figSpecKind(plotBunchFpec)}"
         }
         return plotBunchSize(bunchItemBoundsList(plotBunchFpec))
     }

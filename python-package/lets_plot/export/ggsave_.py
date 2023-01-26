@@ -5,7 +5,7 @@ import os
 from os.path import join
 from typing import Union
 
-from .simple import export_svg, export_html
+from .simple import export_svg, export_html, export_png
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
 
@@ -17,7 +17,7 @@ _DEF_EXPORT_DIR = "lets-plot-images"
 def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True) -> str:
     """
     Export plot or `bunch` to a file.
-    Supported formats: SVG, HTML.
+    Supported formats: PNG, SVG, HTML.
 
     The exported file is created in directory ${user.dir}/lets-plot-images
     if not specified otherwise (see the `path` parameter).
@@ -28,7 +28,7 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
-        to one of the supported formats: SVG, HTML (or HTM).
+        to one of the supported formats: PNG (requires `cairosvg`), SVG, HTML (or HTM).
     path : str
         Path to a directory to save image files in.
         By default it is ${user.dir}/lets-plot-images.
@@ -78,6 +78,8 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
         return export_svg(plot, pathname)
     elif ext in ['html', 'htm']:
         return export_html(plot, pathname, iframe=iframe)
+    elif ext == 'png':
+        return export_png(plot, pathname)
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'svg', 'html', 'htm'".format(ext)

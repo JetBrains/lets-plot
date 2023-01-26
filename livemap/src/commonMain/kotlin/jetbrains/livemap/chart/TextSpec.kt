@@ -10,9 +10,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontStyle
-import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontWeight
+import jetbrains.datalore.vis.canvas.Font
+import jetbrains.datalore.vis.canvas.FontStyle
+import jetbrains.datalore.vis.canvas.FontWeight
+import jetbrains.datalore.vis.canvas.TextAlign
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.graphics.TextMeasurer
 import kotlin.math.abs
@@ -20,7 +21,8 @@ import kotlin.math.max
 
 class TextSpec(
     label: String,
-    fontface: String,
+    fontStyle: FontStyle,
+    fontWeight: FontWeight,
     size: Int,
     family: String,
     degreeAngle: Double,
@@ -35,9 +37,9 @@ class TextSpec(
     lineheight: Double
 ) {
     val lines = label.split('\n').map(String::trim)
-    val font = Context2d.Font(
-        fontStyle = fontface.extractFontStyle(),
-        fontWeight = fontface.extractFontWeight(),
+    val font = Font(
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
         fontSize = size.toDouble(),
         fontFamily = family
     )
@@ -46,9 +48,9 @@ class TextSpec(
     val lineHeight = lineheight * size
     val textSize = textMeasurer.measure(lines, font, lineHeight)
     val textAlign = when (hjust) {
-        0.0 -> Context2d.TextAlign.START
-        1.0 -> Context2d.TextAlign.END
-        else -> Context2d.TextAlign.CENTER
+        0.0 -> TextAlign.START
+        1.0 -> TextAlign.END
+        else -> TextAlign.CENTER
     }
     val padding = font.fontSize * labelPadding
     val rectangle: DoubleRectangle

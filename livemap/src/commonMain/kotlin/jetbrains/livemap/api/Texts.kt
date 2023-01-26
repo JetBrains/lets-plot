@@ -8,6 +8,8 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.vis.canvas.FontStyle
+import jetbrains.datalore.vis.canvas.FontWeight
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.TextRenderer
 import jetbrains.livemap.chart.TextSpec
@@ -65,9 +67,10 @@ class TextBuilder(
     var labelSize: Double = 1.0
 
     var label: String = ""
+    var fontStyle: FontStyle = FontStyle.NORMAL
+    var fontWeight: FontWeight = FontWeight.NORMAL
     var size: Double = 10.0
     var family: String = "Arial"
-    var fontface: String = ""
     var hjust: Double = 0.0
     var vjust: Double = 0.0
     var angle: Double = 0.0
@@ -76,37 +79,10 @@ class TextBuilder(
     fun build(
         textMeasurer: TextMeasurer
     ): EcsEntity {
-        val textSpec = createTextSpec(textMeasurer)
-
-        return when {
-            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
-            else -> error("Can't create text entity. Coord is null.")
-        }
-            .setInitializer { worldPoint ->
-                + RenderableComponent().apply {
-                    renderer = TextRenderer()
-                }
-                + ChartElementComponent().apply {
-                    fillColor = this@TextBuilder.fillColor
-                    strokeColor = this@TextBuilder.strokeColor
-                    strokeWidth = this@TextBuilder.strokeWidth
-                    lineheight = this@TextBuilder.lineheight
-                }
-                + TextSpecComponent().apply { this.textSpec = textSpec }
-                + WorldOriginComponent(worldPoint)
-                + ScreenLoopComponent()
-                + ScreenOriginComponent()
-                + ScreenOffsetComponent()
-                + ScreenDimensionComponent().apply {
-                    dimension = textSpec.dimension
-                }
-            }
-    }
-
-    private fun createTextSpec(textMeasurer: TextMeasurer): TextSpec {
-        return TextSpec(
+        val textSpec = TextSpec(
             label,
-            fontface,
+            fontStyle,
+            fontWeight,
             size.toInt(),
             family,
             angle,
@@ -119,5 +95,30 @@ class TextBuilder(
             labelSize,
             lineheight
         )
+
+        return when {
+            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
+            else -> error("Can't create text entity. Coord is null.")
+        }
+            .setInitializer { worldPoint ->
+                +RenderableComponent().apply {
+                    renderer = TextRenderer()
+                }
+                +ChartElementComponent().apply {
+                    fillColor = this@TextBuilder.fillColor
+                    strokeColor = this@TextBuilder.strokeColor
+                    strokeWidth = this@TextBuilder.strokeWidth
+                    lineheight = this@TextBuilder.lineheight
+                }
+                +TextSpecComponent().apply { this.textSpec = textSpec }
+                +WorldOriginComponent(worldPoint)
+                +ScreenLoopComponent()
+                +ScreenOriginComponent()
+                +ScreenOffsetComponent()
+                +ScreenDimensionComponent().apply {
+                    dimension = textSpec.dimension
+                }
+            }
     }
+
 }

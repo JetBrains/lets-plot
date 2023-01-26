@@ -8,6 +8,8 @@ package jetbrains.datalore.plot.server.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
+import jetbrains.datalore.plot.config.Option.Meta.KIND
+import jetbrains.datalore.plot.config.Option.Meta.Kind.PLOT
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
@@ -22,6 +24,7 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf(
+            KIND to PLOT,
             MAPPING to aes,
             LAYERS to listOf(
                 mapOf(
@@ -45,6 +48,7 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf(
+            KIND to PLOT,
             DATA to data,
             MAPPING to aes,
             LAYERS to listOf(
@@ -66,6 +70,7 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf<String, Any>(
+            KIND to PLOT,
             LAYERS to listOf(
                 mapOf(
                     GEOM to GeomName.POINT,
@@ -89,6 +94,7 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf<String, Any>(
+            KIND to PLOT,
             LAYERS to listOf(
                 mapOf(
                     GEOM to GeomName.POINT,
@@ -110,6 +116,7 @@ class DataVectorsInAesMappingTest {
         val aes = mapOf("x" to inputVector)
 
         val plotOpts = mutableMapOf<String, Any>(
+            KIND to PLOT,
             LAYERS to listOf(
                 mapOf(
                     GEOM to GeomName.POINT,

@@ -1,8 +1,10 @@
 package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.plot.PlotSizeHelper
+import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -36,7 +38,10 @@ abstract class PlotSpecComponentProvider(
             executor,
             computationMessagesHandler
         )
-        return if (PlotConfig.isGGBunchSpec(processedSpec)) {
+
+        val isGGBunch =
+            !PlotConfig.isFailure(processedSpec) && PlotConfig.figSpecKind(processedSpec) == FigKind.GG_BUNCH_SPEC
+        return if (isGGBunch) {
             // GGBunch is always 'original' size => add a scroll pane.
             val scrollPane = createScrollPane(plotComponent)
             containerSize?.run {
@@ -77,13 +82,21 @@ abstract class PlotSpecComponentProvider(
             val width = containerSize.width
             val height = containerSize.height
 
-            return when {
-                PlotConfig.isGGBunchSpec(figureSpec) -> {
+            if (PlotConfig.isFailure(figureSpec)) {
+                // just keep given size
+                return Dimension(width, height)
+            }
+
+            return when (val kind = PlotConfig.figSpecKind(figureSpec)) {
+                FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+
+                FigKind.GG_BUNCH_SPEC -> {
                     // Don't scale GGBunch.
                     val bunchSize = PlotSizeHelper.plotBunchSize(figureSpec)
                     Dimension(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
                 }
-                PlotConfig.isPlotSpec(figureSpec) -> {
+
+                FigKind.PLOT_SPEC -> {
                     // Singe plot has flexible size.
                     if (!preserveAspectRatio) {
                         return containerSize
@@ -92,8 +105,11 @@ abstract class PlotSpecComponentProvider(
                     val config = PlotConfigClientSide.create(figureSpec) { /*ignore messages*/ }
                     val defaultSize = PlotSizeHelper.singlePlotSize(
                         figureSpec,
-                        plotSize = null, plotMaxWidth = null, plotPreferredWidth = null,
-                        config.facets, config.containsLiveMap
+                        plotSize = null,
+                        plotMaxWidth = null,
+                        plotPreferredWidth = null,
+                        config.facets,
+                        config.containsLiveMap
                     )
 
                     val aspectRatio = defaultSize.x / defaultSize.y
@@ -108,9 +124,6 @@ abstract class PlotSpecComponentProvider(
                         Dimension(floor(plotWidth * scaling).toInt(), floor(height * scaling).toInt())
                     }
                 }
-                else ->
-                    // was failure - just keep given size
-                    Dimension(width, height)
             }
         }
     }

@@ -8,6 +8,8 @@ package jetbrains.livemap.canvasDemo
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.LineCap
+import jetbrains.datalore.vis.canvas.LineJoin
 
 class LineJoinLineCapDemoModel(canvas: Canvas) {
     init {
@@ -15,8 +17,8 @@ class LineJoinLineCapDemoModel(canvas: Canvas) {
             setStrokeStyle(Color.RED)
             setLineWidth(10.0)
 
-            val join = listOf(Context2d.LineJoin.BEVEL, Context2d.LineJoin.MITER, Context2d.LineJoin.ROUND)
-            val cap = listOf(Context2d.LineCap.SQUARE, Context2d.LineCap.BUTT, Context2d.LineCap.ROUND)
+            val join = listOf(LineJoin.BEVEL, LineJoin.MITER, LineJoin.ROUND)
+            val cap = listOf(LineCap.SQUARE, LineCap.BUTT, LineCap.ROUND)
 
             for (i in 0..2) {
                 setTransform(1.0, 0.0, 0.0, 1.0, 100.0 * i + 20,20.0)

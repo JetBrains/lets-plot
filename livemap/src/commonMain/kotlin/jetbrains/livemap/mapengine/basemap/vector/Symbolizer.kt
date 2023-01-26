@@ -11,9 +11,7 @@ import jetbrains.datalore.base.typedGeometry.MultiLineString
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Ring
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontStyle
-import jetbrains.datalore.vis.canvas.CssStyleUtil.extractFontWeight
+import jetbrains.datalore.vis.canvas.*
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import jetbrains.livemap.Client
 import kotlin.math.round
@@ -76,7 +74,7 @@ internal interface Symbolizer {
         }
 
         override fun applyTo(ctx: Context2d) {
-            myStyle.stroke?.let { ctx.setStrokeStyle(it) }
+            myStyle.stroke?.let(ctx::setStrokeStyle)
             myStyle.strokeWidth?.let(ctx::setLineWidth)
 
             myStyle.lineCap?.let { ctx.setLineCap(stringToLineCap(it)) }
@@ -178,7 +176,7 @@ internal interface Symbolizer {
         }
 
         private fun labelInBounds(bbox: DoubleRectangle): Boolean {
-            return myLabelBounds.find { bbox.intersects(it) } != null
+            return myLabelBounds.find(bbox::intersects) != null
         }
 
         private fun getLabel(feature: TileFeature): String? =
@@ -190,15 +188,15 @@ internal interface Symbolizer {
 
         override fun applyTo(ctx: Context2d) {
             ctx.setFont(
-                Context2d.Font(
-                    myStyle.fontStyle?.extractFontStyle(),
-                    myStyle.fontStyle?.extractFontWeight(),
+                Font(
+                    myStyle.fontStyle?.fontStyle,
+                    myStyle.fontStyle?.fontWeight,
                     myStyle.size,
                     myStyle.fontFamily
                 )
             )
-            ctx.setTextAlign(Context2d.TextAlign.CENTER)
-            ctx.setTextBaseline(Context2d.TextBaseline.MIDDLE)
+            ctx.setTextAlign(TextAlign.CENTER)
+            ctx.setTextBaseline(TextBaseline.MIDDLE)
 
             setBaseStyle(ctx, myStyle)
         }
@@ -259,20 +257,20 @@ internal interface Symbolizer {
             }
         }
 
-        fun stringToLineCap(cap: String): Context2d.LineCap {
+        fun stringToLineCap(cap: String): LineCap {
             return when (cap) {
-                BUTT -> Context2d.LineCap.BUTT
-                ROUND -> Context2d.LineCap.ROUND
-                SQUARE -> Context2d.LineCap.SQUARE
+                BUTT -> LineCap.BUTT
+                ROUND -> LineCap.ROUND
+                SQUARE -> LineCap.SQUARE
                 else -> error("Unknown lineCap type: $cap")
             }
         }
 
-        fun stringToLineJoin(join: String): Context2d.LineJoin {
+        fun stringToLineJoin(join: String): LineJoin {
             return when (join) {
-                BEVEL -> Context2d.LineJoin.BEVEL
-                ROUND -> Context2d.LineJoin.ROUND
-                MITER -> Context2d.LineJoin.MITER
+                BEVEL -> LineJoin.BEVEL
+                ROUND -> LineJoin.ROUND
+                MITER -> LineJoin.MITER
                 else -> error("Unknown lineJoin type: $join")
             }
         }
@@ -303,9 +301,20 @@ internal interface Symbolizer {
 
         fun setBaseStyle(ctx: Context2d, style: Style) {
             style.strokeWidth?.let(ctx::setLineWidth)
-            style.fill?.let { ctx.setFillStyle(it) }
-            style.stroke?.let { ctx.setStrokeStyle(it) }
+            style.fill?.let(ctx::setFillStyle)
+            style.stroke?.let(ctx::setStrokeStyle)
         }
     }
 }
 
+private val String.fontStyle: FontStyle
+    get() = when (contains("italic", ignoreCase = true)) {
+        true -> FontStyle.ITALIC
+        false -> FontStyle.NORMAL
+    }
+
+private val String.fontWeight: FontWeight
+    get() = when (contains("600|700|800|900|bold".toRegex(RegexOption.IGNORE_CASE))) {
+        true -> FontWeight.BOLD
+        false -> FontWeight.NORMAL
+    }

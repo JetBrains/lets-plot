@@ -31,7 +31,7 @@ object DemoAndTest {
         computationMessagesHandler: ((List<String>) -> Unit)?
     ): PlotSvgComponent {
 
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
 
         @Suppress("NAME_SHADOWING")
         val plotSpec = transformPlotSpec(plotSpec)

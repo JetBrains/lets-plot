@@ -107,7 +107,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         fun processTransform(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {
             @Suppress("NAME_SHADOWING")
             var plotSpec = plotSpec
-            val isGGBunch = isGGBunchSpec(plotSpec)
+            val isGGBunch = !isFailure(plotSpec) && figSpecKind(plotSpec) == FigKind.GG_BUNCH_SPEC
 
             plotSpec = PlotSpecTransform.builderForRawSpec()
                 .build()

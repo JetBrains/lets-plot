@@ -9,8 +9,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
 import java.awt.*
 import java.awt.AlphaComposite.SRC_OVER
 import java.awt.font.GlyphVector
@@ -18,6 +19,7 @@ import java.awt.geom.*
 import java.awt.geom.Arc2D.OPEN
 import java.awt.Color as AwtColor
 
+typealias AwtFont = java.awt.Font
 
 internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
     private var currentPath: GeneralPath? = null
@@ -31,33 +33,33 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         ).let(graphics::setRenderingHints)
 
         graphics.background = Color.TRANSPARENT.toAwtColor()
-        setLineCap(Context2d.LineCap.BUTT)
+        setLineCap(LineCap.BUTT)
     }
 
     private data class ContextState(
         var strokeColor: AwtColor = AwtColor.BLACK,
         var fillColor: AwtColor = AwtColor.BLACK,
         var stroke: BasicStroke = BasicStroke(),
-        var textBaseline: Context2d.TextBaseline = Context2d.TextBaseline.ALPHABETIC,
-        var textAlign: Context2d.TextAlign = Context2d.TextAlign.START,
-        var font: Font = Font(Font.SERIF, Font.PLAIN, 10),
+        var textBaseline: TextBaseline = TextBaseline.ALPHABETIC,
+        var textAlign: TextAlign = TextAlign.START,
+        var font: AwtFont = AwtFont(AwtFont.SERIF, AwtFont.PLAIN, 10),
         var globalAlpha: Float = 1f,
         var transform: AffineTransform = AffineTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
     )
 
-    private fun convertLineJoin(lineJoin: Context2d.LineJoin): Int {
+    private fun convertLineJoin(lineJoin: LineJoin): Int {
         return when (lineJoin) {
-            Context2d.LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
-            Context2d.LineJoin.MITER -> BasicStroke.JOIN_MITER
-            Context2d.LineJoin.ROUND -> BasicStroke.JOIN_ROUND
+            LineJoin.BEVEL -> BasicStroke.JOIN_BEVEL
+            LineJoin.MITER -> BasicStroke.JOIN_MITER
+            LineJoin.ROUND -> BasicStroke.JOIN_ROUND
         }
     }
 
-    private fun convertLineCap(lineCap: Context2d.LineCap): Int {
+    private fun convertLineCap(lineCap: LineCap): Int {
         return when (lineCap) {
-            Context2d.LineCap.BUTT -> BasicStroke.CAP_BUTT
-            Context2d.LineCap.ROUND -> BasicStroke.CAP_ROUND
-            Context2d.LineCap.SQUARE -> BasicStroke.CAP_SQUARE
+            LineCap.BUTT -> BasicStroke.CAP_BUTT
+            LineCap.ROUND -> BasicStroke.CAP_ROUND
+            LineCap.SQUARE -> BasicStroke.CAP_SQUARE
         }
     }
 
@@ -84,18 +86,18 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         val fm = graphics.fontMetrics
 
         val offsetX = when(state.textAlign) {
-            Context2d.TextAlign.START -> x
+            TextAlign.START -> x
 
-            Context2d.TextAlign.CENTER -> x - box.width / 2
+            TextAlign.CENTER -> x - box.width / 2
 
-            Context2d.TextAlign.END -> x - box.width
+            TextAlign.END -> x - box.width
         }
 
         val offsetY = when(state.textBaseline) {
-            Context2d.TextBaseline.ALPHABETIC -> y
-            Context2d.TextBaseline.BOTTOM -> y - fm.descent
-            Context2d.TextBaseline.MIDDLE -> y + (fm.leading + fm.ascent - fm.descent) / 2
-            Context2d.TextBaseline.TOP -> y + fm.leading + fm.ascent
+            TextBaseline.ALPHABETIC -> y
+            TextBaseline.BOTTOM -> y - fm.descent
+            TextBaseline.MIDDLE -> y + (fm.leading + fm.ascent - fm.descent) / 2
+            TextBaseline.TOP -> y + fm.leading + fm.ascent
         }
 
         return DoubleVector(offsetX, offsetY)
@@ -117,18 +119,18 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         return AwtColor(red, green, blue, alpha)
     }
 
-    private fun Context2d.Font.toAwtFont(): Font {
+    private fun Font.toAwtFont(): AwtFont {
         val weight = when (fontWeight) {
-            Context2d.Font.FontWeight.NORMAL -> Font.PLAIN
-            Context2d.Font.FontWeight.BOLD -> Font.BOLD
+            FontWeight.NORMAL -> AwtFont.PLAIN
+            FontWeight.BOLD -> AwtFont.BOLD
         }
 
         val style = when (fontStyle) {
-            Context2d.Font.FontStyle.NORMAL -> Font.PLAIN
-            Context2d.Font.FontStyle.ITALIC -> Font.ITALIC
+            FontStyle.NORMAL -> AwtFont.PLAIN
+            FontStyle.ITALIC -> AwtFont.ITALIC
         }
 
-        return Font(fontFamily,weight or style, fontSize.toInt())
+        return AwtFont(fontFamily,weight or style, fontSize.toInt())
     }
 
     override fun clearRect(rect: DoubleRectangle) {
@@ -269,7 +271,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
     }
 
-    override fun setFont(f: Context2d.Font) {
+    override fun setFont(f: Font) {
         state.font = f.toAwtFont()
         graphics.font = state.font
     }
@@ -325,7 +327,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         currentPath?.curveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
-    override fun setLineJoin(lineJoin: Context2d.LineJoin) {
+    override fun setLineJoin(lineJoin: LineJoin) {
         state.stroke = state.stroke.change(
             join = convertLineJoin(lineJoin)
         )
@@ -333,7 +335,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.stroke = state.stroke
     }
 
-    override fun setLineCap(lineCap: Context2d.LineCap) {
+    override fun setLineCap(lineCap: LineCap) {
         state.stroke = state.stroke.change(
             cap = convertLineCap(lineCap)
         )
@@ -341,11 +343,11 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         graphics.stroke = state.stroke
     }
 
-    override fun setTextBaseline(baseline: Context2d.TextBaseline) {
+    override fun setTextBaseline(baseline: TextBaseline) {
         state.textBaseline = baseline
     }
 
-    override fun setTextAlign(align: Context2d.TextAlign) {
+    override fun setTextAlign(align: TextAlign) {
         state.textAlign = align
     }
 
@@ -356,7 +358,7 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
 
     override fun setLineDash(lineDash: DoubleArray) {
         state.stroke = state.stroke.change(
-            dash = if (lineDash.isEmpty()) null else lineDash.map { it.toFloat() }.toFloatArray()
+            dash = if (lineDash.isEmpty()) null else lineDash.map(Double::toFloat).toFloatArray()
         )
 
         graphics.stroke = state.stroke

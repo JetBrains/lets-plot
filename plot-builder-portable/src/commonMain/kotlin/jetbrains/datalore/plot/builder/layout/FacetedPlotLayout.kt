@@ -36,10 +36,6 @@ internal class FacetedPlotLayout(
     )
 
     init {
-//        val padding = 10.0
-//        val leftPadding = if (!vAxisTheme.showTitle() && !vAxisTheme.showLabels()) padding else 0.0
-//        val bottomPadding = if (!hAxisTheme.showTitle() && !hAxisTheme.showLabels()) padding else 0.0
-//        setPadding(top = padding, right = padding, bottomPadding, leftPadding)
         require(facets.isDefined) { "Undefined facets." }
     }
 

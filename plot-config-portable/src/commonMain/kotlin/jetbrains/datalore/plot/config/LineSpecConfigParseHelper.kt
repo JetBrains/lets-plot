@@ -48,7 +48,7 @@ open class LineSpecConfigParser(
                 }
                 // the specified format for the variable should be applied also to the aes (if it doesn't have its own format())
                 val aesValueSources = mutableMapOf<Field, ValueSource>()
-                specifiedFormats.map { (field, format) ->
+                specifiedFormats.forEach { (field, format) ->
                     aesValueSources += getAesValueSourceForVariable(field, format, valueSources)
                 }
                 valueSources + aesValueSources

@@ -12,18 +12,16 @@ import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
+import jetbrains.datalore.plot.FigureBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon
-import jetbrains.datalore.plot.MonolithicCommon.PlotBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.config.FailureHandler
-import jetbrains.datalore.plot.config.LiveMapOptionsParser
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
-import jetbrains.datalore.plot.livemap.LiveMapProvider
+import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
@@ -52,7 +50,7 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
-        PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+        PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         val processedSpec = processSpecs(plotSpec, frontendOnly = false)
         buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
@@ -113,12 +111,13 @@ private fun buildPlotFromProcessedSpecsIntern(
     }
 }
 
-fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLElement) {
+fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLElement) {
     for (plotInfo in plotInfos) {
+        val origin = plotInfo.bounds.origin
         val itemElement = parentElement.ownerDocument!!.createElement("div") {
             setAttribute(
                 "style",
-                "position: absolute; left: ${plotInfo.origin.x}px; top: ${plotInfo.origin.y}px;"
+                "position: absolute; left: ${origin.x}px; top: ${origin.y}px;"
             )
         } as HTMLElement
 
@@ -126,7 +125,7 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
         buildSinglePlotComponent(plotInfo, itemElement)
     }
 
-    val bunchBounds = plotInfos.map { it.bounds() }
+    val bunchBounds = plotInfos.map { it.bounds }
         .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
             acc.union(bounds)
         }
@@ -141,16 +140,18 @@ fun buildGGBunchComponent(plotInfos: List<PlotBuildInfo>, parentElement: HTMLEle
 }
 
 private fun buildSinglePlotComponent(
-    plotBuildInfo: PlotBuildInfo,
+    plotBuildInfo: FigureBuildInfo,
     parentElement: HTMLElement
 ) {
 
-    val assembler = plotBuildInfo.plotAssembler
     val cursorServiceConfig = CursorServiceConfig()
-    injectLivemapProvider(assembler, plotBuildInfo.processedPlotSpec, cursorServiceConfig)
+    LiveMapProviderUtil.injectLiveMapProvider(
+        plotBuildInfo,
+        cursorServiceConfig
+    )
 
-    val plot = assembler.createPlot()
-    val plotContainer = PlotContainer(plot, plotBuildInfo.size)
+    val plot = plotBuildInfo.createFigure()
+    val plotContainer = PlotContainer(plot, plotBuildInfo.bounds.dimension)
     val svg = buildPlotSvg(plotContainer, parentElement)
     svg.style.setCursor(CssCursor.CROSSHAIR)
 
@@ -159,21 +160,6 @@ private fun buildSinglePlotComponent(
     cursorServiceConfig.pointerSetter { svg.style.setCursor(CssCursor.POINTER) }
 
     parentElement.appendChild(svg)
-}
-
-private fun injectLivemapProvider(
-    plotAssembler: PlotAssembler,
-    processedPlotSpec: MutableMap<String, Any>,
-    cursorServiceConfig: CursorServiceConfig
-) {
-    LiveMapOptionsParser.parseFromPlotSpec(processedPlotSpec)
-        ?.let {
-            LiveMapProvider.injectLiveMapProvider(
-                plotAssembler.coreLayersByTile,
-                it,
-                cursorServiceConfig
-            )
-        }
 }
 
 private fun buildPlotSvg(
@@ -250,7 +236,7 @@ private fun showText(message: String, className: String, style: String, parentEl
 
 @Suppress("DuplicatedCode")
 private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-    PlotConfig.assertPlotSpecOrErrorMessage(plotSpec)
+    PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
     if (PlotConfig.isFailure(plotSpec)) {
         return plotSpec
     }

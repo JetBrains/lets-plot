@@ -19,8 +19,8 @@ object Option {
 
         object Kind {
             const val PLOT = "plot"
+            const val SUBPLOTS = "subplots"
             const val GG_BUNCH = "ggbunch"
-            const val POS = "pos"
         }
 
         object PubSub {
@@ -80,6 +80,10 @@ object Option {
             const val HEIGHT = "height"
             const val FEATURE_SPEC = "feature_spec"
         }
+    }
+
+    object SubPlots {
+        const val FIGURES = "figures"
     }
 
     object PlotBase {

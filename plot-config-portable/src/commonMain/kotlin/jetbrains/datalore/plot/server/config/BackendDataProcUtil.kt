@@ -51,7 +51,8 @@ internal object BackendDataProcUtil {
                 (tooltips.valueSources + annotations.valueSources)
                     .filterIsInstance<DataFrameValue>()
                     .map(DataFrameValue::getVariableName) +
-                        orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable)
+                        orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable) +
+                        (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList())
             }
 
             val statInput = StatInput(

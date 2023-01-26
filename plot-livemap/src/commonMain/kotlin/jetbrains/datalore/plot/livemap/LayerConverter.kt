@@ -7,11 +7,14 @@ package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
+import jetbrains.datalore.vis.canvas.FontStyle
+import jetbrains.datalore.vis.canvas.FontWeight
 import jetbrains.livemap.api.*
 
 
@@ -170,7 +173,6 @@ object LayerConverter {
                         label = it.label
                         size = it.size
                         family = it.family
-                        fontface = it.fontface
                         hjust = it.hjust
                         vjust = it.vjust
                         angle = it.angle
@@ -179,6 +181,10 @@ object LayerConverter {
                         labelRadius = it.labelRadius
                         labelSize = it.labelSize
                         lineheight = it.lineheight
+
+                        val fontFace = FontFace.fromString(it.fontface)
+                        fontStyle = FontStyle.ITALIC.takeIf { fontFace.italic } ?: FontStyle.NORMAL
+                        fontWeight = FontWeight.BOLD.takeIf { fontFace.bold } ?: FontWeight.NORMAL
                     }
                 }
             }

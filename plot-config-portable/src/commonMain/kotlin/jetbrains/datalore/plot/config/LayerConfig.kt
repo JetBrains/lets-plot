@@ -252,7 +252,12 @@ class LayerConfig constructor(
         tooltips = if (has(TOOLTIPS)) {
             when (get(TOOLTIPS)) {
                 is Map<*, *> -> {
-                    TooltipConfig(getMap(TOOLTIPS), constantsMap, explicitGroupingVarName, varBindings).createTooltips()
+                    TooltipConfig(
+                        opts = getMap(TOOLTIPS),
+                        constantsMap = constantsMap,
+                        groupingVarName = explicitGroupingVarName,
+                        varBindings = varBindings.filter { it.aes in geomProto.renders() } // use rendered only (without stat.consumes())
+                    ).createTooltips()
                 }
                 NONE -> {
                     // not show tooltips
@@ -267,7 +272,12 @@ class LayerConfig constructor(
         }
 
         annotations = if (has(ANNOTATIONS)) {
-            AnnotationConfig(getMap(ANNOTATIONS), constantsMap, explicitGroupingVarName, varBindings).createAnnotations()
+            AnnotationConfig(
+                opts = getMap(ANNOTATIONS),
+                constantsMap = constantsMap,
+                groupingVarName = explicitGroupingVarName,
+                varBindings = varBindings.filter { it.aes in geomProto.renders() } // use rendered only (without stat.consumes())
+            ).createAnnotations()
         } else {
             AnnotationSpecification.NONE
         }

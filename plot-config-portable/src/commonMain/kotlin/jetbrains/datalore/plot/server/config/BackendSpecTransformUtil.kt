@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.config.FailureHandler
+import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms
@@ -18,10 +19,10 @@ object BackendSpecTransformUtil {
 
     fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
         return try {
-            if (PlotConfig.isGGBunchSpec(plotSpecRaw)) {
-                processTransformInBunch(plotSpecRaw)
-            } else {
-                processTransformIntern(plotSpecRaw)
+            when (val kind = PlotConfig.figSpecKind(plotSpecRaw)) {
+                FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
+                FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(plotSpecRaw)
+                FigKind.GG_BUNCH_SPEC -> processTransformInBunch(plotSpecRaw)
             }
         } catch (e: RuntimeException) {
             val failureInfo = FailureHandler.failureInfo(e)
@@ -29,6 +30,52 @@ object BackendSpecTransformUtil {
                 LOG.error(e) { failureInfo.message }
             }
             HashMap(PlotConfig.failure(failureInfo.message))
+        }
+    }
+
+    private fun processTransformInSubPlots(subPlotsSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
+        if (!subPlotsSpecRaw.containsKey(Option.SubPlots.FIGURES)) {
+            subPlotsSpecRaw[Option.SubPlots.FIGURES] = emptyList<Any>()
+            return subPlotsSpecRaw
+        }
+
+        // 2D list of figures
+        val figureGrid: Any = subPlotsSpecRaw.getValue(Option.SubPlots.FIGURES)
+        if (figureGrid !is List<*>) {
+            throw IllegalArgumentException("Subplots grid: a list of figures expected but was: ${figureGrid::class.simpleName}")
+        }
+
+        val figureGridProcessed = figureGrid.map { figureGridRow ->
+            requireNotNull(figureGridRow) { "Subplots grid row can't be null." }
+            if (figureGridRow !is List<*>) {
+                throw IllegalArgumentException("Subplots grid row: a list of figures expected but was: ${figureGridRow::class.simpleName}")
+            }
+
+            processTransformFigureList(figureGridRow)
+        }
+
+        val subPlotsSpec = HashMap<String, Any>(subPlotsSpecRaw)
+        subPlotsSpec[Option.SubPlots.FIGURES] = figureGridProcessed
+        return subPlotsSpec
+    }
+
+    private fun processTransformFigureList(figureListRaw: List<*>): List<MutableMap<String, Any>?> {
+        return figureListRaw.map { figRaw ->
+            if (figRaw == null) {
+                null
+            } else {
+                if (figRaw !is Map<*, *>) {
+                    throw IllegalArgumentException("Subplots: a figure spec expected (as a Map) but was: ${figRaw::class.simpleName}")
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                val figCopy = HashMap<String, Any>(figRaw as Map<String, Any>)
+                when (PlotConfig.figSpecKind(figCopy)) {
+                    FigKind.PLOT_SPEC -> processTransformIntern(figCopy)
+                    FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(figCopy)
+                    FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("GGBunch is not expected among subplots.")
+                }
+            }
         }
     }
 
@@ -65,9 +112,9 @@ object BackendSpecTransformUtil {
             // Plot spec
             @Suppress("UNCHECKED_CAST")
             val featureSpec = HashMap<String, Any>(featureSpecRaw as Map<String, Any>)
-            val kind = featureSpec[Option.Meta.KIND]
-            if (Option.Meta.Kind.PLOT != kind) {
-                throw IllegalArgumentException("GGBunch item feature kind not suppotred: $kind")
+            val kind = PlotConfig.figSpecKind(featureSpec)
+            if (kind != FigKind.PLOT_SPEC) {
+                throw IllegalArgumentException("${FigKind.PLOT_SPEC} expected but was: $kind")
             }
 
             val plotSpec = processTransformIntern(featureSpec)
