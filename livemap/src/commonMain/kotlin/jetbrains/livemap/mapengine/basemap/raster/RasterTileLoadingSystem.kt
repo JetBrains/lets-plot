@@ -101,6 +101,7 @@ class RasterTileLoadingSystem(
             entity.setMicroThread(1, MicroTaskUtil.join(microThreads))
         }
 
+        @Suppress("ConvertLambdaToReference")
         downloadedEntities.forEach { it.remove<HttpTileResponseComponent>() }
     }
 
