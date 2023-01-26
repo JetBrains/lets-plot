@@ -11,46 +11,26 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import kotlin.math.*
 
 internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, DEF_STACK_SIZE_CALCULATOR)
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST)
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, calculator: StackSizeCalculator): Map<Int, Double> {
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double): Map<Int, Double> {
         val offsetByIndex = HashMap<Int, Double>()
-        val negPosBaseByBin = HashMap<Double, Pair<Double, Double>>()
+        val offsetCalculator = OffsetCalculator(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
         aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
             .filter { SeriesUtil.allFinite(it.second.x(), it.second.y()) }
             .groupBy { it.second.group() }
             .forEach { (_, indexedDataPoints) ->
-                val negPosBaseByGroupBin = HashMap<Double, Pair<Double, Double>>()
                 for ((i, dataPoint) in indexedDataPoints) {
                     val x = dataPoint.x()!!
-                    if (!negPosBaseByGroupBin.containsKey(x)) {
-                        negPosBaseByGroupBin[x] = Pair(0.0, 0.0)
-                    }
-                    if (!negPosBaseByBin.containsKey(x)) {
-                        negPosBaseByBin[x] = Pair(0.0, 0.0)
-                    }
-
                     val y = dataPoint.y()!!
-                    val groupPair = negPosBaseByGroupBin[x]!!
-                    val pair = negPosBaseByBin[x]!!
-                    val offset = if (y >= 0) {
-                        negPosBaseByGroupBin[x] = Pair(groupPair.first, calculator.reduceGroupSize(groupPair.second, y))
-                        calculator.calculateStackSize(pair.second, groupPair.second)
-                    } else {
-                        negPosBaseByGroupBin[x] = Pair(calculator.reduceGroupSize(groupPair.first, y), groupPair.second)
-                        calculator.calculateStackSize(pair.first, groupPair.first)
-                    }
+                    val offset = offsetCalculator.calculate(x, y)
                     offsetByIndex[i] = offset - y * (1 - vjust)
                 }
-                for ((x, groupPair) in negPosBaseByGroupBin) {
-                    val pair = negPosBaseByBin[x]!!
-                    negPosBaseByBin[x] = Pair(pair.first + groupPair.first, pair.second + groupPair.second)
-                }
+                offsetCalculator.update()
             }
         return offsetByIndex
     }
@@ -63,38 +43,66 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
         return PositionAdjustments.Meta.STACK.handlesGroups()
     }
 
-    class StackSizeCalculator(
+    class OffsetCalculator(
         private val stackInsideGroups: Boolean,
-        private val groupSizeReducer: (Double, Double) -> Double
+        private val positiveGroupOffsetReducer: (Double, Double) -> Double
     ) {
-        internal fun reduceGroupSize(currentGroupSize: Double, newElementSize: Double): Double {
-            return if (stackInsideGroups)
-                currentGroupSize + newElementSize
-            else
-                groupSizeReducer(currentGroupSize, newElementSize)
+        private val positiveOffset = HashMap<Double, Double>()
+        private val negativeOffset = HashMap<Double, Double>()
+        private val positiveGroupOffset = HashMap<Double, Double>()
+        private val negativeGroupOffset = HashMap<Double, Double>()
+
+        fun calculate(stackId: Double, offsetValue: Double): Double {
+            initOffsetContainers(stackId)
+            return if (offsetValue >= 0) {
+                val currentPositiveOffset = positiveOffset[stackId]!!
+                val currentPositiveGroupOffset = positiveGroupOffset[stackId]!!
+                positiveGroupOffset[stackId] = reduceGroupOffset(currentPositiveGroupOffset, offsetValue)
+                calculateTotalOffset(currentPositiveOffset, currentPositiveGroupOffset)
+            } else {
+                val currentNegativeOffset = negativeOffset[stackId]!!
+                val currentNegativeGroupOffset = negativeGroupOffset[stackId]!!
+                negativeGroupOffset[stackId] = -reduceGroupOffset(-currentNegativeGroupOffset, -offsetValue)
+                calculateTotalOffset(currentNegativeOffset, currentNegativeGroupOffset)
+            }
         }
 
-        internal fun calculateStackSize(stackSize: Double, groupSize: Double): Double {
+        fun update() {
+            for (stackId in positiveGroupOffset.keys) {
+                positiveOffset[stackId] = positiveOffset[stackId]!! + positiveGroupOffset[stackId]!!
+                positiveGroupOffset[stackId] = 0.0
+                negativeOffset[stackId] = negativeOffset[stackId]!! + negativeGroupOffset[stackId]!!
+                negativeGroupOffset[stackId] = 0.0
+            }
+        }
+
+        private fun initOffsetContainers(stackId: Double) {
+            if (!positiveOffset.containsKey(stackId)) {
+                positiveOffset[stackId] = 0.0
+                negativeOffset[stackId] = 0.0
+            }
+            if (!positiveGroupOffset.containsKey(stackId)) {
+                positiveGroupOffset[stackId] = 0.0
+                negativeGroupOffset[stackId] = 0.0
+            }
+        }
+
+        private fun reduceGroupOffset(currentGroupOffset: Double, offsetValue: Double): Double {
             return if (stackInsideGroups)
-                stackSize + groupSize
+                currentGroupOffset + offsetValue
             else
-                stackSize
+                positiveGroupOffsetReducer(currentGroupOffset, offsetValue)
+        }
+
+        private fun calculateTotalOffset(stackOffset: Double, groupOffset: Double): Double {
+            return if (stackInsideGroups)
+                stackOffset + groupOffset
+            else
+                stackOffset
         }
     }
 
     companion object {
         private const val DEF_VJUST = 1.0
-
-        // Default calculator: all points will be stacked one above another
-        val DEF_STACK_SIZE_CALCULATOR = StackSizeCalculator(true) { groupSize, elementSize ->
-            groupSize + elementSize
-        }
-        // "Max" calculator: inside groups points aren't stacked, but each next group will be stacked over sum of maximum values of the previous groups
-        val MAX_STACK_SIZE_CALCULATOR = StackSizeCalculator(false) { groupSize, elementSize ->
-            if (groupSize >= 0 && elementSize >= 0)
-                max(groupSize, elementSize)
-            else
-                min(groupSize, elementSize)
-        }
     }
 }
