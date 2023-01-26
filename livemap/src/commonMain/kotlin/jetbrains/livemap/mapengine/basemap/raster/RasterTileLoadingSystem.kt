@@ -101,7 +101,7 @@ class RasterTileLoadingSystem(
             entity.setMicroThread(1, MicroTaskUtil.join(microThreads))
         }
 
-        downloadedEntities.forEach(EcsEntity::remove)
+        downloadedEntities.forEach { it.remove<HttpTileResponseComponent>() }
     }
 
     private fun getTileLayerEntities(cellKey: CellKey): Sequence<EcsEntity> {

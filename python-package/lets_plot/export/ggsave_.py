@@ -82,5 +82,5 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
         return export_png(plot, pathname)
     else:
         raise ValueError(
-            "Unsupported file extension: '{}'\nPlease use one of: 'svg', 'html', 'htm'".format(ext)
+            "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'html', 'htm'".format(ext)
         )
