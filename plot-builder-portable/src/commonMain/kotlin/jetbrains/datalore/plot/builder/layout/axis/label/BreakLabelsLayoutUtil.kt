@@ -50,14 +50,6 @@ internal object BreakLabelsLayoutUtil {
         return breaks
     }
 
-    fun longestLabelWidth(
-        labels: List<String>,
-        labelToWidth: (String) -> Double = { it.length.toDouble() }
-    ): Double {
-        val longestLabel = labels.maxByOrNull(labelToWidth)
-        return longestLabel?.let(labelToWidth) ?: 0.0
-    }
-
     fun horizontalCenteredLabelBounds(labelSize: DoubleVector): DoubleRectangle {
         return DoubleRectangle(-labelSize.x / 2.0, 0.0, labelSize.x, labelSize.y)
     }
@@ -137,7 +129,6 @@ internal object BreakLabelsLayoutUtil {
             }
             it.subtract(offset).origin
         }
-
         val dimension = bounds.dimension.add(
             when {
                 orientation.isHorizontal -> DoubleVector(0.0, margins.height())
@@ -209,7 +200,7 @@ internal object BreakLabelsLayoutUtil {
         axisMapper: (Double?) -> Double?,
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
-        val maxLabelWidth = longestLabelWidth(breaks.labels) { tickLabelSpec.width(it) }
+        val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
@@ -228,5 +219,43 @@ internal object BreakLabelsLayoutUtil {
         val origin = DoubleVector(0.0, y1)
         val dimensions = DoubleVector(maxLabelWidth, y2 - y1)
         return DoubleRectangle(origin, dimensions)
+    }
+
+    fun estimateBreakCountInitial(
+        axisLength: Double,
+        tickLabelSpec: LabelSpec,
+        rotationAngle: Double?,
+        side: (DoubleVector) -> Double
+    ): Int {
+        val initialDim = tickLabelSpec.dimensions(AxisLabelsLayout.INITIAL_TICK_LABEL)
+        val dimension = if (rotationAngle != null) {
+            rotatedLabelBounds(initialDim, rotationAngle).dimension
+        } else {
+            initialDim
+        }
+        return estimateBreakCount(side(dimension), axisLength)
+    }
+
+    fun estimateBreakCount(
+        labels: List<String>,
+        axisLength: Double,
+        axisTick: LabelSpec,
+        rotationAngle: Double?,
+        side: (DoubleVector) -> Double
+    ): Int {
+        val dims = labels.map { label ->
+            if (rotationAngle != null) {
+                rotatedLabelBounds(axisTick.dimensions(label), rotationAngle).dimension
+            } else {
+                axisTick.dimensions(label)
+            }
+        }
+        val longestSide = dims.maxOfOrNull(side) ?: 0.0
+        return estimateBreakCount(longestSide, axisLength)
+    }
+
+    private fun estimateBreakCount(length: Double, axisLength: Double): Int {
+        val tickDistance = length + AxisLabelsLayout.MIN_TICK_LABEL_DISTANCE
+        return max(1.0, axisLength / tickDistance).toInt()
     }
 }

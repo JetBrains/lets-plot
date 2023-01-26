@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
@@ -23,7 +23,6 @@ internal class HorizontalFlexBreaksLabelsLayout(
     theme: AxisTheme
 ) :
     AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
-    private val myRotationAngle: Double? = theme.labelAngle()
 
     init {
         require(orientation.isHorizontal) { orientation.toString() }
@@ -35,21 +34,23 @@ internal class HorizontalFlexBreaksLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        var targetBreakCount = estimateBreakCountInitial(
+        var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
             axisLength,
             PlotLabelSpecFactory.axisTick(theme),
-            myRotationAngle
+            theme.labelAngle(),
+            side = DoubleVector::x
         )
         var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
 
         while (labelsInfo.isOverlap) {
             // reduce tick count
-            val newTargetBreakCount = estimateBreakCount(
+            val newTargetBreakCount = BreakLabelsLayoutUtil.estimateBreakCount(
                 breaks.labels,
                 axisLength,
                 PlotLabelSpecFactory.axisTick(theme),
-                myRotationAngle
+                theme.labelAngle(),
+                side = DoubleVector::x
             )
             if (newTargetBreakCount >= targetBreakCount) {
                 // paranoid - highly impossible.
@@ -68,14 +69,14 @@ internal class HorizontalFlexBreaksLabelsLayout(
         axisLength: Double,
         axisMapper: (Double?) -> Double?,
     ): AxisLabelsLayoutInfo {
-        val layout = if (myRotationAngle != null) {
+        val layout = if (theme.labelAngle() != null) {
             HorizontalRotatedLabelsLayout(
                 orientation,
                 axisDomain,
                 labelSpec,
                 breaks,
                 theme,
-                myRotationAngle
+                theme.labelAngle()!!
             )
         } else {
             HorizontalSimpleLabelsLayout(
@@ -95,49 +96,5 @@ internal class HorizontalFlexBreaksLabelsLayout(
             maxCount,
             axisLength
         )
-    }
-
-    companion object {
-        private fun estimateBreakCountInitial(
-            axisLength: Double,
-            tickLabelSpec: LabelSpec,
-            rotationAngle: Double?
-        ): Int {
-            val initialDim = tickLabelSpec.dimensions(INITIAL_TICK_LABEL)
-            val width = if (rotationAngle != null) {
-                BreakLabelsLayoutUtil.rotatedLabelBounds(initialDim, rotationAngle).width
-            } else {
-                initialDim.x
-            }
-            return estimateBreakCount(
-                width,
-                axisLength
-            )
-        }
-
-        private fun estimateBreakCount(
-            labels: List<String>,
-            axisLength: Double,
-            axisTick: LabelSpec,
-            rotationAngle: Double?
-        ): Int {
-            val longestLabelWidth = if (rotationAngle != null) {
-                labels.map { label ->
-                    val dim = axisTick.dimensions(label)
-                    BreakLabelsLayoutUtil.rotatedLabelBounds(dim, rotationAngle)
-                }.maxOfOrNull(DoubleRectangle::width) ?: 0.0
-            } else {
-                BreakLabelsLayoutUtil.longestLabelWidth(labels, axisTick::width)
-            }
-            return estimateBreakCount(
-                longestLabelWidth,
-                axisLength
-            )
-        }
-
-        private fun estimateBreakCount(width: Double, axisLength: Double): Int {
-            val tickDistance = width + MIN_TICK_LABEL_DISTANCE
-            return max(1.0, axisLength / tickDistance).toInt()
-        }
     }
 }

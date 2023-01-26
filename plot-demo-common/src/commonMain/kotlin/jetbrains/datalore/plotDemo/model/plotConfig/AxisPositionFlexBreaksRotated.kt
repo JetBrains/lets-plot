@@ -11,8 +11,8 @@ open class AxisPositionFlexBreaksRotated {
 
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            axisWithLabelAngles(xAngle = 10.0, yAngle = 0.0),
-            axisWithLabelAngles(xAngle = 90.0, yAngle = 0.0)
+            axisWithLabelAngles(xAngle = 0.0, yAngle = 0.0),
+            axisWithLabelAngles(xAngle = 90.0, yAngle = 90.0)
         )
     }
 
@@ -21,7 +21,7 @@ open class AxisPositionFlexBreaksRotated {
         private fun data(): Map<String, List<*>> {
             val map = HashMap<String, List<*>>()
             map["x"] = listOf(0.0)
-            map["y"] = listOf(0.0)
+            map["y"] = listOf(10000.0)
             return map
         }
 

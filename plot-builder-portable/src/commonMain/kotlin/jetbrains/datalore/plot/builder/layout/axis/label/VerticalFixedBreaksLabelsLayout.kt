@@ -32,7 +32,14 @@ internal class VerticalFixedBreaksLabelsLayout(
 
         val angle = theme.labelAngle()
         if (theme.showLabels() && angle != null) {
-            return rotatedLayout(angle).doLayout(axisLength, axisMapper)
+            return VerticalRotatedLabelsLayout(
+                orientation,
+                axisDomain,
+                labelSpec,
+                breaks,
+                theme,
+                angle
+            ).doLayout(axisLength, axisMapper)
         }
 
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
@@ -40,17 +47,6 @@ internal class VerticalFixedBreaksLabelsLayout(
             axisDomain,
             axisMapper,
             theme
-        )
-    }
-
-    private fun rotatedLayout(angle: Double): AxisLabelsLayout {
-        return VerticalRotatedLabelsLayout(
-            orientation,
-            axisDomain,
-            labelSpec,
-            breaks,
-            theme,
-            angle
         )
     }
 }

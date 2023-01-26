@@ -28,6 +28,13 @@ internal class HorizontalRotatedLabelsLayout(
         axisLength: Double,
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
+        if (breaks.isEmpty) {
+            return noLabelsLayoutInfo(axisLength, orientation)
+        }
+
+        if (!theme.showLabels()) {
+            return noLabelsLayoutInfo(axisLength, orientation)
+        }
 
         val ticks = mapToAxis(breaks.transformedValues, axisMapper)
         val labelBoundsList = labelBoundsList(ticks, breaks.labels, HORIZONTAL_TICK_LOCATION)

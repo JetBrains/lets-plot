@@ -11,6 +11,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
@@ -30,21 +31,13 @@ internal class VerticalRotatedLabelsLayout(
         val labelBoundsList = labelBoundsList(ticks, breaks.labels) { y: Double -> DoubleVector(0.0, y) }
 
         // total bounds
-        val maxLabelWidth = labelBoundsList.maxOfOrNull(DoubleRectangle::width) ?: 0.0
-        var y1 = 0.0
-        var y2 = 0.0
-        if (!breaks.isEmpty) {
-            val minIndex = ticks.indexOf(ticks.minBy { it })
-            val maxIndex = ticks.indexOf(ticks.maxBy { it })
-
-            y1 = ticks[minIndex]
-            y2 = ticks[maxIndex]
-            y1 -= labelBoundsList[minIndex].height / 2
-            y2 += labelBoundsList[maxIndex].height / 2
-        }
-        val origin = DoubleVector(0.0, y1)
-        val dimensions = DoubleVector(maxLabelWidth, y2 - y1)
-        val bounds = DoubleRectangle(origin, dimensions)
+        var overlap = false
+        val bounds = labelBoundsList.fold(null) { acc: DoubleRectangle?, b ->
+            overlap = overlap || acc != null && acc.yRange().connected(
+                b.yRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
+            )
+            GeometryUtil.union(b, acc)
+        } ?: DoubleRectangle(DoubleVector.ZERO,DoubleVector.ZERO)
 
         // add additional offsets for labels
         val xOffset: (DoubleRectangle) -> Double = when (orientation) {
@@ -54,7 +47,7 @@ internal class VerticalRotatedLabelsLayout(
         }
         val labelAdditionalOffsets = labelBoundsList.map { DoubleVector(xOffset(it), 0.0) }
 
-        return createAxisLabelsLayoutInfoBuilder(bounds, overlap = false)
+        return createAxisLabelsLayoutInfoBuilder(bounds, overlap)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(Text.VerticalAnchor.CENTER)
             .labelRotationAngle(-myRotationAngle)
