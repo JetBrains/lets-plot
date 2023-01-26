@@ -81,7 +81,7 @@ class PlotSvgComponent constructor(
     private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
     private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
 
-    private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
+    val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
     override fun buildComponent() {
         try {

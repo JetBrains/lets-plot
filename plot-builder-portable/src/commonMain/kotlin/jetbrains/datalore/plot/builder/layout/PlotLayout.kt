@@ -10,6 +10,4 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 interface PlotLayout {
     fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo
-
-//    fun setPadding(top: Double, right: Double, bottom: Double, left: Double)
 }
