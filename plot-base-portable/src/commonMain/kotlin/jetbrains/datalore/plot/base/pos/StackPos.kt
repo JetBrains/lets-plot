@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import kotlin.math.max
 
 internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
@@ -18,7 +19,7 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
     private fun mapIndexToOffset(aes: Aesthetics, vjust: Double): Map<Int, Double> {
         val offsetByIndex = HashMap<Int, Double>()
-        val offsetCalculator = OffsetCalculator(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
+        val offsetState = OffsetState.summable()
         aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
             .filter { SeriesUtil.allFinite(it.second.x(), it.second.y()) }
@@ -27,10 +28,10 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
                 for ((i, dataPoint) in indexedDataPoints) {
                     val x = dataPoint.x()!!
                     val y = dataPoint.y()!!
-                    val offset = offsetCalculator.calculate(x, y)
+                    val offset = offsetState.append(x, y)
                     offsetByIndex[i] = offset - y * (1 - vjust)
                 }
-                offsetCalculator.update()
+                offsetState.update()
             }
         return offsetByIndex
     }
@@ -43,7 +44,7 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
         return PositionAdjustments.Meta.STACK.handlesGroups()
     }
 
-    class OffsetCalculator(
+    class OffsetState private constructor(
         private val stackInsideGroups: Boolean,
         private val positiveGroupOffsetReducer: (Double, Double) -> Double
     ) {
@@ -52,7 +53,7 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
         private val positiveGroupOffset = HashMap<Double, Double>()
         private val negativeGroupOffset = HashMap<Double, Double>()
 
-        fun calculate(stackId: Double, offsetValue: Double): Double {
+        fun append(stackId: Double, offsetValue: Double): Double {
             initOffsetContainers(stackId)
             return if (offsetValue >= 0) {
                 val currentPositiveOffset = positiveOffset[stackId]!!
@@ -99,6 +100,18 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
                 stackOffset + groupOffset
             else
                 stackOffset
+        }
+
+        companion object {
+            // Default: all points will be stacked one above another
+            fun summable(): OffsetState {
+                return OffsetState(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
+            }
+
+            // Inside groups points aren't stacked, but each next group will be stacked over sum of maximum values of the previous groups
+            fun max(): OffsetState {
+                return OffsetState(false) { currentGroupOffset, offsetValue -> max(currentGroupOffset, offsetValue) }
+            }
         }
     }
 
