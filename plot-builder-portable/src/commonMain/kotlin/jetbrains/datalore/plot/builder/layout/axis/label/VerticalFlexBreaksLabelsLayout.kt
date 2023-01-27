@@ -9,7 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -37,7 +36,7 @@ internal class VerticalFlexBreaksLabelsLayout(
 
         var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
             axisLength,
-            PlotLabelSpecFactory.axisTick(theme),
+            labelSpec,
             theme.labelAngle(),
             side = DoubleVector::y
         )
@@ -50,7 +49,7 @@ internal class VerticalFlexBreaksLabelsLayout(
             val newTargetBreakCount = BreakLabelsLayoutUtil.estimateBreakCount(
                 breaks.labels,
                 axisLength,
-                PlotLabelSpecFactory.axisTick(theme),
+                labelSpec,
                 theme.labelAngle(),
                 side = DoubleVector::y
 
@@ -80,22 +79,14 @@ internal class VerticalFlexBreaksLabelsLayout(
         axisLength: Double,
         axisMapper: (Double?) -> Double?,
     ): AxisLabelsLayoutInfo {
-        return if (theme.labelAngle() != null) {
-            VerticalRotatedLabelsLayout(
-                orientation,
-                axisDomain,
-                labelSpec,
-                breaks,
-                theme,
-                theme.labelAngle()!!
-            ).doLayout(axisLength, axisMapper)
-        } else {
-            BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
-                orientation, breaks,
-                axisDomain,
-                axisMapper,
-                theme
-            )
-        }
+        return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
+            orientation,
+            axisDomain,
+            labelSpec,
+            breaks,
+            theme,
+            axisLength,
+            axisMapper
+        )
     }
 }

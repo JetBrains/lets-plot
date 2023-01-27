@@ -21,6 +21,10 @@ internal class VerticalFixedBreaksLabelsLayout(
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, tickLabelSpec, breaks, theme) {
 
+    init {
+        require(!orientation.isHorizontal) { orientation.toString() }
+    }
+
     override fun labelBounds(labelNormalSize: DoubleVector): DoubleRectangle {
         throw IllegalStateException("Not implemented here")
     }
@@ -29,24 +33,14 @@ internal class VerticalFixedBreaksLabelsLayout(
         axisLength: Double,
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
-
-        val angle = theme.labelAngle()
-        if (theme.showLabels() && angle != null) {
-            return VerticalRotatedLabelsLayout(
-                orientation,
-                axisDomain,
-                labelSpec,
-                breaks,
-                theme,
-                angle
-            ).doLayout(axisLength, axisMapper)
-        }
-
         return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
-            orientation, breaks,
+            orientation,
             axisDomain,
-            axisMapper,
-            theme
+            labelSpec,
+            breaks,
+            theme,
+            axisLength,
+            axisMapper
         )
     }
 }

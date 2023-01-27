@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.*
 import jetbrains.datalore.plot.builder.layout.Margins
-import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
@@ -56,12 +55,25 @@ internal object BreakLabelsLayoutUtil {
 
     fun doLayoutVerticalAxisLabels(
         orientation: Orientation,
-        breaks: ScaleBreaks,
         axisDomain: DoubleSpan,
-        axisMapper: (Double?) -> Double?,
-        theme: AxisTheme
+        labelSpec: LabelSpec,
+        breaks: ScaleBreaks,
+        theme: AxisTheme,
+        axisLength: Double,
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
         check(!orientation.isHorizontal)
+
+        if (theme.showLabels() && theme.labelAngle() != null) {
+            return VerticalRotatedLabelsLayout(
+                orientation,
+                axisDomain,
+                labelSpec,
+                breaks,
+                theme,
+                theme.labelAngle()!!
+            ).doLayout(axisLength, axisMapper)
+        }
 
         val tickLength = if (theme.showTickMarks()) theme.tickMarkLength() else 0.0
         val axisBounds = when {
@@ -70,7 +82,7 @@ internal object BreakLabelsLayoutUtil {
                     breaks,
                     axisDomain,
                     axisMapper,
-                    PlotLabelSpecFactory.axisTick(theme)
+                    labelSpec
                 )
                 applyLabelMargins(
                     labelsBounds,

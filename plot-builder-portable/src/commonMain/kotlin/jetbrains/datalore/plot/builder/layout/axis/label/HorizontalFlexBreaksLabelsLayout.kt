@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import kotlin.math.max
 
 internal class HorizontalFlexBreaksLabelsLayout(
     orientation: Orientation,
