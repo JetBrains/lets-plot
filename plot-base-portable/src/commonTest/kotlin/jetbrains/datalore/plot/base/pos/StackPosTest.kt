@@ -31,7 +31,7 @@ class StackPosTest {
     }
 
     @Test
-    fun testWithoutGrouping() {
+    fun testWithoutGroupingWithOffsetSum() {
         compareWithExpectedOffsets(
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
@@ -41,12 +41,35 @@ class StackPosTest {
     }
 
     @Test
-    fun testWithGrouping() {
+    fun testWithoutGroupingWithOffsetMax() {
         compareWithExpectedOffsets(
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            groupValues = listOf(0, 1, 2, 0, 2, 1, 0, 1, 1),
-            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, 6.0, 5.0, 3.0, 5.0, 6.0),
+            expectedOffsets = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            offsetState = StackPos.OffsetState.MAX_OFFSET_STATE,
+            messageBeginning = "Should work without grouping"
+        )
+    }
+
+    @Test
+    fun testWithGroupingAndOffsetSum() {
+        compareWithExpectedOffsets(
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 2, 1, 1, 0, 0),
+            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, 6.0, 5.0, 6.0, 2.0, 3.0),
+            messageBeginning = "Should work with grouping"
+        )
+    }
+
+    @Test
+    fun testWithGroupingAndOffsetMax() {
+        compareWithExpectedOffsets(
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 2, 1, 1, 0, 0),
+            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, 6.0, 5.0, 5.0, 2.0, 1.0),
+            offsetState = StackPos.OffsetState.MAX_OFFSET_STATE,
             messageBeginning = "Should work with grouping"
         )
     }
@@ -87,10 +110,11 @@ class StackPosTest {
         groupValues: List<Int>? = null,
         expectedOffsets: List<Double?>,
         vjust: Double? = null,
+        offsetState: StackPos.OffsetState? = null,
         messageBeginning: String
     ) {
         val aes = buildAesthetics(xValues, yValues, groupValues)
-        val pos = PositionAdjustments.stack(aes, vjust = vjust)
+        val pos = PositionAdjustments.stack(aes, vjust = vjust, offsetState = offsetState)
         val ctx = getBogusContext()
         for (i in 0 until aes.dataPointCount()) {
             val p = aes.dataPointAt(i)

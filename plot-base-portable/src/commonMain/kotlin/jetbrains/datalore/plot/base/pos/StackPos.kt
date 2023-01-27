@@ -13,13 +13,13 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
-internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
+class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST)
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, offsetState ?: OffsetState.DEF_OFFSET_STATE)
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double): Map<Int, Double> {
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, offsetState: OffsetState): Map<Int, Double> {
         val offsetByIndex = HashMap<Int, Double>()
-        val offsetState = OffsetState.summable()
+        offsetState.clear()
         aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
             .filter { SeriesUtil.allFinite(it.second.x(), it.second.y()) }
@@ -68,6 +68,13 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
             }
         }
 
+        fun clear() {
+            positiveOffset.clear()
+            negativeOffset.clear()
+            positiveGroupOffset.clear()
+            negativeGroupOffset.clear()
+        }
+
         fun update() {
             for (stackId in positiveGroupOffset.keys) {
                 positiveOffset[stackId] = positiveOffset[stackId]!! + positiveGroupOffset[stackId]!!
@@ -104,14 +111,10 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
         companion object {
             // Default: all points will be stacked one above another
-            fun summable(): OffsetState {
-                return OffsetState(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
-            }
+            val DEF_OFFSET_STATE = OffsetState(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
 
             // Inside groups points aren't stacked, but each next group will be stacked over sum of maximum values of the previous groups
-            fun max(): OffsetState {
-                return OffsetState(false) { currentGroupOffset, offsetValue -> max(currentGroupOffset, offsetValue) }
-            }
+            val MAX_OFFSET_STATE = OffsetState(false) { currentGroupOffset, offsetValue -> max(currentGroupOffset, offsetValue) }
         }
     }
 
