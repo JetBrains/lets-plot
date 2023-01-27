@@ -47,7 +47,7 @@ object TestUtil {
         override fun lineColor() = TODO("Not yet implemented")
         override fun tickMarkColor() = TODO("Not yet implemented")
         override fun labelStyle(): ThemeTextStyle = TODO("Not yet implemented")
-        override fun labelAngle(): Double? = null
+        override fun labelAngle(): Double = TODO("Not yet implemented")
         override fun tickMarkWidth() = TODO("Not yet implemented")
         override fun tickMarkLength() = TODO("Not yet implemented")
         override fun tickLabelMargins() = Margins()
