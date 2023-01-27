@@ -54,15 +54,14 @@ class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null
         private val negativeGroupOffset = HashMap<Double, Double>()
 
         fun append(stackId: Double, offsetValue: Double): Double {
-            initOffsetContainers(stackId)
             return if (offsetValue >= 0) {
-                val currentPositiveOffset = positiveOffset[stackId]!!
-                val currentPositiveGroupOffset = positiveGroupOffset[stackId]!!
+                val currentPositiveOffset = positiveOffset.getOrPut(stackId) { INITIAL_OFFSET }
+                val currentPositiveGroupOffset = positiveGroupOffset.getOrPut(stackId) { INITIAL_OFFSET }
                 positiveGroupOffset[stackId] = reduceGroupOffset(currentPositiveGroupOffset, offsetValue)
                 calculateTotalOffset(currentPositiveOffset, currentPositiveGroupOffset)
             } else {
-                val currentNegativeOffset = negativeOffset[stackId]!!
-                val currentNegativeGroupOffset = negativeGroupOffset[stackId]!!
+                val currentNegativeOffset = negativeOffset.getOrPut(stackId) { INITIAL_OFFSET }
+                val currentNegativeGroupOffset = negativeGroupOffset.getOrPut(stackId) { INITIAL_OFFSET }
                 negativeGroupOffset[stackId] = -reduceGroupOffset(-currentNegativeGroupOffset, -offsetValue)
                 calculateTotalOffset(currentNegativeOffset, currentNegativeGroupOffset)
             }
@@ -77,21 +76,12 @@ class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null
 
         fun update() {
             for (stackId in positiveGroupOffset.keys) {
-                positiveOffset[stackId] = positiveOffset[stackId]!! + positiveGroupOffset[stackId]!!
-                positiveGroupOffset[stackId] = 0.0
-                negativeOffset[stackId] = negativeOffset[stackId]!! + negativeGroupOffset[stackId]!!
-                negativeGroupOffset[stackId] = 0.0
+                positiveOffset[stackId] = positiveOffset.getOrElse(stackId) { INITIAL_OFFSET } + positiveGroupOffset[stackId]!!
+                positiveGroupOffset[stackId] = INITIAL_OFFSET
             }
-        }
-
-        private fun initOffsetContainers(stackId: Double) {
-            if (!positiveOffset.containsKey(stackId)) {
-                positiveOffset[stackId] = 0.0
-                negativeOffset[stackId] = 0.0
-            }
-            if (!positiveGroupOffset.containsKey(stackId)) {
-                positiveGroupOffset[stackId] = 0.0
-                negativeGroupOffset[stackId] = 0.0
+            for (stackId in negativeGroupOffset.keys) {
+                negativeOffset[stackId] = negativeOffset.getOrElse(stackId) { INITIAL_OFFSET } + negativeGroupOffset[stackId]!!
+                negativeGroupOffset[stackId] = INITIAL_OFFSET
             }
         }
 
@@ -110,6 +100,8 @@ class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null
         }
 
         companion object {
+            const val INITIAL_OFFSET = 0.0
+
             // Default: all points will be stacked one above another
             val DEF_OFFSET_STATE = OffsetState(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
 

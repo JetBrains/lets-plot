@@ -33,9 +33,9 @@ class StackPosTest {
     @Test
     fun testWithoutGroupingWithOffsetSum() {
         compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, 4.0, 6.0, 3.0, 5.0, 6.0),
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -4.0, -6.0, 4.0, 6.0, 3.0, 5.0, 6.0),
             messageBeginning = "Should work without grouping"
         )
     }
@@ -43,9 +43,9 @@ class StackPosTest {
     @Test
     fun testWithoutGroupingWithOffsetMax() {
         compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            expectedOffsets = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            expectedOffsets = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             offsetState = StackPos.OffsetState.MAX_OFFSET_STATE,
             messageBeginning = "Should work without grouping"
         )
@@ -54,10 +54,10 @@ class StackPosTest {
     @Test
     fun testWithGroupingAndOffsetSum() {
         compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            groupValues = listOf(0, 1, 2, 0, 2, 1, 1, 0, 0),
-            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, 6.0, 5.0, 6.0, 2.0, 3.0),
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
+            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -4.0, -6.0, 6.0, 5.0, 6.0, 2.0, 3.0),
             messageBeginning = "Should work with grouping"
         )
     }
@@ -65,10 +65,10 @@ class StackPosTest {
     @Test
     fun testWithGroupingAndOffsetMax() {
         compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            groupValues = listOf(0, 1, 2, 0, 2, 1, 1, 0, 0),
-            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, 6.0, 5.0, 5.0, 2.0, 1.0),
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
+            expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -1.0, -5.0, 6.0, 5.0, 5.0, 2.0, 1.0),
             offsetState = StackPos.OffsetState.MAX_OFFSET_STATE,
             messageBeginning = "Should work with grouping"
         )
@@ -87,18 +87,18 @@ class StackPosTest {
     @Test
     fun testVjust() {
         compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             expectedOffsets = listOf(3.0 * 0.5, 3.0 + 2.0 * 0.5, 5.0 + 1.0 * 0.5,
-                                     3.0 * 0.5, 3.0 + 1.0 * 0.5, 4.0 + 2.0 * 0.5,
-                                     3.0 * 0.5, 3.0 + 2.0 * 0.5, 5.0 + 1.0 * 0.5),
+                3.0 * 0.5, -3.0 * 0.5, -3.0 - 1.0 * 0.5, -4.0 - 2.0 * 0.5, 3.0 + 1.0 * 0.5, 4.0 + 2.0 * 0.5,
+                3.0 * 0.5, 3.0 + 2.0 * 0.5, 5.0 + 1.0 * 0.5),
             vjust = 0.5,
             messageBeginning = "Should work with vjust = 0.5"
         )
         compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            expectedOffsets = listOf(0.0, 3.0, 5.0, 0.0, 3.0, 4.0, 0.0, 3.0, 5.0),
+            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
+            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            expectedOffsets = listOf(0.0, 3.0, 5.0, 0.0, 0.0, -3.0, -4.0, 3.0, 4.0, 0.0, 3.0, 5.0),
             vjust = 0.0,
             messageBeginning = "Should work with vjust = 0.0"
         )
