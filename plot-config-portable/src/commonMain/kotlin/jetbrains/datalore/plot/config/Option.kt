@@ -82,6 +82,10 @@ object Option {
         }
     }
 
+    object SubPlots {
+        const val FIGURES = "figures"
+    }
+
     object PlotBase {
         const val DATA = "data"
         const val MAPPING = "mapping"

@@ -7,7 +7,7 @@ package jetbrains.livemap.ui
 
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.ecs.*
@@ -25,7 +25,7 @@ class UiService(
     private val myComponentManager: EcsComponentManager,
     private val textMeasurer: TextMeasurer
 ) : GraphicsService {
-    override fun measure(text: String, font: Context2d.Font) = textMeasurer.measure(text, font)
+    override fun measure(text: String, font: Font) = textMeasurer.measure(text, font)
 
     override fun repaint() {
         val uiLayerEntityId = myComponentManager.getEntity(UiLayerComponent::class).id
@@ -130,7 +130,7 @@ class UiService(
     }
 
     fun containsElementAtCoord(p: Vec<Client>): Boolean {
-        myComponentManager.onEachEntity<UiRenderComponent>() { _, uiElement ->
+        myComponentManager.onEachEntity<UiRenderComponent> { _, uiElement ->
             if (inside(p.x, p.y, uiElement.origin, uiElement.dimension)) {
                 return true
             }

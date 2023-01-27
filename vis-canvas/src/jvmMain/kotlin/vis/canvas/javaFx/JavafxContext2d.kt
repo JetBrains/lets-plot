@@ -10,51 +10,56 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.scene.shape.FillRule
 import javafx.scene.shape.StrokeLineCap
 import javafx.scene.shape.StrokeLineJoin
-import javafx.scene.text.*
 import javafx.scene.text.Font.font
+import javafx.scene.text.FontPosture
+import javafx.scene.text.Text
+import javafx.scene.text.TextAlignment
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
-import jetbrains.datalore.vis.canvas.Context2d
 import javafx.scene.paint.Color as JavafxColor
+
+typealias JfxFont = javafx.scene.text.Font
+typealias JfxFontWeight = javafx.scene.text.FontWeight
 
 internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Context2d {
 
     init {
-        setLineCap(Context2d.LineCap.BUTT)
+        setLineCap(LineCap.BUTT)
     }
 
-    private fun convertLineJoin(lineJoin: Context2d.LineJoin): StrokeLineJoin {
+    private fun convertLineJoin(lineJoin: LineJoin): StrokeLineJoin {
         return when (lineJoin) {
-            Context2d.LineJoin.BEVEL -> StrokeLineJoin.BEVEL
-            Context2d.LineJoin.MITER -> StrokeLineJoin.MITER
-            Context2d.LineJoin.ROUND -> StrokeLineJoin.ROUND
+            LineJoin.BEVEL -> StrokeLineJoin.BEVEL
+            LineJoin.MITER -> StrokeLineJoin.MITER
+            LineJoin.ROUND -> StrokeLineJoin.ROUND
         }
     }
 
-    private fun convertLineCap(lineCap: Context2d.LineCap): StrokeLineCap {
+    private fun convertLineCap(lineCap: LineCap): StrokeLineCap {
         return when (lineCap) {
-            Context2d.LineCap.BUTT -> StrokeLineCap.BUTT
-            Context2d.LineCap.ROUND -> StrokeLineCap.ROUND
-            Context2d.LineCap.SQUARE -> StrokeLineCap.SQUARE
+            LineCap.BUTT -> StrokeLineCap.BUTT
+            LineCap.ROUND -> StrokeLineCap.ROUND
+            LineCap.SQUARE -> StrokeLineCap.SQUARE
         }
     }
 
-    private fun convertTextBaseline(baseline: Context2d.TextBaseline): VPos {
+    private fun convertTextBaseline(baseline: TextBaseline): VPos {
         return when (baseline) {
-            Context2d.TextBaseline.ALPHABETIC -> VPos.BASELINE
-            Context2d.TextBaseline.BOTTOM -> VPos.BOTTOM
-            Context2d.TextBaseline.MIDDLE -> VPos.CENTER
-            Context2d.TextBaseline.TOP -> VPos.TOP
+            TextBaseline.ALPHABETIC -> VPos.BASELINE
+            TextBaseline.BOTTOM -> VPos.BOTTOM
+            TextBaseline.MIDDLE -> VPos.CENTER
+            TextBaseline.TOP -> VPos.TOP
         }
     }
 
-    private fun convertTextAlign(align: Context2d.TextAlign): TextAlignment {
+    private fun convertTextAlign(align: TextAlign): TextAlignment {
         return when (align) {
-            Context2d.TextAlign.CENTER -> TextAlignment.CENTER
-            Context2d.TextAlign.END -> TextAlignment.RIGHT
-            Context2d.TextAlign.START -> TextAlignment.LEFT
+            TextAlign.CENTER -> TextAlignment.CENTER
+            TextAlign.END -> TextAlignment.RIGHT
+            TextAlign.START -> TextAlignment.LEFT
         }
     }
 
@@ -173,22 +178,22 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.globalAlpha = alpha
     }
 
-    private fun Context2d.Font.toJavaFxFont(): Font {
-        val weight: FontWeight = when (fontWeight) {
-            Context2d.Font.FontWeight.NORMAL -> FontWeight.NORMAL
-            Context2d.Font.FontWeight.BOLD -> FontWeight.BOLD
+    private fun Font.toJavaFxFont(): JfxFont {
+        val weight: JfxFontWeight = when (fontWeight) {
+            FontWeight.NORMAL -> JfxFontWeight.NORMAL
+            FontWeight.BOLD -> JfxFontWeight.BOLD
         }
 
         val posture: FontPosture = when (fontStyle) {
-            Context2d.Font.FontStyle.NORMAL -> FontPosture.REGULAR
-            Context2d.Font.FontStyle.ITALIC -> FontPosture.ITALIC
+            FontStyle.NORMAL -> FontPosture.REGULAR
+            FontStyle.ITALIC -> FontPosture.ITALIC
         }
 
         // In Javafx FontPosture will not work, for fonts without italics
         return font(fontFamily, weight, posture, fontSize)
     }
 
-    override fun setFont(f: Context2d.Font) {
+    override fun setFont(f: Font) {
         myContext2d.font = f.toJavaFxFont()
     }
 
@@ -228,19 +233,19 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)
     }
 
-    override fun setLineJoin(lineJoin: Context2d.LineJoin) {
+    override fun setLineJoin(lineJoin: LineJoin) {
         myContext2d.lineJoin = convertLineJoin(lineJoin)
     }
 
-    override fun setLineCap(lineCap: Context2d.LineCap) {
+    override fun setLineCap(lineCap: LineCap) {
         myContext2d.lineCap = convertLineCap(lineCap)
     }
 
-    override fun setTextBaseline(baseline: Context2d.TextBaseline) {
+    override fun setTextBaseline(baseline: TextBaseline) {
         myContext2d.textBaseline = convertTextBaseline(baseline)
     }
 
-    override fun setTextAlign(align: Context2d.TextAlign) {
+    override fun setTextAlign(align: TextAlign) {
         myContext2d.textAlign = convertTextAlign(align)
     }
 

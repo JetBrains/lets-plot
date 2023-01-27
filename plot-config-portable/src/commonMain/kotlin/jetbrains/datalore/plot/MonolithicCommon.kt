@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.builder.PlotContainerPortable
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svgToString.SvgToString
 import kotlin.math.max
@@ -43,11 +42,9 @@ object MonolithicCommon {
             computationMessagesHandler(computationMessages)
         }
 
-        return success.buildInfos.map {
-
-            val assembler = it.plotAssembler
-            val plot = assembler.createPlot()
-            val plotContainer = PlotContainerPortable(plot, it.size)
+        return success.buildInfos.map { figureBuildInfo ->
+            val plot = figureBuildInfo.createFigure()
+            val plotContainer = PlotContainerPortable(plot, figureBuildInfo.bounds.dimension)
 
             plotContainer.ensureContentBuilt()
             plotContainer.svg
@@ -125,29 +122,23 @@ object MonolithicCommon {
             "No plots in the bunch"
         )
 
-        val buildInfos = ArrayList<PlotBuildInfo>()
+        val buildInfos = ArrayList<FigureBuildInfo>()
         for (bunchItem in bunchConfig.bunchItems) {
             val plotSpec = bunchItem.featureSpec as MutableMap<String, Any>
-            val itemBuildInfoRaw = buildSinglePlotFromProcessedSpecs(
-                plotSpec,
-                PlotSizeHelper.bunchItemSize(bunchItem),
-                plotMaxWidth = null,
-                plotPreferredWidth = null
-            )
-
+            val itemSize = PlotSizeHelper.bunchItemSize(bunchItem)
             val itemBounds = DoubleRectangle(
                 DoubleVector(bunchItem.x, bunchItem.y).mul(scalingCoef),
-                itemBuildInfoRaw.size.mul(scalingCoef)
+                itemSize.mul(scalingCoef)
             )
 
-            val itemBuildInfo = PlotBuildInfo(
-                itemBuildInfoRaw.plotAssembler,
-                itemBuildInfoRaw.processedPlotSpec,
-                itemBounds.origin,
-                itemBounds.dimension,
-                itemBuildInfoRaw.computationMessages
-            )
-            buildInfos.add(itemBuildInfo)
+            val plotFigureBuildInfo = buildSinglePlotFromProcessedSpecs(
+                plotSpec,
+                itemSize,
+                plotMaxWidth = null,
+                plotPreferredWidth = null
+            ).withBounds(itemBounds)
+
+            buildInfos.add(plotFigureBuildInfo)
         }
 
         return PlotsBuildResult.Success(buildInfos)
@@ -159,7 +150,7 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
-    ): PlotBuildInfo {
+    ): PlotFigureBuildInfo {
 
         val computationMessages = ArrayList<String>()
         val config = PlotConfigClientSide.create(plotSpec) {
@@ -176,11 +167,10 @@ object MonolithicCommon {
         )
 
         val assembler = createPlotAssembler(config)
-        return PlotBuildInfo(
+        return PlotFigureBuildInfo(
             assembler,
             plotSpec,
-            DoubleVector.ZERO,
-            preferredSize,
+            DoubleRectangle(DoubleVector.ZERO, preferredSize),
             computationMessages
         )
     }
@@ -237,19 +227,7 @@ object MonolithicCommon {
         class Error(val error: String) : PlotsBuildResult()
 
         class Success(
-            val buildInfos: List<PlotBuildInfo>
+            val buildInfos: List<FigureBuildInfo>
         ) : PlotsBuildResult()
-    }
-
-    class PlotBuildInfo constructor(
-        val plotAssembler: PlotAssembler,
-        val processedPlotSpec: MutableMap<String, Any>,
-        val origin: DoubleVector,
-        val size: DoubleVector,
-        val computationMessages: List<String>
-    ) {
-        fun bounds(): DoubleRectangle {
-            return DoubleRectangle(origin, size)
-        }
     }
 }

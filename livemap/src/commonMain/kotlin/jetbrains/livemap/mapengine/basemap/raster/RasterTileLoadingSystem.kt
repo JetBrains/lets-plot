@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.spatial.projectOrigin
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Untyped
-import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.core.ecs.*
@@ -68,7 +68,7 @@ class RasterTileLoadingSystem(
                     MicroTaskUtil.create {
                         if (response.errorCode != null) {
                             val errorText = response.errorCode!!.message ?: "Unknown error"
-                            val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMESION)
+                            val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
                             val tileCtx = tileCanvas.context2d
                             val textDim = tileCtx.measureText(errorText)
                             val x =
@@ -77,11 +77,11 @@ class RasterTileLoadingSystem(
                                 } else {
                                     4.0
                                 }
-                            tileCtx.setFont(Context2d.Font())
+                            tileCtx.setFont(Font())
                             tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
                             tileCanvas.takeSnapshot()
                         } else {
-                            context.mapRenderContext.canvasProvider.createSnapshot(imageData, TILE_PIXEL_DIMESION)
+                            context.mapRenderContext.canvasProvider.createSnapshot(imageData, TILE_PIXEL_DIMENSION)
                         }
                             .onSuccess { snapshot ->
                                 runLaterBySystem(httpTileEntity) { theEntity ->
@@ -101,6 +101,7 @@ class RasterTileLoadingSystem(
             entity.setMicroThread(1, MicroTaskUtil.join(microThreads))
         }
 
+        @Suppress("ConvertLambdaToReference")
         downloadedEntities.forEach { it.remove<HttpTileResponseComponent>() }
     }
 
@@ -114,7 +115,7 @@ class RasterTileLoadingSystem(
         fun replacePlaceholders(cellKey: CellKey, domain: String): String {
             return 2.0.pow(cellKey.length)
                 .let { Rect<Untyped>(0.0, 0.0, it, it) }
-                .let { cellKey.projectOrigin(it) }
+                .let(cellKey::projectOrigin)
                 .let {
                     domain
                         .replace("{z}", cellKey.length.toString(),  ignoreCase = true)
@@ -122,7 +123,7 @@ class RasterTileLoadingSystem(
                         .replace("{y}", it.y.roundToInt().toString(), ignoreCase = true)
                 }
         }
-        val TILE_PIXEL_DIMESION = Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt())
+        val TILE_PIXEL_DIMENSION = Vector(TILE_PIXEL_SIZE.toInt(), TILE_PIXEL_SIZE.toInt())
     }
 
     class HttpTileResponseComponent: EcsComponent {

@@ -9,7 +9,6 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.StyleSheet.Companion.toCSS
 import jetbrains.datalore.vis.TextStyle
 
 object Style {
@@ -41,9 +40,6 @@ object Style {
         |   -ms-user-select: none;
         |}
         |text {
-        |   fill: ${StyleSheet.UNDEFINED_FONT_COLOR.toHexColor()};
-        |   ${StyleSheet.UNDEFINED_FONT_FACE.toCSS()}   
-        |
         |   text-rendering: optimizeLegibility;
         |}
     """.trimMargin()

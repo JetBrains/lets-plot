@@ -12,7 +12,7 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.Context2d.LineJoin
+import jetbrains.datalore.vis.canvas.LineJoin
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
@@ -32,8 +32,8 @@ object Renderers {
     fun drawLines(geometry: MultiPolygon<Client>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry) {
             for (ring in polygon) {
-                ring[0].let { ctx.moveTo(it) }
-                ring.drop(1).forEach { ctx.lineTo(it) }
+                ring[0].let(ctx::moveTo)
+                ring.drop(1).forEach(ctx::lineTo)
             }
         }
         afterPolygon(ctx)

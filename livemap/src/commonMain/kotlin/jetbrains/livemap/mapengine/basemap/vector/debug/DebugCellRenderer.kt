@@ -7,6 +7,7 @@ package jetbrains.livemap.mapengine.basemap.vector.debug
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.datalore.vis.canvas.Font
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -52,6 +53,6 @@ class DebugCellRenderer : Renderer {
     companion object {
         private const val LINE_WIDTH = 2.0
         private const val LINE_HEIGHT = 20.0
-        private val FONT = Context2d.Font(fontSize = 12.0)
+        private val FONT = Font(fontSize = 12.0)
     }
 }

@@ -59,55 +59,6 @@ interface Context2d {
     fun setTransform(m11: Double, m12: Double, m21: Double, m22: Double, dx: Double, dy: Double)
     fun setLineDash(lineDash: DoubleArray)
     fun measureText(str: String): Double
-
-    enum class LineJoin {
-        BEVEL, MITER, ROUND
-    }
-
-    enum class LineCap {
-        BUTT, ROUND, SQUARE
-    }
-
-    enum class TextBaseline {
-        ALPHABETIC, BOTTOM, MIDDLE, TOP
-    }
-
-    enum class TextAlign {
-        CENTER, END, START
-    }
-
-    data class Font(
-        val fontStyle: FontStyle = FontStyle.NORMAL,
-        val fontWeight: FontWeight = FontWeight.NORMAL,
-        val fontSize: Double = DEFAULT_SIZE,
-        val fontFamily: String = DEFAULT_FAMILY
-    ) {
-        constructor(
-            style: FontStyle?,
-            weight: FontWeight?,
-            size:Double?,
-            family: String?
-        ): this(
-            style ?: FontStyle.NORMAL,
-            weight ?: FontWeight.NORMAL,
-            size ?: DEFAULT_SIZE,
-            family ?: DEFAULT_FAMILY
-        )
-
-        enum class FontStyle {
-            NORMAL, ITALIC
-        }
-
-        enum class FontWeight {
-            NORMAL, BOLD
-        }
-
-        companion object {
-            const val DEFAULT_SIZE = 10.0
-            const val DEFAULT_FAMILY = "serif"
-        }
-    }
 }
 
 fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
-
