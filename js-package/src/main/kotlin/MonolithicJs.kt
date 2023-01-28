@@ -150,8 +150,8 @@ private fun buildSinglePlotComponent(
         cursorServiceConfig
     )
 
-    val plot = plotBuildInfo.createFigure()
-    val plotContainer = PlotContainer(plot, plotBuildInfo.bounds.dimension)
+    val plotSvgContainer = plotBuildInfo.createFigure()
+    val plotContainer = PlotContainer(plotSvgContainer)
     val svg = buildPlotSvg(plotContainer, parentElement)
     svg.style.setCursor(CssCursor.CROSSHAIR)
 

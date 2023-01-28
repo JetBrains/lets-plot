@@ -7,7 +7,7 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PlotSvgComponent
+import jetbrains.datalore.plot.builder.PlotSvgContainer
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 
 internal class PlotFigureBuildInfo constructor(
@@ -18,17 +18,14 @@ internal class PlotFigureBuildInfo constructor(
 ) : FigureBuildInfo {
     override val containsLiveMap: Boolean = plotAssembler.containsLiveMap
 
-    override fun createFigure(): PlotSvgComponent {
-        return plotAssembler.createPlot()
+    override fun createFigure(): PlotSvgContainer {
+        val plotSvgComponent = plotAssembler.createPlot()
+        return PlotSvgContainer(plotSvgComponent, bounds)
     }
 
     override fun forEachPlot(f: (tiles: List<List<GeomLayer>>, spec: Map<String, Any>) -> Unit) {
         val listOfTiles = plotAssembler.coreLayersByTile
         f(listOfTiles, processedPlotSpec)
-    }
-
-    override fun forEachPlot(f: (assembler: PlotAssembler) -> Unit) {
-        f(plotAssembler)
     }
 
     fun withBounds(r: DoubleRectangle): PlotFigureBuildInfo {

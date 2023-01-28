@@ -7,17 +7,14 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.PlotSvgComponent
-import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.PlotSvgContainer
 
 interface FigureBuildInfo {
     val bounds: DoubleRectangle
     val computationMessages: List<String>
     val containsLiveMap: Boolean
 
-    fun createFigure(): PlotSvgComponent
+    fun createFigure(): PlotSvgContainer
 
     fun forEachPlot(f: (tiles: List<List<GeomLayer>>, spec: Map<String, Any>) -> Unit)
-
-    fun forEachPlot(f: (assembler: PlotAssembler) -> Unit)
 }

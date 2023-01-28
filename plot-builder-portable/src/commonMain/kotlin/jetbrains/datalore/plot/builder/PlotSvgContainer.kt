@@ -5,23 +5,22 @@
 
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgCssResource
+import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgSvgElement
 
 /**
  *  This class only handles static SVG. (no interactions)
  */
-open class PlotContainerPortable(
-    protected val plot: PlotSvgComponent,
-    plotSize: DoubleVector
+class PlotSvgContainer(
+    val plot: PlotSvgComponent,
+    val bounds: DoubleRectangle
 ) {
-
     val svg: SvgSvgElement = SvgSvgElement()
 
     val liveMapFigures: List<SomeFig>
@@ -30,43 +29,43 @@ open class PlotContainerPortable(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
-    private var myContentBuilt: Boolean = false
-    private var myRegistrations = CompositeRegistration()
+    private val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID_PREFIX)
+    val decorationLayer = SvgGElement().apply {
+        id().set(decorationLayerId)
+    }
+
+    private var isContentBuilt: Boolean = false
 
     init {
         svg.addClass(Style.PLOT_CONTAINER)
-        setSvgSize(plotSize)
-        plot.resize(plotSize)
+        setSvgSize(bounds.dimension)
+        plot.resize(bounds.dimension)
     }
 
     fun ensureContentBuilt() {
-        if (!myContentBuilt) {
+        if (!isContentBuilt) {
             buildContent()
         }
     }
 
     fun resize(plotSize: DoubleVector) {
+        if (isContentBuilt) {
+            throw IllegalStateException(
+                "The plot SVG container is already built." +
+                        "\nPlease, call `clearContent()` before `resize()`."
+            )
+        }
+
         if (plotSize.x <= 0 || plotSize.y <= 0) return
         if (plotSize == plot.plotSize) return
 
-        // Invalidate
-        clearContent()
         setSvgSize(plotSize)
         plot.resize(plotSize)
     }
 
-//    private fun revalidateContent() {
-//        if (myContentBuilt) {
-//            clearContent()
-//            buildContent()
-//        }
-//    }
-
-    protected val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID_PREFIX)
-
-    protected open fun buildContent() {
-        check(!myContentBuilt)
-        myContentBuilt = true
+    private fun buildContent() {
+        check(!isContentBuilt)
+        isContentBuilt = true
 
         val id = SvgUID.get(PLOT_ID_PREFIX)
 
@@ -90,21 +89,20 @@ open class PlotContainerPortable(
         // Styling of the root <svg>-element can be done in an external css file.
 
         svg.children().add(plot.rootGroup)
-    }
 
-    open fun clearContent() {
-        if (myContentBuilt) {
-            myContentBuilt = false
-
-            svg.children().clear()
-            plot.clear()
-            myRegistrations.remove()
-            myRegistrations = CompositeRegistration()
+        if (plot.interactionsEnabled) {
+            svg.children().add(decorationLayer)
         }
     }
 
-    protected fun reg(registration: Registration) {
-        myRegistrations.add(registration)
+    fun clearContent() {
+        if (isContentBuilt) {
+            isContentBuilt = false
+
+            svg.children().clear()
+            decorationLayer.children().clear()
+            plot.clear()
+        }
     }
 
     private fun setSvgSize(size: DoubleVector) {
@@ -112,7 +110,7 @@ open class PlotContainerPortable(
         svg.height().set(size.y)
     }
 
-    companion object {
+    private companion object {
         const val PLOT_ID_PREFIX = "p"
         const val DECORATION_LAYER_ID_PREFIX = "d"
     }

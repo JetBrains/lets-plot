@@ -44,10 +44,10 @@ internal object AwtPlotFactoryUtil {
             )
         }
 
-        val plot = figureBuilder.createFigure()
-        val plotContainer = PlotContainer(plot, figureBuilder.bounds.dimension)
+        val plotSvgContainer = figureBuilder.createFigure()
+        val plotContainer = PlotContainer(plotSvgContainer)
         val plotComponent = buildPlotComponent(plotContainer, svgComponentFactory, executor)
-        return if (plot.containsLiveMap) {
+        return if (plotSvgContainer.isLiveMap) {
             AwtLiveMapPanel(
                 plotContainer,
                 plotComponent,

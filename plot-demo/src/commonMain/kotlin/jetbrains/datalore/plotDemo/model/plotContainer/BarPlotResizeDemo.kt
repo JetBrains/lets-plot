@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotContainer
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
@@ -17,6 +18,7 @@ import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgComponent
+import jetbrains.datalore.plot.builder.PlotSvgContainer
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -32,7 +34,13 @@ class BarPlotResizeDemo private constructor(
 ) {
 
     fun createPlotContainer(plotSize: DoubleVector): PlotContainer {
-        return PlotContainer(createPlot(), plotSize)
+        val plot = createPlot()
+        return PlotContainer(
+            PlotSvgContainer(
+                plot,
+                DoubleRectangle(DoubleVector.ZERO, plotSize)
+            )
+        )
     }
 
     fun createPlot(): PlotSvgComponent {
