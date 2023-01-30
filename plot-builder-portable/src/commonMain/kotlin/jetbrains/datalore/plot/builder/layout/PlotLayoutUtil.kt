@@ -220,7 +220,7 @@ internal object PlotLayoutUtil {
                 margin = marginDimensions.x
             )
 
-            DoubleVector(hAxisThickness, vAxisThickness)
+            DoubleVector(vAxisThickness, hAxisThickness)
         } else {
             DoubleVector.ZERO
         }

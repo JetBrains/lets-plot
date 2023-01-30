@@ -8,7 +8,6 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.builder.PlotContainerPortable
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
@@ -43,11 +42,9 @@ object MonolithicCommon {
         }
 
         return success.buildInfos.map { figureBuildInfo ->
-            val plot = figureBuildInfo.createFigure()
-            val plotContainer = PlotContainerPortable(plot, figureBuildInfo.bounds.dimension)
-
-            plotContainer.ensureContentBuilt()
-            plotContainer.svg
+            val plotSvgContainer = figureBuildInfo.createFigure()
+            plotSvgContainer.ensureContentBuilt()
+            plotSvgContainer.svg
         }.map { svgToString.render(it) }
     }
 

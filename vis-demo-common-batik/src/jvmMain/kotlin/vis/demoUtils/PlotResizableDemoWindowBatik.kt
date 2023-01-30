@@ -5,9 +5,11 @@
 
 package jetbrains.datalore.vis.demoUtils
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.PlotSvgComponent
+import jetbrains.datalore.plot.builder.PlotSvgContainer
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.PlotComponentProvider
@@ -31,7 +33,12 @@ class PlotResizableDemoWindowBatik(
             plotSize.getWidth(),
             plotSize.getHeight(),
         )
-        val plotContainer = PlotContainer(plot, plotSize)
+        val plotContainer = PlotContainer(
+            PlotSvgContainer(
+                plot,
+                DoubleRectangle(DoubleVector.ZERO, plotSize)
+            )
+        )
 
         return PlotPanel(
             plotComponentProvider = MyPlotComponentProvider(plotContainer, plotSize),
