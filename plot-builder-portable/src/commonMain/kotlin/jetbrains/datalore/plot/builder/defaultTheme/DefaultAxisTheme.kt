@@ -106,10 +106,10 @@ internal class DefaultAxisTheme(
         return getTextStyle(getElemValue(textKey))
     }
 
-    override fun labelAngle(): Double? {
-        val values = getElemValue(textKey)
-        if (!values.containsKey(Elem.ANGLE)) return null
-        return getNumber(values, Elem.ANGLE)
+    override fun applyLabelAngle() = !labelAngle().isNaN()
+
+    override fun labelAngle(): Double {
+        return getNumber(getElemValue(textKey), Elem.ANGLE)
     }
 
     override fun tooltipFill(): Color {

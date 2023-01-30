@@ -52,7 +52,9 @@ internal class LiveMapAxisTheme : AxisTheme {
         color = Defaults.TEXT_COLOR
     )
 
-    override fun labelAngle(): Double? = null
+    override fun applyLabelAngle(): Boolean = false
+
+    override fun labelAngle(): Double = Double.NaN
 
     override fun tickMarkWidth() = 1.0
 

@@ -34,10 +34,12 @@ internal class VerticalFlexBreaksLabelsLayout(
 
         require(axisLength > 0) { "axis length: $axisLength" }
 
+        val rotationAngle = if (theme.applyLabelAngle()) theme.labelAngle() else null
+
         var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
             axisLength,
             labelSpec,
-            theme.labelAngle(),
+            rotationAngle,
             side = DoubleVector::y
         )
 
@@ -50,7 +52,7 @@ internal class VerticalFlexBreaksLabelsLayout(
                 breaks.labels,
                 axisLength,
                 labelSpec,
-                theme.labelAngle(),
+                rotationAngle,
                 side = DoubleVector::y
 
             )

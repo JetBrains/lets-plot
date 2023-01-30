@@ -23,6 +23,8 @@ internal class HorizontalFlexBreaksLabelsLayout(
 ) :
     AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
+    private val myRotationAngle = if (theme.applyLabelAngle()) theme.labelAngle() else null
+
     init {
         require(orientation.isHorizontal) { orientation.toString() }
         require(!myBreaksProvider.isFixedBreaks) { "fixed breaks" }
@@ -36,7 +38,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
         var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
             axisLength,
             PlotLabelSpecFactory.axisTick(theme),
-            theme.labelAngle(),
+            myRotationAngle,
             side = DoubleVector::x
         )
         var breaks = getBreaks(targetBreakCount, axisLength)
@@ -48,7 +50,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
                 breaks.labels,
                 axisLength,
                 PlotLabelSpecFactory.axisTick(theme),
-                theme.labelAngle(),
+                myRotationAngle,
                 side = DoubleVector::x
             )
             if (newTargetBreakCount >= targetBreakCount) {
@@ -66,16 +68,16 @@ internal class HorizontalFlexBreaksLabelsLayout(
     private fun doLayoutLabels(
         breaks: ScaleBreaks,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
-        val layout = if (theme.labelAngle() != null) {
+        val layout = if (myRotationAngle != null) {
             HorizontalRotatedLabelsLayout(
                 orientation,
                 axisDomain,
                 labelSpec,
                 breaks,
                 theme,
-                theme.labelAngle()!!
+                myRotationAngle
             )
         } else {
             HorizontalSimpleLabelsLayout(
