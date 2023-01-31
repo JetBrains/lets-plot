@@ -17,7 +17,9 @@ object TransformVar {
     val YMIN = DataFrame.Variable("transform.YMIN", TRANSFORM)
     val YMAX = DataFrame.Variable("transform.YMAX", TRANSFORM)
     val COLOR = DataFrame.Variable("transform.COLOR", TRANSFORM)
+    val COLORS = mutableListOf(COLOR)
     val FILL = DataFrame.Variable("transform.FILL", TRANSFORM)
+    val FILLS = mutableListOf(FILL)
     val ALPHA = DataFrame.Variable("transform.ALPHA", TRANSFORM)
     val SHAPE = DataFrame.Variable("transform.SHAPE", TRANSFORM)
     val LINETYPE = DataFrame.Variable("transform.LINETYPE", TRANSFORM)
@@ -56,18 +58,18 @@ object TransformVar {
     val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
 
     private val VAR_BY_AES = TransformVarByAes()
-    private val VAR_BY_NAME: Map<String, DataFrame.Variable>
-    private val AES_BY_VAR: Map<DataFrame.Variable, Aes<*>>
+    private val VAR_BY_NAME: MutableMap<String, DataFrame.Variable>
+    private val AES_BY_VAR: MutableMap<DataFrame.Variable, Aes<*>>
 
     init {
         VAR_BY_NAME = Aes.values().associate { aes ->
             val variable = VAR_BY_AES.visit(aes)
             variable.name to variable
-        }
+        }.toMutableMap()
 
         AES_BY_VAR = Aes.values().associateBy { aes ->
             VAR_BY_AES.visit(aes)
-        }
+        }.toMutableMap()
     }
 
     fun isTransformVar(varName: String): Boolean {
@@ -80,7 +82,14 @@ object TransformVar {
     }
 
     fun forAes(aes: Aes<*>): DataFrame.Variable {
-        return VAR_BY_AES.visit(aes)
+        val v = VAR_BY_AES.visit(aes)
+        if (!VAR_BY_NAME.containsKey(v.name)) {
+            VAR_BY_NAME[v.name] = v
+        }
+        if (!AES_BY_VAR.containsKey(v)) {
+            AES_BY_VAR[v] = aes
+        }
+        return v
     }
 
     fun toAes(variable: DataFrame.Variable): Aes<*> {
@@ -109,12 +118,24 @@ object TransformVar {
             return YMAX
         }
 
-        override fun color(): DataFrame.Variable {
-            return COLOR
+        override fun color(aes: Aes<*>): DataFrame.Variable {
+            val transformedVarName = "transform." + aes.name.uppercase()
+            val variable = COLORS.firstOrNull { it.name == transformedVarName }
+                ?: DataFrame.Variable(transformedVarName, TRANSFORM)
+            if (!COLORS.contains(variable)) {
+                COLORS.add(variable)
+            }
+            return variable
         }
 
-        override fun fill(): DataFrame.Variable {
-            return FILL
+        override fun fill(aes: Aes<*>): DataFrame.Variable {
+            val transformedVarName = "transform." + aes.name.uppercase()
+            val variable = FILLS.firstOrNull { it.name == transformedVarName }
+                ?: DataFrame.Variable(transformedVarName, TRANSFORM)
+            if (!FILLS.contains(variable)) {
+                FILLS.add(variable)
+            }
+            return variable
         }
 
         override fun alpha(): DataFrame.Variable {

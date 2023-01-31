@@ -563,6 +563,20 @@ object Option {
             AES_BY_OPTION["col"] = Aes.COLOR
         }
 
+        fun extendWithColorAes(option: String) {
+            val allowedPrefixes = listOf("fill", "color", "colour", "col")
+            val baseName = allowedPrefixes.firstOrNull(option::startsWith) ?: return
+
+            AES_BY_OPTION[baseName]?.let { baseAes ->
+                // not use aliases as key
+                val suffix = option.substringAfterLast(baseName)
+                val newAesName = baseAes.name + suffix
+                if (!AES_BY_OPTION.containsKey(option)) {
+                    AES_BY_OPTION[option] = Aes.createAs(baseAes, name = newAesName)
+                }
+            }
+        }
+
         fun toAes(option: String): Aes<*> {
             require(AES_BY_OPTION.containsKey(option)) { "Not an aesthetic: '$option'" }
             return AES_BY_OPTION[option]!!

@@ -37,11 +37,19 @@ abstract class DataPointAesthetics {
     }
 
     fun color(): Color? {
-        return get(Aes.COLOR)
+        return color(Aes.COLOR)
+    }
+
+    fun color(aes: Aes<Color>): Color? {
+        return get(aes)
     }
 
     fun fill(): Color? {
-        return get(Aes.FILL)
+        return fill(Aes.FILL)
+    }
+
+    fun fill(aes: Aes<Color>): Color? {
+        return get(aes)
     }
 
     fun alpha(): Double? {

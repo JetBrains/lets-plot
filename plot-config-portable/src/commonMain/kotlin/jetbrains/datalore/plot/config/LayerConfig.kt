@@ -145,6 +145,11 @@ class LayerConfig constructor(
             update(MAPPING, layerMappings)
         }
 
+        // Extend aesthetics with color extensions
+        (plotMappings + layerMappings).keys.forEach {
+            if (it is String && it != Option.Mapping.GROUP) Option.Mapping.extendWithColorAes(it)
+        }
+
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
         val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {
             when (clientSide) {

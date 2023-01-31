@@ -146,8 +146,9 @@ object DefaultMapperProvider {
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {
+            val baseAes = Aes.getBaseAes(aes)
             @Suppress("UNCHECKED_CAST")
-            return myMap[aes] as MapperProvider<T>
+            return myMap[baseAes] as MapperProvider<T>
         }
 
         private fun <T> put(aes: Aes<T>, value: MapperProvider<T>) {

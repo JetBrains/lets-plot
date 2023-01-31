@@ -15,6 +15,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
     val isColor: Boolean
         get() = isColor(this)
 
+    fun copy(name: String): Aes<T> {
+        return Aes(name, isNumeric)
+    }
+
     init {
         values.add(this)
     }
@@ -137,7 +141,21 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isColor(aes: Aes<*>): Boolean {
-            return aes == COLOR || aes == FILL
+            return isColorAes(aes) || isFillAes(aes)
+        }
+
+        fun isFillAes(aes: Aes<*>): Boolean {
+            return aes.name.startsWith(FILL.name)
+        }
+
+        fun isColorAes(aes: Aes<*>): Boolean {
+            return aes.name.startsWith(COLOR.name)
+        }
+
+        fun getBaseAes(aes: Aes<*>) = when {
+            isFillAes(aes) -> FILL
+            isColorAes(aes) -> COLOR
+            else -> aes
         }
 
         fun affectingScaleX(aes: Aes<*>): Boolean {
@@ -192,6 +210,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         fun allPositional(): List<Aes<Double>> {
             @Suppress("UNCHECKED_CAST")
             return values.filter { isPositional(it) } as List<Aes<Double>>
+        }
+
+        fun createAs(aes: Aes<*>, name: String): Aes<*> {
+            return aes.copy(name = name)
         }
     }
 }

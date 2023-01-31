@@ -113,7 +113,9 @@ object DefaultNaValue {
     }
 
     operator fun <T> get(aes: Aes<T>): T {
-        return VALUE_MAP[aes]
+        @Suppress("UNCHECKED_CAST")
+        val baseAes = Aes.getBaseAes(aes) as Aes<T>
+        return VALUE_MAP.get<T>(baseAes)
     }
 
     operator fun <T> get(aes: TypedKey<T>): T {

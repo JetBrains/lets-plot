@@ -49,6 +49,8 @@ import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
+import jetbrains.datalore.plot.base.Aes.Companion.isColorAes
+import jetbrains.datalore.plot.base.Aes.Companion.isFillAes
 
 abstract class AesVisitor<T> {
     fun visit(aes: Aes<*>): T {
@@ -85,11 +87,11 @@ abstract class AesVisitor<T> {
         if (aes == YMAX) {
             return ymax()
         }
-        if (aes == COLOR) {
-            return color()
+        if (isColorAes(aes)) {
+            return color(aes)
         }
-        if (aes == FILL) {
-            return fill()
+        if (isFillAes(aes)) {
+            return fill(aes)
         }
         if (aes == ALPHA) {
             return alpha()
@@ -215,9 +217,9 @@ abstract class AesVisitor<T> {
 
     protected abstract fun ymax(): T
 
-    protected abstract fun color(): T
+    protected abstract fun color(aes: Aes<*>): T
 
-    protected abstract fun fill(): T
+    protected abstract fun fill(aes: Aes<*>): T
 
     protected abstract fun alpha(): T
 
