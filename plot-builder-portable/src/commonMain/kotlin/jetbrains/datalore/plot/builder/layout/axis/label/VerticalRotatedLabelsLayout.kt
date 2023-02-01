@@ -37,7 +37,9 @@ internal class VerticalRotatedLabelsLayout(
                 b.yRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
             )
             GeometryUtil.union(b, acc)
-        } ?: DoubleRectangle(DoubleVector.ZERO,DoubleVector.ZERO)
+        }
+            ?: // labels can be empty so bounds may be null, it is safe to use empty rect
+            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)
 
         // add additional offsets for labels
         val xOffset: (DoubleRectangle) -> Double = when (orientation) {

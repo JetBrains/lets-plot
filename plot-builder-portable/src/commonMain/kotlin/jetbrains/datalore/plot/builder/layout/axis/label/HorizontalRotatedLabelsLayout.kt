@@ -45,7 +45,7 @@ internal class HorizontalRotatedLabelsLayout(
                 b.xRange().expanded(MIN_TICK_LABEL_DISTANCE / 2)
             )
             GeometryUtil.union(b, acc)
-        }
+        }!! // labels are not empty so bounds can't be null
 
         // add additional offsets for labels
         val yOffset: (DoubleRectangle) -> Double = when (orientation) {
@@ -55,7 +55,7 @@ internal class HorizontalRotatedLabelsLayout(
         }
         val labelAdditionalOffsets = labelBoundsList.map { DoubleVector(0.0, yOffset(it)) }
 
-        return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
+        return createAxisLabelsLayoutInfoBuilder(bounds, overlap)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(Text.VerticalAnchor.CENTER)
             .labelRotationAngle(-myRotationAngle)
