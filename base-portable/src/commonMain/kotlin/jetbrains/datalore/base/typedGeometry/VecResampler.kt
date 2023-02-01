@@ -12,9 +12,9 @@ class VecResampler<InT, OutT>(
     private val transform: (Vec<InT>) -> Vec<OutT>?,
     precision: Double
 ) {
-    private val resampler = AdaptiveResampler.generic(this::tranformWrapper, precision, VEC_ADAPTER)
+    private val resampler = AdaptiveResampler.generic(this::transformWrapper, precision, VEC_ADAPTER)
 
-    private fun tranformWrapper(v: Vec<*>): Vec<*>? {
+    private fun transformWrapper(v: Vec<*>): Vec<*>? {
         @Suppress("UNCHECKED_CAST")
         return transform(v as Vec<InT>)
     }
