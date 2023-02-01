@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import kotlin.math.max
 
 internal class HorizontalSimpleLabelsLayout(
     orientation: Orientation,
@@ -57,10 +56,7 @@ internal class HorizontalSimpleLabelsLayout(
             Orientation.BOTTOM -> Text.VerticalAnchor.TOP
             else -> Text.VerticalAnchor.BOTTOM
         }
-        return AxisLabelsLayoutInfo.Builder()
-            .breaks(breaks)
-            .bounds(applyLabelsMargins(bounds!!))
-            .overlap(overlap)
+        return createAxisLabelsLayoutInfoBuilder(bounds!!, overlap)
             .labelAdditionalOffsets(null)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(verticalAnchor)
@@ -71,27 +67,5 @@ internal class HorizontalSimpleLabelsLayout(
         return BreakLabelsLayoutUtil.horizontalCenteredLabelBounds(
             labelNormalSize
         )
-    }
-
-    companion object {
-        fun estimateBreakCountInitial(axisLength: Double, tickLabelSpec: LabelSpec): Int {
-            return estimateBreakCount(
-                tickLabelSpec.width(INITIAL_TICK_LABEL),
-                axisLength
-            )
-        }
-
-        fun estimateBreakCount(labels: List<String>, axisLength: Double, tickLabelSpec: LabelSpec): Int {
-            val longestLabelWidth = BreakLabelsLayoutUtil.longestLabelWidth(labels) { tickLabelSpec.width(it) }
-            return estimateBreakCount(
-                longestLabelWidth,
-                axisLength
-            )
-        }
-
-        private fun estimateBreakCount(width: Double, axisLength: Double): Int {
-            val tickDistance = width + MIN_TICK_LABEL_DISTANCE
-            return max(1.0, axisLength / tickDistance).toInt()
-        }
     }
 }

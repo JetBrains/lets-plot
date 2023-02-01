@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
@@ -22,6 +23,8 @@ internal class HorizontalFlexBreaksLabelsLayout(
 ) :
     AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
 
+    private val myRotationAngle = if (theme.rotateLabels()) theme.labelAngle() else null
+
     init {
         require(orientation.isHorizontal) { orientation.toString() }
         require(!myBreaksProvider.isFixedBreaks) { "fixed breaks" }
@@ -32,22 +35,24 @@ internal class HorizontalFlexBreaksLabelsLayout(
         axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
 
-        var targetBreakCount =
-            HorizontalSimpleLabelsLayout.estimateBreakCountInitial(
-                axisLength,
-                PlotLabelSpecFactory.axisTick(theme)
-            )
+        var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
+            axisLength,
+            PlotLabelSpecFactory.axisTick(theme),
+            myRotationAngle,
+            side = DoubleVector::x
+        )
         var breaks = getBreaks(targetBreakCount, axisLength)
         var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
 
         while (labelsInfo.isOverlap) {
             // reduce tick count
-            val newTargetBreakCount =
-                HorizontalSimpleLabelsLayout.estimateBreakCount(
-                    breaks.labels,
-                    axisLength,
-                    PlotLabelSpecFactory.axisTick(theme)
-                )
+            val newTargetBreakCount = BreakLabelsLayoutUtil.estimateBreakCount(
+                breaks.labels,
+                axisLength,
+                PlotLabelSpecFactory.axisTick(theme),
+                myRotationAngle,
+                side = DoubleVector::x
+            )
             if (newTargetBreakCount >= targetBreakCount) {
                 // paranoid - highly impossible.
                 break
@@ -63,16 +68,26 @@ internal class HorizontalFlexBreaksLabelsLayout(
     private fun doLayoutLabels(
         breaks: ScaleBreaks,
         axisLength: Double,
-        axisMapper: (Double?) -> Double?,
+        axisMapper: (Double?) -> Double?
     ): AxisLabelsLayoutInfo {
-
-        val layout = HorizontalSimpleLabelsLayout(
-            orientation,
-            axisDomain,
-            labelSpec,
-            breaks,
-            theme
-        )
+        val layout = if (myRotationAngle != null) {
+            HorizontalRotatedLabelsLayout(
+                orientation,
+                axisDomain,
+                labelSpec,
+                breaks,
+                theme,
+                myRotationAngle
+            )
+        } else {
+            HorizontalSimpleLabelsLayout(
+                orientation,
+                axisDomain,
+                labelSpec,
+                breaks,
+                theme
+            )
+        }
         return layout.doLayout(axisLength, axisMapper)
     }
 

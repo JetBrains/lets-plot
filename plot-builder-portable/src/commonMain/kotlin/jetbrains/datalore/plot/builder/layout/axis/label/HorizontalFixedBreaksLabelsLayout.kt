@@ -57,6 +57,10 @@ internal class HorizontalFixedBreaksLabelsLayout(
             upper = axisLength + axisRightExpand
         )
 
+        if (theme.rotateLabels()) {
+            return rotatedLayout(theme.labelAngle()).doLayout(axisLength, axisMapper)
+        }
+
         var labelsInfo = simpleLayout().doLayout(axisLength, axisMapper)
         if (overlap(labelsInfo, axisSpanExpanded)) {
             labelsInfo = multilineLayout().doLayout(axisLength, axisMapper)
@@ -99,6 +103,17 @@ internal class HorizontalFixedBreaksLabelsLayout(
             labelSpec,
             breaks,
             theme
+        )
+    }
+
+    private fun rotatedLayout(angle: Double): AxisLabelsLayout {
+        return HorizontalRotatedLabelsLayout(
+            orientation,
+            axisDomain,
+            labelSpec,
+            breaks,
+            theme,
+            angle
         )
     }
 

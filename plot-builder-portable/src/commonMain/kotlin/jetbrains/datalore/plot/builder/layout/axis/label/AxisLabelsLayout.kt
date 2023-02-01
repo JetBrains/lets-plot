@@ -42,9 +42,18 @@ internal abstract class AxisLabelsLayout protected constructor(
         )
     }
 
-    internal fun applyLabelsMargins(labelsBounds: DoubleRectangle): DoubleRectangle {
-        return BreakLabelsLayoutUtil.applyLabelsMargins(
-            labelsBounds,
+    internal fun applyLabelMargins(bounds: DoubleRectangle): DoubleRectangle {
+        return BreakLabelsLayoutUtil.applyLabelMargins(
+            bounds,
+            if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+            theme.tickLabelMargins(),
+            orientation
+        )
+    }
+
+    internal fun alignToLabelMargin(bounds: DoubleRectangle): DoubleRectangle {
+        return BreakLabelsLayoutUtil.alignToLabelMargin(
+            bounds,
             if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
             theme.tickLabelMargins(),
             orientation

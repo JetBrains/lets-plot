@@ -98,7 +98,9 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 //                Elem.Margin.LEFT to 0.0
 // All around equal default margins because axis text can appear on either side of a plot tile. (See scale x/y "position")
                 Elem.Margin.BOTTOM to 3.0,
-                Elem.Margin.LEFT to 3.0
+                Elem.Margin.LEFT to 3.0,
+                // Currently 'angle' is supported for AXIS_TEXT only: NaN means no rotation.
+                Elem.ANGLE to Double.NaN
             ),
 
             AXIS_TITLE to mapOf(
