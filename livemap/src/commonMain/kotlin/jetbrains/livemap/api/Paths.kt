@@ -94,12 +94,12 @@ class PathBuilder(
     fun build(nonInteractive: Boolean): EcsEntity? {
         // Build location component on original, non-curved, path data
         val pathLocation = splitAndPackPath(points)
-            .let { transformMultiPolygon(it, myMapProjection::project) }
+            .let { transformMultiPolygon(it, myMapProjection::project, resamplingPrecision = null) }
             .let(::bbox)
 
         // Build visualization component - bend if needed
         val multiPolygon = splitAndPackPath(if (flat) points else createArcPath(points))
-        val coord = transformMultiPolygon(multiPolygon, myMapProjection::project)
+        val coord = transformMultiPolygon(multiPolygon, myMapProjection::project, resamplingPrecision = null)
 
         return bbox(coord)?.let { bbox ->
             val entity = myFactory

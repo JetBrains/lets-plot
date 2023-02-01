@@ -91,8 +91,7 @@ class PolygonsBuilder(
     }
 
     private fun createStaticEntity(): EcsEntity {
-        val worldGeometry = geometry!!
-            .run { transformMultiPolygon(this, myMapProjection::project) }
+        val worldGeometry = transformMultiPolygon(geometry!!, myMapProjection::project, resamplingPrecision = null)
 
         val worldBbox = bbox(worldGeometry) ?: error("Polygon bbox can't be null")
 
