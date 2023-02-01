@@ -11,38 +11,27 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.util.MutableDouble
+import kotlin.math.max
 
-internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: StackingContext = StackingContext()) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST)
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingContext)
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double): Map<Int, Double> {
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingContext: StackingContext): Map<Int, Double> {
         val offsetByIndex = HashMap<Int, Double>()
-        val negPosBaseByBin = HashMap<Double, Pair<MutableDouble, MutableDouble>>()
-        for (i in 0 until aes.dataPointCount()) {
-            val dataPoint = aes.dataPointAt(i)
-            val x = dataPoint.x()
-            if (SeriesUtil.isFinite(x)) {
-                if (!negPosBaseByBin.containsKey(x)) {
-                    negPosBaseByBin[x!!] = Pair(
-                        MutableDouble(0.0),
-                        MutableDouble(0.0)
-                    )
-                }
-
-                val y = dataPoint.y()
-                if (SeriesUtil.isFinite(y)) {
-                    val pair = negPosBaseByBin[x]!!
-                    val offset = if (y!! >= 0) {
-                        pair.second.getAndAdd(y)
-                    } else {
-                        pair.first.getAndAdd(y)
-                    }
+        aes.dataPoints().asSequence()
+            .mapIndexed { i, p -> Pair(i, p) }
+            .filter { SeriesUtil.allFinite(it.second.x(), it.second.y()) }
+            .groupBy { it.second.group() }
+            .forEach { (_, indexedDataPoints) ->
+                for ((i, dataPoint) in indexedDataPoints) {
+                    val x = dataPoint.x()!!
+                    val y = dataPoint.y()!!
+                    val offset = stackingContext.getTotalOffset(x, y)
                     offsetByIndex[i] = offset - y * (1 - vjust)
                 }
+                stackingContext.computeStackOffset()
             }
-        }
         return offsetByIndex
     }
 
@@ -52,6 +41,48 @@ internal class StackPos(aes: Aesthetics, vjust: Double?) : PositionAdjustment {
 
     override fun handlesGroups(): Boolean {
         return PositionAdjustments.Meta.STACK.handlesGroups()
+    }
+
+    internal data class Offset(val stack: Double, val group: Double)
+
+    internal class StackingContext(private val stackInsideGroups: Boolean = true) {
+        private val positiveOffset = HashMap<Double, Offset>()
+        private val negativeOffset = HashMap<Double, Offset>()
+
+        fun getTotalOffset(stackId: Double, offsetValue: Double): Double {
+            return if (offsetValue >= 0) {
+                val currentOffset = positiveOffset.getOrPut(stackId) { Offset(0.0, 0.0) }
+                positiveOffset[stackId] = Offset(currentOffset.stack, getGroupOffset(currentOffset.group, offsetValue))
+                getCurrentTotalOffset(currentOffset.stack, currentOffset.group)
+            } else {
+                val currentOffset = negativeOffset.getOrPut(stackId) { Offset(0.0, 0.0) }
+                negativeOffset[stackId] = Offset(currentOffset.stack, -getGroupOffset(-currentOffset.group, -offsetValue))
+                getCurrentTotalOffset(currentOffset.stack, currentOffset.group)
+            }
+        }
+
+        fun computeStackOffset() {
+            positiveOffset.forEach { (stackId, offset) ->
+                positiveOffset[stackId] = Offset(offset.stack + offset.group, 0.0)
+            }
+            negativeOffset.forEach { (stackId, offset) ->
+                negativeOffset[stackId] = Offset(offset.stack + offset.group, 0.0)
+            }
+        }
+
+        private fun getGroupOffset(currentGroupOffset: Double, offsetValue: Double): Double {
+            return if (stackInsideGroups)
+                currentGroupOffset + offsetValue
+            else
+                max(currentGroupOffset, offsetValue)
+        }
+
+        private fun getCurrentTotalOffset(stackOffset: Double, groupOffset: Double): Double {
+            return if (stackInsideGroups)
+                stackOffset + groupOffset
+            else
+                stackOffset
+        }
     }
 
     companion object {
