@@ -39,8 +39,8 @@ object PositionAdjustments {
         return DodgePos(aesthetics, groupCount, width)
     }
 
-    fun stack(aes: Aesthetics, vjust: Double?, offsetState: StackPos.OffsetState? = null): PositionAdjustment {
-        return StackPos(aes, vjust, offsetState)
+    fun stack(aes: Aesthetics, vjust: Double?): PositionAdjustment {
+        return StackPos(aes, vjust)
     }
 
     fun fill(aesthetics: Aesthetics, vjust: Double?): PositionAdjustment {

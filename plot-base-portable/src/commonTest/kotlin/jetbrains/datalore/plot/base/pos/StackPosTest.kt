@@ -46,7 +46,7 @@ class StackPosTest {
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             expectedOffsets = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            offsetState = StackPos.OffsetState.spannableToMax(),
+            stackingContext = StackPos.StackingContext.spannableToMax(),
             messageBeginning = "Should work without grouping"
         )
     }
@@ -69,7 +69,7 @@ class StackPosTest {
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
             expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -1.0, -5.0, 6.0, 5.0, 5.0, 2.0, 1.0),
-            offsetState = StackPos.OffsetState.spannableToMax(),
+            stackingContext = StackPos.StackingContext.spannableToMax(),
             messageBeginning = "Should work with grouping"
         )
     }
@@ -110,11 +110,11 @@ class StackPosTest {
         groupValues: List<Int>? = null,
         expectedOffsets: List<Double?>,
         vjust: Double? = null,
-        offsetState: StackPos.OffsetState? = null,
+        stackingContext: StackPos.StackingContext = StackPos.StackingContext.summable(),
         messageBeginning: String
     ) {
         val aes = buildAesthetics(xValues, yValues, groupValues)
-        val pos = PositionAdjustments.stack(aes, vjust = vjust, offsetState = offsetState)
+        val pos = StackPos(aes, vjust = vjust, stackingContext = stackingContext)
         val ctx = getBogusContext()
         for (i in 0 until aes.dataPointCount()) {
             val p = aes.dataPointAt(i)

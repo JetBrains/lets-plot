@@ -13,11 +13,11 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
-class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null) : PositionAdjustment {
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: StackingContext = StackingContext.summable()) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, offsetState ?: OffsetState.summable())
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingContext)
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, offsetState: OffsetState): Map<Int, Double> {
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingContext: StackingContext): Map<Int, Double> {
         val offsetByIndex = HashMap<Int, Double>()
         aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
@@ -27,10 +27,10 @@ class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null
                 for ((i, dataPoint) in indexedDataPoints) {
                     val x = dataPoint.x()!!
                     val y = dataPoint.y()!!
-                    val offset = offsetState.append(x, y)
+                    val offset = stackingContext.append(x, y)
                     offsetByIndex[i] = offset - y * (1 - vjust)
                 }
-                offsetState.update()
+                stackingContext.update()
             }
         return offsetByIndex
     }
@@ -43,37 +43,33 @@ class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null
         return PositionAdjustments.Meta.STACK.handlesGroups()
     }
 
-    class OffsetState private constructor(
+    internal data class StackOffset(val stack: Double, val group: Double)
+
+    internal class StackingContext private constructor(
         private val stackInsideGroups: Boolean,
         private val positiveGroupOffsetReducer: (Double, Double) -> Double
     ) {
-        private val positiveOffset = HashMap<Double, Double>()
-        private val negativeOffset = HashMap<Double, Double>()
-        private val positiveGroupOffset = HashMap<Double, Double>()
-        private val negativeGroupOffset = HashMap<Double, Double>()
+        private val positiveOffset = HashMap<Double, StackOffset>()
+        private val negativeOffset = HashMap<Double, StackOffset>()
 
         fun append(stackId: Double, offsetValue: Double): Double {
             return if (offsetValue >= 0) {
-                val currentPositiveOffset = positiveOffset.getOrPut(stackId) { INITIAL_OFFSET }
-                val currentPositiveGroupOffset = positiveGroupOffset.getOrPut(stackId) { INITIAL_OFFSET }
-                positiveGroupOffset[stackId] = reduceGroupOffset(currentPositiveGroupOffset, offsetValue)
-                calculateTotalOffset(currentPositiveOffset, currentPositiveGroupOffset)
+                val (stackOffset, groupOffset) = positiveOffset.getOrPut(stackId) { StackOffset(0.0, 0.0) }
+                positiveOffset[stackId] = StackOffset(stackOffset, reduceGroupOffset(groupOffset, offsetValue))
+                calculateTotalOffset(stackOffset, groupOffset)
             } else {
-                val currentNegativeOffset = negativeOffset.getOrPut(stackId) { INITIAL_OFFSET }
-                val currentNegativeGroupOffset = negativeGroupOffset.getOrPut(stackId) { INITIAL_OFFSET }
-                negativeGroupOffset[stackId] = -reduceGroupOffset(-currentNegativeGroupOffset, -offsetValue)
-                calculateTotalOffset(currentNegativeOffset, currentNegativeGroupOffset)
+                val (stackOffset, groupOffset) = negativeOffset.getOrPut(stackId) { StackOffset(0.0, 0.0) }
+                negativeOffset[stackId] = StackOffset(stackOffset, -reduceGroupOffset(-groupOffset, -offsetValue))
+                calculateTotalOffset(stackOffset, groupOffset)
             }
         }
 
         fun update() {
-            for (stackId in positiveGroupOffset.keys) {
-                positiveOffset[stackId] = positiveOffset.getOrElse(stackId) { INITIAL_OFFSET } + positiveGroupOffset[stackId]!!
-                positiveGroupOffset[stackId] = INITIAL_OFFSET
+            for (stackId in positiveOffset.keys) {
+                positiveOffset[stackId] = StackOffset(positiveOffset[stackId]!!.stack + positiveOffset[stackId]!!.group, 0.0)
             }
-            for (stackId in negativeGroupOffset.keys) {
-                negativeOffset[stackId] = negativeOffset.getOrElse(stackId) { INITIAL_OFFSET } + negativeGroupOffset[stackId]!!
-                negativeGroupOffset[stackId] = INITIAL_OFFSET
+            for (stackId in negativeOffset.keys) {
+                negativeOffset[stackId] = StackOffset(negativeOffset[stackId]!!.stack + negativeOffset[stackId]!!.group, 0.0)
             }
         }
 
@@ -92,13 +88,11 @@ class StackPos(aes: Aesthetics, vjust: Double?, offsetState: OffsetState? = null
         }
 
         companion object {
-            const val INITIAL_OFFSET = 0.0
-
             // Default: all points will be stacked one above another
-            fun summable(): OffsetState = OffsetState(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
+            fun summable(): StackingContext = StackingContext(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
 
             // Inside groups points aren't stacked, but each next group will be stacked over sum of maximum values of the previous groups
-            fun spannableToMax(): OffsetState = OffsetState(false) { currentGroupOffset, offsetValue -> max(currentGroupOffset, offsetValue) }
+            fun spannableToMax(): StackingContext = StackingContext(false) { currentGroupOffset, offsetValue -> max(currentGroupOffset, offsetValue) }
         }
     }
 
