@@ -64,7 +64,7 @@ internal object BreakLabelsLayoutUtil {
     ): AxisLabelsLayoutInfo {
         check(!orientation.isHorizontal)
 
-        if (theme.showLabels() && theme.applyLabelAngle()) {
+        if (theme.showLabels() && theme.rotateLabels()) {
             return VerticalRotatedLabelsLayout(
                 orientation,
                 axisDomain,

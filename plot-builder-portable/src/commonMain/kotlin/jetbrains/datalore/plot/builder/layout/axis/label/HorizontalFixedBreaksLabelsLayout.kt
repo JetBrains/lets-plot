@@ -57,7 +57,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
             upper = axisLength + axisRightExpand
         )
 
-        if (theme.applyLabelAngle()) {
+        if (theme.rotateLabels()) {
             return rotatedLayout(theme.labelAngle()).doLayout(axisLength, axisMapper)
         }
 

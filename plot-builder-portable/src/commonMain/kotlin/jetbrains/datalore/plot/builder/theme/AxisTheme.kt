@@ -38,7 +38,7 @@ interface AxisTheme {
 
     fun labelStyle(): ThemeTextStyle
 
-    fun applyLabelAngle(): Boolean
+    fun rotateLabels(): Boolean
 
     fun labelAngle(): Double
 
