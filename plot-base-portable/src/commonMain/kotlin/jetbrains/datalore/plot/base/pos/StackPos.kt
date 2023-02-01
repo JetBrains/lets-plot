@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
-internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: StackingContext = StackingContext.summable()) : PositionAdjustment {
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: StackingContext = StackingContext()) : PositionAdjustment {
 
     private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingContext)
 
@@ -45,10 +45,7 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: Stacki
 
     internal data class Offset(val stack: Double, val group: Double)
 
-    internal class StackingContext private constructor(
-        private val stackInsideGroups: Boolean,
-        private val positiveGroupOffsetReducer: (Double, Double) -> Double
-    ) {
+    internal class StackingContext(private val stackInsideGroups: Boolean = true) {
         private val positiveOffset = HashMap<Double, Offset>()
         private val negativeOffset = HashMap<Double, Offset>()
 
@@ -77,7 +74,7 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: Stacki
             return if (stackInsideGroups)
                 currentGroupOffset + offsetValue
             else
-                positiveGroupOffsetReducer(currentGroupOffset, offsetValue)
+                max(currentGroupOffset, offsetValue)
         }
 
         private fun getCurrentTotalOffset(stackOffset: Double, groupOffset: Double): Double {
@@ -85,14 +82,6 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: Stacki
                 stackOffset + groupOffset
             else
                 stackOffset
-        }
-
-        companion object {
-            // Default: all points will be stacked one above another
-            fun summable(): StackingContext = StackingContext(true) { currentGroupOffset, offsetValue -> currentGroupOffset + offsetValue }
-
-            // Inside groups points aren't stacked, but each next group will be stacked over sum of maximum values of the previous groups
-            fun spannableToMax(): StackingContext = StackingContext(false) { currentGroupOffset, offsetValue -> max(currentGroupOffset, offsetValue) }
         }
     }
 

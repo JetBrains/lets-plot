@@ -46,7 +46,7 @@ class StackPosTest {
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             expectedOffsets = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            stackingContext = StackPos.StackingContext.spannableToMax(),
+            stackingContext = StackPos.StackingContext(false),
             messageBeginning = "Should work without grouping"
         )
     }
@@ -69,7 +69,7 @@ class StackPosTest {
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
             expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -1.0, -5.0, 6.0, 5.0, 5.0, 2.0, 1.0),
-            stackingContext = StackPos.StackingContext.spannableToMax(),
+            stackingContext = StackPos.StackingContext(false),
             messageBeginning = "Should work with grouping"
         )
     }
@@ -110,7 +110,7 @@ class StackPosTest {
         groupValues: List<Int>? = null,
         expectedOffsets: List<Double?>,
         vjust: Double? = null,
-        stackingContext: StackPos.StackingContext = StackPos.StackingContext.summable(),
+        stackingContext: StackPos.StackingContext = StackPos.StackingContext(),
         messageBeginning: String
     ) {
         val aes = buildAesthetics(xValues, yValues, groupValues)
