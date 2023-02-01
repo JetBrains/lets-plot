@@ -27,10 +27,10 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: Stacki
                 for ((i, dataPoint) in indexedDataPoints) {
                     val x = dataPoint.x()!!
                     val y = dataPoint.y()!!
-                    val offset = stackingContext.append(x, y)
+                    val offset = stackingContext.getTotalOffset(x, y)
                     offsetByIndex[i] = offset - y * (1 - vjust)
                 }
-                stackingContext.update()
+                stackingContext.computeStackOffset()
             }
         return offsetByIndex
     }
@@ -43,44 +43,44 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: Stacki
         return PositionAdjustments.Meta.STACK.handlesGroups()
     }
 
-    internal data class StackOffset(val stack: Double, val group: Double)
+    internal data class Offset(val stack: Double, val group: Double)
 
     internal class StackingContext private constructor(
         private val stackInsideGroups: Boolean,
         private val positiveGroupOffsetReducer: (Double, Double) -> Double
     ) {
-        private val positiveOffset = HashMap<Double, StackOffset>()
-        private val negativeOffset = HashMap<Double, StackOffset>()
+        private val positiveOffset = HashMap<Double, Offset>()
+        private val negativeOffset = HashMap<Double, Offset>()
 
-        fun append(stackId: Double, offsetValue: Double): Double {
+        fun getTotalOffset(stackId: Double, offsetValue: Double): Double {
             return if (offsetValue >= 0) {
-                val (stackOffset, groupOffset) = positiveOffset.getOrPut(stackId) { StackOffset(0.0, 0.0) }
-                positiveOffset[stackId] = StackOffset(stackOffset, reduceGroupOffset(groupOffset, offsetValue))
-                calculateTotalOffset(stackOffset, groupOffset)
+                val currentOffset = positiveOffset.getOrPut(stackId) { Offset(0.0, 0.0) }
+                positiveOffset[stackId] = Offset(currentOffset.stack, getGroupOffset(currentOffset.group, offsetValue))
+                getCurrentTotalOffset(currentOffset.stack, currentOffset.group)
             } else {
-                val (stackOffset, groupOffset) = negativeOffset.getOrPut(stackId) { StackOffset(0.0, 0.0) }
-                negativeOffset[stackId] = StackOffset(stackOffset, -reduceGroupOffset(-groupOffset, -offsetValue))
-                calculateTotalOffset(stackOffset, groupOffset)
+                val currentOffset = negativeOffset.getOrPut(stackId) { Offset(0.0, 0.0) }
+                negativeOffset[stackId] = Offset(currentOffset.stack, -getGroupOffset(-currentOffset.group, -offsetValue))
+                getCurrentTotalOffset(currentOffset.stack, currentOffset.group)
             }
         }
 
-        fun update() {
-            for (stackId in positiveOffset.keys) {
-                positiveOffset[stackId] = StackOffset(positiveOffset[stackId]!!.stack + positiveOffset[stackId]!!.group, 0.0)
+        fun computeStackOffset() {
+            positiveOffset.forEach { (stackId, offset) ->
+                positiveOffset[stackId] = Offset(offset.stack + offset.group, 0.0)
             }
-            for (stackId in negativeOffset.keys) {
-                negativeOffset[stackId] = StackOffset(negativeOffset[stackId]!!.stack + negativeOffset[stackId]!!.group, 0.0)
+            negativeOffset.forEach { (stackId, offset) ->
+                negativeOffset[stackId] = Offset(offset.stack + offset.group, 0.0)
             }
         }
 
-        private fun reduceGroupOffset(currentGroupOffset: Double, offsetValue: Double): Double {
+        private fun getGroupOffset(currentGroupOffset: Double, offsetValue: Double): Double {
             return if (stackInsideGroups)
                 currentGroupOffset + offsetValue
             else
                 positiveGroupOffsetReducer(currentGroupOffset, offsetValue)
         }
 
-        private fun calculateTotalOffset(stackOffset: Double, groupOffset: Double): Double {
+        private fun getCurrentTotalOffset(stackOffset: Double, groupOffset: Double): Double {
             return if (stackInsideGroups)
                 stackOffset + groupOffset
             else
