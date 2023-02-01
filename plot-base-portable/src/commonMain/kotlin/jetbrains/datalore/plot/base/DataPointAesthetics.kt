@@ -36,19 +36,11 @@ abstract class DataPointAesthetics {
         return get(Aes.YMAX)
     }
 
-    fun color(): Color? {
-        return color(Aes.COLOR)
-    }
-
-    fun color(aes: Aes<Color>): Color? {
+    fun color(aes: Aes<Color> = Aes.COLOR): Color? {
         return get(aes)
     }
 
-    fun fill(): Color? {
-        return fill(Aes.FILL)
-    }
-
-    fun fill(aes: Aes<Color>): Color? {
+    fun fill(aes: Aes<Color> = Aes.FILL): Color? {
         return get(aes)
     }
 

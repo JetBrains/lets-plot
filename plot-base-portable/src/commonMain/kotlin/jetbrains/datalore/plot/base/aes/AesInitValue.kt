@@ -119,6 +119,8 @@ object AesInitValue {
     }
 
     operator fun <T> get(aes: TypedKey<T>): T {
-        return VALUE_MAP.get<T>(aes)
-    }
+        val baseAes = Aes.getBaseAes(aes as Aes<T>)
+        @Suppress("UNCHECKED_CAST")
+        return VALUE_MAP.get<T>(baseAes as Aes<T>)
+   }
 }

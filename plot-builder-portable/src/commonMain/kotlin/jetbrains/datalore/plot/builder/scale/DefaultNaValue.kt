@@ -106,7 +106,7 @@ object DefaultNaValue {
     }
 
     /**
-     * For test only (must br TRUE for any Aes)
+     * For test only (must be TRUE for any Aes)
      */
     fun has(aes: Aes<*>): Boolean {
         return VALUE_MAP.containsKey(aes)
@@ -119,6 +119,8 @@ object DefaultNaValue {
     }
 
     operator fun <T> get(aes: TypedKey<T>): T {
-        return VALUE_MAP[aes]
+        val baseAes = Aes.getBaseAes(aes as Aes<T>)
+        @Suppress("UNCHECKED_CAST")
+        return VALUE_MAP.get<T>(baseAes as Aes<T>)
     }
 }

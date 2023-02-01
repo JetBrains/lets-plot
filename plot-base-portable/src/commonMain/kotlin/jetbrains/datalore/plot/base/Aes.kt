@@ -15,16 +15,16 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
     val isColor: Boolean
         get() = isColor(this)
 
-    fun copy(name: String): Aes<T> {
-        return Aes(name, isNumeric)
-    }
-
     init {
         values.add(this)
     }
 
     override fun toString(): String {
         return "aes '$name'"
+    }
+
+    private fun copy(name: String): Aes<T> {
+        return Aes(name, isNumeric)
     }
 
     companion object {
