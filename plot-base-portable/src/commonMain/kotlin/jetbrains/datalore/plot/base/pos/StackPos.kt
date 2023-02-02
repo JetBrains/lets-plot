@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.pos
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
@@ -13,11 +14,32 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
-internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: StackingContext = StackingContext()) : PositionAdjustment {
+enum class StackingType {
+    SUM, LN;
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingContext)
+    companion object {
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingContext: StackingContext): Map<Int, Double> {
+        private val ENUM_INFO = EnumInfoFactory.createEnumInfo<StackingType>()
+
+        fun safeValueOf(v: String): StackingType {
+            return ENUM_INFO.safeValueOf(v) ?:
+            throw IllegalArgumentException(
+                "Unsupported stacking type: '$v'\n" +
+                "Use one of: sum, ln."
+            )
+        }
+    }
+}
+
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingType: StackingType?) : PositionAdjustment {
+
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingType ?: DEF_STACKING_TYPE)
+
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingType: StackingType): Map<Int, Double> {
+        val stackingContext = when (stackingType) {
+            StackingType.SUM -> StackingContext()
+            StackingType.LN -> StackingContext(false)
+        }
         val offsetByIndex = HashMap<Int, Double>()
         aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
@@ -87,5 +109,6 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingContext: Stacki
 
     companion object {
         private const val DEF_VJUST = 1.0
+        val DEF_STACKING_TYPE = StackingType.SUM
     }
 }

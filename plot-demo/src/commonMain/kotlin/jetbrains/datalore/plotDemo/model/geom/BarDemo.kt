@@ -98,7 +98,7 @@ open class BarDemo : SimpleDemoBase() {
             .width(constant(0.75))
             .build()
 
-        val pos = PositionAdjustments.stack(aes, vjust = null)
+        val pos = PositionAdjustments.stack(aes, vjust = null, stackingType = null)
         return createGeomLayer(aes, pos)
     }
 

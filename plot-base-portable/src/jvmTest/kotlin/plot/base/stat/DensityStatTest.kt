@@ -58,7 +58,7 @@ class DensityStatTest {
         val binWidth = (SeriesUtil.range(test)!!).length / (n - 1)
 
         for (kernel in DensityStat.Kernel.values()) { //test for different kernels
-            val stat = Stats.density(n = n, kernel = kernel)
+            val stat = Stats.density(n = n, kernel = kernel, quantiles = emptyList())
 
             val statDf = stat.apply(df, statContext(df))
             assertTrue(statDf.has(Stats.X))

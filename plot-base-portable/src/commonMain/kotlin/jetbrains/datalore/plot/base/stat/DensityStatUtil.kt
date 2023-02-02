@@ -183,7 +183,7 @@ object DensityStatUtil {
         }
     }
 
-    private fun expandByGroupEnds(
+    fun expandByGroupEnds(
         statData: MutableMap<DataFrame.Variable, List<Double>>,
         axisVar: DataFrame.Variable,
         groupVar: DataFrame.Variable,

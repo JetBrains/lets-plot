@@ -98,13 +98,19 @@ class DensityStat(
 
         val statQuantile = DensityStatUtil.calculateQuantiles(statX, statCount, quantiles)
 
-        return DataFrame.Builder()
-            .putNumeric(Stats.X, statX)
-            .putNumeric(Stats.DENSITY, statDensity)
-            .putNumeric(Stats.COUNT, statCount)
-            .putNumeric(Stats.SCALED, statScaled)
-            .putNumeric(Stats.QUANTILE, statQuantile)
-            .build()
+        val statData = DensityStatUtil.expandByGroupEnds(mutableMapOf(
+            Stats.X to statX,
+            Stats.DENSITY to statDensity,
+            Stats.COUNT to statCount,
+            Stats.SCALED to statScaled,
+            Stats.QUANTILE to statQuantile
+        ), Stats.X, Stats.QUANTILE)
+
+        val builder = DataFrame.Builder()
+        for ((variable, series) in statData) {
+            builder.putNumeric(variable, series)
+        }
+        return builder.build()
     }
 
     enum class Kernel {
