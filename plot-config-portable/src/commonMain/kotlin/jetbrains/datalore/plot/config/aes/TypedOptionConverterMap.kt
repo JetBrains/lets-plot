@@ -112,8 +112,9 @@ internal class TypedOptionConverterMap {
 
     operator fun <T> get(aes: Aes<T>): (Any?) -> T? {
         // Safe cast because 'put' is private
+        val baseAes = Aes.getBaseAes(aes)
         @Suppress("UNCHECKED_CAST")
-        return myMap[aes] as (Any?) -> T?
+        return myMap[baseAes] as (Any?) -> T?
     }
 
     fun containsKey(aes: Aes<*>): Boolean {
