@@ -5,27 +5,19 @@
 
 package jetbrains.datalore.plot.builder.layout.axis.label
 
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
-import kotlin.math.ceil
 
 internal class VerticalFlexBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     private val myBreaksProvider: AxisBreaksProvider,
     theme: AxisTheme
-) :
-    AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
-
-    private fun maxTickCount(axisLength: Double): Int {
-        return ceil(axisLength / (PlotLabelSpecFactory.axisTick(theme).height() + MIN_TICK_LABEL_DISTANCE)).toInt()
-    }
+) : AxisLabelsLayout(orientation, axisDomain, theme) {
 
     init {
         require(!orientation.isHorizontal) { orientation.toString() }
@@ -38,22 +30,62 @@ internal class VerticalFlexBreaksLabelsLayout(
     ): AxisLabelsLayoutInfo {
 
         require(axisLength > 0) { "axis length: $axisLength" }
-        val maxTickCount = maxTickCount(axisLength)
-        val breaks = getBreaks(maxTickCount, axisLength)
 
-        return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
-            orientation, breaks,
-            axisDomain,
-            axisMapper,
-            theme
+        val rotationAngle = if (theme.rotateLabels()) theme.labelAngle() else null
+
+        var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
+            axisLength,
+            labelSpec,
+            rotationAngle,
+            side = DoubleVector::y
         )
+
+        var breaks = getBreaks(targetBreakCount, axisLength)
+        var labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
+
+        while (labelsInfo.isOverlap) {
+            // reduce tick count
+            val newTargetBreakCount = BreakLabelsLayoutUtil.estimateBreakCount(
+                breaks.labels,
+                axisLength,
+                labelSpec,
+                rotationAngle,
+                side = DoubleVector::y
+
+            )
+            if (newTargetBreakCount >= targetBreakCount) {
+                // paranoid - highly impossible.
+                break
+            }
+            targetBreakCount = newTargetBreakCount
+            breaks = getBreaks(targetBreakCount, axisLength)
+            labelsInfo = doLayoutLabels(breaks, axisLength, axisMapper)
+        }
+
+        return labelsInfo
     }
 
-    protected fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {
+    private fun getBreaks(maxCount: Int, axisLength: Double): ScaleBreaks {
         return BreakLabelsLayoutUtil.getFlexBreaks(
             myBreaksProvider,
             maxCount,
             axisLength
+        )
+    }
+
+    private fun doLayoutLabels(
+        breaks: ScaleBreaks,
+        axisLength: Double,
+        axisMapper: (Double?) -> Double?,
+    ): AxisLabelsLayoutInfo {
+        return BreakLabelsLayoutUtil.doLayoutVerticalAxisLabels(
+            orientation,
+            axisDomain,
+            labelSpec,
+            breaks,
+            theme,
+            axisLength,
+            axisMapper
         )
     }
 }

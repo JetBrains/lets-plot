@@ -12,16 +12,14 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal abstract class AbstractFixedBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     protected val breaks: ScaleBreaks,
     theme: AxisTheme
-) : AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+) : AxisLabelsLayout(orientation, axisDomain, theme) {
 
     private fun labelBounds(labelLocation: DoubleVector, labelText: String): DoubleRectangle {
         val dim = labelSpec.dimensions(labelText)
@@ -63,7 +61,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     fun createAxisLabelsLayoutInfoBuilder(bounds: DoubleRectangle, overlap: Boolean): AxisLabelsLayoutInfo.Builder {
         return AxisLabelsLayoutInfo.Builder()
             .breaks(breaks)
-            .bounds(applyLabelsMargins(bounds))
+            .bounds(applyLabelMargins(bounds))
             .overlap(overlap)
     }
 
@@ -73,7 +71,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     ): AxisLabelsLayoutInfo {
         if (orientation.isHorizontal) {
             var bounds = DoubleRectangle(axisLength / 2, 0.0, 0.0, 0.0) // empty bounds in the middle of the axis;
-            bounds = applyLabelsMargins(bounds)
+            bounds = applyLabelMargins(bounds)
             return AxisLabelsLayoutInfo.Builder()
                 .breaks(breaks)
                 .bounds(bounds)
@@ -90,5 +88,4 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     companion object {
         val HORIZONTAL_TICK_LOCATION = { x: Double -> DoubleVector(x, 0.0) }
     }
-
 }

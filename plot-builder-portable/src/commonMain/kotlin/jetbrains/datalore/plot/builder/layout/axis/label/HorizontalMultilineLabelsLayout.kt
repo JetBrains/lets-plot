@@ -19,11 +19,10 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 internal class HorizontalMultilineLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme,
     private val maxLines: Int
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
 
     override fun doLayout(
         axisLength: Double,
@@ -85,7 +84,7 @@ internal class HorizontalMultilineLabelsLayout(
             }
         }
 
-        val labelBounds = applyLabelsMargins(bounds)
+        val labelBounds = applyLabelMargins(bounds)
         val verticalAnchor = when (orientation) {
             TOP -> Text.VerticalAnchor.BOTTOM
             else -> Text.VerticalAnchor.TOP

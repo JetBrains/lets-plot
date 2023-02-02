@@ -225,7 +225,7 @@ class AxisComponent(
         return when (orientation) {
             Orientation.LEFT -> DoubleVector(axisTheme.tickLabelMargins().left - distance, 0.0)
             Orientation.RIGHT -> DoubleVector(distance - axisTheme.tickLabelMargins().right, 0.0)
-            Orientation.TOP -> DoubleVector(0.0, axisTheme.tickLabelMargins().top - distance /*- textBounds.height*/)
+            Orientation.TOP -> DoubleVector(0.0, axisTheme.tickLabelMargins().top - distance)
             Orientation.BOTTOM -> DoubleVector(0.0, distance - axisTheme.tickLabelMargins().bottom)
         }
     }

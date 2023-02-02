@@ -18,9 +18,9 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 internal abstract class AxisLabelsLayout protected constructor(
     val orientation: Orientation,
     val axisDomain: DoubleSpan,
-    val labelSpec: LabelSpec,
     val theme: AxisTheme
 ) {
+    protected val labelSpec: LabelSpec = PlotLabelSpecFactory.axisTick(theme)
 
     protected val isHorizontal: Boolean
         get() = orientation.isHorizontal
@@ -42,9 +42,18 @@ internal abstract class AxisLabelsLayout protected constructor(
         )
     }
 
-    internal fun applyLabelsMargins(labelsBounds: DoubleRectangle): DoubleRectangle {
-        return BreakLabelsLayoutUtil.applyLabelsMargins(
-            labelsBounds,
+    internal fun applyLabelMargins(bounds: DoubleRectangle): DoubleRectangle {
+        return BreakLabelsLayoutUtil.applyLabelMargins(
+            bounds,
+            if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
+            theme.tickLabelMargins(),
+            orientation
+        )
+    }
+
+    internal fun alignToLabelMargin(bounds: DoubleRectangle): DoubleRectangle {
+        return BreakLabelsLayoutUtil.alignToLabelMargin(
+            bounds,
             if (theme.showTickMarks()) theme.tickMarkLength() else 0.0,
             theme.tickLabelMargins(),
             orientation
@@ -55,11 +64,11 @@ internal abstract class AxisLabelsLayout protected constructor(
         const val INITIAL_TICK_LABEL = "0000" // Typical tick label to estimate number of breaks (chosen by eye)
         const val MIN_TICK_LABEL_DISTANCE = 20.0  // px
 
-        private fun tickLabelSpec(theme: AxisTheme) = PlotLabelSpecFactory.axisTick(theme)
-
         fun horizontalFlexBreaks(
             orientation: Orientation,
-            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
+            axisDomain: DoubleSpan,
+            breaksProvider: AxisBreaksProvider,
+            theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(orientation.isHorizontal) { orientation.toString() }
@@ -67,7 +76,6 @@ internal abstract class AxisLabelsLayout protected constructor(
             return HorizontalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme),
                 breaksProvider,
                 theme
             )
@@ -85,7 +93,6 @@ internal abstract class AxisLabelsLayout protected constructor(
             return HorizontalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme),
                 breaks,
                 geomAreaInsets,
                 theme
@@ -94,7 +101,9 @@ internal abstract class AxisLabelsLayout protected constructor(
 
         fun verticalFlexBreaks(
             orientation: Orientation,
-            axisDomain: DoubleSpan, breaksProvider: AxisBreaksProvider, theme: AxisTheme
+            axisDomain: DoubleSpan,
+            breaksProvider: AxisBreaksProvider,
+            theme: AxisTheme
         ): AxisLabelsLayout {
 
             require(!orientation.isHorizontal) { orientation.toString() }
@@ -102,7 +111,6 @@ internal abstract class AxisLabelsLayout protected constructor(
             return VerticalFlexBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme),
                 breaksProvider,
                 theme
             )
@@ -114,11 +122,11 @@ internal abstract class AxisLabelsLayout protected constructor(
             breaks: ScaleBreaks,
             theme: AxisTheme
         ): AxisLabelsLayout {
+
             require(!orientation.isHorizontal) { orientation.toString() }
             return VerticalFixedBreaksLabelsLayout(
                 orientation,
                 axisDomain,
-                tickLabelSpec(theme),
                 breaks,
                 theme
             )

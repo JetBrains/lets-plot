@@ -106,6 +106,12 @@ internal class DefaultAxisTheme(
         return getTextStyle(getElemValue(textKey))
     }
 
+    override fun rotateLabels() = !labelAngle().isNaN()
+
+    override fun labelAngle(): Double {
+        return getNumber(getElemValue(textKey), Elem.ANGLE)
+    }
+
     override fun tooltipFill(): Color {
         return getColor(getElemValue(tooltipFillKey), Elem.FILL)
     }

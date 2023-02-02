@@ -12,21 +12,18 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.H_AXIS_LABELS_EXPAND
 import jetbrains.datalore.plot.builder.layout.util.Insets
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.max
 
 internal class HorizontalFixedBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     geomAreaInsets: Insets,
     theme: AxisTheme
 ) : AbstractFixedBreaksLabelsLayout(
     orientation,
     axisDomain,
-    labelSpec,
     breaks,
     theme
 ) {
@@ -57,6 +54,10 @@ internal class HorizontalFixedBreaksLabelsLayout(
             upper = axisLength + axisRightExpand
         )
 
+        if (theme.rotateLabels()) {
+            return rotatedLayout(theme.labelAngle()).doLayout(axisLength, axisMapper)
+        }
+
         var labelsInfo = simpleLayout().doLayout(axisLength, axisMapper)
         if (overlap(labelsInfo, axisSpanExpanded)) {
             labelsInfo = multilineLayout().doLayout(axisLength, axisMapper)
@@ -64,7 +65,7 @@ internal class HorizontalFixedBreaksLabelsLayout(
                 labelsInfo = tiltedLayout().doLayout(axisLength, axisMapper)
                 if (overlap(labelsInfo, axisSpanExpanded)) {
 //                    println("Overlap")
-                    labelsInfo = verticalLayout(labelSpec).doLayout(axisLength, axisMapper)
+                    labelsInfo = verticalLayout().doLayout(axisLength, axisMapper)
                 }
             }
         }
@@ -75,7 +76,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
         return HorizontalSimpleLabelsLayout(
             orientation,
             axisDomain,
-            labelSpec,
             breaks,
             theme
         )
@@ -85,7 +85,6 @@ internal class HorizontalFixedBreaksLabelsLayout(
         return HorizontalMultilineLabelsLayout(
             orientation,
             axisDomain,
-            labelSpec,
             breaks,
             theme,
             2
@@ -96,17 +95,25 @@ internal class HorizontalFixedBreaksLabelsLayout(
         return HorizontalTiltedLabelsLayout(
             orientation,
             axisDomain,
-            labelSpec,
             breaks,
             theme
         )
     }
 
-    private fun verticalLayout(labelSpec: LabelSpec): AxisLabelsLayout {
+    private fun rotatedLayout(angle: Double): AxisLabelsLayout {
+        return HorizontalRotatedLabelsLayout(
+            orientation,
+            axisDomain,
+            breaks,
+            theme,
+            angle
+        )
+    }
+
+    private fun verticalLayout(): AxisLabelsLayout {
         return HorizontalVerticalLabelsLayout(
             orientation,
             axisDomain,
-            labelSpec,
             breaks,
             theme
         )

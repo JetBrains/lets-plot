@@ -388,7 +388,8 @@ def element_text(
         family=None,
         face=None,
         size=None,
-        # ToDo: angle, lineheight
+        angle=None,
+        # ToDo: lineheight
         hjust=None,
         vjust=None,
         margin=None,
@@ -408,6 +409,8 @@ def element_text(
         Font face ("plain", "italic", "bold", "bold_italic").
     size : int
         Text size in pt.
+    angle : float
+        Angle to rotate the text (in degrees).
     hjust : float
         Horizontal justification (in [0, 1]).
         0 - left-justified
