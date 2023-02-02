@@ -68,7 +68,6 @@ internal object BreakLabelsLayoutUtil {
             return VerticalRotatedLabelsLayout(
                 orientation,
                 axisDomain,
-                labelSpec,
                 breaks,
                 theme,
                 theme.labelAngle()
@@ -251,15 +250,15 @@ internal object BreakLabelsLayoutUtil {
     fun estimateBreakCount(
         labels: List<String>,
         axisLength: Double,
-        axisTick: LabelSpec,
+        tickLabelSpec: LabelSpec,
         rotationAngle: Double?,
         side: (DoubleVector) -> Double
     ): Int {
         val dims = labels.map { label ->
             if (rotationAngle != null) {
-                rotatedLabelBounds(axisTick.dimensions(label), rotationAngle).dimension
+                rotatedLabelBounds(tickLabelSpec.dimensions(label), rotationAngle).dimension
             } else {
-                axisTick.dimensions(label)
+                tickLabelSpec.dimensions(label)
             }
         }
         val longestSide = dims.maxOfOrNull(side) ?: 0.0

@@ -9,19 +9,15 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class HorizontalFlexBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     private val myBreaksProvider: AxisBreaksProvider,
     theme: AxisTheme
-) :
-    AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+) : AxisLabelsLayout(orientation, axisDomain, theme) {
 
     private val myRotationAngle = if (theme.rotateLabels()) theme.labelAngle() else null
 
@@ -37,7 +33,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
 
         var targetBreakCount = BreakLabelsLayoutUtil.estimateBreakCountInitial(
             axisLength,
-            PlotLabelSpecFactory.axisTick(theme),
+            labelSpec,
             myRotationAngle,
             side = DoubleVector::x
         )
@@ -49,7 +45,7 @@ internal class HorizontalFlexBreaksLabelsLayout(
             val newTargetBreakCount = BreakLabelsLayoutUtil.estimateBreakCount(
                 breaks.labels,
                 axisLength,
-                PlotLabelSpecFactory.axisTick(theme),
+                labelSpec,
                 myRotationAngle,
                 side = DoubleVector::x
             )
@@ -74,7 +70,6 @@ internal class HorizontalFlexBreaksLabelsLayout(
             HorizontalRotatedLabelsLayout(
                 orientation,
                 axisDomain,
-                labelSpec,
                 breaks,
                 theme,
                 myRotationAngle
@@ -83,7 +78,6 @@ internal class HorizontalFlexBreaksLabelsLayout(
             HorizontalSimpleLabelsLayout(
                 orientation,
                 axisDomain,
-                labelSpec,
                 breaks,
                 theme
             )

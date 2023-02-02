@@ -13,17 +13,15 @@ import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
 import jetbrains.datalore.plot.builder.guide.Orientation.TOP
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import kotlin.math.abs
 
 internal class HorizontalVerticalLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
 
     val labelHorizontalAnchor: Text.HorizontalAnchor
         get() = when (orientation) {

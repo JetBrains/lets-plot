@@ -12,17 +12,15 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class HorizontalRotatedLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     breaks: ScaleBreaks,
     theme: AxisTheme,
     private val myRotationAngle: Double
-) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, labelSpec, breaks, theme) {
+) : AbstractFixedBreaksLabelsLayout(orientation, axisDomain, breaks, theme) {
 
     override fun doLayout(
         axisLength: Double,

@@ -10,17 +10,14 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
 internal class VerticalFlexBreaksLabelsLayout(
     orientation: Orientation,
     axisDomain: DoubleSpan,
-    labelSpec: LabelSpec,
     private val myBreaksProvider: AxisBreaksProvider,
     theme: AxisTheme
-) :
-    AxisLabelsLayout(orientation, axisDomain, labelSpec, theme) {
+) : AxisLabelsLayout(orientation, axisDomain, theme) {
 
     init {
         require(!orientation.isHorizontal) { orientation.toString() }
