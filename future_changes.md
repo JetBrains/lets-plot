@@ -15,6 +15,7 @@
 
 - `pandas` library was added to dependencies of the `residual_plot()` function.
 - Python packages for `Windows` no longer require `MinGW` tools to run.
+- parameter `flat=True` turns off lines re-projection, keeping the original number of points.
 
 ### Fixed
 
