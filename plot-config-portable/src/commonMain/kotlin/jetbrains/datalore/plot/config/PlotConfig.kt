@@ -162,11 +162,14 @@ abstract class PlotConfig(
         }
 
         fun assertFigSpecOrErrorMessage(opts: Map<String, Any>) {
-            check(isFailure(opts) || isFigSpec(opts))
+            if (!isFailure(opts)) {
+                assertFigSpec(opts)
+            }
         }
 
-        fun assertFigSpec(opts: Map<String, Any>) {
-            check(isFigSpec(opts))
+        private fun assertFigSpec(opts: Map<String, Any>) {
+            // Will throw an IllegalArgumentException is something is wrong.
+            figSpecKind(opts)
         }
 
         fun isFailure(opts: Map<String, Any>): Boolean {
@@ -177,22 +180,12 @@ abstract class PlotConfig(
             return opts[ERROR_MESSAGE].toString()
         }
 
-        //        fun isPlotSpec(opts: Map<*, *>): Boolean {
-//            return FigKind.PLOT_SPEC == figSpecKind(opts)
-//        }
-//
-//        fun isGGBunchSpec(opts: Map<*, *>): Boolean {
-//            return FigKind.GG_BUNCH_SPEC == figSpecKind(opts)
-//        }
-//
-        fun isFigSpec(opts: Map<*, *>): Boolean {
-            return when (figSpecKind(opts)) {
-                else -> true
-            }
-        }
-
         fun figSpecKind(opts: Map<*, *>): FigKind {
             return FigKind.fromOption(opts[Meta.KIND]?.toString())
+        }
+
+        fun figSpecKind(opts: OptionsAccessor): FigKind {
+            return FigKind.fromOption(opts.getStringSafe(Meta.KIND))
         }
     }
 }

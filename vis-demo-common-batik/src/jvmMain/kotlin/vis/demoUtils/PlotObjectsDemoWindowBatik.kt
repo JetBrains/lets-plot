@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgComponent
-import jetbrains.datalore.plot.builder.PlotSvgContainer
+import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.vis.demoUtils.swing.PlotObjectsDemoWindowBase
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import java.awt.Dimension
@@ -29,8 +29,9 @@ class PlotObjectsDemoWindowBatik(
 
     override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
         val plotContainer = PlotContainer(
-            PlotSvgContainer(
+            PlotSvgRoot(
                 plot,
+                liveMapCursorServiceConfig = null,
                 DoubleRectangle(
                     DoubleVector.ZERO, DoubleVector(
                         plotSize.getWidth(),
@@ -40,7 +41,7 @@ class PlotObjectsDemoWindowBatik(
             )
         )
 
-        plotContainer.ensureContentBuilt()
+//        plotContainer.ensureContentBuilt()
         return BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
     }
 }

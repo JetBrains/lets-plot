@@ -258,6 +258,10 @@ open class OptionsAccessor(
         return AesOptionConversion.apply(aes, v)
     }
 
+    fun toMap(): Map<String, Any> {
+        return defaultOptions + options
+    }
+
     companion object {
         fun over(map: Map<String, Any>): OptionsAccessor {
             return OptionsAccessor(map)

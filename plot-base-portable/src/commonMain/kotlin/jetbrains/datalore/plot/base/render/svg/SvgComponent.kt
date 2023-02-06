@@ -14,7 +14,8 @@ import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 
 abstract class SvgComponent {
-    private var myIsBuilt: Boolean = false
+    protected var isBuilt: Boolean = false
+        private set
     private var myIsBuilding: Boolean = false
     private val myRootGroup = SvgGElement()
     private val myChildComponents = ArrayList<SvgComponent>()
@@ -24,7 +25,7 @@ abstract class SvgComponent {
 
     protected val childComponents: List<SvgComponent>
         get() {
-            require(myIsBuilt) { "Plot has not yet built" }
+            require(isBuilt) { "Plot has not yet built" }
             return ArrayList(myChildComponents)
         }
 
@@ -35,7 +36,7 @@ abstract class SvgComponent {
         }
 
     fun ensureBuilt() {
-        if (!(myIsBuilt || myIsBuilding)) {
+        if (!(isBuilt || myIsBuilding)) {
             buildComponentIntern()
         }
     }
@@ -46,7 +47,7 @@ abstract class SvgComponent {
             buildComponent()
         } finally {
             myIsBuilding = false
-            myIsBuilt = true
+            isBuilt = true
         }
     }
 
@@ -61,7 +62,7 @@ abstract class SvgComponent {
     }
 
     protected fun needRebuild() {
-        if (myIsBuilt) {
+        if (isBuilt) {
             clear()
             buildComponentIntern()
         }
@@ -71,8 +72,8 @@ abstract class SvgComponent {
         myCompositeRegistration.add(r)
     }
 
-    fun clear() {
-        myIsBuilt = false
+    open fun clear() {
+        isBuilt = false
         for (child in myChildComponents) {
             child.clear()
         }

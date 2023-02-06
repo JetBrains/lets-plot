@@ -6,6 +6,7 @@
 package jetbrains.datalore.vis.swing
 
 import javafx.scene.Parent
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
@@ -63,6 +64,8 @@ class SceneMapperJfxPanel(
 
     override fun dispose() {
         registrations.dispose()
+
+        AwtContainerDisposer(this).dispose()
 
         // Detach svg root.
         nodeContainer.root().set(SvgSvgElement())

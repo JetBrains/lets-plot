@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot
 
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.plot.builder.PlotContainer
@@ -86,7 +87,7 @@ class AwtLiveMapPanel(
     override fun dispose() {
         awtContainerDisposer.dispose()
         registrations.forEach(Disposable::dispose)
-        plotContainer.clearContent()
+        plotContainer.dispose()
         cursorServiceConfig.defaultSetter { }
         cursorServiceConfig.pointerSetter { }
     }

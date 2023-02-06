@@ -5,14 +5,12 @@
 
 package jetbrains.datalore.vis.demoUtils.swing
 
-import jetbrains.datalore.plot.builder.PlotSvgComponent
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
 
 abstract class PlotResizableDemoWindowBase(
     title: String,
-    private val plot: PlotSvgComponent,
     private val plotSize: Dimension
 ) : JFrame(title) {
 
@@ -31,7 +29,7 @@ abstract class PlotResizableDemoWindowBase(
 
     fun open() {
         SwingUtilities.invokeLater {
-            rootPanel.add(createPlotComponent(plot, plotSize))
+            rootPanel.add(createPlotComponent(plotSize))
 
             pack()
             setLocationRelativeTo(null)  // move to the screen center
@@ -39,5 +37,5 @@ abstract class PlotResizableDemoWindowBase(
         }
     }
 
-    protected abstract fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent
+    protected abstract fun createPlotComponent(plotSize: Dimension): JComponent
 }

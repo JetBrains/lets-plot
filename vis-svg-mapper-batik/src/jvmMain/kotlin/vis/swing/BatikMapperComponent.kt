@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.vis.swing
 
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.vis.svg.*
@@ -21,7 +22,7 @@ class BatikMapperComponent(
 ) : JPanel(), Disposable {
 
     private val myHelper: BatikMapperComponentHelper
-    private var myIsDisposed: Boolean = false
+    private var isDisposed: Boolean = false
 
     private val registrations = CompositeRegistration()
 
@@ -30,6 +31,7 @@ class BatikMapperComponent(
 //        background = Color(0, 0, 0, 0)
         isOpaque = false
         cursor = Cursor(Cursor.CROSSHAIR_CURSOR)
+        layout = null  // Composite figure contains sub-panels with provided bounds.
 
         myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
@@ -69,9 +71,11 @@ class BatikMapperComponent(
     }
 
     override fun dispose() {
-        require(!myIsDisposed) { "Alreadey disposed." }
+        require(!isDisposed) { "Alreadey disposed." }
         registrations.dispose()
         myHelper.dispose()
+
+        AwtContainerDisposer(this).dispose()
     }
 
     companion object {

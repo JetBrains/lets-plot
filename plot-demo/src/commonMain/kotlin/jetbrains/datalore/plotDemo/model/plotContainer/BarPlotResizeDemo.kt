@@ -5,8 +5,6 @@
 
 package jetbrains.datalore.plotDemo.model.plotContainer
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DiscreteTransform
@@ -16,9 +14,6 @@ import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.PlotSvgComponent
-import jetbrains.datalore.plot.builder.PlotSvgContainer
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -33,17 +28,7 @@ class BarPlotResizeDemo private constructor(
     private val xScale: Scale
 ) {
 
-    fun createPlotContainer(plotSize: DoubleVector): PlotContainer {
-        val plot = createPlot()
-        return PlotContainer(
-            PlotSvgContainer(
-                plot,
-                DoubleRectangle(DoubleVector.ZERO, plotSize)
-            )
-        )
-    }
-
-    fun createPlot(): PlotSvgComponent {
+    fun createPlotAssembler(): PlotAssembler {
         val varX = sclData.varX
         val varY = sclData.varY
         val varCat = sclData.varCat
@@ -99,17 +84,6 @@ class BarPlotResizeDemo private constructor(
             .build(data, scaleByAes, scaleMappersNP)
 
 
-        //Theme t = new DefaultTheme() {
-        //  @Override
-        //  public AxisTheme axisX() {
-        //    return new DefaultAxisTheme() {
-        //      @Override
-        //      public boolean showTickLabels() {
-        //        return false;
-        //      }
-        //    };
-        //  }
-        //};
         val assembler = PlotAssembler.demoAndTest(
             listOf(layer),
             scaleByAes,
@@ -117,7 +91,8 @@ class BarPlotResizeDemo private constructor(
             CoordProviders.cartesian(),
             DefaultTheme.minimal2()
         )
-        return assembler.createPlot()
+
+        return assembler
     }
 
     companion object {

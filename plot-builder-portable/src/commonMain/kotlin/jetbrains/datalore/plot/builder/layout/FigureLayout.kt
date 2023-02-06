@@ -5,5 +5,5 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-internal interface FigureLayout {
+interface FigureLayout {
 }

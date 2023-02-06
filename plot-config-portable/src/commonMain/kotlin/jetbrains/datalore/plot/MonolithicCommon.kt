@@ -7,14 +7,15 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.config.CompositeFigureBuildInfo
+import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.layout.composite.FigureGridLayout
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svgToString.SvgToString
 import kotlin.math.max
-
 
 object MonolithicCommon {
 
@@ -41,10 +42,8 @@ object MonolithicCommon {
             computationMessagesHandler(computationMessages)
         }
 
-        return success.buildInfos.map { figureBuildInfo ->
-            val plotSvgContainer = figureBuildInfo.createFigure()
-            plotSvgContainer.ensureContentBuilt()
-            plotSvgContainer.svg
+        return success.buildInfos.map { buildInfo ->
+            FigureToPlainSvg(buildInfo).eval()
         }.map { svgToString.render(it) }
     }
 
@@ -74,7 +73,7 @@ object MonolithicCommon {
             return PlotsBuildResult.Error(errorMessage)
         }
 
-        return when (val kind = PlotConfig.figSpecKind(plotSpec)) {
+        return when (PlotConfig.figSpecKind(plotSpec)) {
             FigKind.PLOT_SPEC -> PlotsBuildResult.Success(
                 listOf(
                     buildSinglePlotFromProcessedSpecs(
@@ -86,7 +85,16 @@ object MonolithicCommon {
                 )
             )
 
-            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+            FigKind.SUBPLOTS_SPEC -> PlotsBuildResult.Success(
+                listOf(
+                    buildFigGridFromProcessedSpecs(
+                        plotSpec,
+                        plotSize,
+                        plotMaxWidth,
+                        plotPreferredWidth
+                    )
+                )
+            )
 
             FigKind.GG_BUNCH_SPEC -> buildGGBunchFromProcessedSpecs(
                 plotSpec,
@@ -141,13 +149,12 @@ object MonolithicCommon {
         return PlotsBuildResult.Success(buildInfos)
     }
 
-
     private fun buildSinglePlotFromProcessedSpecs(
-        plotSpec: MutableMap<String, Any>,
+        plotSpec: Map<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
-    ): PlotFigureBuildInfo {
+    ): PlotBuildInfo {
 
         val computationMessages = ArrayList<String>()
         val config = PlotConfigClientSide.create(plotSpec) {
@@ -164,7 +171,7 @@ object MonolithicCommon {
         )
 
         val assembler = createPlotAssembler(config)
-        return PlotFigureBuildInfo(
+        return PlotBuildInfo(
             assembler,
             plotSpec,
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
@@ -172,9 +179,70 @@ object MonolithicCommon {
         )
     }
 
-    private fun createPlotAssembler(
-        config: PlotConfigClientSide
-    ): PlotAssembler {
+    private fun buildFigGridFromProcessedSpecs(
+        plotSpec: Map<String, Any>,
+        plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
+        plotPreferredWidth: Double?
+    ): CompositeFigureBuildInfo {
+        // ToDo: collect computationMessages.
+        val computationMessages = ArrayList<String>()
+        val gridConfig = FigGridConfigClientSide(plotSpec) {
+            computationMessages.addAll(it)
+        }
+
+        val preferredSize = PlotSizeHelper.subPlotsSize(
+            plotSpec,
+            plotSize,
+            plotMaxWidth,
+            plotPreferredWidth,
+        )
+
+        return buildFigureGrid(
+            gridConfig,
+            preferredSize
+        )
+    }
+
+    private fun buildFigureGrid(
+        gridConfig: FigGridConfigClientSide,
+        preferredSize: DoubleVector,
+    ): CompositeFigureBuildInfo {
+
+        val gridElements: List<FigureBuildInfo?> = gridConfig.elementConfigs.map {
+            it?.let {
+                when (PlotConfig.figSpecKind(it)) {
+                    FigKind.PLOT_SPEC -> buildSinglePlotFromProcessedSpecs(
+                        plotSpec = it.toMap(),
+                        plotSize = null,           // Will be updateed by subplots' layout.
+                        plotMaxWidth = null,
+                        plotPreferredWidth = null
+                    )
+
+                    FigKind.SUBPLOTS_SPEC -> {
+                        val gridOptions = it as FigGridConfigClientSide
+                        buildFigureGrid(
+                            gridOptions,
+                            preferredSize = DoubleVector.ZERO // Will be updateed by subplots' layout.
+                        )
+                    }
+
+                    FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
+                }
+            }
+        }
+
+        return CompositeFigureBuildInfo(
+            elements = gridElements,
+            layout = FigureGridLayout(
+                ncol = gridConfig.ncol,
+                nrow = gridConfig.nrow,
+            ),
+            DoubleRectangle(DoubleVector.ZERO, preferredSize),
+        )
+    }
+
+    private fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         return PlotConfigClientSideUtil.createPlotAssembler(config)
     }
 

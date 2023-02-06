@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot
 
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.Disposable
 import java.awt.LayoutManager
 import javax.swing.JPanel

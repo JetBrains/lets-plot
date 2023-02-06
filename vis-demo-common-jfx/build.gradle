@@ -18,6 +18,7 @@ kotlin {
                 implementation project(':base')
                 implementation project(':mapper-core')
                 implementation project(':vis-svg-portable')
+                implementation project(':plot-base-portable')
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')

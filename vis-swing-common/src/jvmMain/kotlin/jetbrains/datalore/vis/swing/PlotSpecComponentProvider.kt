@@ -1,7 +1,6 @@
 package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.plot.PlotSizeHelper
 import jetbrains.datalore.plot.config.FigKind
@@ -79,21 +78,33 @@ abstract class PlotSpecComponentProvider(
             preserveAspectRatio: Boolean,
             containerSize: Dimension
         ): Dimension {
-            val width = containerSize.width
-            val height = containerSize.height
 
             if (PlotConfig.isFailure(figureSpec)) {
                 // just keep given size
-                return Dimension(width, height)
+                return containerSize
             }
 
-            return when (val kind = PlotConfig.figSpecKind(figureSpec)) {
-                FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
+            return when (PlotConfig.figSpecKind(figureSpec)) {
 
                 FigKind.GG_BUNCH_SPEC -> {
                     // Don't scale GGBunch.
                     val bunchSize = PlotSizeHelper.plotBunchSize(figureSpec)
                     Dimension(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
+                }
+
+                FigKind.SUBPLOTS_SPEC -> {
+                    // Subplots figure has flexible size.
+                    if (!preserveAspectRatio) {
+                        return containerSize
+                    }
+
+                    val defaultSize = PlotSizeHelper.subPlotsSize(
+                        figureSpec,
+                        plotSize = null,
+                        plotMaxWidth = null,
+                        plotPreferredWidth = null,
+                    )
+                    fitPlotInContainer(plotSize = defaultSize, containerSize)
                 }
 
                 FigKind.PLOT_SPEC -> {
@@ -112,18 +123,25 @@ abstract class PlotSpecComponentProvider(
                         config.containsLiveMap
                     )
 
-                    val aspectRatio = defaultSize.x / defaultSize.y
-
-                    if (aspectRatio >= 1.0) {
-                        val plotHeight = width / aspectRatio
-                        val scaling = if (plotHeight > height) height / plotHeight else 1.0
-                        Dimension(floor(width * scaling).toInt(), floor(plotHeight * scaling).toInt())
-                    } else {
-                        val plotWidth = height * aspectRatio
-                        val scaling = if (plotWidth > width) width / plotWidth else 1.0
-                        Dimension(floor(plotWidth * scaling).toInt(), floor(height * scaling).toInt())
-                    }
+                    fitPlotInContainer(plotSize = defaultSize, containerSize)
                 }
+            }
+        }
+
+        private fun fitPlotInContainer(plotSize: DoubleVector, containerSize: Dimension): Dimension {
+            val aspectRatio = plotSize.x / plotSize.y
+
+            val width = containerSize.width
+            val height = containerSize.height
+
+            return if (aspectRatio >= 1.0) {
+                val plotHeight = width / aspectRatio
+                val scaling = if (plotHeight > height) height / plotHeight else 1.0
+                Dimension(floor(width * scaling).toInt(), floor(plotHeight * scaling).toInt())
+            } else {
+                val plotWidth = height * aspectRatio
+                val scaling = if (plotWidth > width) width / plotWidth else 1.0
+                Dimension(floor(plotWidth * scaling).toInt(), floor(height * scaling).toInt())
             }
         }
     }

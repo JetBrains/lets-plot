@@ -12,7 +12,7 @@ fun main() {
     with(BarPlotResizeDemo.discreteX()) {
         PlotResizableDemoWindowJfx(
             "Bar plot (X-discrete)",
-            plot = createPlot()
+            plotAssembler = createPlotAssembler()
         ).open()
     }
 }

@@ -7,7 +7,6 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import javax.swing.JComponent
 
@@ -46,16 +45,19 @@ object MonolithicAwt {
         )
     }
 
-    fun buildPlotComponent(
-        plotContainer: PlotContainer,
-        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): JComponent {
-        return AwtPlotFactoryUtil.buildPlotComponent(
-            plotContainer,
-            svgComponentFactory, executor
-        )
-    }
+
+// DO NOT REMOVE THIS FUNCTION !!!
+
+//    fun buildPlotComponent(
+//        plotContainer: PlotContainer,
+//        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
+//        executor: (() -> Unit) -> Unit
+//    ): JComponent {
+//        return AwtPlotFactoryUtil.buildPlotComponent(
+//            plotContainer,
+//            svgComponentFactory, executor
+//        )
+//    }
 
     /**
      * Static SVG export

@@ -8,8 +8,8 @@ package jetbrains.datalore.vis.demoUtils
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.PlotContainer
-import jetbrains.datalore.plot.builder.PlotSvgComponent
-import jetbrains.datalore.plot.builder.PlotSvgContainer
+import jetbrains.datalore.plot.builder.PlotSvgRoot
+import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import jetbrains.datalore.vis.swing.PlotComponentProvider
 import jetbrains.datalore.vis.swing.PlotPanel
@@ -20,30 +20,22 @@ import javax.swing.JComponent
 
 class PlotResizableDemoWindowJfx(
     title: String,
-    plot: PlotSvgComponent,
+    private val plotAssembler: PlotAssembler,
     plotSize: Dimension = Dimension(500, 350)
 ) : PlotResizableDemoWindowBase(
     title,
-    plot = plot,
     plotSize = plotSize
 ) {
 
-    override fun createPlotComponent(plot: PlotSvgComponent, plotSize: Dimension): JComponent {
+    override fun createPlotComponent(plotSize: Dimension): JComponent {
         @Suppress("NAME_SHADOWING")
         val plotSize = DoubleVector(
             plotSize.getWidth(),
             plotSize.getHeight(),
         )
 
-        val plotContainer = PlotContainer(
-            PlotSvgContainer(
-                plot,
-                DoubleRectangle(DoubleVector.ZERO, plotSize)
-            )
-        )
-
         return PlotPanel(
-            plotComponentProvider = MyPlotComponentProvider(plotContainer, plotSize),
+            plotComponentProvider = MyPlotComponentProvider(plotAssembler, plotSize),
             preferredSizeFromPlot = true,
             repaintDelay = 100,
             applicationContext = DefaultSwingContextJfx()
@@ -51,19 +43,34 @@ class PlotResizableDemoWindowJfx(
     }
 
     private class MyPlotComponentProvider(
-        private val plotContainer: PlotContainer,
-        private val plotSize: DoubleVector,
+        private val plotAssembler: PlotAssembler,
+        private val plotInitialSize: DoubleVector,
     ) : PlotComponentProvider {
         override fun getPreferredSize(containerSize: Dimension): Dimension {
             return containerSize
         }
 
         override fun createComponent(containerSize: Dimension?): JComponent {
-            plotContainer.clearContent()
-            containerSize?.run {
-                plotContainer.resize(DoubleVector(getWidth(), getHeight()))
+            val plotSize = if (containerSize != null) {
+                DoubleVector(
+                    containerSize.getWidth(),
+                    containerSize.getHeight()
+                )
+            } else {
+                plotInitialSize
             }
-            plotContainer.ensureContentBuilt()
+
+            val plotSvgComponent = plotAssembler.createPlot()
+//            plotSvgComponent.resize(plotSize)
+            val plotContainer = PlotContainer(
+                PlotSvgRoot(
+                    plotSvgComponent,
+                    liveMapCursorServiceConfig = null,
+                    DoubleRectangle(DoubleVector.ZERO, plotSize)
+                )
+            )
+//            plotContainer.ensureContentBuilt()
+
             return SceneMapperJfxPanel(plotContainer.svg, stylesheets = emptyList())
         }
     }
