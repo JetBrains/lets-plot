@@ -11,55 +11,54 @@ import jetbrains.datalore.vis.swing.batik.DefaultPlotPanelBatik
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.GridLayout
-import javax.swing.JButton
-import javax.swing.JFrame
-import javax.swing.JPanel
-import javax.swing.JTextArea
+import javax.swing.*
 
 fun main() {
-    val window = Window()
-    window.isResizable = false // temp. Incorrect plot size after resize.
-    window.isVisible = true
-}
-
-
-class Window: JFrame("Spec Demo") {
-    private val plotSpec = JTextArea(
-        """
+    val plotSpecEditor = PlotSpecEditor()
+    // Plot spec can be set by PLOT_SPEC env var via IDEA run configuration.
+    // TODO: add pretty print for JsonSupport
+    plotSpecEditor.plotSpec.text = System.getenv("PLOT_SPEC")
+        ?: """
         {
             'kind': 'plot',
             'data': { 'time': ['Lunch','Lunch', 'Dinner', 'Dinner', 'Dinner'] },
             'mapping': { 'x': 'time', 'color': 'time', 'fill': 'time' },
-            'layers': [
-                { 'geom': 'bar', 'alpha': '0.5' }
-            ]
-        }""".trimIndent()
-    )
+            'layers': [ { 'geom': 'bar', 'alpha': '0.5' } ]
+        }
+        """.trimIndent()
+
+    plotSpecEditor.evaluate()
+    plotSpecEditor.isVisible = true
+}
+
+
+class PlotSpecEditor : JFrame("PlotSpec Editor") {
     private val plotPanel = JPanel()
-    private val controlPanel = JPanel().apply {
-        layout =  BorderLayout()
-        add(plotSpec, BorderLayout.CENTER)
-        add(JButton("Evaluate").apply {
-            addActionListener {
-                evaluate(plotSpec.text)
-            }
-        }, BorderLayout.PAGE_END)
+    val plotSpec = JTextArea().apply {
+        wrapStyleWord = true
+        lineWrap = true
+        autoscrolls = true
     }
 
     init {
+        isResizable = false // temp. Incorrect plot size after resize.
+        defaultCloseOperation = EXIT_ON_CLOSE
         preferredSize = Dimension(1200, 600)
         layout = GridLayout(1, 2)
-        contentPane.add(controlPanel)
+        contentPane.add(
+            JPanel().apply {
+                layout = BorderLayout()
+                add(JScrollPane(plotSpec), BorderLayout.CENTER)
+                add(JButton("Evaluate").apply { addActionListener { evaluate() } }, BorderLayout.PAGE_END)
+            })
         contentPane.add(plotPanel)
         pack()
-
-        evaluate(plotSpec.text)
     }
 
-    private fun evaluate(plotSpec: String) {
+    fun evaluate() {
         plotPanel.components.forEach(plotPanel::remove)
         plotPanel.add(DefaultPlotPanelBatik(
-            processedSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec), frontendOnly = false),
+            processedSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(plotSpec.text), frontendOnly = false),
             preferredSizeFromPlot = false,
             repaintDelay = 300,
             preserveAspectRatio = false,
