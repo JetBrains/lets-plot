@@ -60,11 +60,11 @@ object TestUtil {
         assertEquals(expectedNumLayers, plotConfigClientSide.layerConfigs.size)
     }
 
-    private fun createGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {
+    internal fun createGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {
         val transformed = BackendSpecTransformUtil.processTransform(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigClientSide.create(transformed) {}
-        return PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile.single()
+        return PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile.flatten()
     }
 
     internal fun getSingleGeomLayer(plotSpec: MutableMap<String, Any>): GeomLayer {

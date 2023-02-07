@@ -411,4 +411,27 @@ object DataProcessing {
         val data: DataFrame,
         val groupingContext: GroupingContext
     )
+
+    fun regroupData(
+        data: DataFrame,
+        groupingContext: GroupingContext
+    ): DataFrame {
+        val groups = groupingContext.groupMapper
+        if (groups === GroupUtil.SINGLE_GROUP) {
+            // if only one group no need to modify
+            return data
+        }
+
+        val groupMerger = GroupMerger()
+        splitByGroup(data, groups).forEach { d ->
+            groupMerger.addGroup(d, d.rowCount())
+        }
+        val resultSeries = groupMerger.getResultSeries()
+        return Builder().run {
+            resultSeries.keys.forEach { variable ->
+                put(variable, resultSeries[variable]!!)
+            }
+            build()
+        }
+    }
 }
