@@ -17,9 +17,9 @@ import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
+import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
-import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
@@ -177,6 +177,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.has(Segment.FLAT)) {
                     geom.flat = opts.getBoolean(Segment.FLAT)
                 }
+                if (opts.has(Segment.GEODESIC)) {
+                    geom.geodesic = opts.getBoolean(Segment.GEODESIC)
+                }
                 geom
             }
 
@@ -187,6 +190,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 if (opts.has(Path.FLAT)) {
                     geom.flat = opts.getBoolean(Path.FLAT)
+                }
+                if (opts.has(Segment.GEODESIC)) {
+                    geom.geodesic = opts.getBoolean(Segment.GEODESIC)
                 }
                 geom
             }

@@ -192,7 +192,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, use_crs=None,
-              flat=None,
+              flat=None, geodesic=None,
               **other_args):
     """
     Connect observations in the order, how they appear in the data.
@@ -237,6 +237,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
     flat : Boolean, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
+    geodesic : Boolean, default=False
+        Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -334,7 +336,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
-                 flat=flat,
+                 flat=flat, geodesic=geodesic,
                  **other_args)
 
 
@@ -5059,7 +5061,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 arrow=None, flat=None, **other_args):
+                 arrow=None, flat=None, geodesic=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -5094,6 +5096,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specification for arrow head, as created by `arrow()` function.
     flat : Boolean, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
+    geodesic : Boolean, default=False
+        Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5162,6 +5166,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=tooltips,
                  arrow=arrow,
                  flat=flat,
+                 geodesic=geodesic,
                  **other_args)
 
 

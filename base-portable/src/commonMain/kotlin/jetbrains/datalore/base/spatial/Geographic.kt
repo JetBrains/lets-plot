@@ -12,6 +12,14 @@ import kotlin.math.min
 class LonLat
 typealias LonLatPoint = Vec<LonLat>
 
+const val EARTH_RADIUS = 6378137.0
+const val MIN_LONGITUDE = -180.0
+const val MAX_LONGITUDE = 180.0
+const val FULL_LONGITUDE = MAX_LONGITUDE - MIN_LONGITUDE
+const val MIN_LATITUDE = -90.0
+const val MAX_LATITUDE = 90.0
+const val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
+
 val EARTH_RECT = Rect<LonLat>(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
 val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, myLoopX = true, myLoopY = false)
 

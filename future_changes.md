@@ -9,7 +9,12 @@
 
 - `angle` parameter in `element_text()` for `axis_text, axis_text_x, axis_text_y` in a `theme()` (i.e. to axis labels).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/element_text_angle.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/element_text_angle.ipynb).  
+
+
+- `geodesic` parameter for `geom_segment()` and `geom_path()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/geodesic_path.ipynb).
 
 ### Changed
 

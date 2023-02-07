@@ -12,6 +12,9 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
+import jetbrains.datalore.plot.base.geom.PieGeom
+import jetbrains.datalore.plot.base.geom.PointGeom
+import jetbrains.datalore.plot.base.geom.SegmentGeom
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
 import jetbrains.datalore.vis.canvas.FontStyle
 import jetbrains.datalore.vis.canvas.FontWeight
@@ -32,16 +35,16 @@ object LayerConverter {
             )
 
             val (layerKind, dataPointLiveMapAesthetics) = when (layer.geomKind) {
-                POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom)
+                POINT -> MapLayerKind.POINT to dataPointsConverter.toPoint(layer.geom as PointGeom)
                 H_LINE -> MapLayerKind.H_LINE to dataPointsConverter.toHorizontalLine()
                 V_LINE -> MapLayerKind.V_LINE to dataPointsConverter.toVerticalLine()
-                SEGMENT -> MapLayerKind.PATH to dataPointsConverter.toSegment(layer.geom)
+                SEGMENT -> MapLayerKind.PATH to dataPointsConverter.toSegment(layer.geom as SegmentGeom)
                 RECT -> MapLayerKind.POLYGON to dataPointsConverter.toRect()
                 TILE, BIN_2D -> MapLayerKind.POLYGON to dataPointsConverter.toTile()
                 DENSITY2D, CONTOUR, PATH -> MapLayerKind.PATH to dataPointsConverter.toPath(layer.geom)
                 TEXT, LABEL -> MapLayerKind.TEXT to dataPointsConverter.toText(layer.geom)
                 DENSITY2DF, CONTOURF, POLYGON, MAP -> MapLayerKind.POLYGON to dataPointsConverter.toPolygon()
-                PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom)
+                PIE -> MapLayerKind.PIE to dataPointsConverter.toPie(layer.geom as PieGeom)
                 else -> throw IllegalArgumentException("Layer '" + layer.geomKind.name + "' is not supported on Live Map.")
             }
 
@@ -121,6 +124,7 @@ object LayerConverter {
                             index = it.index
                             points = it.geometry!!
                             flat = it.flat
+                            geodesic = it.geodesic
                             lineDash = it.lineDash
                             strokeColor = it.strokeColor
                             strokeWidth = AestheticsUtil.strokeWidth(it.myP)

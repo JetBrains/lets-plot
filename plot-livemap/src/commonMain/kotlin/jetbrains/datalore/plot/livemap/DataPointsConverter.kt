@@ -41,11 +41,9 @@ internal class DataPointsConverter(
         val strokeWidth: Double,
         val holeSize: Double
     )
-    private fun pieConverter(geom: Geom): List<DataPointLiveMapAesthetics> {
-        val pieOptions = (geom as? PieGeom)?.let {
-            PieOptions(it.strokeColor, it.strokeWidth, it.holeSize)
-        }
-        val fillWithColor = (geom as? PieGeom)?.fillWithColor ?: false
+    private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
+        val pieOptions = PieOptions(geom.strokeColor, geom.strokeWidth, geom.holeSize)
+        val fillWithColor = geom.fillWithColor
         val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics ->
             if (fillWithColor) p.color()!! else p.fill()!!
         }
@@ -59,16 +57,16 @@ internal class DataPointsConverter(
             }
     }
 
-    fun toPoint(geom: Geom) = pointFeatureConverter.point(geom)
+    fun toPoint(geom: PointGeom) = pointFeatureConverter.point(geom)
     fun toHorizontalLine() = pointFeatureConverter.hLine()
     fun toVerticalLine() = pointFeatureConverter.vLine()
-    fun toSegment(geom: Geom) = mySinglePathFeatureConverter.segment(geom)
+    fun toSegment(geom: SegmentGeom) = mySinglePathFeatureConverter.segment(geom)
     fun toRect() = myMultiPathFeatureConverter.rect()
     fun toTile() = mySinglePathFeatureConverter.tile()
     fun toPath(geom: Geom) = myMultiPathFeatureConverter.path(geom)
     fun toPolygon() = myMultiPathFeatureConverter.polygon()
     fun toText(geom: Geom) = pointFeatureConverter.text(geom)
-    fun toPie(geom: Geom): List<DataPointLiveMapAesthetics> = pieConverter(geom)
+    fun toPie(geom: PieGeom) = pieConverter(geom)
 
     private abstract class PathFeatureConverterBase(
         val aesthetics: Aesthetics
@@ -76,6 +74,7 @@ internal class DataPointsConverter(
         private var myArrowSpec: ArrowSpec? = null
         private var myAnimation: Int? = null
         private var myFlat: Boolean = false
+        private var myGeodesic: Boolean = false
 
         private fun parsePathAnimation(animation: Any?): Int? {
             when (animation) {
@@ -90,7 +89,7 @@ internal class DataPointsConverter(
             throw IllegalArgumentException("Unknown path animation: '$animation'")
         }
 
-        internal fun pathToBuilder(p: DataPointAesthetics, points: List<Vec<LonLat>>, isClosed: Boolean) =
+        fun pathToBuilder(p: DataPointAesthetics, points: List<Vec<LonLat>>, isClosed: Boolean) =
             DataPointLiveMapAesthetics(
                 p = p,
                 layerKind = when {
@@ -100,20 +99,25 @@ internal class DataPointsConverter(
             ).apply {
                 this.geometry = points
                 this.flat = myFlat
+                this.geodesic = myGeodesic
                 setArrowSpec(myArrowSpec)
                 setAnimation(myAnimation)
             }
 
-        internal fun setArrowSpec(arrowSpec: ArrowSpec?) {
+        fun setArrowSpec(arrowSpec: ArrowSpec?) {
             myArrowSpec = arrowSpec
         }
 
-        internal fun setAnimation(animation: Any?) {
+        fun setAnimation(animation: Any?) {
             myAnimation = parsePathAnimation(animation)
         }
 
-        internal fun setFlat(flat: Boolean) {
+        fun setFlat(flat: Boolean) {
             myFlat = flat
+        }
+
+        fun setGeodesic(geodesic: Boolean) {
+            myGeodesic = geodesic
         }
     }
 
@@ -121,18 +125,21 @@ internal class DataPointsConverter(
         aes: Aesthetics
     ) : PathFeatureConverterBase(aes) {
 
-        internal fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
-            setAnimation((geom as? PathGeom)?.animation)
-            (geom as? PathGeom)?.flat?.let(::setFlat)
+        fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
+            if (geom is PathGeom) {
+                setAnimation(geom.animation)
+                setFlat(geom.flat)
+                setGeodesic(geom.geodesic)
+            }
 
             return process(multiPointDataByGroup(singlePointAppender(TO_LOCATION_X_Y)), false)
         }
 
-        internal fun polygon(): List<DataPointLiveMapAesthetics> {
+        fun polygon(): List<DataPointLiveMapAesthetics> {
             return process(multiPointDataByGroup(singlePointAppender(TO_LOCATION_X_Y)), true)
         }
 
-        internal fun rect(): List<DataPointLiveMapAesthetics> {
+        fun rect(): List<DataPointLiveMapAesthetics> {
             return process(multiPointDataByGroup(multiPointAppender(TO_RECTANGLE)), true)
         }
 
@@ -161,7 +168,7 @@ internal class DataPointsConverter(
     private inner class SinglePathFeatureConverter(
         aesthetics: Aesthetics
     ) : PathFeatureConverterBase(aesthetics) {
-        internal fun tile(): List<DataPointLiveMapAesthetics> {
+        fun tile(): List<DataPointLiveMapAesthetics> {
             val d = getMinXYNonZeroDistance(aesthetics)
             return process(isClosed = true, dataPointToGeometry = { p ->
                 if (SeriesUtil.allFinite(p.x(), p.y(), p.width(), p.height())) {
@@ -179,10 +186,11 @@ internal class DataPointsConverter(
             })
         }
 
-        internal fun segment(geom: Geom): List<DataPointLiveMapAesthetics> {
-            setArrowSpec((geom as? SegmentGeom)?.arrowSpec)
-            setAnimation((geom as? SegmentGeom)?.animation)
-            (geom as? SegmentGeom)?.flat?.let(::setFlat)
+        fun segment(geom: SegmentGeom): List<DataPointLiveMapAesthetics> {
+            setArrowSpec(geom.arrowSpec)
+            setAnimation(geom.animation)
+            setFlat(geom.flat)
+            setGeodesic(geom.geodesic)
 
             return process(isClosed = false) {
                 if (SeriesUtil.allFinite(it.x(), it.y(), it.xend(), it.yend())) {
@@ -280,13 +288,13 @@ internal class DataPointsConverter(
             throw IllegalArgumentException("Unknown point animation: '$animation'")
         }
 
-        internal fun point(geom: Geom): List<DataPointLiveMapAesthetics> {
-            myAnimation = parsePointAnimation((geom as? PointGeom)?.animation)
+        fun point(geom: PointGeom): List<DataPointLiveMapAesthetics> {
+            myAnimation = parsePointAnimation(geom.animation)
 
             return process(MapLayerKind.POINT) { explicitVec(it.x()!!, it.y()!!) }
         }
 
-        internal fun hLine(): List<DataPointLiveMapAesthetics> {
+        fun hLine(): List<DataPointLiveMapAesthetics> {
             return process(MapLayerKind.H_LINE) {
                 if (SeriesUtil.isFinite(it.interceptY())) {
                     explicitVec(0.0, it.interceptY()!!)
@@ -296,7 +304,7 @@ internal class DataPointsConverter(
             }
         }
 
-        internal fun vLine(): List<DataPointLiveMapAesthetics> {
+        fun vLine(): List<DataPointLiveMapAesthetics> {
             return process(MapLayerKind.V_LINE) {
                 if (SeriesUtil.isFinite(it.interceptX())) {
                     explicitVec(it.interceptX()!!, 0.0)
@@ -308,7 +316,7 @@ internal class DataPointsConverter(
 
         private var myLabelOptions: LabelOptions? = null
 
-        internal fun text(geom: Geom): List<DataPointLiveMapAesthetics> {
+        fun text(geom: Geom): List<DataPointLiveMapAesthetics> {
             if (geom is LabelGeom) {
                 myLabelOptions = LabelOptions(
                     padding = geom.paddingFactor,
@@ -374,9 +382,9 @@ internal class DataPointsConverter(
             fun build(): MultiDataPoint {
                 return MultiDataPoint(
                     aes = myAes,
-                    indices = myPoints.map { it.index() },
+                    indices = myPoints.map(DataPointAesthetics::index),
                     values = myPoints.map { it.slice()!! },
-                    colors = myPoints.map { myColorGetter(it) },
+                    colors = myPoints.map(myColorGetter),
                     explodeValues = myPoints.map { it.explode() ?: 0.0 }
                 )
             }
