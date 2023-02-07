@@ -27,12 +27,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.LIGH
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.TooltipsTheme
-import jetbrains.datalore.plot.builder.tooltip.CrosshairComponent
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
-import jetbrains.datalore.plot.builder.tooltip.RetainableComponents
-import jetbrains.datalore.plot.builder.tooltip.TooltipBox
+import jetbrains.datalore.plot.builder.tooltip.*
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation
-import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
@@ -76,6 +72,7 @@ internal class TooltipRenderer constructor(
         regs.add(mouseEventPeer.addEventHandler(MOUSE_MOVED, handler { showTooltips(it.location.toDoubleVector()) }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_DRAGGED, handler { hideTooltips() }))
         regs.add(mouseEventPeer.addEventHandler(MOUSE_LEFT, handler { hideTooltips() }))
+        regs.add(mouseEventPeer.addEventHandler(MOUSE_DOUBLE_CLICKED, handler { hideTooltips() }))
     }
 
     override fun dispose() {
@@ -268,7 +265,7 @@ internal class TooltipRenderer constructor(
                 }
             }
 
-        internal fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
+        fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
             val targetsPicker = LocatedTargetsPicker(flippedAxis, plotCoord).apply {
                 for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
@@ -280,7 +277,7 @@ internal class TooltipRenderer constructor(
             return targetsPicker.picked
         }
 
-        internal operator fun contains(plotCoord: DoubleVector) = geomBounds.contains(plotCoord)
+        operator fun contains(plotCoord: DoubleVector) = geomBounds.contains(plotCoord)
 
         private inner class TileTargetLocator(
             locator: GeomTargetLocator

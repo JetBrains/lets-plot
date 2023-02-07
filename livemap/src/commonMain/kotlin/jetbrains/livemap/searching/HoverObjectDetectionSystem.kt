@@ -10,6 +10,7 @@ import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.onEachEntity2
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.toClientPoint
@@ -34,46 +35,39 @@ class HoverObjectDetectionSystem(
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        getSingletonEntity<HoverObjectComponent>().let { hoverObject ->
-            val mouseInputComponent = hoverObject.get<MouseInputComponent>()
-
-            if (mouseInputComponent.moveEvent == null) {
+        onEachEntity2<HoverObjectComponent, MouseInputComponent> { _, hoverObjectComponent, mouseInputComponent ->
+            if (mouseInputComponent.doubleClickEvent != null) {
+                // Only fixes ghost result that appears for a split second when mouse starts to move AFTER zoom.
+                // Tooltips update themselves only on a mouse move, we can't hide them from here if mouse is not moving.
+                // To hide them on a zoom start we handle the DOUBLE_CLICK mouse event here:
+                // jetbrains/datalore/plot/builder/interact/TooltipRenderer.kt:79
+                hoverObjectComponent.clearResult()
                 return
             }
 
-            val mouseLocation: Vec<Client> = mouseInputComponent.moveEvent!!.location.toClientPoint()
+            if (mouseInputComponent.dragState != null) {
+                // On drag show no results
+                hoverObjectComponent.clearResult()
+                return
+            }
 
-            val hoverObjectComponent = hoverObject.get<HoverObjectComponent>()
+            val mouseLocation = mouseInputComponent.moveEvent?.location?.toClientPoint() ?: return
+            if (uiService.containsElementAtCoord(mouseLocation)) {
+                hoverObjectComponent.clearResult()
+                return
+            }
+
+            if (context.camera.isZoomFractionChanged && !context.camera.isZoomLevelChanged) {
+                // mouse moves while zooming in/out - show no results
+                hoverObjectComponent.clearResult()
+                return
+            }
+
             if (
                 hoverObjectComponent.cursotPosition == mouseLocation &&
                 hoverObjectComponent.zoom?.toDouble() == context.camera.zoom
             ) {
                 // same mouse position - same result
-                return
-            }
-
-            if (context.camera.isZoomFractionChanged && !context.camera.isZoomLevelChanged) {
-                // on zoom do not search
-                hoverObjectComponent.apply {
-                    cursotPosition = null
-                    zoom = null
-                    searchResult = null
-                }
-                return
-            }
-
-            if (mouseInputComponent.dragState != null) {
-                // On panning an object and a mouse are synchronized and there is no need to do a search again, only update cursor position
-                hoverObjectComponent.cursotPosition = mouseLocation
-                return
-            }
-
-            if (uiService.containsElementAtCoord(mouseLocation)) {
-                hoverObjectComponent.apply {
-                    cursotPosition = null
-                    zoom = null
-                    searchResult = null
-                }
                 return
             }
 
@@ -87,5 +81,11 @@ class HoverObjectDetectionSystem(
                     .firstOrNull()
             }
         }
+    }
+
+    private fun HoverObjectComponent.clearResult() {
+        cursotPosition = null
+        zoom = null
+        searchResult = null
     }
 }
