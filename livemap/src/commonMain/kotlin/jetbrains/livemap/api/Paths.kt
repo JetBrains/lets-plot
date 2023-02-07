@@ -93,9 +93,8 @@ class PathBuilder(
 
     fun build(nonInteractive: Boolean): EcsEntity? {
         // Build location component on original, non-curved, path data
-        val pathLocation = splitAndPackPath(points)
+        val locationGeometry = splitAndPackPath(points)
             .let { transformMultiPolygon(it, myMapProjection::project, resamplingPrecision = null) }
-            .let(::bbox)
 
         // Build visualization component - bend if needed
         val multiPolygon = splitAndPackPath(if (flat) points else createArcPath(points))
@@ -124,10 +123,8 @@ class PathBuilder(
                             this@PathBuilder.arrowType,
                         )
                     }
-                    pathLocation?.let {
-                        +ChartElementLocationComponent().apply {
-                            location = it
-                        }
+                    +ChartElementLocationComponent().apply {
+                        geometry = Geometry.createMultiPolygon(locationGeometry)
                     }
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = coord }

@@ -5,6 +5,7 @@
 
 package jetbrains.livemap.geocoding
 
+import jetbrains.datalore.base.typedGeometry.GeometryType.MULTI_POLYGON
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.livemap.World
@@ -36,7 +37,12 @@ class LocationCalculateSystem(
             .forEach { entity ->
                 when {
                     entity.contains<ChartElementLocationComponent>() -> {
-                        mapRuler.calculateBoundingBox(listOf(entity.get<ChartElementLocationComponent>().location))
+                        with(entity.get<ChartElementLocationComponent>().geometry) {
+                            when (type) {
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.limit())
+                                else -> error("Unsupported geometry: $type")
+                            }
+                        }
                     }
                     entity.contains<WorldGeometryComponent>() -> {
                         entity.get<WorldGeometryComponent>().geometry
