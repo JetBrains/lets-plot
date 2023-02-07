@@ -16,7 +16,7 @@ open class QuantilesHelper(
     private val quantiles: List<Double>,
     private val groupAes: Aes<Double>? = null
 ) : GeomHelper(pos, coord, ctx) {
-    fun getQuantileLineElements(
+    internal fun getQuantileLineElements(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
@@ -32,7 +32,7 @@ open class QuantilesHelper(
         while (pIt.hasNext()) {
             val pCurr = pIt.next()
             val quantilesAreSame = pPrev.quantile() == pCurr.quantile() ||
-                    (pPrev.quantile()?.isFinite() != true && pCurr.quantile()?.isFinite() != true)
+                (pPrev.quantile()?.isFinite() != true && pCurr.quantile()?.isFinite() != true)
             if (!quantilesAreSame) quantileLineElements.add(getQuantileLineElement(pCurr, toLocationBoundStart, toLocationBoundEnd))
             pPrev = pCurr
         }
