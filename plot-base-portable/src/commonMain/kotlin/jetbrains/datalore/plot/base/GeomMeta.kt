@@ -20,21 +20,7 @@ object GeomMeta {
             renderedAesByGeom[geomKind] =
                 renderedAesList(geomKind)
         }
-        return extendWithColorAes(renderedAesByGeom[geomKind]!!)
-    }
-
-    private fun extendWithColorAes(aesList: List<Aes<*>>): List<Aes<*>> {
-        val colors = if (aesList.any(Aes.Companion::isColorAes)) {
-            Aes.values().filter(Aes.Companion::isColorAes) - Aes.COLOR
-        } else {
-            emptyList()
-        }
-        val fills = if (aesList.any(Aes.Companion::isFillAes)) {
-            Aes.values().filter(Aes.Companion::isFillAes) - Aes.FILL
-        } else {
-            emptyList()
-        }
-        return aesList + colors + fills
+        return renderedAesByGeom[geomKind]!!
     }
 
     private val POINT = listOf(
@@ -378,10 +364,10 @@ object GeomMeta {
                 Aes.SLICE,
                 Aes.EXPLODE,
                 Aes.SIZE,
-                Aes.COLOR,
-                Aes.FILL,
+              //  Aes.COLOR,
+              //  Aes.FILL,
                 Aes.ALPHA
-            )
+            ) + Aes.getColorList()
         }
     }
 }

@@ -142,7 +142,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         )
     }
 
-    private fun getFillColor(p: DataPointAesthetics) = p.fill(aesFill)!!
+    private fun getFillColor(p: DataPointAesthetics) = p[aesFill]!!
 
     private fun computeSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }

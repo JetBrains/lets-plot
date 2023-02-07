@@ -85,7 +85,7 @@ object HintColorUtil {
         val strokeColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
             ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT_RANGE, TEXT, TILE -> HintColorUtil::colorWithAlpha
             POINT -> this::pointStrokeMapper
-            else -> { p: DataPointAesthetics -> p.color() } // border always ignores alpha
+            else -> DataPointAesthetics::color // border always ignores alpha
         }.let { colorSelector -> { p: DataPointAesthetics ->
             colorSelector(p)?.takeIf { it.alpha > 0 && p.size() != 0.0 } }
         }

@@ -12,10 +12,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
-import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
 import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
 import jetbrains.datalore.plot.base.Aes.Companion.FRAME
@@ -65,8 +63,9 @@ object DefaultNaValue {
         VALUE_MAP.put(Z, 0.0)
         VALUE_MAP.put(YMIN, 0.0)
         VALUE_MAP.put(YMAX, 0.0)
-        VALUE_MAP.put(COLOR, Color.GRAY)
-        VALUE_MAP.put(FILL, Color.GRAY)
+        Aes.getColorList().forEach { aes ->
+            VALUE_MAP.put(aes, Color.GRAY)
+        }
         VALUE_MAP.put(ALPHA, 0.0)
         VALUE_MAP.put(SHAPE, TinyPointShape)
         VALUE_MAP.put(LINETYPE, NamedLineType.SOLID)
@@ -113,14 +112,10 @@ object DefaultNaValue {
     }
 
     operator fun <T> get(aes: Aes<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        val baseAes = Aes.getBaseAes(aes) as Aes<T>
-        return VALUE_MAP.get<T>(baseAes)
+        return VALUE_MAP[aes]
     }
 
     operator fun <T> get(aes: TypedKey<T>): T {
-        val baseAes = Aes.getBaseAes(aes as Aes<T>)
-        @Suppress("UNCHECKED_CAST")
-        return VALUE_MAP.get<T>(baseAes as Aes<T>)
+        return VALUE_MAP[aes]
     }
 }

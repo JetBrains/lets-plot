@@ -61,8 +61,9 @@ internal class TypedOptionConverterMap {
         this.put(Z, DOUBLE_CVT)
         this.put(YMIN, DOUBLE_CVT)
         this.put(YMAX, DOUBLE_CVT)
-        this.put(COLOR, COLOR_CVT)
-        this.put(FILL, COLOR_CVT)
+        Aes.getColorList().forEach { aes ->
+            this.put(aes, COLOR_CVT)
+        }
         this.put(ALPHA, DOUBLE_CVT)
         this.put(SHAPE, SHAPE_CVT)
         this.put(LINETYPE, LINETYPE_CVT)
@@ -112,9 +113,8 @@ internal class TypedOptionConverterMap {
 
     operator fun <T> get(aes: Aes<T>): (Any?) -> T? {
         // Safe cast because 'put' is private
-        val baseAes = Aes.getBaseAes(aes)
         @Suppress("UNCHECKED_CAST")
-        return myMap[baseAes] as (Any?) -> T?
+        return myMap[aes] as (Any?) -> T?
     }
 
     fun containsKey(aes: Aes<*>): Boolean {

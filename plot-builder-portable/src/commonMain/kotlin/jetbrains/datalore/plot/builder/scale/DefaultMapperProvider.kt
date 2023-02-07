@@ -10,10 +10,8 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
-import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
 import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
 import jetbrains.datalore.plot.base.Aes.Companion.FRAME
@@ -95,8 +93,9 @@ object DefaultMapperProvider {
             this.put(Z, NUMERIC_IDENTITY)
             this.put(YMIN, NUMERIC_IDENTITY)
             this.put(YMAX, NUMERIC_IDENTITY)
-            this.put(COLOR, createColorMapperProvider())
-            this.put(FILL, createColorMapperProvider())
+            Aes.getColorList().forEach { aes ->
+                this.put(aes, createColorMapperProvider())
+            }
             this.put(ALPHA, AlphaMapperProvider.DEFAULT)
             this.put(SHAPE, createWithDiscreteOutput(ShapeMapper.allShapes(), ShapeMapper.NA_VALUE))
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
@@ -146,9 +145,8 @@ object DefaultMapperProvider {
         }
 
         internal operator fun <T> get(aes: Aes<T>): MapperProvider<T> {
-            val baseAes = Aes.getBaseAes(aes)
             @Suppress("UNCHECKED_CAST")
-            return myMap[baseAes] as MapperProvider<T>
+            return myMap[aes] as MapperProvider<T>
         }
 
         private fun <T> put(aes: Aes<T>, value: MapperProvider<T>) {

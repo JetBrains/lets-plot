@@ -25,6 +25,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -49,8 +52,6 @@ import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
 import jetbrains.datalore.plot.base.Aes.Companion.YMAX
 import jetbrains.datalore.plot.base.Aes.Companion.YMIN
 import jetbrains.datalore.plot.base.Aes.Companion.Z
-import jetbrains.datalore.plot.base.Aes.Companion.isColorAes
-import jetbrains.datalore.plot.base.Aes.Companion.isFillAes
 
 abstract class AesVisitor<T> {
     fun visit(aes: Aes<*>): T {
@@ -87,11 +88,20 @@ abstract class AesVisitor<T> {
         if (aes == YMAX) {
             return ymax()
         }
-        if (isColorAes(aes)) {
-            return color(aes)
+        if (aes == COLOR) {
+            return color()
         }
-        if (isFillAes(aes)) {
-            return fill(aes)
+        if (aes == FILL) {
+            return fill()
+        }
+        if (aes == PAINT_A) {
+            return paint_a()
+        }
+        if (aes == PAINT_B) {
+            return paint_b()
+        }
+        if (aes == PAINT_C) {
+            return paint_c()
         }
         if (aes == ALPHA) {
             return alpha()
@@ -217,9 +227,15 @@ abstract class AesVisitor<T> {
 
     protected abstract fun ymax(): T
 
-    protected abstract fun color(aes: Aes<*>): T
+    protected abstract fun color(): T
 
-    protected abstract fun fill(aes: Aes<*>): T
+    protected abstract fun fill(): T
+
+    protected abstract fun paint_a(): T
+
+    protected abstract fun paint_b(): T
+
+    protected abstract fun paint_c(): T
 
     protected abstract fun alpha(): T
 

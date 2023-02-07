@@ -23,10 +23,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         return "aes '$name'"
     }
 
-    private fun copy(name: String): Aes<T> {
-        return Aes(name, isNumeric)
-    }
-
     companion object {
         private val values = ArrayList<Aes<*>>()
 
@@ -36,6 +32,9 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         val COLOR: Aes<Color> = Aes("color", false)
         val FILL: Aes<Color> = Aes("fill", false)
+        val PAINT_A: Aes<Color> = Aes("paint_a", false)
+        val PAINT_B: Aes<Color> = Aes("paint_b", false)
+        val PAINT_C: Aes<Color> = Aes("paint_c", false)
         val ALPHA: Aes<Double> = Aes("alpha")
         val SHAPE: Aes<PointShape> = Aes("shape", false)
         val LINETYPE: Aes<LineType> = Aes("linetype", false)
@@ -141,22 +140,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isColor(aes: Aes<*>): Boolean {
-            return isColorAes(aes) || isFillAes(aes)
+            return aes in getColorList()
         }
 
-        fun isFillAes(aes: Aes<*>): Boolean {
-            return aes.name.startsWith(FILL.name)
-        }
-
-        fun isColorAes(aes: Aes<*>): Boolean {
-            return aes.name.startsWith(COLOR.name)
-        }
-
-        fun getBaseAes(aes: Aes<*>) = when {
-            isFillAes(aes) -> FILL
-            isColorAes(aes) -> COLOR
-            else -> aes
-        }
+        fun getColorList() = listOf(COLOR, FILL, PAINT_A, PAINT_B, PAINT_C)
 
         fun affectingScaleX(aes: Aes<*>): Boolean {
             return isPositionalX(aes)
@@ -210,10 +197,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         fun allPositional(): List<Aes<Double>> {
             @Suppress("UNCHECKED_CAST")
             return values.filter { isPositional(it) } as List<Aes<Double>>
-        }
-
-        fun createAs(aes: Aes<*>, name: String): Aes<*> {
-            return aes.copy(name = name)
         }
     }
 }

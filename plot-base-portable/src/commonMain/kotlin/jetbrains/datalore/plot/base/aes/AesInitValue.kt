@@ -65,8 +65,9 @@ object AesInitValue {
         VALUE_MAP[Z] = 0.0
         VALUE_MAP[YMIN] = Double.NaN
         VALUE_MAP[YMAX] = Double.NaN
-        VALUE_MAP[COLOR] = Color.PACIFIC_BLUE
-        VALUE_MAP[FILL] = Color.PACIFIC_BLUE
+        Aes.getColorList().forEach { aes ->
+            VALUE_MAP[aes] = Color.PACIFIC_BLUE
+        }
         VALUE_MAP[ALPHA] = 1.0
         VALUE_MAP[SHAPE] = NamedShape.SOLID_CIRCLE
         VALUE_MAP[LINETYPE] = NamedLineType.SOLID
@@ -113,14 +114,10 @@ object AesInitValue {
     }
 
     operator fun <T> get(aes: Aes<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        val baseAes = Aes.getBaseAes(aes) as Aes<T>
-        return VALUE_MAP.get<T>(baseAes)
+        return VALUE_MAP[aes]
     }
 
     operator fun <T> get(aes: TypedKey<T>): T {
-        val baseAes = Aes.getBaseAes(aes as Aes<T>)
-        @Suppress("UNCHECKED_CAST")
-        return VALUE_MAP.get<T>(baseAes as Aes<T>)
+        return VALUE_MAP[aes]
    }
 }

@@ -36,9 +36,7 @@ open class AestheticsDefaults {
     }
 
     fun <T> defaultValue(aes: Aes<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        val baseAes = Aes.getBaseAes(aes) as Aes<T>
-        return myDefaults[baseAes]
+        return myDefaults[aes]
     }
 
     fun <T> defaultValueInLegend(aes: Aes<T>): T {
