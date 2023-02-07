@@ -66,6 +66,7 @@ kotlin {
                 implementation project(':vis-demo-common-batik')
                 implementation project(':vis-swing-common')
                 implementation project(':vis-swing-batik')
+                implementation project(':plot-livemap')
             }
         }
         jvmJfxMain {
