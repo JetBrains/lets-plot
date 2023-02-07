@@ -89,8 +89,10 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             appendNodes(helper.createLines(points, boundTransform), root)
         }
 
-        if (quantileLines) getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
-            root.add(quantileLine)
+        if (quantileLines) {
+            getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+                root.add(quantileLine)
+            }
         }
 
         dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->

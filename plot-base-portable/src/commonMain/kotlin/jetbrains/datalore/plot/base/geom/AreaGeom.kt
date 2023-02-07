@@ -49,8 +49,10 @@ open class AreaGeom : GeomBase() {
                 appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y), root)
             }
 
-            if (quantileLines) getQuantileLines(groupDataPoints, pos, coord, ctx).forEach { quantileLine ->
-                root.add(quantileLine)
+            if (quantileLines) {
+                getQuantileLines(groupDataPoints, pos, coord, ctx).forEach { quantileLine ->
+                    root.add(quantileLine)
+                }
             }
 
             groupDataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->

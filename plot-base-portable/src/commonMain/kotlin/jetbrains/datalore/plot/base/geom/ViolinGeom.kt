@@ -68,8 +68,10 @@ class ViolinGeom : GeomBase() {
             appendNodes(helper.createLines(points, rightBoundTransform), root)
         }
 
-        if (quantileLines) getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
-            root.add(quantileLine)
+        if (quantileLines) {
+            getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+                root.add(quantileLine)
+            }
         }
 
         dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
