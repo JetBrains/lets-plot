@@ -59,7 +59,7 @@ open class AreaPlotDemo : SimpleDemoBase() {
             Aes.FILL to filleMapper
         )
 
-        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.area { AreaGeom() }, Stats.density())
+        val layer = GeomLayerBuilder.demoAndTest(GeomProvider.area(), Stats.density())
 //            .stat(Stats.density())
 //            .geom(jetbrains.datalore.plot.builder.assemble.geom.GeomProvider.area())
 //            .pos(PosProvider.wrap(PositionAdjustments.identity()))

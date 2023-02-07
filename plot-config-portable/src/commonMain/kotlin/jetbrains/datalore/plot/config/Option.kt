@@ -158,10 +158,6 @@ object Option {
 
     object Geom {
 
-        object Area {
-            const val QUANTILE_LINES = "quantile_lines"
-        }
-
         object Density {
             const val QUANTILE_LINES = "quantile_lines"
         }

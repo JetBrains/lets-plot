@@ -280,13 +280,12 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { RibbonGeom() }.build()
         }
 
-        fun area(supplier: () -> Geom): GeomProvider {
+        fun area(): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.AREA,
                 AestheticsDefaults.area(),
-                AreaGeom.HANDLES_GROUPS,
-                supplier
-            ).build()
+                AreaGeom.HANDLES_GROUPS
+            ) { AreaGeom() }.build()
         }
 
         fun density(supplier: () -> Geom): GeomProvider {
