@@ -78,6 +78,7 @@ class HoverObjectDetectionSystem(
                     .map { it.get<LocatorComponent>().locatorHelper.search(mouseLocation, it) }
                     .filterNotNull()
                     .sortedByDescending(SearchResult::layerIndex)
+                    .sortedByDescending(SearchResult::index)
                     .firstOrNull()
             }
         }
