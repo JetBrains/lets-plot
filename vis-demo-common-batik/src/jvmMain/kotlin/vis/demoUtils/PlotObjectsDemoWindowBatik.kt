@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotSvgRoot
@@ -41,7 +42,8 @@ class PlotObjectsDemoWindowBatik(
             )
         )
 
-//        plotContainer.ensureContentBuilt()
-        return BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
+        val component = BatikMapperComponent(plotContainer.svg, BatikMapperComponent.DEF_MESSAGE_CALLBACK)
+        (component as DisposingHub).registerDisposable(plotContainer)
+        return component
     }
 }

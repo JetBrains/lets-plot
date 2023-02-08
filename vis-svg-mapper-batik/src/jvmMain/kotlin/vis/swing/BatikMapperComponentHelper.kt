@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.vis.swing
 
+import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.vis.svg.SvgNodeContainer
+import jetbrains.datalore.vis.svg.SvgNodeContainerListener
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.batik.SvgRootDocumentMapper
 import org.apache.batik.bridge.BridgeContext
@@ -25,7 +27,8 @@ class BatikMapperComponentHelper private constructor(
     private val svgRoot: SvgSvgElement,
     val messageCallback: BatikMessageCallback
 ) {
-    internal val nodeContainer = SvgNodeContainer(svgRoot)
+    private val nodeContainer = SvgNodeContainer(svgRoot)
+    private val registrations = CompositeRegistration()
 
     private val myGraphicsNode: GraphicsNode
     private val myMapper: SvgRootDocumentMapper
@@ -75,7 +78,15 @@ class BatikMapperComponentHelper private constructor(
         myUserAgent.eventDispatcher.rootNode = myGraphicsNode
     }
 
+    internal fun addSvgNodeContainerListener(l: SvgNodeContainerListener) {
+        registrations.add(
+            nodeContainer.addListener(l)
+        )
+    }
+
     internal fun dispose() {
+        registrations.dispose()
+
         if (myMapper.isAttached) {
             myMapper.detachRoot()
 

@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -61,7 +62,6 @@ class PlotResizableDemoWindowJfx(
             }
 
             val plotSvgComponent = plotAssembler.createPlot()
-//            plotSvgComponent.resize(plotSize)
             val plotContainer = PlotContainer(
                 PlotSvgRoot(
                     plotSvgComponent,
@@ -69,9 +69,10 @@ class PlotResizableDemoWindowJfx(
                     DoubleRectangle(DoubleVector.ZERO, plotSize)
                 )
             )
-//            plotContainer.ensureContentBuilt()
 
-            return SceneMapperJfxPanel(plotContainer.svg, stylesheets = emptyList())
+            val component = SceneMapperJfxPanel(plotContainer.svg, stylesheets = emptyList())
+            (component as DisposingHub).registerDisposable(plotContainer)
+            return component
         }
     }
 }

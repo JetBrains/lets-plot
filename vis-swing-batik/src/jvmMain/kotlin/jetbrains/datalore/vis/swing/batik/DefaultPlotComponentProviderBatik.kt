@@ -31,7 +31,7 @@ open class DefaultPlotComponentProviderBatik(
 ) {
 
     /**
-     * Override when in in IDEA plugin.
+     * Override when used in IDEA plugin.
      * Use: JBScrollPane
      */
     override fun createScrollPane(plotComponent: JComponent): JScrollPane {

@@ -7,6 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotSvgRoot
@@ -36,7 +37,8 @@ class PlotObjectsDemoWindowJfx(
             )
         )
 
-//        plotContainer.ensureContentBuilt()
-        return SceneMapperJfxPanel(plotContainer.svg, stylesheets)
+        val component = SceneMapperJfxPanel(plotContainer.svg, stylesheets)
+        (component as DisposingHub).registerDisposable(plotContainer)
+        return component
     }
 }

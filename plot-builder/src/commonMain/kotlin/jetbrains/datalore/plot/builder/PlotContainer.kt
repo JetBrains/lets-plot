@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.registration.CompositeRegistration
+import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch
@@ -15,7 +16,7 @@ import jetbrains.datalore.vis.svg.SvgSvgElement
 
 class PlotContainer constructor(
     private val svgRoot: PlotSvgRoot,
-) {
+) : Disposable {
 
     val svg: SvgSvgElement
         get() = svgRoot.svg
@@ -54,7 +55,7 @@ class PlotContainer constructor(
         svgRoot.ensureContentBuilt()
     }
 
-    fun dispose() {
+    override fun dispose() {
         registrations.remove()
 //        registrations = CompositeRegistration()
         svgRoot.clearContent()

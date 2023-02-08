@@ -8,6 +8,8 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
@@ -55,6 +57,14 @@ internal class FigureToAwt(
 
         // JPanel
         val rootJPanel = DisposableJPanel(null)
+        rootJPanel.registerDisposable(
+            object : Disposable {
+                override fun dispose() {
+                    svgRoot.clearContent()
+                }
+            }
+        )
+
         rootJPanel.border = null
 //        rootJPanel.background = Colors.parseColor(Defaults.BACKDROP_COLOR).let {
 //            Color(
@@ -119,9 +129,11 @@ internal class FigureToAwt(
     ): JComponent {
         val plotContainer = PlotContainer(svgRoot)
         val plotComponent = buildSinglePlotComponent(plotContainer, svgComponentFactory, executor)
+
         return if (svgRoot.isLiveMap) {
             AwtLiveMapPanel(
-                plotContainer,
+//                plotContainer,
+                svgRoot.liveMapFigures,
                 plotComponent,
                 executor,
                 svgRoot.liveMapCursorServiceConfig as CursorServiceConfig
@@ -141,6 +153,7 @@ internal class FigureToAwt(
             val svg = plotContainer.svg
 
             val plotComponent: JComponent = svgComponentFactory(svg)
+            (plotComponent as DisposingHub).registerDisposable(plotContainer)
 
             plotComponent.addMouseMotionListener(object : MouseAdapter() {
                 override fun mouseMoved(e: MouseEvent) {
