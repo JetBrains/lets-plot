@@ -2,7 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from .core import FeatureSpec
+from .core import FeatureSpec, FeatureSpecArray
 from .util import as_boolean
 
 #
@@ -10,15 +10,17 @@ from .util import as_boolean
 #
 
 __all__ = ['scale_shape',
-           'scale_color_manual', 'scale_fill_manual', 'scale_size_manual',
+           'scale_manual', 'scale_color_manual', 'scale_fill_manual', 'scale_size_manual',
            'scale_shape_manual', 'scale_linetype_manual', 'scale_alpha_manual',
-           'scale_fill_gradient', 'scale_fill_continuous', 'scale_color_gradient', 'scale_color_continuous',
-           'scale_fill_gradient2', 'scale_color_gradient2',
-           'scale_color_gradientn', 'scale_fill_gradientn',
-           'scale_fill_hue', 'scale_fill_discrete', 'scale_color_hue', 'scale_color_discrete',
-           'scale_fill_grey', 'scale_color_grey',
-           'scale_fill_brewer', 'scale_color_brewer',
-           'scale_fill_viridis', 'scale_color_viridis',
+           'scale_continuous', 'scale_fill_continuous', 'scale_color_continuous',
+           'scale_gradient', 'scale_fill_gradient', 'scale_color_gradient',
+           'scale_gradient2', 'scale_fill_gradient2', 'scale_color_gradient2',
+           'scale_gradientn', 'scale_fill_gradientn', 'scale_color_gradientn',
+           'scale_hue', 'scale_fill_hue', 'scale_color_hue',
+           'scale_discrete', 'scale_fill_discrete', 'scale_color_discrete',
+           'scale_grey', 'scale_fill_grey', 'scale_color_grey',
+           'scale_brewer', 'scale_fill_brewer', 'scale_color_brewer',
+           'scale_viridis', 'scale_fill_viridis', 'scale_color_viridis',
            'scale_alpha', 'scale_size', 'scale_size_area'
            ]
 
@@ -96,10 +98,27 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 # Manual Scales
 #
 
+def scale_manual(aesthetic, *,
+                 values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+
+    return _scale(aesthetic,
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  format=format,
+                  #
+                  values=values)
+
+
 def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
-    Create your own discrete scale for color aesthetic.
+    Create your own discrete scale for `color` aesthetic.
 
     Parameters
     ----------
@@ -157,18 +176,15 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
                                breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
 
     """
-    return _scale('color',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  values=values)
+    return scale_manual('color',
+                        values=values,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        format=format)
 
 
 def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
@@ -231,18 +247,15 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
                               breaks=[2, 4, 7], labels=['green', 'yellow', 'red'])
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  values=values)
+    return scale_manual('fill',
+                        values=values,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        format=format)
 
 
 def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
@@ -304,18 +317,15 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
             scale_size_manual(name='size', values=[5, 8])
 
     """
-    return _scale('size',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  values=values)
+    return scale_manual('size',
+                        values=values,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        format=format)
 
 
 def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
@@ -378,18 +388,15 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
             scale_shape_manual(values=[12, 13], name='shapes', labels=['12', '13'])
 
     """
-    return _scale('shape',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  values=values)
+    return scale_manual('shape',
+                        values=values,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        format=format)
 
 
 def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
@@ -453,18 +460,15 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
                                   labels=['dotted', 'dotdash', 'longdash', 'twodash'])
 
     """
-    return _scale('linetype',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  values=values)
+    return scale_manual('linetype',
+                        values=values,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        format=format)
 
 
 def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
@@ -526,7 +530,25 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
             scale_alpha_manual(values=[.2, .5, .9])
 
     """
-    return _scale('alpha',
+    return scale_manual('alpha',
+                        values=values,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        format=format)
+
+
+#
+# Gradient (continuous) Color Scales
+#
+def scale_continuous(aesthetic, *,
+                     low=None, high=None, name=None, breaks=None, labels=None,
+                     limits=None, na_value=None, guide=None, trans=None, format=None):
+
+    return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
@@ -534,15 +556,28 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=None,
+                  trans=trans,
                   format=format,
                   #
-                  values=values)
+                  low=low, high=high,
+                  scale_mapper_kind='color_gradient')
 
 
-#
-# Gradient (continuous) Color Scales
-#
+def scale_gradient(aesthetic, *,
+                   low=None, high=None, name=None, breaks=None, labels=None,
+                   limits=None, na_value=None, guide=None, trans=None, format=None):
+
+    return scale_continuous(aesthetic,
+                            low=low, high=high,
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format)
+
 
 def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
                         limits=None, na_value=None, guide=None, trans=None, format=None):
@@ -607,7 +642,16 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
             ggsize(600, 200)
 
     """
-    return scale_fill_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans, format)
+    return scale_gradient('fill',
+                          low=low, high=high,
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          trans=trans,
+                          format=format)
 
 
 def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
@@ -671,19 +715,16 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
             ggsize(600, 200)
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  low=low, high=high,
-                  scale_mapper_kind='color_gradient')
+    return scale_continuous('fill',
+                            low=low, high=high,
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format)
 
 
 def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
@@ -749,7 +790,16 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
             ggsize(600, 200)
 
     """
-    return scale_color_continuous(low, high, name, breaks, labels, limits, na_value, guide, trans, format)
+    return scale_gradient('color',
+                          low=low, high=high,
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          trans=trans,
+                          format=format)
 
 
 def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
@@ -807,19 +857,36 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
             scale_color_continuous(low='#1a9641', high='#d7191c')
 
     """
-    return _scale('color',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  low=low, high=high,
-                  scale_mapper_kind='color_gradient')
+    return scale_continuous('color',
+                            low=low, high=high,
+                            name=name,
+                            breaks=breaks,
+                            labels=labels,
+                            limits=limits,
+                            na_value=na_value,
+                            guide=guide,
+                            trans=trans,
+                            format=format)
+
+
+def scale_gradient2(aesthetic, *,
+                    low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
+                    na_value=None, guide=None, trans=None, format=None):
+
+    return _scale(aesthetic,
+        name=name,
+        breaks=breaks,
+        labels=labels,
+        limits=limits,
+        expand=None,
+        na_value=na_value,
+        guide=guide,
+        trans=trans,
+        format=format,
+        #
+        low=low, mid=mid, high=high,
+        midpoint=midpoint,
+        scale_mapper_kind='color_gradient2')
 
 
 def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
@@ -887,19 +954,17 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
             ggsize(600, 200)
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  low=low, mid=mid, high=high,
-                  midpoint=midpoint, scale_mapper_kind='color_gradient2')
+    return scale_gradient2('fill',
+                           low=low, mid=mid, high=high,
+                           midpoint=midpoint,
+                           name=name,
+                           breaks=breaks,
+                           labels=labels,
+                           limits=limits,
+                           na_value=na_value,
+                           guide=guide,
+                           trans=trans,
+                           format=format)
 
 
 def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
@@ -967,7 +1032,24 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
             ggsize(600, 200)
 
     """
-    return _scale('color',
+    return scale_gradient2('color',
+                           low=low, mid=mid, high=high,
+                           midpoint=midpoint,
+                           name=name,
+                           breaks=breaks,
+                           labels=labels,
+                           limits=limits,
+                           na_value=na_value,
+                           guide=guide,
+                           trans=trans,
+                           format=format)
+
+
+def scale_gradientn(aesthetic, *,
+                    colors=None, name=None, breaks=None, labels=None, limits=None,
+                    na_value=None, guide=None, trans=None, format=None):
+
+    return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
@@ -978,8 +1060,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
                   trans=trans,
                   format=format,
                   #
-                  low=low, mid=mid, high=high,
-                  midpoint=midpoint, scale_mapper_kind='color_gradient2')
+                  colors=colors,
+                  scale_mapper_kind='color_gradientn')
 
 
 def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
@@ -1044,19 +1126,16 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
             ggsize(600, 200)
 
     """
-    return _scale('color',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  colors=colors,
-                  scale_mapper_kind='color_gradientn')
+    return scale_gradientn('color',
+                           colors=colors,
+                           name=name,
+                           breaks=breaks,
+                           labels=labels,
+                           limits=limits,
+                           na_value=na_value,
+                           guide=guide,
+                           trans=trans,
+                           format=format)
 
 
 def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
@@ -1121,7 +1200,23 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
             ggsize(600, 200)
 
     """
-    return _scale('fill',
+    return scale_gradientn('fill',
+                           colors=colors,
+                           name=name,
+                           breaks=breaks,
+                           labels=labels,
+                           limits=limits,
+                           na_value=na_value,
+                           guide=guide,
+                           trans=trans,
+                           format=format)
+
+
+def scale_hue(aesthetic, *,
+              h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
+              limits=None, na_value=None, guide=None, trans=None, format=None):
+
+    return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
@@ -1132,8 +1227,9 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
                   trans=trans,
                   format=format,
                   #
-                  colors=colors,
-                  scale_mapper_kind='color_gradientn')
+                  h=h, c=c, l=l, h_start=h_start,
+                  direction=direction,
+                  scale_mapper_kind='color_hue')
 
 
 def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
@@ -1203,19 +1299,18 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
             ggsize(600, 200)
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  h=h, c=c, l=l, h_start=h_start,
-                  direction=direction, scale_mapper_kind='color_hue')
+    return scale_hue('fill',
+                     h=h, c=c, l=l,
+                     h_start=h_start,
+                     direction=direction,
+                     name=name,
+                     breaks=breaks,
+                     labels=labels,
+                     limits=limits,
+                     na_value=na_value,
+                     guide=guide,
+                     trans=trans,
+                     format=format)
 
 
 def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
@@ -1285,7 +1380,25 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
             ggsize(600, 200)
 
     """
-    return _scale('color',
+    return scale_hue('color',
+                     h=h, c=c, l=l,
+                     h_start=h_start,
+                     direction=direction,
+                     name=name,
+                     breaks=breaks,
+                     labels=labels,
+                     limits=limits,
+                     na_value=na_value,
+                     guide=guide,
+                     trans=trans,
+                     format=format)
+
+
+def scale_discrete(aesthetic, *,
+                   direction=None,
+                   name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+
+    return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
@@ -1293,11 +1406,10 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
                   expand=None,
                   na_value=na_value,
                   guide=guide,
-                  trans=trans,
                   format=format,
                   #
-                  h=h, c=c, l=l, h_start=h_start,
-                  direction=direction, scale_mapper_kind='color_hue')
+                  direction=direction,
+                  discrete=True)
 
 
 def scale_fill_discrete(direction=None,
@@ -1362,17 +1474,15 @@ def scale_fill_discrete(direction=None,
             scale_fill_discrete(guide='none')
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  format=format,
-                  #
-                  direction=direction, discrete=True)
+    return scale_discrete('fill',
+                          direction=direction,
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
 
 
 def scale_color_discrete(direction=None,
@@ -1437,7 +1547,24 @@ def scale_color_discrete(direction=None,
             scale_color_discrete(guide='none')
 
     """
-    return _scale('color',
+    return scale_discrete('color',
+                          direction=direction,
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
+
+
+def scale_grey(aesthetic, *,
+               start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+               na_value=None, guide=None, trans=None, format=None):
+
+    start, end = _greyscale_check_parameters(start, end)
+
+    return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
@@ -1445,9 +1572,12 @@ def scale_color_discrete(direction=None,
                   expand=None,
                   na_value=na_value,
                   guide=guide,
+                  trans=trans,
                   format=format,
                   #
-                  direction=direction, discrete=True)
+                  start=start, end=end,
+                  direction=direction,
+                  scale_mapper_kind='color_grey')
 
 
 def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
@@ -1514,22 +1644,17 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
             ggsize(600, 200)
 
     """
-    start, end = _greyscale_check_parameters(start, end)
-
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  start=start, end=end,
-                  direction=direction,
-                  scale_mapper_kind='color_grey')
+    return scale_grey('fill',
+                      start=start, end=end,
+                      direction=direction,
+                      name=name,
+                      breaks=breaks,
+                      labels=labels,
+                      limits=limits,
+                      na_value=na_value,
+                      guide=guide,
+                      trans=trans,
+                      format=format)
 
 
 def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
@@ -1596,22 +1721,17 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
             ggsize(600, 200)
 
     """
-    start, end = _greyscale_check_parameters(start, end)
-
-    return _scale('color',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  start=start, end=end,
-                  direction=direction,
-                  scale_mapper_kind='color_grey')
+    return scale_grey('color',
+                      start=start, end=end,
+                      direction=direction,
+                      name=name,
+                      breaks=breaks,
+                      labels=labels,
+                      limits=limits,
+                      na_value=na_value,
+                      guide=guide,
+                      trans=trans,
+                      format=format)
 
 
 def _greyscale_check_parameters(start=None, end=None):
@@ -1632,6 +1752,27 @@ def _greyscale_check_parameters(start=None, end=None):
         raise ValueError("Value of 'end' must be in range: [0,1] : {}".format(end))
 
     return (start, end)
+
+
+def scale_brewer(aesthetic, *,
+                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+                 na_value=None, guide=None, trans=None, format=None):
+
+    return _scale(aesthetic=aesthetic,
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  type=type,
+                  palette=palette,
+                  direction=direction,
+                  scale_mapper_kind='color_brewer')
 
 
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
@@ -1715,20 +1856,18 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
             ggsize(600, 200)
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  type=type, palette=palette,
-                  direction=direction,
-                  scale_mapper_kind='color_brewer')
+    return scale_brewer('fill',
+                        type=type,
+                        palette=palette,
+                        direction=direction,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        trans=trans,
+                        format=format)
 
 
 def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
@@ -1810,7 +1949,26 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
             scale_color_brewer(palette='Dark2', direction=-1)
 
     """
-    return _scale('color',
+    return scale_brewer('color',
+                        type=type,
+                        palette=palette,
+                        direction=direction,
+                        name=name,
+                        breaks=breaks,
+                        labels=labels,
+                        limits=limits,
+                        na_value=na_value,
+                        guide=guide,
+                        trans=trans,
+                        format=format)
+
+
+def scale_viridis(aesthetic, *,
+                  alpha=None, begin=None, end=None, direction=None, option=None,
+                  name=None, breaks=None, labels=None, limits=None,
+                  na_value=None, guide=None, trans=None, format=None):
+
+    return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
                   labels=labels,
@@ -1821,10 +1979,12 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                   trans=trans,
                   format=format,
                   #
-                  type=type,
-                  palette=palette,
+                  alpha=alpha,
+                  begin=begin,
+                  end=end,
                   direction=direction,
-                  scale_mapper_kind='color_brewer')
+                  option=option,
+                  scale_mapper_kind='color_cmap')
 
 
 def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
@@ -1911,23 +2071,19 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
             ggsize(600, 200)
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  alpha=alpha,
-                  begin=begin,
-                  end=end,
-                  direction=direction,
-                  option=option,
-                  scale_mapper_kind='color_cmap')
+    return scale_viridis('fill',
+                         alpha=alpha,
+                         begin=begin, end=end,
+                         direction=direction,
+                         option=option,
+                         name=name,
+                         breaks=breaks,
+                         labels=labels,
+                         limits=limits,
+                         na_value=na_value,
+                         guide=guide,
+                         trans=trans,
+                         format=format)
 
 
 def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option=None,
@@ -2012,24 +2168,19 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
             scale_color_viridis(option='cividis', direction=-1)
 
     """
-    return _scale('color',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=trans,
-                  format=format,
-                  #
-                  alpha=alpha,
-                  begin=begin,
-                  end=end,
-                  direction=direction,
-                  option=option,
-                  scale_mapper_kind='color_cmap')
-
+    return scale_viridis('color',
+                         alpha=alpha,
+                         begin=begin, end=end,
+                         direction=direction,
+                         option=option,
+                         name=name,
+                         breaks=breaks,
+                         labels=labels,
+                         limits=limits,
+                         na_value=na_value,
+                         guide=guide,
+                         trans=trans,
+                         format=format)
 
 #
 # Range Scale (alpha and size)
@@ -2265,8 +2416,8 @@ def _scale(aesthetic, *,
 
     Parameters
     ----------
-    aesthetic : str
-        The name of the aesthetic that this scale works with
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
     name : str
         The name of the scale - used as the axis label or the legend title
     breaks : list
@@ -2293,12 +2444,21 @@ def _scale(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpec`
-        Scale specification.
+    `FeatureSpecArray`
+        Scale specifications.
 
     """
 
     # flatten the 'other' sub-dictionary
     args = locals().copy()
     args.pop('other')
-    return FeatureSpec('scale', **args, **other)
+
+    specs = []
+    if isinstance(aesthetic, list):
+        args.pop('aesthetic')
+        for aes in aesthetic:
+            specs.append(FeatureSpec('scale', aesthetic=aes, **args, **other))
+    else:
+        specs.append(FeatureSpec('scale', **args, **other))
+
+    return FeatureSpecArray(*specs)
