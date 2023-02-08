@@ -98,7 +98,7 @@ class DensityStat(
 
         val statQuantile = DensityStatUtil.calculateQuantiles(statX, statCount, quantiles)
 
-        val statData = DensityStatUtil.expandByGroupEnds(mutableMapOf(
+        val statData = DensityStatUtil.expandByGroupEnds(mapOf(
             Stats.X to statX,
             Stats.DENSITY to statDensity,
             Stats.COUNT to statCount,

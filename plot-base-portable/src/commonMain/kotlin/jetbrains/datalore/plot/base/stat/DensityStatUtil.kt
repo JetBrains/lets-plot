@@ -44,7 +44,7 @@ object DensityStatUtil {
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
         valueVarName: DataFrame.Variable = Stats.Y
-    ): MutableMap<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Double>> {
         val binnedData = (bins zip (values zip weights))
             .filter { it.first?.isFinite() == true }
             .groupBy({ it.first!! }, { it.second })
@@ -81,7 +81,7 @@ object DensityStatUtil {
             statQuantile += calculateQuantiles(binStatValue, binStatCount, quantiles)
         }
 
-        val statData = mutableMapOf(
+        val statData = mapOf(
             binVarName to statBin.toList(),
             valueVarName to statValue.toList(),
             Stats.DENSITY to statDensity.toList(),
@@ -184,18 +184,18 @@ object DensityStatUtil {
     }
 
     internal fun expandByGroupEnds(
-        statData: MutableMap<DataFrame.Variable, List<Double>>,
+        statData: Map<DataFrame.Variable, List<Double>>,
         axisVar: DataFrame.Variable,
         groupVar: DataFrame.Variable,
         binVar: DataFrame.Variable? = null
-    ): MutableMap<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Double>> {
         require(statData.values.map { it.size }.toSet().size == 1) { "All data series in stat data must have equal size" }
         require(axisVar in statData.keys) { "Stat data should contain variable $axisVar" }
         require(groupVar in statData.keys) { "Stat data should contain variable $groupVar" }
         if (binVar != null) {
             require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
         }
-        val expandedStatData: MutableMap<DataFrame.Variable, List<Double>> = mutableMapOf(*statData.keys.map { it to listOf<Double>() }.toTypedArray())
+        val expandedStatData = mapOf(*statData.keys.map { it to mutableListOf<Double>() }.toTypedArray())
         for (i in 0 until statData.getValue(axisVar).size) {
             if (i > 0) {
                 val prevBin = if (binVar == null) 0.0 else statData.getValue(binVar)[i - 1]
@@ -211,13 +211,13 @@ object DensityStatUtil {
                     if (prevBin == currBin) require(prevGroup <= currGroup) { "Data series $groupVar should be ordered" }
                     statData.keys.forEach {
                         if (it == groupVar)
-                            expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i])
+                            expandedStatData[it]?.add(statData.getValue(it)[i])
                         else
-                            expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i - 1])
+                            expandedStatData[it]?.add(statData.getValue(it)[i - 1])
                     }
                 }
             }
-            statData.keys.forEach { expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i]) }
+            statData.keys.forEach { expandedStatData[it]?.add(statData.getValue(it)[i]) }
         }
         return expandedStatData
     }
