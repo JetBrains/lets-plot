@@ -90,7 +90,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         }
 
         if (quantileLines) {
-            getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
                 root.add(quantileLine)
             }
         }
@@ -100,7 +100,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         }
     }
 
-    private fun getQuantileLines(
+    private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,

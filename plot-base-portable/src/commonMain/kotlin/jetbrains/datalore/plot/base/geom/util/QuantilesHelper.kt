@@ -27,16 +27,22 @@ open class QuantilesHelper(
             compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, { p -> p[groupAes] })
         val pIt = dataPoints.sortedWith(pointsComparator).iterator()
         val quantileLineElements = mutableListOf<SvgLineElement>()
-        if (!pIt.hasNext()) return quantileLineElements
+        if (!pIt.hasNext()) {
+            return quantileLineElements
+        }
         var pPrev = pIt.next()
         while (pIt.hasNext()) {
             val pCurr = pIt.next()
             val quantilesAreSame = pPrev.quantile() == pCurr.quantile() ||
                 (pPrev.quantile()?.isFinite() != true && pCurr.quantile()?.isFinite() != true)
-            if (!quantilesAreSame) quantileLineElements.add(getQuantileLineElement(pCurr, toLocationBoundStart, toLocationBoundEnd))
+            if (!quantilesAreSame) {
+                quantileLineElements.add(getQuantileLineElement(pCurr, toLocationBoundStart, toLocationBoundEnd))
+            }
             pPrev = pCurr
         }
-        if (1.0 in quantiles) quantileLineElements.add(getQuantileLineElement(pPrev, toLocationBoundStart, toLocationBoundEnd))
+        if (1.0 in quantiles) {
+            quantileLineElements.add(getQuantileLineElement(pPrev, toLocationBoundStart, toLocationBoundEnd))
+        }
         return quantileLineElements
     }
 

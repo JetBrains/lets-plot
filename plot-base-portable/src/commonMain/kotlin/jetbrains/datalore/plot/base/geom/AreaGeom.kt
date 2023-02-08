@@ -50,7 +50,7 @@ open class AreaGeom : GeomBase() {
             }
 
             if (quantileLines) {
-                getQuantileLines(groupDataPoints, pos, coord, ctx).forEach { quantileLine ->
+                createQuantileLines(groupDataPoints, pos, coord, ctx).forEach { quantileLine ->
                     root.add(quantileLine)
                 }
             }
@@ -61,7 +61,7 @@ open class AreaGeom : GeomBase() {
         }
     }
 
-    private fun getQuantileLines(
+    private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,

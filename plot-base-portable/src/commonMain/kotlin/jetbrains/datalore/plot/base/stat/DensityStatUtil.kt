@@ -192,7 +192,9 @@ object DensityStatUtil {
         require(statData.values.map { it.size }.toSet().size == 1) { "All data series in stat data must have equal size" }
         require(axisVar in statData.keys) { "Stat data should contain variable $axisVar" }
         require(groupVar in statData.keys) { "Stat data should contain variable $groupVar" }
-        if (binVar != null) require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
+        if (binVar != null) {
+            require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
+        }
         val expandedStatData: MutableMap<DataFrame.Variable, List<Double>> = mutableMapOf(*statData.keys.map { it to listOf<Double>() }.toTypedArray())
         for (i in 0 until statData.getValue(axisVar).size) {
             if (i > 0) {
@@ -202,7 +204,9 @@ object DensityStatUtil {
                 val currGroup = statData.getValue(groupVar)[i]
                 val prevAxis = statData.getValue(axisVar)[i - 1]
                 val currAxis = statData.getValue(axisVar)[i]
-                if (prevBin == currBin) require(prevAxis <= currAxis) { "Data series $axisVar should be ordered" }
+                if (prevBin == currBin) {
+                    require(prevAxis <= currAxis) { "Data series $axisVar should be ordered" }
+                }
                 if (prevBin == currBin && prevGroup != currGroup) {
                     if (prevBin == currBin) require(prevGroup <= currGroup) { "Data series $groupVar should be ordered" }
                     statData.keys.forEach {

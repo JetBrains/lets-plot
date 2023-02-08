@@ -69,7 +69,7 @@ class ViolinGeom : GeomBase() {
         }
 
         if (quantileLines) {
-            getQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
                 root.add(quantileLine)
             }
         }
@@ -80,7 +80,7 @@ class ViolinGeom : GeomBase() {
         }
     }
 
-    private fun getQuantileLines(
+    private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
