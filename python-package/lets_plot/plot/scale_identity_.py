@@ -8,13 +8,84 @@ from .scale import _scale
 # Identity Scales
 #
 
-__all__ = ['scale_color_identity',
+__all__ = ['scale_identity',
+           'scale_color_identity',
            'scale_fill_identity',
            'scale_shape_identity',
            'scale_linetype_identity',
            'scale_alpha_identity',
            'scale_size_identity'
            ]
+
+
+def scale_identity(aesthetic, *,
+                   name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None, **other):
+    """
+    Use this scale when your data has already been scaled.
+    I.e. it already represents aesthetic values that ggplot2 can handle directly.
+    This will not produce a legend unless you also supply the breaks and labels.
+
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        c = np.random.choice(['#e41a1c', '#377eb8', '#4daf4a'], size=n)
+        v = np.random.normal(size=n)
+        ggplot({'c': c, 'v': v}, aes(x='c', y='v')) + \\
+            geom_boxplot(aes(color='c', fill='c'), size=2) + \\
+            scale_identity(aesthetic=['color', 'fill'])
+
+    """
+    return _scale(aesthetic,
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=None,
+                  format=format,
+                  #
+                  scale_mapper_kind='identity',
+                  **other)
 
 
 def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
@@ -75,18 +146,14 @@ def scale_color_identity(name=None, breaks=None, labels=None, limits=None, na_va
             scale_color_identity()
 
     """
-    return _scale('color',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  scale_mapper_kind='identity')
+    return scale_identity('color',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
 
 
 def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
@@ -147,18 +214,14 @@ def scale_fill_identity(name=None, breaks=None, labels=None, limits=None, na_val
                                 labels=list(colors.keys()))
 
     """
-    return _scale('fill',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  scale_mapper_kind='identity')
+    return scale_identity('fill',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
 
 
 def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
@@ -216,19 +279,17 @@ def scale_shape_identity(name=None, breaks=None, labels=None, limits=None, na_va
             scale_shape_identity()
 
     """
-    return _scale('shape',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  solid=None,
-                  scale_mapper_kind='identity', discrete=True)
+    return scale_identity('shape',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format,
+                          #
+                          solid=None,
+                          discrete=True)
 
 
 def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
@@ -290,18 +351,16 @@ def scale_linetype_identity(name=None, breaks=None, labels=None, limits=None, na
             scale_linetype_identity()
 
     """
-    return _scale('linetype',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  scale_mapper_kind='identity', discrete=True)
+    return scale_identity('linetype',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format,
+                          #
+                          discrete=True)
 
 
 def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
@@ -359,18 +418,14 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
             scale_alpha_identity(limits=[.2, .5], breaks=[.2, .3, .4, .5])
 
     """
-    return _scale('alpha',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=None,
-                  trans=None,
-                  format=format,
-                  #
-                  scale_mapper_kind='identity')
+    return scale_identity('alpha',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,  # was None
+                          format=format)
 
 
 def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
@@ -428,15 +483,11 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
             scale_size_identity()
 
     """
-    return _scale('size',
-                  name=name,
-                  breaks=breaks,
-                  labels=labels,
-                  limits=limits,
-                  expand=None,
-                  na_value=na_value,
-                  guide=guide,
-                  trans=None,
-                  format=format,
-                  #
-                  scale_mapper_kind='identity')
+    return scale_identity('size',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
