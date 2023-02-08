@@ -100,7 +100,67 @@ def scale_shape(solid=True, name=None, breaks=None, labels=None, limits=None, na
 
 def scale_manual(aesthetic, *,
                  values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+    """
+    Create your own discrete scale for the specified aesthetics.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    values : list of str
+        A set of aesthetic values to map data values to.
+        If this is a named vector, then the values will be matched based on the names.
+        If unnamed, values will be matched in order (usually alphabetical)
+        with the limits of the scale.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Create your own scales for the specified aesthetics.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6-7
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(9))
+        ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
+            geom_point(aes(color='x', fill='x'), shape=21, size=5) + \\
+            scale_manual(aesthetic=['color', 'fill'], values=['red', 'green', 'blue'], name='color', \\
+                               breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
+
+    """
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
@@ -189,7 +249,7 @@ def scale_color_manual(values, name=None, breaks=None, labels=None, limits=None,
 
 def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Create your own discrete scale for fill aesthetic.
+    Create your own discrete scale for `fill` aesthetic.
 
     Parameters
     ----------
@@ -230,7 +290,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
     Notes
     -----
-    Create your own color scale for fill aesthetic. Values are strings, encoding filling colors.
+    Create your own color scale for `fill` aesthetic. Values are strings, encoding filling colors.
 
     Examples
     --------
@@ -260,7 +320,7 @@ def scale_fill_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
 def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
     """
-    Create your own discrete scale for size aesthetic.
+    Create your own discrete scale for `size` aesthetic.
 
     Parameters
     ----------
@@ -299,7 +359,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
 
     Notes
     -----
-    Create your own discrete scale for size aesthetic. Values are numbers, defining sizes.
+    Create your own discrete scale for `size` aesthetic. Values are numbers, defining sizes.
 
     Examples
     --------
@@ -331,7 +391,7 @@ def scale_size_manual(values, name=None, breaks=None, labels=None, limits=None, 
 def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
-    Create your own discrete scale for shape aesthetic.
+    Create your own discrete scale for `shape` aesthetic.
 
     Parameters
     ----------
@@ -370,7 +430,7 @@ def scale_shape_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Notes
     -----
-    Create your own discrete scale for size aesthetic. Values are numbers, encoding shapes.
+    Create your own discrete scale for `size` aesthetic. Values are numbers, encoding shapes.
 
     Examples
     --------
@@ -474,7 +534,7 @@ def scale_linetype_manual(values, name=None, breaks=None, labels=None, limits=No
 def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None,
                        format=None):
     """
-    Create your own discrete scale for alpha (transparency) aesthetic.
+    Create your own discrete scale for `alpha` (transparency) aesthetic.
 
     Parameters
     ----------
@@ -513,7 +573,7 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 
     Notes
     -----
-    Create your own discrete scale for alpha (transparency) aesthetic.
+    Create your own discrete scale for `alpha` (transparency) aesthetic.
     Accept values between 0 and 1.
 
     Examples
@@ -547,7 +607,67 @@ def scale_alpha_manual(values, name=None, breaks=None, labels=None, limits=None,
 def scale_continuous(aesthetic, *,
                      low=None, high=None, name=None, breaks=None, labels=None,
                      limits=None, na_value=None, guide=None, trans=None, format=None):
+    """
+    Define smooth color gradient between two colors for the specified aesthetics.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A numeric vector of length two providing limits of the scale.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define smooth gradient between two colors (defined by low and high) for the specified aesthetics.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x')) + \\
+            scale_continuous(aesthetic=['color', 'fill'], low='#1a9641', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
@@ -566,6 +686,69 @@ def scale_continuous(aesthetic, *,
 def scale_gradient(aesthetic, *,
                    low=None, high=None, name=None, breaks=None, labels=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
+    """
+    Define smooth color gradient between two colors for the specified aesthetics.
+
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    low : str
+        Color for low end of gradient.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define smooth gradient between two colors (defined by low and high) for the specified aesthetics.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x')) + \\
+            scale_gradient(aesthetic=['color', 'fill'], low='#1a9641', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
 
     return scale_continuous(aesthetic,
                             low=low, high=high,
@@ -582,7 +765,7 @@ def scale_gradient(aesthetic, *,
 def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None,
                         limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for fill aesthetic.
+    Define smooth color gradient between two colors for `fill` aesthetic.
 
     Parameters
     ----------
@@ -657,7 +840,7 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
 def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=None,
                           limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for fill aesthetic.
+    Define smooth color gradient between two colors for `fill` aesthetic.
 
     Parameters
     ----------
@@ -730,7 +913,7 @@ def scale_fill_continuous(low=None, high=None, name=None, breaks=None, labels=No
 def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for color aesthetic.
+    Define smooth color gradient between two colors for `color` aesthetic.
 
     Parameters
     ----------
@@ -772,7 +955,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
 
     Notes
     -----
-    Define smooth gradient between two colors (defined by low and high) for color aesthetic.
+    Define smooth gradient between two colors (defined by low and high) for `color` aesthetic.
 
     Examples
     --------
@@ -805,7 +988,7 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
 def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=None, limits=None,
                            na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between two colors for color aesthetic.
+    Define smooth color gradient between two colors for `color` aesthetic.
 
     Parameters
     ----------
@@ -872,27 +1055,91 @@ def scale_color_continuous(low=None, high=None, name=None, breaks=None, labels=N
 def scale_gradient2(aesthetic, *,
                     low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
+    """
+    Define diverging color gradient for the specified aesthetics.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    low : str
+        Color for low end of gradient.
+    mid : str
+        Color for mid-point.
+    high : str
+        Color for high end of gradient.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define diverging color gradient for the specified aesthetics. Default mid point is set to white color.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(-25, 26))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x')) + \\
+            scale_gradient2(aesthetic=['color', 'fill'], low='#2b83ba', mid='#ffffbf', high='#d7191c') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
     return _scale(aesthetic,
-        name=name,
-        breaks=breaks,
-        labels=labels,
-        limits=limits,
-        expand=None,
-        na_value=na_value,
-        guide=guide,
-        trans=trans,
-        format=format,
-        #
-        low=low, mid=mid, high=high,
-        midpoint=midpoint,
-        scale_mapper_kind='color_gradient2')
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  low=low, mid=mid, high=high,
+                  midpoint=midpoint,
+                  scale_mapper_kind='color_gradient2')
 
 
 def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
-    Define diverging color gradient for fill aesthetic.
+    Define diverging color gradient for `fill` aesthetic.
 
     Parameters
     ----------
@@ -970,7 +1217,7 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
 def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, breaks=None, labels=None, limits=None,
                           na_value=None, guide=None, trans=None, format=None):
     """
-    Define diverging color gradient for color aesthetic.
+    Define diverging color gradient for `color` aesthetic.
 
     Parameters
     ----------
@@ -1014,7 +1261,7 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 
     Notes
     -----
-    Define diverging color gradient for color aesthetic. Default mid point is set to white color.
+    Define diverging color gradient for `color` aesthetic. Default mid point is set to white color.
 
     Examples
     --------
@@ -1048,7 +1295,68 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
 def scale_gradientn(aesthetic, *,
                     colors=None, name=None, breaks=None, labels=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
+    """
+    Define smooth color gradient between multiple colors for the specified aesthetics.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    colors : list
+        Gradient colors list.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define smooth color gradient between multiple colors for the specified aesthetics.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(-25, 26))
+        colors = ["#e41a1c", "#e41a1c", "#e41a1c", "#4daf4a", "#377eb8"]
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x'),size=3) + \\
+            scale_gradientn(aesthetic=['color', 'fill'], colors=colors) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
     return _scale(aesthetic,
                   name=name,
                   breaks=breaks,
@@ -1067,7 +1375,7 @@ def scale_gradientn(aesthetic, *,
 def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
                           na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between multiple colors for color aesthetic.
+    Define smooth color gradient between multiple colors for `color` aesthetic.
 
     Parameters
     ----------
@@ -1107,7 +1415,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
 
     Notes
     -----
-    Define smooth color gradient between multiple colors for color aesthetic.
+    Define smooth color gradient between multiple colors for `color` aesthetic.
 
     Examples
     --------
@@ -1141,7 +1449,7 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, limi
 def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limits=None,
                          na_value=None, guide=None, trans=None, format=None):
     """
-    Define smooth color gradient between multiple colors for fill aesthetic.
+    Define smooth color gradient between multiple colors for `fill` aesthetic.
 
     Parameters
     ----------
@@ -1181,7 +1489,7 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
 
     Notes
     -----
-    Define smooth color gradient between multiple colors for fill aesthetic.
+    Define smooth color gradient between multiple colors for `fill` aesthetic.
 
     Examples
     --------
@@ -1215,7 +1523,73 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, limit
 def scale_hue(aesthetic, *,
               h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
               limits=None, na_value=None, guide=None, trans=None, format=None):
+    """
+    Qualitative color scale with evenly spaced hues for the specified aesthetics.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    h : list
+        Range of hues (two numerics), in [0, 360].
+    c : int
+        Chroma (intensity of color), maximum value varies depending on.
+    l : int
+        Luminance (lightness), in [0, 100].
+    direction : {1, -1}, default=1
+        Direction to travel around the color wheel, 1=clockwise, -1=counter-clockwise.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define qualitative color scale with evenly spaced hues for the specified aesthetics.
+
+    Examples
+    --------
+      .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x'), fill='white', size=3) + \\
+            scale_hue(aesthetic=['color', 'fill'], c=20, l=90) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
     return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
@@ -1235,7 +1609,7 @@ def scale_hue(aesthetic, *,
 def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
                    limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Qualitative color scale with evenly spaced hues for fill aesthetic.
+    Qualitative color scale with evenly spaced hues for `fill` aesthetic.
 
     Parameters
     ----------
@@ -1316,7 +1690,7 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
 def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=None, breaks=None, labels=None,
                     limits=None, na_value=None, guide=None, trans=None, format=None):
     """
-    Qualitative color scale with evenly spaced hues for color aesthetic.
+    Qualitative color scale with evenly spaced hues for `color` aesthetic.
 
     Parameters
     ----------
@@ -1362,7 +1736,7 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for color aesthetic.
+    Define qualitative color scale with evenly spaced hues for `color` aesthetic.
 
     Examples
     --------
@@ -1397,7 +1771,68 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
 def scale_discrete(aesthetic, *,
                    direction=None,
                    name=None, breaks=None, labels=None, limits=None, na_value=None, guide=None, format=None):
+    """
+    Qualitative colors.
+    Defaults to the Brewer 'Set2' palette (or 'Set3' if the categories count > 8).
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    direction : {1, -1}, default=1
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
+        If -1, the order of colors is reversed.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define qualitative color scale with evenly spaced hues for the specified aesthetics.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(100)
+        n = 50
+        x = np.random.rand(n)
+        y = np.random.rand(n)
+        z = np.random.rand(n)
+        ggplot() + geom_point(aes(x, y, color=z, fill=z), shape=21, size=4) + \\
+            scale_discrete(aesthetic=['color', 'fill'], guide='none')
+
+    """
     return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
@@ -1527,7 +1962,7 @@ def scale_color_discrete(direction=None,
 
     Notes
     -----
-    Define qualitative color scale with evenly spaced hues for color aesthetic.
+    Define qualitative color scale with evenly spaced hues for `color` aesthetic.
 
     Examples
     --------
@@ -1561,7 +1996,70 @@ def scale_color_discrete(direction=None,
 def scale_grey(aesthetic, *,
                start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                na_value=None, guide=None, trans=None, format=None):
+    """
+    Sequential grey color scale for the specified aesthetics.
+    The palette is computed using HSV (hue, saturation, value) color model.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    start : float
+        Gray value at low end of palette in range [0, 1].
+    end : float
+        Gray value at high end of palette in range [0, 1].
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define sequential grey color scale for the specified aesthetics.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(50))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x')) + \\
+            scale_grey(aesthetic=['color', 'fill'], start=.9, end=.1) + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
     start, end = _greyscale_check_parameters(start, end)
 
     return _scale(aesthetic=aesthetic,
@@ -1583,7 +2081,7 @@ def scale_grey(aesthetic, *,
 def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential grey color scale for fill aesthetic.
+    Sequential grey color scale for `fill` aesthetic.
     The palette is computed using HSV (hue, saturation, value) color model.
 
     Parameters
@@ -1660,7 +2158,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
 def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                      na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential grey color scale for color aesthetic.
+    Sequential grey color scale for `color` aesthetic.
     The palette is computed using HSV (hue, saturation, value) color model.
 
     Parameters
@@ -1703,7 +2201,7 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
 
     Notes
     -----
-    Define sequential grey color scale for color aesthetic.
+    Define sequential grey color scale for `color` aesthetic.
 
     Examples
     --------
@@ -1757,7 +2255,87 @@ def _greyscale_check_parameters(start=None, end=None):
 def scale_brewer(aesthetic, *,
                  type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
+    """
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for the specified aesthetics.
+    Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    type : {'seq', 'div', 'qual'}
+        One of seq (sequential), div (diverging) or qual (qualitative) types of scales.
+    palette : str or int
+        If a string, will use that named palette. If a number, will index
+        into the list of palettes of appropriate type.
+    direction : {1, -1}, default=1
+        Set the order of colors in the scale. If 1, colors are as output by brewer palette.
+        If -1, the order of colors is reversed.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for the specified aesthetics.
+    ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
+    tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
+    from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
+    colors which do not look as good).
+
+    However, the original color schemes (particularly the qualitative ones) were not intended for this and the
+    perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
+
+    Palettes:
+
+    - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
+    - Qualitative : Accent, Dark2, Paired, Pastel1, Pastel2, Set1, Set2, Set3.
+    - Sequential : Blues, BuGn, BuPu, GnBu, Greens, Greys, Oranges, OrRd, PuBu, PuBuGn, PuRd, Purples, RdPu, Reds, YlGn, YlGnBu, YlOrBr, YlOrRd.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(9))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x')) + \\
+            scale_brewer(aesthetic=['color', 'fill'], palette='YlGnBu') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
     return _scale(aesthetic=aesthetic,
                   name=name,
                   breaks=breaks,
@@ -1778,7 +2356,7 @@ def scale_brewer(aesthetic, *,
 def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                       na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer2.org for fill aesthetic.
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for `fill` aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -1873,7 +2451,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
 def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
+    Sequential, diverging and qualitative color scales from colorbrewer2.org for `color` aesthetic.
     Color schemes provided are particularly suited to display discrete values (levels of factors) on a map.
 
     Parameters
@@ -1920,7 +2498,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
 
     Notes
     -----
-    Define sequential, diverging and qualitative color scales from colorbrewer2.org for color aesthetic.
+    Define sequential, diverging and qualitative color scales from colorbrewer2.org for `color` aesthetic.
     ColorBrewer provides sequential, diverging and qualitative color schemes which are particularly suited and
     tested to display discrete values (levels of a factor) on a map. It allows to smoothly interpolate 6 colors
     from any palette to a continuous scale (6 colors per palette gives nice gradients; more results in more saturated
@@ -1967,6 +2545,89 @@ def scale_viridis(aesthetic, *,
                   alpha=None, begin=None, end=None, direction=None, option=None,
                   name=None, breaks=None, labels=None, limits=None,
                   na_value=None, guide=None, trans=None, format=None):
+    """
+    The `viridis` color maps are designed to be perceptually-uniform,
+    both in regular form and also when converted to black-and-white.
+
+    The `viridis` color scales are suitable for viewers with common forms of colour blindness.
+    See also https://bids.github.io/colormap/.
+
+
+    Parameters
+    ----------
+    aesthetic : str or list
+        The name(s) of the aesthetic(s) that this scale works with.
+    alpha : float, default=1.0
+        Alpha transparency channel. (0 means transparent and 1 means opaque).
+    begin : float, default=0.0
+        Correspond to a color hue to start at. Accept values between 0 and 1. Should be less than `end`.
+    end : float, default=1.0
+        Correspond to a color hue to end with. Accept values between 0 and 1. Should be greater than `begin`.
+    direction : {1, -1}, default=1
+        Set the order of colors in the scale.
+        If -1, the order of colors is reversed.
+    option : str, default="D" (or "viridis")
+        The colormap to use:
+            - "magma" (or "A"),
+            - "inferno" (or "B")
+            - "plasma" (or "C")
+            - "viridis" (or "D")
+            - "cividis" (or "E")
+            - "turbo"
+            - "twilight"
+
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        Guide to use for this scale. It can either be a string ('colorbar', 'legend')
+        or a call to a guide function (`guide_colorbar()`, `guide_legend()`)
+        specifying additional arguments. 'none' will hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
+
+    Notes
+    -----
+    Can be used for both, continuous and discrete data.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 6
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        x = list(range(9))
+        ggplot({'x': x}, aes(x='x')) + \\
+            geom_tile(aes(color='x', fill='x')) + \\
+            scale_viridis(aesthetic=['color', 'fill'], option='twilight') + \\
+            coord_cartesian() + \\
+            ggsize(600, 200)
+
+    """
 
     return _scale(aesthetic=aesthetic,
                   name=name,
@@ -2444,8 +3105,8 @@ def _scale(aesthetic, *,
 
     Returns
     -------
-    `FeatureSpecArray`
-        Scale specifications.
+    `FeatureSpec` or `FeatureSpecArray`
+        Scales specification.
 
     """
 
@@ -2460,5 +3121,8 @@ def _scale(aesthetic, *,
             specs.append(FeatureSpec('scale', aesthetic=aes, **args, **other))
     else:
         specs.append(FeatureSpec('scale', **args, **other))
+
+    if len(specs) == 1:
+        return specs[0]
 
     return FeatureSpecArray(*specs)
