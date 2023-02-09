@@ -19,7 +19,6 @@ import org.apache.batik.gvt.event.AWTEventDispatcher
 import org.apache.batik.gvt.event.EventDispatcher
 import java.awt.Dimension
 import java.awt.Graphics2D
-import java.awt.event.MouseEvent
 import kotlin.math.ceil
 
 
@@ -103,9 +102,9 @@ class BatikMapperComponentHelper private constructor(
         myGraphicsNode.paint(g)
     }
 
-    fun handleMouseEvent(e: MouseEvent) {
-        myUserAgent.eventDispatcher.dispatchEvent(e)
-    }
+//    fun handleMouseEvent(e: MouseEvent) {
+//        myUserAgent.eventDispatcher.dispatchEvent(e)
+//    }
 
     companion object {
         fun forUnattached(svgRoot: SvgSvgElement, messageCallback: BatikMessageCallback): BatikMapperComponentHelper {
