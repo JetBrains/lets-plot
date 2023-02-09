@@ -18,13 +18,14 @@ open class QuantilesHelper(
 ) : GeomHelper(pos, coord, ctx) {
     internal fun getQuantileLineElements(
         dataPoints: Iterable<DataPointAesthetics>,
+        axisAes: Aes<Double>,
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
     ): List<SvgLineElement> {
-        val quantiles = quantiles.sorted()
         if (quantiles.isEmpty() || dataPoints.none()) {
             return emptyList()
         }
+        val quantiles = quantiles.sortedDescending()
         val quantileLineElements = mutableListOf<SvgLineElement>()
         dataPoints.groupBy { p ->
             when (groupAes) {
@@ -32,9 +33,9 @@ open class QuantilesHelper(
                 else -> Pair(p.group(), p[groupAes])
             }
         }.forEach { (_, groupedDataPoints) ->
-            val sortedDataPoints = groupedDataPoints.sortedBy(DataPointAesthetics::quantile).asReversed()
+            val sortedDataPoints = groupedDataPoints.sortedWith(compareBy(DataPointAesthetics::quantile, { it[axisAes] })).asReversed()
             var currPointsIdx = 0
-            for (quantile in quantiles.asReversed()) {
+            for (quantile in quantiles) {
                 while (currPointsIdx < sortedDataPoints.size) {
                     val p = sortedDataPoints[currPointsIdx]
                     currPointsIdx++

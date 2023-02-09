@@ -83,6 +83,7 @@ class QuantilesHelperTest {
         val quantilesHelper = QuantilesHelper(pos, coord, BogusContext, quantiles)
         val quantileLines = quantilesHelper.getQuantileLineElements(
             dataPoints,
+            Aes.X,
             { p -> DoubleVector(p.x()!!, 0.0) },
             { p -> DoubleVector(p.x()!!, 0.0) }
         )

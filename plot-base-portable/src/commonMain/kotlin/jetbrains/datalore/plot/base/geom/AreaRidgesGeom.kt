@@ -109,7 +109,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val toLocationBoundStart = toLocationBound(ctx)
         val toLocationBoundEnd = { p: DataPointAesthetics -> DoubleVector(p.x()!!, p.y()!!) }
-        return quantilesHelper.getQuantileLineElements(dataPoints, toLocationBoundStart, toLocationBoundEnd)
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun toLocationBound(ctx: GeomContext): (p: DataPointAesthetics) -> DoubleVector {

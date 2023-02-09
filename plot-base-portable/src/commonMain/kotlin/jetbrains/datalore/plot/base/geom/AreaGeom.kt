@@ -75,7 +75,7 @@ open class AreaGeom : GeomBase() {
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             GeomUtil.TO_LOCATION_X_ZERO(p)!!
         }
-        return quantilesHelper.getQuantileLineElements(definedPoints, toLocationBoundStart, toLocationBoundEnd)
+        return quantilesHelper.getQuantileLineElements(definedPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun buildHints(dataPoints: Iterable<DataPointAesthetics>, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
