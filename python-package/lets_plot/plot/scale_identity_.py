@@ -424,7 +424,7 @@ def scale_alpha_identity(name=None, breaks=None, labels=None, limits=None, na_va
                           labels=labels,
                           limits=limits,
                           na_value=na_value,
-                          guide=guide,  # was None
+                          guide=guide,
                           format=format)
 
 
