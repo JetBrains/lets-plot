@@ -28,7 +28,7 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
         Plot specification to export.
     filename : str
         The name of file. It must end with a file extension corresponding
-        to one of the supported formats: PNG (requires `cairosvg`), SVG, HTML (or HTM).
+        to one of the supported formats: SVG, HTML (or HTM), PNG (requires CairoSVG library).
     path : str
         Path to a directory to save image files in.
         By default it is ${user.dir}/lets-plot-images.

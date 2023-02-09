@@ -29,3 +29,8 @@ The color map `twilight` was created by Bastian Bechtold ([@bastibe](https://git
 
 ### Palettable
 Copyright (c) 2019 Matt Davis. Licensed under MIT License.
+
+### CairoSVG
+A free software, distributed under the LGPL-3.0 license : [documentation](https://cairosvg.org/documentation/).
+
+
