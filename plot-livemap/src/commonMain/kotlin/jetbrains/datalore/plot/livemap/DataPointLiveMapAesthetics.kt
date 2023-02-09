@@ -36,7 +36,7 @@ internal class DataPointLiveMapAesthetics {
     constructor(p: DataPointAesthetics, layerKind: MapLayerKind) {
         myLayerKind = layerKind
         myP = p
-        indices = emptyList<Int>()
+        indices = emptyList()
         valueArray = emptyList()
         explodeArray = emptyList()
     }
@@ -69,6 +69,7 @@ internal class DataPointLiveMapAesthetics {
         }
 
     var flat: Boolean = false
+    var geodesic: Boolean = false
     var animation = 0
 
     private var myArrowSpec: ArrowSpec? = null
@@ -125,7 +126,7 @@ internal class DataPointLiveMapAesthetics {
 
     val geoObject
         get(): GeoObject? {
-            if (myP.mapId() != DefaultNaValue.get(MAP_ID)) {
+            if (myP.mapId() != DefaultNaValue[MAP_ID]) {
                 fun List<*>.toVec() = explicitVec<LonLat>(get(0) as Double, get(1) as Double)
 
                 fun List<*>.toGeoRect() =
@@ -137,10 +138,10 @@ internal class DataPointLiveMapAesthetics {
                     )
 
                 val geoReference = JsonSupport.parseJson(myP.mapId().toString())
-                val id = geoReference.get("id") as String
-                val lim = (geoReference.get("lim") as? List<*>)?.toGeoRect() ?: error("Limit have to be provided")
-                val pos = (geoReference.get("pos") as? List<*>)?.toGeoRect() ?: error("Position have to be provided")
-                val cen = (geoReference.get("cen") as? List<*>)?.toVec() ?: error("Centroid have to be provided")
+                val id = geoReference["id"] as String
+                val lim = (geoReference["lim"] as? List<*>)?.toGeoRect() ?: error("Limit have to be provided")
+                val pos = (geoReference["pos"] as? List<*>)?.toGeoRect() ?: error("Position have to be provided")
+                val cen = (geoReference["cen"] as? List<*>)?.toVec() ?: error("Centroid have to be provided")
 
                 return GeoObject(id, cen, lim, pos)
             }

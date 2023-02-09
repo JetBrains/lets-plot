@@ -9,7 +9,6 @@ import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.FigureBuildInfo
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.GeomKind
@@ -52,37 +51,33 @@ import jetbrains.livemap.ui.CursorService
 object LiveMapProviderUtil {
 
     fun injectLiveMapProvider(
-        figureBuilder: FigureBuildInfo,
+        tiles: List<List<GeomLayer>>,
+        spec: Map<String, Any>,
         cursorServiceConfig: CursorServiceConfig,
     ) {
-        figureBuilder.forEachPlot { tiles: List<List<GeomLayer>>,
-                                    spec: Map<String, Any> ->
+        tiles.forEach { layers: List<GeomLayer> ->
+            if (layers.any(GeomLayer::isLiveMap)) {
+                require(layers.count(GeomLayer::isLiveMap) == 1) { "Only one LiveMap layer is allowed per plot." }
+                require(layers.first().isLiveMap) { "LiveMap layer should be the first layer in a plot." }
 
-            tiles.forEach { layers: List<GeomLayer> ->
-                if (layers.any(GeomLayer::isLiveMap)) {
-                    require(layers.count(GeomLayer::isLiveMap) == 1) { "Only one LiveMap layer is allowed per plot." }
-                    require(layers.first().isLiveMap) { "LiveMap layer should be the first layer in a plot." }
-
-                    // LiveMap options
-                    val layerSpecs = spec.getMaps(Option.Plot.LAYERS)
-                    check(!layerSpecs.isNullOrEmpty()) { "Layer specs not found in the plot spec: $spec" }
-                    val liveMapOptions = layerSpecs.first()
-                    check(liveMapOptions[Option.Layer.GEOM] == Option.GeomName.LIVE_MAP) {
-                        "LiveMap layer spec not found in the plot spec: $spec"
-                    }
-
-                    layers.first().setLiveMapProvider(
-                        MyLiveMapProvider(
-                            layers.map { createLayerRendererData(it) },
-                            liveMapOptions,
-                            cursorServiceConfig.cursorService
-                        )
-                    )
+                // LiveMap options
+                val layerSpecs = spec.getMaps(Option.Plot.LAYERS)
+                check(!layerSpecs.isNullOrEmpty()) { "Layer specs not found in the plot spec: $spec" }
+                val liveMapOptions = layerSpecs.first()
+                check(liveMapOptions[Option.Layer.GEOM] == Option.GeomName.LIVE_MAP) {
+                    "LiveMap layer spec not found in the plot spec: $spec"
                 }
+
+                layers.first().setLiveMapProvider(
+                    MyLiveMapProvider(
+                        layers.map { createLayerRendererData(it) },
+                        liveMapOptions,
+                        cursorServiceConfig.cursorService
+                    )
+                )
             }
         }
     }
-
 
     private class MyLiveMapProvider internal constructor(
         private val letsPlotLayers: List<LayerRendererData>,

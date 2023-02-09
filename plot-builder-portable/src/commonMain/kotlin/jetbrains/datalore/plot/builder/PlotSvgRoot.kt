@@ -6,22 +6,20 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgCssResource
 import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgSvgElement
 
 /**
  *  This class only handles static SVG. (no interactions)
  */
-class PlotSvgContainer(
+class PlotSvgRoot(
     val plot: PlotSvgComponent,
-    val bounds: DoubleRectangle
-) {
-    val svg: SvgSvgElement = SvgSvgElement()
+    val liveMapCursorServiceConfig: Any?,
+    bounds: DoubleRectangle
+) : FigureSvgRoot(bounds) {
 
     val liveMapFigures: List<SomeFig>
         get() = plot.liveMapFigures
@@ -29,44 +27,17 @@ class PlotSvgContainer(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
+
     private val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID_PREFIX)
     val decorationLayer = SvgGElement().apply {
         id().set(decorationLayerId)
     }
 
-    private var isContentBuilt: Boolean = false
-
     init {
-        svg.addClass(Style.PLOT_CONTAINER)
-        setSvgSize(bounds.dimension)
-        plot.resize(bounds.dimension)
+        plot.plotSize = bounds.dimension
     }
 
-    fun ensureContentBuilt() {
-        if (!isContentBuilt) {
-            buildContent()
-        }
-    }
-
-    fun resize(plotSize: DoubleVector) {
-        if (isContentBuilt) {
-            throw IllegalStateException(
-                "The plot SVG container is already built." +
-                        "\nPlease, call `clearContent()` before `resize()`."
-            )
-        }
-
-        if (plotSize.x <= 0 || plotSize.y <= 0) return
-        if (plotSize == plot.plotSize) return
-
-        setSvgSize(plotSize)
-        plot.resize(plotSize)
-    }
-
-    private fun buildContent() {
-        check(!isContentBuilt)
-        isContentBuilt = true
-
+    protected override fun buildFigureContent() {
         val id = SvgUID.get(PLOT_ID_PREFIX)
 
         svg.setStyle(object : SvgCssResource {
@@ -95,19 +66,9 @@ class PlotSvgContainer(
         }
     }
 
-    fun clearContent() {
-        if (isContentBuilt) {
-            isContentBuilt = false
-
-            svg.children().clear()
-            decorationLayer.children().clear()
-            plot.clear()
-        }
-    }
-
-    private fun setSvgSize(size: DoubleVector) {
-        svg.width().set(size.x)
-        svg.height().set(size.y)
+    protected override fun clearFigureContent() {
+        decorationLayer.children().clear()
+        plot.clear()
     }
 
     private companion object {

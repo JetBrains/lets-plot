@@ -89,7 +89,11 @@ def export_png(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
     if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
         raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
 
-    import cairosvg
+    try:
+        import cairosvg
+    except ImportError:
+        raise ValueError("Please, install cairosvg.")
+
     from .. import _kbridge as kbr
 
     svg = kbr._generate_svg(plot.as_dict())

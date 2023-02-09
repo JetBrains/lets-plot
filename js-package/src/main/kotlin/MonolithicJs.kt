@@ -5,36 +5,21 @@
 
 /* root package */
 
-import jetbrains.datalore.base.event.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.css.*
-import jetbrains.datalore.base.js.css.enumerables.CssCursor
-import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
-import jetbrains.datalore.plot.FigureBuildInfo
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
-import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.config.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.livemap.CursorServiceConfig
-import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
-import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
-import jetbrains.datalore.vis.svg.SvgNodeContainer
-import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
-import kotlinx.browser.document
 import kotlinx.dom.createElement
 import mu.KotlinLogging
-import org.w3c.dom.Element
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLParagraphElement
-import org.w3c.dom.get
-import org.w3c.dom.svg.SVGSVGElement
+import org.w3c.dom.*
 
 private val LOG = KotlinLogging.logger {}
 
@@ -83,7 +68,12 @@ private fun buildPlotFromProcessedSpecsIntern(
 ) {
     val plotSize = if (width > 0 && height > 0) DoubleVector(width, height) else null
     val preferredWidth: Double? = parentElement.ownerDocument?.body?.dataset?.get(DATALORE_PREFERRED_WIDTH)?.toDouble()
-    val maxWidth = if (preferredWidth == null) parentElement.clientWidth.toDouble() else null
+    val parentWidth = when (val w = parentElement.clientWidth) {
+        0 -> null  // parent element wasn't yet layouted
+        else -> w
+    }
+    val maxWidth = if (preferredWidth == null) parentWidth?.toDouble() else null
+//    LOG.error { "plotSize=$plotSize, preferredWidth=$preferredWidth, maxWidth=$maxWidth " }
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
         plotSize,
@@ -103,8 +93,9 @@ private fun buildPlotFromProcessedSpecsIntern(
     }
 
     if (success.buildInfos.size == 1) {
-        // a single plot
-        buildSinglePlotComponent(success.buildInfos[0], parentElement)
+        // a single figure
+        val buildInfo = success.buildInfos[0]
+        FigureToHtml(buildInfo, parentElement).eval()
     } else {
         // a bunch
         buildGGBunchComponent(success.buildInfos, parentElement)
@@ -112,6 +103,16 @@ private fun buildPlotFromProcessedSpecsIntern(
 }
 
 fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLElement) {
+    val bunchBounds = plotInfos.map { it.bounds }
+        .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
+            acc.union(bounds)
+        }
+
+    FigureToHtml.setupRootHTMLElement(
+        parentElement,
+        bunchBounds.dimension
+    )
+
     for (plotInfo in plotInfos) {
         val origin = plotInfo.bounds.origin
         val itemElement = parentElement.ownerDocument!!.createElement("div") {
@@ -122,90 +123,18 @@ fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLE
         } as HTMLElement
 
         parentElement.appendChild(itemElement)
-        buildSinglePlotComponent(plotInfo, itemElement)
+        FigureToHtml(plotInfo, itemElement).eval()
+
     }
 
-    val bunchBounds = plotInfos.map { it.bounds }
-        .fold(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO)) { acc, bounds ->
-            acc.union(bounds)
-        }
+//    var style = "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
+//
+////    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
+////    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
+////        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
+////    }
+//    parentElement.setAttribute("style", style)
 
-    var style = "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
-
-//    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
-//    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
-//        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
-//    }
-    parentElement.setAttribute("style", style)
-}
-
-private fun buildSinglePlotComponent(
-    plotBuildInfo: FigureBuildInfo,
-    parentElement: HTMLElement
-) {
-
-    val cursorServiceConfig = CursorServiceConfig()
-    LiveMapProviderUtil.injectLiveMapProvider(
-        plotBuildInfo,
-        cursorServiceConfig
-    )
-
-    val plotSvgContainer = plotBuildInfo.createFigure()
-    val plotContainer = PlotContainer(plotSvgContainer)
-    val svg = buildPlotSvg(plotContainer, parentElement)
-    svg.style.setCursor(CssCursor.CROSSHAIR)
-
-    // Livemap cursor pointer
-    cursorServiceConfig.defaultSetter { svg.style.setCursor(CssCursor.CROSSHAIR) }
-    cursorServiceConfig.pointerSetter { svg.style.setCursor(CssCursor.POINTER) }
-
-    parentElement.appendChild(svg)
-}
-
-private fun buildPlotSvg(
-    plotContainer: PlotContainer,
-    parentElement: Element
-): SVGSVGElement {
-    plotContainer.ensureContentBuilt()
-
-    val svg = plotContainer.svg
-
-    val mapper = SvgRootDocumentMapper(svg)
-    SvgNodeContainer(svg)
-    mapper.attachRoot()
-
-    if (plotContainer.isLiveMap) {
-        mapper.target.style.run {
-            setPosition(CssPosition.RELATIVE)
-        }
-    }
-
-    DomEventMapper(mapper.target) { eventSpec, mouseEvent ->
-        plotContainer.mouseEventPeer.dispatch(eventSpec, mouseEvent)
-    }
-
-    plotContainer.liveMapFigures.forEach { liveMapFigure ->
-        val bounds = (liveMapFigure as CanvasFigure).bounds().get()
-        val liveMapDiv = document.createElement("div") as HTMLElement
-
-        liveMapDiv.style.run {
-            setLeft(bounds.origin.x.toDouble())
-            setTop(bounds.origin.y.toDouble())
-            setWidth(bounds.dimension.x)
-            setPosition(CssPosition.RELATIVE)
-        }
-
-        val canvasControl = DomCanvasControl(
-            liveMapDiv,
-            bounds.dimension,
-            DomCanvasControl.DomEventPeer(mapper.target, bounds)
-        )
-
-        liveMapFigure.mapToCanvas(canvasControl)
-        parentElement.appendChild(liveMapDiv)
-    }
-
-    return mapper.target
 }
 
 private fun handleException(e: RuntimeException, parentElement: HTMLElement) {

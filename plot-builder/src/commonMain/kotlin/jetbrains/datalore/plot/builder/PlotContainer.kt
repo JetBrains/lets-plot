@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.CompositeRegistration
+import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch
@@ -14,30 +14,32 @@ import jetbrains.datalore.plot.builder.interact.Interactor
 import jetbrains.datalore.plot.builder.interact.PlotToolbox
 import jetbrains.datalore.vis.svg.SvgSvgElement
 
-class PlotContainer(
-    private val plotSvgContainer: PlotSvgContainer,
-) {
+class PlotContainer constructor(
+    private val svgRoot: PlotSvgRoot,
+) : Disposable {
+
     val svg: SvgSvgElement
-        get() = plotSvgContainer.svg
+        get() = svgRoot.svg
 
     val liveMapFigures: List<SomeFig>
-        get() = plotSvgContainer.liveMapFigures
+        get() = svgRoot.liveMapFigures
 
     val isLiveMap: Boolean
-        get() = plotSvgContainer.isLiveMap
+        get() = svgRoot.isLiveMap
 
     val mouseEventPeer: jetbrains.datalore.plot.builder.event.MouseEventPeer
         get() = plot.mouseEventPeer
 
-    private val plot: PlotSvgComponent = plotSvgContainer.plot
+    private val plot: PlotSvgComponent = svgRoot.plot
     private var registrations = CompositeRegistration()
 
     init {
         if (plot.interactionsEnabled) {
+            // ToDo: interactor.dispose() ??
             plot.interactor = Interactor(
-                decorationLayer = plotSvgContainer.decorationLayer,
+                decorationLayer = svgRoot.decorationLayer,
                 mouseEventPeer = mouseEventPeer,
-                plotSize = plot.plotSize,
+                plotSize = plot.plotSize,    // ToDo: svgRoot.bounds.dimension
                 flippedAxis = plot.flippedAxis,
                 theme = plot.theme,
                 plotContext = plot.plotContext
@@ -49,20 +51,14 @@ class PlotContainer(
                 )
             }
         }
+
+        svgRoot.ensureContentBuilt()
     }
 
-    fun ensureContentBuilt() {
-        plotSvgContainer.ensureContentBuilt()
-    }
-
-    fun clearContent() {
+    override fun dispose() {
         registrations.remove()
-        registrations = CompositeRegistration()
-        plotSvgContainer.clearContent()
-    }
-
-    fun resize(plotSize: DoubleVector) {
-        plotSvgContainer.resize(plotSize)
+//        registrations = CompositeRegistration()
+        svgRoot.clearContent()
     }
 
 

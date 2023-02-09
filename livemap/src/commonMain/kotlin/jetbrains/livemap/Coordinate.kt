@@ -17,6 +17,12 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 interface World {
     companion object {
         val ZERO_VEC: Vec<World> = Vec(0.0, 0.0)
+        const val MIN_X = 0.0
+        const val MIN_Y = 0.0
+        const val MAX_X = 256.0
+        const val MAX_Y = 256.0
+        const val WIDTH = MAX_X - MIN_X
+        const val HEIGHT = MAX_Y - MIN_Y
     }
 }
 

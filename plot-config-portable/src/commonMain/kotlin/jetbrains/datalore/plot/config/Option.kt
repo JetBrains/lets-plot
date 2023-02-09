@@ -226,11 +226,13 @@ object Option {
             const val ARROW = "arrow"
             const val ANIMATION = "animation"
             const val FLAT = "flat"
+            const val GEODESIC = "geodesic"
         }
 
         object Path {
             const val ANIMATION = "animation"
             const val FLAT = "flat"
+            const val GEODESIC = "geodesic"
         }
 
         object Point {

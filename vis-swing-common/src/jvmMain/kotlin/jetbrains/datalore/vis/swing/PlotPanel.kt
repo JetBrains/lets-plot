@@ -170,7 +170,7 @@ open class PlotPanel(
 
             applicationContext.invokeLater(action) {
                 // "expired"
-                // Other timer is running? Weird but lets wait for the next action.
+                // Other timer is running? Weird but let's wait for the next action.
                 refreshTimer.isRunning
             }
         }

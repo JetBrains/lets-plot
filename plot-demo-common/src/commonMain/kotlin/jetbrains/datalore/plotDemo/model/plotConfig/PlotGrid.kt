@@ -8,11 +8,11 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.parsePlotSpec
 
-open class SubPlots {
+open class PlotGrid {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            simple(),
-            simpleGGBunch(),
+            simple(),
+//            simpleGGBunch(),
         )
     }
 

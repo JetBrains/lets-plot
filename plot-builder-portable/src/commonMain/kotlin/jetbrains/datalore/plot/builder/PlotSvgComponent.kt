@@ -68,7 +68,8 @@ class PlotSvgComponent constructor(
 
     var interactor: PlotInteractor? = null
         set(value) {
-            check(field == null) { "Can be initialize only once." }
+            check(field == null) { "interactor can be initialize only once." }
+            check(!isBuilt) { "Can't change interactor after plot has already been built." }
             field = value
         }
 
@@ -76,14 +77,27 @@ class PlotSvgComponent constructor(
         private set
 
     var plotSize: DoubleVector = DEF_PLOT_SIZE
-        private set
-
-    private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
-    private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
+        internal set(size: DoubleVector) {
+            check(!isBuilt) { "Can't change size after plot has already been built." }
+            field = size
+        }
 
     val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
+    private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
+    private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
+    private var isDisposed = false
+
+    override fun clear() {
+        // Effectivly disposes the plot component
+        // because "interactor" is likely got disposed (???) too,
+        // and "interactor" can't be reset.
+        isDisposed = true
+        super.clear()
+    }
+
     override fun buildComponent() {
+        check(!isDisposed) { "Plot can't be rebuild after it was disposed." }
         try {
             buildPlot()
         } catch (e: RuntimeException) {
@@ -124,16 +138,6 @@ class PlotSvgComponent constructor(
                 liveMapFigures = emptyList()
             }
         })
-    }
-
-    fun resize(plotSize: DoubleVector) {
-        if (plotSize.x <= 0 || plotSize.y <= 0) return
-        if (plotSize == this.plotSize) return
-
-        this.plotSize = plotSize
-
-        // just invalidate
-        clear()
     }
 
     private fun buildPlotComponents() {

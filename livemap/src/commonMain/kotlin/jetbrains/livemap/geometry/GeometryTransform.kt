@@ -16,9 +16,10 @@ import jetbrains.datalore.base.typedGeometry.VecResampler
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
 
-private const val SAMPLING_EPSILON = 0.001
 
 object GeometryTransform {
+    const val RESAMPLING_PRECISION = 0.001
+
     fun <InT, OutT> resampling(
         geometry: Geometry<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?
@@ -67,7 +68,7 @@ object GeometryTransform {
     internal class IterativeResampler<InT, OutT>(
         private val myTransform: (Vec<InT>) -> Vec<OutT>?
     ) {
-        private val myAdaptiveResampling = VecResampler(myTransform, SAMPLING_EPSILON)
+        private val myAdaptiveResampling = VecResampler(myTransform, RESAMPLING_PRECISION)
         private var myPrevPoint: Vec<InT>? = null
         private var myRing: MutableCollection<Vec<OutT>>? = null
 

@@ -12,7 +12,7 @@ fun main() {
     with(BarPlotResizeDemo.discreteX()) {
         PlotResizableDemoWindowBatik(
             "Bar plot (X-discrete)",
-            plot = createPlot()
+            plotAssembler = createPlotAssembler()
         ).open()
     }
 }

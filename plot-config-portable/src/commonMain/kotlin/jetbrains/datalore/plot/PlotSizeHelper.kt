@@ -13,11 +13,8 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.ASPECT_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
-import jetbrains.datalore.plot.config.BunchConfig
-import jetbrains.datalore.plot.config.Option
-import jetbrains.datalore.plot.config.FigKind
-import jetbrains.datalore.plot.config.OptionsAccessor
-import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.Option.SubPlots
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -80,9 +77,45 @@ object PlotSizeHelper {
         }
 
         val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSinglePlotSize(facets, containsLiveMap)
+        return toScaledSize(
+            defaultSize,
+            plotMaxWidth,
+            plotPreferredWidth
+        )
+    }
+
+    fun subPlotsSize(
+        plotSpec: Map<*, *>,
+        plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
+        plotPreferredWidth: Double?
+    ): DoubleVector {
+        if (plotSize != null) {
+            return plotSize
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        plotSpec as Map<String, Any>
+        val figures2d = OptionsAccessor(plotSpec).getList(SubPlots.FIGURES)
+        val nrow = figures2d.size
+        val ncol = (figures2d.firstOrNull() as List<*>?)?.size ?: 0
+
+        val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSubPlotsSize(ncol, nrow)
+        return toScaledSize(
+            defaultSize,
+            plotMaxWidth,
+            plotPreferredWidth
+        )
+    }
+
+    private fun toScaledSize(
+        size: DoubleVector,
+        plotMaxWidth: Double?,
+        plotPreferredWidth: Double?
+    ): DoubleVector {
         val scaledSize = plotPreferredWidth?.let { w ->
-            defaultSize.mul(max(MIN_PLOT_WIDTH, w) / defaultSize.x)
-        } ?: defaultSize
+            size.mul(max(MIN_PLOT_WIDTH, w) / size.x)
+        } ?: size
 
         return if (plotMaxWidth != null && plotMaxWidth < scaledSize.x) {
             scaledSize.mul(max(MIN_PLOT_WIDTH, plotMaxWidth) / scaledSize.x)
@@ -125,15 +158,23 @@ object PlotSizeHelper {
     }
 
     private fun defaultSinglePlotSize(facets: PlotFacets, containsLiveMap: Boolean): DoubleVector {
-        var plotSize = DEF_PLOT_SIZE
-        if (facets.isDefined) {
-            val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / facets.colCount)
-            val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / facets.rowCount)
-            plotSize = DoubleVector(panelWidth * facets.colCount, panelHeight * facets.rowCount)
+        return if (facets.isDefined) {
+            defaulPlotPanelGridSize(facets.colCount, facets.rowCount)
         } else if (containsLiveMap) {
-            plotSize = DEF_LIVE_MAP_SIZE
+            DEF_LIVE_MAP_SIZE
+        } else {
+            DEF_PLOT_SIZE
         }
-        return plotSize
+    }
+
+    private fun defaultSubPlotsSize(ncol: Int, nrow: Int): DoubleVector {
+        return defaulPlotPanelGridSize(ncol, nrow)
+    }
+
+    private fun defaulPlotPanelGridSize(ncol: Int, nrow: Int): DoubleVector {
+        val panelWidth = DEF_PLOT_SIZE.x * (0.5 + 0.5 / ncol)
+        val panelHeight = DEF_PLOT_SIZE.y * (0.5 + 0.5 / nrow)
+        return DoubleVector(panelWidth * ncol, panelHeight * nrow)
     }
 
     private fun getSizeOptionOrNull(singlePlotSpec: Map<*, *>): DoubleVector? {

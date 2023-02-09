@@ -6,6 +6,7 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.math.toRadians
+import jetbrains.datalore.base.spatial.Geodesic
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
@@ -21,10 +22,10 @@ import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
-import jetbrains.livemap.core.projections.createArcPath
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
+import jetbrains.livemap.geometry.GeometryTransform.RESAMPLING_PRECISION
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
@@ -81,6 +82,7 @@ class PathBuilder(
 
     lateinit var points: List<Vec<LonLat>>
     var flat: Boolean = true
+    var geodesic: Boolean = false
     var animation: Int = 0
     var speed: Double = 0.0
     var flow: Double = 0.0
@@ -92,14 +94,14 @@ class PathBuilder(
     var arrowType: String? = null
 
     fun build(nonInteractive: Boolean): EcsEntity? {
-        // Build location component on original, non-curved, path data
-        val pathLocation = splitAndPackPath(points)
-            .let { transformMultiPolygon(it, myMapProjection::project, resamplingPrecision = null) }
-            .let(::bbox)
+        // location is never built on geodesic points - they alter minimal bbox too much
+        val locationGeometry = splitAndPackPath(points)
+            .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
 
-        // Build visualization component - bend if needed
-        val multiPolygon = splitAndPackPath(if (flat) points else createArcPath(points))
-        val coord = transformMultiPolygon(multiPolygon, myMapProjection::project, resamplingPrecision = null)
+        // flat can't be geodesic
+        val coord= splitAndPackPath(points.takeIf { flat || !geodesic } ?: Geodesic.createArcPath(points))
+            .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
+
 
         return bbox(coord)?.let { bbox ->
             val entity = myFactory
@@ -124,10 +126,8 @@ class PathBuilder(
                             this@PathBuilder.arrowType,
                         )
                     }
-                    pathLocation?.let {
-                        +ChartElementLocationComponent().apply {
-                            location = it
-                        }
+                    +ChartElementLocationComponent().apply {
+                        geometry = Geometry.createMultiPolygon(locationGeometry)
                     }
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = coord }
@@ -210,7 +210,7 @@ private fun splitPathByAntiMeridian(path: List<Vec<LonLat>>): List<List<Vec<LonL
             val next = path[i]
             val lonDelta = abs(next.x - prev.x)
 
-            if (lonDelta > 360.0 - lonDelta) {
+            if (lonDelta > 180.0) {
                 val sign = (if (prev.x < 0.0) -1 else +1).toDouble()
 
                 val x1 = prev.x - sign * 180.0

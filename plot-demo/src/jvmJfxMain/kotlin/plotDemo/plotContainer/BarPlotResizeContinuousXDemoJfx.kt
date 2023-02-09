@@ -12,7 +12,7 @@ fun main() {
     with(BarPlotResizeDemo.continuousX()) {
         PlotResizableDemoWindowJfx(
             "Bar plot (X-continuous)",
-            plot = createPlot()
+            plotAssembler = createPlotAssembler()
         ).open()
     }
 }

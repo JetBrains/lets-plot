@@ -5,8 +5,11 @@
 
 package jetbrains.datalore.vis.swing
 
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.registration.DisposableRegistration
+import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
 import java.awt.Cursor
@@ -18,10 +21,10 @@ import javax.swing.JPanel
 class BatikMapperComponent(
     svgRoot: SvgSvgElement,
     messageCallback: BatikMessageCallback
-) : JPanel(), Disposable {
+) : JPanel(), Disposable, DisposingHub {
 
     private val myHelper: BatikMapperComponentHelper
-    private var myIsDisposed: Boolean = false
+    private var isDisposed: Boolean = false
 
     private val registrations = CompositeRegistration()
 
@@ -30,12 +33,13 @@ class BatikMapperComponent(
 //        background = Color(0, 0, 0, 0)
         isOpaque = false
         cursor = Cursor(Cursor.CROSSHAIR_CURSOR)
+        layout = null  // Composite figure contains sub-panels with provided bounds.
 
         myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
-        registrations.add(
-            myHelper.nodeContainer
-                .addListener(object : SvgNodeContainerAdapter() {
+//        registrations.add(
+//            myHelper.nodeContainer
+            myHelper.addSvgNodeContainerListener(object : SvgNodeContainerAdapter() {
                     override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
                         if (element === svgRoot && (SvgConstants.HEIGHT.equals(
                                 event.attrSpec.name,
@@ -56,7 +60,7 @@ class BatikMapperComponent(
                         this@BatikMapperComponent.parent.repaint()
                     }
                 })
-        )
+//        )
     }
 
     override fun paintComponent(g: Graphics) {
@@ -68,10 +72,16 @@ class BatikMapperComponent(
         return myHelper.preferredSize
     }
 
+    override fun registerDisposable(disposable: Disposable) {
+        registrations.add(DisposableRegistration(disposable))
+    }
+
     override fun dispose() {
-        require(!myIsDisposed) { "Alreadey disposed." }
-        registrations.dispose()
+        require(!isDisposed) { "Alreadey disposed." }
         myHelper.dispose()
+        registrations.dispose()
+
+        AwtContainerDisposer(this).dispose()
     }
 
     companion object {

@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.SubPlots
-import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
+import jetbrains.datalore.plotDemo.model.plotConfig.PlotGrid
+import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowJfx
 
 fun main() {
-    with(SubPlots()) {
-        PlotSpecsDemoWindowBatik(
-            "Sub-Plots",
+    with(PlotGrid()) {
+        PlotSpecsDemoWindowJfx(
+            "Plot Grid (JFX)",
             plotSpecList()
         ).open()
     }

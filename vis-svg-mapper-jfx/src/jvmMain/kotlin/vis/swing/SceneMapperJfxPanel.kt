@@ -6,9 +6,12 @@
 package jetbrains.datalore.vis.swing
 
 import javafx.scene.Parent
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
+import jetbrains.datalore.base.registration.DisposableRegistration
+import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.vis.svg.SvgConstants
 import jetbrains.datalore.vis.svg.SvgElementListener
@@ -22,7 +25,7 @@ import java.awt.Dimension
 class SceneMapperJfxPanel(
     private val svg: SvgSvgElement,
     stylesheets: List<String>
-) : AbstractJfxPanel(stylesheets), Disposable {
+) : AbstractJfxPanel(stylesheets), Disposable, DisposingHub {
 
     private val nodeContainer = SvgNodeContainer(svg)  // attach root
     private var registrations = CompositeRegistration()
@@ -61,8 +64,14 @@ class SceneMapperJfxPanel(
         return Vector(svg.width().get()!!.toInt(), svg.height().get()!!.toInt())
     }
 
+    override fun registerDisposable(disposable: Disposable) {
+        registrations.add(DisposableRegistration(disposable))
+    }
+
     override fun dispose() {
         registrations.dispose()
+
+        AwtContainerDisposer(this).dispose()
 
         // Detach svg root.
         nodeContainer.root().set(SvgSvgElement())

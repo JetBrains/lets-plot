@@ -195,6 +195,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.has(Segment.FLAT)) {
                     geom.flat = opts.getBoolean(Segment.FLAT)
                 }
+                if (opts.has(Segment.GEODESIC)) {
+                    geom.geodesic = opts.getBoolean(Segment.GEODESIC)
+                }
                 geom
             }
 
@@ -205,6 +208,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 if (opts.has(Path.FLAT)) {
                     geom.flat = opts.getBoolean(Path.FLAT)
+                }
+                if (opts.has(Segment.GEODESIC)) {
+                    geom.geodesic = opts.getBoolean(Segment.GEODESIC)
                 }
                 geom
             }

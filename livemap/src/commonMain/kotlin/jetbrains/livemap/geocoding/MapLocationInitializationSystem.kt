@@ -65,7 +65,7 @@ class MapLocationInitializationSystem(
 
     private fun Rect<World>.calculatePosition(positionConsumer: (zoom: Double, coordinates: Vec<World>) -> Unit) {
         val zoom: Double = myZoom
-            ?: if (dimension.x != 0.0 && dimension.y != 0.0) {
+            ?: if (dimension.x != 0.0 || dimension.y != 0.0) {
                 calculateMaxZoom(dimension, myViewport.size)
             } else {
                 calculateMaxZoom(

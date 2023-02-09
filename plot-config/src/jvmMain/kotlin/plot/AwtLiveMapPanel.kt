@@ -5,9 +5,10 @@
 
 package jetbrains.datalore.plot
 
+import jetbrains.datalore.base.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.vis.canvas.awt.AwtAnimationTimerPeer
 import jetbrains.datalore.vis.canvas.awt.AwtCanvasControl
@@ -23,7 +24,7 @@ import javax.swing.JLayeredPane
 
 
 class AwtLiveMapPanel(
-    private val plotContainer: PlotContainer,
+    private val liveMapFigures: List<SomeFig>,
     private val plotOverlayComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,
     private val cursorServiceConfig: CursorServiceConfig
@@ -48,7 +49,8 @@ class AwtLiveMapPanel(
 
         add(plotOverlayComponent)
 
-        plotContainer.liveMapFigures
+//        plotContainer.liveMapFigures
+        liveMapFigures
             .map { it as CanvasFigure }
             .forEach { liveMapFigures ->
                 val liveMapBounds = liveMapFigures.bounds().get()
@@ -62,7 +64,9 @@ class AwtLiveMapPanel(
                 }
 
                 add(
-                    object : JComponent(), Disposable { override fun dispose() { } }
+                    object : JComponent(), Disposable {
+                        override fun dispose() {}
+                    }
                         .apply {
                             background = Color.WHITE
                             bounds = liveMapBounds.run { Rectangle(origin.x, origin.y, dimension.x, dimension.y) }
@@ -86,7 +90,7 @@ class AwtLiveMapPanel(
     override fun dispose() {
         awtContainerDisposer.dispose()
         registrations.forEach(Disposable::dispose)
-        plotContainer.clearContent()
+//        plotContainer.dispose()
         cursorServiceConfig.defaultSetter { }
         cursorServiceConfig.pointerSetter { }
     }

@@ -5,60 +5,24 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.PlotContainer
+import jetbrains.datalore.plot.builder.config.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.livemap.CursorServiceConfig
-import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import mu.KotlinLogging
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Rectangle
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import javax.swing.JComponent
 import javax.swing.JLabel
 
 private val LOG = KotlinLogging.logger {}
 
 internal object AwtPlotFactoryUtil {
-
-    private fun buildPlotComponent(
-        figureBuilder: FigureBuildInfo,
-        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): JComponent {
-        var cursorServiceConfig: Any? = null
-        if (figureBuilder.containsLiveMap) {
-            cursorServiceConfig = CursorServiceConfig()
-            LiveMapProviderUtil.injectLiveMapProvider(
-                figureBuilder,
-                cursorServiceConfig
-            )
-        }
-
-        val plotSvgContainer = figureBuilder.createFigure()
-        val plotContainer = PlotContainer(plotSvgContainer)
-        val plotComponent = buildPlotComponent(plotContainer, svgComponentFactory, executor)
-        return if (plotSvgContainer.isLiveMap) {
-            AwtLiveMapPanel(
-                plotContainer,
-                plotComponent,
-                executor,
-                cursorServiceConfig as CursorServiceConfig
-            )
-
-        } else {
-            plotComponent
-        }
-    }
 
     fun buildPlotFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
@@ -107,18 +71,20 @@ internal object AwtPlotFactoryUtil {
             val success = buildResult as MonolithicCommon.PlotsBuildResult.Success
             val computationMessages = success.buildInfos.flatMap { it.computationMessages }
             computationMessagesHandler(computationMessages)
-            if (success.buildInfos.size == 1) {
+            return if (success.buildInfos.size == 1) {
                 // a single plot
-                return buildPlotComponent(
-                    success.buildInfos[0],
+                val buildInfo = success.buildInfos[0]
+                FigureToAwt(
+                    buildInfo,
+                    svgComponentFactory, executor
+                ).eval()
+            } else {
+                // ggbunch
+                buildGGBunchComponent(
+                    success.buildInfos,
                     svgComponentFactory, executor
                 )
             }
-            // ggbunch
-            return buildGGBunchComponent(
-                success.buildInfos,
-                svgComponentFactory, executor
-            )
 
         } catch (e: RuntimeException) {
             handleException(e)
@@ -145,18 +111,18 @@ internal object AwtPlotFactoryUtil {
         bunchComponent.isOpaque = false
 
         for (plotInfo in plotInfos) {
-            val plotComponent = buildPlotComponent(
+            val itemComp = FigureToAwt(
                 plotInfo,
                 svgComponentFactory, executor
-            )
+            ).eval()
             val bounds = plotInfo.bounds
-            plotComponent.bounds = Rectangle(
+            itemComp.bounds = Rectangle(
                 bounds.origin.x.toInt(),
                 bounds.origin.y.toInt(),
                 bounds.dimension.x.toInt(),
                 bounds.dimension.y.toInt()
             )
-            bunchComponent.add(plotComponent)
+            bunchComponent.add(itemComp)
         }
 
         val bunchBounds = plotInfos.map { it.bounds }
@@ -213,84 +179,5 @@ internal object AwtPlotFactoryUtil {
 
         // Frontend transforms
         return PlotConfigClientSide.processTransform(plotSpec)
-    }
-
-
-    fun buildPlotComponent(
-        plotContainer: PlotContainer,
-        svgComponentFactory: (svg: SvgSvgElement) -> JComponent,
-        executor: (() -> Unit) -> Unit
-    ): JComponent {
-        plotContainer.ensureContentBuilt()
-        val svg = plotContainer.svg
-
-        val plotComponent: JComponent = svgComponentFactory(svg)
-
-        plotComponent.addMouseMotionListener(object : MouseAdapter() {
-            override fun mouseMoved(e: MouseEvent) {
-                super.mouseMoved(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_MOVED, AwtEventUtil.translate(e))
-                }
-            }
-
-
-            override fun mouseDragged(e: MouseEvent) {
-                super.mouseDragged(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_DRAGGED, AwtEventUtil.translate(e))
-                }
-            }
-
-
-        })
-
-        plotComponent.addMouseListener(object : MouseAdapter() {
-            override fun mouseExited(e: MouseEvent) {
-                super.mouseExited(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_LEFT, AwtEventUtil.translate(e))
-                }
-            }
-
-
-            override fun mouseClicked(e: MouseEvent) {
-                super.mouseClicked(e)
-                val event = if (e.clickCount % 2 == 1) {
-                    MouseEventSpec.MOUSE_CLICKED
-                } else {
-                    MouseEventSpec.MOUSE_DOUBLE_CLICKED
-                }
-
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(event, AwtEventUtil.translate(e))
-                }
-            }
-
-
-            override fun mousePressed(e: MouseEvent) {
-                super.mousePressed(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_PRESSED, AwtEventUtil.translate(e))
-                }
-            }
-
-
-            override fun mouseReleased(e: MouseEvent) {
-                super.mouseReleased(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_RELEASED, AwtEventUtil.translate(e))
-                }
-            }
-
-            override fun mouseEntered(e: MouseEvent) {
-                super.mouseEntered(e)
-                executor {
-                    plotContainer.mouseEventPeer.dispatch(MouseEventSpec.MOUSE_ENTERED, AwtEventUtil.translate(e))
-                }
-            }
-        })
-
-        return plotComponent
     }
 }

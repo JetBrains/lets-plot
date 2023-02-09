@@ -24,4 +24,17 @@ inline fun <T: Options, reified TValue> map(key: String): ReadWriteProperty<T, T
     }
 }
 
-inline fun <reified TValue> map(key: Aes<*>): ReadWriteProperty<Options, TValue?> = map(Option.Mapping.toOption(key))
+// Option.Mapping.toOption(key) doesn't work in JS, fixed by inlining the function.
+// Browser console:
+//    JsConsole.java:52 (JavaScript) TypeError: Cannot read properties of undefined (reading 'toOption_896ixz$')TypeError: Cannot read properties of undefined (reading 'toOption_896ixz$')
+//      at new LayerOptions
+//      at CorrPlotOptionsBuilder.newCorrPlotLayerOptions_0
+//      at CorrPlotOptionsBuilder.build
+//      at CorrPlotSpecChange.buildCorrPlotSpec_0
+//      at CorrPlotSpecChange.apply_il3x6g$
+//      at PlotSpecTransform.applyChangesToSpec_0
+//      at PlotSpecTransform.apply_i49brq$
+//      at BackendSpecTransformUtil.processTransformIntern2_0
+//      at BackendSpecTransformUtil.processTransformIntern_0
+//      at BackendSpecTransformUtil.processTransform_2wxo1b$
+inline fun <reified TValue> map(aes: Aes<*>): ReadWriteProperty<Options, TValue?> = map(aes.name.lowercase())
