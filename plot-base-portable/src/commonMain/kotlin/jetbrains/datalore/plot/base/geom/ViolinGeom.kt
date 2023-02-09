@@ -58,7 +58,7 @@ class ViolinGeom : GeomBase() {
         val rightBoundTransform = toLocationBound(positiveSign, ctx)
 
         dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
-            val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform, simplifyBorders = true)
+            val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform)
             appendNodes(paths, root)
         }
 

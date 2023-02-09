@@ -38,7 +38,7 @@ open class AreaGeom : GeomBase() {
 
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group).forEach { (_, groupDataPoints) ->
             groupDataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
-                val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO, simplifyBorders = true)
+                val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
                 // If you want to retain the side edges of area: comment out the following codes,
                 // and switch decorate method in LinesHelper.createBands
                 appendNodes(paths, root)
