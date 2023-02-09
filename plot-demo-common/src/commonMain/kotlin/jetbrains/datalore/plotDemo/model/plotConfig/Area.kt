@@ -114,8 +114,7 @@ class Area {
               },
               'layers': [
                 {
-                  'geom': 'area',
-                  'stat': 'density',
+                  'geom': 'density',
                   'color': 'black',
                   'quantiles': [0, 0.02, 0.1, 0.5, 0.9, 0.98, 1],
                   'quantile_lines': true,

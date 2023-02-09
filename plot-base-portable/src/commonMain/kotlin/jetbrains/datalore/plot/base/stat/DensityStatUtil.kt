@@ -154,7 +154,7 @@ object DensityStatUtil {
         if (sample.isEmpty()) return emptyList()
         val densityValuesSum = density.sum()
         val dens = density.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
-        val quantilesItr = quantiles.iterator()
+        val quantilesItr = quantiles.sorted().iterator()
         if (!quantilesItr.hasNext()) return List(sample.size) { quantileMaxValue }
         var quantile = quantilesItr.next()
         return sample.map { sampleValue ->

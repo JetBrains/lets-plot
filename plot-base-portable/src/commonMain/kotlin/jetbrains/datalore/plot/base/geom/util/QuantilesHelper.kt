@@ -21,27 +21,29 @@ open class QuantilesHelper(
         toLocationBoundStart: (DataPointAesthetics) -> DoubleVector,
         toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector
     ): List<SvgLineElement> {
-        val pointsComparator = if (groupAes == null)
-            compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile)
-        else
-            compareBy(DataPointAesthetics::group, DataPointAesthetics::quantile, { p -> p[groupAes] })
-        val pIt = dataPoints.sortedWith(pointsComparator).iterator()
+        val quantiles = quantiles.sorted()
+        if (quantiles.isEmpty() || dataPoints.none()) {
+            return emptyList()
+        }
         val quantileLineElements = mutableListOf<SvgLineElement>()
-        if (!pIt.hasNext()) {
-            return quantileLineElements
-        }
-        var pPrev = pIt.next()
-        while (pIt.hasNext()) {
-            val pCurr = pIt.next()
-            val quantilesAreSame = pPrev.quantile() == pCurr.quantile() ||
-                (pPrev.quantile()?.isFinite() != true && pCurr.quantile()?.isFinite() != true)
-            if (!quantilesAreSame) {
-                quantileLineElements.add(getQuantileLineElement(pCurr, toLocationBoundStart, toLocationBoundEnd))
+        dataPoints.groupBy { p ->
+            when (groupAes) {
+                null -> p.group()
+                else -> Pair(p.group(), p[groupAes])
             }
-            pPrev = pCurr
-        }
-        if (1.0 in quantiles) {
-            quantileLineElements.add(getQuantileLineElement(pPrev, toLocationBoundStart, toLocationBoundEnd))
+        }.forEach { (_, groupedDataPoints) ->
+            val sortedDataPoints = groupedDataPoints.sortedBy(DataPointAesthetics::quantile).asReversed()
+            var currPointsIdx = 0
+            for (quantile in quantiles.asReversed()) {
+                while (currPointsIdx < sortedDataPoints.size) {
+                    val p = sortedDataPoints[currPointsIdx]
+                    currPointsIdx++
+                    if (quantile == p.quantile()) {
+                        quantileLineElements.add(getQuantileLineElement(p, toLocationBoundStart, toLocationBoundEnd))
+                        break
+                    }
+                }
+            }
         }
         return quantileLineElements
     }
