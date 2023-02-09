@@ -12,26 +12,26 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 
 object BogusContext : GeomContext {
     override val flipped: Boolean
-        get() = throw IllegalStateException("Not available in a bogus geom context")
+        get() = error("Not available in a bogus geom context")
     override val targetCollector: GeomTargetCollector
-        get() = throw IllegalStateException("Not available in a bogus geom context")
+        get() = error("Not available in a bogus geom context")
     override val annotations: Annotations?
-        get() = throw IllegalStateException("Not available in a bogus geom context")
+        get() = error("Not available in a bogus geom context")
 
     override fun getResolution(aes: Aes<Double>): Double {
-        throw IllegalStateException("Not available in a bogus geom context")
+        error("Not available in a bogus geom context")
     }
 
     override fun getAesBounds(): DoubleRectangle {
-        throw IllegalStateException("Not available in a bogus geom context")
+        error("Not available in a bogus geom context")
     }
 
     override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-        throw IllegalStateException("Not available in a bogus geom context")
+        error("Not available in a bogus geom context")
     }
 
     override fun isMappedAes(aes: Aes<*>): Boolean {
-        throw IllegalStateException("Not available in a bogus geom context")
+        error("Not available in a bogus geom context")
     }
 
     override fun estimateTextSize(
@@ -41,6 +41,6 @@ object BogusContext : GeomContext {
         isBold: Boolean,
         isItalic: Boolean
     ): DoubleVector {
-        throw IllegalStateException("Not available in a bogus geom context")
+        error("Not available in a bogus geom context")
     }
 }
