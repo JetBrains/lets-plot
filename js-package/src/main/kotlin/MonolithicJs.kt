@@ -15,8 +15,6 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.config.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import kotlinx.dom.createElement
 import mu.KotlinLogging
 import org.w3c.dom.*
@@ -36,7 +34,7 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
-        val processedSpec = processSpecs(plotSpec, frontendOnly = false)
+        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = false)
         buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
@@ -52,8 +50,10 @@ fun buildPlotFromRawSpecs(plotSpecJs: dynamic, width: Double, height: Double, pa
 fun buildPlotFromProcessedSpecs(plotSpecJs: dynamic, width: Double, height: Double, parentElement: HTMLElement) {
     try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
-        // "processed" here means "processed on backend" -> apply "frontend" transforms to have truly processed specs.
-        val processedSpec = processSpecs(plotSpec, frontendOnly = true)
+        // Though the "plotSpec" might contain already "processed" specs,
+        // we apply "frontend" transforms anyway, just to be sure that
+        // we are going to use a truly processed specs.
+        val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
         buildPlotFromProcessedSpecsIntern(processedSpec, width, height, parentElement)
     } catch (e: RuntimeException) {
         handleException(e, parentElement)
@@ -163,26 +163,26 @@ private fun showText(message: String, className: String, style: String, parentEl
     parentElement.appendChild(paragraphElement)
 }
 
-@Suppress("DuplicatedCode")
-private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-    PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
-    if (PlotConfig.isFailure(plotSpec)) {
-        return plotSpec
-    }
-
-    // Backend transforms
-    @Suppress("NAME_SHADOWING")
-    val plotSpec =
-        if (frontendOnly) {
-            plotSpec
-        } else {
-            BackendSpecTransformUtil.processTransform(plotSpec)
-        }
-
-    if (PlotConfig.isFailure(plotSpec)) {
-        return plotSpec
-    }
-
-    // Frontend transforms
-    return PlotConfigClientSide.processTransform(plotSpec)
-}
+//@Suppress("DuplicatedCode")
+//private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
+//    PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
+//    if (PlotConfig.isFailure(plotSpec)) {
+//        return plotSpec
+//    }
+//
+//    // Backend transforms
+//    @Suppress("NAME_SHADOWING")
+//    val plotSpec =
+//        if (frontendOnly) {
+//            plotSpec
+//        } else {
+//            BackendSpecTransformUtil.processTransform(plotSpec)
+//        }
+//
+//    if (PlotConfig.isFailure(plotSpec)) {
+//        return plotSpec
+//    }
+//
+//    // Frontend transforms
+//    return PlotConfigClientSide.processTransform(plotSpec)
+//}

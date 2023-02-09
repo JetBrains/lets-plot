@@ -256,32 +256,28 @@ object MonolithicCommon {
     }
 
     /**
-     * Applies all transformations to plot specifications.
+     * Applies all transformations to the plot specifications.
      * @param plotSpec: raw specifications of a single plot or GGBunch
      */
-    @Suppress("DuplicatedCode")
     fun processRawSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec
         }
 
-        // Only "portable" transforms (not supported: raster image, any async transforms)
-
-        // Backend transforms
+        // "Backend" transforms.
         @Suppress("NAME_SHADOWING")
-        val plotSpec =
-            if (frontendOnly) {
-                plotSpec
-            } else {
-                BackendSpecTransformUtil.processTransform(plotSpec)
-            }
+        val plotSpec = if (frontendOnly) {
+            plotSpec
+        } else {
+            BackendSpecTransformUtil.processTransform(plotSpec)
+        }
 
         if (PlotConfig.isFailure(plotSpec)) {
             return plotSpec
         }
 
-        // Frontend transforms
+        // "Frontend" transforms.
         return PlotConfigClientSide.processTransform(plotSpec)
     }
 
