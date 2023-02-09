@@ -31,7 +31,7 @@ abstract class PosProvider {
             }
         }
 
-        fun barStack(vjust: Double? = null, stackingType: StackingType? = null): PosProvider {
+        fun barStack(vjust: Double? = null, stackingType: StackingType = StackingType.SUM): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
                     return PositionAdjustments.stack(ctx.aesthetics, vjust, stackingType)

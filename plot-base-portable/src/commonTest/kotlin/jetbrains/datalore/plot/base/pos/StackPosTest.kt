@@ -106,7 +106,7 @@ class StackPosTest {
         groupValues: List<Int>? = null,
         expectedOffsets: List<Double?>,
         vjust: Double? = null,
-        stackingType: StackingType = StackPos.DEF_STACKING_TYPE,
+        stackingType: StackingType = StackingType.SUM,
         messageBeginning: String
     ) {
         val aes = buildAesthetics(xValues, yValues, groupValues)

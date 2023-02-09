@@ -31,9 +31,9 @@ enum class StackingType {
     }
 }
 
-internal class StackPos(aes: Aesthetics, vjust: Double?, stackingType: StackingType?) : PositionAdjustment {
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingType: StackingType) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingType ?: DEF_STACKING_TYPE)
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingType)
 
     private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingType: StackingType): Map<Int, Double> {
         val stackingContext = when (stackingType) {
@@ -109,6 +109,5 @@ internal class StackPos(aes: Aesthetics, vjust: Double?, stackingType: StackingT
 
     companion object {
         private const val DEF_VJUST = 1.0
-        val DEF_STACKING_TYPE = StackingType.SUM
     }
 }

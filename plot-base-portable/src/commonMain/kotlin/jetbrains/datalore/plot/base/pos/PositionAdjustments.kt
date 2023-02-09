@@ -39,7 +39,7 @@ object PositionAdjustments {
         return DodgePos(aesthetics, groupCount, width)
     }
 
-    fun stack(aes: Aesthetics, vjust: Double?, stackingType: StackingType?): PositionAdjustment {
+    fun stack(aes: Aesthetics, vjust: Double?, stackingType: StackingType): PositionAdjustment {
         return StackPos(aes, vjust, stackingType)
     }
 
