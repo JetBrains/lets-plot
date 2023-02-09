@@ -12,11 +12,14 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.stat.DensityRidgesStat
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.vis.svg.SvgLineElement
 
 class AreaRidgesGeom : GeomBase(), WithHeight {
     var scale: Double = DEF_SCALE
     var minHeight: Double = DEF_MIN_HEIGHT
+    var quantiles: List<Double> = DensityRidgesStat.DEF_QUANTILES
     var quantileLines: Boolean = DEF_QUANTILE_LINES
 
     override fun buildIntern(
@@ -86,48 +89,27 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             appendNodes(helper.createLines(points, boundTransform), root)
         }
 
-        if (quantileLines) drawQuantileLines(root, dataPoints, pos, coord, ctx)
+        if (quantileLines) {
+            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+                root.add(quantileLine)
+            }
+        }
 
-        buildHints(dataPoints, ctx, helper, boundTransform)
+        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
+            buildHints(points, ctx, helper, boundTransform)
+        }
     }
 
-    private fun drawQuantileLines(
-        root: SvgRoot,
+    private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
-    ) {
-        val pIt = dataPoints.sortedWith(
-            compareBy(
-                DataPointAesthetics::group,
-                DataPointAesthetics::quantile,
-                DataPointAesthetics::x
-            )
-        ).iterator()
-        if (!pIt.hasNext()) return
-        var pPrev = pIt.next()
-        while (pIt.hasNext()) {
-            val pCurr = pIt.next()
-            val quantilesAreSame = pPrev.quantile() == pCurr.quantile() ||
-                    (pPrev.quantile()?.isFinite() != true && pCurr.quantile()?.isFinite() != true)
-            if (!quantilesAreSame) drawQuantileLine(root, pCurr, pos, coord, ctx)
-            pPrev = pCurr
-        }
-    }
-
-    private fun drawQuantileLine(
-        root: SvgRoot,
-        dataPoint: DataPointAesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
-    ) {
-        val svgElementHelper = GeomHelper(pos, coord, ctx).createSvgElementHelper()
-        val start = toLocationBound(ctx)(dataPoint)
-        val end = DoubleVector(dataPoint.x()!!, dataPoint.y()!!)
-        val line = svgElementHelper.createLine(start, end, dataPoint)!!
-        root.add(line)
+    ): List<SvgLineElement> {
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
+        val toLocationBoundStart = toLocationBound(ctx)
+        val toLocationBoundEnd = { p: DataPointAesthetics -> DoubleVector(p.x()!!, p.y()!!) }
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun toLocationBound(ctx: GeomContext): (p: DataPointAesthetics) -> DoubleVector {

@@ -22,8 +22,8 @@ import jetbrains.datalore.vis.svg.SvgShape
 import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 open class GeomHelper(
-    private val pos: PositionAdjustment,
-    private val coord: CoordinateSystem,
+    protected val pos: PositionAdjustment,
+    protected val coord: CoordinateSystem,
     internal val ctx: GeomContext
 ) {
     fun toClient(location: DoubleVector, p: DataPointAesthetics): DoubleVector? {

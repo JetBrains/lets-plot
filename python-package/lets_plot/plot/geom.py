@@ -2857,7 +2857,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 orientation=None,
                 show_half=None,
-                draw_quantiles=None,
+                quantiles=None, quantile_lines=None,
                 scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 **other_args):
     """
@@ -2892,8 +2892,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         If -1, only half of each violin is drawn.
         If 1, another half is drawn.
         If 0, violins look as usual.
-    draw_quantiles : list of float
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
         Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=False
+        Show the quantile lines.
     scale : {'area', 'count', 'width'}, default='area'
         If 'area', all violins have the same area.
         If 'count', areas are scaled proportionally to the number of observations.
@@ -2935,6 +2937,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ..density.. : density estimate.
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : quantile estimate.
 
     `geom_violin()` understands the following aesthetics mappings:
 
@@ -2946,6 +2949,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'ydensity' stat to compute weighted density.
+    - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
     Examples
     --------
@@ -2967,7 +2971,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 9-10
 
         import numpy as np
         from lets_plot import *
@@ -2977,7 +2981,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         x = np.random.choice(['a', 'b', 'b', 'c'], size=n)
         y = np.random.normal(size=n)
         ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
-            geom_violin(scale='count', draw_quantiles=[.25, .5, .75])
+            geom_violin(aes(fill='..quantile..'), scale='count', \\
+                        quantiles=[.02, .25, .5, .75, .98], quantile_lines=True)
 
     |
 
@@ -3046,7 +3051,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  tooltips=tooltips,
                  orientation=orientation,
                  show_half=show_half,
-                 draw_quantiles=draw_quantiles,
+                 quantiles=quantiles,
+                 quantile_lines=quantile_lines,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
                  **other_args)
 
@@ -3274,7 +3280,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         If `scale = 1.0`, the heights of a ridges are automatically scaled
         such that the ridge with `height = 1.0` just touches the one above.
     quantiles : list of float, default=[0.25, 0.5, 0.75]
-        Draw horizontal lines at the given quantiles of the density estimate.
+        Draw vertical lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
     other_args
@@ -3608,6 +3614,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  bw=None,
                  n=None,
                  fs_max=None,
+                 quantiles=None,
+                 quantile_lines=None,
                  **other_args):
     """
     Display kernel density estimate, which is a smoothed version of the histogram.
@@ -3659,6 +3667,10 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     fs_max : int, default=500
         Maximum size of data to use density computation with 'full scan'.
         For bigger data, less accurate but more efficient density computation is applied.
+    quantiles : list of float, default=[0.25, 0.5, 0.75]
+        Draw horizontal lines at the given quantiles of the density estimate.
+    quantile_lines : bool, default=False
+        Show the quantile lines.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3677,6 +3689,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ..density.. : density estimate (mapped by default).
     - ..count.. : density * number of points.
     - ..scaled.. : density estimate, scaled to maximum of 1.
+    - ..quantile.. : quantile estimate.
 
     `geom_density()` understands the following aesthetics mappings:
 
@@ -3687,6 +3700,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density' stat to compute weighted density.
+    - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
     Examples
     --------
@@ -3700,6 +3714,21 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         np.random.seed(42)
         x = np.random.normal(size=1000)
         ggplot({'x': x}, aes(x='x')) + geom_density()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 200
+        np.random.seed(42)
+        ggplot({'x': np.random.normal(size=n)}) + \\
+            geom_density(aes(x='x', fill='..quantile..'), color='black', size=1, \\
+                         quantiles=[0, .02, .1, .5, .9, .98, 1], quantile_lines=True)
 
     |
 
@@ -3775,6 +3804,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=tooltips,
                  orientation=orientation,
                  trim=trim, kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
+                 quantiles=quantiles, quantile_lines=quantile_lines,
                  **other_args)
 
 

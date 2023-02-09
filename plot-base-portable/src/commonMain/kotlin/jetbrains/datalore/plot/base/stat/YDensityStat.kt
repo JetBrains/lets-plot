@@ -20,7 +20,8 @@ class YDensityStat(
     private val adjust: Double,
     private val kernel: DensityStat.Kernel,
     private val n: Int,
-    private val fullScanMax: Int
+    private val fullScanMax: Int,
+    private val quantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
 
     init {
@@ -51,7 +52,7 @@ class YDensityStat(
         }
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)
-        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange)
+        val statData = DensityStatUtil.binnedStat(xs, ys, ws, trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallYRange, quantiles)
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
@@ -100,11 +101,13 @@ class YDensityStat(
         val DEF_SCALE = Scale.AREA
         const val DEF_TRIM = true
         const val DEF_TAILS_CUTOFF = 3.0
+        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
-            Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH
+            Aes.VIOLINWIDTH to Stats.VIOLIN_WIDTH,
+            Aes.QUANTILE to Stats.QUANTILE
         )
     }
 }

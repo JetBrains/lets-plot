@@ -158,6 +158,10 @@ object Option {
 
     object Geom {
 
+        object Density {
+            const val QUANTILE_LINES = "quantile_lines"
+        }
+
         object Dotplot {
             const val DOTSIZE = "dotsize"
             const val STACKRATIO = "stackratio"
@@ -197,7 +201,7 @@ object Option {
         }
 
         object Violin {
-            const val DRAW_QUANTILES = "draw_quantiles"
+            const val QUANTILE_LINES = "quantile_lines"
             const val SHOW_HALF = "show_half"
         }
 
@@ -355,12 +359,13 @@ object Option {
         }
 
         object Density {
-            const val TRIM = "trim"
             const val N = "n"
             const val KERNEL = "kernel"
             const val BAND_WIDTH = "bw"     // number or string (method name)
             const val ADJUST = "adjust"
             const val FULL_SCAN_MAX = "fs_max"  // use 'full scan' when the input size is < 'fs_max'
+            const val TRIM = "trim"
+            const val QUANTILES = "quantiles"
         }
 
         object Density2d {
@@ -383,6 +388,7 @@ object Option {
             const val SCALE = "scale"
             const val TRIM = "trim"
             const val TAILS_CUTOFF = "tails_cutoff"
+            const val QUANTILES = "quantiles"
         }
 
         object QQ {

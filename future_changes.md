@@ -34,7 +34,14 @@
 
 ### Changed
 
+- **Breaking change** in `geom_violin()`: parameter `draw_quantiles` renamed to `quantiles` - and now it works as in the `geom_area_ridges()` geometry.
+
+- `geom_violin()`: added `quantile_lines` parameter - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
+
+- `geom_density()`: added two new parameters - `quantiles` and `quantile_lines` - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
+
 - `pandas` library was added to dependencies of the `residual_plot()` function.
+
 - Python packages for `Windows` no longer require `MinGW` tools to run.
 - parameter `flat=True` turns off lines re-projection, keeping the original number of points.
 

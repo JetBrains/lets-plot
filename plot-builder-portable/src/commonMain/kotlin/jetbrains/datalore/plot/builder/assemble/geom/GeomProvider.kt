@@ -288,12 +288,13 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { AreaGeom() }.build()
         }
 
-        fun density(): GeomProvider {
+        fun density(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.DENSITY,
                 AestheticsDefaults.density(),
-                DensityGeom.HANDLES_GROUPS
-            ) { DensityGeom() }.build()
+                DensityGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
         }
 
         fun density2d(): GeomProvider {

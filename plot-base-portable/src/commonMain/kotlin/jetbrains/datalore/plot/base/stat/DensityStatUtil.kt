@@ -44,7 +44,7 @@ object DensityStatUtil {
         quantiles: List<Double> = emptyList(),
         binVarName: DataFrame.Variable = Stats.X,
         valueVarName: DataFrame.Variable = Stats.Y
-    ): MutableMap<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Double>> {
         val binnedData = (bins zip (values zip weights))
             .filter { it.first?.isFinite() == true }
             .groupBy({ it.first!! }, { it.second })
@@ -78,10 +78,10 @@ object DensityStatUtil {
             statDensity += binStatCount.map { it / widthsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
-            statQuantile += calculateQuantiles(binStatValue, binStatCount, quantiles)
+            statQuantile += calculateStatQuantile(binStatValue, binStatCount, quantiles)
         }
 
-        val statData = mutableMapOf(
+        val statData = mapOf(
             binVarName to statBin.toList(),
             valueVarName to statValue.toList(),
             Stats.DENSITY to statDensity.toList(),
@@ -145,25 +145,24 @@ object DensityStatUtil {
         return 1.0
     }
 
-    private fun calculateQuantiles(
-        sample: List<Double>,
-        density: List<Double>,
+    internal fun calculateStatQuantile(
+        statSample: List<Double>,
+        statDensity: List<Double>,
         quantiles: List<Double>
     ): List<Double> {
+        if (statSample.isEmpty()) return emptyList()
         val quantileMaxValue = 1.0
-        if (sample.isEmpty()) return emptyList()
-        val densityValuesSum = density.sum()
-        val dens = density.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
-        val quantilesItr = quantiles.iterator()
-        if (!quantilesItr.hasNext()) return List(sample.size) { quantileMaxValue }
-        var quantile = quantilesItr.next()
-        return sample.map { sampleValue ->
-            if (sampleValue <= pwLinInterp(dens, sample)(quantile))
-                quantile
+        if (quantiles.isEmpty()) return List(statSample.size) { quantileMaxValue }
+        val densityValuesSum = statDensity.sum()
+        val dens = statDensity.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
+        val sortedQuantiles = quantiles.distinct().sorted()
+        var i = 0
+        return statSample.map { sampleValue ->
+            if (sampleValue <= pwLinInterp(dens, statSample)(sortedQuantiles[i]))
+                sortedQuantiles[i]
             else {
-                if (quantilesItr.hasNext()) {
-                    quantile = quantilesItr.next()
-                    quantile
+                if (i < sortedQuantiles.lastIndex) {
+                    sortedQuantiles[++i]
                 } else {
                     quantileMaxValue
                 }
@@ -183,17 +182,19 @@ object DensityStatUtil {
         }
     }
 
-    private fun expandByGroupEnds(
-        statData: MutableMap<DataFrame.Variable, List<Double>>,
+    internal fun expandByGroupEnds(
+        statData: Map<DataFrame.Variable, List<Double>>,
         axisVar: DataFrame.Variable,
         groupVar: DataFrame.Variable,
         binVar: DataFrame.Variable? = null
-    ): MutableMap<DataFrame.Variable, List<Double>> {
+    ): Map<DataFrame.Variable, List<Double>> {
         require(statData.values.map { it.size }.toSet().size == 1) { "All data series in stat data must have equal size" }
         require(axisVar in statData.keys) { "Stat data should contain variable $axisVar" }
         require(groupVar in statData.keys) { "Stat data should contain variable $groupVar" }
-        if (binVar != null) require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
-        val expandedStatData: MutableMap<DataFrame.Variable, List<Double>> = mutableMapOf(*statData.keys.map { it to listOf<Double>() }.toTypedArray())
+        if (binVar != null) {
+            require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
+        }
+        val expandedStatData = statData.mapValues { mutableListOf<Double>() }
         for (i in 0 until statData.getValue(axisVar).size) {
             if (i > 0) {
                 val prevBin = if (binVar == null) 0.0 else statData.getValue(binVar)[i - 1]
@@ -202,18 +203,20 @@ object DensityStatUtil {
                 val currGroup = statData.getValue(groupVar)[i]
                 val prevAxis = statData.getValue(axisVar)[i - 1]
                 val currAxis = statData.getValue(axisVar)[i]
-                if (prevBin == currBin) require(prevAxis <= currAxis) { "Data series $axisVar should be ordered" }
+                if (prevBin == currBin) {
+                    require(prevAxis <= currAxis) { "Data series $axisVar should be ordered" }
+                }
                 if (prevBin == currBin && prevGroup != currGroup) {
                     if (prevBin == currBin) require(prevGroup <= currGroup) { "Data series $groupVar should be ordered" }
                     statData.keys.forEach {
                         if (it == groupVar)
-                            expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i])
+                            expandedStatData[it]!!.add(statData.getValue(it)[i])
                         else
-                            expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i - 1])
+                            expandedStatData[it]!!.add(statData.getValue(it)[i - 1])
                     }
                 }
             }
-            statData.keys.forEach { expandedStatData[it] = expandedStatData.getValue(it) + listOf(statData.getValue(it)[i]) }
+            statData.keys.forEach { expandedStatData[it]!!.add(statData.getValue(it)[i]) }
         }
         return expandedStatData
     }

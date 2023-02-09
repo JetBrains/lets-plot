@@ -7,6 +7,7 @@ package jetbrains.datalore.plotDemo.model.plotAssembler
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.AreaGeom
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats

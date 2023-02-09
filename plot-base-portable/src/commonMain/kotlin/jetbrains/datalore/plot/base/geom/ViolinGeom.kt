@@ -11,18 +11,17 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.stat.YDensityStat
+import jetbrains.datalore.vis.svg.SvgLineElement
 
 class ViolinGeom : GeomBase() {
+    var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
+    var quantileLines: Boolean = DEF_QUANTILE_LINES
     var showHalf: Double = DEF_SHOW_HALF
-    private var drawQuantiles: List<Double> = DEF_DRAW_QUANTILES
     private val negativeSign: Double
         get() = if (showHalf > 0.0) 0.0 else -1.0
     private val positiveSign: Double
         get() = if (showHalf < 0.0) 0.0 else 1.0
-
-    fun setDrawQuantiles(quantiles: List<Double>) {
-        drawQuantiles = quantiles
-    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -58,36 +57,43 @@ class ViolinGeom : GeomBase() {
         val leftBoundTransform = toLocationBound(negativeSign, ctx)
         val rightBoundTransform = toLocationBound(positiveSign, ctx)
 
-        val paths = helper.createBands(dataPoints, leftBoundTransform, rightBoundTransform)
-        appendNodes(paths, root)
+        dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
+            val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform)
+            appendNodes(paths, root)
+        }
 
         helper.setAlphaEnabled(false)
-        appendNodes(helper.createLines(dataPoints, leftBoundTransform), root)
-        appendNodes(helper.createLines(dataPoints, rightBoundTransform), root)
+        dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+            appendNodes(helper.createLines(points, leftBoundTransform), root)
+            appendNodes(helper.createLines(points, rightBoundTransform), root)
+        }
 
-        buildQuantiles(root, dataPoints, pos, coord, ctx)
+        if (quantileLines) {
+            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+                root.add(quantileLine)
+            }
+        }
 
-        buildHints(dataPoints, ctx, helper, leftBoundTransform)
-        buildHints(dataPoints, ctx, helper, rightBoundTransform)
+        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
+            buildHints(points, ctx, helper, leftBoundTransform)
+            buildHints(points, ctx, helper, rightBoundTransform)
+        }
     }
 
-    private fun buildQuantiles(
-        root: SvgRoot,
+    private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
         pos: PositionAdjustment,
         coord: CoordinateSystem,
         ctx: GeomContext
-    ) {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, drawQuantiles, Aes.Y, Aes.VIOLINWIDTH, Aes.X)
+    ): List<SvgLineElement> {
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(negativeSign, ctx)(p).x, p.y()!!)
         }
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(positiveSign, ctx)(p).x, p.y()!!)
         }
-        for (line in quantilesHelper.createGroupedQuantiles(dataPoints, toLocationBoundStart, toLocationBoundEnd)) {
-            root.add(line)
-        }
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.Y, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun toLocationBound(
@@ -134,7 +140,7 @@ class ViolinGeom : GeomBase() {
     }
 
     companion object {
-        val DEF_DRAW_QUANTILES = emptyList<Double>()
+        const val DEF_QUANTILE_LINES = false
         const val DEF_SHOW_HALF = 0.0
 
         const val HANDLES_GROUPS = true

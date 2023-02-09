@@ -17,9 +17,10 @@ import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
+import jetbrains.datalore.plot.config.Option.Geom.Density
 import jetbrains.datalore.plot.config.Option.Geom.Boxplot
 import jetbrains.datalore.plot.config.Option.Geom.BoxplotOutlier
+import jetbrains.datalore.plot.config.Option.Geom.AreaRidges
 import jetbrains.datalore.plot.config.Option.Geom.CrossBar
 import jetbrains.datalore.plot.config.Option.Geom.Dotplot
 import jetbrains.datalore.plot.config.Option.Geom.Image
@@ -57,6 +58,17 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
     fun geomProvider(opts: OptionsAccessor): GeomProvider {
         when (geomKind) {
+            GeomKind.DENSITY -> return GeomProvider.density {
+                val geom = DensityGeom()
+                if (opts.hasOwn(Option.Stat.Density.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.Density.QUANTILES, 0.0, 1.0)
+                }
+                if (opts.hasOwn(Density.QUANTILE_LINES)) {
+                    geom.quantileLines = opts.getBoolean(Density.QUANTILE_LINES, DensityGeom.DEF_QUANTILE_LINES)
+                }
+                geom
+            }
+
             GeomKind.DOT_PLOT -> return GeomProvider.dotplot {
                 val geom = DotplotGeom()
                 if (opts.hasOwn(Dotplot.DOTSIZE)) {
@@ -120,6 +132,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(AreaRidges.MIN_HEIGHT)) {
                     geom.minHeight = opts.getDoubleDef(AreaRidges.MIN_HEIGHT, AreaRidgesGeom.DEF_MIN_HEIGHT)
                 }
+                if (opts.hasOwn(Option.Stat.DensityRidges.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.DensityRidges.QUANTILES, 0.0, 1.0)
+                }
                 if (opts.hasOwn(AreaRidges.QUANTILE_LINES)) {
                     geom.quantileLines = opts.getBoolean(AreaRidges.QUANTILE_LINES, AreaRidgesGeom.DEF_QUANTILE_LINES)
                 }
@@ -128,8 +143,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.VIOLIN -> return GeomProvider.violin {
                 val geom = ViolinGeom()
-                if (opts.hasOwn(Violin.DRAW_QUANTILES)) {
-                    geom.setDrawQuantiles(opts.getBoundedDoubleList(Violin.DRAW_QUANTILES, 0.0, 1.0))
+                if (opts.hasOwn(Option.Stat.YDensity.QUANTILES)) {
+                    geom.quantiles = opts.getBoundedDoubleList(Option.Stat.YDensity.QUANTILES, 0.0, 1.0)
+                }
+                if (opts.hasOwn(Violin.QUANTILE_LINES)) {
+                    geom.quantileLines = opts.getBoolean(Violin.QUANTILE_LINES, ViolinGeom.DEF_QUANTILE_LINES)
                 }
                 if (opts.hasOwn(Violin.SHOW_HALF)) {
                     geom.showHalf = opts.getDouble(Violin.SHOW_HALF)!!
@@ -291,7 +309,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // violin - special case
             PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
             PROVIDER[GeomKind.AREA] = GeomProvider.area()
-            PROVIDER[GeomKind.DENSITY] = GeomProvider.density()
+            // density - special case
             PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
             PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
             PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
