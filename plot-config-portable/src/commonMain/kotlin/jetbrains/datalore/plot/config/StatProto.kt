@@ -228,7 +228,9 @@ object StatProto {
 
         val quantiles = if (options.hasOwn(YDensity.QUANTILES)) {
             options.getBoundedDoubleList(YDensity.QUANTILES, 0.0, 1.0)
-        } else YDensityStat.DEF_QUANTILES
+        } else {
+            YDensityStat.DEF_QUANTILES
+        }
 
         return YDensityStat(
             scale = scale ?: YDensityStat.DEF_SCALE,
