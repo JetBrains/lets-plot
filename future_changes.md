@@ -16,6 +16,22 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/geodesic_path.ipynb).
 
+
+- New scale functions with  parameter `aesthetic` to define aesthetics that this scale works with:
+  - `scale_identity(aesthetic, *, ...)`
+  - `scale_manual(aesthetic, values, *, ...)`
+  - `scale_continuous(aesthetic, *, ...)`
+  - `scale_gradient(aesthetic, *, ...)`
+  - `scale_gradient2(aesthetic, *, ...)`
+  - `scale_gradientn(aesthetic, *, ...)`
+  - `scale_hue(aesthetic, *, ...)`
+  - `scale_discrete(aesthetic, *, ...)`
+  - `scale_grey(aesthetic, *, ...)`
+  - `scale_brewer(aesthetic, *, ...)`
+  - `scale_viridis(aesthetic, *, ...)`
+    
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/scale_functions.ipynb). 
+
 ### Changed
 
 - `pandas` library was added to dependencies of the `residual_plot()` function.
