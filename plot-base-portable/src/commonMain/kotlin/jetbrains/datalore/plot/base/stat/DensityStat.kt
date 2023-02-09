@@ -96,7 +96,7 @@ class DensityStat(
             statScaled.add(d / maxm)
         }
 
-        val statQuantile = DensityStatUtil.calculateQuantiles(statX, statCount, quantiles)
+        val statQuantile = DensityStatUtil.calculateStatQuantile(statX, statCount, quantiles)
 
         val statData = DensityStatUtil.expandByGroupEnds(mapOf(
             Stats.X to statX,

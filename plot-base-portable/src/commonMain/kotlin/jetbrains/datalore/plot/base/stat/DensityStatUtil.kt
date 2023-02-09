@@ -78,7 +78,7 @@ object DensityStatUtil {
             statDensity += binStatCount.map { it / widthsSum }
             statCount += binStatCount
             statScaled += binStatCount.map { it / maxBinCount }
-            statQuantile += calculateQuantiles(binStatValue, binStatCount, quantiles)
+            statQuantile += calculateStatQuantile(binStatValue, binStatCount, quantiles)
         }
 
         val statData = mapOf(
@@ -145,25 +145,25 @@ object DensityStatUtil {
         return 1.0
     }
 
-    internal fun calculateQuantiles(
-        sample: List<Double>,
-        density: List<Double>,
+    internal fun calculateStatQuantile(
+        statSample: List<Double>,
+        statDensity: List<Double>,
         quantiles: List<Double>
     ): List<Double> {
+        if (statSample.isEmpty()) return emptyList()
         val quantileMaxValue = 1.0
-        if (sample.isEmpty()) return emptyList()
-        val densityValuesSum = density.sum()
-        val dens = density.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
-        val quantilesItr = quantiles.sorted().iterator()
-        if (!quantilesItr.hasNext()) return List(sample.size) { quantileMaxValue }
-        var quantile = quantilesItr.next()
-        return sample.map { sampleValue ->
-            if (sampleValue <= pwLinInterp(dens, sample)(quantile))
-                quantile
+        if (quantiles.isEmpty()) return List(statSample.size) { quantileMaxValue }
+        val densityValuesSum = statDensity.sum()
+        val dens = statDensity.runningReduce { cumSum, elem -> cumSum + elem }.map { it / densityValuesSum }
+        val sortedQuantiles = quantiles.distinct().sorted()
+        var i = 0
+        return statSample.map { sampleValue ->
+            if (sampleValue <= pwLinInterp(dens, statSample)(sortedQuantiles[i]))
+                sortedQuantiles[i]
             else {
-                if (quantilesItr.hasNext()) {
-                    quantile = quantilesItr.next()
-                    quantile
+                if (i < sortedQuantiles.size - 1) {
+                    i++
+                    sortedQuantiles[i]
                 } else {
                     quantileMaxValue
                 }

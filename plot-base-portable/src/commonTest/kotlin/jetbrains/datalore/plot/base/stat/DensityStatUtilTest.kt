@@ -9,21 +9,52 @@ import jetbrains.datalore.plot.base.DataFrame
 import kotlin.test.*
 
 class DensityStatUtilTest : BaseStatTest() {
-    private fun constructStatData(
-        axisValues: List<Double> = emptyList(),
-        groupValues: List<Double> = emptyList(),
-        binValues: List<Double> = emptyList(),
-        axisVar: DataFrame.Variable = Stats.X,
-        groupVar: DataFrame.Variable = Stats.QUANTILE,
-        binVar: DataFrame.Variable? = null
-    ): MutableMap<DataFrame.Variable, List<Double>> {
-        val statData = mutableMapOf(
-            axisVar to axisValues,
-            groupVar to groupValues,
+    @Test
+    fun statQuantileForEmptyData() {
+        val statSample = emptyList<Double>()
+        val statDensity = emptyList<Double>()
+        val quantiles = listOf(0.0, 0.5, 1.0)
+        val statQuantile = DensityStatUtil.calculateStatQuantile(statSample, statDensity, quantiles)
+        assertContentEquals(emptyList(), statQuantile, "Quantiles stat isn't calculated correctly when data is empty")
+    }
+
+    @Test
+    fun statQuantileWithDifferentQuantiles() {
+        val statSample = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+        val statDensity = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.3, 0.2, 0.1, 0.0)
+        val quantiles = listOf(0.0, 0.5, 1.0)
+        val statQuantile = DensityStatUtil.calculateStatQuantile(statSample, statDensity, quantiles)
+        assertContentEquals(
+            listOf(0.0, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0),
+            statQuantile,
+            "Quantiles stat isn't calculated correctly"
         )
-        if (binVar != null)
-            statData[binVar] = binValues
-        return statData
+    }
+
+    @Test
+    fun statQuantileWithUnsortedQuantiles() {
+        val statSample = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+        val statDensity = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.3, 0.2, 0.1, 0.0)
+        val quantiles = listOf(0.0, 1.0, 0.5)
+        val statQuantile = DensityStatUtil.calculateStatQuantile(statSample, statDensity, quantiles)
+        assertContentEquals(
+            listOf(0.0, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0),
+            statQuantile,
+            "Quantiles stat isn't calculated correctly when quantiles is unsorted"
+        )
+    }
+
+    @Test
+    fun statQuantileWithDuplicatedQuantiles() {
+        val statSample = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8)
+        val statDensity = listOf(0.0, 0.1, 0.2, 0.3, 0.4, 0.3, 0.2, 0.1, 0.0)
+        val quantiles = listOf(0.0, 0.0, 0.5, 0.5, 1.0, 1.0)
+        val statQuantile = DensityStatUtil.calculateStatQuantile(statSample, statDensity, quantiles)
+        assertContentEquals(
+            listOf(0.0, 0.5, 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.0),
+            statQuantile,
+            "Quantiles stat isn't calculated correctly when there is duplicates in quantiles parameter"
+        )
     }
 
     @Test
@@ -84,5 +115,22 @@ class DensityStatUtilTest : BaseStatTest() {
         checkStatVarValues(expandedStatDf, Stats.X, listOf(2.72, 2.72, 3.14, -3.14, -3.14, -2.72))
         checkStatVarValues(expandedStatDf, Stats.QUANTILE, listOf(0.5, 1.0, 1.0, 0.5, 1.0, 1.0))
         checkStatVarValues(expandedStatDf, Stats.Y, listOf(2.0, 2.0, 2.0, 0.0, 0.0, 0.0))
+    }
+
+    private fun constructStatData(
+        axisValues: List<Double> = emptyList(),
+        groupValues: List<Double> = emptyList(),
+        binValues: List<Double> = emptyList(),
+        axisVar: DataFrame.Variable = Stats.X,
+        groupVar: DataFrame.Variable = Stats.QUANTILE,
+        binVar: DataFrame.Variable? = null
+    ): MutableMap<DataFrame.Variable, List<Double>> {
+        val statData = mutableMapOf(
+            axisVar to axisValues,
+            groupVar to groupValues,
+        )
+        if (binVar != null)
+            statData[binVar] = binValues
+        return statData
     }
 }
