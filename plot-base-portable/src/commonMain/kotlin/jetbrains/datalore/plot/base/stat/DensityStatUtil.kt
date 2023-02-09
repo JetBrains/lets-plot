@@ -161,9 +161,8 @@ object DensityStatUtil {
             if (sampleValue <= pwLinInterp(dens, statSample)(sortedQuantiles[i]))
                 sortedQuantiles[i]
             else {
-                if (i < sortedQuantiles.size - 1) {
-                    i++
-                    sortedQuantiles[i]
+                if (i < sortedQuantiles.lastIndex) {
+                    sortedQuantiles[++i]
                 } else {
                     quantileMaxValue
                 }
@@ -195,7 +194,7 @@ object DensityStatUtil {
         if (binVar != null) {
             require(binVar in statData.keys) { "Stat data should contain variable $binVar" }
         }
-        val expandedStatData = mapOf(*statData.keys.map { it to mutableListOf<Double>() }.toTypedArray())
+        val expandedStatData = statData.mapValues { mutableListOf<Double>() }
         for (i in 0 until statData.getValue(axisVar).size) {
             if (i > 0) {
                 val prevBin = if (binVar == null) 0.0 else statData.getValue(binVar)[i - 1]
@@ -211,13 +210,13 @@ object DensityStatUtil {
                     if (prevBin == currBin) require(prevGroup <= currGroup) { "Data series $groupVar should be ordered" }
                     statData.keys.forEach {
                         if (it == groupVar)
-                            expandedStatData[it]?.add(statData.getValue(it)[i])
+                            expandedStatData[it]!!.add(statData.getValue(it)[i])
                         else
-                            expandedStatData[it]?.add(statData.getValue(it)[i - 1])
+                            expandedStatData[it]!!.add(statData.getValue(it)[i - 1])
                     }
                 }
             }
-            statData.keys.forEach { expandedStatData[it]?.add(statData.getValue(it)[i]) }
+            statData.keys.forEach { expandedStatData[it]!!.add(statData.getValue(it)[i]) }
         }
         return expandedStatData
     }
