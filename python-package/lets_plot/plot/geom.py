@@ -3041,6 +3041,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                         trim=False, fill='#74c476')
 
     """
+    if 'draw_quantiles' in other_args:
+        print("WARN: The parameter 'draw_quantiles' is no longer supported; use quantiles.")
+        other_args.pop('draw_quantiles')
     return _geom('violin',
                  mapping=mapping,
                  data=data,
