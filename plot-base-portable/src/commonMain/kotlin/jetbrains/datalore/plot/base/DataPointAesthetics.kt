@@ -44,8 +44,6 @@ abstract class DataPointAesthetics {
         return get(Aes.FILL)
     }
 
-    // todo Add fun paint_xxx()
-
     fun alpha(): Double? {
         return get(Aes.ALPHA)
     }

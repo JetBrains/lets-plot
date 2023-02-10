@@ -20,7 +20,13 @@ object GeomMeta {
             renderedAesByGeom[geomKind] =
                 renderedAesList(geomKind)
         }
-        return renderedAesByGeom[geomKind]!!
+        return renderedAesByGeom[geomKind]!!.let {
+            if (it.contains(Aes.COLOR) || it.contains(Aes.FILL)) {
+                it + Aes.getAdditionalColorList()
+            } else {
+                it
+            }
+        }
     }
 
     private val POINT = listOf(
@@ -364,10 +370,10 @@ object GeomMeta {
                 Aes.SLICE,
                 Aes.EXPLODE,
                 Aes.SIZE,
-              //  Aes.COLOR,
-              //  Aes.FILL,
+                Aes.COLOR,
+                Aes.FILL,
                 Aes.ALPHA
-            ) + Aes.getColorList()
+            )
         }
     }
 }

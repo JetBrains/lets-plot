@@ -266,7 +266,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 opts.getDouble(Pie.HOLE)?.let { geom.holeSize = it }
                 opts.getDouble(Pie.STROKE)?.let { geom.strokeWidth = it }
                 opts.getColor(Pie.STROKE_COLOR)?.let { geom.strokeColor = it }
-                opts.getColorAes(Pie.FILL_BY)?.let { geom.aesFill = it }
+                opts.getColorAes(FILL_BY)?.let { geom.aesFill = it }
                 geom
             }
 

@@ -129,6 +129,9 @@ object Option {
         const val ANNOTATIONS = "labels"
         const val ANNOTATION_SIZE = "annotation_size"
 
+        const val COLOR_BY = "color_by"
+        const val FILL_BY = "fill_by"
+
         object Marginal {
             const val SIZE = "margin_size"
             const val SIZE_DEFAULT = 0.1
@@ -267,7 +270,6 @@ object Option {
         }
 
         object Pie {
-            const val FILL_BY = "fill_by"
             const val HOLE = "hole"
             const val STROKE = "stroke"
             const val STROKE_COLOR = "stroke_color"
