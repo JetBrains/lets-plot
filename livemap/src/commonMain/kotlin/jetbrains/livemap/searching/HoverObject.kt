@@ -5,4 +5,4 @@
 
 package jetbrains.livemap.searching
 
-data class SearchResult(val layerIndex: Int, val index: Int)
+data class HoverObject(val layerIndex: Int, val index: Int)

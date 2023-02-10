@@ -9,13 +9,13 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.searching.LocatorHelper
-import jetbrains.livemap.searching.SearchResult
 
 object SearchTestHelper {
     const val UNDEFINED_SECTOR = -1
 
-    private fun isTargetUnderCoord(mouseCoord: Vec<Client>, locatorHelper: LocatorHelper, target: EcsEntity): SearchResult? {
+    private fun isTargetUnderCoord(mouseCoord: Vec<Client>, locatorHelper: LocatorHelper, target: EcsEntity): HoverObject? {
         return locatorHelper.search(mouseCoord, target)
     }
 

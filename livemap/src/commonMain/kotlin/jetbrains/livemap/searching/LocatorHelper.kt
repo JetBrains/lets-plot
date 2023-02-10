@@ -12,9 +12,9 @@ import jetbrains.livemap.core.ecs.EcsEntity
 interface LocatorHelper {
     fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean
 
-    fun search(coord: Vec<Client>, target: EcsEntity): SearchResult? {
+    fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
         if (isCoordinateInTarget(coord, target)) {
-            return SearchResult(
+            return HoverObject(
                 layerIndex = target.get<IndexComponent>().layerIndex,
                 index = target.get<IndexComponent>().index
             )

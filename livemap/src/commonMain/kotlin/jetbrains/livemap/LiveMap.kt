@@ -70,9 +70,9 @@ import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem
 import jetbrains.livemap.mapengine.viewport.ViewportPositionUpdateSystem
-import jetbrains.livemap.searching.HoverObjectComponent
+import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.searching.HoverObjectDetectionSystem
-import jetbrains.livemap.searching.SearchResult
+import jetbrains.livemap.searching.SearchResultComponent
 import jetbrains.livemap.ui.*
 
 class LiveMap(
@@ -150,12 +150,12 @@ class LiveMap(
         )
     }
 
-    fun searchResult(): SearchResult? {
+    fun hoverObjects(): List<HoverObject> {
         if (!myInitialized) {
-            return null
+            return emptyList()
         }
 
-        return myComponentManager.getSingleton<HoverObjectComponent>().searchResult
+        return myComponentManager.getSingleton<SearchResultComponent>().hoverObjects
     }
 
     private fun animationHandler(componentManager: EcsComponentManager, dt: Long): Boolean {
@@ -373,7 +373,7 @@ class LiveMap(
         private val deltaTime = DeltaTime()
         private var currentTime: Long = 0
 
-        internal fun onTime(millisTime: Long): Boolean {
+        fun onTime(millisTime: Long): Boolean {
             val dt = deltaTime.tick(millisTime)
             currentTime += dt
 

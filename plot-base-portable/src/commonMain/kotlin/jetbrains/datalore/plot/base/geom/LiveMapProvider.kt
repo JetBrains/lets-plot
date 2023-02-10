@@ -14,6 +14,7 @@ interface LiveMapProvider {
 
     class LiveMapData(
         val canvasFigure: SomeFig,
-        val targetLocator: GeomTargetLocator
+        // emulate separated layers for TargetPicker so tooltips will work in the same way as in non-livemap plot
+        val targetLocators: List<GeomTargetLocator>
     )
 }

@@ -46,7 +46,7 @@ internal class PlotTile(
     val targetLocators: List<GeomTargetLocator>
         get() = _targetLocators
 
-    val layerYOrientations: List<Boolean> = coreLayers.map { it.isYOrientation }
+    val layerYOrientations: List<Boolean> = coreLayers.map(GeomLayer::isYOrientation)
 
     init {
         moveTo(tileLayoutInfo.getAbsoluteBounds(tilesOrigin).origin)
@@ -67,13 +67,13 @@ internal class PlotTile(
 
         // render geoms
 
-        val liveMapGeomLayer = coreLayers.firstOrNull { it.isLiveMap }
+        val liveMapGeomLayer = coreLayers.firstOrNull(GeomLayer::isLiveMap)
         if (liveMapGeomLayer != null) {
             val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
             val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
 
             liveMapFigure = liveMapData.canvasFigure
-            _targetLocators.add(liveMapData.targetLocator)
+            _targetLocators.addAll(liveMapData.targetLocators)
         } else {
             // Normal plot tiles
 

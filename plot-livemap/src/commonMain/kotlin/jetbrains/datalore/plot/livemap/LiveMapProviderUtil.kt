@@ -5,17 +5,20 @@
 
 package jetbrains.datalore.plot.livemap
 
+import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes.Companion.COLOR
-import jetbrains.datalore.plot.base.Aes.Companion.FILL
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.interact.ContextualMapping
+import jetbrains.datalore.plot.base.interact.GeomTarget
+import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.livemap.LivemapConstants.Projection.*
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
@@ -32,6 +35,7 @@ import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.ATTRIBUTION
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MAX_ZOOM
 import jetbrains.datalore.plot.config.Option.Geom.LiveMap.Tile.MIN_ZOOM
 import jetbrains.gis.tileprotocol.TileService
+import jetbrains.livemap.LiveMap
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.Services
@@ -46,6 +50,7 @@ import jetbrains.livemap.core.projections.Projections.geographic
 import jetbrains.livemap.core.projections.Projections.mercator
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.mapengine.basemap.Tilesets
+import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.ui.CursorService
 
 object LiveMapProviderUtil {
@@ -70,7 +75,7 @@ object LiveMapProviderUtil {
 
                 layers.first().setLiveMapProvider(
                     MyLiveMapProvider(
-                        layers.map { createLayerRendererData(it) },
+                        layers.map(::createLayerRendererData),
                         liveMapOptions,
                         cursorServiceConfig.cursorService
                     )
@@ -79,7 +84,7 @@ object LiveMapProviderUtil {
         }
     }
 
-    private class MyLiveMapProvider internal constructor(
+    private class MyLiveMapProvider(
         private val letsPlotLayers: List<LayerRendererData>,
         private val myLiveMapOptions: Map<*, *>,
         private val cursor: CursorService,
@@ -126,21 +131,6 @@ object LiveMapProviderUtil {
                 )
             }
 
-            val targetSource = HashMap<Pair<Int, Int>, ContextualMapping>()
-            val colorMap = HashMap<Int, (Int) -> List<Color>>()
-            plotLayers.onEachIndexed { layerIndex, layer ->
-                val colorBarProvider = HintColorUtil.createColorMarkerMapper(
-                    layer.geomKind,
-                    FILL in layer.mappedAes,
-                    COLOR in layer.mappedAes
-                )
-                colorMap[layerIndex] = { i -> colorBarProvider(layer.aesthetics.dataPointAt(i)) }
-
-                layer.aesthetics.dataPoints().forEach { dataPoint ->
-                    targetSource[layerIndex to dataPoint.index()] = layer.contextualMapping
-                }
-            }
-
             return liveMapBuilder.build()
                 .let(Asyncs::constant)
                 .let { liveMapAsync ->
@@ -155,7 +145,7 @@ object LiveMapProviderUtil {
                                 )
                             )
                         },
-                        LiveMapTargetLocator(liveMapAsync, targetSource, colorMap)
+                        createTargetLocators(plotLayers, liveMapAsync)
                     )
                 }
         }
@@ -179,17 +169,11 @@ object LiveMapProviderUtil {
                 return listOf(url)
             }
 
-            if (openBracketIndex > closeBracketIndex) {
-                throw IllegalArgumentException("Error parsing subdomains: wrong brackets order")
-            }
+            require(openBracketIndex <= closeBracketIndex) { "Error parsing subdomains: wrong brackets order" }
 
             val subdomains = url.substring(openBracketIndex + 1, closeBracketIndex)
-            if (subdomains.isEmpty()) {
-                throw IllegalArgumentException("Empty subdomains list")
-            }
-            if (subdomains.any { it.lowercaseChar() !in 'a'..'z' }) {
-                throw IllegalArgumentException("subdomain list contains non-letter symbols")
-            }
+            require(subdomains.isNotEmpty()) { "Empty subdomains list" }
+            require(subdomains.all { it.lowercaseChar() in 'a'..'z' }) { "subdomain list contains non-letter symbols" }
 
             val urlStart = url.substring(0, openBracketIndex)
             val urlEnd = url.substring(closeBracketIndex + 1, url.length)
@@ -212,4 +196,67 @@ object LiveMapProviderUtil {
         }
     }
 
+    private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMapAsync: Async<LiveMap>): List<GeomTargetLocator> {
+        class LiveMapInteractionAdapter {
+            private var myLiveMap: LiveMap? = null
+            private val adapters: List<GeomTargetLocatorAdapter> = plotLayers.mapIndexed(::GeomTargetLocatorAdapter)
+            private var lastCoord: DoubleVector? = null
+            private var lastResult: Map<Int, GeomTargetLocator.LookupResult> = emptyMap()
+
+            val geomTargetLocators: List<GeomTargetLocator> = adapters
+
+            init {
+                liveMapAsync.map { myLiveMap = it }
+            }
+
+            // called n-times with same coord (where n - number of "layers").
+            // Search only if coord changed, return cached result for the rest calls.
+            private fun search(layerIndex: Int, coord: DoubleVector): GeomTargetLocator.LookupResult? {
+                if (lastCoord != coord) {
+                    lastResult = myLiveMap
+                        ?.hoverObjects()
+                        ?.groupBy(HoverObject::layerIndex)
+                        ?.mapValues { (layerIndex, hoverObjects) ->
+                            adapters[layerIndex].buildLookupResult(coord, hoverObjects)
+                        } ?: emptyMap()
+                }
+                return lastResult[layerIndex]
+            }
+
+            inner class GeomTargetLocatorAdapter(
+                private val layerIndex: Int,
+                private val layer: LayerRendererData
+            ) : GeomTargetLocator {
+                override fun search(coord: DoubleVector) = search(layerIndex, coord)
+
+                private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(
+                    layer.geomKind,
+                    Aes.FILL in layer.mappedAes,
+                    Aes.COLOR in layer.mappedAes
+                )
+
+                fun buildLookupResult(coord: DoubleVector, hoverObjects: List<HoverObject>): GeomTargetLocator.LookupResult {
+                    return GeomTargetLocator.LookupResult(
+                        targets = hoverObjects.map { hoverObject ->
+                            require(layerIndex == hoverObject.layerIndex)
+                            GeomTarget(
+                                hitIndex = hoverObject.index,
+                                tipLayoutHint = TipLayoutHint.cursorTooltip(
+                                    coord,
+                                    markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
+                                ),
+                                aesTipLayoutHints = emptyMap()
+                            )
+                        },
+                        distance = 0.0, // livemap shows tooltip only on hover
+                        geomKind = layer.geomKind,
+                        contextualMapping = layer.contextualMapping,
+                        isCrosshairEnabled = false // no crosshair on livemap
+                    )
+                }
+            }
+        }
+
+        return LiveMapInteractionAdapter().geomTargetLocators
+    }
 }

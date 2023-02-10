@@ -5,10 +5,7 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.AbstractSystem
-import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.onEachEntity2
 import jetbrains.livemap.core.input.MouseInputComponent
@@ -17,12 +14,6 @@ import jetbrains.livemap.toClientPoint
 import jetbrains.livemap.ui.UiService
 
 
-class HoverObjectComponent : EcsComponent {
-    var searchResult: SearchResult? = null
-    var zoom : Int? = null
-    var cursotPosition : Vec<Client>? = null
-}
-
 class HoverObjectDetectionSystem(
     private val uiService: UiService,
     componentManager: EcsComponentManager
@@ -30,12 +21,12 @@ class HoverObjectDetectionSystem(
     override fun initImpl(context: LiveMapContext) {
         super.initImpl(context)
         createEntity("hover_object")
-            .add(HoverObjectComponent())
+            .add(SearchResultComponent())
             .add(MouseInputComponent())
     }
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        onEachEntity2<HoverObjectComponent, MouseInputComponent> { _, hoverObjectComponent, mouseInputComponent ->
+        onEachEntity2<SearchResultComponent, MouseInputComponent> { _, hoverObjectComponent, mouseInputComponent ->
             if (mouseInputComponent.doubleClickEvent != null) {
                 // Only fixes ghost result that appears for a split second when mouse starts to move AFTER zoom.
                 // Tooltips update themselves only on a mouse move, we can't hide them from here if mouse is not moving.
@@ -64,7 +55,7 @@ class HoverObjectDetectionSystem(
             }
 
             if (
-                hoverObjectComponent.cursotPosition == mouseLocation &&
+                hoverObjectComponent.cursorPosition == mouseLocation &&
                 hoverObjectComponent.zoom?.toDouble() == context.camera.zoom
             ) {
                 // same mouse position - same result
@@ -72,21 +63,23 @@ class HoverObjectDetectionSystem(
             }
 
             hoverObjectComponent.apply {
-                cursotPosition = mouseLocation
+                cursorPosition = mouseLocation
                 zoom = context.camera.zoom.toInt()
-                searchResult = getEntities(SEARCH_COMPONENTS)
-                    .map { it.get<LocatorComponent>().locatorHelper.search(mouseLocation, it) }
+                hoverObjects = getEntities(SEARCH_COMPONENTS)
+                    .map { it.get<LocatorComponent>().locator.search(mouseLocation, it) }
                     .filterNotNull()
-                    .sortedByDescending(SearchResult::layerIndex)
-                    .sortedByDescending(SearchResult::index)
-                    .firstOrNull()
+                    .groupBy(HoverObject::layerIndex)
+                    // Only one object per layer, especially important fot heightmaps, where polygons are layered
+                    // one above another and tooltip should be displayed only for the top polygon
+                    .map { (_, hoverObjects) -> hoverObjects.maxBy(HoverObject::index) }
+                    .toList()
             }
         }
     }
 
-    private fun HoverObjectComponent.clearResult() {
-        cursotPosition = null
+    private fun SearchResultComponent.clearResult() {
+        cursorPosition = null
         zoom = null
-        searchResult = null
+        hoverObjects = emptyList()
     }
 }

@@ -14,16 +14,12 @@ import jetbrains.livemap.Client
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorHelper
 import jetbrains.livemap.searching.LocatorUtil
-import jetbrains.livemap.searching.SearchResult
 import jetbrains.livemap.toClientPoint
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.sin
+import kotlin.math.*
 
 object DonutChart {
 
@@ -164,7 +160,7 @@ object DonutChart {
 
 
     class Locator : LocatorHelper {
-        override fun search(coord: Vec<Client>, target: EcsEntity): SearchResult? {
+        override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
             if (!target.contains(LOCATABLE_COMPONENTS)) {
                 return null
             }
@@ -176,7 +172,7 @@ object DonutChart {
                 target.get<ScreenLoopComponent>().origins.forEach { origin ->
                     val loc = origin.toDoubleVector().add(sector.sectorCenter)
                     if (isCoordinateInPieSector(coord, loc.toClientPoint(), sector.holeRadius, sector.radius, sector.startAngle, sector.endAngle)) {
-                        return SearchResult(
+                        return HoverObject(
                             layerIndex = target.get<IndexComponent>().layerIndex,
                             index = sector.index
                         )
