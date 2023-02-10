@@ -108,7 +108,7 @@ def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 1.0
               "To export Lets-Plot figure to a PNG file please install CairoSVG library to your Python environment.\n"
               "CairoSVG is free and distributed under the LGPL-3.0 license.\n"
               "For more details visit: https://cairosvg.org/documentation/\n", file=sys.stderr)
-        return abspath(filename)
+        return None
 
     from .. import _kbridge
     svg = _kbridge._generate_svg(plot.as_dict())
