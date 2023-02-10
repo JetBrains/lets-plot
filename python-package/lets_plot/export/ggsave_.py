@@ -14,7 +14,8 @@ __all__ = ['ggsave']
 _DEF_EXPORT_DIR = "lets-plot-images"
 
 
-def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True) -> str:
+def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True,
+           scale: float = 1.0) -> str:
     """
     Export plot or `bunch` to a file.
     Supported formats: PNG, SVG, HTML.
@@ -35,6 +36,9 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
     iframe : bool, default=True
         Whether to wrap HTML page into a iFrame.
         Only applicable when exporting to HTML.
+    scale : float, default=1.0
+        Scaling factor for raster output.
+        Only applicable when exporting to PNG.
 
     Returns
     -------
@@ -79,7 +83,7 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
     elif ext in ['html', 'htm']:
         return export_html(plot, pathname, iframe=iframe)
     elif ext == 'png':
-        return export_png(plot, pathname)
+        return export_png(plot, pathname, scale)
     else:
         raise ValueError(
             "Unsupported file extension: '{}'\nPlease use one of: 'png', 'svg', 'html', 'htm'".format(ext)

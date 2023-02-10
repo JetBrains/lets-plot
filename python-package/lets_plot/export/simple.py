@@ -69,7 +69,7 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
     return abspath(filename)
 
 
-def export_png(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
+def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 1.0) -> str:
     """
     Export plot or `bunch` to a file in PNG format.
 
@@ -79,6 +79,8 @@ def export_png(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
             Plot specification to export.
     filename: str
             Filename to save PNG under.
+    scale : float, default=1.0
+        Scaling factor for raster output.
 
     Returns
     -------
@@ -111,6 +113,6 @@ def export_png(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
     from .. import _kbridge
     svg = _kbridge._generate_svg(plot.as_dict())
 
-    cairosvg.svg2png(bytestring=svg, write_to=filename)
+    cairosvg.svg2png(bytestring=svg, write_to=filename, scale=scale)
 
     return abspath(filename)
