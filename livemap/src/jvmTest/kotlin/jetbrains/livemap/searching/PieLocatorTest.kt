@@ -26,9 +26,9 @@ import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.test.assertEquals
 
-class PieLocatorHelperTest {
+class PieLocatorTest {
     private val manager = EcsComponentManager()
-    private val helper = DonutChart.Locator()
+    private val locator = DonutChart.Locator()
     private val r = 10.0
     private val entities = createPie(listOf(2.0, 2.0, 2.0, 2.0))
 
@@ -56,7 +56,7 @@ class PieLocatorHelperTest {
     private fun checkMouseInPieSector(expectedSector: Int, mouseCoord: Vec<Client>) {
         assertEquals(
             expectedSector,
-            getTargetUnderCoord(mouseCoord, helper, entities)
+            getTargetUnderCoord(mouseCoord, locator, entities)
         )
     }
 

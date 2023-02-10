@@ -12,19 +12,29 @@ import jetbrains.livemap.fragment.RegionFragmentsComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
-class PolygonLocatorHelper : LocatorHelper {
+class PolygonLocator : Locator {
 
-    override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
+    override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
         if (target.contains<RegionFragmentsComponent>()) {
             target.get<RegionFragmentsComponent>().fragments.forEach { fragment ->
                 if (isCoordinateOnEntity(coord, fragment)) {
-                    return true
+                    return HoverObject(
+                        layerIndex = target.get<IndexComponent>().layerIndex,
+                        index = target.get<IndexComponent>().index
+                    )
                 }
             }
 
-            return false
+            return null
         } else {
-            return isCoordinateOnEntity(coord, target)
+            return when (isCoordinateOnEntity(coord, target)) {
+                true -> HoverObject(
+                    layerIndex = target.get<IndexComponent>().layerIndex,
+                    index = target.get<IndexComponent>().index
+                )
+
+                false -> null
+            }
         }
     }
 

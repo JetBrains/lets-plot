@@ -36,7 +36,7 @@ import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PathLocatorHelper
+import jetbrains.livemap.searching.PathLocator
 import kotlin.math.abs
 
 @LiveMapDsl
@@ -137,7 +137,7 @@ class PathBuilder(
                     +NeedLocationComponent
                     +NeedCalculateLocationComponent
                     if (!nonInteractive) {
-                        +LocatorComponent(PathLocatorHelper())
+                        +LocatorComponent(PathLocator())
                     }
                 }
 

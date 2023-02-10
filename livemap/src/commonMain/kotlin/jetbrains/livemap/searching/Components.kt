@@ -11,7 +11,7 @@ import jetbrains.livemap.core.ecs.EcsComponent
 
 class IndexComponent(val layerIndex: Int, val index: Int): EcsComponent
 
-class LocatorComponent(val locator: LocatorHelper): EcsComponent
+class LocatorComponent(val locator: Locator): EcsComponent
 
 class SearchResultComponent : EcsComponent {
     var hoverObjects: List<HoverObject> = emptyList()

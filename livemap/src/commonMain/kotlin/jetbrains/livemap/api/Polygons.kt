@@ -33,7 +33,7 @@ import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PolygonLocatorHelper
+import jetbrains.livemap.searching.PolygonLocator
 
 @LiveMapDsl
 class Polygons(
@@ -119,7 +119,7 @@ class PolygonsBuilder(
                 + ScaleComponent()
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
-                + LocatorComponent(PolygonLocatorHelper())
+                + LocatorComponent(PolygonLocator())
             }
     }
 

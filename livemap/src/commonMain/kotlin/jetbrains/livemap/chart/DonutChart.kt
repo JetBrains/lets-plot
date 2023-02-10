@@ -16,7 +16,6 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorHelper
 import jetbrains.livemap.searching.LocatorUtil
 import jetbrains.livemap.toClientPoint
 import kotlin.math.*
@@ -159,7 +158,7 @@ object DonutChart {
     }
 
 
-    class Locator : LocatorHelper {
+    class Locator : jetbrains.livemap.searching.Locator {
         override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
             if (!target.contains(LOCATABLE_COMPONENTS)) {
                 return null
@@ -182,8 +181,6 @@ object DonutChart {
 
             return null
         }
-
-        override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity) = throw NotImplementedError()
 
         private fun isCoordinateInPieSector(
             coord: Vec<Client>,

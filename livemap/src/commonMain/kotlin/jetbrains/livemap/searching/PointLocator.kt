@@ -13,18 +13,25 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.searching.LocatorUtil.distance
 
-class PointLocatorHelper : LocatorHelper {
-
-    override fun isCoordinateInTarget(coord: Vec<Client>, target: EcsEntity): Boolean {
+class PointLocator : Locator {
+    override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
         if (REQUIRED_COMPONENTS !in target) {
-            return false
+            return null
         }
 
         val radius = target.get<PointComponent>().size / 2 * target.get<ChartElementComponent>().scalingSizeFactor
-        return target.get<ScreenLoopComponent>().origins.any { distance(coord, it) <= radius }
+        return when (target.get<ScreenLoopComponent>().origins.any { distance(coord, it) <= radius }) {
+            true -> HoverObject(
+                layerIndex = target.get<IndexComponent>().layerIndex,
+                index = target.get<IndexComponent>().index
+            )
+
+            false -> null
+        }
     }
 
     companion object {
-        val REQUIRED_COMPONENTS = listOf(PointComponent::class, ScreenLoopComponent::class, ChartElementComponent::class)
+        val REQUIRED_COMPONENTS =
+            listOf(PointComponent::class, ScreenLoopComponent::class, ChartElementComponent::class)
     }
 }

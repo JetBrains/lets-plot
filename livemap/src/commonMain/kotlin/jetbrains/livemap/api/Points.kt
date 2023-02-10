@@ -9,8 +9,8 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers
 import jetbrains.livemap.chart.PointComponent
+import jetbrains.livemap.chart.Renderers
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
@@ -23,7 +23,7 @@ import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PointLocatorHelper
+import jetbrains.livemap.searching.PointLocator
 
 @LiveMapDsl
 class Points(
@@ -119,7 +119,7 @@ class PointBuilder(
                 +ScreenOriginComponent()
 
                 if (!nonInteractive) {
-                    +LocatorComponent(PointLocatorHelper())
+                    +LocatorComponent(PointLocator())
                 }
             }
         }
