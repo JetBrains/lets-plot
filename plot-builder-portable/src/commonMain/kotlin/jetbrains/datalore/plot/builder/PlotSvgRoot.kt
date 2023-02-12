@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -15,11 +16,11 @@ import jetbrains.datalore.vis.svg.SvgGElement
 /**
  *  This class only handles static SVG. (no interactions)
  */
-class PlotSvgRoot(
+class PlotSvgRoot constructor(
     val plot: PlotSvgComponent,
     val liveMapCursorServiceConfig: Any?,
-    bounds: DoubleRectangle
-) : FigureSvgRoot(bounds) {
+    origin: DoubleVector
+) : FigureSvgRoot(DoubleRectangle(origin, plot.plotSize)) {
 
     val liveMapFigures: List<SomeFig>
         get() = plot.liveMapFigures
@@ -27,14 +28,9 @@ class PlotSvgRoot(
     val isLiveMap: Boolean
         get() = plot.liveMapFigures.isNotEmpty()
 
-
     private val decorationLayerId = SvgUID.get(DECORATION_LAYER_ID_PREFIX)
     val decorationLayer = SvgGElement().apply {
         id().set(decorationLayerId)
-    }
-
-    init {
-        plot.plotSize = bounds.dimension
     }
 
     protected override fun buildFigureContent() {

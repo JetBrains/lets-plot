@@ -14,9 +14,11 @@ interface FigureBuildInfo {
     val computationMessages: List<String>
     val containsLiveMap: Boolean
 
-    fun withBounds(bounds: DoubleRectangle): FigureBuildInfo
-
     fun createSvgRoot(): FigureSvgRoot
 
     fun injectLiveMapProvider(f: (tiles: List<List<GeomLayer>>, spec: Map<String, Any>) -> Any)
+
+    fun withBounds(bounds: DoubleRectangle): FigureBuildInfo
+
+    fun toLayouted(): FigureBuildInfo
 }

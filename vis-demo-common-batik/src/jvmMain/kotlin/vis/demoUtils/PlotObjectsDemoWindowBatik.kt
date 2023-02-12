@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.vis.demoUtils
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.plot.builder.PlotContainer
@@ -33,12 +32,7 @@ class PlotObjectsDemoWindowBatik(
             PlotSvgRoot(
                 plot,
                 liveMapCursorServiceConfig = null,
-                DoubleRectangle(
-                    DoubleVector.ZERO, DoubleVector(
-                        plotSize.getWidth(),
-                        plotSize.getHeight(),
-                    )
-                )
+                DoubleVector.ZERO
             )
         )
 

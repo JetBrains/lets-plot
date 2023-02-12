@@ -7,6 +7,7 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.PlotSvgComponent
+import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
@@ -47,7 +48,7 @@ object DemoAndTest {
         }
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(config)
-        return assembler.createPlot()
+        return assembler.createPlot(Defaults.DEF_PLOT_SIZE)
     }
 
     private fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {

@@ -28,8 +28,6 @@ import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.liveMapBounds
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.subtractTitlesAndLegends
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
@@ -48,12 +46,13 @@ import jetbrains.datalore.vis.svg.event.SvgEventSpec
 import kotlin.math.max
 
 class PlotSvgComponent constructor(
+    val plotSize: DoubleVector,
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
-    private var plotLayout: PlotLayout,
+    private val plotLayoutInfo: PlotLayoutInfo,
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
     private val legendBoxInfos: List<LegendBoxInfo>,
@@ -76,12 +75,6 @@ class PlotSvgComponent constructor(
     internal var liveMapFigures: List<SomeFig> = emptyList()
         private set
 
-    var plotSize: DoubleVector = DEF_PLOT_SIZE
-        internal set(size: DoubleVector) {
-            check(!isBuilt) { "Can't change size after plot has already been built." }
-            field = size
-        }
-
     val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
     private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
@@ -90,7 +83,7 @@ class PlotSvgComponent constructor(
 
     override fun clear() {
         // Effectivly disposes the plot component
-        // because "interactor" is likely got disposed (???) too,
+        // because "interactor" is likely got disposed too,
         // and "interactor" can't be reset.
         isDisposed = true
         super.clear()
@@ -164,13 +157,6 @@ class PlotSvgComponent constructor(
             drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
         }
 
-        // compute geom bounds
-        val entirePlot = if (containsLiveMap) {
-            liveMapBounds(overallRect)
-        } else {
-            overallRect
-        }
-
         val legendTheme = theme.legend()
         val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
             legendBoxInfos,
@@ -179,27 +165,9 @@ class PlotSvgComponent constructor(
 
         // -------------
         val axisEnabled = !containsLiveMap
-        val plotInnerSizeAvailable = subtractTitlesAndLegends(
-            baseSize = entirePlot.dimension,
-            title,
-            subtitle,
-            caption,
-            hAxisTitle,
-            vAxisTitle,
-            axisEnabled,
-            legendsBlockInfo,
-            theme,
-            flippedAxis
-        )
-
-        // Layout plot inners
-        val plotInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
-        if (plotInfo.tiles.isEmpty()) {
-            return
-        }
 
         // Inner size includes geoms, axis and facet labels.
-        val plotInnerSize = plotInfo.size
+        val plotInnerSize = plotLayoutInfo.size
         val plotOuterSize = addTitlesAndLegends(
             plotInnerSize,
             title,
@@ -251,20 +219,20 @@ class PlotSvgComponent constructor(
                 axisTitlesOriginOffset(
                     hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
                     vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    hasTopAxisTitle = plotInfo.hasTopAxisTitle,
-                    hasLeftAxisTitle = plotInfo.hasLeftAxisTitle,
+                    hasTopAxisTitle = plotLayoutInfo.hasTopAxisTitle,
+                    hasLeftAxisTitle = plotLayoutInfo.hasLeftAxisTitle,
                     axisEnabled,
                     marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
                 )
             )
 
-        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotInfo)
+        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
             .add(plotInnerOrigin)
 
         // build tiles
         @Suppress("UnnecessaryVariable")
         val tilesOrigin = plotInnerOrigin
-        for (tileLayoutInfo in plotInfo.tiles) {
+        for (tileLayoutInfo in plotLayoutInfo.tiles) {
             val tileIndex = tileLayoutInfo.trueIndex
 
             // Create a plot tile.
@@ -304,16 +272,16 @@ class PlotSvgComponent constructor(
 
             // axis tooltip should appear on 'outer' bounds:
             val axisOrigin = DoubleVector(
-                x = if (plotInfo.hasLeftAxis) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
-                y = if (plotInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
+                x = if (plotLayoutInfo.hasLeftAxis) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
+                y = if (plotLayoutInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
             )
             interactor?.onTileAdded(
                 geomInnerBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
                 axisOrigin,
-                hAxisTooltipPosition = if (plotInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
-                vAxisTooltipPosition = if (plotInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
+                hAxisTooltipPosition = if (plotLayoutInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
+                vAxisTooltipPosition = if (plotLayoutInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
             )
 
             if (DEBUG_DRAWING) {
@@ -429,7 +397,7 @@ class PlotSvgComponent constructor(
             )
         }
 
-        val overallTileBounds = PlotLayoutUtil.overallTileBounds(plotInfo)
+        val overallTileBounds = PlotLayoutUtil.overallTileBounds(plotLayoutInfo)
             .add(plotInnerOrigin)
 
         if (DEBUG_DRAWING) {
@@ -439,7 +407,7 @@ class PlotSvgComponent constructor(
         // add axis titles
         if (axisEnabled) {
             if (vAxisTitle != null) {
-                val titleOrientation = plotInfo.tiles.first().axisInfos.vAxisTitleOrientation
+                val titleOrientation = plotLayoutInfo.tiles.first().axisInfos.vAxisTitleOrientation
                 addAxisTitle(
                     vAxisTitle,
                     titleOrientation,
@@ -452,7 +420,7 @@ class PlotSvgComponent constructor(
                 )
             }
             if (hAxisTitle != null) {
-                val titleOrientation = plotInfo.tiles.first().axisInfos.hAxisTitleOrientation
+                val titleOrientation = plotLayoutInfo.tiles.first().axisInfos.hAxisTitleOrientation
                 addAxisTitle(
                     hAxisTitle,
                     titleOrientation,

@@ -34,7 +34,7 @@ abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAUL
 
     protected fun createSvgRootsFromPlots(plots: List<PlotSvgComponent>): List<SvgSvgElement> {
         val plotContainers = plots.map {
-            PlotSvgRoot(it, null, DoubleRectangle(DoubleVector.ZERO, demoInnerSize))
+            PlotSvgRoot(it, null, DoubleVector.ZERO)
         }
 
         return plotContainers.map {

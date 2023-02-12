@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.vis.demoUtils
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.plot.builder.PlotContainer
@@ -61,12 +60,12 @@ class PlotResizableDemoWindowJfx(
                 plotInitialSize
             }
 
-            val plotSvgComponent = plotAssembler.createPlot()
+            val plotSvgComponent = plotAssembler.createPlot(plotSize)
             val plotContainer = PlotContainer(
                 PlotSvgRoot(
                     plotSvgComponent,
                     liveMapCursorServiceConfig = null,
-                    DoubleRectangle(DoubleVector.ZERO, plotSize)
+                    DoubleVector.ZERO
                 )
             )
 

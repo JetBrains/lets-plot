@@ -6,8 +6,9 @@
 package jetbrains.datalore.plot.builder.config
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.layout.CompositeFigureLayout
+import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgComponent
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 
@@ -39,7 +40,7 @@ class CompositeFigureBuildInfo(
 
     override fun createSvgRoot(): CompositeFigureSvgRoot {
         val layouted = layout.doLayout(bounds.dimension, elements)
-        val figures = layouted.filterNotNull().map {
+        val figures = layouted.map {
             it.createSvgRoot()
         }
 
@@ -47,5 +48,9 @@ class CompositeFigureBuildInfo(
             svgComponent = CompositeFigureSvgComponent(figures),
             bounds
         )
+    }
+
+    override fun toLayouted(): FigureBuildInfo {
+        UNSUPPORTED()
     }
 }
