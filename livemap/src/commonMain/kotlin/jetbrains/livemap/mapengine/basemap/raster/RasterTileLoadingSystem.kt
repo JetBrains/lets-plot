@@ -114,7 +114,7 @@ class RasterTileLoadingSystem(
     companion object {
         fun replacePlaceholders(cellKey: CellKey, domain: String): String {
             return 2.0.pow(cellKey.length)
-                .let { Rect<Untyped>(0.0, 0.0, it, it) }
+                .let { Rect.XYWH<Untyped>(0.0, 0.0, it, it) }
                 .let(cellKey::projectOrigin)
                 .let {
                     domain

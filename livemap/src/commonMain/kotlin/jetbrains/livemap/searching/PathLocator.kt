@@ -7,7 +7,6 @@ package jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
@@ -37,7 +36,7 @@ class PathLocator : Locator {
     private fun isCoordinateInPath(coord: Vec<Client>, strokeRadius: Double, multiPath: MultiPolygon<Client>): Boolean {
 
         for (path in multiPath) {
-            val bbox = path.limit() ?: continue
+            val bbox = path.bbox ?: continue
 
             if (!LocatorUtil.coordInExtendedRect(coord, bbox, strokeRadius)) {
                 continue

@@ -8,6 +8,8 @@ package jetbrains.datalore.base.typedGeometry
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import kotlin.math.max
+import kotlin.math.min
 
 class Untyped
 
@@ -44,6 +46,16 @@ val <TypeT> Rect<TypeT>.scalarTop: Scalar<TypeT> get() = Scalar(top)
 val <TypeT> Rect<TypeT>.scalarLeft: Scalar<TypeT> get() = Scalar(left)
 
 val <TypeT> Rect<TypeT>.center: Vec<TypeT> get() = dimension / 2.0 + origin
+val <TypeT> Rect<TypeT>.rightBottom: Vec<TypeT> get() = origin + dimension
+fun <TypeT> Rect<TypeT>.toPolygon(): Polygon<TypeT> {
+    val points = ArrayList<Vec<TypeT>>()
+    points.add(origin)
+    points.add(origin.transform(newX = { it + scalarWidth }))
+    points.add(origin + dimension)
+    points.add(origin.transform(newY = { it + scalarHeight }))
+    points.add(origin)
+    return Polygon(listOf(Ring(points)))
+}
 
 val <TypeT> Vec<TypeT>.scalarX get(): Scalar<TypeT> = Scalar(x)
 val <TypeT> Vec<TypeT>.scalarY get(): Scalar<TypeT> = Scalar(y)
@@ -56,6 +68,8 @@ operator fun <TypeT> Vec<TypeT>.div(other: Vec<TypeT>): Vec<TypeT> = Vec(x / oth
 operator fun <TypeT> Vec<TypeT>.times(scale: Double): Vec<TypeT> = Vec(x * scale, y * scale)
 operator fun <TypeT> Vec<TypeT>.div(scale: Double): Vec<TypeT> = Vec(x / scale, y / scale)
 operator fun <TypeT> Vec<TypeT>.unaryMinus(): Vec<TypeT> = Vec(-x, -y)
+fun <TypeT> Vec<TypeT>.min(other: Vec<TypeT>):Vec<TypeT> = Vec(min(x, other.x), min(y, other.y))
+fun <TypeT> Vec<TypeT>.max(other: Vec<TypeT>):Vec<TypeT> = Vec(max(x, other.x), max(y, other.y))
 
 fun <TypeT> Vec<TypeT>.transform(
     newX: (Scalar<TypeT>) -> Scalar<TypeT> = { it },
@@ -74,16 +88,25 @@ operator fun <T> Scalar<T>.unaryMinus(): Scalar<T> = Scalar(-value)
 operator fun <T> Scalar<T>.compareTo(i: Int) = value.compareTo(i)
 
 
-fun <TypeT> newSpanRectangle(leftTop: Vec<TypeT>, rightBottom: Vec<TypeT>): Rect<TypeT> {
-    return Rect(leftTop, rightBottom - leftTop)
-}
-
-fun <TypeT> Polygon<TypeT>.limit(): Rect<TypeT>? {
-    return asSequence().flatten().asIterable().boundingBox()
-}
-
 fun <TypeT> Rect<TypeT>.contains(v: Vec<TypeT>): Boolean {
     return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
+}
+
+fun <TypeT> Rect<TypeT>.union(other: Rect<TypeT>) = Rect.LTRB(
+    origin.min(other.origin),
+    rightBottom.max(other.rightBottom)
+)
+
+fun <TypeT> List<Rect<TypeT>?>.union(): Rect<TypeT>? {
+    return fold(firstOrNull()) { acc, box ->
+        when {
+            acc != null && box != null -> acc.union(box)
+            acc == null && box == null -> null
+            acc != null -> acc
+            box != null -> box
+            else -> error("Unreachable")
+        }
+    }
 }
 
 fun <TypeT> Rect<TypeT>.intersects(rect: Rect<TypeT>): Boolean {
@@ -97,10 +120,6 @@ fun <TypeT> Rect<TypeT>.intersects(rect: Rect<TypeT>): Boolean {
 fun Rect<*>.xRange() = DoubleSpan(origin.x, origin.x + dimension.x)
 fun Rect<*>.yRange() = DoubleSpan(origin.y, origin.y + dimension.y)
 
-fun <TypeT> MultiPolygon<TypeT>.limit(): List<Rect<TypeT>> {
-    return mapNotNull { polygon -> polygon.limit() }
-}
-
 fun <TypeT> finiteVecOrNull(x: Double, y: Double): Vec<TypeT>?  = when {
     x.isFinite() && y.isFinite() -> explicitVec(x, y)
     else -> null
@@ -108,5 +127,5 @@ fun <TypeT> finiteVecOrNull(x: Double, y: Double): Vec<TypeT>?  = when {
 
 fun Vec<*>.toDoubleVector() = DoubleVector(x, y)
 fun <T> DoubleVector.toVec() = Vec<T>(x, y)
-fun <T> DoubleRectangle.toRect() = Rect<T>(left, top, width, height)
+fun <T> DoubleRectangle.toRect() = Rect.XYWH<T>(left, top, width, height)
 fun <T> Rect<T>.toDoubleRectangle() = DoubleRectangle(left, top, width, height)

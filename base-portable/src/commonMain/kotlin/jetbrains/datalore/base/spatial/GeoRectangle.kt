@@ -7,8 +7,6 @@ package jetbrains.datalore.base.spatial
 
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 
 class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Double, maxLatitude: Double) {
     private val myLongitudeSegment: LongitudeSegment
@@ -44,9 +42,9 @@ class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Do
         val longitudeRanges = myLongitudeSegment.splitByAntiMeridian()
         for (longitudeRange in longitudeRanges) {
             rects.add(
-                newSpanRectangle(
-                    Vec(longitudeRange.lowerEnd, myLatitudeRange.lowerEnd),
-                    Vec(longitudeRange.upperEnd, myLatitudeRange.upperEnd)
+                Rect.LTRB(
+                    longitudeRange.lowerEnd, myLatitudeRange.lowerEnd,
+                    longitudeRange.upperEnd, myLatitudeRange.upperEnd
                 )
             )
         }

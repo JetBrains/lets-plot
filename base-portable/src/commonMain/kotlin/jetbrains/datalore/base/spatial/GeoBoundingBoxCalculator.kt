@@ -27,7 +27,7 @@ class GeoBoundingBoxCalculator<TypeT>(
     fun calculateBoundingBox(xSegments: Sequence<Segment>, ySegments: Sequence<Segment>): Rect<TypeT> {
         val xRange = calculateBoundingRange(xSegments, myMapRect.xRange(), myLoopX)
         val yRange = calculateBoundingRange(ySegments, myMapRect.yRange(), myLoopY)
-        return Rect(xRange.lowerEnd, yRange.lowerEnd, xRange.length(), yRange.length())
+        return Rect.XYWH(xRange.lowerEnd, yRange.lowerEnd, xRange.length(), yRange.length())
     }
 
     private fun calculateBoundingRange(

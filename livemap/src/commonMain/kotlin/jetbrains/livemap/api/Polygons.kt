@@ -8,7 +8,6 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
-import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
@@ -93,33 +92,33 @@ class PolygonsBuilder(
     private fun createStaticEntity(): EcsEntity {
         val worldGeometry = transformMultiPolygon(geometry!!, myMapProjection::project, resamplingPrecision = null)
 
-        val worldBbox = bbox(worldGeometry) ?: error("Polygon bbox can't be null")
+        val worldBbox = worldGeometry.bbox ?: error("Polygon bbox can't be null")
 
         return myFactory
             .createMapEntity("map_ent_s_polygon")
             .addComponents {
                 if (layerIndex != null && index != null) {
-                    + IndexComponent(layerIndex!!, index!!)
+                    +IndexComponent(layerIndex!!, index!!)
                 }
-                + RenderableComponent().apply {
+                +RenderableComponent().apply {
                     renderer = PolygonRenderer()
                 }
-                + ChartElementComponent().apply {
+                +ChartElementComponent().apply {
                     sizeScalingRange = this@PolygonsBuilder.sizeScalingRange
                     alphaScalingEnabled = this@PolygonsBuilder.alphaScalingEnabled
                     fillColor = this@PolygonsBuilder.fillColor
                     strokeColor = this@PolygonsBuilder.strokeColor
                     strokeWidth = this@PolygonsBuilder.strokeWidth
                 }
-                + WorldOriginComponent(worldBbox.origin)
-                + WorldGeometryComponent().apply { this.geometry = worldGeometry }
-                + WorldDimensionComponent(worldBbox.dimension)
-                + ScreenLoopComponent()
-                + ScreenOriginComponent()
-                + ScaleComponent()
-                + NeedLocationComponent
-                + NeedCalculateLocationComponent
-                + LocatorComponent(PolygonLocator())
+                +WorldOriginComponent(worldBbox.origin)
+                +WorldGeometryComponent().apply { this.geometry = worldGeometry }
+                +WorldDimensionComponent(worldBbox.dimension)
+                +ScreenLoopComponent()
+                +ScreenOriginComponent()
+                +ScaleComponent()
+                +NeedLocationComponent
+                +NeedCalculateLocationComponent
+                +LocatorComponent(PolygonLocator())
             }
     }
 

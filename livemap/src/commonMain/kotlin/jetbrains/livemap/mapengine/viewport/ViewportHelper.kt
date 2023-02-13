@@ -162,7 +162,7 @@ class ViewportHelper(
         xRanges.forEach { xRange ->
             yRanges.forEach { yRange ->
                 rects.add(
-                    Rect<World>(
+                    Rect.XYWH(
                         xRange.lowerEnd,
                         yRange.lowerEnd,
                         length(xRange),

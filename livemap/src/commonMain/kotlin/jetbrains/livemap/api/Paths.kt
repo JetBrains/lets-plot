@@ -99,11 +99,11 @@ class PathBuilder(
             .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
 
         // flat can't be geodesic
-        val coord= splitAndPackPath(points.takeIf { flat || !geodesic } ?: Geodesic.createArcPath(points))
+        val coord = splitAndPackPath(points.takeIf { flat || !geodesic } ?: Geodesic.createArcPath(points))
             .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
 
 
-        return bbox(coord)?.let { bbox ->
+        return coord.bbox?.let { bbox ->
             val entity = myFactory
                 .createMapEntity("map_ent_path")
                 .addComponents {

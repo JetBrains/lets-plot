@@ -8,7 +8,6 @@ package jetbrains.livemap.fragment
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.bbox
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.livemap.Client
@@ -129,14 +128,14 @@ class FragmentEmitSystem(
         val projector = GeometryTransform
             .resampling(boundaries, mapProjection::project)
             .flatMap { worldMultiPolygon: MultiPolygon<World> ->
-                val bbox = bbox(worldMultiPolygon) ?: error("Fragment bbox can't be null")
+                val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
                 runLaterBySystem(
                     fragmentEntity
                 ) { theEntity ->
                     theEntity
                         .addComponents {
-                            + WorldDimensionComponent(bbox.dimension)
-                            + WorldOriginComponent(bbox.origin)
+                            +WorldDimensionComponent(bbox.dimension)
+                            +WorldOriginComponent(bbox.origin)
                         }
                 }
                 GeometryTransform.simple(worldMultiPolygon) { p -> zoomProjection.project(p - bbox.origin) }

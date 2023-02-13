@@ -21,7 +21,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.verify
 
 class DonorTileCalculatorTest {
-    private val myCellRect = Rect<Client>(
+    private val myCellRect = Rect.XYWH<Client>(
         explicitVec(0.0, 0.0),
         explicitVec(256.0, 256.0)
     )

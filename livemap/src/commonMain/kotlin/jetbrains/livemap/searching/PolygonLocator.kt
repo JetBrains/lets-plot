@@ -5,7 +5,10 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.contains
+import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.fragment.RegionFragmentsComponent
@@ -54,7 +57,7 @@ class PolygonLocator : Locator {
 
     private fun isCoordinateInPolygon(coord: Vec<Client>, multiPolygon: MultiPolygon<Client>): Boolean {
         for (polygon in multiPolygon) {
-            if (polygon.limit()?.contains(coord) == false) {
+            if (polygon.bbox?.contains(coord) == false) {
                 continue
             }
             var count = 0

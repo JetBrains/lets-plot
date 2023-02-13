@@ -20,7 +20,7 @@ const val MIN_LATITUDE = -90.0
 const val MAX_LATITUDE = 90.0
 const val FULL_LATITUDE = MAX_LATITUDE - MIN_LATITUDE
 
-val EARTH_RECT = Rect<LonLat>(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
+val EARTH_RECT = Rect.XYWH<LonLat>(MIN_LONGITUDE, MIN_LATITUDE, FULL_LONGITUDE, FULL_LATITUDE)
 val BBOX_CALCULATOR = GeoBoundingBoxCalculator(EARTH_RECT, myLoopX = true, myLoopY = false)
 
 fun limitLon(lon: Double) = max(MIN_LONGITUDE, min(lon, MAX_LONGITUDE))
@@ -61,7 +61,7 @@ fun convertToGeoRectangle(rect: Rect<LonLat>): GeoRectangle {
 }
 
 fun calculateQuadKeys(rect: Rect<LonLat>, zoom: Int): Set<QuadKey<LonLat>> {
-    val flippedRect = Rect<LonLat>(
+    val flippedRect = Rect.XYWH<LonLat>(
         rect.left,
         -rect.bottom,
         rect.width,

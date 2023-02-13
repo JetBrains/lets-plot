@@ -12,12 +12,7 @@ object Transforms {
         bbox: Rect<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?,
         resamplingPrecision: Double? = RESAMPLING_PRECISION
-    ): Rect<OutT>? {
-        return bbox
-            .let(::rectToPolygon)
-            .let { transformPoints(it, transform, resamplingPrecision) }
-            .boundingBox()
-    }
+    ): Rect<OutT>? = transformPolygon(bbox.toPolygon(), transform, resamplingPrecision).bbox
 
     fun <InT, OutT> transformMultiPolygon(
         multiPolygon: MultiPolygon<InT>,
@@ -38,15 +33,5 @@ object Transforms {
     ): List<Vec<OutT>> = when(resamplingPrecision) {
         null -> path.mapNotNull(transform)
         else -> VecResampler(transform, resamplingPrecision).resample(path)
-    }
-
-    private fun <TypeT> rectToPolygon(rect: Rect<TypeT>): List<Vec<TypeT>> {
-        val points = ArrayList<Vec<TypeT>>()
-        points.add(rect.origin)
-        points.add(rect.origin.transform(newX = { it + rect.scalarWidth }))
-        points.add(rect.origin + rect.dimension)
-        points.add(rect.origin.transform(newY = { it + rect.scalarHeight }))
-        points.add(rect.origin)
-        return points
     }
 }

@@ -23,19 +23,17 @@ fun QuadKey<LonLat>.computeRect(): Rect<LonLat> {
     val dimension = EARTH_RECT.dimension / calulateQuadsCount(length).toDouble()
 
     val flippedY = EARTH_RECT.scalarBottom - (origin.scalarY + dimension.scalarY - EARTH_RECT.scalarTop)
-    return Rect(origin.transform(newY = { flippedY }), dimension)
+    return Rect.XYWH(origin.transform(newY = { flippedY }), dimension)
 }
 
 fun <T> QuadKey<T>.computeRect(rect: Rect<T>): Rect<T> {
     return projectRect(rect)
 }
 
-fun <T, OutT> QuadKey<T>.projectRect(rect: Rect<OutT>): Rect<OutT> {
-    val origin = projectOrigin(rect)
-    val dimension = rect.dimension / calulateQuadsCount(length).toDouble()
-
-    return Rect(origin, dimension)
-}
+fun <T, OutT> QuadKey<T>.projectRect(rect: Rect<OutT>): Rect<OutT> = Rect.XYWH(
+    origin = projectOrigin(rect),
+    dimension = rect.dimension / calulateQuadsCount(length).toDouble()
+)
 
 fun QuadKey<LonLat>.zoom() = length
 

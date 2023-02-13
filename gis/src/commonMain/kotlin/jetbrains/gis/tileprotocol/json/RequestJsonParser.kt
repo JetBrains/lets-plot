@@ -11,8 +11,6 @@ import jetbrains.datalore.base.json.Obj
 import jetbrains.datalore.base.json.parseEnum
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 import jetbrains.gis.tileprotocol.Request
 import jetbrains.gis.tileprotocol.Request.*
 import jetbrains.gis.tileprotocol.TileCoordinates
@@ -50,12 +48,12 @@ object RequestJsonParser {
         }
     }
 
-    private fun parseBBox(bbox: FluentArray): Rect<LonLat> {
-        return newSpanRectangle(
-            explicitVec<LonLat>(bbox.getDouble(0), bbox.getDouble(1)),
-            explicitVec<LonLat>(bbox.getDouble(2), bbox.getDouble(3))
-        )
-    }
+    private fun parseBBox(bbox: FluentArray): Rect<LonLat> = Rect.LTRB(
+        left = bbox.getDouble(0),
+        top = bbox.getDouble(1),
+        right = bbox.getDouble(2),
+        bottom = bbox.getDouble(3)
+    )
 
     private fun parseTileCoordinates(jsonCoordinates: FluentObject): TileCoordinates {
         return TileCoordinates(

@@ -84,7 +84,7 @@ class MapLocationGeocoder(
             mapRuler::distanceY
         )
 
-        return Rect(
+        return Rect.XYWH(
             center.x - radiusX,
             center.y - radiusY,
             radiusX * 2,

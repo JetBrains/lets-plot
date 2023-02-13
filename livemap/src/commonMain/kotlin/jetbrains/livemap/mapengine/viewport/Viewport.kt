@@ -61,9 +61,9 @@ open class Viewport internal constructor(
     }
 
     fun getOrigins(origin: ClientPoint, dimension: ClientPoint): List<ClientPoint> {
-        return Rect(viewportTransform.invert(origin), viewportTransform.invert(origin + dimension))
+        return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dimension))
             .let { helper.getOrigins(it, window) }
-            .map { getViewCoord(it) }
+            .map(::getViewCoord)
     }
 
     fun calculateBoundingBox(bBoxes: List<Rect<World>>) = helper.calculateBoundingBox(bBoxes)

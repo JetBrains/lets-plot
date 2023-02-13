@@ -11,7 +11,6 @@ import jetbrains.datalore.base.spatial.limitLat
 import jetbrains.datalore.base.spatial.limitLon
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.typedGeometry.newSpanRectangle
 
 internal class GeographicProjection : GeoProjection {
     override fun project(v: LonLatPoint): GeographicPoint = explicitVec(limitLon(v.x), limitLat(v.y))
@@ -20,9 +19,9 @@ internal class GeographicProjection : GeoProjection {
     override val cylindrical: Boolean = false
 
     companion object {
-        private val VALID_RECTANGLE = newSpanRectangle(
-            explicitVec<LonLat>(-180.0, -90.0),
-            explicitVec<LonLat>(+180.0, +90.0)
+        private val VALID_RECTANGLE = Rect.LTRB<LonLat>(
+            leftTop = explicitVec(-180.0, -90.0),
+            rightBottom = explicitVec(+180.0, +90.0)
         )
     }
 }

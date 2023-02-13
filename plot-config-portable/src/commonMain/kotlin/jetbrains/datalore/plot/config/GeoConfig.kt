@@ -251,7 +251,7 @@ internal abstract class CoordinatesCollector(
     val mappings: Map<String, String>
 ) {
     private val dupCounter = mutableListOf<Int>()
-    protected val coordinates: Map<String, MutableList<Any>> = mappings.values.associateBy({ it }) { mutableListOf<Any>() }
+    protected val coordinates: Map<String, MutableList<Any>> = mappings.values.associateBy({ it }) { mutableListOf() }
     protected abstract val geoJsonConsumer: SimpleFeature.Consumer<LonLat>
     protected abstract val supportedFeatures: List<String>
 
@@ -335,19 +335,19 @@ internal abstract class CoordinatesCollector(
             onMultiPoint = { it.boundingBox()?.let(::insert) }
             onLineString = { it.boundingBox()?.let(::insert) }
             onMultiLineString = { it.flatten().boundingBox()?.let(::insert) }
-            onPolygon = { it.limit()?.let(::insert) }
-            onMultiPolygon = { insert(it.limit()) }
+            onPolygon = { it.bbox?.let(::insert) }
+            onMultiPolygon = { insert(listOfNotNull(it.bbox)) }
         }
     }
 
     companion object {
 
-        val POINT_COLUMNS = mapOf<String, String>(
+        val POINT_COLUMNS = mapOf(
             Aes.X.name to GeoConfig.POINT_X,
             Aes.Y.name to GeoConfig.POINT_Y
         )
 
-        val RECT_MAPPINGS = mapOf<String, String>(
+        val RECT_MAPPINGS = mapOf(
             Aes.XMIN.name to GeoConfig.RECT_XMIN,
             Aes.YMIN.name to GeoConfig.RECT_YMIN,
             Aes.XMAX.name to GeoConfig.RECT_XMAX,

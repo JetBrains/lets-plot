@@ -21,10 +21,10 @@ class GeoBoundingBoxCalculatorTest {
 
     @Test
     fun roundingErrorTest() {
-        val pointRect = Rect<World>(127.99999999999999, 127.99999999999997, 0.0, 0.0)
+        val pointRect = Rect.XYWH<World>(127.99999999999999, 127.99999999999997, 0.0, 0.0)
 
         val rect = GeoBoundingBoxCalculator(
-            Rect<World>(0.0, 0.0, 256.0, 256.0), true, false
+            Rect.XYWH<World>(0.0, 0.0, 256.0, 256.0), true, false
         ).union(listOf(pointRect))
 
         assertNotEquals(pointRect, rect)

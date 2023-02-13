@@ -7,7 +7,6 @@ package jetbrains.livemap.geocoding
 
 import jetbrains.datalore.base.typedGeometry.GeometryType.MULTI_POLYGON
 import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.limit
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementLocationComponent
 import jetbrains.livemap.core.ecs.AbstractSystem
@@ -39,18 +38,18 @@ class LocationCalculateSystem(
                     entity.contains<ChartElementLocationComponent>() -> {
                         with(entity.get<ChartElementLocationComponent>().geometry) {
                             when (type) {
-                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.limit())
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(listOfNotNull(multiPolygon.bbox))
                                 else -> error("Unsupported geometry: $type")
                             }
                         }
                     }
                     entity.contains<WorldGeometryComponent>() -> {
                         entity.get<WorldGeometryComponent>().geometry
-                            ?.let { mapRuler.calculateBoundingBox(it.limit()) }
+                            ?.let { mapRuler.calculateBoundingBox(listOfNotNull(it.bbox)) }
                             ?: error("Unexpected - no geometry")
                     }
                     entity.contains<WorldOriginComponent>() -> {
-                        Rect(
+                        Rect.XYWH(
                             entity.get<WorldOriginComponent>().origin,
                             entity.tryGet<WorldDimensionComponent>()?.dimension ?: World.ZERO_VEC
                         )
