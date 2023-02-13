@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.guide
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.base.render.svg.Text
@@ -14,12 +14,14 @@ import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 import jetbrains.datalore.vis.svg.SvgUtils.transformTranslate
+import kotlin.math.abs
 
 class AxisComponent(
     private val length: Double,
@@ -94,7 +96,10 @@ class AxisComponent(
         if (!hideAxis) {
             // Ticks and labels
             if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
-                val labelsCleaner = TickLabelsCleaner(orientation.isHorizontal)
+                val labelsCleaner = TickLabelsCleaner(
+                    orientation.isHorizontal,
+                    PlotLabelSpecFactory.axisTick(axisTheme)
+                )
 
                 for ((i, br) in breaksData.majorBreaks.withIndex()) {
                     if (br >= start && br <= end) {
@@ -105,8 +110,9 @@ class AxisComponent(
                             labelOffset,
                             skipLabel = !labelsCleaner.beforeAddLabel(
                                 br,
+                                label,
                                 labelAdjustments.rotationDegree,
-                                PlotLabelSpecFactory.axisTick(axisTheme).height()
+                                labelOffset
                             ),
                             axisTheme
                         )
@@ -286,27 +292,24 @@ class AxisComponent(
         }
     }
 
-    private class TickLabelsCleaner(val horizontalAxis: Boolean) {
-        private val filledRanges = ArrayList<DoubleSpan>()
+    private class TickLabelsCleaner(private val horizontalAxis: Boolean, private val labelSpec: LabelSpec) {
+        private val filledAreas = ArrayList<DoubleRectangle>()
 
-        fun beforeAddLabel(loc: Double, rotationDegree: Double, axisTickHeight: Double): Boolean {
+        fun beforeAddLabel(loc: Double, label: String, rotationDegree: Double, labelOffset: DoubleVector): Boolean {
             if (!isRelevant(rotationDegree)) return true
 
+            val rect = labelRect(loc, label, rotationDegree, labelOffset)
             // find overlap
-            if (filledRanges.any { it.contains(loc) || it.contains(loc + axisTickHeight) }) {
+            if (filledAreas.any { it.intersects(rect)}) {
                 // overlap - don't add this label
                 return false
             }
-
-            filledRanges.add(DoubleSpan(loc, loc + axisTickHeight))
+            filledAreas.add(rect)
             return true
         }
 
         private fun isRelevant(rotationDegree: Double): Boolean {
-            return when {
-                horizontalAxis -> isVertical(rotationDegree)
-                else -> isHorizontal(rotationDegree)
-            }
+            return isVertical(rotationDegree) || isHorizontal(rotationDegree)
         }
 
         private fun isHorizontal(rotationDegree: Double): Boolean {
@@ -314,7 +317,20 @@ class AxisComponent(
         }
 
         private fun isVertical(rotationDegree: Double): Boolean {
-            return (rotationDegree / 90) % 2 == 1.0
+            return abs(rotationDegree / 90) % 2 == 1.0
+        }
+
+        private fun labelRect(loc: Double, label: String, rotationDegree: Double, labelOffset: DoubleVector): DoubleRectangle {
+            val labelNormalSize = labelSpec.dimensions(label)
+            val wh = if (isVertical(rotationDegree)) {
+                labelNormalSize.flip()
+            } else {
+                labelNormalSize
+            }
+            val origin = if (horizontalAxis) DoubleVector(loc, 0.0) else DoubleVector(0.0, loc)
+            return DoubleRectangle(origin, wh)
+                .subtract(wh.mul(0.5)) // labels use central adjustments
+                .add(labelOffset)
         }
     }
 }
