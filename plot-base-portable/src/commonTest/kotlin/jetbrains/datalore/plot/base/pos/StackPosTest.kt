@@ -42,7 +42,7 @@ class StackPosTest {
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             expectedOffsets = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            stackingType = StackingType.LN,
+            stackingMode = StackingMode.GROUPS,
             messageBeginning = "Should work without grouping"
         )
     }
@@ -65,7 +65,7 @@ class StackPosTest {
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
             expectedOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -1.0, -5.0, 6.0, 5.0, 5.0, 2.0, 1.0),
-            stackingType = StackingType.LN,
+            stackingMode = StackingMode.GROUPS,
             messageBeginning = "Should work with grouping"
         )
     }
@@ -106,11 +106,11 @@ class StackPosTest {
         groupValues: List<Int>? = null,
         expectedOffsets: List<Double?>,
         vjust: Double? = null,
-        stackingType: StackingType = StackingType.SUM,
+        stackingMode: StackingMode = StackingMode.ALL,
         messageBeginning: String
     ) {
         val aes = buildAesthetics(xValues, yValues, groupValues)
-        val pos = StackPos(aes, vjust = vjust, stackingType = stackingType)
+        val pos = StackPos(aes, vjust = vjust, stackingMode = stackingMode)
         for (i in 0 until aes.dataPointCount()) {
             val p = aes.dataPointAt(i)
             if (!SeriesUtil.allFinite(p.x(), p.y())) continue

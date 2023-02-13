@@ -14,31 +14,31 @@ import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.max
 
-enum class StackingType {
-    SUM, LN;
+enum class StackingMode {
+    ALL, GROUPS;
 
     companion object {
 
-        private val ENUM_INFO = EnumInfoFactory.createEnumInfo<StackingType>()
+        private val ENUM_INFO = EnumInfoFactory.createEnumInfo<StackingMode>()
 
-        fun safeValueOf(v: String): StackingType {
+        fun safeValueOf(v: String): StackingMode {
             return ENUM_INFO.safeValueOf(v) ?:
             throw IllegalArgumentException(
-                "Unsupported stacking type: '$v'\n" +
-                "Use one of: sum, ln."
+                "Unsupported stacking mode: '$v'\n" +
+                "Use one of: all, groups."
             )
         }
     }
 }
 
-internal class StackPos(aes: Aesthetics, vjust: Double?, stackingType: StackingType) : PositionAdjustment {
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingMode: StackingMode) : PositionAdjustment {
 
-    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingType)
+    private val myOffsetByIndex: Map<Int, Double> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingMode)
 
-    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingType: StackingType): Map<Int, Double> {
-        val stackingContext = when (stackingType) {
-            StackingType.SUM -> StackingContext()
-            StackingType.LN -> StackingContext(false)
+    private fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingMode: StackingMode): Map<Int, Double> {
+        val stackingContext = when (stackingMode) {
+            StackingMode.ALL -> StackingContext()
+            StackingMode.GROUPS -> StackingContext(false)
         }
         val offsetByIndex = HashMap<Int, Double>()
         aes.dataPoints().asSequence()

@@ -239,7 +239,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun areaDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "identity"
-            defaults[Layer.POS] = PosProto.STACK_LN
+            defaults[Layer.POS] = PosProto.GSTACK
             return defaults
         }
 
