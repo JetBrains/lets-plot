@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.PlotContext
@@ -38,6 +39,8 @@ class LegendAssembler(
 //        scaleByAes: Map<Aes<*>, Scale>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
+        colorByAes: Aes<Color>?,
+        fillByAes: Aes<Color>?
     ) {
 
         legendLayers.add(
@@ -49,7 +52,9 @@ class LegendAssembler(
 //                scaleByAes,
                 scaleMappers,
 //                transformedDomainByAes
-                ctx
+                ctx,
+                colorByAes,
+                fillByAes
             )
         )
     }
@@ -116,6 +121,8 @@ class LegendAssembler(
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
+        colorByAes: Aes<Color>?,
+        fillByAes: Aes<Color>?
     ) {
 
         internal val keyAesthetics: Aesthetics
@@ -143,7 +150,13 @@ class LegendAssembler(
             }
 
             // build 'key' aesthetics
-            keyAesthetics = mapToAesthetics(aesValuesByLabel.values, constantByAes, aestheticsDefaults)
+            keyAesthetics = mapToAesthetics(
+                aesValuesByLabel.values,
+                constantByAes,
+                aestheticsDefaults,
+                colorByAes,
+                fillByAes
+            )
             keyLabels = ArrayList(aesValuesByLabel.keys)
         }
     }

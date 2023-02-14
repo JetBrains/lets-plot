@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
@@ -38,6 +39,18 @@ internal class StitchedPlotLayer constructor(
         get() {
             check(geomLayers.isNotEmpty())
             return geomLayers[0].isLegendDisabled
+        }
+
+    val colorByAes: Aes<Color>?
+        get() {
+            check(geomLayers.isNotEmpty())
+            return geomLayers[0].colorByAes
+        }
+
+    val fillByAes: Aes<Color>?
+        get() {
+            check(geomLayers.isNotEmpty())
+            return geomLayers[0].fillByAes
         }
 
     fun renderedAes(): List<Aes<*>> {

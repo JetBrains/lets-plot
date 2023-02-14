@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -147,6 +148,8 @@ internal class PlotAssemblerPlotContext(
         override val isLegendDisabled: Boolean get() = stitchedPlotLayer.isLegendDisabled
         override val aestheticsDefaults: AestheticsDefaults get() = stitchedPlotLayer.aestheticsDefaults
         override val legendKeyElementFactory: LegendKeyElementFactory get() = stitchedPlotLayer.legendKeyElementFactory
+        override val colorByAes: Aes<Color>? get() = stitchedPlotLayer.colorByAes
+        override val fillByAes: Aes<Color>? get() = stitchedPlotLayer.fillByAes
 
         override fun renderedAes(): List<Aes<*>> = stitchedPlotLayer.renderedAes()
 
