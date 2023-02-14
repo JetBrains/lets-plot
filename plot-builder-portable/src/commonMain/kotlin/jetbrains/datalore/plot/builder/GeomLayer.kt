@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.annotations.Annotations
@@ -50,6 +51,10 @@ interface GeomLayer {
     val marginalSize: Double
 
     val fontFamilyRegistry: FontFamilyRegistry
+
+    val colorByAes: Aes<Color>?
+
+    val fillByAes: Aes<Color>?
 
     fun renderedAes(): List<Aes<*>>
 

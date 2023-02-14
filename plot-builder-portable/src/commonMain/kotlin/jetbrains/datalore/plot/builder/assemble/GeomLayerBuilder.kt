@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.annotations.Annotations
@@ -62,6 +63,9 @@ class GeomLayerBuilder constructor(
     private var isMarginal: Boolean = false
     private var marginalSide: MarginSide = MarginSide.LEFT
     private var marginalSize: Double = Double.NaN
+
+    private var colorByAes: Aes<Color>? = null
+    private var fillByAes: Aes<Color>? = null
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
@@ -134,6 +138,16 @@ class GeomLayerBuilder constructor(
         myAnnotationsProvider = { dataAccess, dataFrame ->
             AnnotationLine.createAnnotations(annotationSpec, dataAccess, dataFrame, themeTextStyle)
         }
+        return this
+    }
+
+    fun colorByAes(aes: Aes<Color>?): GeomLayerBuilder {
+        colorByAes = aes
+        return this
+    }
+
+    fun fillByAes(aes: Aes<Color>?): GeomLayerBuilder {
+        fillByAes = aes
         return this
     }
 
@@ -217,6 +231,8 @@ class GeomLayerBuilder constructor(
             marginalSide = marginalSide,
             marginalSize = marginalSize,
             fontFamilyRegistry = fontFamilyRegistry,
+            colorByAes = colorByAes,
+            fillByAes = fillByAes,
             annotationsProvider = myAnnotationsProvider
         )
     }
@@ -244,7 +260,9 @@ class GeomLayerBuilder constructor(
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
         override val fontFamilyRegistry: FontFamilyRegistry,
-        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
+        override val colorByAes: Aes<Color>?,
+        override val fillByAes: Aes<Color>?,
+        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?,
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()

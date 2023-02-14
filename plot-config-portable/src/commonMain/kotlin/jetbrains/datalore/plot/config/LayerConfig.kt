@@ -9,6 +9,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
@@ -152,7 +153,7 @@ class LayerConfig constructor(
         // Extend renders with specified color aesthetics
         colorByAes = getColorAes(Option.Layer.COLOR_BY)
         fillByAes = getColorAes(Option.Layer.FILL_BY)
-        LayerConfigUtil.extendAesRenders(geomProto.geomKind, listOfNotNull(colorByAes, fillByAes))
+        GeomMeta.extendRenders(geomProto.geomKind, listOfNotNull(colorByAes, fillByAes))
 
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
         val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {

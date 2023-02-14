@@ -65,6 +65,9 @@ object PlotUtil {
         val aesBuilder = AestheticsBuilder()
         aesBuilder.group(layer.group)
 
+        layer.colorByAes?.let(aesBuilder::aesColor)
+        layer.fillByAes?.let(aesBuilder::aesFill)
+
         var hasPositionalConstants = false
         for (aes in aesList) {
             if (Aes.isPositional(aes) && layer.hasConstant(aes)) {

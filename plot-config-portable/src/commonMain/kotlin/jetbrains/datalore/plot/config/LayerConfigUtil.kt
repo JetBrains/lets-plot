@@ -83,8 +83,4 @@ internal object LayerConfigUtil {
             SamplingConfig.create(opts[SAMPLING]!!)
         } else listOf(defaultSampling)
     }
-
-    fun extendAesRenders(geomKind: GeomKind, aesList: List<Aes<*>>) {
-        return GeomMeta.extendRenders(geomKind, aesList)
-    }
 }
