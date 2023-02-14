@@ -163,7 +163,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun barDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "count"
-            defaults[Layer.POS] = "stack"
+            defaults[Layer.POS] = PosProto.STACK
             return defaults
         }
 
@@ -177,7 +177,6 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         private fun dotplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "dotplot"
-            defaults[Layer.POS] = "identity"
             return defaults
         }
 
