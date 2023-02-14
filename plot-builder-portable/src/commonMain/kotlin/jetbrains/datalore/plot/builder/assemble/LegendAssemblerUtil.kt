@@ -51,7 +51,8 @@ internal object LegendAssemblerUtil {
                 when (constantAes) {
                     Aes.SHAPE,
                     Aes.COLOR,
-                    Aes.FILL -> dataPoint[constantAes] = constantByAes[constantAes]!!
+                    Aes.FILL,
+                    Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C -> dataPoint[constantAes] = constantByAes[constantAes]!!
                 }
             }
 

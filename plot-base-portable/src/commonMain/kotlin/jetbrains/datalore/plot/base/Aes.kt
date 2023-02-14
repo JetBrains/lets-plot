@@ -140,12 +140,8 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isColor(aes: Aes<*>): Boolean {
-            return aes in getColorList()
+            return aes in listOf(COLOR, FILL, PAINT_A, PAINT_B, PAINT_C)
         }
-
-        fun getAdditionalColorList() = listOf(PAINT_A, PAINT_B, PAINT_C)
-
-        fun getColorList() = listOf(COLOR, FILL) + getAdditionalColorList()
 
         fun affectingScaleX(aes: Aes<*>): Boolean {
             return isPositionalX(aes)

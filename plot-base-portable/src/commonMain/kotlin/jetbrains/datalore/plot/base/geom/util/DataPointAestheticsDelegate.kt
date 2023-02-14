@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
@@ -23,4 +24,8 @@ open class DataPointAestheticsDelegate(
     override fun <T> get(aes: Aes<T>): T? {
         return p.get(aes)
     }
+
+    override val aesColor: Aes<Color> = p.aesColor
+
+    override val aesFill: Aes<Color> = p.aesFill
 }

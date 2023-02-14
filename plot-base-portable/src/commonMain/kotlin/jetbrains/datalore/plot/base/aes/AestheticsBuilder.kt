@@ -51,6 +51,8 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     private val myIndexFunctionMap: MutableMap<Aes<*>, (Int) -> Any?>
     private var myGroup = constant(0)
     private val myConstantAes = HashSet(Aes.values())  // initially contains all Aes;
+    private var myAesColor: Aes<Color> = COLOR
+    private var myAesFill: Aes<Color> = FILL
 
     init {
         myIndexFunctionMap = HashMap()
@@ -77,11 +79,11 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
     }
 
     fun color(v: (Int) -> Color?): AestheticsBuilder {
-        return aes(COLOR, v)
+        return aes(myAesColor, v)
     }
 
     fun fill(v: (Int) -> Color?): AestheticsBuilder {
-        return aes(FILL, v)
+        return aes(myAesFill, v)
     }
 
     fun alpha(v: (Int) -> Double?): AestheticsBuilder {
@@ -201,6 +203,16 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return this
     }
 
+    fun aesColor(aes: Aes<Color>): AestheticsBuilder {
+        myAesColor = aes
+        return this
+    }
+
+    fun aesFill(aes: Aes<Color>): AestheticsBuilder {
+        myAesFill = aes
+        return this
+    }
+
     fun build(): Aesthetics {
         return MyAesthetics(this)
     }
@@ -214,6 +226,9 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
         private val myResolutionByAes = HashMap<Aes<*>, Double>()
         private val myRangeByNumericAes = HashMap<Aes<Double>, DoubleSpan?>()
+
+        val aesColor = b.myAesColor
+        val aesFill = b.myAesFill
 
         override val isEmpty: Boolean
             get() = myDataPointCount == 0
@@ -357,6 +372,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         override fun <T> get(aes: Aes<T>): T? {
             return myAesthetics.aes(aes)(myIndex)
         }
+
+        override val aesColor: Aes<Color> = myAesthetics.aesColor
+
+        override val aesFill: Aes<Color> = myAesthetics.aesFill
     }
 
 

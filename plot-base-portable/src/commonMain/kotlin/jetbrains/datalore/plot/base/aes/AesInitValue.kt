@@ -28,6 +28,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -65,9 +68,11 @@ object AesInitValue {
         VALUE_MAP[Z] = 0.0
         VALUE_MAP[YMIN] = Double.NaN
         VALUE_MAP[YMAX] = Double.NaN
-        Aes.getColorList().forEach { aes ->
-            VALUE_MAP[aes] = Color.PACIFIC_BLUE
-        }
+        VALUE_MAP[COLOR] = Color.PACIFIC_BLUE
+        VALUE_MAP[FILL] = Color.PACIFIC_BLUE
+        VALUE_MAP[PAINT_A] = Color.PACIFIC_BLUE
+        VALUE_MAP[PAINT_B] = Color.PACIFIC_BLUE
+        VALUE_MAP[PAINT_C] = Color.PACIFIC_BLUE
         VALUE_MAP[ALPHA] = 1.0
         VALUE_MAP[SHAPE] = NamedShape.SOLID_CIRCLE
         VALUE_MAP[LINETYPE] = NamedLineType.SOLID

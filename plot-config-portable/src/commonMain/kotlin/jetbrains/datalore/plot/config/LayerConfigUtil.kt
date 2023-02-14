@@ -8,6 +8,8 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.config.Option.Layer.POS
@@ -80,5 +82,9 @@ internal object LayerConfigUtil {
         return if (opts.has(SAMPLING)) {
             SamplingConfig.create(opts[SAMPLING]!!)
         } else listOf(defaultSampling)
+    }
+
+    fun extendAesRenders(geomKind: GeomKind, aesList: List<Aes<*>>) {
+        return GeomMeta.extendRenders(geomKind, aesList)
     }
 }

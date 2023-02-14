@@ -20,13 +20,12 @@ object GeomMeta {
             renderedAesByGeom[geomKind] =
                 renderedAesList(geomKind)
         }
-        return renderedAesByGeom[geomKind]!!.let {
-            if (it.contains(Aes.COLOR) || it.contains(Aes.FILL)) {
-                it + Aes.getAdditionalColorList()
-            } else {
-                it
-            }
-        }
+        return renderedAesByGeom[geomKind]!!
+    }
+
+    fun extendRenders(geomKind: GeomKind, aesList: List<Aes<*>>) {
+        val fullAesList = (renders(geomKind) + aesList).distinct()
+        renderedAesByGeom[geomKind] = fullAesList
     }
 
     private val POINT = listOf(

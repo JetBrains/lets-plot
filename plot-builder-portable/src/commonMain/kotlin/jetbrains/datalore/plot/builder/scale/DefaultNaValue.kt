@@ -12,8 +12,10 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
 import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
+import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
 import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
+import jetbrains.datalore.plot.base.Aes.Companion.FILL
 import jetbrains.datalore.plot.base.Aes.Companion.FLOW
 import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
 import jetbrains.datalore.plot.base.Aes.Companion.FRAME
@@ -26,6 +28,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -63,9 +68,11 @@ object DefaultNaValue {
         VALUE_MAP.put(Z, 0.0)
         VALUE_MAP.put(YMIN, 0.0)
         VALUE_MAP.put(YMAX, 0.0)
-        Aes.getColorList().forEach { aes ->
-            VALUE_MAP.put(aes, Color.GRAY)
-        }
+        VALUE_MAP.put(COLOR, Color.GRAY)
+        VALUE_MAP.put(FILL, Color.GRAY)
+        VALUE_MAP.put(PAINT_A, Color.GRAY)
+        VALUE_MAP.put(PAINT_B, Color.GRAY)
+        VALUE_MAP.put(PAINT_C, Color.GRAY)
         VALUE_MAP.put(ALPHA, 0.0)
         VALUE_MAP.put(SHAPE, TinyPointShape)
         VALUE_MAP.put(LINETYPE, NamedLineType.SOLID)

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -131,6 +132,9 @@ class LayerConfig constructor(
     }
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 
+    // Color aesthetics
+    val colorByAes: Aes<Color>?
+    val fillByAes: Aes<Color>?
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -144,6 +148,11 @@ class LayerConfig constructor(
         if (!clientSide) {
             update(MAPPING, layerMappings)
         }
+
+        // Extend renders with specified color aesthetics
+        colorByAes = getColorAes(Option.Layer.COLOR_BY)
+        fillByAes = getColorAes(Option.Layer.FILL_BY)
+        LayerConfigUtil.extendAesRenders(geomProto.geomKind, listOfNotNull(colorByAes, fillByAes))
 
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
         val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {
@@ -367,6 +376,15 @@ class LayerConfig constructor(
         }
 
         return Pair(dataVar, mapVar)
+    }
+
+    private fun OptionsAccessor.getColorAes(option: String): Aes<Color>? {
+        return getString(option)?.let {
+            val aes = Option.Mapping.toAes(it)
+            require(Aes.isColor(aes)) { "'$option' should be an aesthetic related to color" }
+            @Suppress("UNCHECKED_CAST")
+            aes as Aes<Color>
+        }
     }
 
     private companion object {

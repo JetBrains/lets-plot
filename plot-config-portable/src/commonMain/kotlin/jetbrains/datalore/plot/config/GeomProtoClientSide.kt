@@ -10,8 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.projections.identity
 import jetbrains.datalore.base.spatial.projections.mercator
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.stat.DotplotStat
@@ -266,7 +264,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 opts.getDouble(Pie.HOLE)?.let { geom.holeSize = it }
                 opts.getDouble(Pie.STROKE)?.let { geom.strokeWidth = it }
                 opts.getColor(Pie.STROKE_COLOR)?.let { geom.strokeColor = it }
-                opts.getColorAes(FILL_BY)?.let { geom.aesFill = it }
                 geom
             }
 
@@ -329,15 +326,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             opts.getString(Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it)::format }
             opts.getString(Text.NA_TEXT)?.let { geom.naValue = it }
             geom.sizeUnit = opts.getString(Text.SIZE_UNIT)?.lowercase()
-        }
-
-        private fun OptionsAccessor.getColorAes(option: String): Aes<Color>? {
-            return getString(option)?.let {
-                val aes = Option.Mapping.toAes(it)
-                require(Aes.isColor(aes)) { "'$option' should be an aesthetic related to color" }
-                @Suppress("UNCHECKED_CAST")
-                aes as Aes<Color>
-            }
         }
     }
 }
