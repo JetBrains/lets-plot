@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.config
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.FigureSvgRoot
 import jetbrains.datalore.plot.builder.GeomLayer
 
@@ -20,5 +21,5 @@ interface FigureBuildInfo {
 
     fun withBounds(bounds: DoubleRectangle): FigureBuildInfo
 
-    fun toLayouted(): FigureBuildInfo
+    fun layoutedByOuterSize(size: DoubleVector): FigureBuildInfo
 }

@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
@@ -34,7 +35,9 @@ class PlotBuildInfo constructor(
     }
 
     override fun createSvgRoot(): PlotSvgRoot {
-        val plotSvgComponent = plotAssembler.createPlot(bounds.dimension)
+        val layoutInfo = plotAssembler.layoutByOuterSize(bounds.dimension)
+
+        val plotSvgComponent = plotAssembler.createPlot(layoutInfo)
         return PlotSvgRoot(
             plotSvgComponent,
             liveMapCursorServiceConfig = if (containsLiveMap) liveMapCursorServiceConfig else null,
@@ -57,7 +60,9 @@ class PlotBuildInfo constructor(
         return newBuildInfo
     }
 
-    override fun toLayouted(): FigureBuildInfo {
+    override fun layoutedByOuterSize(size: DoubleVector): FigureBuildInfo {
+//        val layoutInfo = plotAssembler.layoutByOuterSize(size)
+
         UNSUPPORTED()
     }
 }

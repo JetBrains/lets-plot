@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.config
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
@@ -50,7 +51,7 @@ class CompositeFigureBuildInfo(
         )
     }
 
-    override fun toLayouted(): FigureBuildInfo {
+    override fun layoutedByOuterSize(size: DoubleVector): FigureBuildInfo {
         UNSUPPORTED()
     }
 }

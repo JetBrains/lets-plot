@@ -48,7 +48,8 @@ object DemoAndTest {
         }
 
         val assembler = PlotConfigClientSideUtil.createPlotAssembler(config)
-        return assembler.createPlot(Defaults.DEF_PLOT_SIZE)
+        val layoutInfo = assembler.layoutByOuterSize(Defaults.DEF_PLOT_SIZE)
+        return assembler.createPlot(layoutInfo)
     }
 
     private fun transformPlotSpec(plotSpec: MutableMap<String, Any>): MutableMap<String, Any> {

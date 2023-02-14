@@ -7,31 +7,25 @@ package jetbrains.datalore.plot.builder.layout.figure.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.MarginalLayerUtil
 import jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.PositionalScalesUtil
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.frame.BogusFrameOfReferenceProvider
-import jetbrains.datalore.plot.builder.frame.SquareFrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
 
-internal class PlotFigureLayouter(
+internal class PlotFigureLayouter constructor(
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
+    private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val facets: PlotFacets,
     private val coordProvider: CoordProvider,
-    private val scaleXProto: Scale,
-    private val scaleYProto: Scale,
-    private val xAxisPosition: AxisPosition,
-    private val yAxisPosition: AxisPosition,
+    private val hAxisPosition: AxisPosition,
+    private val vAxisPosition: AxisPosition,
     private val theme: Theme,
     private val legendBoxInfos: List<LegendBoxInfo>,
     private var title: String?,
@@ -41,52 +35,12 @@ internal class PlotFigureLayouter(
     private val flipAxis = coordProvider.flipped
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
-    private val frameProviderByTile: List<FrameOfReferenceProvider>
     private val plotLayout: PlotLayout
 
     init {
         if (containsLiveMap) {
-            frameProviderByTile = coreLayersByTile.map { BogusFrameOfReferenceProvider() }
             plotLayout = createLiveMapPlotLayout()
         } else {
-            val flipAxis = coordProvider.flipped
-            val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
-                coreLayersByTile,
-                scaleXProto,
-                scaleYProto,
-                facets
-            )
-            val (hScaleProto, vScaleProto) = when (flipAxis) {
-                true -> scaleYProto to scaleXProto
-                else -> scaleXProto to scaleYProto
-            }
-
-            val (hAxisPosition, vAxisPosition) = when (flipAxis) {
-                true -> yAxisPosition.flip() to xAxisPosition.flip()
-                else -> xAxisPosition to yAxisPosition
-            }
-
-            // Marginal layers.
-            // Marginal layers share "marginal domain" and layout across all tiles.
-            val marginalLayers = marginalLayersByTile.flatten()
-            val domainByMargin = MarginalLayerUtil.marginalDomainByMargin(marginalLayers, scaleXProto, scaleYProto)
-            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayers)
-
-            // Create frame of reference provider for each tile.
-            frameProviderByTile =
-                domainsXYByTile.map { (xDomain, yDomain) ->
-                    val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
-                    SquareFrameOfReferenceProvider(
-                        hScaleProto, vScaleProto,
-                        adjustedDomain,
-                        flipAxis,
-                        hAxisPosition, vAxisPosition,
-                        theme,
-                        marginsLayout,
-                        domainByMargin
-                    )
-                }
-
             val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
                 it.createTileLayoutProvider()
             }
@@ -101,8 +55,8 @@ internal class PlotFigureLayouter(
         }
     }
 
-    fun doLayout(plotSize: DoubleVector): Result {
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
+    fun doLayout(outerSize: DoubleVector): PlotFigureLayoutInfo {
+        val overallRect = DoubleRectangle(DoubleVector.ZERO, outerSize)
 
         val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
         val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
@@ -137,7 +91,10 @@ internal class PlotFigureLayouter(
 
         // Layout plot inners
         val layoutInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
-        return Result(layoutInfo, frameProviderByTile)
+        return PlotFigureLayoutInfo(
+            outerSize = outerSize,
+            plotLayoutInfo = layoutInfo
+        )
     }
 
     private fun createLiveMapPlotLayout(): PlotLayout {
@@ -158,9 +115,4 @@ internal class PlotFigureLayouter(
             vAxisTheme = LiveMapAxisTheme(),
         )
     }
-
-    data class Result(
-        val layoutInfo: PlotLayoutInfo,
-        val frameProviderByTile: List<FrameOfReferenceProvider>
-    )
 }

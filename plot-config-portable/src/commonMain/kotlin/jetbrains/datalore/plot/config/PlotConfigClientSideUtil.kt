@@ -43,20 +43,20 @@ object PlotConfigClientSideUtil {
 
     fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
-        val assembler = PlotAssembler.multiTile(
+        val assembler = PlotAssembler(
             layersByTile,
             config.scaleMap,
             config.mappersByAesNP,
+            config.facets,
             config.coordProvider,
             config.xAxisPosition,
             config.yAxisPosition,
-            config.theme
+            config.theme,
+            title = config.title,
+            subtitle = config.subtitle,
+            caption = config.caption,
+            guideOptionsMap = config.guideOptionsMap
         )
-        assembler.title = config.title
-        assembler.subtitle = config.subtitle
-        assembler.caption = config.caption
-        assembler.guideOptionsMap = config.guideOptionsMap
-        assembler.facets = config.facets
         return assembler
     }
 

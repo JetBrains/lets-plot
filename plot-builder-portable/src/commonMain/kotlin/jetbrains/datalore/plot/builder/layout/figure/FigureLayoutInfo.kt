@@ -5,11 +5,9 @@
 
 package jetbrains.datalore.plot.builder.layout.figure
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.layout.util.Insets
 
 interface FigureLayoutInfo {
-    val size: DoubleVector
-    val contentBounds: DoubleRectangle
+    val outerSize: DoubleVector
+//    val contentBounds: DoubleRectangle
 }
