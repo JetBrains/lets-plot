@@ -43,8 +43,8 @@ object PositionAdjustments {
         return StackPos(aes, vjust, stackingMode)
     }
 
-    fun fill(aesthetics: Aesthetics, vjust: Double?): PositionAdjustment {
-        return FillPos(aesthetics, vjust)
+    fun fill(aesthetics: Aesthetics, vjust: Double?, stackingMode: StackingMode): PositionAdjustment {
+        return FillPos(aesthetics, vjust, stackingMode)
     }
 
     fun jitter(width: Double?, height: Double?): PositionAdjustment {

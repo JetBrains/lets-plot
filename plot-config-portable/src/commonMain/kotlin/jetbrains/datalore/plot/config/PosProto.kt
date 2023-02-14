@@ -18,6 +18,7 @@ internal object PosProto {
     const val GSTACK = "gstack"
     const val DODGE = "dodge"
     const val FILL = "fill"
+    const val GFILL = "gfill"
     const val NUDGE = "nudge"
     const val JITTER = "jitter"
     const val JITTER_DODGE = "jitterdodge"
@@ -30,7 +31,8 @@ internal object PosProto {
             STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST), StackingMode.ALL)
             GSTACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST), StackingMode.GROUPS)
             DODGE -> PosProvider.dodge(opts.getDouble(Pos.Dodge.WIDTH))
-            FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST))
+            FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST), StackingMode.ALL)
+            GFILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST), StackingMode.GROUPS)
             JITTER -> PosProvider.jitter(
                 opts.getDouble(Pos.Jitter.WIDTH),
                 opts.getDouble(Pos.Jitter.HEIGHT)
