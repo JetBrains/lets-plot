@@ -67,7 +67,8 @@ class StyleSheet constructor(
         //      property: value;
         //      ....
         // }
-        private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^{}]*)}"""
+        @Suppress("RegExpRedundantEscape") // this inspection breaks the RegEx
+        private const val CSS_REGEX = """\.([\w\-]+)\s+\{([^\{\}]*)\}"""
 
         fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
