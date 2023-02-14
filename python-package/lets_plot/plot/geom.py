@@ -49,7 +49,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -213,7 +213,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -363,7 +363,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -474,7 +474,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -637,7 +637,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='stack'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1062,7 +1062,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='bin2d'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`, default='stack'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1199,7 +1199,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1309,7 +1309,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1394,7 +1394,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1504,7 +1504,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='dodge'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1622,7 +1622,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1738,7 +1738,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1844,7 +1844,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contour'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -1961,7 +1961,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='contourf'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2076,7 +2076,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2251,7 +2251,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2389,7 +2389,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2490,7 +2490,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2588,7 +2588,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2692,7 +2692,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='boxplot'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='dodge'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -2874,7 +2874,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='ydensity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='dodge'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -3059,7 +3059,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
                   binwidth=None,
                   bins=None,
                   method=None,
@@ -3208,7 +3208,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, position=None, show_leg
                  mapping=mapping,
                  data=data,
                  stat=stat,
-                 position=position,
+                 position=None,
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -3244,7 +3244,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'densityridges' (computes and draws kernel density estimate for each ridge).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -3409,7 +3409,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -3519,7 +3519,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='gstack'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -3638,7 +3638,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -3832,7 +3832,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2d'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4024,7 +4024,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='density2df'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4219,7 +4219,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='jitter'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4335,7 +4335,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4453,7 +4453,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4548,7 +4548,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4668,7 +4668,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4757,7 +4757,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4866,7 +4866,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -4964,7 +4964,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         is inherited from the plot data as specified in the call to ggplot.
     stat : str, default='identity'
         The statistical transformation to use on the data for this layer, as a string.
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -5113,7 +5113,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -5227,7 +5227,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='nudge'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -5415,7 +5415,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='nudge'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -5607,7 +5607,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         The statistical transformation to use on the data for this layer, as a string.
         Supported transformations: 'identity' (leaves the data unchanged),
         'count2d' (counts number of points with same x,y coordinate).
-    position : str or `FeatureSpec`
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
