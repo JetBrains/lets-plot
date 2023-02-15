@@ -28,7 +28,7 @@ internal class GroupMerger {
             .map { OrderOptionUtil.createOrderSpec(variables, bindings, it, aggregateOperation) }
     }
 
-    fun getResultSeries(): HashMap<DataFrame.Variable, MutableList<Any?>> {
+    fun getResultSeries(): Map<DataFrame.Variable, List<Any?>> {
         val resultSeries = HashMap<DataFrame.Variable, MutableList<Any?>>()
         myOrderedGroups.forEach { group ->
             group.df.variables().forEach { variable ->
@@ -90,10 +90,11 @@ internal class GroupMerger {
         }
     }
 
-    fun addGroup(d: DataFrame, groupSize: Int) {
+    fun addGroup(d: DataFrame, groupSize: Int): GroupMerger {
         val group = Group(d, groupSize)
         val indexToInsert = findIndexToInsert(group)
         myOrderedGroups.add(indexToInsert, group)
+        return this
     }
 
     private fun findIndexToInsert(group: Group): Int {

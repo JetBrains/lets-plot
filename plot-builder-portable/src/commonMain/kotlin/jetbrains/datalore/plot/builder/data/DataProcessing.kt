@@ -421,14 +421,13 @@ object DataProcessing {
             return data
         }
 
-        val groupMerger = GroupMerger()
-        splitByGroup(data, groupingContext.groupMapper).forEach { d ->
-            groupMerger.addGroup(d, d.rowCount())
-        }
+        val regroupedData = splitByGroup(data, groupingContext.groupMapper)
+            .fold(GroupMerger()) { groupMerger, d -> groupMerger.addGroup(d, d.rowCount()) }
+            .getResultSeries()
 
-        val resultSeries = groupMerger.getResultSeries()
-        return resultSeries.keys.fold(Builder()) { b, variable ->
-            b.put(variable, resultSeries[variable]!!)
-        }.build()
+        return regroupedData
+            .entries
+            .fold(Builder()) { b, (variable, values) -> b.put(variable, values) }
+            .build()
     }
 }
