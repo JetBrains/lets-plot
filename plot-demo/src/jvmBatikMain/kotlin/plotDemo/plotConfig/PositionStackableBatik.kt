@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.PositionStack
+import jetbrains.datalore.plotDemo.model.plotConfig.PositionStackable
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
-    with(PositionStack()) {
+    with(PositionStackable()) {
         PlotSpecsDemoWindowBatik(
-            "Position stack",
+            "Positions stack & fill",
             plotSpecList()
         ).open()
     }
