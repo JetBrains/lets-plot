@@ -416,22 +416,19 @@ object DataProcessing {
         data: DataFrame,
         groupingContext: GroupingContext
     ): DataFrame {
-        val groups = groupingContext.groupMapper
-        if (groups === GroupUtil.SINGLE_GROUP) {
+        if (groupingContext.groupMapper === GroupUtil.SINGLE_GROUP) {
             // if only one group no need to modify
             return data
         }
 
         val groupMerger = GroupMerger()
-        splitByGroup(data, groups).forEach { d ->
+        splitByGroup(data, groupingContext.groupMapper).forEach { d ->
             groupMerger.addGroup(d, d.rowCount())
         }
+
         val resultSeries = groupMerger.getResultSeries()
-        return Builder().run {
-            resultSeries.keys.forEach { variable ->
-                put(variable, resultSeries[variable]!!)
-            }
-            build()
-        }
+        return resultSeries.keys.fold(Builder()) { b, variable ->
+            b.put(variable, resultSeries[variable]!!)
+        }.build()
     }
 }

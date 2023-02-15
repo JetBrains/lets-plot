@@ -169,7 +169,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
                     layerData,
                     groupingVariables,
                     explicitGroupingVarName = layerConfig.explicitGroupingVarName,
-                    expectMultiple = true // ?
+                    expectMultiple = true
                 )
                 layerData = DataProcessing.regroupData(layerData, groupingContext)
             }
