@@ -5,4 +5,10 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-class MultiPoint<TypeT>(geometry: List<Vec<TypeT>>) : AbstractGeometryList<Vec<TypeT>>(geometry)
+class MultiPoint<TypeT>(
+    points: List<Vec<TypeT>>
+) : AbstractGeometryList<Vec<TypeT>>(points) {
+    constructor(point: Vec<TypeT>) : this(listOf(point))
+
+    val bbox: Rect<TypeT>? by lazy(this::boundingBox)
+}

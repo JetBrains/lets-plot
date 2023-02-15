@@ -5,4 +5,6 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-class LineString<TypeT>(geometry: List<Vec<TypeT>>) : AbstractGeometryList<Vec<TypeT>>(geometry)
+class LineString<TypeT>(geometry: List<Vec<TypeT>>) : AbstractGeometryList<Vec<TypeT>>(geometry) {
+    val bbox: Rect<TypeT>? by lazy(this::boundingBox)
+}

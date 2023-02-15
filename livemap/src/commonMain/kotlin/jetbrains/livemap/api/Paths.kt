@@ -127,7 +127,7 @@ class PathBuilder(
                         )
                     }
                     +ChartElementLocationComponent().apply {
-                        geometry = Geometry.createMultiPolygon(locationGeometry)
+                        geometry = Geometry.of(locationGeometry)
                     }
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = coord }
@@ -194,7 +194,7 @@ fun PathBuilder.arrow(
 internal fun splitAndPackPath(points: List<Vec<LonLat>>): MultiPolygon<LonLat> {
     return points
         .run(::splitPathByAntiMeridian)
-        .map { path -> Polygon(listOf(Ring(path))) }
+        .map { path -> Polygon(Ring(path)) }
         .run(::MultiPolygon)
 }
 

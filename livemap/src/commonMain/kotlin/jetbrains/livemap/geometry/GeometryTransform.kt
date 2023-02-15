@@ -6,9 +6,6 @@
 package jetbrains.livemap.geometry
 
 import jetbrains.datalore.base.typedGeometry.Geometry
-import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiLineString
-import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPoint
-import jetbrains.datalore.base.typedGeometry.Geometry.Companion.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.GeometryType.*
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
@@ -44,7 +41,7 @@ object GeometryTransform {
     private fun <InT, OutT> simple(
         transform: (Vec<InT>) -> Vec<OutT>?
     ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
-        return { p, ring -> transform(p)?.let { ring.add(it) } }
+        return { p, ring -> transform(p)?.let(ring::add) }
     }
 
     private fun <InT, OutT> resampling(
@@ -56,12 +53,9 @@ object GeometryTransform {
         transform: (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit
     ): MicroTask<Geometry<OutT>> {
         return when (geometry.type) {
-            MULTI_POLYGON ->
-                MultiPolygonTransform(geometry.multiPolygon, transform).map(::createMultiPolygon)
-            MULTI_LINESTRING ->
-                MultiLineStringTransform(geometry.multiLineString, transform).map(::createMultiLineString)
-            MULTI_POINT ->
-                MultiPointTransform(geometry.multiPoint, transform).map(::createMultiPoint)
+            MULTI_POLYGON -> MultiPolygonTransform(geometry.multiPolygon, transform).map(Geometry.Companion::of)
+            MULTI_LINESTRING -> MultiLineStringTransform(geometry.multiLineString, transform).map(Geometry.Companion::of)
+            MULTI_POINT -> MultiPointTransform(geometry.multiPoint, transform).map(Geometry.Companion::of)
         }
     }
 

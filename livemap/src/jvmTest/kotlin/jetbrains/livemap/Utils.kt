@@ -23,19 +23,16 @@ object Utils {
         val topD = top.toDouble()
         val widthD = width.toDouble()
         val heightD = height.toDouble()
-        return Boundary.create(MultiPolygon(
-                listOf(
-                    Polygon(
+        return Boundary.create(
+            MultiPolygon(
+                Polygon(
+                    Ring(
                         listOf(
-                            Ring(
-                                listOf(
-                                    explicitVec(leftD, topD),
-                                    explicitVec(leftD + widthD, topD),
-                                    explicitVec(leftD + widthD, topD + heightD),
-                                    explicitVec(leftD, topD + heightD),
-                                    explicitVec(leftD, topD)
-                                )
-                            )
+                            explicitVec(leftD, topD),
+                            explicitVec(leftD + widthD, topD),
+                            explicitVec(leftD + widthD, topD + heightD),
+                            explicitVec(leftD, topD + heightD),
+                            explicitVec(leftD, topD)
                         )
                     )
                 )
@@ -44,16 +41,12 @@ object Utils {
     }
 
     fun <T> point(p: DoubleVector): Geometry<T> {
-        return Geometry.createMultiPolygon(
+        return Geometry.of(
             MultiPolygon(
-                listOf(
-                    Polygon(
+                Polygon(
+                    Ring(
                         listOf(
-                            Ring(
-                                listOf(
-                                    explicitVec(p.x, p.y)
-                                )
-                            )
+                            explicitVec(p.x, p.y)
                         )
                     )
                 )

@@ -113,8 +113,8 @@ private fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: 
             point.transform(newY = { mapRect.scalarBottom })
         )
     }
-        .run { listOf(Ring(this)) }
-        .run { listOf(Polygon(this)) }
+        .run { Ring(this) }
+        .run { Polygon(this) }
         .run { MultiPolygon(this) }
 }
 

@@ -54,7 +54,7 @@ fun <TypeT> Rect<TypeT>.toPolygon(): Polygon<TypeT> {
     points.add(origin + dimension)
     points.add(origin.transform(newY = { it + scalarHeight }))
     points.add(origin)
-    return Polygon(listOf(Ring(points)))
+    return Polygon(Ring(points))
 }
 
 val <TypeT> Vec<TypeT>.scalarX get(): Scalar<TypeT> = Scalar(x)
