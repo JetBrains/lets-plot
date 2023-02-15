@@ -7,6 +7,12 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_position.ipynb).
 
 
+- New positioning functions:
+
+  - `position_gstack()`
+  - `position_gfill()`
+
+
 - `angle` parameter in `element_text()` for `axis_text, axis_text_x, axis_text_y` in a `theme()` (i.e. to axis labels).
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_text_angle.ipynb).  
