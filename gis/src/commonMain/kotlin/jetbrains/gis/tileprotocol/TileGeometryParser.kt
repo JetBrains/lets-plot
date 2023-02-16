@@ -27,15 +27,15 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
             get() = myTileGeometries
 
         override fun onPoint(point: Vec<Untyped>) {
-            myTileGeometries.add(Geometry.of(MultiPoint(point.reinterpret())))
+            myTileGeometries.add(Geometry.of(point.reinterpret()))
         }
 
         override fun onLineString(lineString: LineString<Untyped>) {
-            myTileGeometries.add(Geometry.of(MultiLineString(lineString.reinterpret())))
+            myTileGeometries.add(Geometry.of(lineString.reinterpret()))
         }
 
         override fun onPolygon(polygon: Polygon<Untyped>) {
-            myTileGeometries.add(Geometry.of(MultiPolygon(polygon.reinterpret())))
+            myTileGeometries.add(Geometry.of(polygon.reinterpret()))
         }
 
         override fun onMultiPoint(multiPoint: MultiPoint<Untyped>) {

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.spatial.Geodesic
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.ChartElementLocationComponent
@@ -25,7 +25,7 @@ import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
-import jetbrains.livemap.geometry.GeometryTransform.RESAMPLING_PRECISION
+import jetbrains.livemap.geometry.MicroTasks.RESAMPLING_PRECISION
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
@@ -96,11 +96,11 @@ class PathBuilder(
     fun build(nonInteractive: Boolean): EcsEntity? {
         // location is never built on geodesic points - they alter minimal bbox too much
         val locationGeometry = splitAndPackPath(points)
-            .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
+            .let { transform(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
 
         // flat can't be geodesic
         val coord = splitAndPackPath(points.takeIf { flat || !geodesic } ?: Geodesic.createArcPath(points))
-            .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
+            .let { transform(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
 
 
         return coord.bbox?.let { bbox ->
@@ -130,7 +130,7 @@ class PathBuilder(
                         geometry = Geometry.of(locationGeometry)
                     }
                     +WorldOriginComponent(bbox.origin)
-                    +WorldGeometryComponent().apply { geometry = coord }
+                    +WorldGeometryComponent().apply { geometry = Geometry.of(coord) }
                     +WorldDimensionComponent(bbox.dimension)
                     +ScreenLoopComponent()
                     +ScreenOriginComponent()
@@ -191,11 +191,11 @@ fun PathBuilder.arrow(
     arrowType = type
 }
 
-internal fun splitAndPackPath(points: List<Vec<LonLat>>): MultiPolygon<LonLat> {
+internal fun splitAndPackPath(points: List<Vec<LonLat>>): MultiLineString<LonLat> {
     return points
-        .run(::splitPathByAntiMeridian)
-        .map { path -> Polygon(Ring(path)) }
-        .run(::MultiPolygon)
+        .let(::splitPathByAntiMeridian)
+        .map(::LineString)
+        .let(::MultiLineString)
 }
 
 // TODO: looks outdated - does it even work?

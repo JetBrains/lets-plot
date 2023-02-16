@@ -14,37 +14,44 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.map
 
 
-object GeometryTransform {
+object MicroTasks {
     const val RESAMPLING_PRECISION = 0.001
 
-    fun <InT, OutT> resampling(
+    fun <InT, OutT> resample(
         geometry: Geometry<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<Geometry<OutT>> {
-        return createTransformer(geometry, resampling(transform))
+        return createTransformer(geometry, resample(transform))
     }
 
-    fun <InT, OutT> simple(
+    fun <InT, OutT> transform(
+        geometry: Geometry<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>?
+    ): MicroTask<Geometry<OutT>> {
+        return createTransformer(geometry, transform(transform))
+    }
+
+    fun <InT, OutT> transform(
         geometry: MultiPolygon<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<MultiPolygon<OutT>> {
-        return MultiPolygonTransform(geometry, simple(transform))
+        return MultiPolygonTransform(geometry, transform(transform))
     }
 
-    fun <InT, OutT> resampling(
+    fun <InT, OutT> resample(
         geometry: MultiPolygon<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?
     ): MicroTask<MultiPolygon<OutT>> {
-        return MultiPolygonTransform(geometry, resampling(transform))
+        return MultiPolygonTransform(geometry, resample(transform))
     }
 
-    private fun <InT, OutT> simple(
+    private fun <InT, OutT> transform(
         transform: (Vec<InT>) -> Vec<OutT>?
     ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit {
         return { p, ring -> transform(p)?.let(ring::add) }
     }
 
-    private fun <InT, OutT> resampling(
+    private fun <InT, OutT> resample(
         transform: (Vec<InT>) -> Vec<OutT>?
     ): (Vec<InT>, MutableCollection<Vec<OutT>>) -> Unit = IterativeResampler(transform)::next
 

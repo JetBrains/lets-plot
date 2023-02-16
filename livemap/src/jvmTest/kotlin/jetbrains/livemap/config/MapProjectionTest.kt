@@ -16,7 +16,7 @@ import jetbrains.livemap.World
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.projections.Geographic
 import jetbrains.livemap.core.projections.Projections.mercator
-import jetbrains.livemap.geometry.GeometryTransform.simple
+import jetbrains.livemap.geometry.MicroTasks.transform
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -35,7 +35,7 @@ class MapProjectionTest {
         val mercator = mercator()
         val input = square<LonLat>(1, 2, 30, 40).asMultipolygon()
 
-        val transformTask = simple(input, mercator::project)
+        val transformTask = transform(input, mercator::project)
         while(transformTask.alive()) {
             transformTask.resume()
         }

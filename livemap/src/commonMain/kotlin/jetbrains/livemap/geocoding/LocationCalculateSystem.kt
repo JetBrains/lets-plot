@@ -5,7 +5,8 @@
 
 package jetbrains.livemap.geocoding
 
-import jetbrains.datalore.base.typedGeometry.GeometryType.MULTI_POLYGON
+import jetbrains.datalore.base.typedGeometry.GeometryType.*
+import jetbrains.datalore.base.typedGeometry.LineString
 import jetbrains.datalore.base.typedGeometry.Polygon
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.World
@@ -40,14 +41,21 @@ class LocationCalculateSystem(
                         with(entity.get<ChartElementLocationComponent>().geometry) {
                             when (type) {
                                 MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
+                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
+                                MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
                                 else -> error("Unsupported geometry: $type")
                             }
                         }
                     }
                     entity.contains<WorldGeometryComponent>() -> {
-                        entity.get<WorldGeometryComponent>().geometry
-                            ?.let { mapRuler.calculateBoundingBox(it.mapNotNull(Polygon<World>::bbox)) }
-                            ?: error("Unexpected - no geometry")
+                        with(entity.get<WorldGeometryComponent>().geometry!!) {
+                            when (type) {
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
+                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
+                                MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
+                                else -> error("Unsupported geometry: $type")
+                            }
+                        }
                     }
                     entity.contains<WorldOriginComponent>() -> {
                         Rect.XYWH(

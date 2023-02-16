@@ -10,7 +10,10 @@ import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.LineString
+import jetbrains.datalore.base.typedGeometry.Vec
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
@@ -115,26 +118,12 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createGeometry(vararg points: Vec<Client>): MultiPolygon<Client> {
-        return MultiPolygon(
-            listOf(
-                Polygon(
-                    listOf(
-                        Ring(
-                            listOf(*points)
-                        )
-                    )
-                )
-            )
-        )
-    }
-
     private fun createEffect(vararg points: Vec<Client>) {
         myComponentManager.createEntity("effect")
             .addComponents {
                 + myGrowingPathEffectComponent
                 + ScreenGeometryComponent().apply {
-                    geometry = createGeometry(*points)
+                    geometry = Geometry.of(LineString.of(*points))
                 }
                 + ParentLayerComponent(
                     myComponentManager.createEntity("parent layer").id
@@ -152,7 +141,7 @@ class GrowingPathTest {
                     interpolatedPoint = explicitVec(3.5, 3.5)
                 }
                 + ScreenGeometryComponent().apply {
-                    geometry = createGeometry(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0))
+                    geometry = Geometry.of(LineString.of(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0)))
                 }
                 + RenderableComponent().apply {
                     renderer = render

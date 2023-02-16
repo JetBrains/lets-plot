@@ -8,7 +8,7 @@ package jetbrains.livemap.geocoding
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
@@ -111,7 +111,7 @@ class MapLocationGeocoder(
 
     companion object {
         fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
-            return splitByAntiMeridian().mapNotNull { rect -> transformBBox(rect, mapProjection::project) }
+            return splitByAntiMeridian().mapNotNull { rect -> transform(rect, mapProjection::project) }
         }
     }
 }

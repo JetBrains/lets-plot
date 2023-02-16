@@ -19,7 +19,7 @@ import jetbrains.livemap.core.multitasking.MicroTaskUtil
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.geometry.GeometryTransform
+import jetbrains.livemap.geometry.MicroTasks
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.viewport.CellKey
 
@@ -58,7 +58,7 @@ internal class TileDataParserImpl(private val myMapProjection: MapProjection) : 
                 repeat(tileGeometries.size) {
                     val geometry = tileGeometries[it]
                     microThreads.add(
-                        GeometryTransform.resampling(geometry, transform)
+                        MicroTasks.resample(geometry, transform)
                             .map { worldMultiPolygon: Geometry<Client> ->
                                 tileFeatures.add(
                                     TileFeature(

@@ -5,7 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.searching
 
-import jetbrains.datalore.base.typedGeometry.createMultiPolygon
+import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.LineString
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
 import jetbrains.livemap.chart.ChartElementComponent
@@ -23,17 +24,18 @@ class PathLocatorTest {
     private val locator = PathLocator()
     private val entity = manager.createEntity("")
         .addComponents {
-            + IndexComponent(0, 0)
-            + ChartElementComponent().apply {
+            +IndexComponent(0, 0)
+            +ChartElementComponent().apply {
                 strokeWidth = 5.0
             }
-            + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
-            + ScreenGeometryComponent().apply {
-                geometry = createMultiPolygon(
-                    listOf(
+            +ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
+            +ScreenGeometryComponent().apply {
+                geometry = Geometry.of(
+                    LineString.of(
                         point(10, 10),
                         point(20, 30),
-                        point(50, 20)
+                        point(50, 20),
+                        point(10, 10),
                     )
                 )
             }

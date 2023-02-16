@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.jetbrains.livemap.searching
 
-import jetbrains.datalore.base.typedGeometry.createMultiPolygon
+import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.Polygon
+import jetbrains.datalore.base.typedGeometry.Ring
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
@@ -21,16 +23,18 @@ class PolygonLocatorTest {
     private val locator = PolygonLocator()
     private val entity = manager.createEntity("")
         .addComponents {
-            + IndexComponent(0, 0)
-            + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
-            + ScreenGeometryComponent().apply {
-                geometry = createMultiPolygon(
-                    listOf(
-                        explicitVec(0.0, 0.0),
-                        explicitVec(4.0, 0.0),
-                        explicitVec(4.0, 4.0),
-                        explicitVec(0.0, 4.0),
-                        explicitVec(0.0, 0.0)
+            +IndexComponent(0, 0)
+            +ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
+            +ScreenGeometryComponent().apply {
+                geometry = Geometry.of(
+                    Polygon(
+                        Ring.of(
+                            explicitVec(0.0, 0.0),
+                            explicitVec(4.0, 0.0),
+                            explicitVec(4.0, 4.0),
+                            explicitVec(0.0, 4.0),
+                            explicitVec(0.0, 0.0)
+                        )
                     )
                 )
             }

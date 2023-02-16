@@ -7,7 +7,7 @@ package jetbrains.livemap.config
 
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
@@ -64,7 +64,8 @@ internal class MapProjectionBuilder(
     }
 
     fun create(): MapProjection {
-        val rect = transformBBox(geoProjection.validRect(), geoProjection::project) ?: error("Unable to transform projection valid rect")
+        val rect = transform(geoProjection.validRect(), geoProjection::project)
+            ?: error("Unable to transform projection valid rect")
         val scale = min(mapRect.width / rect.width, mapRect.height / rect.height)
 
         @Suppress("UNCHECKED_CAST")

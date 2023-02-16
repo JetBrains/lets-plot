@@ -37,15 +37,15 @@ class WorldGeometry2ScreenUpdateSystem(
 
         val worldOrigin = entity.get<WorldOriginComponent>().origin
         val zoomProjection = Projections.zoom<World, Client> { zoom }
-        return GeometryTransform
-            .simple(entity.get<WorldGeometryComponent>().geometry!!) {
+        return MicroTasks
+            .transform(entity.get<WorldGeometryComponent>().geometry!!) {
                 zoomProjection.project(it - worldOrigin)
             }
-            .map { screenMultipolygon ->
+            .map { screenGeometry ->
                 runLaterBySystem(entity) { theEntity ->
                     tagDirtyParentLayer(theEntity)
                     theEntity.provide(::ScreenGeometryComponent).apply {
-                        geometry = screenMultipolygon
+                        geometry = screenGeometry
                         this.zoom = zoom
                     }
                     

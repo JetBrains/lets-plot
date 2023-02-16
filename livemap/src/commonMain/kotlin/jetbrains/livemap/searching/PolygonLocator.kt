@@ -47,7 +47,7 @@ class PolygonLocator : Locator {
         }
 
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
-            if (isCoordinateInPolygon(coord - origin, target.get<ScreenGeometryComponent>().geometry)) {
+            if (isCoordinateInPolygon(coord - origin, target.get<ScreenGeometryComponent>().geometry.multiPolygon)) {
                 return true
             }
         }

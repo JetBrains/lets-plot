@@ -8,23 +8,35 @@ package jetbrains.datalore.base.typedGeometry
 object Transforms {
     private const val RESAMPLING_PRECISION = 0.001
 
-    fun <InT, OutT> transformBBox(
+    fun <InT, OutT> transform(
         bbox: Rect<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?,
         resamplingPrecision: Double? = RESAMPLING_PRECISION
-    ): Rect<OutT>? = transformPolygon(bbox.toPolygon(), transform, resamplingPrecision).bbox
+    ): Rect<OutT>? = transform(bbox.toPolygon(), transform, resamplingPrecision).bbox
 
-    fun <InT, OutT> transformMultiPolygon(
+    fun <InT, OutT> transform(
         multiPolygon: MultiPolygon<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?,
         resamplingPrecision: Double? = RESAMPLING_PRECISION
-    ): MultiPolygon<OutT> = MultiPolygon(multiPolygon.map { transformPolygon(it, transform, resamplingPrecision) })
+    ): MultiPolygon<OutT> = MultiPolygon(multiPolygon.map { transform(it, transform, resamplingPrecision) })
 
-    private fun <InT, OutT> transformPolygon(
+    fun <InT, OutT> transform(
         polygon: Polygon<InT>,
         transform: (Vec<InT>) -> Vec<OutT>?,
         resamplingPrecision: Double?
     ): Polygon<OutT> = Polygon(polygon.map { Ring(transformPoints(it, transform, resamplingPrecision)) })
+
+    fun <InT, OutT> transform(
+        lineString: LineString<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>?,
+        resamplingPrecision: Double?
+    ): LineString<OutT> = LineString(transformPoints(lineString, transform, resamplingPrecision))
+
+    fun <InT, OutT> transform(
+        multiLineString: MultiLineString<InT>,
+        transform: (Vec<InT>) -> Vec<OutT>?,
+        resamplingPrecision: Double?
+    ): MultiLineString<OutT> = MultiLineString(multiLineString.map { transform(it, transform, resamplingPrecision) } )
 
     private fun <InT, OutT> transformPoints(
         path: List<Vec<InT>>,
