@@ -52,38 +52,15 @@ internal class PlotFigureBuildInfo constructor(
     }
 
     override fun withBounds(bounds: DoubleRectangle): PlotFigureBuildInfo {
-        val newBuildInfo = PlotFigureBuildInfo(
-            plotAssembler,
-            processedPlotSpec,
-            bounds,
-            computationMessages,
-        )
-
-        if (this::liveMapCursorServiceConfig.isInitialized) {
-            newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
-        }
-
-        return newBuildInfo
+        return makeCopy(bounds)
     }
 
     override fun layoutedByOuterSize(): PlotFigureBuildInfo {
         val outerSize = bounds.dimension
         val layoutInfo = plotAssembler.layoutByOuterSize(outerSize)
-
-        val newBuildInfo = PlotFigureBuildInfo(
-            plotAssembler,
-            processedPlotSpec,
-            bounds,
-            computationMessages,
-        ).apply {
+        return makeCopy().apply {
             this._layoutInfo = layoutInfo
         }
-
-        if (this::liveMapCursorServiceConfig.isInitialized) {
-            newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
-        }
-
-        return newBuildInfo
     }
 
     override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotFigureBuildInfo {
@@ -95,14 +72,18 @@ internal class PlotFigureBuildInfo constructor(
         val newOrigin = this.bounds.origin.subtract(newCenter.subtract(oldCenter))
         val newBounds = DoubleRectangle(newOrigin, layoutInfo.outerSize)
 
+        return makeCopy(newBounds).apply {
+            this._layoutInfo = layoutInfo
+        }
+    }
+
+    private fun makeCopy(newBounds: DoubleRectangle? = null): PlotFigureBuildInfo {
         val newBuildInfo = PlotFigureBuildInfo(
             plotAssembler,
             processedPlotSpec,
-            newBounds,
+            newBounds ?: this.bounds,
             computationMessages,
-        ).apply {
-            this._layoutInfo = layoutInfo
-        }
+        )
 
         if (this::liveMapCursorServiceConfig.isInitialized) {
             newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
