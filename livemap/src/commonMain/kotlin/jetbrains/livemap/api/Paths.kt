@@ -96,11 +96,11 @@ class PathBuilder(
     fun build(nonInteractive: Boolean): EcsEntity? {
         // location is never built on geodesic points - they alter minimal bbox too much
         val locationGeometry = splitAndPackPath(points)
-            .let { transform(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
+            .let { transform(it, myMapProjection::apply, RESAMPLING_PRECISION.takeIf { !flat }) }
 
         // flat can't be geodesic
         val coord = splitAndPackPath(points.takeIf { flat || !geodesic } ?: Geodesic.createArcPath(points))
-            .let { transform(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
+            .let { transform(it, myMapProjection::apply, RESAMPLING_PRECISION.takeIf { !flat }) }
 
 
         return coord.bbox?.let { bbox ->

@@ -13,6 +13,7 @@ import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -21,7 +22,6 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.fragment.Utils.RegionsIndex
 import jetbrains.livemap.fragment.Utils.entityName
 import jetbrains.livemap.geometry.MicroTasks
@@ -124,10 +124,10 @@ class FragmentEmitSystem(
         require(!boundaries.isEmpty())
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
-        val zoomProjection = Projections.zoom<World, Client>(fragmentKey::zoom)
+        val zoomProjection = Transforms.zoom<World, Client>(fragmentKey::zoom)
 
         val projector = MicroTasks
-            .resample(boundaries, mapProjection::project)
+            .resample(boundaries, mapProjection::apply)
             .flatMap { worldMultiPolygon: MultiPolygon<World> ->
                 val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
                 runLaterBySystem(
@@ -139,7 +139,7 @@ class FragmentEmitSystem(
                             +WorldOriginComponent(bbox.origin)
                         }
                 }
-                MicroTasks.transform(worldMultiPolygon) { p -> zoomProjection.project(p - bbox.origin) }
+                MicroTasks.transform(worldMultiPolygon) { p -> zoomProjection.apply(p - bbox.origin) }
             }
             .map { screenMultiPolygon ->
                 runLaterBySystem(

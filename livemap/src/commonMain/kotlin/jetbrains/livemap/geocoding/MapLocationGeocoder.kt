@@ -15,7 +15,7 @@ import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldRectangle
-import jetbrains.livemap.core.projections.MapRuler
+import jetbrains.livemap.core.MapRuler
 import jetbrains.livemap.mapengine.MapProjection
 import kotlin.math.min
 
@@ -41,7 +41,7 @@ class MapLocationGeocoder(
                     calculateExtendedRectangleWithCenter(
                         myMapRuler,
                         calculateBBoxOfGeoRect(feature.position!!),
-                        myMapProjection.project(feature.centroid!!.reinterpret()) ?: Vec(0, 0) // TODO: remove this class as map_location doesn't support geocoding anymore
+                        myMapProjection.apply(feature.centroid!!.reinterpret()) ?: Vec(0, 0) // TODO: remove this class as map_location doesn't support geocoding anymore
                     )
                 } else {
                     features
@@ -111,7 +111,7 @@ class MapLocationGeocoder(
 
     companion object {
         fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
-            return splitByAntiMeridian().mapNotNull { rect -> transform(rect, mapProjection::project) }
+            return splitByAntiMeridian().mapNotNull { rect -> transform(rect, mapProjection::apply) }
         }
     }
 }

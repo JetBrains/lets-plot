@@ -3,14 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.livemap.core.projections
+package jetbrains.livemap.core
 
-interface UnsafeProjection<InT, OutT> {
-    fun project(v: InT): OutT?
+interface UnsafeTransform<InT, OutT> {
+    fun apply(v: InT): OutT?
     fun invert(v: OutT): InT?
 }
 
-interface Projection<InT, OutT> {
-    fun project(v: InT): OutT
+interface Transform<InT, OutT> {
+    fun apply(v: InT): OutT
     fun invert(v: OutT): InT
 }

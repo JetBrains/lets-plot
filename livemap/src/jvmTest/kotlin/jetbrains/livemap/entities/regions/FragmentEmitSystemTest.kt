@@ -8,13 +8,12 @@ import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec.Compan
 import jetbrains.datalore.maps.Utils.empty
 import jetbrains.datalore.maps.Utils.quad
 import jetbrains.datalore.maps.Utils.square
-import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.createMapProjection
+import jetbrains.livemap.core.Projections
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
 import jetbrains.livemap.geometry.ScaleComponent
@@ -36,7 +35,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
     private lateinit var fragmentFoo0: FragmentSpec
     private lateinit var fragmentFoo1: FragmentSpec
     private lateinit var emptyFragmentFoo2: FragmentSpec
-    protected override val systemsOrder
+    override val systemsOrder
         get() = listOf(
             CameraInputSystem::class,
             FragmentEmitSystem::class,
@@ -45,7 +44,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             SchedulerSystem::class
         )
 
-    protected override fun afterUpdateCleanup(): List<MockSpec> {
+    override fun afterUpdateCleanup(): List<MockSpec> {
         return listOf(
             Mocks.changedFragments(this).none(),
             Mocks.downloadingFragments(this).none()
@@ -100,15 +99,15 @@ class FragmentEmitSystemTest : RegionsTestBase() {
 
         run {
             val fragmentEntity: EcsEntity = getEntity(fragmentFoo0.name())
-            assertThat(fragmentEntity.contains(EMITTED_FRAGMENT_COMPONENTS)).isTrue()
+            assertThat(fragmentEntity.contains(EMITTED_FRAGMENT_COMPONENTS)).isTrue
             assertThat(fragmentEntity.get<WorldOriginComponent>().origin).isEqualTo(WorldPoint(x=128.7111111111111, y=95.03156113339311))
             assertThat(fragmentEntity.get<WorldDimensionComponent>().dimension).isEqualTo(WorldPoint(x=21.333333333333314, y=31.545927733930668))
-            assertThat(fragmentEntity.get<FragmentComponent>().fragmentKey.quadKey).isEqualTo(quad<World>("0"))
+            assertThat(fragmentEntity.get<FragmentComponent>().fragmentKey.quadKey).isEqualTo(quad<LonLat>("0"))
             assertThat(fragmentEntity.get<ParentLayerComponent>().layerId).isEqualTo(parentLayerEntity.id)
         }
         run {
             val fragmentEntity: EcsEntity = getEntity(fragmentFoo1.name())
-            assertThat(fragmentEntity.contains(EMITTED_FRAGMENT_COMPONENTS)).isTrue()
+            assertThat(fragmentEntity.contains(EMITTED_FRAGMENT_COMPONENTS)).isTrue
             assertThat(fragmentEntity.get<WorldOriginComponent>().origin).isEqualTo(WorldPoint(x=131.55555555555554, y=5.4495652533470364E-11))
             assertThat(fragmentEntity.get<WorldDimensionComponent>().dimension).isEqualTo(WorldPoint(x=49.7777777777778, y=123.72551367976955))
             assertThat(fragmentEntity.get<FragmentComponent>().fragmentKey.quadKey).isEqualTo(quad<LonLat>("1"))

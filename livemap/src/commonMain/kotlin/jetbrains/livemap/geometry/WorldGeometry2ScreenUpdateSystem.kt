@@ -8,6 +8,7 @@ package jetbrains.livemap.geometry
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -16,7 +17,6 @@ import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyPare
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
@@ -36,10 +36,10 @@ class WorldGeometry2ScreenUpdateSystem(
         }
 
         val worldOrigin = entity.get<WorldOriginComponent>().origin
-        val zoomProjection = Projections.zoom<World, Client> { zoom }
+        val zoomProjection = Transforms.zoom<World, Client> { zoom }
         return MicroTasks
             .transform(entity.get<WorldGeometryComponent>().geometry!!) {
-                zoomProjection.project(it - worldOrigin)
+                zoomProjection.apply(it - worldOrigin)
             }
             .map { screenGeometry ->
                 runLaterBySystem(entity) { theEntity ->

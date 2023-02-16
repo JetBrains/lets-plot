@@ -11,7 +11,8 @@ import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
-import jetbrains.livemap.core.projections.*
+import jetbrains.livemap.core.*
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.mapengine.MapProjection
 import kotlin.math.min
 
@@ -22,49 +23,49 @@ internal class MapProjectionBuilder(
     var reverseX = false
     var reverseY = false
 
-    private fun offset(offset: Double): Projection<Double, Double> {
-        return object : Projection<Double, Double> {
-            override fun project(v: Double): Double = v - offset
+    private fun offset(offset: Double): Transform<Double, Double> {
+        return object : Transform<Double, Double> {
+            override fun apply(v: Double): Double = v - offset
             override fun invert(v: Double): Double = v + offset
         }
     }
 
     private fun <InT, InterT, OutT> composite(
-        t1: UnsafeProjection<InT, InterT>,
-        t2: UnsafeProjection<InterT, OutT>
-    ): UnsafeProjection<InT, OutT> {
-        return object : UnsafeProjection<InT, OutT> {
-            override fun project(v: InT): OutT? = v.run(t1::project)?.run(t2::project)
+        t1: UnsafeTransform<InT, InterT>,
+        t2: UnsafeTransform<InterT, OutT>
+    ): UnsafeTransform<InT, OutT> {
+        return object : UnsafeTransform<InT, OutT> {
+            override fun apply(v: InT): OutT? = v.run(t1::apply)?.run(t2::apply)
             override fun invert(v: OutT): InT? = v.run(t2::invert)?.run(t1::invert)
         }
     }
 
     private fun <InT, InterT, OutT> composite(
-        t1: UnsafeProjection<InT, InterT>,
-        t2: Projection<InterT, OutT>
-    ): UnsafeProjection<InT, OutT> {
-        return object : UnsafeProjection<InT, OutT> {
-            override fun project(v: InT): OutT? = v.run(t1::project)?.run(t2::project)
+        t1: UnsafeTransform<InT, InterT>,
+        t2: Transform<InterT, OutT>
+    ): UnsafeTransform<InT, OutT> {
+        return object : UnsafeTransform<InT, OutT> {
+            override fun apply(v: InT): OutT? = v.run(t1::apply)?.run(t2::apply)
             override fun invert(v: OutT): InT? = v.run(t2::invert)?.run(t1::invert)
         }
     }
 
     private fun <InT, InterT, OutT> composite(
-        t1: Projection<InT, InterT>,
-        t2: Projection<InterT, OutT>
-    ): Projection<InT, OutT> {
-        return object : Projection<InT, OutT> {
-            override fun project(v: InT): OutT = v.run(t1::project).run(t2::project)
+        t1: Transform<InT, InterT>,
+        t2: Transform<InterT, OutT>
+    ): Transform<InT, OutT> {
+        return object : Transform<InT, OutT> {
+            override fun apply(v: InT): OutT = v.run(t1::apply).run(t2::apply)
             override fun invert(v: OutT): InT = v.run(t2::invert).run(t1::invert)
         }
     }
 
-    private fun linear(offset: Double, scale: Double): Projection<Double, Double> {
-        return composite(offset(offset), Projections.scale { scale })
+    private fun linear(offset: Double, scale: Double): Transform<Double, Double> {
+        return composite(offset(offset), Transforms.scale { scale })
     }
 
     fun create(): MapProjection {
-        val rect = transform(geoProjection.validRect(), geoProjection::project)
+        val rect = transform(geoProjection.validRect(), geoProjection::apply)
             ?: error("Unable to transform projection valid rect")
         val scale = min(mapRect.width / rect.width, mapRect.height / rect.height)
 
@@ -78,7 +79,7 @@ internal class MapProjectionBuilder(
         val scaleY = if (reverseY) -scale else scale
 
         val linearProjection =
-            Projections.tuple<Geographic, World>(
+            Transforms.tuple<Geographic, World>(
                 linear(offsetX, scaleX),
                 linear(offsetY, scaleY)
             )
@@ -86,7 +87,7 @@ internal class MapProjectionBuilder(
         val proj = composite(geoProjection, linearProjection)
 
         return object : MapProjection {
-            override fun project(v: LonLatPoint): WorldPoint? = proj.project(v)
+            override fun apply(v: LonLatPoint): WorldPoint? = proj.apply(v)
             override fun invert(v: WorldPoint): LonLatPoint? = proj.invert(v)
 
             override val mapRect: WorldRectangle

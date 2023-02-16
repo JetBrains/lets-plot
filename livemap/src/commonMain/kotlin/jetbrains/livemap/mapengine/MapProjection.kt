@@ -8,8 +8,8 @@ package jetbrains.livemap.mapengine
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
-import jetbrains.livemap.core.projections.UnsafeProjection
+import jetbrains.livemap.core.UnsafeTransform
 
-interface MapProjection : UnsafeProjection<LonLatPoint, WorldPoint> {
+interface MapProjection : UnsafeTransform<LonLatPoint, WorldPoint> {
     val mapRect: WorldRectangle
 }

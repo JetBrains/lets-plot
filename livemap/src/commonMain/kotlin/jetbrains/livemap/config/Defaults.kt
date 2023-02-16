@@ -8,7 +8,7 @@ package jetbrains.livemap.config
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.World
-import jetbrains.livemap.core.projections.GeoProjection
+import jetbrains.livemap.core.GeoProjection
 
 const val MIN_ZOOM = 1
 const val MAX_ZOOM = 15

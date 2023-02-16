@@ -8,11 +8,11 @@ package jetbrains.livemap.mapengine.placement
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.onEachEntity3
 import jetbrains.livemap.core.layers.ParentLayerComponent
-import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
 
@@ -31,6 +31,6 @@ class WorldDimension2ScreenUpdateSystem(componentManager: EcsComponentManager) :
         }
 
     companion object {
-        fun world2Screen(p: WorldPoint, zoom: Int) = Projections.zoom<World, Client> { zoom }.project(p)
+        fun world2Screen(p: WorldPoint, zoom: Int) = Transforms.zoom<World, Client> { zoom }.apply(p)
     }
 }
