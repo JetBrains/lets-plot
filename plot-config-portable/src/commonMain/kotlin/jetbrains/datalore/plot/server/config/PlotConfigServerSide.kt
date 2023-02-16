@@ -221,7 +221,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             }
 
             // drop var if aes is not rendered by geom
-            val renderedAes = HashSet(layerConfig.geomProto.renders())
+            val renderedAes = HashSet(layerConfig.renderedAes)
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
             for (binding in bindings) {

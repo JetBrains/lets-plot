@@ -137,6 +137,8 @@ class LayerConfig constructor(
     val colorByAes: Aes<Color>?
     val fillByAes: Aes<Color>?
 
+    val renderedAes: List<Aes<*>>
+
     init {
         val (layerMappings, layerData) = createDataFrame(
             options = this,
@@ -150,13 +152,18 @@ class LayerConfig constructor(
             update(MAPPING, layerMappings)
         }
 
-        // Extend renders with specified color aesthetics
-        colorByAes = getColorAes(Option.Layer.COLOR_BY)
-        fillByAes = getColorAes(Option.Layer.FILL_BY)
-        GeomMeta.extendRenders(geomProto.geomKind, listOfNotNull(colorByAes, fillByAes))
+        // Get 'color_by' and 'fill_by' if this aesthetic is in mappings
+        colorByAes = getColorAes(Option.Layer.COLOR_BY)?.takeIf {
+            (plotMappings + layerMappings).containsKey(it.name)
+        }
+        fillByAes = getColorAes(Option.Layer.FILL_BY)?.takeIf {
+            (plotMappings + layerMappings).containsKey(it.name)
+        }
+        // Get renders with replacing color aesthetics
+        renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
 
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
-        val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {
+        val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
                 true -> it
                 false -> it + stat.consumes()
@@ -266,7 +273,7 @@ class LayerConfig constructor(
                         opts = getMap(TOOLTIPS),
                         constantsMap = constantsMap,
                         groupingVarName = explicitGroupingVarName,
-                        varBindings = varBindings.filter { it.aes in geomProto.renders() } // use rendered only (without stat.consumes())
+                        varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
                     ).createTooltips()
                 }
                 NONE -> {
@@ -286,7 +293,7 @@ class LayerConfig constructor(
                 opts = getMap(ANNOTATIONS),
                 constantsMap = constantsMap,
                 groupingVarName = explicitGroupingVarName,
-                varBindings = varBindings.filter { it.aes in geomProto.renders() } // use rendered only (without stat.consumes())
+                varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
             ).createAnnotations()
         } else {
             AnnotationSpecification.NONE

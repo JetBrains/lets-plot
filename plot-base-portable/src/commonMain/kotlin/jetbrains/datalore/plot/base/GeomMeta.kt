@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
+import jetbrains.datalore.base.values.Color
 import kotlin.native.concurrent.ThreadLocal
 
 // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.
@@ -23,9 +24,14 @@ object GeomMeta {
         return renderedAesByGeom[geomKind]!!
     }
 
-    fun extendRenders(geomKind: GeomKind, aesList: List<Aes<*>>) {
-        val fullAesList = (renders(geomKind) + aesList).distinct()
-        renderedAesByGeom[geomKind] = fullAesList
+    fun renders(geomKind: GeomKind, newColorAes: Aes<Color>?, newFillAes: Aes<Color>?): List<Aes<*>> {
+        return renders(geomKind).map {
+            when {
+                it == Aes.COLOR && newColorAes != null -> newColorAes
+                it == Aes.FILL && newFillAes != null -> newFillAes
+                else -> it
+            }
+        }
     }
 
     private val POINT = listOf(

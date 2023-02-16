@@ -231,8 +231,8 @@ object LiveMapProviderUtil {
 
                 private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(
                     layer.geomKind,
-                    Aes.FILL in layer.mappedAes,
-                    Aes.COLOR in layer.mappedAes
+                    isMappedFill = { Aes.FILL in layer.mappedAes },
+                    isMappedColor = { Aes.COLOR in layer.mappedAes }
                 )
 
                 fun buildLookupResult(coord: DoubleVector, hoverObjects: List<HoverObject>): GeomTargetLocator.LookupResult {

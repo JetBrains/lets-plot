@@ -80,7 +80,7 @@ object GeomInteractionUtil {
         ).afterOrientation(yOrientation)
 
         val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(yOrientation)
-        val layerRendersAesAfterOrientation = layerConfig.geomProto.renders().afterOrientation(yOrientation)
+        val layerRendersAesAfterOrientation = layerConfig.renderedAes.afterOrientation(yOrientation)
         val tooltipAes = createTooltipAesList(
             layerConfig,
             scaleMap,
@@ -241,9 +241,9 @@ object GeomInteractionUtil {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
                 if (layerConfig.tooltips.tooltipLinePatterns.isNullOrEmpty()) {
-                    GeomMeta.renders(layerConfig.geomProto.geomKind)
+                    layerConfig.renderedAes
                 } else {
-                    GeomMeta.renders(layerConfig.geomProto.geomKind) - axisAes
+                    layerConfig.renderedAes - axisAes
                 }
             }
 

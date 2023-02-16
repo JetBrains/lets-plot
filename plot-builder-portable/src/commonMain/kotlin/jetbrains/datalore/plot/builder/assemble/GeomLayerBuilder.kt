@@ -217,7 +217,6 @@ class GeomLayerBuilder constructor(
             data,
             geomProvider,
             posProvider,
-            geomProvider.renders(),
             groupingContext.groupMapper,
             replacementBindings,
             myConstantByAes,
@@ -246,7 +245,6 @@ class GeomLayerBuilder constructor(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
         override val posProvider: PosProvider,
-        renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
         private val varBindings: Map<Aes<*>, VarBinding>,
         constantByAes: TypedKeyHashMap,
@@ -279,7 +277,7 @@ class GeomLayerBuilder constructor(
             get() = geom is LiveMapGeom
 
         init {
-            myRenderedAes = ArrayList(renderedAes)
+            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes)
 
             // constant value by aes (default + specified)
             myConstantByAes = TypedKeyHashMap()
