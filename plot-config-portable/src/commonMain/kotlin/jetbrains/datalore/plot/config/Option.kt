@@ -84,6 +84,10 @@ object Option {
 
     object SubPlots {
         const val FIGURES = "figures"
+
+        object Figure {
+            const val BLANK = "blank"
+        }
     }
 
     object PlotBase {

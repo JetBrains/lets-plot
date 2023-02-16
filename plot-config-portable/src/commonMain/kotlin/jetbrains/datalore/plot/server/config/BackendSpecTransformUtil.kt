@@ -9,6 +9,7 @@ import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.Option
+import jetbrains.datalore.plot.config.Option.SubPlots.Figure.BLANK
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.server.config.transform.PlotConfigServerSideTransforms
 
@@ -59,13 +60,13 @@ object BackendSpecTransformUtil {
         return subPlotsSpec
     }
 
-    private fun processTransformFigureList(figureListRaw: List<*>): List<MutableMap<String, Any>?> {
+    private fun processTransformFigureList(figureListRaw: List<*>): List<Any> {
         return figureListRaw.map { figRaw ->
-            if (figRaw == null) {
-                null
+            if (figRaw == null || figRaw == BLANK) {
+                BLANK
             } else {
                 if (figRaw !is Map<*, *>) {
-                    throw IllegalArgumentException("Subplots: a figure spec expected (as a Map) but was: ${figRaw::class.simpleName}")
+                    throw IllegalArgumentException("Subplots: a figure spec (a Map) expected but was: ${figRaw::class.simpleName}")
                 }
 
                 @Suppress("UNCHECKED_CAST")

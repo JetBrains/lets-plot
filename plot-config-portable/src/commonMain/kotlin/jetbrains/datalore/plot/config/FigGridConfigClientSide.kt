@@ -28,14 +28,16 @@ internal class FigGridConfigClientSide(
         val computationMessages = ArrayList<String>()
         elementConfigs = figSpecs2D.flatMap { it as Iterable<*> }
             .map { spec ->
-                @Suppress("UNCHECKED_CAST")
-                spec as Map<String, Any>?
-                spec?.let {
+                if (spec is Map<*, *>) {
+                    @Suppress("UNCHECKED_CAST")
+                    spec as Map<String, Any>
                     when (PlotConfig.figSpecKind(spec)) {
                         FigKind.PLOT_SPEC -> PlotConfigClientSide.create(spec) { computationMessages.addAll(it) }
                         FigKind.SUBPLOTS_SPEC -> FigGridConfigClientSide(spec) { computationMessages.addAll(it) }
                         FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
                     }
+                } else {
+                    null
                 }
             }
 
