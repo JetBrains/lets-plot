@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 
@@ -90,7 +90,10 @@ internal class PlotFigureBuildInfo constructor(
         val innerSize = geomBounds.dimension
         val layoutInfo = plotAssembler.layoutByGeomSize(innerSize)
 
-        val newBounds = DoubleRectangle(bounds.origin, layoutInfo.outerSize)
+        val oldCenter = this.bounds.center
+        val newCenter = DoubleRectangle(bounds.origin, layoutInfo.outerSize).center
+        val newOrigin = this.bounds.origin.subtract(newCenter.subtract(oldCenter))
+        val newBounds = DoubleRectangle(newOrigin, layoutInfo.outerSize)
 
         val newBuildInfo = PlotFigureBuildInfo(
             plotAssembler,
