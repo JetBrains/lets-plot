@@ -8,10 +8,8 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.config.CompositeFigureBuildInfo
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
-import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
@@ -155,7 +153,7 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
-    ): PlotBuildInfo {
+    ): PlotFigureBuildInfo {
 
         val computationMessages = ArrayList<String>()
         val config = PlotConfigClientSide.create(plotSpec) {
@@ -172,7 +170,7 @@ object MonolithicCommon {
         )
 
         val assembler = createPlotAssembler(config)
-        return PlotBuildInfo(
+        return PlotFigureBuildInfo(
             assembler,
             plotSpec,
             DoubleRectangle(DoubleVector.ZERO, preferredSize),

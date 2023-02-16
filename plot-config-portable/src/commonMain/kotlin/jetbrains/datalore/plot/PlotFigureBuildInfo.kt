@@ -9,11 +9,11 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 
-class PlotBuildInfo constructor(
+internal class PlotFigureBuildInfo constructor(
     private val plotAssembler: PlotAssembler,
     private val processedPlotSpec: Map<String, Any>,
     override val bounds: DoubleRectangle,
@@ -51,8 +51,8 @@ class PlotBuildInfo constructor(
         }
     }
 
-    override fun withBounds(bounds: DoubleRectangle): PlotBuildInfo {
-        val newBuildInfo = PlotBuildInfo(
+    override fun withBounds(bounds: DoubleRectangle): PlotFigureBuildInfo {
+        val newBuildInfo = PlotFigureBuildInfo(
             plotAssembler,
             processedPlotSpec,
             bounds,
@@ -66,11 +66,11 @@ class PlotBuildInfo constructor(
         return newBuildInfo
     }
 
-    override fun layoutedByOuterSize(): PlotBuildInfo {
+    override fun layoutedByOuterSize(): PlotFigureBuildInfo {
         val outerSize = bounds.dimension
         val layoutInfo = plotAssembler.layoutByOuterSize(outerSize)
 
-        val newBuildInfo = PlotBuildInfo(
+        val newBuildInfo = PlotFigureBuildInfo(
             plotAssembler,
             processedPlotSpec,
             bounds,
@@ -86,13 +86,13 @@ class PlotBuildInfo constructor(
         return newBuildInfo
     }
 
-    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotBuildInfo {
+    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotFigureBuildInfo {
         val innerSize = geomBounds.dimension
         val layoutInfo = plotAssembler.layoutByGeomSize(innerSize)
 
         val newBounds = DoubleRectangle(bounds.origin, layoutInfo.outerSize)
 
-        val newBuildInfo = PlotBuildInfo(
+        val newBuildInfo = PlotFigureBuildInfo(
             plotAssembler,
             processedPlotSpec,
             newBounds,

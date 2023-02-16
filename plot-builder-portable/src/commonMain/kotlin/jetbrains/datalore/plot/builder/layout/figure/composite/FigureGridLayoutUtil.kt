@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.figure.composite
 
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 
 internal object FigureGridLayoutUtil {
     fun indexToRow(index: Int, ncol: Int) = index.floorDiv(ncol)

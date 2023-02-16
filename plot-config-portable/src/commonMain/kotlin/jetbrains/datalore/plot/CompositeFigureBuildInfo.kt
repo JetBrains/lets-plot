@@ -3,17 +3,18 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.plot.builder.config
+package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
 import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgComponent
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 
-class CompositeFigureBuildInfo(
+internal class CompositeFigureBuildInfo(
     private val elements: List<FigureBuildInfo?>,
     private val layout: CompositeFigureLayout,
     override val bounds: DoubleRectangle,
