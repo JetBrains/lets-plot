@@ -35,31 +35,44 @@ internal class PlotFigureLayouter constructor(
     private val flipAxis = coordProvider.flipped
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
-    private val plotLayout: PlotLayout
+//    private val plotLayout: PlotLayout
+
+//    init {
+//        plotLayout = if (containsLiveMap) {
+//            createLiveMapPlotLayout()
+//        } else {
+//            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
+//                it.createTileLayoutProvider()
+//            }
+//            PlotAssemblerUtil.createPlotLayout(
+//                layoutProviderByTile,
+//                facets,
+//                theme.facets(),
+//                hAxisPosition, vAxisPosition,
+//                hAxisTheme = theme.horizontalAxis(flipAxis),
+//                vAxisTheme = theme.verticalAxis(flipAxis),
+//            )
+//        }
+//    }
+
+    private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
+    private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
+
+    private val legendsBlockInfo: LegendsBlockInfo
 
     init {
-        if (containsLiveMap) {
-            plotLayout = createLiveMapPlotLayout()
-        } else {
-            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
-                it.createTileLayoutProvider()
-            }
-            plotLayout = PlotAssemblerUtil.createPlotLayout(
-                layoutProviderByTile,
-                facets,
-                theme.facets(),
-                hAxisPosition, vAxisPosition,
-                hAxisTheme = theme.horizontalAxis(flipAxis),
-                vAxisTheme = theme.verticalAxis(flipAxis),
-            )
-        }
+        val legendTheme = theme.legend()
+        legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
+            legendBoxInfos,
+            legendTheme
+        )
     }
 
-    fun doLayout(outerSize: DoubleVector): PlotFigureLayoutInfo {
+    fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, outerSize)
 
-        val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
-        val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
+//        val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
+//        val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
 
         // compute geom bounds
         val entirePlot = if (containsLiveMap) {
@@ -68,11 +81,11 @@ internal class PlotFigureLayouter constructor(
             overallRect
         }
 
-        val legendTheme = theme.legend()
-        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-            legendBoxInfos,
-            legendTheme
-        )
+//        val legendTheme = theme.legend()
+//        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
+//            legendBoxInfos,
+//            legendTheme
+//        )
 
         // -------------
         val axisEnabled = !containsLiveMap
@@ -90,11 +103,67 @@ internal class PlotFigureLayouter constructor(
         )
 
         // Layout plot inners
-        val layoutInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
+        val layoutInfo = createPlotLayout(insideOut = false)
+            .doLayout(plotInnerSizeAvailable, coordProvider)
         return PlotFigureLayoutInfo(
             outerSize = outerSize,
             plotLayoutInfo = layoutInfo
         )
+    }
+
+    fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
+        val layoutInfo = createPlotLayout(insideOut = true)
+            .doLayout(geomSize, coordProvider)
+
+        // Compute the outer size.
+        // -----------------------
+        val plotInnerSize = layoutInfo.size  // geom + axis
+
+//        val legendTheme = theme.legend()
+//        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
+//            legendBoxInfos,
+//            legendTheme
+//        )
+
+        // -------------
+        val axisEnabled = !containsLiveMap
+        val figureOuterSize = PlotLayoutUtil.addTitlesAndLegends(
+            base = plotInnerSize,
+            title,
+            subtitle,
+            caption,
+            hAxisTitle,
+            vAxisTitle,
+            axisEnabled,
+            legendsBlockInfo,
+            theme,
+            flipAxis
+        )
+
+        return PlotFigureLayoutInfo(
+            outerSize = figureOuterSize,
+            plotLayoutInfo = layoutInfo
+        )
+    }
+
+
+    private fun createPlotLayout(insideOut: Boolean): PlotLayout {
+        return if (containsLiveMap) {
+            createLiveMapPlotLayout()
+        } else {
+            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
+                it.createTileLayoutProvider()
+            }
+            PlotAssemblerUtil.createPlotLayout(
+                layoutProviderByTile,
+                insideOut,
+                facets,
+                theme.facets(),
+                hAxisPosition, vAxisPosition,
+                hAxisTheme = theme.horizontalAxis(flipAxis),
+                vAxisTheme = theme.verticalAxis(flipAxis),
+            )
+        }
     }
 
     private fun createLiveMapPlotLayout(): PlotLayout {
@@ -107,6 +176,7 @@ internal class PlotFigureLayouter constructor(
         }
         return PlotAssemblerUtil.createPlotLayout(
             layoutProviderByTile,
+            insideOut = false,
             facets,
             theme.facets(),
             hAxisPosition = AxisPosition.BOTTOM,  // Not used with Live Map

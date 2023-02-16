@@ -6,14 +6,15 @@
 package jetbrains.datalore.plot.builder.config
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.FigureSvgRoot
 import jetbrains.datalore.plot.builder.GeomLayer
+import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 
 interface FigureBuildInfo {
     val bounds: DoubleRectangle
     val computationMessages: List<String>
     val containsLiveMap: Boolean
+    val layoutInfo: FigureLayoutInfo
 
     fun createSvgRoot(): FigureSvgRoot
 
@@ -21,5 +22,7 @@ interface FigureBuildInfo {
 
     fun withBounds(bounds: DoubleRectangle): FigureBuildInfo
 
-    fun layoutedByOuterSize(size: DoubleVector): FigureBuildInfo
+    fun layoutedByOuterSize(): FigureBuildInfo
+
+    fun layoutedByGeomBounds(geomBounds: DoubleRectangle): FigureBuildInfo
 }

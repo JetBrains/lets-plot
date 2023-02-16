@@ -12,7 +12,7 @@ class TileLayoutInfo constructor(
     val offset: DoubleVector,  // A value to take in account when translating relative tile bounds to absolute ones.
 
     // Relative bounds.
-    val bounds: DoubleRectangle,      // Tile geom area, axis, axis ticks/labels.
+    val geomWithAxisBounds: DoubleRectangle,    // Tile geom area, axis, axis ticks/labels.
     val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins.
     val geomInnerBounds: DoubleRectangle,  // Tile main geom area.
 
@@ -29,10 +29,36 @@ class TileLayoutInfo constructor(
     val hAxisShown: Boolean = (axisInfos.top != null || axisInfos.bottom != null) && hAxisShown
     val vAxisShown: Boolean = (axisInfos.left != null || axisInfos.right != null) && vAxisShown
 
+    fun getAbsoluteBounds(tilesOrigin: DoubleVector): DoubleRectangle {
+        val offset = tilesOrigin.add(this.offset)
+        return geomWithAxisBounds.add(offset)
+    }
+
+    fun getAbsoluteOuterGeomBounds(tilesOrigin: DoubleVector): DoubleRectangle {
+        val offset = tilesOrigin.add(this.offset)
+        return geomOuterBounds.add(offset)
+    }
+
+    fun axisThicknessX(): Double {
+        return geomWithAxisBounds.bottom - geomOuterBounds.bottom
+    }
+
+    fun axisThicknessY(): Double {
+        return geomOuterBounds.left - geomWithAxisBounds.left
+    }
+
+    fun geomOuterWidth(): Double {
+        return geomOuterBounds.width
+    }
+
+    fun geomOuterHeight(): Double {
+        return geomOuterBounds.height
+    }
+
     fun withOffset(offset: DoubleVector): TileLayoutInfo {
         return TileLayoutInfo(
             offset = offset,
-            this.bounds,
+            this.geomWithAxisBounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
             this.axisInfos,
@@ -45,7 +71,7 @@ class TileLayoutInfo constructor(
     fun withFacetLabels(xLabels: List<String>, yLabel: String?): TileLayoutInfo {
         return TileLayoutInfo(
             this.offset,
-            this.bounds,
+            this.geomWithAxisBounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
             this.axisInfos,
@@ -58,7 +84,7 @@ class TileLayoutInfo constructor(
     fun withAxisShown(hAxisShown: Boolean, vAxisShown: Boolean): TileLayoutInfo {
         return TileLayoutInfo(
             this.offset,
-            this.bounds,
+            this.geomWithAxisBounds,
             this.geomOuterBounds,
             this.geomInnerBounds,
             this.axisInfos,
@@ -68,29 +94,22 @@ class TileLayoutInfo constructor(
         )
     }
 
-    fun getAbsoluteBounds(tilesOrigin: DoubleVector): DoubleRectangle {
-        val offset = tilesOrigin.add(this.offset)
-        return bounds.add(offset)
-    }
+    fun withNormalizedOrigin(): TileLayoutInfo {
+        val geomWithAxisOrigin = geomWithAxisBounds.origin
 
-    fun getAbsoluteOuterGeomBounds(tilesOrigin: DoubleVector): DoubleRectangle {
-        val offset = tilesOrigin.add(this.offset)
-        return geomOuterBounds.add(offset)
-    }
+        val geomWithAxisBounds = geomWithAxisBounds.subtract(geomWithAxisOrigin)
+        val geomOuterBounds = geomOuterBounds.subtract(geomWithAxisOrigin)
+        val geomInnerBounds = geomInnerBounds.subtract(geomWithAxisOrigin)
 
-    fun axisThicknessX(): Double {
-        return bounds.bottom - geomOuterBounds.bottom
-    }
-
-    fun axisThicknessY(): Double {
-        return geomOuterBounds.left - bounds.left
-    }
-
-    fun geomOuterWidth(): Double {
-        return geomOuterBounds.width
-    }
-
-    fun geomOuterHeight(): Double {
-        return geomOuterBounds.height
+        return TileLayoutInfo(
+            this.offset,
+            geomWithAxisBounds,
+            geomOuterBounds,
+            geomInnerBounds,
+            this.axisInfos,
+            this.hAxisShown, this.vAxisShown,
+            this.facetXLabels, this.facetYLabel,
+            this.trueIndex
+        )
     }
 }

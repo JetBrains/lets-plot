@@ -120,7 +120,11 @@ class PlotAssembler constructor(
     }
 
     fun layoutByOuterSize(size: DoubleVector): PlotFigureLayoutInfo {
-        return layouter.doLayout(size)
+        return layouter.layoutByOuterSize(size)
+    }
+
+    fun layoutByGeomSize(size: DoubleVector): PlotFigureLayoutInfo {
+        return layouter.layoutByGeomSize(size)
     }
 
     private fun hasLayers(): Boolean {

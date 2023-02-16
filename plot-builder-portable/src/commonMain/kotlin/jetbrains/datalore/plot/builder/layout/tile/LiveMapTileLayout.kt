@@ -13,12 +13,13 @@ import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.tile.TileLayoutUtil.liveMapGeomBounds
 
 internal class LiveMapTileLayout : TileLayout {
+    override val insideOut: Boolean = false
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
         val geomBounds = liveMapGeomBounds(preferredSize)
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
-            bounds = geomBounds,
+            geomWithAxisBounds = geomBounds,
             geomOuterBounds = geomBounds,
             geomInnerBounds = geomBounds,
             axisInfos = AxisLayoutInfoQuad.EMPTY,

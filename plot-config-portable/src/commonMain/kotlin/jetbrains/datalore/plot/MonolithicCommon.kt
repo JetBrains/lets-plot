@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.config.CompositeFigureBuildInfo
 import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
@@ -234,7 +235,8 @@ object MonolithicCommon {
 
         return CompositeFigureBuildInfo(
             elements = gridElements,
-            layout = CompositeFigureGridLayout(
+//            layout = CompositeFigureGridLayout(
+            layout = CompositeFigureGridAlignmentLayout(
                 ncol = gridConfig.ncol,
                 nrow = gridConfig.nrow,
             ),

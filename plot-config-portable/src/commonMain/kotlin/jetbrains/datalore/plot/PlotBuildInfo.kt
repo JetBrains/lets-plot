@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
+import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 
 class PlotBuildInfo constructor(
     private val plotAssembler: PlotAssembler,
@@ -22,6 +22,10 @@ class PlotBuildInfo constructor(
 
     override val containsLiveMap: Boolean = plotAssembler.containsLiveMap
 
+    override val layoutInfo: FigureLayoutInfo
+        get() = _layoutInfo
+
+    private lateinit var _layoutInfo: PlotFigureLayoutInfo
     private lateinit var liveMapCursorServiceConfig: Any
 
     /**
@@ -35,14 +39,16 @@ class PlotBuildInfo constructor(
     }
 
     override fun createSvgRoot(): PlotSvgRoot {
-        val layoutInfo = plotAssembler.layoutByOuterSize(bounds.dimension)
-
-        val plotSvgComponent = plotAssembler.createPlot(layoutInfo)
-        return PlotSvgRoot(
-            plotSvgComponent,
-            liveMapCursorServiceConfig = if (containsLiveMap) liveMapCursorServiceConfig else null,
-            bounds.origin
-        )
+        return if (this::_layoutInfo.isInitialized) {
+            val plotSvgComponent = plotAssembler.createPlot(_layoutInfo)
+            PlotSvgRoot(
+                plotSvgComponent,
+                liveMapCursorServiceConfig = if (containsLiveMap) liveMapCursorServiceConfig else null,
+                bounds.origin
+            )
+        } else {
+            layoutedByOuterSize().createSvgRoot()
+        }
     }
 
     override fun withBounds(bounds: DoubleRectangle): PlotBuildInfo {
@@ -60,9 +66,45 @@ class PlotBuildInfo constructor(
         return newBuildInfo
     }
 
-    override fun layoutedByOuterSize(size: DoubleVector): FigureBuildInfo {
-//        val layoutInfo = plotAssembler.layoutByOuterSize(size)
+    override fun layoutedByOuterSize(): PlotBuildInfo {
+        val outerSize = bounds.dimension
+        val layoutInfo = plotAssembler.layoutByOuterSize(outerSize)
 
-        UNSUPPORTED()
+        val newBuildInfo = PlotBuildInfo(
+            plotAssembler,
+            processedPlotSpec,
+            bounds,
+            computationMessages,
+        ).apply {
+            this._layoutInfo = layoutInfo
+        }
+
+        if (this::liveMapCursorServiceConfig.isInitialized) {
+            newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
+        }
+
+        return newBuildInfo
+    }
+
+    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotBuildInfo {
+        val innerSize = geomBounds.dimension
+        val layoutInfo = plotAssembler.layoutByGeomSize(innerSize)
+
+        val newBounds = DoubleRectangle(bounds.origin, layoutInfo.outerSize)
+
+        val newBuildInfo = PlotBuildInfo(
+            plotAssembler,
+            processedPlotSpec,
+            newBounds,
+            computationMessages,
+        ).apply {
+            this._layoutInfo = layoutInfo
+        }
+
+        if (this::liveMapCursorServiceConfig.isInitialized) {
+            newBuildInfo.liveMapCursorServiceConfig = liveMapCursorServiceConfig
+        }
+
+        return newBuildInfo
     }
 }

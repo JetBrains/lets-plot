@@ -21,6 +21,7 @@ internal class TopDownTileLayout(
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
 ) : TileLayout {
+    override val insideOut: Boolean = false
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
@@ -63,7 +64,7 @@ internal class TopDownTileLayout(
 
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
-            bounds = geomWithAxisBounds,
+            geomWithAxisBounds = geomWithAxisBounds,
             geomOuterBounds = geomBoundsAfterLayout,
             geomInnerBounds = geomInnerBounds,
             axisInfos = axisInfosNew,

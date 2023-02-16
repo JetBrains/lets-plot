@@ -18,6 +18,7 @@ internal class InsideOutTileLayout(
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
 ) : TileLayout {
+    override val insideOut: Boolean = true
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     override fun doLayout(geomSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
@@ -45,7 +46,7 @@ internal class InsideOutTileLayout(
 
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,
-            bounds = geomWithAxisBounds,
+            geomWithAxisBounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
             axisInfos = axisInfos,

@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
-internal class SingleTilePlotLayout(
+internal class SingleTilePlotLayout constructor(
     private val tileLayout: TileLayout,
     hAxisPosition: AxisPosition,
     vAxisPosition: AxisPosition,
@@ -26,7 +26,15 @@ internal class SingleTilePlotLayout(
     )
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val tilePreferredSize = preferredSize
+        return if (tileLayout.insideOut) {
+            layoutByGeomSize(preferredSize, coordProvider)
+        } else {
+            layoutOuterSize(preferredSize, coordProvider)
+        }
+    }
+
+    private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+        val tilePreferredSize = outerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
 
@@ -34,7 +42,20 @@ internal class SingleTilePlotLayout(
             .doLayout(tilePreferredSize, coordProvider)
             .withOffset(insets.leftTop)
 
-        val plotSize = tileInfo.bounds.dimension
+        return tileInfoToPlotInfo(tileInfo)
+    }
+
+    private fun layoutByGeomSize(geomSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+        val tileInfo = tileLayout
+            .doLayout(geomSize, coordProvider)
+            .withOffset(insets.leftTop)
+            .withNormalizedOrigin()
+
+        return tileInfoToPlotInfo(tileInfo)
+    }
+
+    private fun tileInfoToPlotInfo(tileInfo: TileLayoutInfo): PlotLayoutInfo {
+        val plotSize = tileInfo.geomWithAxisBounds.dimension
             .add(insets.leftTop)
             .add(insets.rightBottom)
 
