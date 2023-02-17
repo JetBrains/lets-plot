@@ -4,7 +4,7 @@
 #
 import pytest
 
-from lets_plot.bistro._plot2d_common import *
+from lets_plot.bistro._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 
 
 def test_empty_data__get_bin_params_2d():

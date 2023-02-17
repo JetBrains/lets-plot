@@ -6,8 +6,6 @@ from ..plot.core import aes
 from ..plot.geom import *
 from ..plot.marginal_layer import ggmarginal
 
-__all__ = ['_get_bin_params_2d', '_get_geom2d_layer', '_get_marginal_layers']
-
 _BINS_DEF = 30
 _COLOR_DEF = "#118ed8"
 

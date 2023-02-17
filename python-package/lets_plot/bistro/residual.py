@@ -16,7 +16,7 @@ from ..plot.core import PlotSpec, aes
 from ..plot.geom import geom_hline
 from ..plot.label import ylab
 from ..plot.theme_ import *
-from ._plot2d_common import *
+from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 
 __all__ = ['residual_plot']
 
