@@ -56,7 +56,7 @@ class PlotSvgComponent constructor(
     val plotContext: PlotContext
 ) : SvgComponent() {
 
-    val figureSize: DoubleVector = figureLayoutInfo.outerSize
+    val figureSize: DoubleVector = figureLayoutInfo.figureSize
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
@@ -158,12 +158,12 @@ class PlotSvgComponent constructor(
 
         val layoutInfo = figureLayoutInfo.plotLayoutInfo
 
-        val plotOuterBounds = figureLayoutInfo.plotOuterBounds
+        val plotOuterBounds = figureLayoutInfo.figureLayoutedBounds
         if (DEBUG_DRAWING) {
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val plotOuterBoundsWithoutTitleAndCaption = figureLayoutInfo.plotOuterBoundsWithoutTitleAndCaption
+        val plotOuterBoundsWithoutTitleAndCaption = figureLayoutInfo.figureBoundsWithoutTitleAndCaption
         if (DEBUG_DRAWING) {
             drawDebugRect(
                 plotOuterBoundsWithoutTitleAndCaption,
@@ -172,12 +172,11 @@ class PlotSvgComponent constructor(
             )
         }
 
-        val plotInnerOrigin = figureLayoutInfo.plotInnerOrigin
-        val geomAreaBounds = figureLayoutInfo.geomAreaBounds
+        val plotAreaOrigin = figureLayoutInfo.plotAreaOrigin
 
         // build tiles
         @Suppress("UnnecessaryVariable")
-        val tilesOrigin = plotInnerOrigin
+        val tilesOrigin = plotAreaOrigin
         for (tileLayoutInfo in layoutInfo.tiles) {
             val tileIndex = tileLayoutInfo.trueIndex
 
@@ -235,6 +234,7 @@ class PlotSvgComponent constructor(
             }
         }
 
+        val geomAreaBounds = figureLayoutInfo.geomAreaBounds
         if (DEBUG_DRAWING) {
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
         }
@@ -344,7 +344,7 @@ class PlotSvgComponent constructor(
         }
 
         val overallTileBounds = PlotLayoutUtil.overallTileBounds(layoutInfo)
-            .add(plotInnerOrigin)
+            .add(plotAreaOrigin)
 
         if (DEBUG_DRAWING) {
             drawDebugRect(overallTileBounds, Color.DARK_MAGENTA, "DARK_MAGENTA: overallTileBounds")

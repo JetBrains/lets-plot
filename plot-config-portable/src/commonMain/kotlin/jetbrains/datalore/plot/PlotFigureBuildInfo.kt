@@ -64,13 +64,13 @@ internal class PlotFigureBuildInfo constructor(
     }
 
     override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotFigureBuildInfo {
-        val innerSize = geomBounds.dimension
-        val layoutInfo = plotAssembler.layoutByGeomSize(innerSize)
-
-        val oldCenter = this.bounds.center
-        val newCenter = DoubleRectangle(bounds.origin, layoutInfo.outerSize).center
-        val newOrigin = this.bounds.origin.subtract(newCenter.subtract(oldCenter))
-        val newBounds = DoubleRectangle(newOrigin, layoutInfo.outerSize)
+        val layoutInfo = plotAssembler.layoutByGeomSize(geomBounds.dimension)
+        val oldCenter = geomBounds.center
+        val newCenter = layoutInfo.geomAreaBounds.center
+        val delta = newCenter.subtract(oldCenter)
+        val newOrigin = this.bounds.origin.subtract(delta)
+        val newSize = layoutInfo.figureLayoutedBounds.dimension
+        val newBounds = DoubleRectangle(newOrigin, newSize)
 
         return makeCopy(newBounds).apply {
             this._layoutInfo = layoutInfo

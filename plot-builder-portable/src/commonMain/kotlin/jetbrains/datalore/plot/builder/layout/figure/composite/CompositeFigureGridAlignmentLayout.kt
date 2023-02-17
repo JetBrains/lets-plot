@@ -48,7 +48,7 @@ class CompositeFigureGridAlignmentLayout(
         for (row in 0 until nrow) {
             val rowElements = rowElements(row, elementsLayoutedByBounds, ncol)
             val vSpan = rowElements.filterNotNull().map {
-                it.layoutInfo.geomBounds.yRange()
+                it.layoutInfo.geomAreaBounds.yRange()
             }.reduceOrNull { acc, span ->
                 acc.intersection(span)
             }
@@ -59,7 +59,7 @@ class CompositeFigureGridAlignmentLayout(
         for (col in 0 until ncol) {
             val colElements = colElements(col, elementsLayoutedByBounds, ncol)
             val hSpan = colElements.filterNotNull().map {
-                it.layoutInfo.geomBounds.xRange()
+                it.layoutInfo.geomAreaBounds.xRange()
             }.reduceOrNull { acc, span ->
                 acc.intersection(span)
             }

@@ -66,7 +66,7 @@ internal class CompositeFigureBuildInfo(
         val layoutedElements = layout.doLayout(outerSize, elements)
 
         val geomBounds = layoutedElements.map {
-            it.layoutInfo.geomBounds
+            it.layoutInfo.geomAreaBounds
         }.reduce { acc, el -> acc.union(el) }
 
         return CompositeFigureBuildInfo(

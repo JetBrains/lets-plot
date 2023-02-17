@@ -54,18 +54,16 @@ internal class PlotFigureLayouter constructor(
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
-        val figureOuterBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
-
-        // compute geom bounds
-        val entirePlot = if (containsLiveMap) {
-            PlotLayoutUtil.liveMapBounds(figureOuterBounds)
+        val figureBaseSize = if (containsLiveMap) {
+            val figBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
+            PlotLayoutUtil.liveMapBounds(figBounds).dimension
         } else {
-            figureOuterBounds
+            outerSize
         }
 
         // -------------
-        val plotInnerSizeAvailable = PlotLayoutUtil.subtractTitlesAndLegends(
-            baseSize = entirePlot.dimension,
+        val plotPreferredSize = PlotLayoutUtil.subtractTitlesAndLegends(
+            baseSize = figureBaseSize,
             title,
             subtitle,
             caption,
@@ -81,55 +79,20 @@ internal class PlotFigureLayouter constructor(
 
         // Layout plot inners
         val plotLayout = createPlotLayout(insideOut = false)
-        val layoutInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
-
-        // -------------
-
-        // Inner size includes geoms, axis and facet labels.
-        val plotInnerSize = layoutInfo.size
-        val plotOuterSize = PlotLayoutUtil.addTitlesAndLegends(
-            plotInnerSize,
-            title,
-            subtitle,
-            caption,
-            hAxisTitle,
-            vAxisTitle,
-            axisEnabled,
-            legendsBlockInfo,
-            theme,
-            flipAxis
-        )
+        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
 
         return createFigureLayoutInfo(
-            figureOuterBounds,
-            plotOuterSize,
-            layoutInfo)
+            figurePreferredSize = outerSize,
+            plotLayoutInfo = layoutInfo
+        )
     }
 
     fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
         val plotLayout = createPlotLayout(insideOut = true)
         val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
 
-        // -------------
-
-        // Inner size includes geoms, axis and facet labels.
-        val plotInnerSize = layoutInfo.size
-        val figureOuterSize = PlotLayoutUtil.addTitlesAndLegends(
-            base = plotInnerSize,
-            title,
-            subtitle,
-            caption,
-            hAxisTitle,
-            vAxisTitle,
-            axisEnabled,
-            legendsBlockInfo,
-            theme,
-            flipAxis
-        )
-
         return createFigureLayoutInfo(
-            overallRect = DoubleRectangle(DoubleVector.ZERO, figureOuterSize),
-            plotOuterSize = figureOuterSize,
+            figurePreferredSize = null,
             layoutInfo
         )
     }
@@ -175,31 +138,49 @@ internal class PlotFigureLayouter constructor(
     }
 
     private fun createFigureLayoutInfo(
-        overallRect: DoubleRectangle,
-        plotOuterSize: DoubleVector,
+        figurePreferredSize: DoubleVector?,
         plotLayoutInfo: PlotLayoutInfo
     ): PlotFigureLayoutInfo {
+        // Plot size includes geoms, axis and facet labels (no titles, legends).
+        val plotSize = plotLayoutInfo.size
+        val figureLayoutedSize = PlotLayoutUtil.addTitlesAndLegends(
+            base = plotSize,
+            title,
+            subtitle,
+            caption,
+            hAxisTitle,
+            vAxisTitle,
+            axisEnabled,
+            legendsBlockInfo,
+            theme,
+            flipAxis
+        )
+
         // Position the "entire" plot rect in the center of the "overall" rect.
-        val plotOuterBounds = let {
-            val delta = overallRect.center.subtract(
-                DoubleRectangle(overallRect.origin, plotOuterSize).center
+        val figureLayoutedBounds = if (figurePreferredSize == null) {
+            DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
+        } else {
+            val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
+            val delta = figurePreferredBounds.center.subtract(
+                DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
             )
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            val plotOuterOrigin = overallRect.origin.add(deltaApplied)
-            DoubleRectangle(plotOuterOrigin, plotOuterSize)
+            val plotOuterOrigin = figurePreferredBounds.origin.add(deltaApplied)
+            DoubleRectangle(plotOuterOrigin, figureLayoutedSize)
         }
 
-        val plotOuterBoundsWithoutTitleAndCaption = let {
+        val figureBoundsWithoutTitleAndCaption = let {
             val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
             val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
             DoubleRectangle(
-                plotOuterBounds.origin.add(titleSizeDelta),
-                plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
+                figureLayoutedBounds.origin.add(titleSizeDelta),
+                figureLayoutedBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
             )
         }
 
         // Inner bounds - all without titles and legends.
-        val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
+        // Plot origin : the origin of the plot area: geoms, axis and facet labels (no titles, legends).
+        val plotOrigin = figureBoundsWithoutTitleAndCaption.origin
             .add(legendBlockLeftTopDelta(legendsBlockInfo, theme.legend()))
             .add(
                 axisTitlesOriginOffset(
@@ -212,16 +193,16 @@ internal class PlotFigureLayouter constructor(
                 )
             )
 
+        // Geom area: plot withot axis and facet labels.
         val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
-            .add(plotInnerOrigin)
+            .add(plotOrigin)
 
         return PlotFigureLayoutInfo(
-            plotOuterBounds = plotOuterBounds,
-            plotOuterBoundsWithoutTitleAndCaption = plotOuterBoundsWithoutTitleAndCaption,
-            plotInnerOrigin = plotInnerOrigin,
+            figureLayoutedBounds = figureLayoutedBounds,
+            figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleAndCaption,
+            plotAreaOrigin = plotOrigin,
             geomAreaBounds = geomAreaBounds,
-//            outerSize = outerSize,
-            outerSize = overallRect.dimension,
+            figurePreferredSize = figurePreferredSize ?: figureLayoutedBounds.dimension,
             plotLayoutInfo = plotLayoutInfo,
             legendsBlockInfo = legendsBlockInfo
         )

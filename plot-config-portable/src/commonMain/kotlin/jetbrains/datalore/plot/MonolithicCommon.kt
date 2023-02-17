@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
+import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil

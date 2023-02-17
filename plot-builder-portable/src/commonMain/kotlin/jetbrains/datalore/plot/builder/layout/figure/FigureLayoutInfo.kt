@@ -9,8 +9,12 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
 open class FigureLayoutInfo(
-    val outerSize: DoubleVector,
-    val geomBounds: DoubleRectangle
+    val figureSize: DoubleVector,
+    /**
+     * Plot withot axis and facet labels.
+     * Relative to the entire figure origin
+     */
+    val geomAreaBounds: DoubleRectangle
 ) {
 
 }

@@ -11,17 +11,21 @@ import jetbrains.datalore.plot.builder.layout.LegendsBlockInfo
 import jetbrains.datalore.plot.builder.layout.PlotLayoutInfo
 import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 
-class PlotFigureLayoutInfo(
-    // ToDo: rename to "figure..."
-    val plotOuterBounds:DoubleRectangle,
-    val plotOuterBoundsWithoutTitleAndCaption:DoubleRectangle,
-
-    val plotInnerOrigin:DoubleVector, // Inner bounds - all without titles and legends.
-    val geomAreaBounds: DoubleRectangle,
-
-    outerSize: DoubleVector,
+class PlotFigureLayoutInfo constructor(
+    val figureLayoutedBounds: DoubleRectangle,
+    val figureBoundsWithoutTitleAndCaption: DoubleRectangle,
+    /**
+     * Origin of the plot area: geoms, axis and facet labels (no titles, legends).
+     * Relative to the figure origin (see `figureLayoutedBounds`)
+     */
+    val plotAreaOrigin: DoubleVector, // Inner bounds - all without titles and legends.
+    /**
+     * Plot withot axis and facet labels.
+     * Relative to the figure origin (see `figureLayoutedBounds`)
+     */
+    geomAreaBounds: DoubleRectangle,
+    figurePreferredSize: DoubleVector,
     val plotLayoutInfo: PlotLayoutInfo,
-
     val legendsBlockInfo: LegendsBlockInfo,
 
-) : FigureLayoutInfo(outerSize, plotLayoutInfo.geomOuterBounds)
+    ) : FigureLayoutInfo(figurePreferredSize, geomAreaBounds)
