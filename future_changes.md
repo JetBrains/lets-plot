@@ -33,7 +33,7 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/scale_functions.ipynb).
 
 
-- New 'bistro' graph - `joint_plot()`.
+- `joint_plot()` - new function in the `bistro` module.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/joint_plot.ipynb).
 
