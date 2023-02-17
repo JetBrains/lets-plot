@@ -11,7 +11,8 @@ import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import kotlin.math.max
 
-internal class LegendBoxesLayout(
+// ToDo: internal
+/*internal*/ class LegendBoxesLayout(
     private val outerBounds: DoubleRectangle,
     private val innerBounds: DoubleRectangle,
     private val theme: LegendTheme

@@ -60,14 +60,13 @@ class PlotAssembler constructor(
     private val frameProviderByTile: List<FrameOfReferenceProvider>
 
     private val plotContext: PlotContext
-    private val legendBoxInfos: List<LegendBoxInfo>
     private val layouter: PlotFigureLayouter
 
     init {
         // ToDo: transformed ranges by aes
         plotContext = PlotAssemblerPlotContext(layersByTile, scaleMap)
 
-        legendBoxInfos = when {
+        val legendBoxInfos: List<LegendBoxInfo> = when {
             legendsEnabled -> PlotAssemblerUtil.createLegends(
                 plotContext,
                 scaleMappersNP,
@@ -79,11 +78,6 @@ class PlotAssembler constructor(
         }
 
         val flipAxis = coordProvider.flipped
-
-//        val (hScaleProto, vScaleProto) = when (flipAxis) {
-//            true -> scaleYProto to scaleXProto
-//            else -> scaleXProto to scaleYProto
-//        }
 
         val (hAxisPosition, vAxisPosition) = when (flipAxis) {
             true -> yAxisPosition.flip() to xAxisPosition.flip()
@@ -136,7 +130,6 @@ class PlotAssembler constructor(
         return createPlot(
             frameProviderByTile = frameProviderByTile,
             figureLayoutInfo = figureLayoutInfo,
-            legendBoxInfos = legendBoxInfos,
             styleSheet = Style.fromTheme(theme, coordProvider.flipped),
             plotContext = plotContext
         )
@@ -145,7 +138,6 @@ class PlotAssembler constructor(
     private fun createPlot(
         frameProviderByTile: List<FrameOfReferenceProvider>,
         figureLayoutInfo: PlotFigureLayoutInfo,
-        legendBoxInfos: List<LegendBoxInfo>,
         styleSheet: StyleSheet,
         plotContext: PlotContext
     ): PlotSvgComponent {
@@ -158,7 +150,6 @@ class PlotAssembler constructor(
             figureLayoutInfo = figureLayoutInfo,
             frameProviderByTile = frameProviderByTile,
             coordProvider = coordProvider,
-            legendBoxInfos = legendBoxInfos,
             interactionsEnabled = interactionsEnabled,
             theme = theme,
             styleSheet = styleSheet,

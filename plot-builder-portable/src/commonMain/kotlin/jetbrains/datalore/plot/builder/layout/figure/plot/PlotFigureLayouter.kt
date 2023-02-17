@@ -13,10 +13,13 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
+import kotlin.math.max
 
 internal class PlotFigureLayouter constructor(
     private val coreLayersByTile: List<List<GeomLayer>>,
@@ -35,28 +38,10 @@ internal class PlotFigureLayouter constructor(
     private val flipAxis = coordProvider.flipped
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
-//    private val plotLayout: PlotLayout
-
-//    init {
-//        plotLayout = if (containsLiveMap) {
-//            createLiveMapPlotLayout()
-//        } else {
-//            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
-//                it.createTileLayoutProvider()
-//            }
-//            PlotAssemblerUtil.createPlotLayout(
-//                layoutProviderByTile,
-//                facets,
-//                theme.facets(),
-//                hAxisPosition, vAxisPosition,
-//                hAxisTheme = theme.horizontalAxis(flipAxis),
-//                vAxisTheme = theme.verticalAxis(flipAxis),
-//            )
-//        }
-//    }
-
     private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
     private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
+
+    private val axisEnabled = !containsLiveMap
 
     private val legendsBlockInfo: LegendsBlockInfo
 
@@ -71,9 +56,6 @@ internal class PlotFigureLayouter constructor(
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
         val overallRect = DoubleRectangle(DoubleVector.ZERO, outerSize)
 
-//        val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
-//        val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
-
         // compute geom bounds
         val entirePlot = if (containsLiveMap) {
             PlotLayoutUtil.liveMapBounds(overallRect)
@@ -81,14 +63,7 @@ internal class PlotFigureLayouter constructor(
             overallRect
         }
 
-//        val legendTheme = theme.legend()
-//        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-//            legendBoxInfos,
-//            legendTheme
-//        )
-
         // -------------
-        val axisEnabled = !containsLiveMap
         val plotInnerSizeAvailable = PlotLayoutUtil.subtractTitlesAndLegends(
             baseSize = entirePlot.dimension,
             title,
@@ -102,31 +77,40 @@ internal class PlotFigureLayouter constructor(
             flipAxis
         )
 
+        // -------------
+
         // Layout plot inners
-        val layoutInfo = createPlotLayout(insideOut = false)
-            .doLayout(plotInnerSizeAvailable, coordProvider)
-        return PlotFigureLayoutInfo(
-            outerSize = outerSize,
-            plotLayoutInfo = layoutInfo
+        val plotLayout = createPlotLayout(insideOut = false)
+        val layoutInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
+
+        // -------------
+
+        // Inner size includes geoms, axis and facet labels.
+        val plotInnerSize = layoutInfo.size
+        val plotOuterSize = PlotLayoutUtil.addTitlesAndLegends(
+            plotInnerSize,
+            title,
+            subtitle,
+            caption,
+            hAxisTitle,
+            vAxisTitle,
+            axisEnabled,
+            legendsBlockInfo,
+            theme,
+            flipAxis
         )
+
+        return createFigureLayoutInfo(overallRect, plotOuterSize, layoutInfo)
     }
 
     fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
-        val layoutInfo = createPlotLayout(insideOut = true)
-            .doLayout(geomSize, coordProvider)
-
-        // Compute the outer size.
-        // -----------------------
-        val plotInnerSize = layoutInfo.size  // geom + axis
-
-//        val legendTheme = theme.legend()
-//        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-//            legendBoxInfos,
-//            legendTheme
-//        )
+        val plotLayout = createPlotLayout(insideOut = true)
+        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
 
         // -------------
-        val axisEnabled = !containsLiveMap
+
+        // Inner size includes geoms, axis and facet labels.
+        val plotInnerSize = layoutInfo.size
         val figureOuterSize = PlotLayoutUtil.addTitlesAndLegends(
             base = plotInnerSize,
             title,
@@ -140,9 +124,10 @@ internal class PlotFigureLayouter constructor(
             flipAxis
         )
 
-        return PlotFigureLayoutInfo(
-            outerSize = figureOuterSize,
-            plotLayoutInfo = layoutInfo
+        return createFigureLayoutInfo(
+            overallRect = DoubleRectangle(DoubleVector.ZERO, figureOuterSize),
+            plotOuterSize = figureOuterSize,
+            layoutInfo
         )
     }
 
@@ -183,6 +168,59 @@ internal class PlotFigureLayouter constructor(
             vAxisPosition = AxisPosition.LEFT,    // Not used with Live Map
             hAxisTheme = LiveMapAxisTheme(),
             vAxisTheme = LiveMapAxisTheme(),
+        )
+    }
+
+    private fun createFigureLayoutInfo(
+        overallRect: DoubleRectangle,
+        plotOuterSize: DoubleVector,
+        plotLayoutInfo: PlotLayoutInfo
+    ): PlotFigureLayoutInfo {
+        // Position the "entire" plot rect in the center of the "overall" rect.
+        val plotOuterBounds = let {
+            val delta = overallRect.center.subtract(
+                DoubleRectangle(overallRect.origin, plotOuterSize).center
+            )
+            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+            val plotOuterOrigin = overallRect.origin.add(deltaApplied)
+            DoubleRectangle(plotOuterOrigin, plotOuterSize)
+        }
+
+        val plotOuterBoundsWithoutTitleAndCaption = let {
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
+            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
+            DoubleRectangle(
+                plotOuterBounds.origin.add(titleSizeDelta),
+                plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
+            )
+        }
+
+        // Inner bounds - all without titles and legends.
+        val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
+            .add(legendBlockLeftTopDelta(legendsBlockInfo, theme.legend()))
+            .add(
+                axisTitlesOriginOffset(
+                    hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flipAxis)),
+                    vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flipAxis)),
+                    hasTopAxisTitle = plotLayoutInfo.hasTopAxisTitle,
+                    hasLeftAxisTitle = plotLayoutInfo.hasLeftAxisTitle,
+                    axisEnabled,
+                    marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flipAxis)
+                )
+            )
+
+        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
+            .add(plotInnerOrigin)
+
+        return PlotFigureLayoutInfo(
+            plotOuterBounds = plotOuterBounds,
+            plotOuterBoundsWithoutTitleAndCaption = plotOuterBoundsWithoutTitleAndCaption,
+            plotInnerOrigin = plotInnerOrigin,
+            geomAreaBounds = geomAreaBounds,
+//            outerSize = outerSize,
+            outerSize = overallRect.dimension,
+            plotLayoutInfo = plotLayoutInfo,
+            legendsBlockInfo = legendsBlockInfo
         )
     }
 }

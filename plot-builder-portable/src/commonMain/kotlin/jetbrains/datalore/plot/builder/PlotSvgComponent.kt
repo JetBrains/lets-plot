@@ -25,9 +25,6 @@ import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.layout.*
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
@@ -43,7 +40,6 @@ import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
-import kotlin.math.max
 
 class PlotSvgComponent constructor(
     private val title: String?,
@@ -54,7 +50,6 @@ class PlotSvgComponent constructor(
     private val figureLayoutInfo: PlotFigureLayoutInfo,
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
-    private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
     val styleSheet: StyleSheet,
@@ -158,55 +153,17 @@ class PlotSvgComponent constructor(
             drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
         }
 
-        val legendTheme = theme.legend()
-        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-            legendBoxInfos,
-            legendTheme
-        )
-
         // -------------
         val axisEnabled = !containsLiveMap
 
         val layoutInfo = figureLayoutInfo.plotLayoutInfo
 
-        // Inner size includes geoms, axis and facet labels.
-        val plotInnerSize = layoutInfo.size
-        val plotOuterSize = addTitlesAndLegends(
-            plotInnerSize,
-            title,
-            subtitle,
-            caption,
-            hAxisTitle,
-            vAxisTitle,
-            axisEnabled,
-            legendsBlockInfo,
-            theme,
-            flippedAxis
-        )
-
-        // Position the "entire" plot rect in the center of the "overall" rect.
-        val plotOuterBounds = let {
-            val delta = overallRect.center.subtract(
-                DoubleRectangle(overallRect.origin, plotOuterSize).center
-            )
-            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            val plotOuterOrigin = overallRect.origin.add(deltaApplied)
-            DoubleRectangle(plotOuterOrigin, plotOuterSize)
-        }
-
+        val plotOuterBounds = figureLayoutInfo.plotOuterBounds
         if (DEBUG_DRAWING) {
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val plotOuterBoundsWithoutTitleAndCaption = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
-            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
-            DoubleRectangle(
-                plotOuterBounds.origin.add(titleSizeDelta),
-                plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
-            )
-        }
-
+        val plotOuterBoundsWithoutTitleAndCaption = figureLayoutInfo.plotOuterBoundsWithoutTitleAndCaption
         if (DEBUG_DRAWING) {
             drawDebugRect(
                 plotOuterBoundsWithoutTitleAndCaption,
@@ -215,22 +172,8 @@ class PlotSvgComponent constructor(
             )
         }
 
-        // Inner bounds - all without titles and legends.
-        val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
-            .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
-            .add(
-                axisTitlesOriginOffset(
-                    hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
-                    vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    hasTopAxisTitle = layoutInfo.hasTopAxisTitle,
-                    hasLeftAxisTitle = layoutInfo.hasLeftAxisTitle,
-                    axisEnabled,
-                    marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
-                )
-            )
-
-        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(layoutInfo)
-            .add(plotInnerOrigin)
+        val plotInnerOrigin = figureLayoutInfo.plotInnerOrigin
+        val geomAreaBounds = figureLayoutInfo.geomAreaBounds
 
         // build tiles
         @Suppress("UnnecessaryVariable")
@@ -438,6 +381,8 @@ class PlotSvgComponent constructor(
         }
 
         // add legends
+        val legendTheme = theme.legend()
+        val legendsBlockInfo = figureLayoutInfo.legendsBlockInfo
         if (!legendTheme.position().isHidden) {
             val legendsBlockInfoLayouted = LegendBoxesLayout(
                 outerBounds = plotOuterBoundsWithoutTitleAndCaption,
