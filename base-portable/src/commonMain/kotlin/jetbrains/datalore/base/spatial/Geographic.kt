@@ -9,7 +9,11 @@ import jetbrains.datalore.base.typedGeometry.*
 import kotlin.math.max
 import kotlin.math.min
 
-class LonLat
+interface LonLat {
+    companion object {
+        val DOMAIN = Rect.LTRB<LonLat>(-180.0, -90.0, 180.0, 90.0)
+    }
+}
 typealias LonLatPoint = Vec<LonLat>
 
 const val EARTH_RADIUS = 6378137.0

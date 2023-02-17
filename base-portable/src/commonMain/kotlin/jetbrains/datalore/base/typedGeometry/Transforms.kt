@@ -38,7 +38,7 @@ object Transforms {
         resamplingPrecision: Double?
     ): MultiLineString<OutT> = MultiLineString(multiLineString.map { transform(it, transform, resamplingPrecision) } )
 
-    private fun <InT, OutT> transformPoints(
+    fun <InT, OutT> transformPoints(
         path: List<Vec<InT>>,
         transform: (Vec<InT>) -> Vec<OutT>?,
         resamplingPrecision: Double?
