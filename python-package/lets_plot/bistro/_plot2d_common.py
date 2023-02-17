@@ -56,13 +56,22 @@ def _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alph
 def _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend):
     marginal_color = None if color_by is not None else (color or _COLOR_DEF)
 
+    def bin_param_to_1d(param2d, side):
+        if param2d is None:
+            return None
+        else:
+            if side in ['t', 'b']:
+                return param2d[0]
+            else:
+                return param2d[1]
+
     def _get_marginal_layer(geom_kind, side, size):
         if geom_kind in ['dens', 'density']:
             layer = geom_area(stat='density', position='identity', color=marginal_color, fill=marginal_color,
                               alpha=_MARGINAL_ALPHA, show_legend=show_legend)
         elif geom_kind in ['hist', 'histogram']:
-            binwidth = None if binwidth2d is None else (binwidth2d[0] if side in ['t', 'b'] else binwidth2d[1])
-            bins = None if bins2d is None else (bins2d[0] if side in ['t', 'b'] else bins2d[1])
+            binwidth = bin_param_to_1d(binwidth2d, side)
+            bins = bin_param_to_1d(bins2d, side)
             layer = geom_histogram(bins=bins, binwidth=binwidth,
                                    color=marginal_color, fill=marginal_color, alpha=_MARGINAL_ALPHA,
                                    show_legend=show_legend)
