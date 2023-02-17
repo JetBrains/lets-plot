@@ -33,6 +33,7 @@ def _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alph
         return geom_point(color=color, size=size, alpha=alpha, show_legend=show_legend)
     if geom_kind == 'tile':
         return geom_bin2d(
+            aes(fill=('..count..' if color_by is None else color_by)),
             bins=bins2d, binwidth=binwidth2d,
             color=color, size=size, alpha=alpha,
             show_legend=show_legend
@@ -56,20 +57,14 @@ def _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alph
 
 def _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend):
     def _get_marginal_layer(geom_kind, side, size):
-        layer = None
         if geom_kind in ['dens', 'density']:
-            layer = geom_density(color=color, show_legend=show_legend)
-        elif geom_kind in ['area']:
-            marginal_aes = aes(fill=color_by) if color_by is not None else None
-            marginal_fill = color if marginal_aes is None else None
-            layer = geom_area(marginal_aes, stat='density', fill=marginal_fill, alpha=_MARGINAL_ALPHA,
-                              show_legend=show_legend)
+            layer = geom_area(stat='density', color=color, fill=color,
+                              alpha=_MARGINAL_ALPHA, show_legend=show_legend)
         elif geom_kind in ['hist', 'histogram']:
             binwidth = None if binwidth2d is None else (binwidth2d[0] if side in ['t', 'b'] else binwidth2d[1])
             bins = None if bins2d is None else (bins2d[0] if side in ['t', 'b'] else bins2d[1])
             marginal_color = None if color_by is not None else (color or _COLOR_DEF)
-            marginal_aes = aes(color=color_by, fill=color_by) if color_by is not None else None
-            layer = geom_histogram(marginal_aes, bins=bins, binwidth=binwidth,
+            layer = geom_histogram(bins=bins, binwidth=binwidth,
                                    color=marginal_color, fill=marginal_color, alpha=_MARGINAL_ALPHA,
                                    show_legend=show_legend)
         elif geom_kind in ['box', 'boxplot']:

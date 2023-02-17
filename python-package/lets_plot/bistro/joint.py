@@ -17,11 +17,10 @@ _REG_LINE_LINETYPE = 'dashed'
 
 
 def _get_marginal_def(geom_kind, color_by=None):
-    if geom_kind == 'density2df':
-        return "area:tr"
-    if geom_kind == 'density2d' or color_by is not None:
+    if geom_kind in ['density2d', 'density2df'] or color_by is not None:
         return "dens:tr"
-    return "hist:tr"
+    else:
+        return "hist:tr"
 
 
 def _is_reg_line_needed(reg_line, geom_kind):
@@ -49,6 +48,7 @@ def joint_plot(data, x, y, *,
     mapping_dict = {'x': x, 'y': y}
     if color_by is not None:
         mapping_dict['color'] = color_by
+        mapping_dict['fill'] = color_by
     # prepare layers
     layers = []
     # main layer

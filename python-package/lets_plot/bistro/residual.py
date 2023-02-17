@@ -287,6 +287,7 @@ def residual_plot(data=None, x=None, y=None, *,
     mapping_dict = {'x': x, 'y': _RESIDUAL_COL}
     if color_by is not None:
         mapping_dict['color'] = color_by
+        mapping_dict['fill'] = color_by
     # prepare scales
     scales = []
     if method == 'none':
