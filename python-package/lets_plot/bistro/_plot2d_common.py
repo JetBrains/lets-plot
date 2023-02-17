@@ -56,19 +56,20 @@ def _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alph
 
 
 def _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend):
+    marginal_color = None if color_by is not None else (color or _COLOR_DEF)
+
     def _get_marginal_layer(geom_kind, side, size):
         if geom_kind in ['dens', 'density']:
-            layer = geom_area(stat='density', color=color, fill=color,
+            layer = geom_area(stat='density', position='identity', color=marginal_color, fill=marginal_color,
                               alpha=_MARGINAL_ALPHA, show_legend=show_legend)
         elif geom_kind in ['hist', 'histogram']:
             binwidth = None if binwidth2d is None else (binwidth2d[0] if side in ['t', 'b'] else binwidth2d[1])
             bins = None if bins2d is None else (bins2d[0] if side in ['t', 'b'] else bins2d[1])
-            marginal_color = None if color_by is not None else (color or _COLOR_DEF)
             layer = geom_histogram(bins=bins, binwidth=binwidth,
                                    color=marginal_color, fill=marginal_color, alpha=_MARGINAL_ALPHA,
                                    show_legend=show_legend)
         elif geom_kind in ['box', 'boxplot']:
-            layer = geom_boxplot(color=color, show_legend=show_legend)
+            layer = geom_boxplot(color=marginal_color, fill=marginal_color, alpha=_MARGINAL_ALPHA, show_legend=show_legend)
         else:
             raise Exception("Unknown geom '{0}'".format(geom_kind))
 
@@ -77,8 +78,8 @@ def _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_leg
     marginals = []
     for layer_description in filter(bool, marginal.split(",")):
         params = layer_description.strip().split(":")
-        geom_kind, sides = params[0], params[1]
-        size = float(params[2]) if len(params) > 2 else None
+        geom_kind, sides = params[0].strip(), params[1].strip()
+        size = float(params[2].strip()) if len(params) > 2 else None
         for side in sides:
             marginals.append(_get_marginal_layer(geom_kind, side, size))
 
