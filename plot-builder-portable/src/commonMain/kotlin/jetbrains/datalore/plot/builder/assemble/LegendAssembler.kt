@@ -39,8 +39,8 @@ class LegendAssembler(
 //        scaleByAes: Map<Aes<*>, Scale>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
-        colorByAes: Aes<Color>?,
-        fillByAes: Aes<Color>?
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>
     ) {
 
         legendLayers.add(
@@ -121,8 +121,8 @@ class LegendAssembler(
         scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
-        colorByAes: Aes<Color>?,
-        fillByAes: Aes<Color>?
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>
     ) {
 
         internal val keyAesthetics: Aesthetics

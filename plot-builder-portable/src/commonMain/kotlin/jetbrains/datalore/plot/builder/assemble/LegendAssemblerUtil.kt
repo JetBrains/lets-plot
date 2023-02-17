@@ -39,8 +39,8 @@ internal object LegendAssemblerUtil {
         valueByAesIterable: Collection<Map<Aes<*>, Any>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-        colorByAes: Aes<Color>?,
-        fillByAes: Aes<Color>?
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>
     ): Aesthetics {
         val dataPoints = ArrayList<Map<Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {

@@ -134,8 +134,8 @@ class LayerConfig constructor(
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 
     // Color aesthetics
-    val colorByAes: Aes<Color>?
-    val fillByAes: Aes<Color>?
+    val colorByAes: Aes<Color>
+    val fillByAes: Aes<Color>
 
     val renderedAes: List<Aes<*>>
 
@@ -155,10 +155,10 @@ class LayerConfig constructor(
         // Get 'color_by' and 'fill_by' if this aesthetic is in mappings
         colorByAes = getColorAes(Option.Layer.COLOR_BY)?.takeIf {
             (plotMappings + layerMappings).containsKey(it.name)
-        }
+        } ?: Aes.COLOR
         fillByAes = getColorAes(Option.Layer.FILL_BY)?.takeIf {
             (plotMappings + layerMappings).containsKey(it.name)
-        }
+        } ?: Aes.FILL
         // Get renders with replacing color aesthetics
         renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
 

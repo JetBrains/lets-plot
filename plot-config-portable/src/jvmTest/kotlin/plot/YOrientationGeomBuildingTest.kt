@@ -40,7 +40,7 @@ class YOrientationGeomBuildingTest {
 
         // Just check that this invariant still holds.
         assertEquals(
-            GeomMeta.renders(GeomKind.BOX_PLOT, newColorAes = null, newFillAes = null).toSet(),
+            GeomMeta.renders(GeomKind.BOX_PLOT, Aes.COLOR, Aes.FILL).toSet(),
             geomLayerStub.renderedAes().toSet()
         )
 

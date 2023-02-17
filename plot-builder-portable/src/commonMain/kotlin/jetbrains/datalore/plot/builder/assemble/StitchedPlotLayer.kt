@@ -41,13 +41,13 @@ internal class StitchedPlotLayer constructor(
             return geomLayers[0].isLegendDisabled
         }
 
-    val colorByAes: Aes<Color>?
+    val colorByAes: Aes<Color>
         get() {
             check(geomLayers.isNotEmpty())
             return geomLayers[0].colorByAes
         }
 
-    val fillByAes: Aes<Color>?
+    val fillByAes: Aes<Color>
         get() {
             check(geomLayers.isNotEmpty())
             return geomLayers[0].fillByAes

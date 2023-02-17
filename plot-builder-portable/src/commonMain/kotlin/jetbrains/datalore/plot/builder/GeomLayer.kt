@@ -52,9 +52,9 @@ interface GeomLayer {
 
     val fontFamilyRegistry: FontFamilyRegistry
 
-    val colorByAes: Aes<Color>?
+    val colorByAes: Aes<Color>
 
-    val fillByAes: Aes<Color>?
+    val fillByAes: Aes<Color>
 
     fun renderedAes(): List<Aes<*>>
 

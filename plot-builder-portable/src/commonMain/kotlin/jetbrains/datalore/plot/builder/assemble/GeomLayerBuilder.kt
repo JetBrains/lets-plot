@@ -64,8 +64,8 @@ class GeomLayerBuilder constructor(
     private var marginalSide: MarginSide = MarginSide.LEFT
     private var marginalSize: Double = Double.NaN
 
-    private var colorByAes: Aes<Color>? = null
-    private var fillByAes: Aes<Color>? = null
+    private var colorByAes: Aes<Color> = Aes.COLOR
+    private var fillByAes: Aes<Color> = Aes.FILL
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
@@ -141,12 +141,12 @@ class GeomLayerBuilder constructor(
         return this
     }
 
-    fun colorByAes(aes: Aes<Color>?): GeomLayerBuilder {
+    fun colorByAes(aes: Aes<Color>): GeomLayerBuilder {
         colorByAes = aes
         return this
     }
 
-    fun fillByAes(aes: Aes<Color>?): GeomLayerBuilder {
+    fun fillByAes(aes: Aes<Color>): GeomLayerBuilder {
         fillByAes = aes
         return this
     }
@@ -258,8 +258,8 @@ class GeomLayerBuilder constructor(
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
         override val fontFamilyRegistry: FontFamilyRegistry,
-        override val colorByAes: Aes<Color>?,
-        override val fillByAes: Aes<Color>?,
+        override val colorByAes: Aes<Color>,
+        override val fillByAes: Aes<Color>,
         private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?,
     ) : GeomLayer {
 

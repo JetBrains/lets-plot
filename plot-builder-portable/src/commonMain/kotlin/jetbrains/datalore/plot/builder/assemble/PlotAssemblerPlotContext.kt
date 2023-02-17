@@ -148,8 +148,8 @@ internal class PlotAssemblerPlotContext(
         override val isLegendDisabled: Boolean get() = stitchedPlotLayer.isLegendDisabled
         override val aestheticsDefaults: AestheticsDefaults get() = stitchedPlotLayer.aestheticsDefaults
         override val legendKeyElementFactory: LegendKeyElementFactory get() = stitchedPlotLayer.legendKeyElementFactory
-        override val colorByAes: Aes<Color>? get() = stitchedPlotLayer.colorByAes
-        override val fillByAes: Aes<Color>? get() = stitchedPlotLayer.fillByAes
+        override val colorByAes: Aes<Color> get() = stitchedPlotLayer.colorByAes
+        override val fillByAes: Aes<Color> get() = stitchedPlotLayer.fillByAes
 
         override fun renderedAes(): List<Aes<*>> = stitchedPlotLayer.renderedAes()
 
