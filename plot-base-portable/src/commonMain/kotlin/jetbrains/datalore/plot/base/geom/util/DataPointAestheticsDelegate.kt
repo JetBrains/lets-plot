@@ -25,7 +25,7 @@ open class DataPointAestheticsDelegate(
         return p.get(aes)
     }
 
-    override val aesColor: Aes<Color> = p.aesColor
+    override val colorAes: Aes<Color> = p.colorAes
 
-    override val aesFill: Aes<Color> = p.aesFill
+    override val fillAes: Aes<Color> = p.fillAes
 }

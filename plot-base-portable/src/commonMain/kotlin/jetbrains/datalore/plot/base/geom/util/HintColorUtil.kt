@@ -41,8 +41,8 @@ object HintColorUtil {
     ): (DataPointAesthetics) -> List<Color> {
         return createColorMarkerMapper(
             geomKind,
-            isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.aesFill) },
-            isMappedColor = { p: DataPointAesthetics -> ctx.isMappedAes(p.aesColor) }
+            isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.fillAes) },
+            isMappedColor = { p: DataPointAesthetics -> ctx.isMappedAes(p.colorAes) }
         )
     }
 
@@ -121,10 +121,10 @@ object HintColorUtil {
                 }
 
                 else -> {
-                    val renderedAes = GeomMeta.renders(geomKind, p.aesColor, p.aesFill)
+                    val renderedAes = GeomMeta.renders(geomKind, p.colorAes, p.fillAes)
                     listOf(
-                        fillColorGetter(p).takeIf { isMappedFill(p) && p.aesFill in renderedAes },
-                        strokeColorGetter(p).takeIf { isMappedColor(p) && p.aesColor in renderedAes }
+                        fillColorGetter(p).takeIf { isMappedFill(p) && p.fillAes in renderedAes },
+                        strokeColorGetter(p).takeIf { isMappedColor(p) && p.colorAes in renderedAes }
                     )
                 }
             }

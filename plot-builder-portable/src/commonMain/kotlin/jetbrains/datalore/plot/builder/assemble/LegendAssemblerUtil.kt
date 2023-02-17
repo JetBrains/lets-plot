@@ -71,8 +71,10 @@ internal object LegendAssemblerUtil {
             @Suppress("UNCHECKED_CAST")
             builder.aes(aes as Aes<Any>) { index -> dataPoints[index][aes]!! }
         }
-        colorByAes?.let(builder::aesColor)
-        fillByAes?.let(builder::aesFill)
+
+        builder
+            .colorAes(colorByAes)
+            .fillAes(fillByAes)
 
         return builder.build()
     }

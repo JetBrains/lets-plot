@@ -140,7 +140,11 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isColor(aes: Aes<*>): Boolean {
-            return aes in listOf(COLOR, FILL, PAINT_A, PAINT_B, PAINT_C)
+            return aes == COLOR ||
+                    aes == FILL ||
+                    aes == PAINT_A ||
+                    aes == PAINT_B ||
+                    aes == PAINT_C
         }
 
         fun affectingScaleX(aes: Aes<*>): Boolean {

@@ -16,9 +16,9 @@ abstract class DataPointAesthetics {
 
     abstract operator fun <T> get(aes: Aes<T>): T?
 
-    abstract val aesColor: Aes<Color>
+    abstract val colorAes: Aes<Color>
 
-    abstract val aesFill: Aes<Color>
+    abstract val fillAes: Aes<Color>
 
     fun x(): Double? {
         return get(Aes.X)
@@ -41,11 +41,11 @@ abstract class DataPointAesthetics {
     }
 
     fun color(): Color? {
-        return get(aesColor)
+        return get(colorAes)
     }
 
     fun fill(): Color? {
-        return get(aesFill)
+        return get(fillAes)
     }
 
     fun alpha(): Double? {

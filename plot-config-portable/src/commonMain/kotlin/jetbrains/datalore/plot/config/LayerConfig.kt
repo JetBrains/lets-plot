@@ -152,7 +152,7 @@ class LayerConfig constructor(
             update(MAPPING, layerMappings)
         }
 
-        // Get 'color_by' and 'fill_by' if this aesthetic is in mappings
+        // Decided that color/fill_by only affects mappings, constants always uses original aes color/fill.
         colorByAes = getColorAes(Option.Layer.COLOR_BY)?.takeIf {
             (plotMappings + layerMappings).containsKey(it.name)
         } ?: Aes.COLOR
