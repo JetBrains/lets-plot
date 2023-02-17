@@ -152,7 +152,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Random seed for 'loess' sampling.
     max_n : int
         Maximum number of data-points for 'loess' method. If this quantity exceeded random sampling is applied to data.
-    geom : {'point', 'tile', 'contour', 'none'}, default='point'
+    geom : {'point', 'tile', 'density2d', 'density2df', 'none'}, default='point'
         The geometric object to use to display the data. No object will be used if `geom='none'`.
     bins : int or list of int
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
@@ -270,7 +270,7 @@ def residual_plot(data=None, x=None, y=None, *,
         }
         residual_plot(data, 'x', 'y', geom='none', hline=False, marginal='none') + \\
             geom_hline(yintercept=0, size=1, color=color) + \\
-            geom_point(shape=21, color=color, fill=fill) + \\
+            geom_point(shape=21, size=3, color=color, fill=fill) + \\
             ggmarginal('r', layer=geom_area(stat='density', color=color, fill=fill))
 
     """
