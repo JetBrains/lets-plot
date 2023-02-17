@@ -198,13 +198,8 @@ internal class FacetedPlotLayout(
             )
         }
 
-        val combinedTilesSize =
-            finalLayoutInfos.map { it.geomWithAxisBounds }.reduce { b0, b1 -> b0.union(b1) }.dimension
-        val plotSize = combinedTilesSize
-            .add(tilesPaddingLeftTop)
-            .add(insets.rightBottom)
-
-        return PlotLayoutInfo(finalLayoutInfos, plotSize)
+        val plotInsets = Insets(tilesPaddingLeftTop, insets.rightBottom)
+        return PlotLayoutInfo(finalLayoutInfos, plotInsets)
     }
 
 

@@ -55,10 +55,6 @@ internal class SingleTilePlotLayout constructor(
     }
 
     private fun tileInfoToPlotInfo(tileInfo: TileLayoutInfo): PlotLayoutInfo {
-        val plotSize = tileInfo.geomWithAxisBounds.dimension
-            .add(insets.leftTop)
-            .add(insets.rightBottom)
-
-        return PlotLayoutInfo(listOf(tileInfo), plotSize)
+        return PlotLayoutInfo(listOf(tileInfo), insets)
     }
 }

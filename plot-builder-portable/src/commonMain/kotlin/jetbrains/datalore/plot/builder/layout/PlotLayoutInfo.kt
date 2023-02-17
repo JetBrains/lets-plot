@@ -8,13 +8,14 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.util.Insets
 
 /**
  * Only "geom" area + axes.
  */
 class PlotLayoutInfo constructor(
     val tiles: List<TileLayoutInfo>,
-    val size: DoubleVector
+    private val insets: Insets,
 ) {
     val hasTopAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.hAxisTitleOrientation == Orientation.TOP
     val hasLeftAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.vAxisTitleOrientation == Orientation.LEFT
@@ -36,4 +37,8 @@ class PlotLayoutInfo constructor(
         get() {
             return tiles.map { it.geomWithAxisBounds }.reduce { acc, el -> acc.union(el) }
         }
+
+    val size: DoubleVector = geomWithAxisBounds.dimension
+        .add(insets.leftTop)
+        .add(insets.rightBottom)
 }

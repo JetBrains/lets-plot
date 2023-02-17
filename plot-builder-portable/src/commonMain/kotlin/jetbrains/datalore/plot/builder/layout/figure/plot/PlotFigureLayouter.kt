@@ -54,13 +54,13 @@ internal class PlotFigureLayouter constructor(
     }
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, outerSize)
+        val figureOuterBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
 
         // compute geom bounds
         val entirePlot = if (containsLiveMap) {
-            PlotLayoutUtil.liveMapBounds(overallRect)
+            PlotLayoutUtil.liveMapBounds(figureOuterBounds)
         } else {
-            overallRect
+            figureOuterBounds
         }
 
         // -------------
@@ -100,7 +100,10 @@ internal class PlotFigureLayouter constructor(
             flipAxis
         )
 
-        return createFigureLayoutInfo(overallRect, plotOuterSize, layoutInfo)
+        return createFigureLayoutInfo(
+            figureOuterBounds,
+            plotOuterSize,
+            layoutInfo)
     }
 
     fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
