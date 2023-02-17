@@ -24,6 +24,7 @@ internal object BackendDataProcUtil {
         statCtx: StatContext,
         transformByAes: Map<Aes<*>, Transform>,
         facetVariables: List<DataFrame.Variable>,
+        variableValuesOrder: Map<DataFrame.Variable, Collection<Any>>?,
         massageHandler: (String) -> Unit
     ): DataFrame {
         val groupingVariables = DataProcessing.defaultGroupingVariables(
@@ -70,7 +71,8 @@ internal object BackendDataProcUtil {
                 facetVariables,
                 varsWithoutBinding,
                 layerConfig.orderOptions,
-                layerConfig.aggregateOperation
+                layerConfig.aggregateOperation,
+                variableValuesOrder
             ) { message -> massageHandler(createStatMessage(message, layerConfig)) }
 
             tileLayerDataAfterStat = tileLayerDataAndGroupingContextAfterStat.data
