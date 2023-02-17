@@ -33,6 +33,11 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/scale_functions.ipynb).
 
 
+- New 'bistro' graph - `joint_plot()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/joint_plot.ipynb).
+
+
 - PNG support for `ggsave()` [[#596](https://github.com/JetBrains/lets-plot/issues/596)].
   
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
@@ -46,9 +51,12 @@
 
 - `geom_density()`: added two new parameters - `quantiles` and `quantile_lines` - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
 
+- `residual_plot()`: added `'density2d'` and `'density2df'` geometry types, changed some defaults for color parameters. 
+
 - `pandas` library was added to dependencies of the `residual_plot()` function.
 
 - Python packages for `Windows` no longer require `MinGW` tools to run.
+
 - parameter `flat=True` turns off lines re-projection, keeping the original number of points.
 
 ### Fixed
