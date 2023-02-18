@@ -13,20 +13,20 @@ import jetbrains.datalore.plot.builder.layout.figure.composite.FigureGridLayoutU
 import jetbrains.datalore.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToRow
 
 class CompositeFigureGridLayout(
-    private val ncol: Int,
-    private val nrow: Int,
+    private val ncols: Int,
+    private val nrows: Int,
 ) : CompositeFigureLayout {
     override fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo> {
-        check(elements.size == nrow * ncol) {
-            "Grid size mismatch: ${elements.size} elements in a $ncol X $nrow grid."
+        check(elements.size == nrows * ncols) {
+            "Grid size mismatch: ${elements.size} elements in a $ncols X $nrows grid."
         }
 
-        val cellWidth = size.x / ncol
-        val cellHeight = size.y / nrow
+        val cellWidth = size.x / ncols
+        val cellHeight = size.y / nrows
 
         val elementsWithBounds = elements.mapIndexed { index, buildInfo ->
-            val row = indexToRow(index, ncol)
-            val col = indexToCol(index, ncol)
+            val row = indexToRow(index, ncols)
+            val col = indexToCol(index, ncols)
             val bounds = DoubleRectangle(
                 x = col * cellWidth,
                 y = row * cellHeight,

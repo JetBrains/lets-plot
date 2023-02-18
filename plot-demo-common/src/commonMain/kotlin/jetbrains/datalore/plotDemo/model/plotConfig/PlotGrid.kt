@@ -8,6 +8,12 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.SubPlots.FIGURES
 import jetbrains.datalore.plot.config.Option.SubPlots.Figure.BLANK
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.INNER_ALIGNMENT
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NCOLS
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NROWS
+import jetbrains.datalore.plot.config.Option.SubPlots.LAYOUT
+import jetbrains.datalore.plot.config.Option.SubPlots.Layout.GRID
+import jetbrains.datalore.plot.config.Option.SubPlots.Layout.LAYOUT_KIND
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
 
@@ -69,14 +75,17 @@ open class PlotGrid {
         fun simple(): MutableMap<String, Any> {
             val plotSpec = simplePlot()
 
-            // Sub-plots
-            val subPlots = mutableMapOf(
+            // Sub-plots: 1 row, 2 col
+            return mutableMapOf(
                 Option.Meta.KIND to Option.Meta.Kind.SUBPLOTS,
-                "figures" to listOf(
-                    listOf(plotSpec, plotSpec)    // 1 row, 2 col
+                FIGURES to listOf(plotSpec, plotSpec),
+                LAYOUT to mapOf(
+                    LAYOUT_KIND to GRID,
+                    NCOLS to 2,
+                    NROWS to 1,
+//                    INNER_ALIGNMENT to true,
                 )
             )
-            return subPlots
         }
 
         //============================
@@ -85,12 +94,18 @@ open class PlotGrid {
             val scatterSpec = irisScatterPlot()
             val densitySpec = irisDensityPlot()
 
-            // Plot grid
+            // Plot grid: 2 row, 2 col
             return mutableMapOf(
                 Option.Meta.KIND to Option.Meta.Kind.SUBPLOTS,
-                FIGURES to listOf(              // 2 row, 2 col
-                    listOf(densitySpec, BLANK),
-                    listOf(scatterSpec, densitySpec)
+                FIGURES to listOf(
+                    densitySpec, BLANK,
+                    scatterSpec, densitySpec
+                ),
+                LAYOUT to mapOf(
+                    LAYOUT_KIND to GRID,
+                    NCOLS to 2,
+                    NROWS to 2,
+                    INNER_ALIGNMENT to true,
                 )
             )
         }

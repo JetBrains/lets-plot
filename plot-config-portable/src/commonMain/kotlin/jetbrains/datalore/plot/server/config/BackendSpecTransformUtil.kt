@@ -34,30 +34,17 @@ object BackendSpecTransformUtil {
         }
     }
 
-    private fun processTransformInSubPlots(subPlotsSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
-        if (!subPlotsSpecRaw.containsKey(Option.SubPlots.FIGURES)) {
-            subPlotsSpecRaw[Option.SubPlots.FIGURES] = emptyList<Any>()
-            return subPlotsSpecRaw
+    private fun processTransformInSubPlots(compositeFigureSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
+        if (!compositeFigureSpecRaw.containsKey(Option.SubPlots.FIGURES)) {
+            compositeFigureSpecRaw[Option.SubPlots.FIGURES] = emptyList<Any>()
+            return compositeFigureSpecRaw
         }
 
-        // 2D list of figures
-        val figureGrid: Any = subPlotsSpecRaw.getValue(Option.SubPlots.FIGURES)
-        if (figureGrid !is List<*>) {
-            throw IllegalArgumentException("Subplots grid: a list of figures expected but was: ${figureGrid::class.simpleName}")
-        }
-
-        val figureGridProcessed = figureGrid.map { figureGridRow ->
-            requireNotNull(figureGridRow) { "Subplots grid row can't be null." }
-            if (figureGridRow !is List<*>) {
-                throw IllegalArgumentException("Subplots grid row: a list of figures expected but was: ${figureGridRow::class.simpleName}")
-            }
-
-            processTransformFigureList(figureGridRow)
-        }
-
-        val subPlotsSpec = HashMap<String, Any>(subPlotsSpecRaw)
-        subPlotsSpec[Option.SubPlots.FIGURES] = figureGridProcessed
-        return subPlotsSpec
+        val elementListRaw = compositeFigureSpecRaw[Option.SubPlots.FIGURES] as List<*>
+        val elementListProcessed = processTransformFigureList(elementListRaw)
+        val compositeFigureSpec = HashMap<String, Any>(compositeFigureSpecRaw)
+        compositeFigureSpec[Option.SubPlots.FIGURES] = elementListProcessed
+        return compositeFigureSpec
     }
 
     private fun processTransformFigureList(figureListRaw: List<*>): List<Any> {

@@ -16,20 +16,20 @@ import jetbrains.datalore.plot.builder.layout.figure.composite.FigureGridLayoutU
 import jetbrains.datalore.plot.builder.layout.figure.composite.FigureGridLayoutUtil.rowElements
 
 class CompositeFigureGridAlignmentLayout(
-    private val ncol: Int,
-    private val nrow: Int,
+    private val ncols: Int,
+    private val nrows: Int,
 ) : CompositeFigureLayout {
     override fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo> {
-        check(elements.size == nrow * ncol) {
-            "Grid size mismatch: ${elements.size} elements in a $ncol X $nrow grid."
+        check(elements.size == nrows * ncols) {
+            "Grid size mismatch: ${elements.size} elements in a $ncols X $nrows grid."
         }
 
-        val cellWidth = size.x / ncol
-        val cellHeight = size.y / nrow
+        val cellWidth = size.x / ncols
+        val cellHeight = size.y / nrows
 
         val elementsWithBounds = elements.mapIndexed { index, buildInfo ->
-            val row = indexToRow(index, ncol)
-            val col = indexToCol(index, ncol)
+            val row = indexToRow(index, ncols)
+            val col = indexToCol(index, ncols)
             val bounds = DoubleRectangle(
                 x = col * cellWidth,
                 y = row * cellHeight,
@@ -45,8 +45,8 @@ class CompositeFigureGridAlignmentLayout(
 
         // Compute "inner" size for each row and colunm
         val vSpanByRow = ArrayList<DoubleSpan?>()
-        for (row in 0 until nrow) {
-            val rowElements = rowElements(row, elementsLayoutedByBounds, ncol)
+        for (row in 0 until nrows) {
+            val rowElements = rowElements(row, elementsLayoutedByBounds, ncols)
             val vSpan = rowElements.filterNotNull().map {
                 it.layoutInfo.geomAreaBounds.yRange()
             }.reduceOrNull { acc, span ->
@@ -56,8 +56,8 @@ class CompositeFigureGridAlignmentLayout(
         }
 
         val hSpanByCol = ArrayList<DoubleSpan?>()
-        for (col in 0 until ncol) {
-            val colElements = colElements(col, elementsLayoutedByBounds, ncol)
+        for (col in 0 until ncols) {
+            val colElements = colElements(col, elementsLayoutedByBounds, ncols)
             val hSpan = colElements.filterNotNull().map {
                 it.layoutInfo.geomAreaBounds.xRange()
             }.reduceOrNull { acc, span ->
@@ -70,8 +70,8 @@ class CompositeFigureGridAlignmentLayout(
             if (buildInfo == null) {
                 null
             } else {
-                val row = indexToRow(index, ncol)
-                val col = indexToCol(index, ncol)
+                val row = indexToRow(index, ncols)
+                val col = indexToCol(index, ncols)
                 val bounds = DoubleRectangle.hvRange(
                     hSpanByCol[col]!!,
                     vSpanByRow[row]!!

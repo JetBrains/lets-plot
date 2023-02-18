@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.Defaults.MIN_PLOT_WIDTH
 import jetbrains.datalore.plot.config.*
-import jetbrains.datalore.plot.config.Option.SubPlots
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.max
@@ -85,7 +84,7 @@ object PlotSizeHelper {
     }
 
     fun subPlotsSize(
-        plotSpec: Map<*, *>,
+        compositeFigureSpec: Map<*, *>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
@@ -95,14 +94,21 @@ object PlotSizeHelper {
         }
 
         @Suppress("UNCHECKED_CAST")
-        plotSpec as Map<String, Any>
-        val figures2d = OptionsAccessor(plotSpec).getList(SubPlots.FIGURES)
-        val nrow = figures2d.size
-        val ncol = (figures2d.firstOrNull() as List<*>?)?.size ?: 0
+        compositeFigureSpec as Map<String, Any>
+        var compositeFigureConfig = CompositeFigureConfig(compositeFigureSpec) {
+            // no messages handler here
+        }
 
-        val defaultSize = getSizeOptionOrNull(plotSpec) ?: defaultSubPlotsSize(ncol, nrow)
+        val specifiedFigureSize = getSizeOptionOrNull(compositeFigureSpec)
+        val figureSize = specifiedFigureSize ?: run {
+            val gridColsRows = compositeFigureConfig.gridSizeOrNull()
+            gridColsRows?.let { (ncols, nrows) ->
+                defaultPlotGridSize(ncols, nrows)
+            } ?: DEF_PLOT_SIZE
+        }
+
         return toScaledSize(
-            defaultSize,
+            figureSize,
             plotMaxWidth,
             plotPreferredWidth
         )
@@ -167,7 +173,7 @@ object PlotSizeHelper {
         }
     }
 
-    private fun defaultSubPlotsSize(ncol: Int, nrow: Int): DoubleVector {
+    private fun defaultPlotGridSize(ncol: Int, nrow: Int): DoubleVector {
         return defaulPlotPanelGridSize(ncol, nrow)
     }
 

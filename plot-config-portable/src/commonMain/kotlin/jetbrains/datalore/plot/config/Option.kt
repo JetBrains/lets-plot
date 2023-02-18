@@ -84,9 +84,25 @@ object Option {
 
     object SubPlots {
         const val FIGURES = "figures"
+        const val LAYOUT = "layout"
 
         object Figure {
             const val BLANK = "blank"
+        }
+
+        object Layout {
+            const val LAYOUT_KIND = "kind"
+            const val GRID = "grid"
+        }
+
+        object Grid {
+            const val NROWS = "nrows"
+            const val NCOLS = "ncols"
+            const val HSPACE = "hspace"  // ToDo: abs px or relative ?
+            const val VSPACE = "vspace"
+            const val COL_WIDTHS = "col_widths"
+            const val ROW_HEIGHTS = "row_heights"
+            const val INNER_ALIGNMENT = "inner_alignment" // bool
         }
     }
 
