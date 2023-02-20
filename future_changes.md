@@ -57,7 +57,11 @@
 
 - Python packages for `Windows` no longer require `MinGW` tools to run.
 
-- parameter `flat=True` turns off lines re-projection, keeping the original number of points.
+- Parameter `flat=True` turns off lines re-projection, keeping the original number of points.
+
+- Position adjustments `'stack'` and `'fill'` shifts objects only between different groups.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/position_stack.ipynb).
 
 ### Fixed
 

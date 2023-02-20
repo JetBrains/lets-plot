@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.pos.StackingType
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.config.Option.Pos
 
@@ -15,7 +14,6 @@ internal object PosProto {
     // position adjustments
     const val IDENTITY = "identity"
     const val STACK = "stack"
-    const val STACK_LN = "stack_ln"
     const val DODGE = "dodge"
     const val FILL = "fill"
     const val NUDGE = "nudge"
@@ -27,8 +25,7 @@ internal object PosProto {
         val opts = OptionsAccessor(posOptions)
         return when (posName) {
             IDENTITY -> PosProvider.wrap(PositionAdjustments.identity())
-            STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST), StackingType.SUM)
-            STACK_LN -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST), StackingType.LN)
+            STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST))
             DODGE -> PosProvider.dodge(opts.getDouble(Pos.Dodge.WIDTH))
             FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST))
             JITTER -> PosProvider.jitter(
