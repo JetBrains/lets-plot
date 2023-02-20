@@ -15,7 +15,7 @@ _DEF_EXPORT_DIR = "lets-plot-images"
 
 
 def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True,
-           scale: float = 1.0) -> str:
+           scale: float = 2.0) -> str:
     """
     Export plot or `bunch` to a file.
     Supported formats: PNG, SVG, HTML.
@@ -36,7 +36,7 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
     iframe : bool, default=True
         Whether to wrap HTML page into a iFrame.
         Only applicable when exporting to HTML.
-    scale : float, default=1.0
+    scale : float, default=2.0
         Scaling factor for raster output.
         Only applicable when exporting to PNG.
 

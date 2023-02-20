@@ -69,7 +69,7 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
     return abspath(filename)
 
 
-def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 1.0) -> str:
+def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 2.0) -> str:
     """
     Export plot or `bunch` to a file in PNG format.
 
@@ -79,7 +79,7 @@ def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 1.0
             Plot specification to export.
     filename: str
             Filename to save PNG under.
-    scale : float, default=1.0
+    scale : float, default=2.0
         Scaling factor for raster output.
 
     Returns
