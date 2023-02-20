@@ -8,7 +8,7 @@ from .core import FeatureSpec
 # Position Adjustments
 #
 __all__ = ['position_dodge', 'position_jitter', 'position_nudge', 'position_jitterdodge',
-           'position_stack', 'position_gstack', 'position_fill', 'position_gfill']
+           'position_stack', 'position_fill']
 
 
 def position_dodge(width=None):
@@ -197,47 +197,6 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
 
 def position_stack(vjust=None):
     """
-    Adjust position by stacking overlapping objects on top of each other.
-
-    Parameters
-    ----------
-    vjust : float
-        Vertical adjustment for geoms that have a position (like points or lines),
-        not a dimension (like bars or areas).
-        Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Geom object position specification.
-
-    Notes
-    -----
-    Adjust position by stacking overlapping objects on top of each other.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 10
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'x': [1, 1, 2, 2],
-            'y': [1, 3, 2, 1],
-            'grp': ["a", "b", "a", "b"]
-        }
-        ggplot(data, aes('x', 'y', group='grp')) + \\
-            geom_bar(aes(fill='grp'), stat='identity') + \\
-            geom_text(aes(label='y'), position=position_stack(0.5))
-
-    """
-    return _pos('stack', vjust=vjust)
-
-
-def position_gstack(vjust=None):
-    """
     Adjust position by stacking overlapping groups of objects on top of each other.
     Preferred for density-like geometries.
 
@@ -271,56 +230,13 @@ def position_gstack(vjust=None):
             'g': ["a", "b", "b", "a", "a", "b"],
         }
         ggplot(data, aes('x', 'y', color='g')) + \\
-            geom_point(position=position_gstack(), size=10)
+            geom_point(position=position_stack(), size=10)
 
     """
-    return _pos('gstack', vjust=vjust)
+    return _pos('stack', vjust=vjust)
 
 
 def position_fill(vjust=None):
-    """
-    Adjust position by stacking overlapping objects on top of each other
-    and standardise each stack to have constant height.
-                                        
-    Parameters
-    ----------
-    vjust : float
-        Vertical adjustment for geoms that have a position (like points or lines),
-        not a dimension (like bars or areas).
-        Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
-
-    Returns
-    -------
-    `FeatureSpec`
-        Geom object position specification.
-
-    Notes
-    -----
-    Adjust position by stacking overlapping objects on top of each other
-    and standardise each stack to have constant height.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 9
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'x': [1, 1, 2, 2],
-            'y' : [1, 3, 2, 1],
-            'grp': ["a", "b", "a", "b"]
-        }
-        ggplot(data, aes('x', 'y', group='grp')) + \\
-            geom_bar(aes(fill='grp'), stat='identity', position='fill') + \\
-            geom_text(aes(label='y'), position=position_fill(0.5))
-
-    """
-    return _pos('fill', vjust=vjust)
-
-
-def position_gfill(vjust=None):
     """
     Adjust position by stacking overlapping groups of objects on top of each other
     and standardise each stack to have constant height.
@@ -356,10 +272,10 @@ def position_gfill(vjust=None):
             'g': ["a", "a", "b", "b", "b", "a", "a", "b"],
         }
         ggplot(data, aes('x', 'y', color='g')) + \\
-            geom_point(position=position_gfill(), size=10)
+            geom_point(position=position_fill(), size=10)
 
     """
-    return _pos('gfill', vjust=vjust)
+    return _pos('fill', vjust=vjust)
 
 
 def _pos(name, **other):

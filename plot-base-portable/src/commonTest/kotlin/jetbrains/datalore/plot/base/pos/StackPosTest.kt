@@ -22,47 +22,24 @@ class StackPosTest : PosTest() {
     }
 
     @Test
-    fun testWithoutGroupingWithOffsetSum() {
-        compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            expectedYOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -4.0, -6.0, 4.0, 6.0, 3.0, 5.0, 6.0),
-            posConstructor = getPositionAdjustmentConstructor(),
-            messageBeginning = "Should work without grouping"
-        )
-    }
-
-    @Test
-    fun testWithoutGroupingWithOffsetMax() {
+    fun testWithoutGrouping() {
         compareWithExpectedOffsets(
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             expectedYOffsets = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            posConstructor = getPositionAdjustmentConstructor(stackingMode = StackingMode.GROUPS),
+            posConstructor = getPositionAdjustmentConstructor(),
             messageBeginning = "Should work without grouping"
         )
     }
 
     @Test
-    fun testWithGroupingAndOffsetSum() {
-        compareWithExpectedOffsets(
-            xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
-            yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
-            groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
-            expectedYOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -4.0, -6.0, 6.0, 5.0, 6.0, 2.0, 3.0),
-            posConstructor = getPositionAdjustmentConstructor(),
-            messageBeginning = "Should work with grouping"
-        )
-    }
-
-    @Test
-    fun testWithGroupingAndOffsetMax() {
+    fun testWithGrouping() {
         compareWithExpectedOffsets(
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
             groupValues = listOf(0, 1, 2, 0, 0, 0, 1, 2, 1, 1, 0, 0),
             expectedYOffsets = listOf(3.0, 5.0, 6.0, 3.0, -3.0, -1.0, -5.0, 6.0, 5.0, 5.0, 2.0, 1.0),
-            posConstructor = getPositionAdjustmentConstructor(stackingMode = StackingMode.GROUPS),
+            posConstructor = getPositionAdjustmentConstructor(),
             messageBeginning = "Should work with grouping"
         )
     }
@@ -72,6 +49,7 @@ class StackPosTest : PosTest() {
         compareWithExpectedOffsets(
             xValues = listOf(null, 0.0, 0.0, null, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(null, 2.0, 1.0, 3.0, 1.0, 2.0, null, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 1, 2, 0, 1, 2),
             expectedYOffsets = listOf(null, 2.0, 3.0, null, 1.0, 3.0, null, 2.0, 3.0),
             posConstructor = getPositionAdjustmentConstructor(),
             messageBeginning = "Should work with NaN values in data"
@@ -83,6 +61,7 @@ class StackPosTest : PosTest() {
         compareWithExpectedOffsets(
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 0, 1, 2, 1, 2, 0, 1, 2),
             expectedYOffsets = listOf(3.0 * 0.5, 3.0 + 2.0 * 0.5, 5.0 + 1.0 * 0.5,
                 3.0 * 0.5, -3.0 * 0.5, -3.0 - 1.0 * 0.5, -4.0 - 2.0 * 0.5, 3.0 + 1.0 * 0.5, 4.0 + 2.0 * 0.5,
                 3.0 * 0.5, 3.0 + 2.0 * 0.5, 5.0 + 1.0 * 0.5),
@@ -92,6 +71,7 @@ class StackPosTest : PosTest() {
         compareWithExpectedOffsets(
             xValues = listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0),
             yValues = listOf(3.0, 2.0, 1.0, 3.0, -3.0, -1.0, -2.0, 1.0, 2.0, 3.0, 2.0, 1.0),
+            groupValues = listOf(0, 1, 2, 0, 0, 1, 2, 1, 2, 0, 1, 2),
             expectedYOffsets = listOf(0.0, 3.0, 5.0, 0.0, 0.0, -3.0, -4.0, 3.0, 4.0, 0.0, 3.0, 5.0),
             posConstructor = getPositionAdjustmentConstructor(vjust = 0.0),
             messageBeginning = "Should work with vjust = 0.0"
@@ -99,9 +79,8 @@ class StackPosTest : PosTest() {
     }
 
     private fun getPositionAdjustmentConstructor(
-        vjust: Double? = null,
-        stackingMode: StackingMode = StackingMode.ALL
+        vjust: Double? = null
     ): (Aesthetics) -> PositionAdjustment {
-        return { aes -> StackPos(aes, vjust = vjust, stackingMode = stackingMode) }
+        return { aes -> StackPos(aes, vjust = vjust) }
     }
 }

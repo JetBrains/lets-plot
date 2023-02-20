@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.pos.StackingMode
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.config.Option.Pos
 
@@ -15,10 +14,8 @@ internal object PosProto {
     // position adjustments
     const val IDENTITY = "identity"
     const val STACK = "stack"
-    const val GSTACK = "gstack"
     const val DODGE = "dodge"
     const val FILL = "fill"
-    const val GFILL = "gfill"
     const val NUDGE = "nudge"
     const val JITTER = "jitter"
     const val JITTER_DODGE = "jitterdodge"
@@ -28,11 +25,9 @@ internal object PosProto {
         val opts = OptionsAccessor(posOptions)
         return when (posName) {
             IDENTITY -> PosProvider.wrap(PositionAdjustments.identity())
-            STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST), StackingMode.ALL)
-            GSTACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST), StackingMode.GROUPS)
+            STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST))
             DODGE -> PosProvider.dodge(opts.getDouble(Pos.Dodge.WIDTH))
-            FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST), StackingMode.ALL)
-            GFILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST), StackingMode.GROUPS)
+            FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST))
             JITTER -> PosProvider.jitter(
                 opts.getDouble(Pos.Jitter.WIDTH),
                 opts.getDouble(Pos.Jitter.HEIGHT)
