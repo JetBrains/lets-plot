@@ -9,8 +9,12 @@ import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.spatial.Geodesic
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.wrapPath
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.LineString
+import jetbrains.datalore.base.typedGeometry.MultiLineString
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.typedGeometry.Transforms.transformPoints
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
@@ -108,12 +112,7 @@ class PathBuilder(
                 else ->
                     wrapPath(points, LonLat.DOMAIN)
                         .let { MultiLineString(it.map(::LineString)) }
-                        .let {
-                            Transforms.transform(
-                                it,
-                                myMapProjection::apply,
-                                RESAMPLING_PRECISION.takeUnless { geodesic })
-                        }
+                        .let { transform(it, myMapProjection::apply, RESAMPLING_PRECISION.takeUnless { geodesic }) }
             }
 
         // location is never built on geodesic points - they alter minimal bbox too much
