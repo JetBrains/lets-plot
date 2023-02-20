@@ -152,12 +152,17 @@ class LayerConfig constructor(
             update(MAPPING, layerMappings)
         }
 
-        // Decided that color/fill_by only affects mappings, constants always uses original aes color/fill.
+        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
+            .filter(::hasOwn)
+            .map(Option.Mapping::toAes)
+
+        // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
+        // And the constant cancels mappings => the constant cancels color/fill_by.
         colorByAes = getColorAes(Option.Layer.COLOR_BY)?.takeIf {
-            (plotMappings + layerMappings).containsKey(it.name)
+             !explicitConstantAes.contains(it) && !explicitConstantAes.contains(Aes.COLOR)
         } ?: Aes.COLOR
         fillByAes = getColorAes(Option.Layer.FILL_BY)?.takeIf {
-            (plotMappings + layerMappings).containsKey(it.name)
+            !explicitConstantAes.contains(it) && !explicitConstantAes.contains(Aes.FILL)
         } ?: Aes.FILL
         // Get renders with replacing color aesthetics
         renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
@@ -238,9 +243,6 @@ class LayerConfig constructor(
         }
 
         // drop from aes mapping constant that were defined explicitly.
-        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
-            .filter { hasOwn(it) }
-            .map { Option.Mapping.toAes(it) }
         aesMappings = aesMappings - explicitConstantAes
 
         // init AES constants excluding mapped AES
