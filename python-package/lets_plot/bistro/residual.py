@@ -1,6 +1,7 @@
+#
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-
+#
 try:
     import numpy as np
 except ImportError:
@@ -11,23 +12,23 @@ try:
 except ImportError:
     pd = None
 
-from lets_plot.plot.core import PlotSpec, aes
-from lets_plot.plot.geom import *
-from lets_plot.plot.label import ylab
-from lets_plot.plot.marginal_layer import ggmarginal
-from lets_plot.plot.theme_ import *
+from ..plot.core import PlotSpec, aes
+from ..plot.geom import geom_hline
+from ..plot.label import ylab
+from ..plot.theme_ import *
+from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
 
 __all__ = ['residual_plot']
 
-
-_METHOD_DEF = "lm"
+_METHOD_DEF = 'lm'
 _METHOD_LM_DEG_DEF = 1
 _METHOD_LOESS_SPAN_DEF = .5
-_GEOM_DEF = "point"
-_BINS_DEF = 30
+_GEOM_DEF = 'point'
 _MARGINAL_DEF = "dens:r"
-_COLOR_DEF = "#118ed8"
 _HLINE_DEF = True
+
+_HLINE_COLOR = "magenta"
+_HLINE_LINETYPE = 'dashed'
 _RESIDUAL_COL = "..residual.."
 
 
@@ -47,12 +48,14 @@ def _extract_data_series(df, x, y):
 
     return xs, ys
 
+
 def _poly_transform(deg):
     def _transform(X):
         assert len(X.shape) > 1 and X.shape[1] == 1
         return np.concatenate([np.power(X, d) for d in range(deg + 1)], axis=1).astype(float)
 
     return _transform
+
 
 def _get_lm_predictor(xs_train, ys_train, deg):
     import statsmodels.api as sm
@@ -62,6 +65,7 @@ def _get_lm_predictor(xs_train, ys_train, deg):
     model = sm.OLS(ys_train, transform(X_train)).fit()
 
     return lambda xs: model.predict(transform(xs.reshape(-1, 1)))
+
 
 def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
     import statsmodels.api as sm
@@ -79,6 +83,7 @@ def _get_loess_predictor(xs_train, ys_train, span, seed, max_n):
 
     return lambda xs: np.array([model(x) for x in xs])
 
+
 def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
     if method == 'lm':
         return _get_lm_predictor(xs_train, ys_train, deg)
@@ -88,6 +93,7 @@ def _get_predictor(xs_train, ys_train, method, deg, span, seed, max_n):
         return lambda xs: np.array([0] * xs.size)
     else:
         raise Exception("Unknown method '{0}'".format(method))
+
 
 def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
     def _get_group_stat_data(group_df):
@@ -107,42 +113,6 @@ def _get_stat_data(data, x, y, group_by, method, deg, span, seed, max_n):
             for group_value in df[group_by].unique()
         ])
         return pd.concat(df_list), np.concatenate(xs_list), np.concatenate(ys_list)
-
-def _get_binwidth(xs, ys, binwidth, bins):
-    if binwidth is not None or bins is not None or len(xs) == 0:
-        return binwidth
-    binwidth_x = (xs.max() - xs.min()) / _BINS_DEF
-    binwidth_y = (ys.max() - ys.min()) / _BINS_DEF
-    binwidth_max = max(binwidth_x, binwidth_y)
-
-    return [binwidth_max, binwidth_max]
-
-def _parse_marginal(marginal, color, color_by, show_legend, bins2d, binwidth2d):
-    def _parse_marginal_layer(geom_name, side, size):
-        layer = None
-        if geom_name in ["dens", "density"]:
-            layer = geom_density(color=color, show_legend=show_legend)
-        elif geom_name in ["hist", "histogram"]:
-            bins = None if bins2d is None else (bins2d[0] if side in ["t", "b"] else bins2d[1])
-            binwidth = None if binwidth2d is None else (binwidth2d[0] if side in ["t", "b"] else binwidth2d[1])
-            marginal_color = None if color_by is not None else (color or _COLOR_DEF)
-            layer = geom_histogram(color=marginal_color, alpha=0, bins=bins, binwidth=binwidth, show_legend=show_legend)
-        elif geom_name in ["box", "boxplot"]:
-            layer = geom_boxplot(color=color, show_legend=show_legend)
-        else:
-            raise Exception("Unknown geom '{0}'".format(geom_name))
-
-        return ggmarginal(side, size=size, layer=layer)
-
-    marginals = []
-    for layer_description in filter(bool, marginal.split(",")):
-        params = layer_description.strip().split(":")
-        geom_name, sides = params[0], params[1]
-        size = float(params[2]) if len(params) > 2 else None
-        for side in sides:
-            marginals.append(_parse_marginal_layer(geom_name, side, size))
-
-    return marginals
 
 
 def residual_plot(data=None, x=None, y=None, *,
@@ -182,7 +152,7 @@ def residual_plot(data=None, x=None, y=None, *,
         Random seed for 'loess' sampling.
     max_n : int
         Maximum number of data-points for 'loess' method. If this quantity exceeded random sampling is applied to data.
-    geom : {'point', 'tile', 'none'}, default='point'
+    geom : {'point', 'tile', 'density2d', 'density2df', 'none'}, default='point'
         The geometric object to use to display the data. No object will be used if `geom='none'`.
     bins : int or list of int
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
@@ -300,7 +270,7 @@ def residual_plot(data=None, x=None, y=None, *,
         }
         residual_plot(data, 'x', 'y', geom='none', hline=False, marginal='none') + \\
             geom_hline(yintercept=0, size=1, color=color) + \\
-            geom_point(shape=21, color=color, fill=fill) + \\
+            geom_point(shape=21, size=3, color=color, fill=fill) + \\
             ggmarginal('r', layer=geom_area(stat='density', color=color, fill=fill))
 
     """
@@ -312,15 +282,12 @@ def residual_plot(data=None, x=None, y=None, *,
     # prepare data
     stat_data, xs, ys = _get_stat_data(data, x, y, color_by, method, deg, span, seed, max_n)
     # prepare parameters
-    if isinstance(bins, int):
-        bins = [bins, bins]
-    if isinstance(binwidth, int) or isinstance(binwidth, float):
-        binwidth = [binwidth, binwidth]
-    binwidth = _get_binwidth(xs, ys, binwidth, bins)
+    binwidth2d, bins2d = _get_bin_params_2d(xs, ys, binwidth, bins)
     # prepare mapping
     mapping_dict = {'x': x, 'y': _RESIDUAL_COL}
     if color_by is not None:
         mapping_dict['color'] = color_by
+        mapping_dict['fill'] = color_by
     # prepare scales
     scales = []
     if method == 'none':
@@ -330,24 +297,15 @@ def residual_plot(data=None, x=None, y=None, *,
     # prepare layers
     layers = []
     # main layer
-    if geom == 'point':
-        layers.append(geom_point(color=color, size=size, alpha=alpha, show_legend=show_legend))
-    elif geom == 'tile':
-        layers.append(geom_bin2d(
-            bins=bins, binwidth=binwidth,
-            color=color, size=size, alpha=alpha,
-            show_legend=show_legend
-        ))
-    elif geom == 'none':
-        pass
-    else:
-        raise Exception("Unknown geom '{0}'".format(geom))
+    main_layer = _get_geom2d_layer(geom, binwidth2d, bins2d, color, color_by, size, alpha, show_legend)
+    if main_layer is not None:
+        layers.append(main_layer)
     # hline layer
     if hline:
-        layers.append(geom_hline(yintercept=0, color="magenta", linetype='dashed'))
+        layers.append(geom_hline(yintercept=0, color=_HLINE_COLOR, linetype=_HLINE_LINETYPE))
     # marginal layers
     if marginal != 'none':
-        layers += _parse_marginal(marginal, color, color_by, show_legend, bins, binwidth)
+        layers += _get_marginal_layers(marginal, binwidth2d, bins2d, color, color_by, show_legend)
     # theme layer
     theme_layer = theme(axis="blank",
                         axis_text_x=element_text(),

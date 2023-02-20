@@ -7,11 +7,11 @@ package jetbrains.datalore.jetbrains.livemap.entities.geometry
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.livemap.World
 import jetbrains.livemap.config.createMapProjection
-import jetbrains.livemap.core.projections.Projections
-import jetbrains.livemap.geometry.GeometryTransform
+import jetbrains.livemap.core.Projections
+import jetbrains.livemap.geometry.MicroTasks
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -35,7 +35,7 @@ class MultiPolygonTransformTest {
 
     @Test
     fun transformTest() {
-        val transform = GeometryTransform.simple<LonLat, LonLat>(
+        val transform = MicroTasks.transform<LonLat, LonLat>(
             multiPolygon(
                 polygon(
                     ring(
@@ -147,14 +147,14 @@ class MultiPolygonTransformTest {
         )
 
         val mapProjection = createMapProjection(Projections.mercator())
-        val transform = GeometryTransform.resampling(input, mapProjection::project)
+        val transform = MicroTasks.resample(input, mapProjection::apply)
 
         while (transform.alive()) {
             transform.resume()
         }
 
         val xyMultipolygon = ArrayList<Polygon<World>>()
-        val xyBoundary = transformMultiPolygon(input, mapProjection::project)
+        val xyBoundary = transform(input, mapProjection::apply)
         for (xyPolygon in xyBoundary) {
             if (!xyPolygon.isEmpty()) {
                 xyMultipolygon.add(xyPolygon)

@@ -10,8 +10,8 @@ import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.plus
 import jetbrains.livemap.*
-import jetbrains.livemap.core.projections.Projection
-import jetbrains.livemap.core.projections.Projections
+import jetbrains.livemap.core.Transform
+import jetbrains.livemap.core.Transforms
 import kotlin.math.max
 import kotlin.math.min
 
@@ -22,7 +22,7 @@ open class Viewport internal constructor(
     val maxZoom: Int
 ) {
 
-    private val zoomTransform = Projections.zoom<World, Client> { zoom }
+    private val zoomTransform = Transforms.zoom<World, Client> { zoom }
     val center: ClientPoint = size / 2.0
     private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
     private var windowSize = World.ZERO_VEC
@@ -57,7 +57,7 @@ open class Viewport internal constructor(
     }
 
     fun getViewCoord(mapCoord: WorldPoint): ClientPoint {
-        return viewportTransform.project(mapCoord)
+        return viewportTransform.apply(mapCoord)
     }
 
     fun getOrigins(origin: ClientPoint, dimension: ClientPoint): List<ClientPoint> {
@@ -73,13 +73,13 @@ open class Viewport internal constructor(
     }
 
     private fun viewportTransform(
-        zoomProjection: Projection<WorldPoint, ClientPoint>,
+        zoomTransform: Transform<WorldPoint, ClientPoint>,
         position: () -> WorldPoint,
         center: () -> ClientPoint
-    ): Projection<WorldPoint, ClientPoint> {
-        return object : Projection<WorldPoint, ClientPoint> {
-            override fun project(v: WorldPoint): ClientPoint = zoomProjection.project(v - position()) + center()
-            override fun invert(v: ClientPoint): WorldPoint = zoomProjection.invert(v - center()) + position()
+    ): Transform<WorldPoint, ClientPoint> {
+        return object : Transform<WorldPoint, ClientPoint> {
+            override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v - position()) + center()
+            override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v - center()) + position()
         }
     }
 

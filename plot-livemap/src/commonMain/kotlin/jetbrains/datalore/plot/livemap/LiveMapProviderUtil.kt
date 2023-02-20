@@ -44,10 +44,10 @@ import jetbrains.livemap.api.liveMapVectorTiles
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapCanvasFigure
 import jetbrains.livemap.core.Clipboard
-import jetbrains.livemap.core.projections.Projections.azimuthalEqualArea
-import jetbrains.livemap.core.projections.Projections.conicEqualArea
-import jetbrains.livemap.core.projections.Projections.geographic
-import jetbrains.livemap.core.projections.Projections.mercator
+import jetbrains.livemap.core.Projections.azimuthalEqualArea
+import jetbrains.livemap.core.Projections.conicEqualArea
+import jetbrains.livemap.core.Projections.geographic
+import jetbrains.livemap.core.Projections.mercator
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.mapengine.basemap.Tilesets
 import jetbrains.livemap.searching.HoverObject

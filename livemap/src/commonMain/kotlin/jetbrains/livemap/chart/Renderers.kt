@@ -7,6 +7,7 @@ package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.typedGeometry.MultiLineString
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
@@ -29,7 +30,7 @@ import kotlin.math.sin
 
 object Renderers {
 
-    fun drawLines(geometry: MultiPolygon<Client>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
+    fun drawMultiPolygon(geometry: MultiPolygon<Client>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry) {
             for (ring in polygon) {
                 ring[0].let(ctx::moveTo)
@@ -83,7 +84,7 @@ object Renderers {
 
             ctx.beginPath()
 
-            drawLines(entity.get<ScreenGeometryComponent>().geometry, ctx) { c ->
+            drawMultiPolygon(entity.get<ScreenGeometryComponent>().geometry.multiPolygon, ctx) { c ->
                 c.closePath()
 
                 if (chartElement.fillColor != null) {
@@ -107,7 +108,7 @@ object Renderers {
             if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
-            val geometry = entity.get<ScreenGeometryComponent>().geometry
+            val geometry = entity.get<ScreenGeometryComponent>().geometry.multiLineString
             val chartElement = entity.get<ChartElementComponent>()
             val color = changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue)
             ctx.setStrokeStyle(color)
@@ -115,7 +116,12 @@ object Renderers {
             ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
             ctx.beginPath()
 
-            drawLines(geometry, ctx, Context2d::stroke)
+            for (lineString in geometry) {
+                lineString[0].let(ctx::moveTo)
+                lineString.drop(1).forEach(ctx::lineTo)
+            }
+            ctx.stroke()
+
             chartElement.arrowSpec?.let { arrowSpec ->
                 drawArrows(arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx)
             }
@@ -133,7 +139,12 @@ object Renderers {
             val isOnLastEnd: Boolean
                 get() = end == End.LAST || end == End.BOTH
 
-            fun createGeometry(polarAngle: Double, x: Double, y: Double, scalingFactor: Double): Pair<DoubleArray, DoubleArray> {
+            fun createGeometry(
+                polarAngle: Double,
+                x: Double,
+                y: Double,
+                scalingFactor: Double
+            ): Pair<DoubleArray, DoubleArray> {
                 val xs = doubleArrayOf(
                     x - length * scalingFactor * cos(polarAngle - angle),
                     x,
@@ -183,7 +194,7 @@ object Renderers {
 
         private fun drawArrows(
             arrowSpec: ArrowSpec,
-            geometry: MultiPolygon<Client>,
+            geometry: MultiLineString<Client>,
             color: Color,
             scalingSizeFactor: Double,
             ctx: Context2d
@@ -216,16 +227,14 @@ object Renderers {
                 }
             }
 
-            for (polygon in geometry) {
-                for (ring in polygon) {
-                    if (arrowSpec.isOnFirstEnd) {
-                        val segment = ring.take(2).reversed()
-                        drawArrowAtEnd(segment, arrowSpec)
-                    }
-                    if (arrowSpec.isOnLastEnd) {
-                        val segment = ring.takeLast(2)
-                        drawArrowAtEnd(segment, arrowSpec)
-                    }
+            for (lineString in geometry) {
+                if (arrowSpec.isOnFirstEnd) {
+                    val segment = lineString.take(2).reversed()
+                    drawArrowAtEnd(segment, arrowSpec)
+                }
+                if (arrowSpec.isOnLastEnd) {
+                    val segment = lineString.takeLast(2)
+                    drawArrowAtEnd(segment, arrowSpec)
                 }
             }
         }

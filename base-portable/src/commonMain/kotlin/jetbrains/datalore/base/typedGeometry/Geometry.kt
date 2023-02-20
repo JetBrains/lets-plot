@@ -25,7 +25,9 @@ class Geometry<TypeT> private constructor(
         get() = myMultiPolygon ?: error("$type is not a MultiPolygon")
 
     companion object {
-        fun <TypeT> createMultiPoint(multiPoint: MultiPoint<TypeT>): Geometry<TypeT> {
+        fun <TypeT> of(point: Vec<TypeT>): Geometry<TypeT> = of(MultiPoint(point))
+
+        fun <TypeT> of(multiPoint: MultiPoint<TypeT>): Geometry<TypeT> {
             return Geometry(
                 type = GeometryType.MULTI_POINT,
                 myMultiPoint = multiPoint,
@@ -34,7 +36,9 @@ class Geometry<TypeT> private constructor(
             )
         }
 
-        fun <TypeT> createMultiLineString(multiLineString: MultiLineString<TypeT>): Geometry<TypeT> {
+        fun <TypeT> of(lineString: LineString<TypeT>): Geometry<TypeT> = of(MultiLineString(lineString))
+
+        fun <TypeT> of(multiLineString: MultiLineString<TypeT>): Geometry<TypeT> {
             return Geometry(
                 type = GeometryType.MULTI_LINESTRING,
                 myMultiPoint = null,
@@ -43,7 +47,9 @@ class Geometry<TypeT> private constructor(
             )
         }
 
-        fun <TypeT> createMultiPolygon(multiPolygon: MultiPolygon<TypeT>): Geometry<TypeT> {
+        fun <TypeT> of(polygon: Polygon<TypeT>): Geometry<TypeT> = of(MultiPolygon(polygon))
+
+        fun <TypeT> of(multiPolygon: MultiPolygon<TypeT>): Geometry<TypeT> {
             return Geometry(
                 type = GeometryType.MULTI_POLYGON,
                 myMultiPoint = null,

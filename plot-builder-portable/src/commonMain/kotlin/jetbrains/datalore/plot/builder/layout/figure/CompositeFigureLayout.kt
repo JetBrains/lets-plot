@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.layout.figure
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 
 interface CompositeFigureLayout {
     fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo>

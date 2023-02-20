@@ -40,6 +40,7 @@ import jetbrains.livemap.config.DevParams.Companion.TILE_CACHE_LIMIT
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_PAUSE_MS
 import jetbrains.livemap.config.DevParams.Companion.UPDATE_TIME_MULTIPLIER
 import jetbrains.livemap.config.DevParams.MicroTaskExecutor.*
+import jetbrains.livemap.core.MapRuler
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.graphics.Rectangle
 import jetbrains.livemap.core.graphics.TextMeasurer
@@ -50,7 +51,6 @@ import jetbrains.livemap.core.layers.RenderTarget.OWN_SCREEN_CANVAS
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.core.projections.MapRuler
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.ApplyPointSystem
 import jetbrains.livemap.geocoding.LocationCalculateSystem

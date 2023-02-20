@@ -2,7 +2,10 @@ package jetbrains.datalore.maps
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.*
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Polygon
+import jetbrains.datalore.base.typedGeometry.Ring
+import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.mapengine.viewport.CellKey
 import java.util.*
@@ -23,37 +26,16 @@ object Utils {
         val topD = top.toDouble()
         val widthD = width.toDouble()
         val heightD = height.toDouble()
-        return Boundary.create(MultiPolygon(
-                listOf(
-                    Polygon(
-                        listOf(
-                            Ring(
-                                listOf(
-                                    explicitVec(leftD, topD),
-                                    explicitVec(leftD + widthD, topD),
-                                    explicitVec(leftD + widthD, topD + heightD),
-                                    explicitVec(leftD, topD + heightD),
-                                    explicitVec(leftD, topD)
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    }
-
-    fun <T> point(p: DoubleVector): Geometry<T> {
-        return Geometry.createMultiPolygon(
+        return Boundary.create(
             MultiPolygon(
-                listOf(
-                    Polygon(
+                Polygon(
+                    Ring(
                         listOf(
-                            Ring(
-                                listOf(
-                                    explicitVec(p.x, p.y)
-                                )
-                            )
+                            explicitVec(leftD, topD),
+                            explicitVec(leftD + widthD, topD),
+                            explicitVec(leftD + widthD, topD + heightD),
+                            explicitVec(leftD, topD + heightD),
+                            explicitVec(leftD, topD)
                         )
                     )
                 )

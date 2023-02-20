@@ -5,4 +5,10 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-class MultiLineString<TypeT>(geometry: List<LineString<TypeT>>) : AbstractGeometryList<LineString<TypeT>>(geometry)
+class MultiLineString<TypeT>(
+    geometry: List<LineString<TypeT>>
+) : AbstractGeometryList<LineString<TypeT>>(geometry) {
+    constructor(linString: LineString<TypeT>) : this(listOf(linString))
+
+    val bbox: Rect<TypeT>? by lazy(geometry.map(LineString<TypeT>::bbox)::union)
+}

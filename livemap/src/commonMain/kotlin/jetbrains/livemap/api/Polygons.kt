@@ -6,8 +6,9 @@
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
+import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
@@ -90,7 +91,7 @@ class PolygonsBuilder(
     }
 
     private fun createStaticEntity(): EcsEntity {
-        val worldGeometry = transformMultiPolygon(geometry!!, myMapProjection::project, resamplingPrecision = null)
+        val worldGeometry = transform(geometry!!, myMapProjection::apply, resamplingPrecision = null)
 
         val worldBbox = worldGeometry.bbox ?: error("Polygon bbox can't be null")
 
@@ -111,7 +112,7 @@ class PolygonsBuilder(
                     strokeWidth = this@PolygonsBuilder.strokeWidth
                 }
                 +WorldOriginComponent(worldBbox.origin)
-                +WorldGeometryComponent().apply { this.geometry = worldGeometry }
+                +WorldGeometryComponent().apply { this.geometry = Geometry.of(worldGeometry) }
                 +WorldDimensionComponent(worldBbox.dimension)
                 +ScreenLoopComponent()
                 +ScreenOriginComponent()

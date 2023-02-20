@@ -224,6 +224,11 @@ open class OptionsAccessor(
         return getNumber(option)?.toInt()
     }
 
+    fun getIntegerSafe(option: String): Int {
+        return getNumber(option)?.toInt()
+            ?: throw IllegalArgumentException("Can't get integer value: option '$option' is not present.")
+    }
+
     fun getLong(option: String): Long? {
         return getNumber(option)?.toLong()
     }

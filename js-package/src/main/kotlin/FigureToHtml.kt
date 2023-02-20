@@ -11,7 +11,7 @@ import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil

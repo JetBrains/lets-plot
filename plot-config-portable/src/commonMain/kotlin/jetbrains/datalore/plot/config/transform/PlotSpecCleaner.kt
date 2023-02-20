@@ -37,13 +37,13 @@ object PlotSpecCleaner {
         return v
     }
 
-    private fun cleanList(`in`: List<*>): List<*> {
-        if (!containSpecs(`in`)) {
+    private fun cleanList(list: List<*>): List<*> {
+        if (!containSpecs(list)) {
             // do not change data vectors
-            return `in`
+            return list
         }
-        val copy = ArrayList<Any>(`in`.size)
-        for (o in `in`) {
+        val copy = ArrayList<Any>(list.size)
+        for (o in list) {
             copy.add(cleanValue(o!!))
         }
         return copy

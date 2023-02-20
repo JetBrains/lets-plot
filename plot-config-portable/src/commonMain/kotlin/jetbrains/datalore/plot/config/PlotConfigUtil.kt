@@ -57,12 +57,11 @@ object PlotConfigUtil {
         val result: List<String> = when (val kind = PlotConfig.figSpecKind(figSpec)) {
             FigKind.PLOT_SPEC -> getComputationMessages(figSpec)
             FigKind.SUBPLOTS_SPEC -> {
-                val figures2D = OptionsAccessor(figSpec).getList(Option.SubPlots.FIGURES)
-                figures2D.flatMap { it as Iterable<*> }
-                    .flatMap {
-                        @Suppress("UNCHECKED_CAST")
-                        findComputationMessages(it as Map<String, Any>)
-                    }
+                val figures = OptionsAccessor(figSpec).getList(Option.SubPlots.FIGURES)
+                figures.flatMap {
+                    @Suppress("UNCHECKED_CAST")
+                    findComputationMessages(it as Map<String, Any>)
+                }
             }
 
             FigKind.GG_BUNCH_SPEC -> {

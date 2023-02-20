@@ -5,15 +5,40 @@
 
 package jetbrains.datalore.plot.builder.layout
 
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.util.Insets
 
-class PlotLayoutInfo(tiles: List<TileLayoutInfo>, val size: DoubleVector) {
-    val tiles: List<TileLayoutInfo> = ArrayList(tiles)
-
+/**
+ * Only "geom" area + axes.
+ */
+class PlotLayoutInfo constructor(
+    val tiles: List<TileLayoutInfo>,
+    private val insets: Insets,
+) {
     val hasTopAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.hAxisTitleOrientation == Orientation.TOP
     val hasLeftAxisTitle: Boolean = tiles.firstOrNull()?.axisInfos?.vAxisTitleOrientation == Orientation.LEFT
 
     val hasBottomAxis: Boolean = tiles.firstOrNull()?.axisInfos?.bottom != null
     val hasLeftAxis: Boolean = tiles.firstOrNull()?.axisInfos?.left != null
+
+    val geomInnerBounds: DoubleRectangle
+        get() {
+            return tiles.map { it.geomInnerBounds }.reduce { acc, el -> acc.union(el) }
+        }
+
+    val geomOuterBounds: DoubleRectangle
+        get() {
+            return tiles.map { it.geomOuterBounds }.reduce { acc, el -> acc.union(el) }
+        }
+
+    val geomWithAxisBounds: DoubleRectangle
+        get() {
+            return tiles.map { it.geomWithAxisBounds }.reduce { acc, el -> acc.union(el) }
+        }
+
+    val size: DoubleVector = geomWithAxisBounds.dimension
+        .add(insets.leftTop)
+        .add(insets.rightBottom)
 }

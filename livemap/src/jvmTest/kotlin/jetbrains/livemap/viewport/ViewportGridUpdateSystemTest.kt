@@ -11,7 +11,7 @@ import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.datalore.jetbrains.livemap.Mocks
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.config.createMapProjection
-import jetbrains.livemap.core.projections.Projections
+import jetbrains.livemap.core.Projections
 import jetbrains.livemap.mapengine.camera.CameraInputSystem
 import jetbrains.livemap.mapengine.viewport.CellKey
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent

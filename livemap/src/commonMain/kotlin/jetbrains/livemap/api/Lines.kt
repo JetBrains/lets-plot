@@ -89,7 +89,7 @@ class LineBuilder(
             lineDash = this@LineBuilder.lineDash.toDoubleArray()
         }
         +WorldOriginComponent(bbox.origin)
-        +WorldGeometryComponent().apply { geometry = line }
+        +WorldGeometryComponent().apply { geometry = Geometry.of(line) }
         +WorldDimensionComponent(bbox.dimension)
         +ScreenLoopComponent()
         +ScreenOriginComponent()
@@ -100,23 +100,12 @@ class LineBuilder(
 
 }
 
-private fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): MultiPolygon<World> {
-    return if (horizontal) {
-        listOf(
-            point.transform(newX = { mapRect.scalarLeft }),
-            point.transform(newX = { mapRect.scalarRight })
-
-        )
+private fun createLineGeometry(point: WorldPoint, horizontal: Boolean, mapRect: WorldRectangle): LineString<World> =
+    if (horizontal) {
+        LineString.of(point.transform(newX = { mapRect.scalarLeft }), point.transform(newX = { mapRect.scalarRight }))
     } else {
-        listOf(
-            point.transform(newY = { mapRect.scalarTop }),
-            point.transform(newY = { mapRect.scalarBottom })
-        )
+        LineString.of(point.transform(newY = { mapRect.scalarTop }), point.transform(newY = { mapRect.scalarBottom }))
     }
-        .run { listOf(Ring(this)) }
-        .run { listOf(Polygon(this)) }
-        .run { MultiPolygon(this) }
-}
 
 private fun createLineBBox(
     point: WorldPoint,

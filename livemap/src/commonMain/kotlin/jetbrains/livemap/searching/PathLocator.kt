@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.searching
 
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.MultiLineString
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.Client
@@ -22,7 +22,7 @@ class PathLocator : Locator {
 
         val strokeRadius: Double = target.get<ChartElementComponent>().strokeWidth / 2
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
-            if (isCoordinateInPath(coord - origin, strokeRadius, target.get<ScreenGeometryComponent>().geometry)) {
+            if (isCoordinateInPath(coord - origin, strokeRadius, target.get<ScreenGeometryComponent>().geometry.multiLineString)) {
                 return HoverObject(
                     layerIndex = target.get<IndexComponent>().layerIndex,
                     index = target.get<IndexComponent>().index
@@ -33,18 +33,15 @@ class PathLocator : Locator {
         return null
     }
 
-    private fun isCoordinateInPath(coord: Vec<Client>, strokeRadius: Double, multiPath: MultiPolygon<Client>): Boolean {
-
-        for (path in multiPath) {
-            val bbox = path.bbox ?: continue
+    private fun isCoordinateInPath(coord: Vec<Client>, strokeRadius: Double, multiLineString: MultiLineString<Client>): Boolean {
+        for (lineString in multiLineString) {
+            val bbox = lineString.bbox ?: continue
 
             if (!LocatorUtil.coordInExtendedRect(coord, bbox, strokeRadius)) {
                 continue
             }
-            for (ring in path) {
-                if (LocatorUtil.pathContainsCoordinate(coord, ring.toList(), strokeRadius)) {
-                    return true
-                }
+            if (LocatorUtil.pathContainsCoordinate(coord, lineString, strokeRadius)) {
+                return true
             }
         }
         return false

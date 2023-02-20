@@ -140,7 +140,7 @@ internal class SquareFrameOfReference(
 
     private fun drawDebugShapes(parent: SvgComponent, geomBounds: DoubleRectangle) {
         run {
-            val tileBounds = layoutInfo.bounds
+            val tileBounds = layoutInfo.geomWithAxisBounds
             val rect = SvgRectElement(tileBounds)
             rect.fillColor().set(Color.BLACK)
             rect.strokeWidth().set(0.0)

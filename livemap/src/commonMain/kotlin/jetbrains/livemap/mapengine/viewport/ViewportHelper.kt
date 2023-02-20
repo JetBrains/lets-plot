@@ -13,7 +13,7 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
-import jetbrains.livemap.core.projections.MapRuler
+import jetbrains.livemap.core.MapRuler
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max

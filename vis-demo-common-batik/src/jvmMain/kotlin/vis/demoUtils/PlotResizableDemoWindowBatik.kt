@@ -59,7 +59,9 @@ class PlotResizableDemoWindowBatik(
                 plotInitialSize
             }
 
-            val plotSvgComponent = plotAssembler.createPlot(plotSize)
+            val layoutInfo = plotAssembler.layoutByOuterSize(plotSize)
+
+            val plotSvgComponent = plotAssembler.createPlot(layoutInfo)
             val plotContainer = PlotContainer(
                 PlotSvgRoot(
                     plotSvgComponent,

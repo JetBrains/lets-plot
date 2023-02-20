@@ -24,6 +24,8 @@ import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.MAX_ZOOM
 import jetbrains.livemap.config.MIN_ZOOM
 import jetbrains.livemap.config.createMapProjection
+import jetbrains.livemap.core.GeoProjection
+import jetbrains.livemap.core.Projections
 import jetbrains.livemap.core.ecs.ComponentsList
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -31,8 +33,6 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.graphics.TextMeasurer
 import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.core.layers.ParentLayerComponent
-import jetbrains.livemap.core.projections.GeoProjection
-import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.fragment.newFragmentProvider
 import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.mapengine.LayerEntitiesComponent

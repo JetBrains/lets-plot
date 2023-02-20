@@ -8,7 +8,9 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.LegendBox
 
-abstract class LegendBoxInfo protected constructor(internal val size: DoubleVector) {
+abstract class LegendBoxInfo(
+    internal val size: DoubleVector
+) {
 
     open val isEmpty: Boolean
         get() = false

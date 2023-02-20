@@ -9,5 +9,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 interface TileLayout {
+    val insideOut:Boolean
     fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo
 }

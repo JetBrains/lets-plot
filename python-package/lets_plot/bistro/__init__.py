@@ -5,8 +5,10 @@ from .corr import *
 from .im import *
 from .qq import *
 from .residual import *
+from .joint import *
 
 __all__ = (im.__all__ +
            corr.__all__ +
            qq.__all__ +
-           residual.__all__)
+           residual.__all__ +
+           joint.__all__)

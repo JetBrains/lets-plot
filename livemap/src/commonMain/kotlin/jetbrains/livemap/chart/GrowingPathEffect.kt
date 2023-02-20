@@ -6,7 +6,6 @@
 package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.typedGeometry.LineString
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
@@ -27,16 +26,12 @@ object GrowingPathEffect {
         return sqrt(x * x + y * y)
     }
 
-    private fun <TypeT> asLineString(geometry: MultiPolygon<TypeT>): LineString<TypeT> {
-        return LineString(geometry[0][0])
-    }
-
     class GrowingPathEffectSystem(componentManager: EcsComponentManager) :
         AbstractSystem<EcsContext>(componentManager) {
 
         override fun updateImpl(context: EcsContext, dt: Double) {
             for (entity in getEntities(COMPONENT_TYPES)) {
-                val path = asLineString(entity.get<ScreenGeometryComponent>().geometry)
+                val path = entity.get<ScreenGeometryComponent>().geometry.multiLineString.single()
 
                 val effectComponent = entity.get<GrowingPathEffectComponent>()
                 if (effectComponent.lengthIndex.isEmpty()) {
@@ -135,25 +130,22 @@ object GrowingPathEffect {
             }
 
             val chartElement = entity.get<ChartElementComponent>()
-            val geometry = entity.get<ScreenGeometryComponent>().geometry
+            val lineString = entity.get<ScreenGeometryComponent>().geometry.multiLineString.single()
             val growingPath = entity.get<GrowingPathEffectComponent>()
 
             ctx.setStrokeStyle(chartElement.strokeColor)
             ctx.setLineWidth(chartElement.strokeWidth)
             ctx.beginPath()
 
-            for (polygon in geometry) {
-                val ring = polygon[0]
-                var viewCoord: Vec<Client> = ring[0]
-                ctx.moveTo(viewCoord.x, viewCoord.y)
+            var viewCoord: Vec<Client> = lineString[0]
+            ctx.moveTo(viewCoord.x, viewCoord.y)
 
-                for (i in 1..growingPath.endIndex) {
-                    viewCoord = ring[i]
-                    ctx.lineTo(viewCoord.x, viewCoord.y)
-                }
-
-                growingPath.interpolatedPoint?.let { ctx.lineTo(it.x, it.y) }
+            for (i in 1..growingPath.endIndex) {
+                viewCoord = lineString[i]
+                ctx.lineTo(viewCoord.x, viewCoord.y)
             }
+
+            growingPath.interpolatedPoint?.let { ctx.lineTo(it.x, it.y) }
             ctx.stroke()
         }
     }

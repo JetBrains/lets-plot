@@ -7,11 +7,13 @@ package jetbrains.livemap.fragment
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
+import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -20,10 +22,9 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
-import jetbrains.livemap.core.projections.Projections
 import jetbrains.livemap.fragment.Utils.RegionsIndex
 import jetbrains.livemap.fragment.Utils.entityName
-import jetbrains.livemap.geometry.GeometryTransform
+import jetbrains.livemap.geometry.MicroTasks
 import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.LiveMapContext
@@ -123,10 +124,10 @@ class FragmentEmitSystem(
         require(!boundaries.isEmpty())
 
         val fragmentEntity = createEntity(entityName(fragmentKey))
-        val zoomProjection = Projections.zoom<World, Client>(fragmentKey::zoom)
+        val zoomProjection = Transforms.zoom<World, Client>(fragmentKey::zoom)
 
-        val projector = GeometryTransform
-            .resampling(boundaries, mapProjection::project)
+        val projector = MicroTasks
+            .resample(boundaries, mapProjection::apply)
             .flatMap { worldMultiPolygon: MultiPolygon<World> ->
                 val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
                 runLaterBySystem(
@@ -138,7 +139,7 @@ class FragmentEmitSystem(
                             +WorldOriginComponent(bbox.origin)
                         }
                 }
-                GeometryTransform.simple(worldMultiPolygon) { p -> zoomProjection.project(p - bbox.origin) }
+                MicroTasks.transform(worldMultiPolygon) { p -> zoomProjection.apply(p - bbox.origin) }
             }
             .map { screenMultiPolygon ->
                 runLaterBySystem(
@@ -153,7 +154,7 @@ class FragmentEmitSystem(
                             + ScaleComponent().apply { zoom = fragmentKey.zoom() }
                             + FragmentComponent(fragmentKey)
                             + ScreenLoopComponent()
-                            + ScreenGeometryComponent().apply { geometry = screenMultiPolygon }
+                            + ScreenGeometryComponent().apply { geometry = Geometry.of(screenMultiPolygon) }
                             + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
                         }
                 }

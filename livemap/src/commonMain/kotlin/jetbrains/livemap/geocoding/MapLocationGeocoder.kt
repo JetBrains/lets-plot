@@ -8,14 +8,14 @@ package jetbrains.livemap.geocoding
 import jetbrains.datalore.base.async.Async
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transformBBox
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldRectangle
-import jetbrains.livemap.core.projections.MapRuler
+import jetbrains.livemap.core.MapRuler
 import jetbrains.livemap.mapengine.MapProjection
 import kotlin.math.min
 
@@ -41,7 +41,7 @@ class MapLocationGeocoder(
                     calculateExtendedRectangleWithCenter(
                         myMapRuler,
                         calculateBBoxOfGeoRect(feature.position!!),
-                        myMapProjection.project(feature.centroid!!.reinterpret()) ?: Vec(0, 0) // TODO: remove this class as map_location doesn't support geocoding anymore
+                        myMapProjection.apply(feature.centroid!!.reinterpret()) ?: Vec(0, 0) // TODO: remove this class as map_location doesn't support geocoding anymore
                     )
                 } else {
                     features
@@ -111,7 +111,7 @@ class MapLocationGeocoder(
 
     companion object {
         fun GeoRectangle.convertToWorldRects(mapProjection: MapProjection): List<Rect<World>> {
-            return splitByAntiMeridian().mapNotNull { rect -> transformBBox(rect, mapProjection::project) }
+            return splitByAntiMeridian().mapNotNull { rect -> transform(rect, mapProjection::apply) }
         }
     }
 }

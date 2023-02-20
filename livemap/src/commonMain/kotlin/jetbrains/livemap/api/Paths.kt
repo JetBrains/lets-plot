@@ -8,9 +8,15 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.math.toRadians
 import jetbrains.datalore.base.spatial.Geodesic
 import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transformMultiPolygon
+import jetbrains.datalore.base.spatial.wrapPath
+import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.LineString
+import jetbrains.datalore.base.typedGeometry.MultiLineString
+import jetbrains.datalore.base.typedGeometry.Transforms.transform
+import jetbrains.datalore.base.typedGeometry.Transforms.transformPoints
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.ChartElementLocationComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
@@ -25,7 +31,7 @@ import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
-import jetbrains.livemap.geometry.GeometryTransform.RESAMPLING_PRECISION
+import jetbrains.livemap.geometry.MicroTasks.RESAMPLING_PRECISION
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
@@ -37,7 +43,6 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
 import jetbrains.livemap.searching.PathLocator
-import kotlin.math.abs
 
 @LiveMapDsl
 class Paths(
@@ -81,7 +86,7 @@ class PathBuilder(
     var strokeWidth: Double = 1.0
 
     lateinit var points: List<Vec<LonLat>>
-    var flat: Boolean = true
+    var flat: Boolean = false
     var geodesic: Boolean = false
     var animation: Int = 0
     var speed: Double = 0.0
@@ -94,16 +99,27 @@ class PathBuilder(
     var arrowType: String? = null
 
     fun build(nonInteractive: Boolean): EcsEntity? {
-        // location is never built on geodesic points - they alter minimal bbox too much
-        val locationGeometry = splitAndPackPath(points)
-            .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
-
         // flat can't be geodesic
-        val coord = splitAndPackPath(points.takeIf { flat || !geodesic } ?: Geodesic.createArcPath(points))
-            .let { transformMultiPolygon(it, myMapProjection::project, RESAMPLING_PRECISION.takeIf { !flat }) }
+        val geodesic = if (flat) false else geodesic
 
+        fun transformPath(points: List<Vec<LonLat>>): MultiLineString<World> =
+            when {
+                flat ->
+                    transformPoints(points, myMapProjection::apply, resamplingPrecision = null)
+                        .let { wrapPath(it, World.DOMAIN) }
+                        .let { MultiLineString(it.map(::LineString)) }
 
-        return coord.bbox?.let { bbox ->
+                else ->
+                    wrapPath(points, LonLat.DOMAIN)
+                        .let { MultiLineString(it.map(::LineString)) }
+                        .let { transform(it, myMapProjection::apply, RESAMPLING_PRECISION.takeUnless { geodesic }) }
+            }
+
+        // location is never built on geodesic points - they alter minimal bbox too much
+        val locGeometry = transformPath(points)
+        val visGeometry = transformPath(points.takeUnless { geodesic } ?: Geodesic.createArcPath(points))
+
+        return visGeometry.bbox?.let { bbox ->
             val entity = myFactory
                 .createMapEntity("map_ent_path")
                 .addComponents {
@@ -127,10 +143,10 @@ class PathBuilder(
                         )
                     }
                     +ChartElementLocationComponent().apply {
-                        geometry = Geometry.createMultiPolygon(locationGeometry)
+                        geometry = Geometry.of(locGeometry)
                     }
                     +WorldOriginComponent(bbox.origin)
-                    +WorldGeometryComponent().apply { geometry = coord }
+                    +WorldGeometryComponent().apply { geometry = Geometry.of(visGeometry) }
                     +WorldDimensionComponent(bbox.dimension)
                     +ScreenLoopComponent()
                     +ScreenOriginComponent()
@@ -185,48 +201,15 @@ fun PathBuilder.arrow(
 ) {
     arrowAngle = toRadians(angle)
     arrowLength = length
-    require(ends in listOf("last", "first", "both")) { "Expected ends to draw arrows values: 'first'|'last'|'both', but was '$ends'"}
+    require(
+        ends in listOf(
+            "last",
+            "first",
+            "both"
+        )
+    ) { "Expected ends to draw arrows values: 'first'|'last'|'both', but was '$ends'" }
     arrowAtEnds = ends
-    require(type in listOf("open", "closed")) { "Expected arrowhead type values: 'open'|'closed', but was '$type'"}
+    require(type in listOf("open", "closed")) { "Expected arrowhead type values: 'open'|'closed', but was '$type'" }
     arrowType = type
 }
 
-internal fun splitAndPackPath(points: List<Vec<LonLat>>): MultiPolygon<LonLat> {
-    return points
-        .run(::splitPathByAntiMeridian)
-        .map { path -> Polygon(listOf(Ring(path))) }
-        .run(::MultiPolygon)
-}
-
-// TODO: looks outdated - does it even work?
-private fun splitPathByAntiMeridian(path: List<Vec<LonLat>>): List<List<Vec<LonLat>>> {
-    val pathList = ArrayList<List<Vec<LonLat>>>()
-    var currentPath = ArrayList<Vec<LonLat>>()
-    if (path.isNotEmpty()) {
-        currentPath.add(path[0])
-
-        for (i in 1 until path.size) {
-            val prev = path[i - 1]
-            val next = path[i]
-            val lonDelta = abs(next.x - prev.x)
-
-            if (lonDelta > 180.0) {
-                val sign = (if (prev.x < 0.0) -1 else +1).toDouble()
-
-                val x1 = prev.x - sign * 180.0
-                val x2 = next.x + sign * 180.0
-                val lat = (next.y - prev.y) * (if (x2 == x1) 1.0 / 2.0 else x1 / (x1 - x2)) + prev.y
-
-                currentPath.add(explicitVec(sign * 180.0, lat))
-                pathList.add(currentPath)
-                currentPath = ArrayList()
-                currentPath.add(explicitVec(-sign * 180.0, lat))
-            }
-
-            currentPath.add(next)
-        }
-    }
-
-    pathList.add(currentPath)
-    return pathList
-}

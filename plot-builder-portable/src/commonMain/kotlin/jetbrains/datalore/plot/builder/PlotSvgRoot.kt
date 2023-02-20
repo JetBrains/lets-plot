@@ -20,7 +20,7 @@ class PlotSvgRoot constructor(
     val plot: PlotSvgComponent,
     val liveMapCursorServiceConfig: Any?,
     origin: DoubleVector
-) : FigureSvgRoot(DoubleRectangle(origin, plot.plotSize)) {
+) : FigureSvgRoot(DoubleRectangle(origin, plot.figureSize)) {
 
     val liveMapFigures: List<SomeFig>
         get() = plot.liveMapFigures

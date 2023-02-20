@@ -25,13 +25,10 @@ import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.interact.PlotInteractor
 import jetbrains.datalore.plot.builder.layout.*
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.addTitlesAndLegends
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
-import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
+import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -43,25 +40,23 @@ import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgRectElement
 import jetbrains.datalore.vis.svg.event.SvgEventHandler
 import jetbrains.datalore.vis.svg.event.SvgEventSpec
-import kotlin.math.max
 
 class PlotSvgComponent constructor(
-    val plotSize: DoubleVector,
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
-    private val plotLayoutInfo: PlotLayoutInfo,
+    private val figureLayoutInfo: PlotFigureLayoutInfo,
     private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val coordProvider: CoordProvider,
-    private val legendBoxInfos: List<LegendBoxInfo>,
     val interactionsEnabled: Boolean,
     val theme: Theme,
     val styleSheet: StyleSheet,
     val plotContext: PlotContext
 ) : SvgComponent() {
 
+    val figureSize: DoubleVector = figureLayoutInfo.figureSize
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
@@ -103,7 +98,8 @@ class PlotSvgComponent constructor(
                 else
                     "<no message>"
             )
-            var y = plotSize.y / 2 - 8
+
+            var y = figureSize.y / 2 - 8
             for (s in messages) {
                 val errorLabel = TextLabel(s)
                 val textColor = when {
@@ -115,7 +111,7 @@ class PlotSvgComponent constructor(
                 errorLabel.setFontStyle("normal")
                 errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
                 errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-                errorLabel.moveTo(plotSize.x / 2, y)
+                errorLabel.moveTo(figureSize.x / 2, y)
                 rootGroup.children().add(errorLabel.rootGroup)
                 y += 16.0
             }
@@ -134,7 +130,7 @@ class PlotSvgComponent constructor(
     }
 
     private fun buildPlotComponents() {
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
+        val overallRect = DoubleRectangle(DoubleVector.ZERO, figureSize)
 
         val plotTheme = theme.plot()
         if (plotTheme.showBackground()) {
@@ -157,53 +153,17 @@ class PlotSvgComponent constructor(
             drawDebugRect(overallRect, Color.MAGENTA, "MAGENTA: overallRect")
         }
 
-        val legendTheme = theme.legend()
-        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
-            legendBoxInfos,
-            legendTheme
-        )
-
         // -------------
         val axisEnabled = !containsLiveMap
 
-        // Inner size includes geoms, axis and facet labels.
-        val plotInnerSize = plotLayoutInfo.size
-        val plotOuterSize = addTitlesAndLegends(
-            plotInnerSize,
-            title,
-            subtitle,
-            caption,
-            hAxisTitle,
-            vAxisTitle,
-            axisEnabled,
-            legendsBlockInfo,
-            theme,
-            flippedAxis
-        )
+        val layoutInfo = figureLayoutInfo.plotLayoutInfo
 
-        // Position the "entire" plot rect in the center of the "overall" rect.
-        val plotOuterBounds = let {
-            val delta = overallRect.center.subtract(
-                DoubleRectangle(overallRect.origin, plotOuterSize).center
-            )
-            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            val plotOuterOrigin = overallRect.origin.add(deltaApplied)
-            DoubleRectangle(plotOuterOrigin, plotOuterSize)
-        }
-
+        val plotOuterBounds = figureLayoutInfo.figureLayoutedBounds
         if (DEBUG_DRAWING) {
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val plotOuterBoundsWithoutTitleAndCaption = let {
-            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
-            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
-            DoubleRectangle(
-                plotOuterBounds.origin.add(titleSizeDelta),
-                plotOuterBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
-            )
-        }
-
+        val plotOuterBoundsWithoutTitleAndCaption = figureLayoutInfo.figureBoundsWithoutTitleAndCaption
         if (DEBUG_DRAWING) {
             drawDebugRect(
                 plotOuterBoundsWithoutTitleAndCaption,
@@ -212,27 +172,12 @@ class PlotSvgComponent constructor(
             )
         }
 
-        // Inner bounds - all without titles and legends.
-        val plotInnerOrigin = plotOuterBoundsWithoutTitleAndCaption.origin
-            .add(legendBlockLeftTopDelta(legendsBlockInfo, legendTheme))
-            .add(
-                axisTitlesOriginOffset(
-                    hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flippedAxis)),
-                    vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flippedAxis)),
-                    hasTopAxisTitle = plotLayoutInfo.hasTopAxisTitle,
-                    hasLeftAxisTitle = plotLayoutInfo.hasLeftAxisTitle,
-                    axisEnabled,
-                    marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flippedAxis)
-                )
-            )
-
-        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
-            .add(plotInnerOrigin)
+        val plotAreaOrigin = figureLayoutInfo.plotAreaOrigin
 
         // build tiles
         @Suppress("UnnecessaryVariable")
-        val tilesOrigin = plotInnerOrigin
-        for (tileLayoutInfo in plotLayoutInfo.tiles) {
+        val tilesOrigin = plotAreaOrigin
+        for (tileLayoutInfo in layoutInfo.tiles) {
             val tileIndex = tileLayoutInfo.trueIndex
 
             // Create a plot tile.
@@ -272,16 +217,16 @@ class PlotSvgComponent constructor(
 
             // axis tooltip should appear on 'outer' bounds:
             val axisOrigin = DoubleVector(
-                x = if (plotLayoutInfo.hasLeftAxis) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
-                y = if (plotLayoutInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
+                x = if (layoutInfo.hasLeftAxis) geomOuterBoundsAbsolute.left else geomOuterBoundsAbsolute.right,
+                y = if (layoutInfo.hasBottomAxis) geomOuterBoundsAbsolute.bottom else geomOuterBoundsAbsolute.top
             )
             interactor?.onTileAdded(
                 geomInnerBoundsAbsolute,
                 tile.targetLocators,
                 tile.layerYOrientations,
                 axisOrigin,
-                hAxisTooltipPosition = if (plotLayoutInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
-                vAxisTooltipPosition = if (plotLayoutInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
+                hAxisTooltipPosition = if (layoutInfo.hasBottomAxis) HorizontalAxisTooltipPosition.BOTTOM else HorizontalAxisTooltipPosition.TOP,
+                vAxisTooltipPosition = if (layoutInfo.hasLeftAxis) VerticalAxisTooltipPosition.LEFT else VerticalAxisTooltipPosition.RIGHT
             )
 
             if (DEBUG_DRAWING) {
@@ -289,6 +234,7 @@ class PlotSvgComponent constructor(
             }
         }
 
+        val geomAreaBounds = figureLayoutInfo.geomAreaBounds
         if (DEBUG_DRAWING) {
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
         }
@@ -397,8 +343,8 @@ class PlotSvgComponent constructor(
             )
         }
 
-        val overallTileBounds = PlotLayoutUtil.overallTileBounds(plotLayoutInfo)
-            .add(plotInnerOrigin)
+        val overallTileBounds = PlotLayoutUtil.overallTileBounds(layoutInfo)
+            .add(plotAreaOrigin)
 
         if (DEBUG_DRAWING) {
             drawDebugRect(overallTileBounds, Color.DARK_MAGENTA, "DARK_MAGENTA: overallTileBounds")
@@ -407,7 +353,7 @@ class PlotSvgComponent constructor(
         // add axis titles
         if (axisEnabled) {
             if (vAxisTitle != null) {
-                val titleOrientation = plotLayoutInfo.tiles.first().axisInfos.vAxisTitleOrientation
+                val titleOrientation = layoutInfo.tiles.first().axisInfos.vAxisTitleOrientation
                 addAxisTitle(
                     vAxisTitle,
                     titleOrientation,
@@ -420,7 +366,7 @@ class PlotSvgComponent constructor(
                 )
             }
             if (hAxisTitle != null) {
-                val titleOrientation = plotLayoutInfo.tiles.first().axisInfos.hAxisTitleOrientation
+                val titleOrientation = layoutInfo.tiles.first().axisInfos.hAxisTitleOrientation
                 addAxisTitle(
                     hAxisTitle,
                     titleOrientation,
@@ -435,6 +381,8 @@ class PlotSvgComponent constructor(
         }
 
         // add legends
+        val legendTheme = theme.legend()
+        val legendsBlockInfo = figureLayoutInfo.legendsBlockInfo
         if (!legendTheme.position().isHidden) {
             val legendsBlockInfoLayouted = LegendBoxesLayout(
                 outerBounds = plotOuterBoundsWithoutTitleAndCaption,

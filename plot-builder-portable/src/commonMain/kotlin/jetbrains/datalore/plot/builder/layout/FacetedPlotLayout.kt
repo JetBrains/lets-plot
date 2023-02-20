@@ -180,7 +180,7 @@ internal class FacetedPlotLayout(
 
             val newLayoutInfo = TileLayoutInfo(
                 tilesPaddingLeftTop,
-                bounds = tileBounds.add(originDelta),
+                geomWithAxisBounds = tileBounds.add(originDelta),
                 geomOuterBounds = geomOuterBounds.add(originDelta),
                 geomInnerBounds = geomInnerBounds.add(originDelta),
                 layoutInfo.axisInfos,
@@ -198,12 +198,8 @@ internal class FacetedPlotLayout(
             )
         }
 
-        val combinedTilesSize = finalLayoutInfos.map { it.bounds }.reduce { b0, b1 -> b0.union(b1) }.dimension
-        val plotSize = combinedTilesSize
-            .add(tilesPaddingLeftTop)
-            .add(insets.rightBottom)
-
-        return PlotLayoutInfo(finalLayoutInfos, plotSize)
+        val plotInsets = Insets(tilesPaddingLeftTop, insets.rightBottom)
+        return PlotLayoutInfo(finalLayoutInfos, plotInsets)
     }
 
 

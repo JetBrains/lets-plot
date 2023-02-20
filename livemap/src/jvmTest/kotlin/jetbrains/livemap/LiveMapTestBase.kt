@@ -6,11 +6,16 @@
 package jetbrains.datalore.jetbrains.livemap
 
 import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
+import jetbrains.datalore.jetbrains.livemap.stubs.LayerManagerStub
+import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.WorldPoint
-import jetbrains.livemap.config.WORLD_RECTANGLE
+import jetbrains.livemap.api.LayersBuilder
+import jetbrains.livemap.config.createMapProjection
+import jetbrains.livemap.core.Projections
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.ecs.*
+import jetbrains.livemap.core.graphics.TextMeasurer
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.mapengine.LiveMapContext
@@ -20,8 +25,8 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportHelper
 import org.junit.Before
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import kotlin.reflect.KClass
 import kotlin.test.assertTrue
 
@@ -32,10 +37,13 @@ abstract class LiveMapTestBase {
     private val mySystems = HashMap<KClass<out EcsSystem>, EcsSystem>()
     private var dt: Double = 0.0
     private var updateRepeatTimes: Int = 0
+    private lateinit var layersBuilder: LayersBuilder
 
     protected abstract val systemsOrder: List<KClass<out EcsSystem>>
 
     protected lateinit var myCamera: MutableCamera
+
+    protected open val size = ClientPoint(500, 500)
 
 
     @Before
@@ -44,15 +52,25 @@ abstract class LiveMapTestBase {
         myCamera = MutableCamera(componentManager)
 
         liveMapContext = mock(LiveMapContext::class.java)
+        val projection = Projections.mercator()
+        val mapProjection = createMapProjection(projection)
+        val viewportHelper = ViewportHelper(mapProjection.mapRect, projection.cylindrical, myLoopY = false)
 
-        val viewport = Viewport(ViewportHelper(WORLD_RECTANGLE, myLoopX = true, myLoopY = false), ClientPoint(500, 500), 1, 15)
+        val viewport = Viewport(viewportHelper, size, 1, 15)
 
         val mapRenderContext = mock(MapRenderContext::class.java)
         `when`(mapRenderContext.viewport).thenReturn(viewport)
 
+        `when`(liveMapContext.mapProjection).thenReturn(mapProjection)
         `when`(liveMapContext.mapRenderContext).thenReturn(mapRenderContext)
         `when`(liveMapContext.camera).thenReturn(myCamera)
 
+        layersBuilder = LayersBuilder(
+            componentManager,
+            LayerManagerStub(),
+            mapProjection,
+            TextMeasurer(mock(Context2d::class.java))
+        )
 
         mySystemTime = mock(SystemTime::class.java)
         `when`(liveMapContext.systemTime).thenReturn(mySystemTime)
@@ -107,6 +125,11 @@ abstract class LiveMapTestBase {
         mySystems[system::class] = system
         return system
     }
+
+    protected fun layers(block: LayersBuilder.() -> Unit) {
+        layersBuilder.apply(block)
+    }
+
 
     fun getEntity(name: String): EcsEntity {
         return ComponentManagerUtil.getEntity(name, componentManager) ?: throw NoSuchElementException()

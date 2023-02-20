@@ -12,7 +12,7 @@ import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import kotlinx.dom.createElement

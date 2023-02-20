@@ -39,7 +39,7 @@ class PlotContainer constructor(
             plot.interactor = Interactor(
                 decorationLayer = svgRoot.decorationLayer,
                 mouseEventPeer = mouseEventPeer,
-                plotSize = plot.plotSize,    // ToDo: svgRoot.bounds.dimension
+                plotSize = plot.figureSize,    // ToDo: svgRoot.bounds.dimension
                 flippedAxis = plot.flippedAxis,
                 theme = plot.theme,
                 plotContext = plot.plotContext

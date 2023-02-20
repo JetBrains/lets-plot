@@ -137,6 +137,7 @@ internal object PlotAssemblerUtil {
 
     fun createPlotLayout(
         layoutProviderByTile: List<TileLayoutProvider>,
+        insideOut: Boolean,
         facets: PlotFacets,
         facetsTheme: FacetsTheme,
         hAxisPosition: AxisPosition,
@@ -144,25 +145,30 @@ internal object PlotAssemblerUtil {
         hAxisTheme: AxisTheme,
         vAxisTheme: AxisTheme,
     ): PlotLayout {
-        if (!facets.isDefined) {
-            val topDownLayout = layoutProviderByTile[0].createTopDownTileLayout()
-            return SingleTilePlotLayout(
-                topDownLayout,
+        return if (facets.isDefined) {
+            FacetedPlotLayout(
+                facets,
+                layoutProviderByTile,
+                facetsTheme.showStrip(),
+                hAxisPosition,
+                vAxisPosition,
+                hAxisTheme,
+                vAxisTheme,
+            )
+        } else {
+            val tileLayout = if (insideOut) {
+                layoutProviderByTile[0].createInsideOutTileLayout()
+            } else {
+                layoutProviderByTile[0].createTopDownTileLayout()
+            }
+
+            SingleTilePlotLayout(
+                tileLayout,
                 hAxisPosition,
                 vAxisPosition,
                 hAxisTheme,
                 vAxisTheme
             )
         }
-
-        return FacetedPlotLayout(
-            facets,
-            layoutProviderByTile,
-            facetsTheme.showStrip(),
-            hAxisPosition,
-            vAxisPosition,
-            hAxisTheme,
-            vAxisTheme,
-        )
     }
 }

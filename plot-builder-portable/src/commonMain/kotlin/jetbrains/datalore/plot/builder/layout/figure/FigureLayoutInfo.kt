@@ -7,9 +7,14 @@ package jetbrains.datalore.plot.builder.layout.figure
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.layout.util.Insets
 
-interface FigureLayoutInfo {
-    val size: DoubleVector
-    val contentBounds: DoubleRectangle
+open class FigureLayoutInfo(
+    val figureSize: DoubleVector,
+    /**
+     * Plot withot axis and facet labels.
+     * Relative to the entire figure origin
+     */
+    val geomAreaBounds: DoubleRectangle
+) {
+
 }

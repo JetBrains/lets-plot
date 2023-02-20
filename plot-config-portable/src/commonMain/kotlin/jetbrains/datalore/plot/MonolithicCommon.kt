@@ -7,10 +7,8 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
-import jetbrains.datalore.plot.builder.config.CompositeFigureBuildInfo
-import jetbrains.datalore.plot.builder.config.FigureBuildInfo
-import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
@@ -87,7 +85,7 @@ object MonolithicCommon {
 
             FigKind.SUBPLOTS_SPEC -> PlotsBuildResult.Success(
                 listOf(
-                    buildFigGridFromProcessedSpecs(
+                    buildCompositeFigureFromProcessedSpecs(
                         plotSpec,
                         plotSize,
                         plotMaxWidth,
@@ -154,7 +152,7 @@ object MonolithicCommon {
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
-    ): PlotBuildInfo {
+    ): PlotFigureBuildInfo {
 
         val computationMessages = ArrayList<String>()
         val config = PlotConfigClientSide.create(plotSpec) {
@@ -171,7 +169,7 @@ object MonolithicCommon {
         )
 
         val assembler = createPlotAssembler(config)
-        return PlotBuildInfo(
+        return PlotFigureBuildInfo(
             assembler,
             plotSpec,
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
@@ -179,7 +177,7 @@ object MonolithicCommon {
         )
     }
 
-    private fun buildFigGridFromProcessedSpecs(
+    private fun buildCompositeFigureFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
@@ -187,7 +185,7 @@ object MonolithicCommon {
     ): CompositeFigureBuildInfo {
         // ToDo: collect computationMessages.
         val computationMessages = ArrayList<String>()
-        val gridConfig = FigGridConfigClientSide(plotSpec) {
+        val compositeFigureConfig = CompositeFigureConfig(plotSpec) {
             computationMessages.addAll(it)
         }
 
@@ -198,32 +196,32 @@ object MonolithicCommon {
             plotPreferredWidth,
         )
 
-        return buildFigureGrid(
-            gridConfig,
+        return buildCompositeFigure(
+            compositeFigureConfig,
             preferredSize
         )
     }
 
-    private fun buildFigureGrid(
-        gridConfig: FigGridConfigClientSide,
+    private fun buildCompositeFigure(
+        compositeFigureConfig: CompositeFigureConfig,
         preferredSize: DoubleVector,
     ): CompositeFigureBuildInfo {
 
-        val gridElements: List<FigureBuildInfo?> = gridConfig.elementConfigs.map {
+        val elements: List<FigureBuildInfo?> = compositeFigureConfig.elementConfigs.map {
             it?.let {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlotFromProcessedSpecs(
                         plotSpec = it.toMap(),
-                        plotSize = null,           // Will be updateed by subplots' layout.
+                        plotSize = null,           // Will be updateed by sub-plots layout.
                         plotMaxWidth = null,
                         plotPreferredWidth = null
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
-                        val gridOptions = it as FigGridConfigClientSide
-                        buildFigureGrid(
+                        val gridOptions = it as CompositeFigureConfig
+                        buildCompositeFigure(
                             gridOptions,
-                            preferredSize = DoubleVector.ZERO // Will be updateed by subplots' layout.
+                            preferredSize = DoubleVector.ZERO // Will be updateed by sub-plots layout.
                         )
                     }
 
@@ -233,11 +231,8 @@ object MonolithicCommon {
         }
 
         return CompositeFigureBuildInfo(
-            elements = gridElements,
-            layout = CompositeFigureGridLayout(
-                ncol = gridConfig.ncol,
-                nrow = gridConfig.nrow,
-            ),
+            elements = elements,
+            layout = compositeFigureConfig.createLayout(),
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
         )
     }

@@ -10,4 +10,8 @@ import jetbrains.datalore.base.algorithms.isClockwise
 class Ring<TypeT>(points: List<Vec<TypeT>>) : AbstractGeometryList<Vec<TypeT>>(points) {
     val bbox: Rect<TypeT>? by lazy(this::boundingBox)
     val isClockwise: Boolean by lazy { isClockwise(this, Vec<TypeT>::x, Vec<TypeT>::y) }
+
+    companion object {
+        fun <TypeT> of(vararg points: Vec<TypeT>): Ring<TypeT> = Ring(points.asList())
+    }
 }

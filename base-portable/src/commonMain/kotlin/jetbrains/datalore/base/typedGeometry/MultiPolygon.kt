@@ -5,6 +5,10 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-class MultiPolygon<TypeT>(polygons: List<Polygon<TypeT>>) : AbstractGeometryList<Polygon<TypeT>>(polygons) {
+class MultiPolygon<TypeT>(
+    polygons: List<Polygon<TypeT>>
+) : AbstractGeometryList<Polygon<TypeT>>(polygons) {
+    constructor(polygon: Polygon<TypeT>) : this(listOf(polygon))
+
     val bbox: Rect<TypeT>? by lazy(polygons.map(Polygon<TypeT>::bbox)::union)
 }

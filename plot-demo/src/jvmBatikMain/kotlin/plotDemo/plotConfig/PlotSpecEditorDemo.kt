@@ -8,9 +8,8 @@ package jetbrains.datalore.plotDemo.plotConfig
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.vis.swing.batik.DefaultPlotPanelBatik
-import java.awt.BorderLayout
 import java.awt.Dimension
-import java.awt.GridLayout
+import java.awt.Rectangle
 import javax.swing.*
 
 fun main() {
@@ -43,15 +42,20 @@ class PlotSpecEditor : JFrame("PlotSpec Editor") {
     init {
         isResizable = false // temp. Incorrect plot size after resize.
         defaultCloseOperation = EXIT_ON_CLOSE
-        preferredSize = Dimension(1200, 600)
-        layout = GridLayout(1, 2)
-        contentPane.add(
-            JPanel().apply {
-                layout = BorderLayout()
-                add(JScrollPane(plotSpec), BorderLayout.CENTER)
-                add(JButton("Evaluate").apply { addActionListener { evaluate() } }, BorderLayout.PAGE_END)
+        preferredSize = Dimension(1400, 600)
+        layout = null
+        contentPane.apply {
+            add(JScrollPane(plotSpec).apply {
+                bounds = Rectangle(10, 10, 400, 500)
             })
-        contentPane.add(plotPanel)
+            add(JButton("Evaluate").apply {
+                bounds = Rectangle(10, 520, 400, 30)
+                addActionListener { evaluate() }
+            })
+        }
+        contentPane.add(plotPanel.apply {
+            bounds = Rectangle(410, 0, 990, 550)
+        })
         pack()
     }
 

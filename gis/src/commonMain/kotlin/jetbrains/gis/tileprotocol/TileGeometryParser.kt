@@ -27,41 +27,27 @@ class TileGeometryParser(geometryCollection: GeometryCollection) {
             get() = myTileGeometries
 
         override fun onPoint(point: Vec<Untyped>) {
-            myTileGeometries.add(
-                Geometry.createMultiPoint(
-                MultiPoint(
-                    listOf(point.reinterpret())
-                )
-            ))
+            myTileGeometries.add(Geometry.of(point.reinterpret()))
         }
 
         override fun onLineString(lineString: LineString<Untyped>) {
-            myTileGeometries.add(
-                Geometry.createMultiLineString(
-                    MultiLineString(listOf(lineString.reinterpret()))
-                )
-            )
+            myTileGeometries.add(Geometry.of(lineString.reinterpret()))
         }
 
         override fun onPolygon(polygon: Polygon<Untyped>) {
-            myTileGeometries.add(
-                Geometry.createMultiPolygon(
-                MultiPolygon(
-                    listOf(polygon.reinterpret())
-                )
-            ))
+            myTileGeometries.add(Geometry.of(polygon.reinterpret()))
         }
 
         override fun onMultiPoint(multiPoint: MultiPoint<Untyped>) {
-            myTileGeometries.add(Geometry.createMultiPoint(multiPoint.reinterpret()))
+            myTileGeometries.add(Geometry.of(multiPoint.reinterpret()))
         }
 
         override fun onMultiLineString(multiLineString: MultiLineString<Untyped>) {
-            myTileGeometries.add(Geometry.createMultiLineString(multiLineString.reinterpret()))
+            myTileGeometries.add(Geometry.of(multiLineString.reinterpret()))
         }
 
         override fun onMultiPolygon(multipolygon: MultiPolygon<Untyped>) {
-            myTileGeometries.add(Geometry.createMultiPolygon(multipolygon.reinterpret()))
+            myTileGeometries.add(Geometry.of(multipolygon.reinterpret()))
         }
     }
 }

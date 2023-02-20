@@ -7,31 +7,28 @@ package jetbrains.datalore.plot.builder.layout.figure.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.MarginalLayerUtil
 import jetbrains.datalore.plot.builder.assemble.PlotAssemblerUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.assemble.PositionalScalesUtil
 import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.frame.BogusFrameOfReferenceProvider
-import jetbrains.datalore.plot.builder.frame.SquareFrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.layout.*
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.axisTitlesOriginOffset
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopDelta
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
+import kotlin.math.max
 
-internal class PlotFigureLayouter(
+internal class PlotFigureLayouter constructor(
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
+    private val frameProviderByTile: List<FrameOfReferenceProvider>,
     private val facets: PlotFacets,
     private val coordProvider: CoordProvider,
-    private val scaleXProto: Scale,
-    private val scaleYProto: Scale,
-    private val xAxisPosition: AxisPosition,
-    private val yAxisPosition: AxisPosition,
+    private val hAxisPosition: AxisPosition,
+    private val vAxisPosition: AxisPosition,
     private val theme: Theme,
     private val legendBoxInfos: List<LegendBoxInfo>,
     private var title: String?,
@@ -41,89 +38,32 @@ internal class PlotFigureLayouter(
     private val flipAxis = coordProvider.flipped
     private val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
 
-    private val frameProviderByTile: List<FrameOfReferenceProvider>
-    private val plotLayout: PlotLayout
+    private val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
+    private val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
+
+    private val axisEnabled = !containsLiveMap
+
+    private val legendsBlockInfo: LegendsBlockInfo
 
     init {
-        if (containsLiveMap) {
-            frameProviderByTile = coreLayersByTile.map { BogusFrameOfReferenceProvider() }
-            plotLayout = createLiveMapPlotLayout()
-        } else {
-            val flipAxis = coordProvider.flipped
-            val domainsXYByTile = PositionalScalesUtil.computePlotXYTransformedDomains(
-                coreLayersByTile,
-                scaleXProto,
-                scaleYProto,
-                facets
-            )
-            val (hScaleProto, vScaleProto) = when (flipAxis) {
-                true -> scaleYProto to scaleXProto
-                else -> scaleXProto to scaleYProto
-            }
-
-            val (hAxisPosition, vAxisPosition) = when (flipAxis) {
-                true -> yAxisPosition.flip() to xAxisPosition.flip()
-                else -> xAxisPosition to yAxisPosition
-            }
-
-            // Marginal layers.
-            // Marginal layers share "marginal domain" and layout across all tiles.
-            val marginalLayers = marginalLayersByTile.flatten()
-            val domainByMargin = MarginalLayerUtil.marginalDomainByMargin(marginalLayers, scaleXProto, scaleYProto)
-            val marginsLayout: GeomMarginsLayout = GeomMarginsLayout.create(marginalLayers)
-
-            // Create frame of reference provider for each tile.
-            frameProviderByTile =
-                domainsXYByTile.map { (xDomain, yDomain) ->
-                    val adjustedDomain = coordProvider.adjustDomain(DoubleRectangle(xDomain, yDomain))
-                    SquareFrameOfReferenceProvider(
-                        hScaleProto, vScaleProto,
-                        adjustedDomain,
-                        flipAxis,
-                        hAxisPosition, vAxisPosition,
-                        theme,
-                        marginsLayout,
-                        domainByMargin
-                    )
-                }
-
-            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
-                it.createTileLayoutProvider()
-            }
-            plotLayout = PlotAssemblerUtil.createPlotLayout(
-                layoutProviderByTile,
-                facets,
-                theme.facets(),
-                hAxisPosition, vAxisPosition,
-                hAxisTheme = theme.horizontalAxis(flipAxis),
-                vAxisTheme = theme.verticalAxis(flipAxis),
-            )
-        }
-    }
-
-    fun doLayout(plotSize: DoubleVector): Result {
-        val overallRect = DoubleRectangle(DoubleVector.ZERO, plotSize)
-
-        val hAxisTitle: String? = frameProviderByTile[0].hAxisLabel
-        val vAxisTitle: String? = frameProviderByTile[0].vAxisLabel
-
-        // compute geom bounds
-        val entirePlot = if (containsLiveMap) {
-            PlotLayoutUtil.liveMapBounds(overallRect)
-        } else {
-            overallRect
-        }
-
         val legendTheme = theme.legend()
-        val legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
+        legendsBlockInfo = LegendBoxesLayoutUtil.arrangeLegendBoxes(
             legendBoxInfos,
             legendTheme
         )
+    }
+
+    fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
+        val figureBaseSize = if (containsLiveMap) {
+            val figBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
+            PlotLayoutUtil.liveMapBounds(figBounds).dimension
+        } else {
+            outerSize
+        }
 
         // -------------
-        val axisEnabled = !containsLiveMap
-        val plotInnerSizeAvailable = PlotLayoutUtil.subtractTitlesAndLegends(
-            baseSize = entirePlot.dimension,
+        val plotPreferredSize = PlotLayoutUtil.subtractTitlesAndLegends(
+            baseSize = figureBaseSize,
             title,
             subtitle,
             caption,
@@ -135,9 +75,46 @@ internal class PlotFigureLayouter(
             flipAxis
         )
 
+        // -------------
+
         // Layout plot inners
-        val layoutInfo = plotLayout.doLayout(plotInnerSizeAvailable, coordProvider)
-        return Result(layoutInfo, frameProviderByTile)
+        val plotLayout = createPlotLayout(insideOut = false)
+        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
+
+        return createFigureLayoutInfo(
+            figurePreferredSize = outerSize,
+            plotLayoutInfo = layoutInfo
+        )
+    }
+
+    fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
+        val plotLayout = createPlotLayout(insideOut = true)
+        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
+
+        return createFigureLayoutInfo(
+            figurePreferredSize = null,
+            layoutInfo
+        )
+    }
+
+
+    private fun createPlotLayout(insideOut: Boolean): PlotLayout {
+        return if (containsLiveMap) {
+            createLiveMapPlotLayout()
+        } else {
+            val layoutProviderByTile: List<TileLayoutProvider> = frameProviderByTile.map {
+                it.createTileLayoutProvider()
+            }
+            PlotAssemblerUtil.createPlotLayout(
+                layoutProviderByTile,
+                insideOut,
+                facets,
+                theme.facets(),
+                hAxisPosition, vAxisPosition,
+                hAxisTheme = theme.horizontalAxis(flipAxis),
+                vAxisTheme = theme.verticalAxis(flipAxis),
+            )
+        }
     }
 
     private fun createLiveMapPlotLayout(): PlotLayout {
@@ -150,6 +127,7 @@ internal class PlotFigureLayouter(
         }
         return PlotAssemblerUtil.createPlotLayout(
             layoutProviderByTile,
+            insideOut = false,
             facets,
             theme.facets(),
             hAxisPosition = AxisPosition.BOTTOM,  // Not used with Live Map
@@ -159,8 +137,74 @@ internal class PlotFigureLayouter(
         )
     }
 
-    data class Result(
-        val layoutInfo: PlotLayoutInfo,
-        val frameProviderByTile: List<FrameOfReferenceProvider>
-    )
+    private fun createFigureLayoutInfo(
+        figurePreferredSize: DoubleVector?,
+        plotLayoutInfo: PlotLayoutInfo
+    ): PlotFigureLayoutInfo {
+        // Plot size includes geoms, axis and facet labels (no titles, legends).
+        val plotSize = plotLayoutInfo.size
+        val figureLayoutedSize = PlotLayoutUtil.addTitlesAndLegends(
+            base = plotSize,
+            title,
+            subtitle,
+            caption,
+            hAxisTitle,
+            vAxisTitle,
+            axisEnabled,
+            legendsBlockInfo,
+            theme,
+            flipAxis
+        )
+
+        // Position the "entire" plot rect in the center of the "overall" rect.
+        val figureLayoutedBounds = if (figurePreferredSize == null) {
+            DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
+        } else {
+            val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
+            val delta = figurePreferredBounds.center.subtract(
+                DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
+            )
+            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+            val plotOuterOrigin = figurePreferredBounds.origin.add(deltaApplied)
+            DoubleRectangle(plotOuterOrigin, figureLayoutedSize)
+        }
+
+        val figureBoundsWithoutTitleAndCaption = let {
+            val titleSizeDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
+            val captionSizeDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
+            DoubleRectangle(
+                figureLayoutedBounds.origin.add(titleSizeDelta),
+                figureLayoutedBounds.dimension.subtract(titleSizeDelta).subtract(captionSizeDelta)
+            )
+        }
+
+        // Inner bounds - all without titles and legends.
+        // Plot origin : the origin of the plot area: geoms, axis and facet labels (no titles, legends).
+        val plotOrigin = figureBoundsWithoutTitleAndCaption.origin
+            .add(legendBlockLeftTopDelta(legendsBlockInfo, theme.legend()))
+            .add(
+                axisTitlesOriginOffset(
+                    hAxisTitleInfo = hAxisTitle to PlotLabelSpecFactory.axisTitle(theme.horizontalAxis(flipAxis)),
+                    vAxisTitleInfo = vAxisTitle to PlotLabelSpecFactory.axisTitle(theme.verticalAxis(flipAxis)),
+                    hasTopAxisTitle = plotLayoutInfo.hasTopAxisTitle,
+                    hasLeftAxisTitle = plotLayoutInfo.hasLeftAxisTitle,
+                    axisEnabled,
+                    marginDimensions = PlotLayoutUtil.axisMarginDimensions(theme, flipAxis)
+                )
+            )
+
+        // Geom area: plot withot axis and facet labels.
+        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
+            .add(plotOrigin)
+
+        return PlotFigureLayoutInfo(
+            figureLayoutedBounds = figureLayoutedBounds,
+            figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleAndCaption,
+            plotAreaOrigin = plotOrigin,
+            geomAreaBounds = geomAreaBounds,
+            figurePreferredSize = figurePreferredSize ?: figureLayoutedBounds.dimension,
+            plotLayoutInfo = plotLayoutInfo,
+            legendsBlockInfo = legendsBlockInfo
+        )
+    }
 }

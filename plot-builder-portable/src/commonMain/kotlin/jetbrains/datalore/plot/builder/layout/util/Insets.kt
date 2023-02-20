@@ -9,18 +9,30 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
 open class Insets(
-    val left: Double,
-    val top: Double,
-    val right: Double,
-    val bottom: Double
+    val leftTop: DoubleVector,
+    val rightBottom: DoubleVector,
 ) {
+    constructor(
+        left: Double,
+        top: Double,
+        right: Double,
+        bottom: Double
+    ) : this(
+        leftTop = DoubleVector(left, top),
+        rightBottom = DoubleVector(right, bottom),
+    )
 
-    val leftTop = DoubleVector(left, top)
-    val rightBottom = DoubleVector(right, bottom)
+    //    val leftTop = DoubleVector(left, top)
+//    val rightBottom = DoubleVector(right, bottom)
+    val left: Double = leftTop.x
+    val top: Double = leftTop.y
+    val right: Double = rightBottom.x
+    val bottom: Double = rightBottom.y
+
 
     open fun subtractFrom(r: DoubleRectangle): DoubleRectangle {
-        val leftTop = DoubleVector(left, top)
-        val rightBottom = DoubleVector(right, bottom)
+//        val leftTop = DoubleVector(left, top)
+//        val rightBottom = DoubleVector(right, bottom)
 
         // ? can be negative
         val size = r.dimension

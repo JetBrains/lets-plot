@@ -8,7 +8,7 @@ package jetbrains.livemap.fragment
 import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers.drawLines
+import jetbrains.livemap.chart.Renderers.drawMultiPolygon
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
@@ -46,7 +46,7 @@ class RegionRenderer : Renderer {
                 ctx.save()
                 ctx.beginPath()
                 ctx.translate(origin.div(fragments.first().get<ScaleComponent>().scale))
-                drawLines(screenGeometry.geometry, ctx) { nop() }
+                drawMultiPolygon(screenGeometry.geometry.multiPolygon, ctx) { nop() }
                 ctx.fill()
                 ctx.restore()
             }

@@ -8,7 +8,8 @@ package jetbrains.datalore.plot.builder.layout
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
-internal class LegendsBlockInfo(
+// ToDo: internal
+/*internal*/ class LegendsBlockInfo(
     val boxWithLocationList: List<LegendBoxesLayout.BoxWithLocation>
 ) {
     fun size(): DoubleVector {
