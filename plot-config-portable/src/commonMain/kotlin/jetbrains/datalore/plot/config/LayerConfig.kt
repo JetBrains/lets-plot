@@ -158,12 +158,24 @@ class LayerConfig constructor(
 
         // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
         // And the constant cancels mappings => the constant cancels color/fill_by.
-        colorByAes = getColorAes(Option.Layer.COLOR_BY)?.takeIf {
-             !explicitConstantAes.contains(it) && !explicitConstantAes.contains(Aes.COLOR)
-        } ?: Aes.COLOR
-        fillByAes = getColorAes(Option.Layer.FILL_BY)?.takeIf {
-            !explicitConstantAes.contains(it) && !explicitConstantAes.contains(Aes.FILL)
-        } ?: Aes.FILL
+        fun getAesOverriding(aes: Aes<Color>): Aes<Color> {
+            val optionName = when (aes) {
+                Aes.COLOR -> Option.Layer.COLOR_BY
+                Aes.FILL -> Option.Layer.FILL_BY
+                else -> aes.name
+            }
+            return when (aes) {
+                in explicitConstantAes -> aes
+                else -> when (val colorBy = getColorAes(optionName)) {
+                    null -> aes
+                    in explicitConstantAes -> aes
+                    else -> colorBy
+                }
+            }
+        }
+
+        colorByAes = getAesOverriding(Aes.COLOR)
+        fillByAes = getAesOverriding(Aes.FILL)
         // Get renders with replacing color aesthetics
         renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
 
