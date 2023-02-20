@@ -7,12 +7,6 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_position.ipynb).
 
 
-- New positioning functions:
-
-  - `position_gstack()`
-  - `position_gfill()`
-
-
 - `angle` parameter in `element_text()` for `axis_text, axis_text_x, axis_text_y` in a `theme()` (i.e. to axis labels).
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_text_angle.ipynb).  
@@ -55,7 +49,12 @@
 - `pandas` library was added to dependencies of the `residual_plot()` function.
 
 - Python packages for `Windows` no longer require `MinGW` tools to run.
-- parameter `flat=True` turns off lines re-projection, keeping the original number of points.
+
+- Parameter `flat=True` turns off lines re-projection, keeping the original number of points.
+
+- Position adjustments `'stack'` and `'fill'` shifts objects only between different groups.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/position_stack.ipynb).
 
 ### Fixed
 
