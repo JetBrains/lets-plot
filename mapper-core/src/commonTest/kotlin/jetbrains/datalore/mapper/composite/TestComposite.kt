@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.composite
+package jetbrains.datalore.mapper.composite
 
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
@@ -14,9 +14,9 @@ import jetbrains.datalore.base.observable.property.ValueProperty
 
 internal open class TestComposite :
         SimpleComposite<TestComposite?, TestComposite>(),
-        NavComposite<TestComposite>,
-        HasVisibility,
-        HasFocusability, HasBounds {
+    NavComposite<TestComposite>,
+    HasVisibility,
+    HasFocusability, HasBounds {
 
 
     private val myChildren = ChildList<TestComposite, TestComposite>(this)

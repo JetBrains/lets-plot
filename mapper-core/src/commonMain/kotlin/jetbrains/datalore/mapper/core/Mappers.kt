@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.mapper.core
 
-import jetbrains.datalore.base.composite.Composites
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.mapper.composite.Composites
 
 object Mappers {
     fun isDescendant(ancestor: Mapper<*, *>, descendant: Mapper<*, *>): Boolean {

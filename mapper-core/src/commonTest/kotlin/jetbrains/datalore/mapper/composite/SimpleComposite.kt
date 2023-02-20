@@ -3,14 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.composite
+package jetbrains.datalore.mapper.composite
 
 
 internal class SimpleComposite(
-        private val name: String,
-        vararg children: SimpleComposite,
-        block: (SimpleComposite) -> Unit = {}) :
-        NavComposite<SimpleComposite> {
+    private val name: String,
+    vararg children: SimpleComposite,
+    block: (SimpleComposite) -> Unit = {}) :
+    NavComposite<SimpleComposite> {
 
     override var parent: SimpleComposite? = null
         private set

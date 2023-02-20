@@ -3,9 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.composite
+package jetbrains.datalore.mapper.composite
 
-import jetbrains.datalore.base.composite.TestComposite.Companion.create
+import jetbrains.datalore.mapper.composite.TestComposite.Companion.create
 import kotlin.test.*
 
 class CompositesTest {
@@ -385,12 +385,12 @@ class CompositesTest {
     fun bothLeftAndRightNull() {
         assertFailsWith<IllegalStateException> {
             Composites.deltaBetween(
-                    object : TestComposite() {
-                        override fun prevSibling(): TestComposite? = null
-                    },
-                    object : TestComposite() {
-                        override fun nextSibling(): TestComposite? = null
-                    }
+                object : TestComposite() {
+                    override fun prevSibling(): TestComposite? = null
+                },
+                object : TestComposite() {
+                    override fun nextSibling(): TestComposite? = null
+                }
             )
         }
     }

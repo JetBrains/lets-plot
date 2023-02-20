@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.mapper.core
 
-import jetbrains.datalore.base.composite.HasParent
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.collections.set.ObservableHashSet
@@ -13,6 +12,7 @@ import jetbrains.datalore.base.observable.collections.set.ObservableSet
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
+import jetbrains.datalore.mapper.composite.HasParent
 
 /**
  * Mapper is an object encapsulating a mapping (usually UI related) from source to target.
