@@ -25,6 +25,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -90,6 +93,15 @@ abstract class AesVisitor<T> {
         }
         if (aes == FILL) {
             return fill()
+        }
+        if (aes == PAINT_A) {
+            return paint_a()
+        }
+        if (aes == PAINT_B) {
+            return paint_b()
+        }
+        if (aes == PAINT_C) {
+            return paint_c()
         }
         if (aes == ALPHA) {
             return alpha()
@@ -218,6 +230,12 @@ abstract class AesVisitor<T> {
     protected abstract fun color(): T
 
     protected abstract fun fill(): T
+
+    protected abstract fun paint_a(): T
+
+    protected abstract fun paint_b(): T
+
+    protected abstract fun paint_c(): T
 
     protected abstract fun alpha(): T
 

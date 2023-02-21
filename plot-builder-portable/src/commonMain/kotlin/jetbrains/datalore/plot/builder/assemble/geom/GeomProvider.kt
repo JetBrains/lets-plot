@@ -5,23 +5,16 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.livemap.LivemapConstants
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 abstract class GeomProvider private constructor(val geomKind: GeomKind) {
 
     open val preferredCoordinateSystem: CoordProvider
         get() = throw IllegalStateException("No preferred coordinate system")
-
-    fun renders(): List<Aes<*>> {
-        return GeomMeta.renders(geomKind)
-    }
 
     abstract fun createGeom(): Geom
 

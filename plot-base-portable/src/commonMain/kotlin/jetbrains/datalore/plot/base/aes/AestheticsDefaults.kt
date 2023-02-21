@@ -42,7 +42,9 @@ open class AestheticsDefaults {
     fun <T> defaultValueInLegend(aes: Aes<T>): T {
         return if (myDefaultsInLegend.containsKey(aes)) {
             myDefaultsInLegend[aes]
-        } else defaultValue(aes)
+        } else {
+            defaultValue(aes)
+        }
     }
 
     companion object {

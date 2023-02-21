@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
@@ -37,7 +38,9 @@ internal object LegendAssemblerUtil {
     fun mapToAesthetics(
         valueByAesIterable: Collection<Map<Aes<*>, Any>>,
         constantByAes: Map<Aes<*>, Any>,
-        aestheticsDefaults: AestheticsDefaults
+        aestheticsDefaults: AestheticsDefaults,
+        colorByAes: Aes<Color>,
+        fillByAes: Aes<Color>
     ): Aesthetics {
         val dataPoints = ArrayList<Map<Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {
@@ -51,7 +54,8 @@ internal object LegendAssemblerUtil {
                 when (constantAes) {
                     Aes.SHAPE,
                     Aes.COLOR,
-                    Aes.FILL -> dataPoint[constantAes] = constantByAes[constantAes]!!
+                    Aes.FILL,
+                    Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C -> dataPoint[constantAes] = constantByAes[constantAes]!!
                 }
             }
 
@@ -67,6 +71,11 @@ internal object LegendAssemblerUtil {
             @Suppress("UNCHECKED_CAST")
             builder.aes(aes as Aes<Any>) { index -> dataPoints[index][aes]!! }
         }
+
+        builder
+            .colorAes(colorByAes)
+            .fillAes(fillByAes)
+
         return builder.build()
     }
 

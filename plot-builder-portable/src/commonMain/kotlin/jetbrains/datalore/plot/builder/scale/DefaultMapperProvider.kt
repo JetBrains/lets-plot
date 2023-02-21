@@ -26,6 +26,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -97,6 +100,9 @@ object DefaultMapperProvider {
             this.put(YMAX, NUMERIC_IDENTITY)
             this.put(COLOR, createColorMapperProvider())
             this.put(FILL, createColorMapperProvider())
+            this.put(PAINT_A, createColorMapperProvider())
+            this.put(PAINT_B, createColorMapperProvider())
+            this.put(PAINT_C, createColorMapperProvider())
             this.put(ALPHA, AlphaMapperProvider.DEFAULT)
             this.put(SHAPE, createWithDiscreteOutput(ShapeMapper.allShapes(), ShapeMapper.NA_VALUE))
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))

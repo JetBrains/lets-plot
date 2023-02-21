@@ -5,10 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
-import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.sampling.Samplings
@@ -70,10 +68,6 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             RASTER,
             IMAGE -> Samplings.NONE
         }
-    }
-
-    fun renders(): List<Aes<*>> {
-        return GeomMeta.renders(geomKind)
     }
 
     fun preferredPositionAdjustmentOptions(layerOptions: OptionsAccessor): Map<String, Any> {

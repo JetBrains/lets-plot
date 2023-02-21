@@ -28,6 +28,9 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.LOWER
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
+import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
 import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
@@ -67,6 +70,9 @@ object DefaultNaValue {
         VALUE_MAP.put(YMAX, 0.0)
         VALUE_MAP.put(COLOR, Color.GRAY)
         VALUE_MAP.put(FILL, Color.GRAY)
+        VALUE_MAP.put(PAINT_A, Color.GRAY)
+        VALUE_MAP.put(PAINT_B, Color.GRAY)
+        VALUE_MAP.put(PAINT_C, Color.GRAY)
         VALUE_MAP.put(ALPHA, 0.0)
         VALUE_MAP.put(SHAPE, TinyPointShape)
         VALUE_MAP.put(LINETYPE, NamedLineType.SOLID)
@@ -106,7 +112,7 @@ object DefaultNaValue {
     }
 
     /**
-     * For test only (must br TRUE for any Aes)
+     * For test only (must be TRUE for any Aes)
      */
     fun has(aes: Aes<*>): Boolean {
         return VALUE_MAP.containsKey(aes)

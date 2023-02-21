@@ -113,7 +113,9 @@ internal object PlotAssemblerUtil {
                     aesListForScaleName,
                     layerConstantByAes,
                     aestheticsDefaults,
-                    ctx
+                    ctx,
+                    contextLayer.colorByAes,
+                    contextLayer.fillByAes
                 )
             }
         }

@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 
@@ -21,6 +22,8 @@ interface PlotContext {
         val isLegendDisabled: Boolean
         val aestheticsDefaults: AestheticsDefaults
         val legendKeyElementFactory: LegendKeyElementFactory
+        val colorByAes: Aes<Color>
+        val fillByAes: Aes<Color>
         fun renderedAes(): List<Aes<*>>
         fun hasBinding(aes: Aes<*>): Boolean
         fun hasConstant(aes: Aes<*>): Boolean

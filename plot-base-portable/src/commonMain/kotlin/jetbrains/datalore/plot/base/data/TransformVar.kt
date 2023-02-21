@@ -18,6 +18,9 @@ object TransformVar {
     val YMAX = DataFrame.Variable("transform.YMAX", TRANSFORM)
     val COLOR = DataFrame.Variable("transform.COLOR", TRANSFORM)
     val FILL = DataFrame.Variable("transform.FILL", TRANSFORM)
+    val PAINT_A = DataFrame.Variable("transform.PAINT_A", TRANSFORM)
+    val PAINT_B = DataFrame.Variable("transform.PAINT_B", TRANSFORM)
+    val PAINT_C = DataFrame.Variable("transform.PAINT_C", TRANSFORM)
     val ALPHA = DataFrame.Variable("transform.ALPHA", TRANSFORM)
     val SHAPE = DataFrame.Variable("transform.SHAPE", TRANSFORM)
     val LINETYPE = DataFrame.Variable("transform.LINETYPE", TRANSFORM)
@@ -115,6 +118,18 @@ object TransformVar {
 
         override fun fill(): DataFrame.Variable {
             return FILL
+        }
+
+        override fun paint_a(): DataFrame.Variable {
+            return PAINT_A
+        }
+
+        override fun paint_b(): DataFrame.Variable {
+            return PAINT_B
+        }
+
+        override fun paint_c(): DataFrame.Variable {
+            return PAINT_C
         }
 
         override fun alpha(): DataFrame.Variable {

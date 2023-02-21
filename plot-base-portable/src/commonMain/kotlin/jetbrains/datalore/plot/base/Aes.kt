@@ -32,6 +32,9 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         val COLOR: Aes<Color> = Aes("color", false)
         val FILL: Aes<Color> = Aes("fill", false)
+        val PAINT_A: Aes<Color> = Aes("paint_a", false)
+        val PAINT_B: Aes<Color> = Aes("paint_b", false)
+        val PAINT_C: Aes<Color> = Aes("paint_c", false)
         val ALPHA: Aes<Double> = Aes("alpha")
         val SHAPE: Aes<PointShape> = Aes("shape", false)
         val LINETYPE: Aes<LineType> = Aes("linetype", false)
@@ -137,7 +140,11 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         }
 
         fun isColor(aes: Aes<*>): Boolean {
-            return aes == COLOR || aes == FILL
+            return aes == COLOR ||
+                    aes == FILL ||
+                    aes == PAINT_A ||
+                    aes == PAINT_B ||
+                    aes == PAINT_C
         }
 
         fun affectingScaleX(aes: Aes<*>): Boolean {

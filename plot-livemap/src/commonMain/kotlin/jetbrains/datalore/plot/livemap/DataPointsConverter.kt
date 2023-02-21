@@ -43,10 +43,7 @@ internal class DataPointsConverter(
     )
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
         val pieOptions = PieOptions(geom.strokeColor, geom.strokeWidth, geom.holeSize)
-        val fillWithColor = geom.fillWithColor
-        val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics ->
-            if (fillWithColor) p.color()!! else p.fill()!!
-        }
+        val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics -> p.fill()!! }
         val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints, colorGetter)
             .map {

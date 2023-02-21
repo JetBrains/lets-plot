@@ -5,9 +5,11 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
@@ -131,6 +133,11 @@ class LayerConfig constructor(
     }
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 
+    // Color aesthetics
+    val colorByAes: Aes<Color>
+    val fillByAes: Aes<Color>
+
+    val renderedAes: List<Aes<*>>
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -145,8 +152,35 @@ class LayerConfig constructor(
             update(MAPPING, layerMappings)
         }
 
+        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
+            .filter(::hasOwn)
+            .map(Option.Mapping::toAes)
+
+        // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
+        // And the constant cancels mappings => the constant cancels color/fill_by.
+        fun getAesOverriding(aes: Aes<Color>): Aes<Color> {
+            val optionName = when (aes) {
+                Aes.COLOR -> Option.Layer.COLOR_BY
+                Aes.FILL -> Option.Layer.FILL_BY
+                else -> aes.name
+            }
+            return when (aes) {
+                in explicitConstantAes -> aes
+                else -> when (val colorBy = getColorAes(optionName)) {
+                    null -> aes
+                    in explicitConstantAes -> aes
+                    else -> colorBy
+                }
+            }
+        }
+
+        colorByAes = getAesOverriding(Aes.COLOR)
+        fillByAes = getAesOverriding(Aes.FILL)
+        // Get renders with replacing color aesthetics
+        renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
+
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
-        val consumedAesSet: Set<Aes<*>> = geomProto.renders().toSet().let {
+        val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
                 true -> it
                 false -> it + stat.consumes()
@@ -221,9 +255,6 @@ class LayerConfig constructor(
         }
 
         // drop from aes mapping constant that were defined explicitly.
-        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
-            .filter { hasOwn(it) }
-            .map { Option.Mapping.toAes(it) }
         aesMappings = aesMappings - explicitConstantAes
 
         // init AES constants excluding mapped AES
@@ -256,7 +287,7 @@ class LayerConfig constructor(
                         opts = getMap(TOOLTIPS),
                         constantsMap = constantsMap,
                         groupingVarName = explicitGroupingVarName,
-                        varBindings = varBindings.filter { it.aes in geomProto.renders() } // use rendered only (without stat.consumes())
+                        varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
                     ).createTooltips()
                 }
                 NONE -> {
@@ -276,7 +307,7 @@ class LayerConfig constructor(
                 opts = getMap(ANNOTATIONS),
                 constantsMap = constantsMap,
                 groupingVarName = explicitGroupingVarName,
-                varBindings = varBindings.filter { it.aes in geomProto.renders() } // use rendered only (without stat.consumes())
+                varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
             ).createAnnotations()
         } else {
             AnnotationSpecification.NONE
@@ -367,6 +398,15 @@ class LayerConfig constructor(
         }
 
         return Pair(dataVar, mapVar)
+    }
+
+    private fun OptionsAccessor.getColorAes(option: String): Aes<Color>? {
+        return getString(option)?.let {
+            val aes = Option.Mapping.toAes(it)
+            require(Aes.isColor(aes)) { "'$option' should be an aesthetic related to color" }
+            @Suppress("UNCHECKED_CAST")
+            aes as Aes<Color>
+        }
     }
 
     private companion object {

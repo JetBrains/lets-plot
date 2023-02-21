@@ -190,6 +190,10 @@ object PlotConfigClientSideUtil {
             .yOrientation(layerConfig.isYOrientation)
             .marginal(layerConfig.isMarginal, layerConfig.marginalSide, layerConfig.marginalSize)
 
+        // Color aesthetics
+        layerBuilder
+            .colorByAes(layerConfig.colorByAes)
+            .fillByAes(layerConfig.fillByAes)
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {

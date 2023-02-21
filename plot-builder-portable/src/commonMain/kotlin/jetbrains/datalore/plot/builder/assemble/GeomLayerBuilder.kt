@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.annotations.Annotations
@@ -62,6 +63,9 @@ class GeomLayerBuilder constructor(
     private var isMarginal: Boolean = false
     private var marginalSide: MarginSide = MarginSide.LEFT
     private var marginalSize: Double = Double.NaN
+
+    private var colorByAes: Aes<Color> = Aes.COLOR
+    private var fillByAes: Aes<Color> = Aes.FILL
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
@@ -137,6 +141,16 @@ class GeomLayerBuilder constructor(
         return this
     }
 
+    fun colorByAes(aes: Aes<Color>): GeomLayerBuilder {
+        colorByAes = aes
+        return this
+    }
+
+    fun fillByAes(aes: Aes<Color>): GeomLayerBuilder {
+        fillByAes = aes
+        return this
+    }
+
     fun build(
         data: DataFrame,
         scaleMap: Map<Aes<*>, Scale>,
@@ -203,7 +217,6 @@ class GeomLayerBuilder constructor(
             data,
             geomProvider,
             posProvider,
-            geomProvider.renders(),
             groupingContext.groupMapper,
             replacementBindings,
             myConstantByAes,
@@ -217,6 +230,8 @@ class GeomLayerBuilder constructor(
             marginalSide = marginalSide,
             marginalSize = marginalSize,
             fontFamilyRegistry = fontFamilyRegistry,
+            colorByAes = colorByAes,
+            fillByAes = fillByAes,
             annotationsProvider = myAnnotationsProvider
         )
     }
@@ -230,7 +245,6 @@ class GeomLayerBuilder constructor(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
         override val posProvider: PosProvider,
-        renderedAes: List<Aes<*>>,
         override val group: (Int) -> Int,
         private val varBindings: Map<Aes<*>, VarBinding>,
         constantByAes: TypedKeyHashMap,
@@ -244,7 +258,9 @@ class GeomLayerBuilder constructor(
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
         override val fontFamilyRegistry: FontFamilyRegistry,
-        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
+        override val colorByAes: Aes<Color>,
+        override val fillByAes: Aes<Color>,
+        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?,
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom()
@@ -261,7 +277,7 @@ class GeomLayerBuilder constructor(
             get() = geom is LiveMapGeom
 
         init {
-            myRenderedAes = ArrayList(renderedAes)
+            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes)
 
             // constant value by aes (default + specified)
             myConstantByAes = TypedKeyHashMap()

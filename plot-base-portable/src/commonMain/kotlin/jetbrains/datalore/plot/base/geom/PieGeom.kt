@@ -43,7 +43,6 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
     var strokeWidth: Double = 0.0
     var strokeColor: Color = Color.WHITE
-    var fillWithColor: Boolean = false
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PieLegendKeyElementFactory()
@@ -142,10 +141,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         )
     }
 
-    private fun getFillColor(p: DataPointAesthetics) = when (fillWithColor) {
-        true -> p.color()!!
-        false -> p.fill()!!
-    }
+    private fun getFillColor(p: DataPointAesthetics) = p.fill()!!
 
     private fun computeSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }
