@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.mapper.core
 
-import jetbrains.datalore.base.observable.transform.Transformers
+import jetbrains.datalore.mapper.transform.Transformers
 
 internal open class ItemMapper(item: Item) : Mapper<Item, Item>(item, Item()) {
     private lateinit var mySimpleRole: SimpleRoleSynchronizer<Item, Item>
 
-    override fun registerSynchronizers(conf: Mapper.SynchronizersConfiguration) {
+    override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         conf.add(Synchronizers.forObservableRole(
                 this, source.observableChildren, target.observableChildren, createMapperFactory()))
         conf.add(Synchronizers.forObservableRole(

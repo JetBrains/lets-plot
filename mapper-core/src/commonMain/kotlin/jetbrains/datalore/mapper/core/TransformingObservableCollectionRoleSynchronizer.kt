@@ -9,16 +9,16 @@ import jetbrains.datalore.base.observable.collections.CollectionAdapter
 import jetbrains.datalore.base.observable.collections.CollectionItemEvent
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
-import jetbrains.datalore.base.observable.transform.Transformation
-import jetbrains.datalore.base.observable.transform.Transformer
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.mapper.transform.Transformation
+import jetbrains.datalore.mapper.transform.Transformer
 
 internal class TransformingObservableCollectionRoleSynchronizer<SourceT, MappedT, TargetT>(
-        mapper: Mapper<*, *>,
-        private val mySource: SourceT,
-        private val mySourceTransformer: Transformer<in SourceT, ObservableList<MappedT>>,
-        private val myTarget: MutableList<in TargetT>,
-        factory: MapperFactory<MappedT, TargetT>) : BaseCollectionRoleSynchronizer<MappedT, TargetT>(mapper) {
+    mapper: Mapper<*, *>,
+    private val mySource: SourceT,
+    private val mySourceTransformer: Transformer<in SourceT, ObservableList<MappedT>>,
+    private val myTarget: MutableList<in TargetT>,
+    factory: MapperFactory<MappedT, TargetT>) : BaseCollectionRoleSynchronizer<MappedT, TargetT>(mapper) {
 
     private var myCollectionRegistration: Registration? = null
     private var mySourceTransformation: Transformation<in SourceT, ObservableList<MappedT>>? = null

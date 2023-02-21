@@ -11,9 +11,9 @@ import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.observable.event.EventSource
 import jetbrains.datalore.base.observable.property.*
-import jetbrains.datalore.base.observable.transform.Transformer
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
+import jetbrains.datalore.mapper.transform.Transformer
 
 /**
  * Utility class for synchronizer creation

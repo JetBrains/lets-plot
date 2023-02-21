@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.observable.transform
+package jetbrains.datalore.mapper.transform
 
 abstract class BaseTransformer<SourceT, TargetT> : Transformer<SourceT, TargetT> {
     override fun <ParameterTargetT> andThen(
-            transformer: Transformer<TargetT, ParameterTargetT>): Transformer<SourceT, ParameterTargetT> {
+            transformer: Transformer<TargetT, ParameterTargetT>
+    ): Transformer<SourceT, ParameterTargetT> {
 
         val firstTransformer = this
         return object : BaseTransformer<SourceT, ParameterTargetT>() {
@@ -24,8 +25,9 @@ abstract class BaseTransformer<SourceT, TargetT> : Transformer<SourceT, TargetT>
             }
 
             private fun createTransformation(
-                    tn1: Transformation<SourceT, TargetT>,
-                    tn2: Transformation<TargetT, ParameterTargetT>): Transformation<SourceT, ParameterTargetT> {
+                tn1: Transformation<SourceT, TargetT>,
+                tn2: Transformation<TargetT, ParameterTargetT>
+            ): Transformation<SourceT, ParameterTargetT> {
 
                 return object : Transformation<SourceT, ParameterTargetT>() {
                     override val source: SourceT

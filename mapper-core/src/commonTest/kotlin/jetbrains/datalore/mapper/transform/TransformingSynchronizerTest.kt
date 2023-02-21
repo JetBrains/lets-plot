@@ -1,14 +1,16 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.mapper.core
+package jetbrains.datalore.mapper.transform
 
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.property.Properties
-import jetbrains.datalore.base.observable.transform.Transformers
+import jetbrains.datalore.mapper.core.Mapper
+import jetbrains.datalore.mapper.core.MapperFactory
+import jetbrains.datalore.mapper.core.TransformingObservableCollectionRoleSynchronizer
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
