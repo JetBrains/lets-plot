@@ -135,4 +135,64 @@ class GroupsOrderWithFacetsTest {
             )
         )
     }
+
+    @Test
+    fun withNanValues() {
+        val data = """
+            |{
+            |    "x": [0, 0, 0, 1, 1, 0, 0, 0, 1, 1],
+            |    "f": ["B", null, "A", null, "A", null, "C", "A", "A", "B"],
+            |    "g": ["X", "X", "X", "X", "X", "Y", "Y", "Y", "Y", "Y"]
+            |}""".trimMargin()
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": $data,
+            |  "mapping": {
+            |    "x": "x",
+            |    "fill": "f"
+            |  },
+            |  "facet": {
+            |    "name": "grid",
+            |    "x": "g",
+            |    "x_order": 1,
+            |    "y_order": 1
+            |   },  
+            |  "layers": [
+            |    {
+            |      "geom": "bar"
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        val layers = TestUtil.createGeomLayers(parsePlotSpec(spec))
+        assertEquals(2, layers.size)
+
+        // tile 1
+        ScaleOrderingTest.assertScaleOrdering(
+            layers[0],
+            expectedScaleBreaks = mapOf(
+                Aes.FILL to listOf("B", "A", "C")
+            ),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to listOf(
+                    listOf("B", "A", null),
+                    listOf("A", null)
+                )
+            )
+        )
+        //tile 2
+        ScaleOrderingTest.assertScaleOrdering(
+            layers[1],
+            expectedScaleBreaks = mapOf(
+                Aes.FILL to listOf("B", "A", "C")
+            ),
+            expectedOrderInBar = mapOf(
+                Aes.FILL to listOf(
+                    listOf("A", "C", null),
+                    listOf("B", "A")
+                )
+            )
+        )
+    }
 }

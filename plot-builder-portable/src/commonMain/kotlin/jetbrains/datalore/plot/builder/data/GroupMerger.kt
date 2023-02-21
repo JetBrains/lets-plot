@@ -90,11 +90,10 @@ internal class GroupMerger {
         }
     }
 
-    fun addGroup(d: DataFrame, groupSize: Int): GroupMerger {
+    fun addGroup(d: DataFrame, groupSize: Int) {
         val group = Group(d, groupSize)
         val indexToInsert = findIndexToInsert(group)
         myOrderedGroups.add(indexToInsert, group)
-        return this
     }
 
     private fun findIndexToInsert(group: Group): Int {

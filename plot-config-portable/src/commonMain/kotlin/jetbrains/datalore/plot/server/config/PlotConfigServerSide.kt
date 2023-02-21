@@ -12,7 +12,6 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
-import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
@@ -56,7 +55,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
     internal fun updatePlotSpec() {
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
 
-        // apply tranform and stat
+        // apply transform and stat
         val dataByTileByLayerAfterStat = dataByTileByLayerAfterStat { layerIndex, message ->
             layerIndexWhereSamplingOccurred.add(layerIndex)
             PlotConfigUtil.addComputationMessage(this, message)
@@ -157,23 +156,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         for (layerConfig in layerConfigs) {
             var layerData = layerConfig.combinedData
             layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, transformByAes)
-
-            // ensure the same group order for facets
-            if (facets.isDefined) {
-                val groupingVariables = DataProcessing.defaultGroupingVariables(
-                    layerData,
-                    layerConfig.varBindings,
-                    pathIdVarName = null
-                )
-                val groupingContext = GroupingContext(
-                    layerData,
-                    groupingVariables,
-                    explicitGroupingVarName = layerConfig.explicitGroupingVarName,
-                    expectMultiple = true
-                )
-                layerData = DataProcessing.regroupData(layerData, groupingContext)
-            }
-
             dataByLayer.add(layerData)
         }
 

@@ -411,23 +411,4 @@ object DataProcessing {
         val data: DataFrame,
         val groupingContext: GroupingContext
     )
-
-    fun regroupData(
-        data: DataFrame,
-        groupingContext: GroupingContext
-    ): DataFrame {
-        if (groupingContext.groupMapper === GroupUtil.SINGLE_GROUP) {
-            // if only one group no need to modify
-            return data
-        }
-
-        val regroupedData = splitByGroup(data, groupingContext.groupMapper)
-            .fold(GroupMerger()) { groupMerger, d -> groupMerger.addGroup(d, d.rowCount()) }
-            .getResultSeries()
-
-        return regroupedData
-            .entries
-            .fold(Builder()) { b, (variable, values) -> b.put(variable, values) }
-            .build()
-    }
 }

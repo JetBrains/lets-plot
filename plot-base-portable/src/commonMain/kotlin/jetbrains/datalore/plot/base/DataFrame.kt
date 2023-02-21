@@ -17,7 +17,7 @@ class DataFrame private constructor(builder: Builder) {
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, DoubleSpan?>()
-    private val myDistinctValues = HashMap<Variable, Set<Any>>()
+    private val myDistinctValues: MutableMap<Variable, Set<Any>>
 
     class OrderSpec(
         val variable: Variable,
@@ -37,6 +37,7 @@ class DataFrame private constructor(builder: Builder) {
         myIsNumeric = HashMap(builder.myIsNumeric)
         myIsDateTime = HashMap(builder.myIsDateTime)
         myOrderSpecs = builder.myOrderSpecs
+        myDistinctValues = builder.myDistinctValues
         myOrderSpecs.forEach { orderSpec ->
             myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
         }
@@ -110,7 +111,7 @@ class DataFrame private constructor(builder: Builder) {
                 this.remove(null)
             }
             @Suppress("UNCHECKED_CAST")
-            return values as Collection<Any>
+            values as Set<Any>
         }
     }
 
@@ -274,6 +275,7 @@ class DataFrame private constructor(builder: Builder) {
         internal val myIsNumeric = HashMap<Variable, Boolean>()
         internal val myIsDateTime = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderSpec>()
+        internal val myDistinctValues = HashMap<Variable, Set<Any>>()
 
         constructor()
 
@@ -283,6 +285,7 @@ class DataFrame private constructor(builder: Builder) {
                 data.myIsNumeric,
                 data.myIsDateTime,
                 data.myOrderSpecs,
+                data.myDistinctValues
             )
         }
 
@@ -290,12 +293,15 @@ class DataFrame private constructor(builder: Builder) {
             val newVectors = data.myVectorByVar.mapValues { (_, serie) ->
                 serie.slice(indices)
             }
+            // ensure the original order
+            val orderedVectorByVar = reorderByDistinctValues(newVectors, data.myDistinctValues)
 
             initInternals(
-                newVectors,
+                orderedVectorByVar,
                 data.myIsNumeric,
                 data.myIsDateTime,
                 data.myOrderSpecs,
+                data.myDistinctValues
             )
         }
 
@@ -304,11 +310,13 @@ class DataFrame private constructor(builder: Builder) {
             isNumeric: Map<Variable, Boolean>,
             isDateTime: Map<Variable, Boolean>,
             orderSpecs: List<OrderSpec>,
+            distinctValues: Map<Variable, Set<Any>>
         ) {
             myVectorByVar.putAll(vectorByVar)
             myIsNumeric.putAll(isNumeric)
             myIsDateTime.putAll(isDateTime)
             myOrderSpecs.addAll(orderSpecs)
+            myDistinctValues.putAll(distinctValues)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {
@@ -369,6 +377,53 @@ class DataFrame private constructor(builder: Builder) {
         companion object {
             fun emptyFrame(): DataFrame {
                 return Builder().build()
+            }
+
+            private fun reorderByDistinctValues(
+                vectorByVar: Map<Variable, List<*>>,
+                distinctValues: Map<Variable, Set<Any>>,
+            ): Map<Variable, List<*>> {
+
+                fun reorder(data: List<*>, groupIndices: List<List<Int>>, orderList: Set<Any>): List<List<Int>> {
+                    val newGroupIndices = mutableListOf<List<Int>>()
+                    groupIndices.forEach { group ->
+                        val values = group.map { it to data[it] }
+                        val ordered = values
+                            .sortedWith { (_, value1), (_, value2) ->
+                                when {
+                                    // null value is always greater - will be at the end of the result
+                                    value1 == null && value2 == null -> 0
+                                    value1 == null -> 1
+                                    value2 == null -> -1
+                                    else -> compareValues(
+                                        orderList.indexOf(value1) as Comparable<*>,
+                                        orderList.indexOf(value2) as Comparable<*>
+                                    )
+                                }
+                            }
+                        newGroupIndices += ordered
+                            .groupBy({ (_, value) -> value }) { (index) -> index }
+                            .values
+                    }
+                    return newGroupIndices
+                }
+
+                var groupIndices: List<List<Int>> = emptyList()
+                distinctValues.forEach { (variable, orderList) ->
+                    require(vectorByVar.containsKey(variable))
+                    if (groupIndices.isEmpty()) {
+                        val indices = List(vectorByVar[variable]!!.size) { index -> index }
+                        groupIndices = listOf(indices)
+                    }
+                    groupIndices = reorder(vectorByVar[variable]!!, groupIndices, orderList)
+                }
+
+                return if (groupIndices.isNotEmpty()) {
+                    val orderedIndices = groupIndices.flatten()
+                    vectorByVar.mapValues { (_, serie) -> orderedIndices.map { serie[it] } }
+                } else {
+                    vectorByVar
+                }
             }
         }
     }
