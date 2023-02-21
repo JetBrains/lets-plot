@@ -52,7 +52,6 @@ object DataProcessing {
         varsWithoutBinding: List<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: ((List<Double?>) -> Double?)?,
-        variableValuesOrder: Map<Variable, Collection<Any>>?,
         messageConsumer: Consumer<String>
     ): DataAndGroupingContext {
         check(stat != Stats.IDENTITY)
@@ -93,6 +92,7 @@ object DataProcessing {
                 if (statData.isEmpty) {
                     continue
                 }
+                groupMerger.initOrderSpecs(orderOptions, statData.variables(), statInput.bindings, aggregateOperation)
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
@@ -124,31 +124,6 @@ object DataProcessing {
                 // Add group's data
                 groupMerger.addGroup(statData, curGroupSizeAfterStat)
             }
-
-            // Prepare ordering rules for merger:
-            // according to the orderOptions (preferred) or by prepared before (variableValuesOrder)
-            val orderedValues = if (orderOptions.isNotEmpty()) {
-                val nonOrdered = groupMerger.getResultSeries()
-                val builder = nonOrdered
-                    .entries
-                    .fold(Builder()) { b, (variable, values) -> b.put(variable, values) }
-                val orderSpecs = orderOptions
-                    .filter { orderOption ->
-                        // no need to reorder groups by X
-                        statInput.bindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } == null
-                    }
-                    .map {
-                        OrderOptionUtil.createOrderSpec(nonOrdered.keys, statInput.bindings, it, aggregateOperation)
-                    }
-                val ordered = builder.addOrderSpecs(orderSpecs).build()
-                orderSpecs.map(DataFrame.OrderSpec::variable).associateWith(ordered::distinctValues)
-            } else {
-                variableValuesOrder
-            }
-
-            // Ordering groups
-            orderedValues?.let(groupMerger::regroupWithOrder)
-
             // Get merged series
             resultSeries = groupMerger.getResultSeries()
             groupSizeListAfterStat = groupMerger.getGroupSizes()
@@ -436,4 +411,23 @@ object DataProcessing {
         val data: DataFrame,
         val groupingContext: GroupingContext
     )
+
+    fun regroupData(
+        data: DataFrame,
+        groupingContext: GroupingContext
+    ): DataFrame {
+        if (groupingContext.groupMapper === GroupUtil.SINGLE_GROUP) {
+            // if only one group no need to modify
+            return data
+        }
+
+        val regroupedData = splitByGroup(data, groupingContext.groupMapper)
+            .fold(GroupMerger()) { groupMerger, d -> groupMerger.addGroup(d, d.rowCount()) }
+            .getResultSeries()
+
+        return regroupedData
+            .entries
+            .fold(Builder()) { b, (variable, values) -> b.put(variable, values) }
+            .build()
+    }
 }

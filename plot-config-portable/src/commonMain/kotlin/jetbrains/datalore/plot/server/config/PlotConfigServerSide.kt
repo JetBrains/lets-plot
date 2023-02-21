@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
+import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
@@ -156,6 +157,23 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         for (layerConfig in layerConfigs) {
             var layerData = layerConfig.combinedData
             layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, transformByAes)
+
+            // ensure the same group order for facets
+            if (facets.isDefined) {
+                val groupingVariables = DataProcessing.defaultGroupingVariables(
+                    layerData,
+                    layerConfig.varBindings,
+                    pathIdVarName = null
+                )
+                val groupingContext = GroupingContext(
+                    layerData,
+                    groupingVariables,
+                    explicitGroupingVarName = layerConfig.explicitGroupingVarName,
+                    expectMultiple = true
+                )
+                layerData = DataProcessing.regroupData(layerData, groupingContext)
+            }
+
             dataByLayer.add(layerData)
         }
 
@@ -171,18 +189,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
 
         for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
 
-            // ensure the same group order for facets
-            val variableValuesOrder = if (facets.isDefined) {
-                val groupingVariables = DataProcessing.defaultGroupingVariables(
-                    dataByLayer[layerIndex],
-                    layerConfig.varBindings,
-                    pathIdVarName = null
-                )
-                groupingVariables.associateWith(dataByLayer[layerIndex]::distinctValues)
-            } else {
-                null
-            }
-
             val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
             for (tileIndex in inputDataByTileByLayer.indices) {
                 val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
@@ -196,7 +202,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
                     statCtx = statCtx,
                     transformByAes = transformByAes,
                     facetVariables = facetVariables,
-                    variableValuesOrder = variableValuesOrder
                 ) { message ->
                     layerIndexAndSamplingMessage(
                         layerIndex,

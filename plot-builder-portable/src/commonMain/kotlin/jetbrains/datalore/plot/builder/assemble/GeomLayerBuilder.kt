@@ -384,7 +384,6 @@ class GeomLayerBuilder constructor(
                             varsWithoutBinding = emptyList(),
                             orderOptions = emptyList(),
                             aggregateOperation = null,
-                            variableValuesOrder = null,
                             ::println
                         )
 
