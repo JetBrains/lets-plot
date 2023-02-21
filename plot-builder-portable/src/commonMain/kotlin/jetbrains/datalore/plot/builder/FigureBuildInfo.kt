@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 
 interface FigureBuildInfo {
+    val isComposite:Boolean
     val bounds: DoubleRectangle
     val computationMessages: List<String>
     val containsLiveMap: Boolean

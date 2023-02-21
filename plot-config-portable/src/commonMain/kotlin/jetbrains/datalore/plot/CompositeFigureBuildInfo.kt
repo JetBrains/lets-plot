@@ -20,6 +20,7 @@ internal class CompositeFigureBuildInfo(
     override val bounds: DoubleRectangle,
 ) : FigureBuildInfo {
 
+    override val isComposite: Boolean = true
 
     override val layoutInfo: FigureLayoutInfo
         get() = _layoutInfo
@@ -80,6 +81,6 @@ internal class CompositeFigureBuildInfo(
     }
 
     override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): CompositeFigureBuildInfo {
-        UNSUPPORTED("Not yet implemented")
+        UNSUPPORTED("Composite figure does not support layouting by \"geometry bounds\".")
     }
 }

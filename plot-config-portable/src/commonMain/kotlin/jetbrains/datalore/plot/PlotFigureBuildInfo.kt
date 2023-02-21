@@ -20,6 +20,8 @@ internal class PlotFigureBuildInfo constructor(
     override val computationMessages: List<String>,
 ) : FigureBuildInfo {
 
+    override val isComposite: Boolean = false
+
     override val containsLiveMap: Boolean = plotAssembler.containsLiveMap
 
     override val layoutInfo: FigureLayoutInfo

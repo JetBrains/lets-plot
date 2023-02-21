@@ -11,15 +11,45 @@ internal object FigureGridLayoutUtil {
     fun indexToRow(index: Int, ncol: Int) = index.floorDiv(ncol)
     fun indexToCol(index: Int, ncol: Int) = index.mod(ncol)
 
-    fun rowElements(row: Int, figs: List<FigureBuildInfo?>, ncol: Int): List<FigureBuildInfo?> {
-        return figs.filterIndexed { index, _ ->
+    fun rowElements(
+        row: Int,
+        figs: List<FigureBuildInfo?>,
+        ncol: Int,
+        inclideComposite: Boolean
+    ): List<FigureBuildInfo?> {
+        val figList = figs.filterIndexed { index, _ ->
             row == indexToRow(index, ncol)
+        }
+        return if (inclideComposite) {
+            figList
+        } else {
+            nullifyComposites(figList)
         }
     }
 
-    fun colElements(col: Int, figs: List<FigureBuildInfo?>, ncol: Int): List<FigureBuildInfo?> {
-        return figs.filterIndexed { index, _ ->
+    fun colElements(
+        col: Int,
+        figs: List<FigureBuildInfo?>,
+        ncol: Int,
+        inclideComposite: Boolean
+    ): List<FigureBuildInfo?> {
+        val figList = figs.filterIndexed { index, _ ->
             col == indexToCol(index, ncol)
+        }
+        return if (inclideComposite) {
+            figList
+        } else {
+            nullifyComposites(figList)
+        }
+    }
+
+    private fun nullifyComposites(figures: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
+        return figures.map {
+            // Exclude composite figures
+            when (it?.isComposite) {
+                false -> it
+                else -> null
+            }
         }
     }
 }

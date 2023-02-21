@@ -34,37 +34,44 @@ class CompositeFigureGridAlignmentLayout(
         }
 
         // Compute "inner" size for each row and colunm
-        val vSpanByRow = ArrayList<DoubleSpan?>()
+        val vGeomSpanByRow = ArrayList<DoubleSpan?>()
         for (row in 0 until nrows) {
-            val rowElements = rowElements(row, elementsLayoutedByBounds, ncols)
-            val vSpan = rowElements.filterNotNull().map {
-                it.layoutInfo.geomAreaBounds.yRange()
-            }.reduceOrNull { acc, span ->
-                acc.intersection(span)
-            }
-            vSpanByRow.add(vSpan)
+            val rowElements = rowElements(row, elementsLayoutedByBounds, ncols, inclideComposite = false)
+            val vSpan = rowElements
+                .filterNotNull()
+                .map {
+                    it.layoutInfo.geomAreaBounds.yRange()
+                }.reduceOrNull { acc, span ->
+                    acc.intersection(span)
+                }
+            vGeomSpanByRow.add(vSpan)
         }
 
-        val hSpanByCol = ArrayList<DoubleSpan?>()
+        val hGeomSpanByCol = ArrayList<DoubleSpan?>()
         for (col in 0 until ncols) {
-            val colElements = colElements(col, elementsLayoutedByBounds, ncols)
-            val hSpan = colElements.filterNotNull().map {
-                it.layoutInfo.geomAreaBounds.xRange()
-            }.reduceOrNull { acc, span ->
-                acc.intersection(span)
-            }
-            hSpanByCol.add(hSpan)
+            val colElements = colElements(col, elementsLayoutedByBounds, ncols, inclideComposite = false)
+            val hSpan = colElements
+                .filterNotNull()
+                .map {
+                    it.layoutInfo.geomAreaBounds.xRange()
+                }.reduceOrNull { acc, span ->
+                    acc.intersection(span)
+                }
+            hGeomSpanByCol.add(hSpan)
         }
 
         val elementsLayoutedByInnerBounds = elementsWithBounds.mapIndexed { index, buildInfo ->
             if (buildInfo == null) {
                 null
+            } else if (buildInfo.isComposite) {
+                // Do not layoute composite figure by "geom bounds".
+                buildInfo
             } else {
                 val row = indexToRow(index, ncols)
                 val col = indexToCol(index, ncols)
                 val bounds = DoubleRectangle.hvRange(
-                    hSpanByCol[col]!!,
-                    vSpanByRow[row]!!
+                    hGeomSpanByCol[col]!!,
+                    vGeomSpanByRow[row]!!
                 )
                 buildInfo.layoutedByGeomBounds(bounds)
             }
