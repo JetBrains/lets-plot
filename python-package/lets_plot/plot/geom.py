@@ -29,6 +29,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                map=None, map_join=None, use_crs=None,
+               color_by=None, fill_by=None,
                **other_args):
     """
     Draw points defined by an x and y coordinate, as for a scatter plot.
@@ -71,6 +72,10 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -187,12 +192,14 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, use_crs=None,
               flat=None, geodesic=None,
+              color_by=None,
               **other_args):
     """
     Connect observations in the order, how they appear in the data.
@@ -239,6 +246,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         True - keeps a line flat, False - allows projection to curve a line.
     geodesic : Boolean, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -337,10 +346,12 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
                  flat=flat, geodesic=geodesic,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+              color_by=None,
               **other_args):
     """
     Connect points in the order of the variable on the x axis.
@@ -374,6 +385,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -441,6 +454,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by,
                  **other_args)
 
 
@@ -454,6 +468,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                 deg=None,
                 seed=None,
                 max_n=None,
+                color_by=None, fill_by=None,
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -508,6 +523,10 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     max_n : int, default=1000
         Maximum number of data-points for 'loess' method.
         If this quantity exceeded random sampling is applied to data.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -611,11 +630,13 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                  deg=deg,
                  seed=seed,
                  max_n=max_n,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              orientation=None,
+             color_by=None, fill_by=None,
              **other_args):
     """
     Display a bar chart which makes the height of the bar proportional to the
@@ -651,6 +672,10 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -746,6 +771,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -755,6 +781,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    binwidth=None,
                    center=None,
                    boundary=None,
+                   color_by=None, fill_by=None,
                    **other_args):
     """
     Display a 1d distribution by dividing variable mapped to x axis into bins
@@ -800,6 +827,10 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Specify x-value to align bin centers to.
     boundary : float
         Specify x-value to align bin boundary (i.e. point between bins) to.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -889,6 +920,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  binwidth=binwidth,
                  center=center,
                  boundary=boundary,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -902,6 +934,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
                  stackgroups=None,
                  center=None,
                  boundary=None,
+                 color_by=None, fill_by=None,
                  **other_args):
     """
     Dotplot represents individual observations in a batch of data with circular dots.
@@ -950,6 +983,10 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     boundary : float
         When method is 'histodot', this specifies x-value to align bin boundary
         (i.e. point between bins) to.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1039,6 +1076,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
                  stackgroups=stackgroups,
                  center=center,
                  boundary=boundary,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -1046,6 +1084,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                bins=None,
                binwidth=None,
                drop=None,
+               color_by=None, fill_by=None,
                **other_args):
     """
     Display a 1d distribution by dividing variable mapped to x axis into bins
@@ -1080,6 +1119,10 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Override `bins`. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
         Specify whether to remove all bins with 0 counts.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1180,10 +1223,12 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  bins=bins,
                  binwidth=binwidth,
                  drop=drop,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+              color_by=None, fill_by=None,
               **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1210,6 +1255,10 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1288,10 +1337,11 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, fill_by=None,
                 **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1317,6 +1367,8 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1370,10 +1422,12 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
+                 fill_by=fill_by,
                  **other_args)
 
 
 def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  color_by=None,
                   **other_args):
     """
     Display error bars defined by the upper and lower values.
@@ -1405,6 +1459,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1479,11 +1535,13 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   fatten=None,
+                  color_by=None, fill_by=None,
                   **other_args):
     """
     Display bars with horizontal median line.
@@ -1517,6 +1575,10 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Specify appearance, style and content.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1596,12 +1658,14 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                     tooltips=None,
                     fatten=None,
+                    color_by=None, fill_by=None,
                     **other_args):
     """
     Add a vertical line defined by upper and lower value with midpoint at y location.
@@ -1635,6 +1699,10 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Specify appearance, style and content.
     fatten : float, default=5.0
         A multiplicative factor applied to size of the middle point.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1714,10 +1782,12 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  sampling=sampling,
                  tooltips=tooltips,
                  fatten=fatten,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                   color_by=None,
                    **other_args):
     """
     Display a line range defined by an upper and lower value.
@@ -1749,6 +1819,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1823,12 +1895,14 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  bins=None,
                  binwidth=None,
+                 color_by=None,
                  **other_args):
     """
     Display contours of a 3d surface in 2d.
@@ -1859,6 +1933,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Number of levels.
     binwidth : float
         Distance between levels.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1940,12 +2016,14 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  sampling=sampling,
                  tooltips=tooltips,
                  bins=bins, binwidth=binwidth,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   bins=None,
                   binwidth=None,
+                  fill_by=None,
                   **other_args):
     """
     Fill contours of a 3d surface in 2d.
@@ -1976,6 +2054,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Number of levels.
     binwidth : float
         Distance between levels.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2056,11 +2136,13 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  tooltips=tooltips,
                  bins=bins,
                  binwidth=binwidth,
+                 fill_by=fill_by,
                  **other_args)
 
 
 def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  map=None, map_join=None, use_crs=None,
+                 color_by=None, fill_by=None,
                  **other_args):
     """
     Display a filled closed path defined by the vertex coordinates of individual polygons.
@@ -2098,6 +2180,10 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2226,11 +2312,13 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
              map=None, map_join=None, use_crs=None,
+             color_by=None, fill_by=None,
              **other_args):
     """
     Display polygons from a reference map.
@@ -2273,6 +2361,10 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2368,12 +2460,14 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
                 slope=None,
                 intercept=None,
+                color_by=None,
                 **other_args):
     """
     Add a straight line with specified slope and intercept to the plot.
@@ -2401,6 +2495,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         The line slope.
     intercept : float
         The value of y at the point where the line crosses the y axis.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2470,11 +2566,13 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  sampling=sampling,
                  slope=slope,
                  intercept=intercept,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                yintercept=None,
+               color_by=None,
                **other_args):
     """
     Add a straight horizontal line to the plot.
@@ -2503,6 +2601,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
     yintercept : float
         The value of y at the point where the line crosses the y axis.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2568,11 +2668,13 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  tooltips=tooltips,
                  yintercept=yintercept,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                xintercept=None,
+               color_by=None,
                **other_args):
     """
     Add a straight vertical line to the plot.
@@ -2601,6 +2703,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
     xintercept : float
         The value of x at the point where the line crosses the x axis.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2666,6 +2770,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  tooltips=tooltips,
                  xintercept=xintercept,
+                 color_by=color_by,
                  **other_args)
 
 
@@ -2675,6 +2780,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
                  varwidth=None,
                  whisker_width=None,
+                 color_by=None, fill_by=None,
                  **other_args):
     """
     Display the distribution of data based on a five number summary
@@ -2722,6 +2828,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         of the number of observations in the groups.
     whisker_width : float, default=0.5
         A multiplicative factor applied to the box width to draw horizontal segments on whiskers.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2851,6 +2961,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_size=outlier_size,
                  varwidth=varwidth,
                  whisker_width=whisker_width,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -2859,6 +2970,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                 show_half=None,
                 quantiles=None, quantile_lines=None,
                 scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
+                color_by=None, fill_by=None,
                 **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
@@ -2918,6 +3030,10 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     fs_max : int, default=500
         Maximum size of data to use density computation with 'full scan'.
         For bigger data, less accurate but more efficient density computation is applied.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3056,6 +3172,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n, fs_max=fs_max,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -3069,6 +3186,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
                   stackgroups=None,
                   center=None,
                   boundary=None,
+                  color_by=None, fill_by=None,
                   **other_args):
     """
     Dotplot represents individual observations in a batch of data with circular dots.
@@ -3120,6 +3238,10 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     boundary : float
         When method is 'histodot', this specifies x-value to align bin boundary
         (i.e. point between bins) to.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3221,12 +3343,14 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
                  stackgroups=stackgroups,
                  center=center,
                  boundary=boundary,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                      trim=None, tails_cutoff=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
+                     color_by=None, fill_by=None,
                      **other_args):
     """
     Plot the sum of the `y` and `height` aesthetics versus `x`. Heights of the ridges are relatively scaled.
@@ -3285,6 +3409,10 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         Draw vertical lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3390,10 +3518,12 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  scale=scale,
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                color_by=None, fill_by=None,
                 **other_args):
     """
     Display a y interval defined by `ymin` and `ymax`.
@@ -3420,6 +3550,10 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3494,10 +3628,12 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+              color_by=None, fill_by=None,
               **other_args):
     """
     Display the development of quantitative values over an interval.
@@ -3530,6 +3666,10 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3605,6 +3745,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -3618,6 +3759,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  fs_max=None,
                  quantiles=None,
                  quantile_lines=None,
+                 color_by=None, fill_by=None,
                  **other_args):
     """
     Display kernel density estimate, which is a smoothed version of the histogram.
@@ -3673,6 +3815,10 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Draw horizontal lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3807,6 +3953,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  orientation=orientation,
                  trim=trim, kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
                  quantiles=quantiles, quantile_lines=quantile_lines,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -3817,6 +3964,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                    n=None,
                    bins=None,
                    binwidth=None,
+                   color_by=None,
                    **other_args):
     """
     Display density function contour.
@@ -3859,6 +4007,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Number of levels.
     binwidth : float
         Distance between levels.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3998,6 +4148,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  sampling=sampling,
                  tooltips=tooltips,
                  kernel=kernel, adjust=adjust, bw=bw, n=n, bins=bins, binwidth=binwidth,
+                 color_by=color_by,
                  **other_args)
 
 
@@ -4009,6 +4160,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                     n=None,
                     bins=None,
                     binwidth=None,
+                    color_by=None, fill_by=None,
                     **other_args):
     """
     Fill density function contour.
@@ -4051,6 +4203,10 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Number of levels.
     binwidth : float
         Distance between levels.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4193,12 +4349,14 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  bw=bw, n=n,
                  bins=bins,
                  binwidth=binwidth,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                 width=None,
                 height=None,
+                color_by=None, fill_by=None,
                 **other_args):
     """
     Display jittered points, especially for discrete plots or dense plots.
@@ -4236,6 +4394,10 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     height : float, default=0.4
         Amount of vertical variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
         Typically ranges between 0 and 0.5. Values that are greater than 0.5 lead to overlapping of the points.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4308,12 +4470,15 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 width=width, height=height, **other_args)
+                 width=width, height=height,
+                 color_by=color_by, fill_by=fill_by,
+                 **other_args)
 
 
 def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
             distribution=None,
             dparams=None,
+            color_by=None, fill_by=None,
             **other_args):
     """
     Display quantile-quantile plot.
@@ -4356,6 +4521,10 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
         If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
         If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4429,10 +4598,13 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  tooltips=tooltips,
                  distribution=distribution,
                  dparams=dparams,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
-def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, **other_args):
+def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+             color_by=None, fill_by=None,
+             **other_args):
     """
     Display quantile-quantile plot.
 
@@ -4464,6 +4636,10 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4520,6 +4696,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -4527,6 +4704,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  distribution=None,
                  dparams=None,
                  quantiles=None,
+                 color_by=None,
                  **other_args):
     """
     Display quantile-quantile fitting line.
@@ -4571,6 +4749,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4642,11 +4822,13 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  distribution=distribution,
                  dparams=dparams,
                  quantiles=quantiles,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   quantiles=None,
+                  color_by=None,
                   **other_args):
     """
     Display quantile-quantile fitting line.
@@ -4681,6 +4863,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         Specify appearance, style and content.
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4731,11 +4915,13 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  quantiles=quantiles,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   orientation=None,
+                  color_by=None,
                   **other_args):
     """
     Display a line chart which makes the y value proportional to the number
@@ -4771,6 +4957,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4841,11 +5029,13 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
               direction=None,
+              color_by=None,
               **other_args):
     """
     Connect observations in the order in which they appear in the data by stairs.
@@ -4877,6 +5067,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4944,11 +5136,13 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  show_legend=show_legend,
                  sampling=sampling,
                  direction=direction,
+                 color_by=color_by,
                  **other_args)
 
 
 def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               map=None, map_join=None, use_crs=None,
+              color_by=None, fill_by=None,
               **other_args):
     """
     Display an axis-aligned rectangle defined by two corners.
@@ -4986,6 +5180,10 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5089,11 +5287,12 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                 arrow=None, flat=None, geodesic=None, **other_args):
+                 arrow=None, flat=None, geodesic=None, color_by=None, **other_args):
     """
     Draw a straight line segment between two points.
 
@@ -5130,6 +5329,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         True - keeps a line flat, False - allows projection to curve a line.
     geodesic : Boolean, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5199,6 +5400,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  arrow=arrow,
                  flat=flat,
                  geodesic=geodesic,
+                 color_by=color_by,
                  **other_args)
 
 
@@ -5207,6 +5409,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               label_format=None,
               na_text=None,
               nudge_x=None, nudge_y=None,
+              color_by=None,
               **other_args):
     """
     Add a text directly to the plot.
@@ -5262,6 +5465,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5386,6 +5591,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  label_format=label_format,
                  na_text=na_text,
                  nudge_x=nudge_x, nudge_y=nudge_y,
+                 color_by=color_by,
                  **other_args)
 
 
@@ -5395,6 +5601,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                na_text=None,
                nudge_x=None, nudge_y=None,
                label_padding=None, label_r=None, label_size=None,
+               color_by=None, fill_by=None,
                **other_args):
     """
     Add a text directly to the plot with a rectangle behind the text.
@@ -5456,6 +5663,10 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Radius of rounded corners. Default is 0.15 of label height.
     label_size : float, default = 1.0
         Size of label border.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5584,6 +5795,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  label_padding=label_padding,
                  label_r=label_r,
                  label_size=label_size,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
@@ -5635,7 +5847,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
         Accept values between 0 and 1.
-    fill_by : {'fill', 'color'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     stroke : float, default=0.0
         Width of slice borders.
