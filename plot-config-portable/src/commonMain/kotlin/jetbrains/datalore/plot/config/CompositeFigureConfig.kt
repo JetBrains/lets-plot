@@ -8,11 +8,15 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
+import jetbrains.datalore.plot.builder.presentation.Defaults.SubplotsGrid.DEF_HSPACE
+import jetbrains.datalore.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.HSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.INNER_ALIGNMENT
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NCOLS
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NROWS
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.VSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout
-import jetbrains.datalore.plot.config.Option.SubPlots.Layout.LAYOUT_KIND
+import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
 
 internal class CompositeFigureConfig(
     opts: Map<String, Any>,
@@ -44,20 +48,26 @@ internal class CompositeFigureConfig(
 
     fun createLayout(): CompositeFigureLayout {
         val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
-        val layoutKind = layoutOptions.getStringSafe(LAYOUT_KIND)
+        val layoutKind = layoutOptions.getStringSafe(NAME)
 
-        if (layoutKind == Layout.GRID) {
+        if (layoutKind == Layout.SUBPLOTS_GRID) {
             val (ncols, nrows) = gridSizeOrNull()!!
+            val hSpace = layoutOptions.getDoubleDef(HSPACE, DEF_HSPACE)
+            val vSpace = layoutOptions.getDoubleDef(VSPACE, DEF_VSPACE)
             val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
             return if (innerAlignment) {
                 CompositeFigureGridAlignmentLayout(
                     ncols = ncols,
-                    nrows = nrows
+                    nrows = nrows,
+                    hSpace = hSpace,
+                    vSpace = vSpace
                 )
             } else {
                 CompositeFigureGridLayout(
                     ncols = ncols,
-                    nrows = nrows
+                    nrows = nrows,
+                    hSpace = hSpace,
+                    vSpace = vSpace
                 )
             }
         }
@@ -67,8 +77,8 @@ internal class CompositeFigureConfig(
 
     fun gridSizeOrNull(): Pair<Int, Int>? {
         val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
-        val layoutKind = layoutOptions.getStringSafe(LAYOUT_KIND)
-        return if (layoutKind == Layout.GRID) {
+        val layoutKind = layoutOptions.getStringSafe(NAME)
+        return if (layoutKind == Layout.SUBPLOTS_GRID) {
             val ncols = layoutOptions.getIntegerSafe(NCOLS)
             val nrows = layoutOptions.getIntegerSafe(NROWS)
             Pair(ncols, nrows)

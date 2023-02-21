@@ -7,8 +7,8 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.FigureBuildInfo
+import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
 import jetbrains.datalore.plot.builder.layout.figure.FigureLayoutInfo
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgComponent
@@ -31,7 +31,6 @@ internal class CompositeFigureBuildInfo(
         get() = elements.filterNotNull().any { it.containsLiveMap }
 
     private lateinit var _layoutInfo: FigureLayoutInfo
-    private lateinit var layoutedElements: List<FigureBuildInfo>
 
 
     override fun injectLiveMapProvider(f: (tiles: List<List<GeomLayer>>, spec: Map<String, Any>) -> Any) {
@@ -41,41 +40,42 @@ internal class CompositeFigureBuildInfo(
     }
 
     override fun createSvgRoot(): CompositeFigureSvgRoot {
-        return if (this::_layoutInfo.isInitialized) {
-            val elementSvgRoots = layoutedElements.map {
-                it.createSvgRoot()
-            }
-
-            val svgComponent = CompositeFigureSvgComponent(elementSvgRoots)
-            CompositeFigureSvgRoot(svgComponent, bounds)
-        } else {
-            layoutedByOuterSize().createSvgRoot()
+        check(this::_layoutInfo.isInitialized) { "Composite figure is not layouted." }
+        val elementSvgRoots = elements.filterNotNull().map {
+            it.createSvgRoot()
         }
+
+        val svgComponent = CompositeFigureSvgComponent(elementSvgRoots)
+        return CompositeFigureSvgRoot(svgComponent, bounds)
     }
 
     override fun withBounds(bounds: DoubleRectangle): CompositeFigureBuildInfo {
-        return CompositeFigureBuildInfo(
-            elements,
-            layout,
-            bounds
-        )
+        return if (bounds == this.bounds) {
+            this
+        } else {
+            // this drops 'layout info' if initialized.
+            CompositeFigureBuildInfo(
+                elements,
+                layout,
+                bounds
+            )
+        }
     }
 
     override fun layoutedByOuterSize(): CompositeFigureBuildInfo {
         val outerSize = bounds.dimension
         val layoutedElements = layout.doLayout(outerSize, elements)
 
-        val geomBounds = layoutedElements.map {
+        val geomBounds = layoutedElements.filterNotNull().map {
             it.layoutInfo.geomAreaBounds
         }.reduce { acc, el -> acc.union(el) }
 
         return CompositeFigureBuildInfo(
-            elements,
+            elements = layoutedElements,
             layout,
             bounds
         ).apply {
             this._layoutInfo = FigureLayoutInfo(outerSize, geomBounds)
-            this.layoutedElements = layoutedElements
         }
     }
 

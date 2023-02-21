@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.config.Option.SubPlots.Grid.INNER_ALIGNMENT
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NCOLS
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NROWS
 import jetbrains.datalore.plot.config.Option.SubPlots.LAYOUT
-import jetbrains.datalore.plot.config.Option.SubPlots.Layout.GRID
-import jetbrains.datalore.plot.config.Option.SubPlots.Layout.LAYOUT_KIND
+import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
+import jetbrains.datalore.plot.config.Option.SubPlots.Layout.SUBPLOTS_GRID
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
 
@@ -21,7 +21,9 @@ open class PlotGrid {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
 //            simple(),
-            irisTriple()
+            irisTriple(innerAlignment = false),
+            irisTriple(innerAlignment = true),
+//            irisTriple_compositeCell(innerAlignment = false),
         )
     }
 
@@ -74,44 +76,71 @@ open class PlotGrid {
 
         fun simple(): MutableMap<String, Any> {
             val plotSpec = simplePlot()
-
-            // Sub-plots: 1 row, 2 col
-            return mutableMapOf(
-                Option.Meta.KIND to Option.Meta.Kind.SUBPLOTS,
-                FIGURES to listOf(plotSpec, plotSpec),
-                LAYOUT to mapOf(
-                    LAYOUT_KIND to GRID,
-                    NCOLS to 2,
-                    NROWS to 1,
-//                    INNER_ALIGNMENT to true,
-                )
+            return subplotsGrid(
+                elements = listOf(plotSpec, plotSpec),
+                ncols = 2,
+                nrows = 1,
+                innerAlignment = false
             )
         }
 
         //============================
 
-        private fun irisTriple(): MutableMap<String, Any> {
+        private fun irisTriple(innerAlignment: Boolean): MutableMap<String, Any> {
             val scatterSpec = irisScatterPlot()
             val densitySpec = irisDensityPlot()
-
-            // Plot grid: 2 row, 2 col
-            return mutableMapOf(
-                Option.Meta.KIND to Option.Meta.Kind.SUBPLOTS,
-                FIGURES to listOf(
+            return subplotsGrid(
+                elements = listOf(
                     densitySpec, BLANK,
                     scatterSpec, densitySpec
                 ),
+                ncols = 2,
+                nrows = 2,
+                innerAlignment
+            )
+        }
+
+        @Suppress("FunctionName")
+        private fun irisTriple_compositeCell(innerAlignment: Boolean): MutableMap<String, Any> {
+            val scatterSpec = irisScatterPlot()
+            val densitySpec = irisDensityPlot()
+
+            val innerSubplots = subplotsGrid(
+                elements = listOf(scatterSpec, densitySpec),
+                ncols = 2,
+                nrows = 1,
+                innerAlignment = false
+            )
+
+            return subplotsGrid(
+                elements = listOf(
+                    densitySpec, innerSubplots,
+                ),
+                ncols = 1,
+                nrows = 2,
+                innerAlignment
+            )
+        }
+
+        private fun subplotsGrid(
+            elements: List<Any?>,
+            ncols: Int,
+            nrows: Int,
+            innerAlignment: Boolean
+        ): MutableMap<String, Any> {
+            return mutableMapOf(
+                Option.Meta.KIND to Option.Meta.Kind.SUBPLOTS,
+                FIGURES to elements,
                 LAYOUT to mapOf(
-                    LAYOUT_KIND to GRID,
-                    NCOLS to 2,
-                    NROWS to 2,
-                    INNER_ALIGNMENT to true,
+                    NAME to SUBPLOTS_GRID,
+                    NCOLS to ncols,
+                    NROWS to nrows,
+                    INNER_ALIGNMENT to innerAlignment,
                 )
             )
         }
 
         private fun irisScatterPlot(): MutableMap<String, Any> {
-
             val spec = """
             {
               'kind': 'plot',

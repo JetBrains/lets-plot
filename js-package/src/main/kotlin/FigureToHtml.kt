@@ -34,6 +34,8 @@ internal class FigureToHtml(
 
     fun eval() {
 
+        val buildInfo = buildInfo.layoutedByOuterSize()
+
         buildInfo.injectLiveMapProvider { tiles: List<List<GeomLayer>>, spec: Map<String, Any> ->
             val cursorServiceConfig = CursorServiceConfig()
             LiveMapProviderUtil.injectLiveMapProvider(tiles, spec, cursorServiceConfig)

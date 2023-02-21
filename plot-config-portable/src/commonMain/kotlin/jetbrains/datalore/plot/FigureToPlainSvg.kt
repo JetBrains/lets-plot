@@ -15,6 +15,9 @@ internal class FigureToPlainSvg(
 ) {
 
     fun eval(): SvgSvgElement {
+
+        val buildInfo = buildInfo.layoutedByOuterSize()
+
         val svgRoot = buildInfo.createSvgRoot()
         svgRoot.ensureContentBuilt()
 

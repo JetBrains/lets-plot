@@ -138,4 +138,9 @@ object Defaults {
         "${Style.FACET_STRIP_TEXT}-x" to createTextStyle(size = FONT_MEDIUM),
         "${Style.FACET_STRIP_TEXT}-y" to createTextStyle(size = FONT_MEDIUM)
     )
+
+    object SubplotsGrid {
+        const val DEF_HSPACE = 4.0
+        const val DEF_VSPACE = 4.0
+    }
 }

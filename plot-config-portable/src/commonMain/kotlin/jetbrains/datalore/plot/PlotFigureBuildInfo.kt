@@ -39,20 +39,22 @@ internal class PlotFigureBuildInfo constructor(
     }
 
     override fun createSvgRoot(): PlotSvgRoot {
-        return if (this::_layoutInfo.isInitialized) {
-            val plotSvgComponent = plotAssembler.createPlot(_layoutInfo)
-            PlotSvgRoot(
-                plotSvgComponent,
-                liveMapCursorServiceConfig = if (containsLiveMap) liveMapCursorServiceConfig else null,
-                bounds.origin
-            )
-        } else {
-            layoutedByOuterSize().createSvgRoot()
-        }
+        check(this::_layoutInfo.isInitialized) { "Plot figure is not layouted." }
+        val plotSvgComponent = plotAssembler.createPlot(_layoutInfo)
+        return PlotSvgRoot(
+            plotSvgComponent,
+            liveMapCursorServiceConfig = if (containsLiveMap) liveMapCursorServiceConfig else null,
+            bounds.origin
+        )
     }
 
     override fun withBounds(bounds: DoubleRectangle): PlotFigureBuildInfo {
-        return makeCopy(bounds)
+        return if (bounds == this.bounds) {
+            this
+        } else {
+            // this drops 'layout info' if initialized.
+            makeCopy(bounds)
+        }
     }
 
     override fun layoutedByOuterSize(): PlotFigureBuildInfo {

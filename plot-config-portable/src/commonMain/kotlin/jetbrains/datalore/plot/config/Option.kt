@@ -91,15 +91,15 @@ object Option {
         }
 
         object Layout {
-            const val LAYOUT_KIND = "kind"
-            const val GRID = "grid"
+            const val NAME = Meta.NAME
+            const val SUBPLOTS_GRID = "grid"
         }
 
         object Grid {
             const val NROWS = "nrows"
             const val NCOLS = "ncols"
-            const val HSPACE = "hspace"  // ToDo: abs px or relative ?
-            const val VSPACE = "vspace"
+            const val HSPACE = "hspace"  // px
+            const val VSPACE = "vspace"  // px
             const val COL_WIDTHS = "col_widths"
             const val ROW_HEIGHTS = "row_heights"
             const val INNER_ALIGNMENT = "inner_alignment" // bool
