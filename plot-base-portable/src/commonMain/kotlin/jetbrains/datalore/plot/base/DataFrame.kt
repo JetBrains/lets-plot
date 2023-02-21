@@ -37,7 +37,7 @@ class DataFrame private constructor(builder: Builder) {
         myIsNumeric = HashMap(builder.myIsNumeric)
         myIsDateTime = HashMap(builder.myIsDateTime)
         myOrderSpecs = builder.myOrderSpecs
-        myDistinctValues = builder.myDistinctValues
+        myDistinctValues = HashMap(builder.myDistinctValues)
         myOrderSpecs.forEach { orderSpec ->
             myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
         }
@@ -301,7 +301,7 @@ class DataFrame private constructor(builder: Builder) {
                 data.myIsNumeric,
                 data.myIsDateTime,
                 data.myOrderSpecs,
-                data.myDistinctValues
+                emptyMap()
             )
         }
 
