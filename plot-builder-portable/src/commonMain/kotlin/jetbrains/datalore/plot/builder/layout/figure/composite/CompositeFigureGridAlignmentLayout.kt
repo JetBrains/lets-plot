@@ -60,7 +60,7 @@ class CompositeFigureGridAlignmentLayout(
             hGeomSpanByCol.add(hSpan)
         }
 
-        val elementsLayoutedByInnerBounds = elementsWithBounds.mapIndexed { index, buildInfo ->
+        val elementsLayoutedByInnerBounds = elementsLayoutedByBounds.mapIndexed { index, buildInfo ->
             if (buildInfo == null) {
                 null
             } else if (buildInfo.isComposite) {

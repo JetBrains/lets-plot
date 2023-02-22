@@ -21,10 +21,10 @@ open class PlotGrid {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
 //            simple(),
-//            irisTriple(innerAlignment = false),
-//            irisTriple(innerAlignment = true),
+            irisTriple(innerAlignment = false),
+            irisTriple(innerAlignment = true),
             irisTriple_compositeCell(innerAlignment = false),
-//            irisTriple_compositeCell(innerAlignment = true),
+            irisTriple_compositeCell(innerAlignment = true),
         )
     }
 
