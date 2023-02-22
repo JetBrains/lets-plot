@@ -8,9 +8,11 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.SubPlots.FIGURES
 import jetbrains.datalore.plot.config.Option.SubPlots.Figure.BLANK
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.COL_WIDTHS
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.INNER_ALIGNMENT
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NCOLS
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NROWS
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.ROW_HEIGHTS
 import jetbrains.datalore.plot.config.Option.SubPlots.LAYOUT
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout.SUBPLOTS_GRID
@@ -25,6 +27,16 @@ open class PlotGrid {
             irisTriple(innerAlignment = true),
             irisTriple_compositeCell(innerAlignment = false),
             irisTriple_compositeCell(innerAlignment = true),
+            irisTriple(
+                colWidths = listOf(1.0, 0.5),
+                rowHeights = listOf(0.5, 1.0),
+                innerAlignment = false
+            ),
+            irisTriple(
+                colWidths = listOf(1.0, 0.5),
+                rowHeights = listOf(0.5, 1.0),
+                innerAlignment = true
+            ),
         )
     }
 
@@ -87,9 +99,17 @@ open class PlotGrid {
 
         //============================
 
-        private fun irisTriple(innerAlignment: Boolean): MutableMap<String, Any> {
+        private fun irisTriple(
+            colWidths: List<Double>? = null,
+            rowHeights: List<Double>? = null,
+            innerAlignment: Boolean
+        ): MutableMap<String, Any> {
+
             val scatterSpec = irisScatterPlot()
             val densitySpec = irisDensityPlot()
+
+//            val colWidthsOption= colWidths?.joinToString(prefix="$COL_WIDTHS=[", postfix = "]," ) ?: ""
+//            val rowHeightsOption= rowHeights?.joinToString(prefix="$ROW_HEIGHTS=[", postfix = "]," ) ?: ""
             return subplotsGrid(
                 elements = listOf(
                     densitySpec, BLANK,
@@ -97,12 +117,18 @@ open class PlotGrid {
                 ),
                 ncols = 2,
                 nrows = 2,
+                colWidths,
+                rowHeights,
                 innerAlignment
             )
         }
 
         @Suppress("FunctionName")
-        private fun irisTriple_compositeCell(innerAlignment: Boolean): MutableMap<String, Any> {
+        private fun irisTriple_compositeCell(
+            colWidths: List<Double>? = null,
+            rowHeights: List<Double>? = null,
+            innerAlignment: Boolean
+        ): MutableMap<String, Any> {
             val scatterSpec = irisScatterPlot()
             val densitySpec = irisDensityPlot()
 
@@ -119,6 +145,8 @@ open class PlotGrid {
                 ),
                 ncols = 1,
                 nrows = 2,
+                colWidths,
+                rowHeights,
                 innerAlignment
             )
         }
@@ -127,7 +155,9 @@ open class PlotGrid {
             elements: List<Any?>,
             ncols: Int,
             nrows: Int,
-            innerAlignment: Boolean
+            colWidths: List<Double>? = null,
+            rowHeights: List<Double>? = null,
+            innerAlignment: Boolean,
         ): MutableMap<String, Any> {
             return mutableMapOf(
                 Option.Meta.KIND to Option.Meta.Kind.SUBPLOTS,
@@ -136,6 +166,8 @@ open class PlotGrid {
                     NAME to SUBPLOTS_GRID,
                     NCOLS to ncols,
                     NROWS to nrows,
+                    COL_WIDTHS to colWidths,
+                    ROW_HEIGHTS to rowHeights,
                     INNER_ALIGNMENT to innerAlignment,
                 )
             )

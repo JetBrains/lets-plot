@@ -14,11 +14,15 @@ class CompositeFigureGridLayout(
     nrows: Int,
     hSpace: Double,
     vSpace: Double,
+    colWidths: List<Double>?,
+    rowHeights: List<Double>?,
 ) : CompositeFigureGridLayoutBase(
     ncols = ncols,
     nrows = nrows,
     hSpace = hSpace,
     vSpace = vSpace,
+    colWidths = colWidths,
+    rowHeights = rowHeights,
 ), CompositeFigureLayout {
     override fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
         val elementsWithBounds = toElelemtsWithInitialBounds(size, elements)

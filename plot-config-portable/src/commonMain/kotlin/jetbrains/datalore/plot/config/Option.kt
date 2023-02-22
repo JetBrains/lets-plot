@@ -100,8 +100,8 @@ object Option {
             const val NCOLS = "ncols"
             const val HSPACE = "hspace"  // px
             const val VSPACE = "vspace"  // px
-            const val COL_WIDTHS = "col_widths"
-            const val ROW_HEIGHTS = "row_heights"
+            const val COL_WIDTHS = "widths"
+            const val ROW_HEIGHTS = "heights"
             const val INNER_ALIGNMENT = "inner_alignment" // bool
         }
     }

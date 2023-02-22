@@ -60,43 +60,14 @@ open class OptionsAccessor(
             ?: throw IllegalArgumentException("Can't get string value: option '$option' is not present.")
     }
 
-    fun getList(option: String): List<*> {
-        val v = get(option) ?: return ArrayList<Any>()
-        require(v is List<*>) { "Not a List: $option: ${v::class.simpleName}" }
-        return v
-    }
-
-    fun getDoubleList(option: String): List<Double> {
-        val list = getNumList(option)
-        return list.map { it.toDouble() }
-    }
-
-    fun getOrderedBoundedDoubleDistinctPair(
-        option: String,
-        lowerBound: Double,
-        upperBound: Double
-    ): Pair<Double, Double> {
-        val pair = pickTwo(option, getBoundedDoubleList(option, lowerBound, upperBound))
-        check(pair.first < pair.second) { "Value ${pair.first} should be lower than ${pair.second}" }
-        return pair
-    }
-
-    fun getBoundedDoubleList(option: String, lowerBound: Double, upperBound: Double): List<Double> {
-        val list = getDoubleList(option)
-        list.forEach {
-            check(it in lowerBound..upperBound) { "Value $it is not in range [$lowerBound, $upperBound]" }
-        }
-        return list
-    }
-
     fun getNumPair(option: String): Pair<Number, Number> {
-        val list = getNumList(option) { it is Number }
+        val list = getNumList(option)
         @Suppress("UNCHECKED_CAST")
         return pickTwo(option, list) as Pair<Number, Number>
     }
 
     fun getNumQPair(option: String): Pair<Number?, Number?> {
-        val list = getNumList(option) { it == null || it is Number }
+        val list = getNumQList(option)
         return pickTwo(option, list)
     }
 
@@ -121,26 +92,48 @@ open class OptionsAccessor(
         return Pair(list[0], list[1])
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getNumList(option: String): List<Number> = getNumList(option) { it is Number } as List<Number>
-
-    fun getNumQList(option: String): List<Number?> = getNumList(option) { it == null || it is Number }
-
     private fun getNumber(option: String): Number? {
         val v = get(option) ?: return null
-
         require(v is Number) { "Parameter '$option' expected to be a Number, but was ${v::class.simpleName}" }
-
         return v;
     }
 
-    private fun getNumList(option: String, predicate: (Any?) -> Boolean): List<Number?> {
+    fun getList(option: String): List<*> {
+        val v = get(option) ?: emptyList<Any>()
+        require(v is List<*>) { "Not a List: $option: ${v::class.simpleName}" }
+        return v
+    }
+
+    private fun getNumQList(option: String): List<Number?> {
         val list = getList(option)
-
-        requireAll(list, predicate) { "$option requires a list of numbers but not numeric encountered: $it" }
-
+        requireAll(list, { it == null || it is Number }) { o, index ->
+            "The option '$option' requires a list of numbers but element [$index] is: $o"
+        }
         @Suppress("UNCHECKED_CAST")
         return list as List<Number?>
+    }
+
+    private fun getNumList(option: String): List<Number> {
+        val list = getNumQList(option)
+        requireAll(list, { it is Number }) { o, index ->
+            "The option '$option' requires a list of numbers but element [$index] is: $o"
+        }
+        @Suppress("UNCHECKED_CAST")
+        return list as List<Number>
+    }
+
+    fun getDoubleList(option: String): List<Double> {
+        val list = getNumList(option)
+        return list.map { it.toDouble() }
+    }
+
+    fun getStringList(option: String): List<String> {
+        val list = getList(option)
+        requireAll(list, { it is String }) { o, index ->
+            "The option '$option' requires a list of strings but element [$index] is: $o"
+        }
+        @Suppress("UNCHECKED_CAST")
+        return list as List<String>
     }
 
     fun getAsList(option: String): List<Any?> {
@@ -153,22 +146,25 @@ open class OptionsAccessor(
     }
 
     fun getAsStringList(option: String): List<String> {
-//        val v = get(option) ?: emptyList<String>()
-//        return if (v is List<*>) {
-//            v.filterNotNull().map { it.toString() }
-//        } else {
-//            listOf(v.toString())
-//        }
         return getAsList(option).filterNotNull().map { it.toString() }
     }
 
-    fun getStringList(option: String): List<String> {
-        val list = getList(option)
+    fun getOrderedBoundedDoubleDistinctPair(
+        option: String,
+        lowerBound: Double,
+        upperBound: Double
+    ): Pair<Double, Double> {
+        val pair = pickTwo(option, getBoundedDoubleList(option, lowerBound, upperBound))
+        check(pair.first < pair.second) { "Value ${pair.first} should be lower than ${pair.second}" }
+        return pair
+    }
 
-        requireAll(list, { it is String }) { "$option requires a list of strings but not string encountered: $it" }
-
-        @Suppress("UNCHECKED_CAST")
-        return list as List<String>
+    fun getBoundedDoubleList(option: String, lowerBound: Double, upperBound: Double): List<Double> {
+        val list = getDoubleList(option)
+        list.forEach {
+            check(it in lowerBound..upperBound) { "Value $it is not in range [$lowerBound, $upperBound]" }
+        }
+        return list
     }
 
     internal fun getRange(option: String): DoubleSpan {
@@ -272,8 +268,17 @@ open class OptionsAccessor(
             return OptionsAccessor(map)
         }
 
-        private fun <T> requireAll(items: Iterable<T>, predicate: (T) -> Boolean, lazy: (T) -> Any) {
-            items.filterNot { predicate(it) }.firstOrNull()?.let { require(false) { lazy(it) } }
+        private fun requireAll(
+            items: Iterable<*>,
+            predicate: (Any?) -> Boolean,
+            message: (Any?, Int) -> String
+        ) {
+//            items.filterNot { predicate(it) }.firstOrNull()?.let { require(false) { message(it) } }
+            require(items.all(predicate)) {
+                val el = items.find { !(predicate(it)) }
+                val i = items.indexOf(el)
+                message(el, i)
+            }
         }
     }
 }

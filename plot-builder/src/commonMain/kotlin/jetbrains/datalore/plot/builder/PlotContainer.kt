@@ -35,7 +35,6 @@ class PlotContainer constructor(
 
     init {
         if (plot.interactionsEnabled) {
-            // ToDo: interactor.dispose() ??
             plot.interactor = Interactor(
                 decorationLayer = svgRoot.decorationLayer,
                 mouseEventPeer = mouseEventPeer,
@@ -57,7 +56,6 @@ class PlotContainer constructor(
 
     override fun dispose() {
         registrations.remove()
-//        registrations = CompositeRegistration()
         svgRoot.clearContent()
     }
 

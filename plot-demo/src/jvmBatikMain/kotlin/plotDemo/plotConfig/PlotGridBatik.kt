@@ -12,7 +12,8 @@ fun main() {
     with(PlotGrid()) {
         PlotSpecsDemoWindowBatik(
             "Plot Grid (Batik)",
-            plotSpecList()
+            plotSpecList(),
+            maxCol = 2
         ).open()
     }
 }

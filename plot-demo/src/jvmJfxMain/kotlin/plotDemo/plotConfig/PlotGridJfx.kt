@@ -12,7 +12,8 @@ fun main() {
     with(PlotGrid()) {
         PlotSpecsDemoWindowJfx(
             "Plot Grid (JFX)",
-            plotSpecList()
+            plotSpecList(),
+            maxCol = 2
         ).open()
     }
 }

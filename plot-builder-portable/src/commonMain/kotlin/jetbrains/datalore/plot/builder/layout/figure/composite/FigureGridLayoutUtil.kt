@@ -52,4 +52,8 @@ internal object FigureGridLayoutUtil {
             }
         }
     }
+
+    fun toCellOrigin(index: Int, sizes: List<Double>, space: Double): Double {
+        return sizes.take(index).sum() + space * index
+    }
 }
