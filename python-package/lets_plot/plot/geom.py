@@ -3577,6 +3577,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - fill : color of geometry filling.
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+    - weight : used by 'densityridges' stat to compute weighted density.
     - quantile : quantile values to draw quantile lines and fill quantiles of the geometry by color.
 
     Examples
