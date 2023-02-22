@@ -11,7 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
 import jetbrains.datalore.plot.base.geom.LiveMapProvider.LiveMapData
@@ -231,8 +231,8 @@ object LiveMapProviderUtil {
 
                 private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(
                     layer.geomKind,
-                    isMappedFill = { Aes.FILL in layer.mappedAes },
-                    isMappedColor = { Aes.COLOR in layer.mappedAes }
+                    isMappedFill = { p: DataPointAesthetics -> p.fillAes in layer.mappedAes },
+                    isMappedColor = { p: DataPointAesthetics -> p.colorAes in layer.mappedAes }
                 )
 
                 fun buildLookupResult(coord: DoubleVector, hoverObjects: List<HoverObject>): GeomTargetLocator.LookupResult {
