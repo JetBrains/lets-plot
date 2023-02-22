@@ -1068,6 +1068,8 @@ def scale_gradient2(aesthetic, *,
         Color for mid-point.
     high : str
         Color for high end of gradient.
+    midpoint : float, default=0.0
+        The midpoint (in data value) of the diverging scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -1149,6 +1151,8 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
         Color for mid-point.
     high : str
         Color for high end of gradient.
+    midpoint : float, default=0.0
+        The midpoint (in data value) of the diverging scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -1227,6 +1231,8 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
         Color for mid-point.
     high : str
         Color for high end of gradient.
+    midpoint : float, default=0.0
+        The midpoint (in data value) of the diverging scale.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
