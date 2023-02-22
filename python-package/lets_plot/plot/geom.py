@@ -173,15 +173,15 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         from lets_plot import *
         from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        data = {'city': ['New York', 'Los Angeles', 'Chicago'], \\
-                'est_pop_2019': [8_336_817, 3_979_576, 2_693_976]}
-        centroids = geocode_cities(data['city']).get_centroids()
+        data = {"city": ["New York", "Los Angeles", "Chicago"], \\
+                "est_pop_2019": [8_336_817, 3_979_576, 2_693_976]}
+        centroids = geocode_cities(data["city"]).get_centroids()
         ggplot() + geom_livemap() + \\
-            geom_point(aes(size='est_pop_2019'), \\
-                       data=data, map=centroids, map_join='city', \\
-                       tooltips=layer_tooltips().line('@city')
-                                                .line('population|@est_pop_2019')) + \\
-            ggsize(600, 450)
+            geom_point(aes(size="est_pop_2019"), color="red", show_legend=False, \\
+                       data=data, map=centroids, map_join="city", \\
+                       tooltips=layer_tooltips().title("@city")
+                                                .line("population|@est_pop_2019"))
+
     """
     return _geom('point',
                  mapping=mapping,
@@ -333,6 +333,28 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         ggplot(data, aes(x='x', y='y', group='c')) + \\
             geom_path(aes(color='c'), size=2, alpha=.5) + \\
             scale_color_discrete()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 15
+
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        pushkin_1829_journey = {
+            "city": ["Moscow", "Oryol", "Novocherkassk", "Stavropol", \\
+                     "Georgiyevsk", "Vladikavkaz", "Tiflis", "Kars", "Erzurum"],
+            "latitude": [55.751244, 52.929697, 47.414101, 45.0428, \\
+                         44.1497667, 43.03667, 41.716667, 40.60199, 39.90861],
+            "longitude": [37.618423, 36.098689, 40.110401, 41.9734, \\
+                          43.4577689, 44.66778, 44.783333, 43.09495, 41.27694],
+        }
+        ggplot(pushkin_1829_journey, aes("longitude", "latitude")) + \\
+            geom_livemap(const_size_zoomin=0) + \\
+            geom_point(size=3, color="#fc4e2a", tooltips=layer_tooltips().line("@city")) + \\
+            geom_path(color="#fc4e2a")
 
     """
 
@@ -1211,6 +1233,21 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                        fill='darkgreen') + \\
             ggsize(600, 450)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7-8
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        x, y = np.random.multivariate_normal(mean=[-98, 39], cov=[[100, 0], [0, 10]], size=100).T
+        ggplot() + geom_livemap() + \\
+            geom_bin2d(aes(x, y, fill='..density..'), \\
+                       bins=[10, 5], alpha=.5, show_legend=False)
+
     """
     return _geom('bin2d',
                  mapping=mapping,
@@ -1327,6 +1364,28 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         ggplot(data, aes(x='x', y='y')) + \\
             geom_tile(aes(fill='z'), width=.8, height=.8, color='black') + \\
             scale_fill_gradient(low='yellow', high='darkgreen')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 15
+
+        import numpy as np
+        import geopandas as gpd
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        nlon, nlat = 30, 20
+        geometry = geocode_countries("Kazakhstan").get_boundaries().iloc[0].geometry
+        bbox = geometry.bounds
+        lonspace = np.linspace(bbox[0], bbox[2], nlon)
+        latspace = np.linspace(bbox[1], bbox[3], nlat)
+        longrid, latgrid = np.meshgrid(lonspace, latspace)
+        lon, lat = longrid.flatten(), latgrid.flatten()
+        within = gpd.points_from_xy(lon, lat).within(geometry)
+        ggplot() + geom_livemap() + \\
+            geom_tile(aes(x=lon, y=lat, fill=within), alpha=.5, show_legend=False)
 
     """
     return _geom('tile',
@@ -2006,6 +2065,22 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
             geom_contour(aes(color='..level..'), bins=3, size=1) + \\
             scale_color_gradient(low='#dadaeb', high='#3f007d')
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        data = {'x': 10 * np.random.normal(size=n) - 100, \\
+                'y': 3 * np.random.normal(size=n) + 40}
+        ggplot(data, aes('x', 'y')) + geom_livemap() + \\
+            geom_contour(stat='density2d')
+
     """
     return _geom('contour',
                  mapping=mapping,
@@ -2124,6 +2199,23 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         ggplot(data, aes(x='x', y='y', z='z')) + \\
             geom_contourf(aes(fill='..level..'), bins=3, size=0) + \\
             scale_fill_gradient(low='#dadaeb', high='#3f007d')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        data = {'x': 10 * np.random.normal(size=n) - 100, \\
+                'y': 3 * np.random.normal(size=n) + 40}
+        ggplot(data, aes('x', 'y')) + geom_livemap() + \\
+            geom_contourf(aes(fill='..group..'), stat='density2df', \\
+                          alpha=.5, show_legend=False)
 
     """
     return _geom('contourf',
@@ -2287,19 +2379,18 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9-12
+        :emphasize-lines: 8-11
 
         from lets_plot import *
         from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        data = {'city': ['New York', 'Philadelphia'], \\
-                'est_pop_2019': [8_336_817, 1_584_064]}
-        boundaries = geocode_cities(data['city']).get_boundaries(resolution=15)
-        ggplot() + \\
-        geom_livemap() + \\
-            geom_polygon(aes(color='city', fill='city'), data=data, map=boundaries, \\
-                         map_join='city', alpha=.2, \\
-                         tooltips=layer_tooltips().line('@city')\\
+        data = {"city": ["New York", "Philadelphia"], \\
+                "est_pop_2019": [8_336_817, 1_584_064]}
+        boundaries = geocode_cities(data["city"]).inc_res().get_boundaries()
+        ggplot() + geom_livemap() + \\
+            geom_polygon(aes(color="city", fill="city"), data=data, map=boundaries, \\
+                         map_join="city", alpha=.2, \\
+                         tooltips=layer_tooltips().title('@city')\\
                                                   .line('population|@est_pop_2019'))
 
     """
@@ -2448,6 +2539,24 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
             geom_map(aes(color='city', fill='city'), data=data, map=boundaries, \\
                      map_join='city', size=.5, alpha=.3, \\
                      tooltips=layer_tooltips().line('@city')\\
+                                              .line('population|@est_pop_2019'))
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8-11
+
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        data = {"city": ["New York", "Philadelphia"], \\
+                "est_pop_2019": [8_336_817, 1_584_064]}
+        boundaries = geocode_cities(data["city"]).inc_res().get_boundaries()
+        ggplot() + geom_livemap() + \\
+            geom_map(aes(color="city", fill="city"), data=data, map=boundaries, \\
+                     map_join="city", alpha=.2, \\
+                     tooltips=layer_tooltips().title('@city')\\
                                               .line('population|@est_pop_2019'))
 
     """
@@ -2658,6 +2767,18 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                        data=bounds_df, size=.7, linetype='longdash') + \\
             geom_point(aes(x='x', y='y', color='c'), data=df)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_livemap(location=[0, 0], zoom=1) + \\
+            geom_hline(yintercept=0, size=1, color="red") + \\
+            ggtitle("Equator")
+
     """
     return _geom('hline',
                  mapping=mapping,
@@ -2759,6 +2880,18 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
             geom_vline(aes(xintercept='xmax', color='c'), \\
                        data=bounds_df, size=.7, linetype='longdash') + \\
             geom_point(aes(x='x', y='y', color='c'), data=df)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 4
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        ggplot() + geom_livemap(location=[0, 0], zoom=1) + \\
+            geom_vline(xintercept=0, size=1, color="red") + \\
+            ggtitle("Prime meridian")
 
     """
     return _geom('vline',
@@ -4138,6 +4271,22 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                        stat='density2d', contour=False, n=50) + \\
             scale_fill_gradient(low='#49006a', high='#fff7f3')
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        data = {'x': 10 * np.random.normal(size=n) - 100, \\
+                'y': 3 * np.random.normal(size=n) + 40}
+        ggplot(data, aes('x', 'y')) + geom_livemap() + \\
+            geom_density2d()
+
     """
     return _geom('density2d',
                  mapping=mapping,
@@ -4334,6 +4483,23 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
             geom_tile(aes(fill='..density..'), color='black', \\
                        stat='density2df', contour=False, n=50) + \\
             scale_fill_gradient(low='#49006a', high='#fff7f3')
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 1000
+        np.random.seed(42)
+        data = {'x': 10 * np.random.normal(size=n) - 100, \\
+                'y': 3 * np.random.normal(size=n) + 40}
+        ggplot(data, aes('x', 'y')) + geom_livemap() + \\
+            geom_density2df(aes(fill='..group..'), \\
+                            alpha=.5, show_legend=False)
 
     """
     return _geom('density2df',
@@ -5277,6 +5443,20 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                       data=agg_df, alpha=.2) + \\
             geom_point(aes(x='x', y='y', color='c'), data=df)
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        geometry = geocode_countries("Kazakhstan").get_boundaries().iloc[0].geometry
+        bbox = geometry.bounds
+        ggplot() + geom_livemap() + \\
+            geom_rect(xmin=bbox[0], ymin=bbox[1], xmax=bbox[2], ymax=bbox[3], alpha=.5)
+
     """
     return _geom('rect',
                  mapping=mapping,
@@ -5387,6 +5567,33 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                          arrow=arrow(type='closed', angle=10)) + \\
             scale_color_gradient(low='#2c7bb6', high='#d7191c') + \\
             coord_fixed()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 18-20
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        pushkin_1829_journey = {
+            "dep_city": ["Moscow", "Oryol", "Novocherkassk", "Stavropol", \\
+                         "Georgiyevsk", "Vladikavkaz", "Tiflis", "Kars"],
+            "arr_city": ["Oryol", "Novocherkassk", "Stavropol", "Georgiyevsk", \\
+                         "Vladikavkaz", "Tiflis", "Kars", "Erzurum"],
+            "dep_lon": [37.618423, 36.098689, 40.110401, 41.9734, \\
+                        43.4577689, 44.66778, 44.783333, 43.09495],
+            "arr_lon": [36.098689, 40.110401, 41.9734, 43.4577689, \\
+                        44.66778, 44.783333, 43.09495, 41.27694],
+            "dep_lat": [55.751244, 52.929697, 47.414101, 45.0428, \\
+                        44.1497667, 43.03667, 41.716667, 40.60199],
+            "arr_lat": [52.929697, 47.414101, 45.0428, 44.1497667, \\
+                        43.03667, 41.716667, 40.60199, 39.90861],
+        }
+        ggplot(pushkin_1829_journey) + geom_livemap(const_size_zoomin=0) + \\
+            geom_segment(aes(x="dep_lon", y="dep_lat", xend="arr_lon", yend="arr_lat"), \\
+                         size=1, color="#fc4e2a", arrow=arrow(), \\
+                         tooltips=layer_tooltips().line("from @dep_city to @arr_city"))
 
     """
     return _geom('segment',
@@ -5559,24 +5766,20 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13-15
+        :emphasize-lines: 11-12
 
         from lets_plot import *
         from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        cities = ['New York', 'Los Angeles', 'Chicago']
-        states = ['NY', 'CA', 'IL']
+        cities = ["New York", "Los Angeles"]
+        states = ["NY", "CA"]
         titles = ['{0} ({1})'.format(city, state) \\
                   for city, state in zip(cities, states)]
-        data = {'city': cities, 'state': states, 'title': titles}
-        centroids = geocode_cities(data['city']).get_centroids()
-        ggplot(data) + \\
-            geom_point(aes(fill='city'), map=centroids, \\
-                       map_join='city', shape=21, color='black') + \\
-            geom_text(aes(label='title'), map=centroids, \\
-                      map_join='city', size=8, vjust=1, \\
-                      family='Optima', fontface='bold') + \\
-            xlim(-130, -60) + ylim(33, 43)
+        data = {"city": cities, "state": states, "title": titles}
+        centroids = geocode_cities(data["city"]).get_centroids()
+        ggplot(data) + geom_livemap(tiles=maptiles_lets_plot(theme='dark')) + \\
+            geom_text(aes(label="title"), map=centroids, map_join="city", \\
+                      size=7, color="yellow", fontface='bold')
 
     """
     return _geom('text',
@@ -5760,24 +5963,21 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 13-14
+        :emphasize-lines: 12-13
 
         from lets_plot import *
         from lets_plot.geo_data import *
         LetsPlot.setup_html()
-        cities = ['New York', 'Los Angeles']
-        states = ['NY', 'CA']
+        cities = ["New York", "Los Angeles"]
+        states = ["NY", "CA"]
         titles = ['{0} ({1})'.format(city, state) \\
                   for city, state in zip(cities, states)]
-        data = {'city': cities, 'state': states, 'title': titles}
-        centroids = geocode_cities(data['city']).get_centroids()
-        ggplot(data) + \\
-            geom_livemap() + \\
-            geom_point(map=centroids, map_join='city') + \\
-            geom_label(aes(label='title'), map=centroids, \\
-                       map_join='city', size=7, hjust=0, vjust=0) + \\
-            ggsize(500, 400)
-
+        data = {"city": cities, "state": states, "title": titles}
+        centroids = geocode_cities(data["city"]).get_centroids()
+        ggplot(data) + geom_livemap() + \\
+            geom_point(map=centroids, map_join="city") + \\
+            geom_label(aes(label="title"), map=centroids, \\
+                       map_join="city", size=7, hjust=0, vjust=0)
 
     """
     return _geom('label',
@@ -5959,6 +6159,23 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                                 labels=layer_labels(['..proppct..']).format('..proppct..', '{.1f}%'))
 
     |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9-10
+
+        from lets_plot import *
+        from lets_plot.geo_data import *
+        LetsPlot.setup_html()
+        data = {"city": ["New York", "New York", "Philadelphia", "Philadelphia"], \\
+                "est_pop_2020": [4_381_593, 3_997_959, 832_685, 748_846], \\
+                "sex": ["female", "male", "female", "male"]}
+        centroids = geocode_cities(data["city"]).get_centroids()
+        ggplot() + geom_livemap() + \\
+            geom_pie(aes(slice="est_pop_2020", fill="sex", size="est_pop_2020"), \\
+                     stat='identity', data=data, map=centroids, map_join="city") + \\
+            scale_size(guide='none')
+
     """
 
     return _geom('pie',
