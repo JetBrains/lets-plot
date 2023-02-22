@@ -19,8 +19,7 @@ enum class StackingMode {
         private val ENUM_INFO = EnumInfoFactory.createEnumInfo<StackingMode>()
 
         fun safeValueOf(v: String): StackingMode {
-            return ENUM_INFO.safeValueOf(v) ?:
-            throw IllegalArgumentException(
+            return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
                 "Unsupported stacking mode: '$v'\n" +
                 "Use one of: groups, all."
             )
@@ -77,7 +76,8 @@ abstract class StackablePos : PositionAdjustment {
         fun getTotalOffset(stackId: Double, offsetValue: Double): Double {
             return if (offsetValue >= 0) {
                 val currentOffset = positiveOffset.getOrPut(stackId) { GroupOffset(0.0, 0.0) }
-                positiveOffset[stackId] = GroupOffset(getGroupOffset(currentOffset.value, offsetValue), currentOffset.stack)
+                positiveOffset[stackId] =
+                    GroupOffset(getGroupOffset(currentOffset.value, offsetValue), currentOffset.stack)
                 getCurrentTotalOffset(currentOffset.stack, currentOffset.value)
             } else {
                 val currentOffset = negativeOffset.getOrPut(stackId) { GroupOffset(0.0, 0.0) }
