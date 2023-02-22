@@ -385,35 +385,22 @@ class DataFrame private constructor(builder: Builder) {
             ): Map<Variable, List<*>> {
 
                 fun reorder(data: List<*>, groupIndices: List<List<Int>>, orderList: Set<Any>): List<List<Int>> {
-                    val newGroupIndices = mutableListOf<List<Int>>()
-                    groupIndices.forEach { group ->
-                        val values = group.map { it to data[it] }
-                        val ordered = values
-                            .sortedWith { (_, value1), (_, value2) ->
-                                when {
-                                    // null value is always greater - will be at the end of the result
-                                    value1 == null && value2 == null -> 0
-                                    value1 == null -> 1
-                                    value2 == null -> -1
-                                    else -> compareValues(
-                                        orderList.indexOf(value1) as Comparable<*>,
-                                        orderList.indexOf(value2) as Comparable<*>
-                                    )
-                                }
-                            }
-                        newGroupIndices += ordered
-                            .groupBy({ (_, value) -> value }) { (index) -> index }
-                            .values
+                    return groupIndices.flatMap { indicesInGroup ->
+                        val groups = indicesInGroup.map { it to data[it] }
+                            .groupBy({ (_, value) -> orderList.indexOf(value)}) { (index) -> index }
+
+                        orderList.indices.mapNotNull { groups[it] }.toMutableList().also { newIndices ->
+                            // null values will be at the end of the result
+                            groups[-1]?.let { nulls -> newIndices.add(nulls) }
+                        }
                     }
-                    return newGroupIndices
                 }
 
                 var groupIndices: List<List<Int>> = emptyList()
                 distinctValues.forEach { (variable, orderList) ->
                     require(vectorByVar.containsKey(variable))
                     if (groupIndices.isEmpty()) {
-                        val indices = List(vectorByVar[variable]!!.size) { index -> index }
-                        groupIndices = listOf(indices)
+                        groupIndices = listOf(List(vectorByVar[variable]!!.size) { it })
                     }
                     groupIndices = reorder(vectorByVar[variable]!!, groupIndices, orderList)
                 }
