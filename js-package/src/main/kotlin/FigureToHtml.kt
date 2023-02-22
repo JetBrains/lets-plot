@@ -8,10 +8,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
@@ -45,32 +45,33 @@ internal class FigureToHtml(
         val svgRoot = buildInfo.createSvgRoot()
         if (svgRoot is CompositeFigureSvgRoot) {
             processCompositeFigure(
-                origin = null,   // The topmost SVG
                 svgRoot,
+                origin = null      // The topmost SVG
             )
         } else {
             processPlotFigure(
-                origin = null,   // The topmost SVG
                 svgRoot as PlotSvgRoot,
+                origin = null      // The topmost SVG
             )
         }
     }
 
     private fun processCompositeFigure(
-        origin: DoubleVector?,
         svgRoot: CompositeFigureSvgRoot,
+        origin: DoubleVector?,
     ) {
         svgRoot.ensureContentBuilt()
 
-        val rootSvg = svgRoot.svg
+        val rootSvgSvg: SvgSvgElement = svgRoot.svg
+        val domSVGSVG: SVGSVGElement = mapSvgToSVG(rootSvgSvg)
         val rootNode: Node = if (origin == null) {
             setupRootHTMLElement(
                 parentElement,
                 svgRoot.bounds.dimension
             )
-            mapSvgToSVG(rootSvg)
+            domSVGSVG
         } else {
-            wrapChildNode(mapSvgToSVG(rootSvg), origin)
+            wrapChildNode(domSVGSVG, origin)
         }
 
         parentElement.appendChild(rootNode)
@@ -83,17 +84,17 @@ internal class FigureToHtml(
         for (element in svgRoot.elements) {
             val elementOrigin = element.bounds.origin.add(origin)
             if (element is PlotSvgRoot) {
-                processPlotFigure(elementOrigin, element)
+                processPlotFigure(element, elementOrigin)
             } else {
                 element as CompositeFigureSvgRoot
-                processCompositeFigure(elementOrigin, element)
+                processCompositeFigure(element, elementOrigin)
             }
         }
     }
 
     private fun processPlotFigure(
-        origin: DoubleVector?,
         svgRoot: PlotSvgRoot,
+        origin: DoubleVector?,
     ) {
 
         val plotContainer = PlotContainer(svgRoot)

@@ -21,15 +21,20 @@ internal class FigureToPlainSvg(
         val svgRoot = buildInfo.createSvgRoot()
         svgRoot.ensureContentBuilt()
 
+        val topSvgSvg: SvgSvgElement = svgRoot.svg
+
         if (svgRoot is CompositeFigureSvgRoot) {
-            processComposite(svgRoot, origin = DoubleVector.ZERO)
+            processCompositeFigure(svgRoot, origin = DoubleVector.ZERO, topSvgSvg)
         }
 
-        return svgRoot.svg
+        return topSvgSvg
     }
 
-    private fun processComposite(svgRoot: CompositeFigureSvgRoot, origin: DoubleVector) {
-        val rootSvg = svgRoot.svg
+    private fun processCompositeFigure(
+        svgRoot: CompositeFigureSvgRoot,
+        origin: DoubleVector,
+        topSvgSvg: SvgSvgElement
+    ) {
 
         // Sub-figures
 
@@ -42,10 +47,10 @@ internal class FigureToPlainSvg(
             elementSvg.y().set(elementOrigin.y)
 
             if (element is CompositeFigureSvgRoot) {
-                processComposite(element, elementOrigin)
+                processCompositeFigure(element, elementOrigin, topSvgSvg)
             }
 
-            rootSvg.children().add(elementSvg)
+            topSvgSvg.children().add(elementSvg)
         }
     }
 }

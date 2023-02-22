@@ -8,12 +8,13 @@ package jetbrains.datalore.plot
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.DisposingHub
+import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
@@ -32,7 +33,7 @@ internal class FigureToAwt(
     fun eval(): JComponent {
 
         val buildInfo = buildInfo.layoutedByOuterSize()
-        
+
         buildInfo.injectLiveMapProvider { tiles: List<List<GeomLayer>>, spec: Map<String, Any> ->
             val cursorServiceConfig = CursorServiceConfig()
             LiveMapProviderUtil.injectLiveMapProvider(tiles, spec, cursorServiceConfig)
@@ -41,13 +42,9 @@ internal class FigureToAwt(
 
         val svgRoot = buildInfo.createSvgRoot()
         return if (svgRoot is CompositeFigureSvgRoot) {
-            processCompositeFigure(
-                svgRoot,
-            )
+            processCompositeFigure(svgRoot)
         } else {
-            processPlotFigure(
-                svgRoot as PlotSvgRoot,
-            )
+            processPlotFigure(svgRoot as PlotSvgRoot)
         }
     }
 
@@ -87,14 +84,18 @@ internal class FigureToAwt(
             )
         }
 
-        val rootFigureBounds = toJBounds(svgRoot.bounds)
-        val rootFigureDim = rootFigureBounds.size
+//        val rootFigureBounds = toJBounds(svgRoot.bounds)
+        val rootJComponentBounds = toJBounds(
+            DoubleRectangle(DoubleVector.ZERO, svgRoot.bounds.dimension)
+        )
+        val rootFigureDim = rootJComponentBounds.size
         rootJPanel.preferredSize = rootFigureDim
         rootJPanel.minimumSize = rootFigureDim
         rootJPanel.maximumSize = rootFigureDim
 
         val rootJComponent: JComponent = svgComponentFactory(svgRoot.svg)
-        rootJComponent.bounds = rootFigureBounds
+//        rootJComponent.bounds = rootFigureBounds
+        rootJComponent.bounds = rootJComponentBounds
         rootJPanel.add(rootJComponent)
 
         //
