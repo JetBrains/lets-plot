@@ -5,14 +5,34 @@
 
 package jetbrains.datalore.plot.base.pos
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.*
 
+enum class StackingMode {
+    GROUPS, ALL;
+
+    companion object {
+
+        private val ENUM_INFO = EnumInfoFactory.createEnumInfo<StackingMode>()
+
+        fun safeValueOf(v: String): StackingMode {
+            return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
+                "Unsupported stacking mode: '$v'\n" +
+                "Use one of: groups, all."
+            )
+        }
+    }
+}
+
 abstract class StackablePos : PositionAdjustment {
-    internal fun mapIndexToOffset(aes: Aesthetics, vjust: Double): Map<Int, StackOffset> {
-        val stackingContext = StackingContext()
+    internal fun mapIndexToOffset(aes: Aesthetics, vjust: Double, stackingMode: StackingMode): Map<Int, StackOffset> {
+        val stackingContext = when (stackingMode) {
+            StackingMode.GROUPS -> StackingContext(false)
+            StackingMode.ALL -> StackingContext(true)
+        }
         val offsetByIndex = HashMap<Int, StackOffset>()
         val indexedDataPoints = aes.dataPoints().asSequence()
             .mapIndexed { i, p -> Pair(i, p) }
@@ -41,7 +61,7 @@ abstract class StackablePos : PositionAdjustment {
 
     private data class GroupOffset(val value: Double, val stack: Double)
 
-    private class StackingContext(private val stackInsideGroups: Boolean = false) {
+    private class StackingContext(private val stackInsideGroups: Boolean) {
         private val positiveOffset = HashMap<Double, GroupOffset>()
         private val negativeOffset = HashMap<Double, GroupOffset>()
 
@@ -56,7 +76,8 @@ abstract class StackablePos : PositionAdjustment {
         fun getTotalOffset(stackId: Double, offsetValue: Double): Double {
             return if (offsetValue >= 0) {
                 val currentOffset = positiveOffset.getOrPut(stackId) { GroupOffset(0.0, 0.0) }
-                positiveOffset[stackId] = GroupOffset(getGroupOffset(currentOffset.value, offsetValue), currentOffset.stack)
+                positiveOffset[stackId] =
+                    GroupOffset(getGroupOffset(currentOffset.value, offsetValue), currentOffset.stack)
                 getCurrentTotalOffset(currentOffset.stack, currentOffset.value)
             } else {
                 val currentOffset = negativeOffset.getOrPut(stackId) { GroupOffset(0.0, 0.0) }
@@ -88,5 +109,9 @@ abstract class StackablePos : PositionAdjustment {
             else
                 stackOffset
         }
+    }
+
+    companion object {
+        val DEF_STACKING_MODE = StackingMode.GROUPS
     }
 }
