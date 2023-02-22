@@ -59,7 +59,7 @@
 
 - Parameter `flat=True` turns off lines re-projection, keeping the original number of points.
 
-- Position adjustments `'stack'` and `'fill'` shifts objects only between different groups.
+- Parameter `mode` added to position adjustments `'stack'` and `'fill'`. When `mode='groups'` (default) the position adjustment shifts objects only if their groups are distinct.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/position_stack.ipynb).
 

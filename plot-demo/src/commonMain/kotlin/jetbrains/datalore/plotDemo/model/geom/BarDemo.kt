@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
 import jetbrains.datalore.plot.base.coord.Coords
 import jetbrains.datalore.plot.base.geom.BarGeom
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.pos.StackablePos
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
@@ -98,7 +99,7 @@ open class BarDemo : SimpleDemoBase() {
             .width(constant(0.75))
             .build()
 
-        val pos = PositionAdjustments.stack(aes, vjust = null)
+        val pos = PositionAdjustments.stack(aes, vjust = null, stackingMode = StackablePos.DEF_STACKING_MODE)
         return createGeomLayer(aes, pos)
     }
 

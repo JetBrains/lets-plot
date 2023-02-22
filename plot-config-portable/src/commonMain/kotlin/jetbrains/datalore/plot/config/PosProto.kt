@@ -6,6 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.pos.StackablePos
+import jetbrains.datalore.plot.base.pos.StackingMode
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.config.Option.Pos
 
@@ -25,9 +27,9 @@ internal object PosProto {
         val opts = OptionsAccessor(posOptions)
         return when (posName) {
             IDENTITY -> PosProvider.wrap(PositionAdjustments.identity())
-            STACK -> PosProvider.barStack(opts.getDouble(Pos.Stack.VJUST))
+            STACK -> configureStackPosition(opts)
             DODGE -> PosProvider.dodge(opts.getDouble(Pos.Dodge.WIDTH))
-            FILL -> PosProvider.fill(opts.getDouble(Pos.Fill.VJUST))
+            FILL -> configureFillPosition(opts)
             JITTER -> PosProvider.jitter(
                 opts.getDouble(Pos.Jitter.WIDTH),
                 opts.getDouble(Pos.Jitter.HEIGHT)
@@ -43,5 +45,21 @@ internal object PosProto {
             )
             else -> throw IllegalArgumentException("Unknown position adjustments name: '$posName'")
         }
+    }
+
+    private fun configureStackPosition(options: OptionsAccessor): PosProvider {
+        val mode = options.getString(Pos.Stack.MODE)?.let {
+            StackingMode.safeValueOf(it)
+        } ?: StackablePos.DEF_STACKING_MODE
+
+        return PosProvider.barStack(options.getDouble(Pos.Stack.VJUST), mode)
+    }
+
+    private fun configureFillPosition(options: OptionsAccessor): PosProvider {
+        val mode = options.getString(Pos.Fill.MODE)?.let {
+            StackingMode.safeValueOf(it)
+        } ?: StackablePos.DEF_STACKING_MODE
+
+        return PosProvider.fill(options.getDouble(Pos.Fill.VJUST), mode)
     }
 }

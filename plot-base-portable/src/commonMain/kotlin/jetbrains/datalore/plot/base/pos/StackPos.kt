@@ -10,9 +10,9 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 
-internal class StackPos(aes: Aesthetics, vjust: Double?) : StackablePos() {
+internal class StackPos(aes: Aesthetics, vjust: Double?, stackingMode: StackingMode) : StackablePos() {
 
-    private val myOffsetByIndex: Map<Int, StackOffset> = mapIndexToOffset(aes, vjust ?: DEF_VJUST)
+    private val myOffsetByIndex: Map<Int, StackOffset> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingMode)
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
         return v.add(DoubleVector(0.0, myOffsetByIndex.getValue(p.index()).value))

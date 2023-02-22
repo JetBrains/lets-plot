@@ -195,9 +195,9 @@ def position_jitterdodge(dodge_width=None, jitter_width=None, jitter_height=None
     return _pos('jitterdodge', dodge_width=dodge_width, jitter_width=jitter_width, jitter_height=jitter_height)
 
 
-def position_stack(vjust=None):
+def position_stack(vjust=None, mode=None):
     """
-    Adjust position by stacking overlapping groups of objects on top of each other.
+    Adjust position by stacking overlapping objects on top of each other.
     Preferred for density-like geometries.
 
     Parameters
@@ -206,6 +206,11 @@ def position_stack(vjust=None):
         Vertical adjustment for geoms that have a position (like points or lines),
         not a dimension (like bars or areas).
         Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
+    mode : {'groups', 'all'}, default='groups'
+        If 'groups', objects inside one group are positioned as in `position='identity'`,
+        but each group is shifted to sum of heights of previous groups
+        (where height of a group is a maximum of it's y values).
+        If 'all', each object will be shifted.
 
     Returns
     -------
@@ -214,7 +219,7 @@ def position_stack(vjust=None):
 
     Notes
     -----
-    Adjust position by stacking overlapping groups of objects on top of each other.
+    Adjust position by stacking overlapping objects on top of each other.
 
     Examples
     --------
@@ -233,12 +238,12 @@ def position_stack(vjust=None):
             geom_point(position=position_stack(), size=10)
 
     """
-    return _pos('stack', vjust=vjust)
+    return _pos('stack', vjust=vjust, mode=mode)
 
 
-def position_fill(vjust=None):
+def position_fill(vjust=None, mode=None):
     """
-    Adjust position by stacking overlapping groups of objects on top of each other
+    Adjust position by stacking overlapping objects on top of each other
     and standardise each stack to have constant height.
 
     Parameters
@@ -247,6 +252,11 @@ def position_fill(vjust=None):
         Vertical adjustment for geoms that have a position (like points or lines),
         not a dimension (like bars or areas).
         Set to 0 to align with the bottom, 0.5 for the middle, and 1 for the top.
+    mode : {'groups', 'all'}, default='groups'
+        If 'groups', objects inside one group are positioned as in `position='identity'`,
+        but each group is shifted to sum of heights of previous groups
+        (where height of a group is a maximum of it's y values).
+        If 'all', each object will be shifted.
 
     Returns
     -------
@@ -255,7 +265,7 @@ def position_fill(vjust=None):
 
     Notes
     -----
-    Adjust position by stacking overlapping groups of objects on top of each other
+    Adjust position by stacking overlapping objects on top of each other
     and standardise each stack to have constant height.
 
     Examples
@@ -275,7 +285,7 @@ def position_fill(vjust=None):
             geom_point(position=position_fill(), size=10)
 
     """
-    return _pos('fill', vjust=vjust)
+    return _pos('fill', vjust=vjust, mode=mode)
 
 
 def _pos(name, **other):

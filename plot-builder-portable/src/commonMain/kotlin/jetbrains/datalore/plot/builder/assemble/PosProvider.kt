@@ -7,6 +7,8 @@ package jetbrains.datalore.plot.builder.assemble
 
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.pos.PositionAdjustments
+import jetbrains.datalore.plot.base.pos.StackablePos
+import jetbrains.datalore.plot.base.pos.StackingMode
 import jetbrains.datalore.plot.builder.PosProviderContext
 import kotlin.jvm.JvmOverloads
 
@@ -30,10 +32,10 @@ abstract class PosProvider {
             }
         }
 
-        fun barStack(vjust: Double? = null): PosProvider {
+        fun barStack(vjust: Double? = null, stackingMode: StackingMode = StackablePos.DEF_STACKING_MODE): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.stack(ctx.aesthetics, vjust)
+                    return PositionAdjustments.stack(ctx.aesthetics, vjust, stackingMode)
                 }
 
                 override fun handlesGroups(): Boolean {
@@ -57,10 +59,10 @@ abstract class PosProvider {
             }
         }
 
-        fun fill(vjust: Double? = null): PosProvider {
+        fun fill(vjust: Double? = null, stackingMode: StackingMode = StackablePos.DEF_STACKING_MODE): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {
-                    return PositionAdjustments.fill(ctx.aesthetics, vjust)
+                    return PositionAdjustments.fill(ctx.aesthetics, vjust, stackingMode)
                 }
 
                 override fun handlesGroups(): Boolean {

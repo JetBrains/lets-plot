@@ -448,10 +448,12 @@ object Option {
 
         object Stack {
             const val VJUST = "vjust"
+            const val MODE = "mode"
         }
 
         object Fill {
             const val VJUST = "vjust"
+            const val MODE = "mode"
         }
     }
 
