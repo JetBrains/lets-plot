@@ -16,7 +16,7 @@ import kotlin.native.concurrent.ThreadLocal
 object GeomMeta {
     private val renderedAesByGeom = HashMap<GeomKind, List<Aes<*>>>()
 
-    fun renders(geomKind: GeomKind): List<Aes<*>> {
+    private fun renders(geomKind: GeomKind): List<Aes<*>> {
         if (!renderedAesByGeom.containsKey(geomKind)) {
             renderedAesByGeom[geomKind] =
                 renderedAesList(geomKind)
@@ -375,7 +375,6 @@ object GeomMeta {
                 Aes.SLICE,
                 Aes.EXPLODE,
                 Aes.SIZE,
-                Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA
             )

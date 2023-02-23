@@ -91,7 +91,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 )
             }
         ).apply {
-            val fill = getFillColor(sector.p)
+            val fill = sector.p.fill()!!
             val fillAlpha = AestheticsUtil.alpha(fill, sector.p)
             fill().set(Colors.withOpacity(fill, fillAlpha))
             width().set(strokeWidth)
@@ -135,13 +135,11 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             localToGlobalIndex = { sector.p.index() },
             GeomTargetCollector.TooltipParams(
                 markerColors = listOf(
-                    HintColorUtil.applyAlpha(getFillColor(sector.p), sector.p.alpha()!!)
+                    HintColorUtil.applyAlpha(sector.p.fill()!!, sector.p.alpha()!!)
                 )
             )
         )
     }
-
-    private fun getFillColor(p: DataPointAesthetics) = p.fill()!!
 
     private fun computeSectors(pieCenter: DoubleVector, dataPoints: List<DataPointAesthetics>): List<Sector> {
         val sum = dataPoints.sumOf { abs(it.slice()!!) }
@@ -208,8 +206,9 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                         size.y / 2,
                         shapeSize(p) / 2
                     ).apply {
-                        fillColor().set(getFillColor(p))
-                        strokeColor().set(if (getFillColor(p) == Color.TRANSPARENT) Color.BLACK else strokeColor)
+                        val fill = p.fill()!!
+                        fillColor().set(fill)
+                        strokeColor().set(if (fill == Color.TRANSPARENT) Color.BLACK else strokeColor)
                         strokeWidth().set(1.5)
                     }
                 )
@@ -325,7 +324,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
         val textColor = when {
             side != Side.INSIDE -> annotations.textStyle.color
-            Colors.luminance(getFillColor(sector.p)) < 0.5 -> Color.WHITE // if fill is dark
+            Colors.luminance(sector.p.fill()!!) < 0.5 -> Color.WHITE // if fill is dark
             else -> Color.BLACK
         }
         return AnnotationLabel(
