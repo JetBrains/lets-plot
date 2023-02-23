@@ -102,7 +102,8 @@ object Option {
             const val VSPACE = "vspace"  // px
             const val COL_WIDTHS = "widths"
             const val ROW_HEIGHTS = "heights"
-            const val INNER_ALIGNMENT = "inner_alignment" // bool
+            const val FIT_CELL_ASPECT_RATIO = "fit" // bool
+            const val INNER_ALIGNMENT = "align" // bool
         }
     }
 

@@ -11,7 +11,8 @@ __all__ = ['gggrid']
 def gggrid(figures: list, ncols: int = None, *,
            widths: list = None,
            heights: list = None,
-           inner_alignment: bool = None
+           fit: bool = None,
+           align: bool = None
            ):
     """
     """
@@ -34,7 +35,8 @@ def gggrid(figures: list, ncols: int = None, *,
         nrows=nrows,
         widths=widths,
         heights=heights,
-        inner_alignment=inner_alignment
+        fit=fit,
+        align=align
     )
 
     return SupPlotsSpec(

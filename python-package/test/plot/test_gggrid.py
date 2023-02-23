@@ -30,12 +30,18 @@ expected_widths_heights = {
     'figures': figures_prop,
     'layout': {'name': 'grid', 'ncols': 1, 'nrows': 1, 'widths': [1, 2, 3], 'heights': [4, 5, 6]}
 }
+expected_fit_align = {
+    'kind': 'subplots',
+    'figures': figures_prop,
+    'layout': {'name': 'grid', 'ncols': 1, 'nrows': 1, 'fit': True, 'align': True}
+}
 
 
 @pytest.mark.parametrize('kwargs,expected', [
     ({}, expected_no_args),
     ({'ncols': 3}, expected_ncols3),
     ({'widths': [1, 2, 3], 'heights': [4, 5, 6]}, expected_widths_heights),
+    ({'fit': True, 'align': True}, expected_fit_align),
 ])
 def test_gggrid(kwargs, expected):
     p = gg.ggplot(data={})

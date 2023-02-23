@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGr
 import jetbrains.datalore.plot.builder.presentation.Defaults.SubplotsGrid.DEF_HSPACE
 import jetbrains.datalore.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.COL_WIDTHS
+import jetbrains.datalore.plot.config.Option.SubPlots.Grid.FIT_CELL_ASPECT_RATIO
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.HSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.INNER_ALIGNMENT
 import jetbrains.datalore.plot.config.Option.SubPlots.Grid.NCOLS
@@ -58,6 +59,7 @@ internal class CompositeFigureConfig(
             val vSpace = layoutOptions.getDoubleDef(VSPACE, DEF_VSPACE)
             val colWidths = layoutOptions.getDoubleList(COL_WIDTHS)
             val rowHeights = layoutOptions.getDoubleList(ROW_HEIGHTS)
+            val fitAspectCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, false)
             val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
             return if (innerAlignment) {
                 CompositeFigureGridAlignmentLayout(
