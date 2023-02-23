@@ -72,9 +72,9 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -246,7 +246,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         True - keeps a line flat, False - allows projection to curve a line.
     geodesic : Boolean, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -407,7 +407,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -545,9 +545,9 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     max_n : int, default=1000
         Maximum number of data-points for 'loess' method.
         If this quantity exceeded random sampling is applied to data.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -577,6 +577,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : filling color for the confidence interval around the line.
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
@@ -694,9 +695,9 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -849,9 +850,9 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Specify x-value to align bin centers to.
     boundary : float
         Specify x-value to align bin boundary (i.e. point between bins) to.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1005,9 +1006,9 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     boundary : float
         When method is 'histodot', this specifies x-value to align bin boundary
         (i.e. point between bins) to.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1141,9 +1142,9 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Override `bins`. The default is to use bin widths that cover the entire range of the data.
     drop : bool, default=True
         Specify whether to remove all bins with 0 counts.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1292,9 +1293,9 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1426,7 +1427,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1518,7 +1519,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1634,9 +1635,9 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Specify appearance, style and content.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the middle bar.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1758,9 +1759,9 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Specify appearance, style and content.
     fatten : float, default=5.0
         A multiplicative factor applied to size of the middle point.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1878,7 +1879,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -1992,7 +1993,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Number of levels.
     binwidth : float
         Distance between levels.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2129,7 +2130,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Number of levels.
     binwidth : float
         Distance between levels.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2272,9 +2273,9 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2298,6 +2299,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color of geometry filling.
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2452,9 +2454,9 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2604,7 +2606,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         The line slope.
     intercept : float
         The value of y at the point where the line crosses the y axis.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2710,7 +2712,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
     yintercept : float
         The value of y at the point where the line crosses the y axis.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2824,7 +2826,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         Specify appearance, style and content.
     xintercept : float
         The value of x at the point where the line crosses the x axis.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -2961,9 +2963,9 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         of the number of observations in the groups.
     whisker_width : float, default=0.5
         A multiplicative factor applied to the box width to draw horizontal segments on whiskers.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -3163,9 +3165,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     fs_max : int, default=500
         Maximum size of data to use density computation with 'full scan'.
         For bigger data, less accurate but more efficient density computation is applied.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -3371,9 +3373,9 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     boundary : float
         When method is 'histodot', this specifies x-value to align bin boundary
         (i.e. point between bins) to.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -3542,9 +3544,9 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         Draw vertical lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -3684,9 +3686,9 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -3800,9 +3802,9 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -3949,9 +3951,9 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Draw horizontal lines at the given quantiles of the density estimate.
     quantile_lines : bool, default=False
         Show the quantile lines.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -4141,7 +4143,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Number of levels.
     binwidth : float
         Distance between levels.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -4353,9 +4355,9 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Number of levels.
     binwidth : float
         Distance between levels.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -4561,9 +4563,9 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     height : float, default=0.4
         Amount of vertical variation. The jitter is added in both directions, so the total spread is twice the specified parameter.
         Typically ranges between 0 and 0.5. Values that are greater than 0.5 lead to overlapping of the points.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -4688,9 +4690,9 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         If `distribution` is `'gamma'` then `dparams` is a pair [alpha, beta] (=[1.0, 1.0] by default).
         If `distribution` is `'exp'` then `dparams` is a float number [lambda] (=[1.0] by default).
         If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -4803,9 +4805,9 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -4916,7 +4918,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         If `distribution` is `'chi2'` then `dparams` is an integer number [k] (=[1] by default).
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5030,7 +5032,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         Specify appearance, style and content.
     quantiles : list, default=[0.25, 0.75]
         Pair of quantiles to use when fitting the Q-Q line.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5124,7 +5126,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5234,7 +5236,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5347,9 +5349,9 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5510,7 +5512,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         True - keeps a line flat, False - allows projection to curve a line.
     geodesic : Boolean, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5673,7 +5675,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Horizontal adjustment to nudge labels by.
     nudge_y : float
         Vertical adjustment to nudge labels by.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -5867,9 +5869,9 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Radius of rounded corners. Default is 0.15 of label height.
     label_size : float, default = 1.0
         Size of label border.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='color'
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
         Other arguments passed on to the layer.
@@ -6048,7 +6050,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     hole : float, default=0.0
         A multiplicative factor applied to the pie diameter to draw donut-like chart.
         Accept values between 0 and 1.
-    fill_by : {'fill', 'color', 'paint_a', 'paint_b','paint_c'}, default='fill'
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
     stroke : float, default=0.0
         Width of slice borders.
@@ -6081,8 +6083,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - slice : values associated to pie sectors.
     - explode : values to explode slices away from their center point, detaching it from the main pie.
     - size : pie diameter.
-    - fill : color of geometry filling (by default).
-    - color (colour) : color of geometry filling if `fill_by='color'`.
+    - fill : color of geometry filling.
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
 
