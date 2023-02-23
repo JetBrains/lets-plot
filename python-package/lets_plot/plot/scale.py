@@ -2000,7 +2000,7 @@ def scale_color_discrete(direction=None,
 
 
 def scale_grey(aesthetic, *,
-               start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+               start=None, end=None, name=None, breaks=None, labels=None, limits=None,
                na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for the specified aesthetics.
@@ -2080,11 +2080,10 @@ def scale_grey(aesthetic, *,
                   format=format,
                   #
                   start=start, end=end,
-                  direction=direction,
                   scale_mapper_kind='color_grey')
 
 
-def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, limits=None,
                     na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `fill` aesthetic.
@@ -2150,7 +2149,6 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
     """
     return scale_grey('fill',
                       start=start, end=end,
-                      direction=direction,
                       name=name,
                       breaks=breaks,
                       labels=labels,
@@ -2161,7 +2159,7 @@ def scale_fill_grey(start=None, end=None, direction=None, name=None, breaks=None
                       format=format)
 
 
-def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=None, labels=None, limits=None,
+def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, limits=None,
                      na_value=None, guide=None, trans=None, format=None):
     """
     Sequential grey color scale for `color` aesthetic.
@@ -2227,7 +2225,6 @@ def scale_color_grey(start=None, end=None, direction=None, name=None, breaks=Non
     """
     return scale_grey('color',
                       start=start, end=end,
-                      direction=direction,
                       name=name,
                       breaks=breaks,
                       labels=labels,
