@@ -2,13 +2,16 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from .annotation import *
 from .coord import *
 from .core import *
 from .facet import *
+from .font_features import *
 from .geom import *
 from .geom_extras import *
 from .geom_imshow_ import *
 from .geom_livemap_ import *
+from .gggrid_ import *
 from .guide import *
 from .label import *
 from .marginal_layer import *
@@ -22,8 +25,6 @@ from .scale_position import *
 from .theme_ import *
 from .theme_set import *
 from .tooltip import *
-from .annotation import *
-from .font_features import *
 
 __all__ = (coord.__all__ +
            core.__all__ +
@@ -46,5 +47,6 @@ __all__ = (coord.__all__ +
            tooltip.__all__ +
            annotation.__all__ +
            marginal_layer.__all__ +
-           font_features.__all__
+           font_features.__all__ +
+           gggrid_.__all__
            )

@@ -245,7 +245,7 @@ class PlotSpec(FeatureSpec):
 
     Do not use this class explicitly.
 
-    Instead you should construct its objects with functions `ggplot()`,
+    Instead, you should construct its objects with functions `ggplot()`,
     `corr_plot(...).points().build()` etc.
     """
 
@@ -476,7 +476,7 @@ class LayerSpec(FeatureSpec):
 
     Do not use this class explicitly.
 
-    Instead you should construct its objects with functions `geom_point()`,
+    Instead, you should construct its objects with functions `geom_point()`,
     `geom_contour()`, `geom_boxplot()`, `geom_text()` etc.
     """
 

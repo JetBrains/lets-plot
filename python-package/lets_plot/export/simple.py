@@ -7,15 +7,16 @@ from typing import Union
 
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
+from ..plot.subplots import SupPlotsSpec
 
 
-def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
+def export_svg(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str) -> str:
     """
     Export plot or `bunch` to a file in SVG format.
     
     Parameters
     ----------
-    plot: `PlotSpec` or `GGBunch` object
+    plot: `PlotSpec`, `SupPlotsSpec` or `GGBunch` object
             Plot specification to export.
     filename: str
             Filename to save SVG under.
@@ -26,8 +27,8 @@ def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
         Absolute pathname of created SVG file.
 
     """
-    if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
-        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, SupPlotsSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(plot)))
 
     from .. import _kbridge as kbr
 
@@ -38,13 +39,13 @@ def export_svg(plot: Union[PlotSpec, GGBunch], filename: str) -> str:
     return abspath(filename)
 
 
-def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = False) -> str:
+def export_html(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, iframe: bool = False) -> str:
     """
     Export plot or `bunch` to a file in HTML format.
 
     Parameters
     ----------
-    plot: `PlotSpec` or `GGBunch` object
+    plot: `PlotSpec`, `SupPlotsSpec` or `GGBunch` object
             Plot specification to export.
     filename: str
             Filename to save HTML page under.
@@ -57,8 +58,8 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
         Absolute pathname of created HTML file.
 
     """
-    if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
-        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, SupPlotsSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(plot)))
 
     from .. import _kbridge as kbr
 
@@ -69,13 +70,13 @@ def export_html(plot: Union[PlotSpec, GGBunch], filename: str, iframe: bool = Fa
     return abspath(filename)
 
 
-def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 2.0) -> str:
+def export_png(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, scale: float = 2.0) -> str:
     """
     Export plot or `bunch` to a file in PNG format.
 
     Parameters
     ----------
-    plot: `PlotSpec` or `GGBunch` object
+    plot: `PlotSpec`, `SupPlotsSpec` or `GGBunch` object
             Plot specification to export.
     filename: str
             Filename to save PNG under.
@@ -95,8 +96,8 @@ def export_png(plot: Union[PlotSpec, GGBunch], filename: str, scale: float = 2.0
     For more details visit: https://cairosvg.org/documentation/
 
     """
-    if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
-        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, SupPlotsSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(plot)))
 
     try:
         import cairosvg

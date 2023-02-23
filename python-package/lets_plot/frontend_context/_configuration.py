@@ -12,6 +12,7 @@ from ._static_svg_ctx import StaticSvgImageContext
 from .._version import __version__
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
+from ..plot.subplots import SupPlotsSpec
 
 __all__ = []
 
@@ -67,16 +68,16 @@ def _setup_html_context(*,
     _frontend_contexts[TEXT_HTML] = ctx
 
 
-def _display_plot(plot_spec: Any):
+def _display_plot(spec: Any):
     """
     Draw plot or `bunch` of plots in the current frontend context
-    :param plot_spec: PlotSpec or GGBunch object
+    :param spec: PlotSpec or GGBunch object
     """
-    if not (isinstance(plot_spec, PlotSpec) or isinstance(plot_spec, GGBunch)):
-        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot_spec)))
+    if not (isinstance(spec, PlotSpec) or isinstance(spec, SupPlotsSpec) or isinstance(spec, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(spec)))
 
     if _default_mimetype == TEXT_HTML:
-        plot_html = _as_html(plot_spec.as_dict())
+        plot_html = _as_html(spec.as_dict())
         try:
             from IPython.display import display_html
             display_html(plot_html, raw=True)
@@ -88,11 +89,11 @@ def _display_plot(plot_spec: Any):
         return
 
     if _default_mimetype == LETS_PLOT_JSON:
-        _frontend_contexts[LETS_PLOT_JSON].show(plot_spec.as_dict())
+        _frontend_contexts[LETS_PLOT_JSON].show(spec.as_dict())
         return
 
     # fallback to plain text.
-    print(plot_spec.as_dict())
+    print(spec.as_dict())
 
 
 def _as_html(plot_spec: Dict) -> str:

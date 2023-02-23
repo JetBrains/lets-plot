@@ -8,13 +8,14 @@ from typing import Union
 from .simple import export_svg, export_html, export_png
 from ..plot.core import PlotSpec
 from ..plot.plot import GGBunch
+from ..plot.subplots import SupPlotsSpec
 
 __all__ = ['ggsave']
 
 _DEF_EXPORT_DIR = "lets-plot-images"
 
 
-def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True,
+def ggsave(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, *, path: str = None, iframe: bool = True,
            scale: float = 2.0) -> str:
     """
     Export plot or `bunch` to a file.
@@ -58,8 +59,8 @@ def ggsave(plot: Union[PlotSpec, GGBunch], filename: str, *, path: str = None, i
 
     """
 
-    if not (isinstance(plot, PlotSpec) or isinstance(plot, GGBunch)):
-        raise ValueError("PlotSpec or GGBunch expected but was: {}".format(type(plot)))
+    if not (isinstance(plot, PlotSpec) or isinstance(plot, SupPlotsSpec) or isinstance(plot, GGBunch)):
+        raise ValueError("PlotSpec, SupPlotsSpec or GGBunch expected but was: {}".format(type(plot)))
 
     filename = filename.strip()
     name, ext = os.path.splitext(filename)
