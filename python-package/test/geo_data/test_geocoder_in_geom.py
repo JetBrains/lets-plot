@@ -187,16 +187,20 @@ def mock_geocoder() -> 'MockGeocoder':
     point_gdf = geo_data_frame([Point(-5, 17)])
     point_dict = {'coord': ['{"type": "Point", "coordinates": [-5.0, 17.0]}']}
 
-    polygon_gdf = geo_data_frame(MultiPolygon([
+    polygon_gdf = geo_data_frame([MultiPolygon([
         Polygon(LinearRing([(11, 12), (13, 14), (15, 13), (7, 4)])),
         Polygon(LinearRing([(10, 2), (13, 10), (12, 3)]))
-    ])
+    ])]
     )
 
     polygon_dict = {
         'coord': [
-            '{"type": "Polygon", "coordinates": [[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [7.0, 4.0], [11.0, 12.0]]]}',
-            '{"type": "Polygon", "coordinates": [[[10.0, 2.0], [13.0, 10.0], [12.0, 3.0], [10.0, 2.0]]]}'
+            '{'
+            '"type": "MultiPolygon", '
+            '"coordinates": ['
+            '[[[11.0, 12.0], [13.0, 14.0], [15.0, 13.0], [7.0, 4.0], [11.0, 12.0]]], '
+            '[[[10.0, 2.0], [13.0, 10.0], [12.0, 3.0], [10.0, 2.0]]]]'
+            '}'
         ]
     }
 
