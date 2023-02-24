@@ -5,6 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.plot.PlotSizeHelper
+import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
 import jetbrains.datalore.plot.builder.layout.figure.composite.CompositeFigureGridLayout
@@ -59,8 +62,26 @@ internal class CompositeFigureConfig(
             val vSpace = layoutOptions.getDoubleDef(VSPACE, DEF_VSPACE)
             val colWidths = layoutOptions.getDoubleList(COL_WIDTHS)
             val rowHeights = layoutOptions.getDoubleList(ROW_HEIGHTS)
-            val fitAspectCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, false)
+            val fitCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, true)
             val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
+
+            val elementsDefaultSizes: List<DoubleVector?> = elementConfigs.map { figureSpec ->
+                figureSpec?.let {
+                    if (!fitCellAspectRatio) {
+                        PlotSizeHelper.singlePlotSize(
+                            plotSpec = it.toMap(),
+                            plotSize = null,
+                            plotMaxWidth = null,
+                            plotPreferredWidth = null,
+                            facets = PlotFacets.undefined(),
+                            containsLiveMap = false
+                        )
+                    } else {
+                        null
+                    }
+                }
+            }
+
             return if (innerAlignment) {
                 CompositeFigureGridAlignmentLayout(
                     ncols = ncols,
@@ -69,6 +90,8 @@ internal class CompositeFigureConfig(
                     vSpace = vSpace,
                     colWidths = colWidths,
                     rowHeights = rowHeights,
+                    fitCellAspectRatio = fitCellAspectRatio,
+                    elementsDefaultSizes = elementsDefaultSizes,
                 )
             } else {
                 CompositeFigureGridLayout(
@@ -78,6 +101,8 @@ internal class CompositeFigureConfig(
                     vSpace = vSpace,
                     colWidths = colWidths,
                     rowHeights = rowHeights,
+                    fitCellAspectRatio = fitCellAspectRatio,
+                    elementsDefaultSizes = elementsDefaultSizes,
                 )
             }
         }

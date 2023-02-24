@@ -18,28 +18,28 @@ figures_prop = [{'data': {},
 expected_no_args = {
     'kind': 'subplots',
     'figures': figures_prop,
-    'layout': {'name': 'grid', 'ncols': 1, 'nrows': 1}
+    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1}
 }
 expected_ncols3 = {
     'kind': 'subplots',
     'figures': figures_prop + [None, None],
-    'layout': {'name': 'grid', 'ncols': 3, 'nrows': 1}
+    'layout': {'name': 'grid', 'ncol': 3, 'nrow': 1}
 }
 expected_widths_heights = {
     'kind': 'subplots',
     'figures': figures_prop,
-    'layout': {'name': 'grid', 'ncols': 1, 'nrows': 1, 'widths': [1, 2, 3], 'heights': [4, 5, 6]}
+    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'widths': [1, 2, 3], 'heights': [4, 5, 6]}
 }
 expected_fit_align = {
     'kind': 'subplots',
     'figures': figures_prop,
-    'layout': {'name': 'grid', 'ncols': 1, 'nrows': 1, 'fit': True, 'align': True}
+    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'fit': True, 'align': True}
 }
 
 
 @pytest.mark.parametrize('kwargs,expected', [
     ({}, expected_no_args),
-    ({'ncols': 3}, expected_ncols3),
+    ({'ncol': 3}, expected_ncols3),
     ({'widths': [1, 2, 3], 'heights': [4, 5, 6]}, expected_widths_heights),
     ({'fit': True, 'align': True}, expected_fit_align),
 ])

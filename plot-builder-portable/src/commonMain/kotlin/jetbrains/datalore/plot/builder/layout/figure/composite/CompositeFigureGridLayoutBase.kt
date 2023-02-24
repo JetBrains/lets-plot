@@ -18,6 +18,8 @@ abstract class CompositeFigureGridLayoutBase(
     private val vSpace: Double,
     private val colWidths: List<Double>?,
     private val rowHeights: List<Double>?,
+    private val fitCellAspectRatio: Boolean,
+    private val elementsDefaultSizes: List<DoubleVector?>,
 ) {
     protected fun toElelemtsWithInitialBounds(
         size: DoubleVector,
@@ -32,16 +34,13 @@ abstract class CompositeFigureGridLayoutBase(
         val hSpaceSum = hSpace * (ncols - 1)
         val vSpaceSum = vSpace * (nrows - 1)
 
-//        val elementWidth = max(1.0, (size.x - hSpaceSum)) / ncols
-//        val elementHeight = max(1.0, (size.y - vSpaceSum)) / nrows
-
-        val elementWidthByCol = elementSizeList(
+        val cellWidthByCol = cellSizeList(
             totalSize = size.x - hSpaceSum,
             n = ncols,
             colWidths
         )
 
-        val elementHeightByRow = elementSizeList(
+        val cellHeightByRow = cellSizeList(
             totalSize = size.y - vSpaceSum,
             n = nrows,
             rowHeights
@@ -50,19 +49,31 @@ abstract class CompositeFigureGridLayoutBase(
         return elements.mapIndexed { index, buildInfo ->
             val row = FigureGridLayoutUtil.indexToRow(index, ncols)
             val col = FigureGridLayoutUtil.indexToCol(index, ncols)
-            val elementWidth = elementWidthByCol[col]
-            val elementHeight = elementHeightByRow[row]
-            val bounds = DoubleRectangle(
-                x = toCellOrigin(col, elementWidthByCol, hSpace),
-                y = toCellOrigin(row, elementHeightByRow, vSpace),
-                elementWidth,
-                elementHeight
+            val cellBounds = DoubleRectangle(
+                x = toCellOrigin(col, cellWidthByCol, hSpace),
+                y = toCellOrigin(row, cellHeightByRow, vSpace),
+                w = cellWidthByCol[col],
+                h = cellHeightByRow[row]
             )
-            buildInfo?.withBounds(bounds)
+
+
+//            buildInfo?.withBounds(cellBounds)
+
+            buildInfo?.let {
+                val figureBounds = if (fitCellAspectRatio) {
+                    cellBounds
+                } else {
+                    val figureDefaultSize = elementsDefaultSizes[index]!!
+                    cellBounds.srinkToAspectRatio(figureDefaultSize)
+                }
+
+//                it.withBounds(cellBounds)
+                it.withBounds(figureBounds)
+            }
         }
     }
 
-    private fun elementSizeList(totalSize: Double, n: Int, sizeList: List<Double>?): List<Double> {
+    private fun cellSizeList(totalSize: Double, n: Int, sizeList: List<Double>?): List<Double> {
         @Suppress("NAME_SHADOWING")
         val sizeList = if (sizeList.isNullOrEmpty()) {
             List(n) { 1.0 }

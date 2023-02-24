@@ -132,6 +132,27 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return result
     }
 
+    fun srinkToAspectRatio(targetRatio: DoubleVector): DoubleRectangle {
+        check(targetRatio.x > 0 && targetRatio.y > 0)
+        val aspectRatio = targetRatio.x / targetRatio.y
+        val newSize = if (aspectRatio >= 1.0) {
+            val newHeight = width / aspectRatio
+            val scaling = if (newHeight > height) height / newHeight else 1.0
+            DoubleVector(width * scaling, newHeight * scaling)
+        } else {
+            val newWidth = height * aspectRatio
+            val scaling = if (newWidth > width) width / newWidth else 1.0
+            DoubleVector(newWidth * scaling, height * scaling)
+        }
+
+        // The srinked rect has the same center as this one.
+        val newOrigin = DoubleVector(
+            x = origin.x + (width - newSize.x) / 2,
+            y = origin.y + (height - newSize.y) / 2,
+        )
+        return DoubleRectangle(newOrigin, newSize)
+    }
+
     override fun hashCode(): Int {
         return origin.hashCode() * 31 + dimension.hashCode()
     }

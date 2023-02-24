@@ -7,7 +7,6 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.presentation.Defaults.ASPECT_RATIO
 import jetbrains.datalore.plot.builder.presentation.Defaults.DEF_LIVE_MAP_SIZE
@@ -36,15 +35,14 @@ object PlotSizeHelper {
         }
 
         return when (val kind = PlotConfig.figSpecKind(figureSpec)) {
-            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
-
             FigKind.GG_BUNCH_SPEC -> {
                 // don't scale GGBunch size
                 val bunchSize = plotBunchSize(figureSpec)
                 Pair(ceil(bunchSize.x).toInt(), ceil(bunchSize.y).toInt())
             }
 
-            FigKind.PLOT_SPEC -> {
+            FigKind.PLOT_SPEC,
+            FigKind.SUBPLOTS_SPEC -> {
                 // for single plot: scale component to fit in requested size
                 val aspectRatio = figureAspectRatio(figureSpec)
                 if (aspectRatio >= 1.0) {
@@ -205,12 +203,11 @@ object PlotSizeHelper {
      */
     fun figureAspectRatio(figureFpec: Map<*, *>): Double {
         return when (val kind = PlotConfig.figSpecKind(figureFpec)) {
-            FigKind.PLOT_SPEC -> {
+            FigKind.PLOT_SPEC,
+            FigKind.SUBPLOTS_SPEC -> {
                 // single plot
                 getSizeOptionOrNull(figureFpec)?.let { it.x / it.y } ?: ASPECT_RATIO
             }
-
-            FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
 
             FigKind.GG_BUNCH_SPEC -> {
                 // bunch

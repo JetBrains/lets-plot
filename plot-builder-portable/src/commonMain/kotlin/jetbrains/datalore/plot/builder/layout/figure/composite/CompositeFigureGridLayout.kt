@@ -16,6 +16,8 @@ class CompositeFigureGridLayout(
     vSpace: Double,
     colWidths: List<Double>?,
     rowHeights: List<Double>?,
+    fitCellAspectRatio: Boolean,
+    elementsDefaultSizes: List<DoubleVector?>,
 ) : CompositeFigureGridLayoutBase(
     ncols = ncols,
     nrows = nrows,
@@ -23,6 +25,8 @@ class CompositeFigureGridLayout(
     vSpace = vSpace,
     colWidths = colWidths,
     rowHeights = rowHeights,
+    fitCellAspectRatio = fitCellAspectRatio,
+    elementsDefaultSizes = elementsDefaultSizes,
 ), CompositeFigureLayout {
     override fun doLayout(size: DoubleVector, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
         val elementsWithBounds = toElelemtsWithInitialBounds(size, elements)

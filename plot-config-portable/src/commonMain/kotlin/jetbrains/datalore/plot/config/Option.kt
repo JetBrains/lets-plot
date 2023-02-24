@@ -96,8 +96,8 @@ object Option {
         }
 
         object Grid {
-            const val NROWS = "nrows"
-            const val NCOLS = "ncols"
+            const val NCOLS = "ncol"
+            const val NROWS = "nrow"
             const val HSPACE = "hspace"  // px
             const val VSPACE = "vspace"  // px
             const val COL_WIDTHS = "widths"

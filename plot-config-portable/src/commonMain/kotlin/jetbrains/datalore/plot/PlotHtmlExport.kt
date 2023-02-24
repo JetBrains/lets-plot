@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
@@ -84,7 +83,8 @@ object PlotHtmlExport {
             }
 
             return when (val kind = PlotConfig.figSpecKind(plotSpec)) {
-                FigKind.PLOT_SPEC -> {
+                FigKind.PLOT_SPEC,
+                FigKind.SUBPLOTS_SPEC -> {
                     val config = PlotConfigClientSide.create(plotSpec) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSize(
                         plotSpec, plotSize,
@@ -93,8 +93,6 @@ object PlotHtmlExport {
                         config.facets, config.containsLiveMap
                     )
                 }
-
-                FigKind.SUBPLOTS_SPEC -> UNSUPPORTED("NOT YET SUPPORTED: $kind")
 
                 FigKind.GG_BUNCH_SPEC -> {
                     PlotSizeHelper.plotBunchSize(plotSpec)
