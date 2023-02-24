@@ -2,29 +2,24 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-import json
-import numbers
 
 # noinspection PyUnresolvedReferences
 from typing import Dict
 
-from lets_plot._global_settings import has_global_value, get_global_val, MAX_WIDTH, MAX_HEIGHT, PLOT_THEME
-from lets_plot.geo_data_internals.utils import is_geocoder
-from lets_plot.plot.core import FeatureSpec
-from lets_plot.plot.core import _specs_to_dict
-from lets_plot.plot.core import PlotSpec
 from lets_plot.plot.core import DummySpec
+from lets_plot.plot.core import FeatureSpec
 from lets_plot.plot.core import FeatureSpecArray
-from lets_plot.plot.util import as_annotated_data
+from lets_plot.plot.core import _specs_to_dict
 
 __all__ = ['SupPlotsSpec']
 
+
 class SupPlotsLayoutSpec:
     """
-
+    Plots layout specification used in constructing subplots figure.
     """
 
-    def __init__(self, name:str, **kwargs):
+    def __init__(self, name: str, **kwargs):
         """Initialize self."""
         self.__props = {}
         self.__props.update(**kwargs)
@@ -36,7 +31,9 @@ class SupPlotsLayoutSpec:
 
 class SupPlotsSpec(FeatureSpec):
     """
+    Subplots figure specification.
 
+    See: `gggrid()`
     """
 
     @classmethod
@@ -48,7 +45,7 @@ class SupPlotsSpec(FeatureSpec):
         dup.props().update(other.props())
         return dup
 
-    def __init__(self, figures:list, layout:SupPlotsLayoutSpec):
+    def __init__(self, figures: list, layout: SupPlotsLayoutSpec):
         """Initialize self."""
         super().__init__('subplots', None)
         self.__figures = list(figures)
@@ -75,7 +72,6 @@ class SupPlotsSpec(FeatureSpec):
             return supplots
 
         return super().__add__(other)
-
 
     def as_dict(self):
         d = super().as_dict()
