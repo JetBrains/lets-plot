@@ -71,7 +71,9 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
     ): AxisLabelsLayoutInfo {
         if (orientation.isHorizontal) {
             var bounds = DoubleRectangle(axisLength / 2, 0.0, 0.0, 0.0) // empty bounds in the middle of the axis;
-            bounds = applyLabelMargins(bounds)
+            if (theme.showTickMarks()) {
+                bounds = applyLabelMargins(bounds)
+            }
             return AxisLabelsLayoutInfo.Builder()
                 .breaks(breaks)
                 .bounds(bounds)
