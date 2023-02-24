@@ -11,6 +11,8 @@ __all__ = ['gggrid']
 def gggrid(plots: list, ncol: int = None, *,
            widths: list = None,
            heights: list = None,
+           hspace: float = None,
+           vspace: float = None,
            fit: bool = None,
            align: bool = None
            ):
@@ -35,6 +37,8 @@ def gggrid(plots: list, ncol: int = None, *,
         nrow=nrow,
         widths=widths,
         heights=heights,
+        hspace=hspace,
+        vspace=vspace,
         fit=fit,
         align=align
     )

@@ -33,7 +33,12 @@ expected_widths_heights = {
 expected_fit_align = {
     'kind': 'subplots',
     'figures': figures_prop,
-    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'fit': True, 'align': True}
+    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'fit': False, 'align': True}
+}
+expected_hv_space = {
+    'kind': 'subplots',
+    'figures': figures_prop,
+    'layout': {'name': 'grid', 'ncol': 1, 'nrow': 1, 'hspace': 10, 'vspace': 20}
 }
 
 
@@ -41,7 +46,8 @@ expected_fit_align = {
     ({}, expected_no_args),
     ({'ncol': 3}, expected_ncols3),
     ({'widths': [1, 2, 3], 'heights': [4, 5, 6]}, expected_widths_heights),
-    ({'fit': True, 'align': True}, expected_fit_align),
+    ({'fit': False, 'align': True}, expected_fit_align),
+    ({'hspace': 10, 'vspace': 20}, expected_hv_space),
 ])
 def test_gggrid(kwargs, expected):
     p = gg.ggplot(data={})
