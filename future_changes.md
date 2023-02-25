@@ -1,6 +1,11 @@
-## [3.0.1] - 2023-??-??
+## [3.1.0] - 2023-03-??
 
 ### Added
+
+- `gggrid()` function.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/plot_grid.ipynb).
+
 
 - `position` parameter in position scales `scale_x_*(), scale_y_*()`.       
 

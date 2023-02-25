@@ -48,6 +48,11 @@ def gggrid(plots: list, ncol: int = None, *,
         If `True`, align inner areas (i.e. "geom" bounds) of plots.
         Howether, cells containing other (sub)grids are not participating in the plot "inner areas" layouting.
 
+    Returns
+    -------
+    `SupPlotsSpec`
+        The grid specification.
+
     Examples
     --------
     .. jupyter-execute::
