@@ -48,6 +48,10 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
 
 
+- `color_by` and `fill_by` layer parameters to support more than one mapping for color and fill. 
+  New color aesthetics: `paint_a, paint_b, paint_c`.
+
+
 ### Changed
 
 - **Breaking change** in `geom_violin()`: parameter `draw_quantiles` renamed to `quantiles` - and now it works as in the `geom_area_ridges()` geometry.
@@ -81,3 +85,5 @@
 - livemap: tooltip may show wrong data on density2df [[#684](https://github.com/JetBrains/lets-plot/issues/684)].
 - map: geom_text vjust="center" is a bit off [[#132](https://github.com/JetBrains/lets-plot/issues/132)].
 - livemap: segment that goes through the antimeridian should be straight [[#692](https://github.com/JetBrains/lets-plot/issues/692)].
+- livemap: apply alpha to the pie chart and to its tooltip color marker.
+- Fix uneven plot margins for the horizontal axis in case of blank labels and tick marks.
