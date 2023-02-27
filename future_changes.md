@@ -51,6 +51,7 @@
 - `color_by` and `fill_by` layer parameters to support more than one mapping for color and fill. 
   New color aesthetics: `paint_a, paint_b, paint_c`.
 
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/multiple_color_scales.ipynb).
 
 ### Changed
 
