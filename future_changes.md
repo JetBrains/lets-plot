@@ -88,3 +88,4 @@
 - livemap: segment that goes through the antimeridian should be straight [[#692](https://github.com/JetBrains/lets-plot/issues/692)].
 - livemap: apply alpha to the pie chart and to its tooltip color marker.
 - Layout: uneven plot margins for the horizontal axis [[#705](https://github.com/JetBrains/lets-plot/issues/705)].
+- Sampling: increase the default N for "pick sampling" and for other types of sampling [[#687](https://github.com/JetBrains/lets-plot/issues/687)].
