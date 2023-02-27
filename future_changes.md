@@ -87,4 +87,4 @@
 - map: geom_text vjust="center" is a bit off [[#132](https://github.com/JetBrains/lets-plot/issues/132)].
 - livemap: segment that goes through the antimeridian should be straight [[#692](https://github.com/JetBrains/lets-plot/issues/692)].
 - livemap: apply alpha to the pie chart and to its tooltip color marker.
-- Fix uneven plot margins for the horizontal axis in case of blank labels and tick marks.
+- Layout: uneven plot margins for the horizontal axis [[#705](https://github.com/JetBrains/lets-plot/issues/705)].
