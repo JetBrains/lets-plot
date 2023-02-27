@@ -19,7 +19,7 @@
 
 - `geodesic` parameter for `geom_segment()` and `geom_path()`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/geodesic_path.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/param_geodesic.ipynb).
 
 
 - New scale functions with  parameter `aesthetic` to define aesthetics that this scale works with:
