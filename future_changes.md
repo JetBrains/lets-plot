@@ -44,7 +44,8 @@
 
 
 - PNG support for `ggsave()` [[#596](https://github.com/JetBrains/lets-plot/issues/596)].
-  
+  Requires the [CairoSVG](https://pypi.org/project/CairoSVG) library
+
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
 
 
