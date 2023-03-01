@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
-import jetbrains.datalore.vis.canvas.dom.DomCanvasControl.*
+import jetbrains.datalore.vis.canvas.dom.DomEventPeer
 import org.w3c.dom.HTMLElement
 import kotlinx.browser.document
 

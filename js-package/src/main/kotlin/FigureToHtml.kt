@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
+import jetbrains.datalore.vis.canvas.dom.DomEventPeer
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
@@ -180,7 +181,7 @@ internal class FigureToHtml(
                 val canvasControl = DomCanvasControl(
                     liveMapDiv,
                     bounds.dimension,
-                    DomCanvasControl.DomEventPeer(svg, bounds)
+                    DomEventPeer(svg, bounds)
                 )
 
                 liveMapFigure.mapToCanvas(canvasControl)

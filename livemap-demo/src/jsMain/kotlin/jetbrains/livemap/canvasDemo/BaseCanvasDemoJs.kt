@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
+import jetbrains.datalore.vis.canvas.dom.DomEventPeer
 import jetbrains.livemap.demo.DemoBaseJs
 import org.w3c.dom.HTMLElement
 import kotlinx.browser.document
@@ -20,7 +21,7 @@ fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async
     val canvasControl = DomCanvasControl(
         rootElement,
         size,
-        DomCanvasControl.DomEventPeer(rootElement, Rectangle(Vector.ZERO, size))
+        DomEventPeer(rootElement, Rectangle(Vector.ZERO, size))
     )
 
     val canvas = canvasControl.createCanvas(size)
