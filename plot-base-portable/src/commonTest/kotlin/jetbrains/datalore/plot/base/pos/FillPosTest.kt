@@ -68,6 +68,17 @@ class FillPosTest : PosTest() {
     }
 
     @Test
+    fun testWithZeroStack() {
+        compareWithExpectedOffsets(
+            xValues = listOf(0.0, 1.0, 2.0),
+            yValues = listOf(1.0, 0.0, 2.0),
+            expectedYOffsets = listOf(1.0, 0.0, 1.0),
+            posConstructor = getPositionAdjustmentConstructor(),
+            messageBeginning = "Should work with zero y values"
+        )
+    }
+
+    @Test
     fun testWithNanValues() {
         compareWithExpectedOffsets(
             xValues = listOf(null, 0.0, 0.0, null, 1.0, 1.0, 2.0, 2.0, 2.0),
