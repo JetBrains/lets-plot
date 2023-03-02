@@ -2099,7 +2099,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                   bins=None,
                   binwidth=None,
-                  fill_by=None,
+                  color_by=None, fill_by=None,
                   **other_args):
     """
     Fill contours of a 3d surface in 2d.
@@ -2130,6 +2130,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Number of levels.
     binwidth : float
         Distance between levels.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
     other_args
@@ -2229,7 +2231,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  tooltips=tooltips,
                  bins=bins,
                  binwidth=binwidth,
-                 fill_by=fill_by,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 
