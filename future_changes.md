@@ -12,7 +12,7 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_position.ipynb).
 
 
-- `angle` parameter in `element_text()` for `axis_text, axis_text_x, axis_text_y` in a `theme()` (i.e. to axis labels).
+- `angle` parameter in `element_text()` in `theme()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_text_angle.ipynb).  
 
@@ -20,6 +20,8 @@
 - `geodesic` parameter for `geom_segment()` and `geom_path()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/param_geodesic.ipynb).
+                
+
 
 
 - New scale functions with  parameter `aesthetic` to define aesthetics that this scale works with:
