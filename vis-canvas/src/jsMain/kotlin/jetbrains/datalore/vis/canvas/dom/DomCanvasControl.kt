@@ -13,7 +13,6 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
 import jetbrains.datalore.base.js.css.setPosition
 import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
@@ -21,17 +20,30 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
-import org.w3c.dom.*
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.Image
 import org.w3c.dom.events.Event
+import org.w3c.dom.get
 import org.w3c.dom.url.URL
 import org.w3c.files.Blob
 import org.w3c.files.BlobPropertyBag
 
 class DomCanvasControl(
     private val myRootElement: HTMLElement,
-    override val size: Vector,
-    private val myEventPeer: EventPeer<MouseEventSpec, MouseEvent>
+    override val size: Vector
 ) : CanvasControl {
+
+    val mousePeer: EventPeer<MouseEventSpec, MouseEvent> = object : EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
+        override fun onSpecAdded(spec: MouseEventSpec) {
+
+        }
+
+        override fun onSpecRemoved(spec: MouseEventSpec) {
+
+        }
+
+    }
 
     override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
         return object : DomAnimationTimer() {
@@ -42,7 +54,7 @@ class DomCanvasControl(
     }
 
     override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
-        return myEventPeer.addEventHandler(eventSpec, handler(eventHandler::onEvent))
+        return mousePeer.addEventHandler(eventSpec, eventHandler)
     }
 
     override fun createCanvas(size: Vector): Canvas {

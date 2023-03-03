@@ -15,13 +15,12 @@ import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
-import org.w3c.dom.Element
-import org.w3c.dom.Node
+import org.w3c.dom.events.EventTarget
 
 typealias DomMouseEvent = org.w3c.dom.events.MouseEvent
 
 class DomEventMapper(
-    private val myEventTarget: Element,
+    private val myEventTarget: EventTarget,
     private val destMouseEventPeer: (MouseEventSpec, MouseEvent) -> Unit
 ) : Disposable {
     private val regs = CompositeRegistration()
@@ -82,10 +81,9 @@ class DomEventMapper(
     }
 
     private fun dispatch(eventSpec: MouseEventSpec, mouseEvent: DomMouseEvent) {
-        val targetRect = myEventTarget.getBoundingClientRect()
         val translatedEvent = MouseEvent(
-            mouseEvent.clientX - targetRect.x.toInt(),
-            mouseEvent.clientY - targetRect.y.toInt(),
+            mouseEvent.offsetX.toInt(),
+            mouseEvent.offsetY.toInt(),
             getButton(mouseEvent),
             getModifiers(mouseEvent)
         )
@@ -98,18 +96,13 @@ class DomEventMapper(
             return@DomEventListener false
         }
 
-        targetNode(eventSpec).addEventListener(eventSpec.name, listener)
+        myEventTarget.addEventListener(eventSpec.name, listener)
 
         regs.add(object : Registration() {
             override fun doRemove() {
-                targetNode(eventSpec).removeEventListener(eventSpec.name, listener)
+                myEventTarget.removeEventListener(eventSpec.name, listener)
             }
         })
-    }
-
-    private fun targetNode(eventSpec: DomEventType<DomMouseEvent>): Node = when (eventSpec) {
-        DomEventType.MOUSE_MOVE, DomEventType.MOUSE_UP -> myEventTarget
-        else -> myEventTarget
     }
 
     override fun dispose() {

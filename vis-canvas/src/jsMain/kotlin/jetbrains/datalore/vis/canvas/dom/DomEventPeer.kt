@@ -7,103 +7,53 @@ package jetbrains.datalore.vis.canvas.dom
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
+import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.event.dom.DomEventUtil
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.js.dom.*
+import jetbrains.datalore.base.js.dom.DomEventType
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.CLICK
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.DOUBLE_CLICK
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_DOWN
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_ENTER
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_LEAVE
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_MOVE
+import jetbrains.datalore.base.js.dom.DomEventType.Companion.MOUSE_UP
+import jetbrains.datalore.base.js.dom.on
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.canvas.EventPeer
 import kotlinx.browser.document
 import org.w3c.dom.Element
 
 private const val DRAG_TRIGGER_DISTANCE = 3.0
+private const val ENABLE_DEBUG_LOG = false
+typealias DomMouseEvent = org.w3c.dom.events.MouseEvent
 
 class DomEventPeer(
     private val myEventTarget: Element,
-    private val myTargetBounds: Rectangle
-) : EventPeer<MouseEventSpec, MouseEvent>(MouseEventSpec::class) {
-    private var myButtonPressCoord: DoubleVector? = null
-    private var myIsDragging = false
-    private var myLastDragEndEventTimestamp: Number = 0
-    private var myDocumentMouseEventsRegistration: Registration = Registration.EMPTY
+    private val myTargetBounds: DoubleRectangle? = null,
+    private val destMouseEventPeer: (MouseEventSpec, MouseEvent) -> Unit
+) {
+    private var state: MouseState = HoverState()
         set(value) {
-            field.dispose()
+            if (ENABLE_DEBUG_LOG) {
+                println("state($${this@DomEventPeer.hashCode()}): ${field::class.simpleName} -> ${value::class.simpleName}")
+            }
             field = value
         }
 
     init {
-        handle(DomEventType.MOUSE_ENTER) { dispatch(MouseEventSpec.MOUSE_ENTERED, translate(it)) }
-        handle(DomEventType.MOUSE_LEAVE) { dispatch(MouseEventSpec.MOUSE_LEFT, translate(it)) }
-
-        handle(DomEventType.CLICK) {
-            if (isPartOfDragEndEvent(it)) return@handle
-            dispatch(MouseEventSpec.MOUSE_CLICKED, translate(it))
-        }
-
-        handle(DomEventType.DOUBLE_CLICK) {
-            if (isPartOfDragEndEvent(it)) return@handle
-            dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, translate(it))
-        }
-
-        handle(DomEventType.MOUSE_DOWN) {
-            // Prevent text selection outside of Canvas element in Safari
-            it.preventDefault()
-            myButtonPressCoord = DoubleVector(it.x, it.y)
-            dispatch(MouseEventSpec.MOUSE_PRESSED, translate(it))
-        }
-
-        handle(DomEventType.MOUSE_UP) {
-            // handled by document event handler
-            if (myIsDragging) return@handle
-
-            myButtonPressCoord = null
-            dispatch(MouseEventSpec.MOUSE_RELEASED, translate(it))
-        }
-
-        handle(DomEventType.MOUSE_MOVE) {
-            // handled by document event handler
-            if (myIsDragging) return@handle
-
-            if (myButtonPressCoord == null) {
-                dispatch(MouseEventSpec.MOUSE_MOVED, translate(it))
-            } else {
-                val distance = myButtonPressCoord?.subtract(DoubleVector(it.x, it.y))?.length() ?: 0.0
-                if (distance > DRAG_TRIGGER_DISTANCE) {
-                    myIsDragging = true
-                    myDocumentMouseEventsRegistration = Registration.from(
-                        document.on(DomEventType.MOUSE_MOVE, ::onDocumentMouseMove),
-                        document.on(DomEventType.MOUSE_UP, ::onDocumentMouseUp)
-                    )
-                    dispatch(MouseEventSpec.MOUSE_DRAGGED, translate(it))
-                }
-            }
-        }
-    }
-
-    private fun onDocumentMouseUp(it: org.w3c.dom.events.MouseEvent) {
-        if (myIsDragging) {
-            myLastDragEndEventTimestamp = it.timeStamp
-        }
-
-        myIsDragging = false
-        myButtonPressCoord = null
-        myDocumentMouseEventsRegistration = Registration.EMPTY
-        dispatch(MouseEventSpec.MOUSE_RELEASED, translate(it))
-    }
-
-    private fun onDocumentMouseMove(event: org.w3c.dom.events.MouseEvent) {
-        if (myIsDragging) {
-            dispatch(MouseEventSpec.MOUSE_DRAGGED, translate(event))
-        } else {
-            // Move without dragging - should not be here. Could be a focus magic. Unsubscribe from document events.
-            myDocumentMouseEventsRegistration = Registration.EMPTY
-        }
+        handle(CLICK) { state.onMouseEvent(CLICK, it) }
+        handle(DOUBLE_CLICK) { state.onMouseEvent(DOUBLE_CLICK, it) }
+        handle(MOUSE_ENTER) { state.onMouseEvent(MOUSE_ENTER, it) }
+        handle(MOUSE_LEAVE) { state.onMouseEvent(MOUSE_LEAVE, it) }
+        handle(MOUSE_DOWN) { state.onMouseEvent(MOUSE_DOWN, it) }
+        handle(MOUSE_UP) { state.onMouseEvent(MOUSE_UP, it) }
+        handle(MOUSE_MOVE) { state.onMouseEvent(MOUSE_MOVE, it) }
     }
 
     private fun handle(
-        eventSpec: DomEventType<org.w3c.dom.events.MouseEvent>,
-        handler: (org.w3c.dom.events.MouseEvent) -> Unit
+        eventSpec: DomEventType<DomMouseEvent>,
+        handler: (DomMouseEvent) -> Unit
     ) {
         myEventTarget.on(eventSpec, consumer = {
             if (isHitOnTarget(it)) {
@@ -112,28 +62,125 @@ class DomEventPeer(
         })
     }
 
-    override fun onSpecAdded(spec: MouseEventSpec) {}
-
-    override fun onSpecRemoved(spec: MouseEventSpec) {}
-
-    /*
-        Check if `event` is a part of drag end event to suppress MOUSE_CLICK and MOUSE_DOUBLECLICK events.
-        This happens when user pans a map and releases LMB over a map button (e.g. center). It triggers button action.
-     */
-    private fun isPartOfDragEndEvent(event: DomMouseEvent) = myLastDragEndEventTimestamp == event.timeStamp
-
     private fun isHitOnTarget(event: DomMouseEvent): Boolean {
-        val v = Vector(event.offsetX.toInt(), event.offsetY.toInt())
-        return myTargetBounds.contains(v)
+        val bbox = myTargetBounds ?: return true
+        return bbox.contains(DoubleVector(event.offsetX, event.offsetY))
+    }
+
+    private fun dispatch(eventSpec: MouseEventSpec, mouseEvent: DomMouseEvent) {
+        destMouseEventPeer.invoke(eventSpec, translate(mouseEvent))
+    }
+
+    private fun dispatch(eventSpec: DomEventType<DomMouseEvent>, mouseEvent: DomMouseEvent) {
+        val mouseEventSpec: MouseEventSpec = when (eventSpec) {
+            CLICK -> MOUSE_CLICKED
+            DOUBLE_CLICK -> MOUSE_DOUBLE_CLICKED
+            MOUSE_ENTER -> MOUSE_ENTERED
+            MOUSE_LEAVE -> MOUSE_LEFT
+            MOUSE_DOWN -> MOUSE_PRESSED
+            MOUSE_UP -> MOUSE_RELEASED
+            MOUSE_MOVE -> MOUSE_MOVED
+            else -> null.also { println("Unsupported event type: $eventSpec") }
+        } ?: return
+
+        dispatch(mouseEventSpec, mouseEvent)
     }
 
     private fun translate(event: DomMouseEvent): MouseEvent {
-        val targetRect = myEventTarget.getBoundingClientRect()
+        val targetClientOrigin = myEventTarget.getBoundingClientRect().let { DoubleVector(it.x, it.y) }
+        val eventClientCoord = DoubleVector(event.clientX.toDouble(), event.clientY.toDouble())
+        val targetAbsoluteOrigin = myTargetBounds?.origin ?: DoubleVector.ZERO
+
+        val eventTargetCoord = eventClientCoord.subtract(targetClientOrigin).subtract(targetAbsoluteOrigin)
         return MouseEvent(
-            event.clientX - targetRect.x.toInt() - myTargetBounds.origin.x,
-            event.clientY - targetRect.y.toInt() - myTargetBounds.origin.y,
+            eventTargetCoord.x.toInt(),
+            eventTargetCoord.y.toInt(),
             DomEventUtil.getButton(event),
             DomEventUtil.getModifiers(event)
         )
+    }
+
+    abstract inner class MouseState {
+        abstract fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent)
+        fun log(str: String) {
+            if (ENABLE_DEBUG_LOG) {
+                println("${this::class.simpleName}(${this@DomEventPeer.hashCode()}): $str")
+            }
+        }
+    }
+
+    open inner class HoverState : MouseState() {
+        override fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+            log(type.name)
+            if (type == MOUSE_DOWN) {
+                dispatch(MOUSE_PRESSED, e)
+                state = DraggingTrial(dragStartCoord = DoubleVector(e.x, e.y))
+                return
+            }
+
+            // Not a MOUSE_DOWN -> drag from another facet
+            if (e.buttons > 0) {
+                state = InvalidDragging()
+                return
+            }
+
+            dispatch(type, e)
+        }
+    }
+
+    inner class DraggingTrial(
+        private val dragStartCoord: DoubleVector
+    ) : MouseState() {
+
+        override fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+            log(type.name)
+            when (type) {
+                MOUSE_UP -> {
+                    dispatch(type, e)
+                    state = HoverState()
+                }
+
+                MOUSE_MOVE -> {
+                    if (DoubleVector(e.x, e.y).subtract(dragStartCoord).length() > DRAG_TRIGGER_DISTANCE) {
+                        dispatch(MOUSE_DRAGGED, e)
+                        state = Dragging()
+                    }
+                }
+            }
+        }
+    }
+
+    inner class Dragging : MouseState() {
+        // Listen for CLICK, not MOUSE_UP, as DRAG_END event consists of two events - MOUSE_UP and then MOUSE_CLICK.
+        // MOUSE_CLICK event, if not handled properly, hits UI elements and triggers action.
+        private var myDocumentMouseEventsRegistration = Registration.from(
+            document.on(MOUSE_MOVE, ::onDocumentMouseMove),
+            document.on(CLICK, ::onDocumentClick)
+        )
+
+        // All required events handled by onDocumentMouseMove()
+        override fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {}
+
+        private fun onDocumentMouseMove(event: DomMouseEvent) {
+            dispatch(MOUSE_DRAGGED, event)
+        }
+
+        private fun onDocumentClick(e: DomMouseEvent) {
+            dispatch(MOUSE_RELEASED, e)
+            state = HoverState()
+            myDocumentMouseEventsRegistration.dispose()
+        }
+    }
+
+    inner class InvalidDragging : MouseState() {
+        override fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
+            log(type.name)
+
+            if (e.buttons == 0.toShort() && type != MOUSE_UP) {
+                // Drag released outside the target - restore HoverState
+                // Yet don't set HoverState on MOUSE_UP as CLICK event will trigger UI elements
+                state = HoverState()
+            }
+        }
     }
 }
