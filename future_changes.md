@@ -54,13 +54,25 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/multiple_color_scales.ipynb).
 
+
+- `quantile_lines` parameter for `geom_violin()` - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/quantile_parameters.ipynb).
+
+
+- `quantiles` and `quantile_lines` parameters for `geom_density()` - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/quantile_parameters.ipynb).
+
+
+- `mode` parameter for `position_stack()` and `position_fill()`. When `mode='groups'` (default) the position adjustment shifts objects only if their groups are distinct.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/position_stack.ipynb).
+
+
 ### Changed
 
 - **Breaking change** in `geom_violin()`: parameter `draw_quantiles` renamed to `quantiles` - and now it works as in the `geom_area_ridges()` geometry.
-
-- `geom_violin()`: added `quantile_lines` parameter - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
-
-- `geom_density()`: added two new parameters - `quantiles` and `quantile_lines` - as in the `geom_area_ridges()` geometry. Also, it was added a `..quantile..` statistic variable.
 
 - `residual_plot()`: added `'density2d'` and `'density2df'` geometry types, changed some defaults for color parameters. 
 
@@ -69,10 +81,6 @@
 - Python packages for `Windows` no longer require `MinGW` tools to run.
 
 - Parameter `flat=True` turns off lines re-projection, keeping the original number of points.
-
-- Parameter `mode` added to position adjustments `'stack'` and `'fill'`. When `mode='groups'` (default) the position adjustment shifts objects only if their groups are distinct.
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/position_stack.ipynb).
 
 ### Fixed
 
