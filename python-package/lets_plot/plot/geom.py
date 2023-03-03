@@ -5512,7 +5512,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specification for arrow head, as created by `arrow()` function.
     flat : Boolean, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
-    geodesic : Boolean, default=False
+    geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
