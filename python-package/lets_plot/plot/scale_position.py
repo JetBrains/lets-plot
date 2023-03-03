@@ -63,8 +63,9 @@ def scale_x_continuous(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -141,8 +142,9 @@ def scale_y_continuous(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -216,8 +218,9 @@ def scale_x_log10(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -287,8 +290,9 @@ def scale_y_log10(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -358,8 +362,9 @@ def scale_x_reverse(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -429,8 +434,9 @@ def scale_y_reverse(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -507,8 +513,9 @@ def scale_x_discrete(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -586,8 +593,9 @@ def scale_x_discrete_reversed(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -664,8 +672,9 @@ def scale_y_discrete(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -743,8 +752,9 @@ def scale_y_discrete_reversed(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -824,8 +834,9 @@ def scale_x_datetime(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -905,8 +916,9 @@ def scale_y_datetime(name=None, *,
         For more info see https://lets-plot.org/pages/formats.html.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -981,8 +993,9 @@ def scale_x_time(name=None, *,
         Missing values will be replaced with this value.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
@@ -1056,8 +1069,9 @@ def scale_y_time(name=None, *,
         Missing values will be replaced with this value.
     position : str
         The position of the axis:
-         - 'left', 'right' or 'both' for y-axis;
-         - 'top', 'bottom' or 'both' for x-axis.
+
+        - 'left', 'right' or 'both' for y-axis;
+        - 'top', 'bottom' or 'both' for x-axis.
 
     Returns
     -------
