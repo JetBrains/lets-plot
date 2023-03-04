@@ -3295,7 +3295,9 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     """
     if 'draw_quantiles' in other_args:
-        raise ValueError("The parameter 'draw_quantiles' is no longer supported; use 'quantiles'.")
+        raise ValueError("The parameter 'draw_quantiles' is no longer supported.\n"
+                         "Use parameters 'quantile_lines', 'quantiles' as needed.")
+
     return _geom('violin',
                  mapping=mapping,
                  data=data,
