@@ -101,7 +101,7 @@ Also read:
 
 - ### Other New Features and Improvements 
 
-  - Export to PNG files in `ggsave()` (requires the [CairoSVG](https://pypi.org/project/CairoSVG) library), see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
+  - Export to PNG file in `ggsave()` (requires the [CairoSVG](https://pypi.org/project/CairoSVG) library), see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
   - `angle` parameter in `element_text()` in `theme()`, see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_text_angle.ipynb).  
   - `geodesic` parameter in `geom_segment()` and `geom_path()`, see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/param_geodesic.ipynb).  
 
