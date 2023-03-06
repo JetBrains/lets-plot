@@ -58,65 +58,52 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 3.0.0
+## What is new in 3.1.0
 
-- ### Breaking Changes
+- ### `gggrid()`
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/plot_grid.png" alt="f-23a/images/plot_grid.png" width="400" height="200">
 
-  - `Python 3.6` is no longer supported as it is in the ["end-of-life"](https://devguide.python.org/versions/) release cycle stage.
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/plot_grid.ipynb).
+
+
+- ### `joint_plot()`
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/joint_plot.png" alt="f-23a/images/joint_plot.png" width="400" height="267">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/joint_plot.ipynb).
+
+
+- ### Configuring Axis Position
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/axis_position.png" alt="f-23a/images/axis_position.png" width="300" height="200">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_position.ipynb).
+
+              
+- ### Showing Quantiles on Density Plots
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/density_quantiles.png" alt="f-23a/images/density_quantiles.png" width="400" height="150">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/quantile_parameters.ipynb).
+
+              
+- ### Additional "color" aesthetics: `paint_a, paint_b, paint_c`.
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/additional_color_aes.png" alt="f-23a/images/additional_color_aes.png" width="400" height="300">
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/multiple_color_scales.ipynb).
   
-  - `geom_livemap()` is now a pure basemap layer. The following options are no longer supported:
-    `symbol`, `data`, `mapping`, `map`, `map_join`, `ontop`, `stat`, `position`, `show_legend`, `sampling`, `tooltips`, `geodesic`.
- 
->    To draw **point** and **pie** markers on map, please, use the `geom_point()` and `geom_pie()` geometry layers.
->
->    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
+  Also added a set of related "color scale" functions with the "aesthetic" parameter for configuring of additional color scales.
 
->    In place of the former `geodetic` parameter in `geom_livemap` please use the new parameter `flat` in **path** and **segment**
->    geometry layers. 
->
->    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/param_flat.ipynb).
+  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/scale_functions.ipynb) demo.
 
-- ### New Features
 
-  - #### `residual_plot()`
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/residual-light.png" alt="f-22e/images/residual-light.png" width="200" height="133">
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/residual-dark.png" alt="f-22e/images/residual-dark.png" width="200" height="133">
+- ### Other New Features and Improvements 
 
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/residual_plot.ipynb).
-
-  - #### `geom_area_ridges()`
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/ridges-dark.png" alt="f-22e/images/ridges-dark.png" width="400" height="130">
-
-    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/ridgeline_plot.ipynb).
-      
-  - #### `geom_pie()`
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie.png" alt="f-22e/images/pie.png" width="379" height="106">
-
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/geom_pie.ipynb).
-
-  - #### Annotation Labels on Pie-Chart
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-explode.png" alt="f-22e/images/pie-labels-explode.png" width="195" height="133">
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/pie-labels-titanic.png" alt="f-22e/images/pie-labels-titanic.png" width="366" height="133">
-
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/annotations_for_pie.ipynb).
-
-  - #### Spatial Pies
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/spatial_pies_titanic.png" alt="f-22e/images/spatial_pies_titanic.png" width="293" height="133">
-
-    See: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/titanic.ipynb).
-
-  - #### New Parameters in `geom_imshow()`:
-    <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-22e/images/imshow-alpha-jp.png" alt="f-22e/images/imshow-alpha-jp.png" width="180" height="172">
-
-    - Transparency of `NaN` values in grayscale images: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_nan_values.ipynb).
-
-    - `alpha` parameter: [example notebook](https://nbviewer.jupyter.org/github/JetBrains/lets-plot/blob/master/docs/f-22e/image_alpha_param.ipynb).
+  - Export to PNG files in `ggsave()` (requires the [CairoSVG](https://pypi.org/project/CairoSVG) library), see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
+  - `angle` parameter in `element_text()` in `theme()`, see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_text_angle.ipynb).  
+  - `geodesic` parameter in `geom_segment()` and `geom_path()`, see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/param_geodesic.ipynb).  
 
 
 ## Change Log
