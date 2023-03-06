@@ -72,9 +72,10 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val boundTransform = toLocationBound(ctx)
 
-        splitByQuantiles(dataPoints).forEach { points ->
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
             val paths = helper.createBands(
                 points,
                 boundTransform,
@@ -90,59 +91,17 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         }
 
         if (quantileLines) {
-            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach { quantileLine ->
                 root.add(quantileLine)
             }
         }
     }
 
-    private fun splitByQuantiles(
-        dataPoints: Iterable<DataPointAesthetics>,
-        axisAes: Aes<Double> = Aes.X,
-        groupAes: Aes<Double>? = Aes.Y
-    ): List<List<DataPointAesthetics>> {
-        val result = mutableListOf<MutableList<DataPointAesthetics>>()
-
-        if (dataPoints.none()) {
-            return emptyList()
-        }
-        dataPoints.groupBy { p ->
-            when (groupAes) {
-                null -> p.group()
-                else -> Pair(p.group(), p[groupAes])
-            }
-        }.forEach { (_, groupedDataPoints) ->
-            val sortedDataPoints = groupedDataPoints.sortedWith(compareBy(DataPointAesthetics::quantile, { it[axisAes] }))
-            var quantilePoints = mutableListOf(sortedDataPoints.first())
-            for (i in 1 until sortedDataPoints.size) {
-                val prev = sortedDataPoints[i - 1]
-                val curr = sortedDataPoints[i]
-                if (SeriesUtil.isFinite(prev.quantile()) && SeriesUtil.isFinite(curr.quantile())) {
-                    if (prev.quantile() == curr.quantile()) {
-                        quantilePoints.add(curr)
-                    } else {
-                        result.add(quantilePoints)
-                        quantilePoints = mutableListOf(curr)
-                    }
-                } else {
-                    quantilePoints.add(curr)
-                }
-            }
-            if (quantilePoints.size > 0) {
-                result.add(quantilePoints)
-            }
-        }
-
-        return result
-    }
-
     private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        quantilesHelper: QuantilesHelper,
         ctx: GeomContext
     ): List<SvgLineElement> {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val toLocationBoundStart = toLocationBound(ctx)
         val toLocationBoundEnd = { p: DataPointAesthetics -> DoubleVector(p.x()!!, p.y()!!) }
         return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
