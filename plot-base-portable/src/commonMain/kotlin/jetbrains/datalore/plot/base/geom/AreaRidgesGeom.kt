@@ -72,9 +72,10 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val boundTransform = toLocationBound(ctx)
 
-        dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
             val paths = helper.createBands(
                 points,
                 boundTransform,
@@ -82,31 +83,25 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
                 simplifyBorders = true
             )
             appendNodes(paths, root)
-        }
 
-        helper.setAlphaEnabled(false)
-        dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+            helper.setAlphaEnabled(false)
             appendNodes(helper.createLines(points, boundTransform), root)
+
+            buildHints(points, ctx, helper, boundTransform)
         }
 
         if (quantileLines) {
-            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach { quantileLine ->
                 root.add(quantileLine)
             }
-        }
-
-        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
-            buildHints(points, ctx, helper, boundTransform)
         }
     }
 
     private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        quantilesHelper: QuantilesHelper,
         ctx: GeomContext
     ): List<SvgLineElement> {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val toLocationBoundStart = toLocationBound(ctx)
         val toLocationBoundEnd = { p: DataPointAesthetics -> DoubleVector(p.x()!!, p.y()!!) }
         return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
