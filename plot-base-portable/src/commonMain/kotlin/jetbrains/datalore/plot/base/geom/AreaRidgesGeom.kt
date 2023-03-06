@@ -74,7 +74,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         val helper = LinesHelper(pos, coord, ctx)
         val boundTransform = toLocationBound(ctx)
 
-        dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
+        splitByQuantiles(dataPoints).forEach { points ->
             val paths = helper.createBands(
                 points,
                 boundTransform,
@@ -82,11 +82,11 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
                 simplifyBorders = true
             )
             appendNodes(paths, root)
-        }
 
-        helper.setAlphaEnabled(false)
-        dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+            helper.setAlphaEnabled(false)
             appendNodes(helper.createLines(points, boundTransform), root)
+
+            buildHints(points, ctx, helper, boundTransform)
         }
 
         if (quantileLines) {
@@ -94,10 +94,46 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
                 root.add(quantileLine)
             }
         }
+    }
 
-        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
-            buildHints(points, ctx, helper, boundTransform)
+    private fun splitByQuantiles(
+        dataPoints: Iterable<DataPointAesthetics>,
+        axisAes: Aes<Double> = Aes.X,
+        groupAes: Aes<Double>? = Aes.Y
+    ): List<List<DataPointAesthetics>> {
+        val result = mutableListOf<MutableList<DataPointAesthetics>>()
+
+        if (dataPoints.none()) {
+            return emptyList()
         }
+        dataPoints.groupBy { p ->
+            when (groupAes) {
+                null -> p.group()
+                else -> Pair(p.group(), p[groupAes])
+            }
+        }.forEach { (_, groupedDataPoints) ->
+            val sortedDataPoints = groupedDataPoints.sortedWith(compareBy(DataPointAesthetics::quantile, { it[axisAes] }))
+            var quantilePoints = mutableListOf(sortedDataPoints.first())
+            for (i in 1 until sortedDataPoints.size) {
+                val prev = sortedDataPoints[i - 1]
+                val curr = sortedDataPoints[i]
+                if (SeriesUtil.isFinite(prev.quantile()) && SeriesUtil.isFinite(curr.quantile())) {
+                    if (prev.quantile() == curr.quantile()) {
+                        quantilePoints.add(curr)
+                    } else {
+                        result.add(quantilePoints)
+                        quantilePoints = mutableListOf(curr)
+                    }
+                } else {
+                    quantilePoints.add(curr)
+                }
+            }
+            if (quantilePoints.size > 0) {
+                result.add(quantilePoints)
+            }
+        }
+
+        return result
     }
 
     private fun createQuantileLines(
