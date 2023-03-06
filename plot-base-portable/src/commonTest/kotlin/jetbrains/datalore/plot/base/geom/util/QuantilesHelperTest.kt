@@ -17,7 +17,12 @@ import kotlin.test.assertEquals
 class QuantilesHelperTest {
     @Test
     fun testEmptyValues() {
-        compareWithExpectedLines(
+        checkSplit(
+            listOf(),
+            listOf(),
+            listOf()
+        )
+        checkLinesNumber(
             listOf(),
             listOf(),
             listOf()
@@ -26,7 +31,7 @@ class QuantilesHelperTest {
 
     @Test
     fun testWithoutQuantiles() {
-        compareWithExpectedLines(
+        checkLinesNumber(
             listOf(),
             listOf(0.1, 0.2),
             listOf(1.0, 1.0)
@@ -35,7 +40,12 @@ class QuantilesHelperTest {
 
     @Test
     fun testWith1Quantile() {
-        compareWithExpectedLines(
+        checkSplit(
+            listOf(0.0, 1.0, 2.0),
+            listOf(1.0, 1.0, 1.0),
+            listOf(listOf(0.0, 1.0, 2.0))
+        )
+        checkLinesNumber(
             listOf(0.5),
             listOf(0.1, 0.1, 0.2),
             listOf(0.5, 1.0, 1.0)
@@ -44,7 +54,12 @@ class QuantilesHelperTest {
 
     @Test
     fun testWithBorderQuantiles() {
-        compareWithExpectedLines(
+        checkSplit(
+            listOf(0.0, 0.0, 1.0, 1.0, 2.0),
+            listOf(0.0, 0.5, 0.5, 1.0, 1.0),
+            listOf(listOf(0.0), listOf(0.0, 1.0), listOf(1.0, 2.0))
+        )
+        checkLinesNumber(
             listOf(0.0, 0.5, 1.0),
             listOf(0.1, 0.1, 0.2, 0.2, 0.3),
             listOf(0.0, 0.5, 0.5, 1.0, 1.0)
@@ -53,7 +68,7 @@ class QuantilesHelperTest {
 
     @Test
     fun testWith1QuantileAndGroups() {
-        compareWithExpectedLines(
+        checkLinesNumber(
             listOf(0.5),
             listOf(0.1, 0.1, 0.2, -0.2, -0.2, -0.1),
             listOf(0.5, 1.0, 1.0, 0.5, 1.0, 1.0),
@@ -63,7 +78,7 @@ class QuantilesHelperTest {
 
     @Test
     fun testWithBorderQuantilesAndGroups() {
-        compareWithExpectedLines(
+        checkLinesNumber(
             listOf(0.0, 0.5, 1.0),
             listOf(0.1, 0.1, 0.2, 0.2, 0.3, -0.3, -0.3, -0.2, -0.2, -0.1),
             listOf(0.0, 0.5, 0.5, 1.0, 1.0, 0.0, 0.5, 0.5, 1.0, 1.0),
@@ -71,7 +86,23 @@ class QuantilesHelperTest {
         )
     }
 
-    private fun compareWithExpectedLines(
+    private fun checkSplit(
+        xValues: List<Double>,
+        quantileValues: List<Double>,
+        expectedXValues: List<List<Double>>
+    ) {
+        val dataPoints = getDataPoints(xValues, quantileValues)
+        val pos = PositionAdjustments.identity()
+        val coord = getCoordinateSystem(xValues)
+        val quantilesHelper = QuantilesHelper(pos, coord, BogusContext, emptyList())
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEachIndexed { i, points ->
+            for (j in points.indices) {
+                assertEquals(expectedXValues[i][j], points[j].x(), "At $i-th bunch, $j-th point, x-values should be equal")
+            }
+        }
+    }
+
+    private fun checkLinesNumber(
         quantiles: List<Double>,
         xValues: List<Double>,
         quantileValues: List<Double>,
@@ -99,7 +130,7 @@ class QuantilesHelperTest {
     private fun getDataPoints(
         xValues: List<Double>,
         quantileValues: List<Double>,
-        groupValues: List<Int>?
+        groupValues: List<Int>? = null
     ): Iterable<DataPointAesthetics> {
         val builder = AestheticsBuilder(xValues.size)
             .x(AestheticsBuilder.list(xValues))
