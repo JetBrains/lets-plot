@@ -114,7 +114,7 @@ class DomEventPeer(
             log(type.name)
             if (type == MOUSE_DOWN) {
                 dispatch(MOUSE_PRESSED, e)
-                state = DraggingTrial(dragStartCoord = DoubleVector(e.x, e.y))
+                state = ButtonDownState(eventCoord = DoubleVector(e.x, e.y))
                 return
             }
 
@@ -128,8 +128,8 @@ class DomEventPeer(
         }
     }
 
-    inner class DraggingTrial(
-        private val dragStartCoord: DoubleVector
+    inner class ButtonDownState(
+        private val eventCoord: DoubleVector
     ) : MouseState() {
 
         override fun onMouseEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
@@ -141,7 +141,7 @@ class DomEventPeer(
                 }
 
                 MOUSE_MOVE -> {
-                    if (DoubleVector(e.x, e.y).subtract(dragStartCoord).length() > DRAG_TRIGGER_DISTANCE) {
+                    if (DoubleVector(e.x, e.y).subtract(eventCoord).length() > DRAG_TRIGGER_DISTANCE) {
                         dispatch(MOUSE_DRAGGED, e)
                         state = Dragging()
                     }
