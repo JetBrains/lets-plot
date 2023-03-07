@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.coord.Coords
@@ -53,11 +54,27 @@ class QuantilesHelperTest {
     }
 
     @Test
+    fun testWithoutDifferentColors() {
+        checkSplit(
+            listOf(0.0, 0.0, 1.0, 1.0, 2.0),
+            listOf(0.25, 0.5, 0.5, 0.75, 0.75),
+            listOf(listOf(0.0, 0.0, 1.0, 1.0, 2.0)),
+        )
+        checkSplit(
+            listOf(0.0, 0.0, 1.0, 1.0, 2.0),
+            listOf(0.25, 0.5, 0.5, 0.75, 0.75),
+            listOf(listOf(0.0, 0.0, 1.0, 1.0, 2.0)),
+            listOf("#ff0000", "#ff0000", "#ff0000", "#ff0000", "#ff0000")
+        )
+    }
+
+    @Test
     fun testWithBorderQuantiles() {
         checkSplit(
             listOf(0.0, 0.0, 1.0, 1.0, 2.0),
             listOf(0.0, 0.5, 0.5, 1.0, 1.0),
-            listOf(listOf(0.0), listOf(0.0, 1.0), listOf(1.0, 2.0))
+            listOf(listOf(0.0), listOf(0.0, 1.0), listOf(1.0, 2.0)),
+            listOf("#ff0000", "#ff0000", "#00ff00", "#00ff00", "#0000ff")
         )
         checkLinesNumber(
             listOf(0.0, 0.5, 1.0),
@@ -89,9 +106,10 @@ class QuantilesHelperTest {
     private fun checkSplit(
         xValues: List<Double>,
         quantileValues: List<Double>,
-        expectedXValues: List<List<Double>>
+        expectedXValues: List<List<Double>>,
+        colorHexValues: List<String>? = null
     ) {
-        val dataPoints = getDataPoints(xValues, quantileValues)
+        val dataPoints = getDataPoints(xValues, quantileValues, colorHexValues = colorHexValues)
         val pos = PositionAdjustments.identity()
         val coord = getCoordinateSystem(xValues)
         val quantilesHelper = QuantilesHelper(pos, coord, BogusContext, emptyList())
@@ -130,12 +148,14 @@ class QuantilesHelperTest {
     private fun getDataPoints(
         xValues: List<Double>,
         quantileValues: List<Double>,
-        groupValues: List<Int>? = null
+        groupValues: List<Int>? = null,
+        colorHexValues: List<String>? = null
     ): Iterable<DataPointAesthetics> {
         val builder = AestheticsBuilder(xValues.size)
             .x(AestheticsBuilder.list(xValues))
             .aes(Aes.QUANTILE, AestheticsBuilder.list(quantileValues))
         if (groupValues != null) builder.group(AestheticsBuilder.list(groupValues))
+        if (colorHexValues != null) builder.color(AestheticsBuilder.list(colorHexValues.map { Color.parseHex(it) }))
         return builder.build().dataPoints()
     }
 
