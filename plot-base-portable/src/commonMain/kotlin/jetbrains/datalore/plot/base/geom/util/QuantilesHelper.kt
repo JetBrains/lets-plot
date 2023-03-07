@@ -25,6 +25,12 @@ open class QuantilesHelper(
             return emptyList()
         }
 
+        // Fix semi-transparent quantile edges when colored/filled with a single color
+        val needToSplit = dataPoints.distinctBy { Pair(it.color(), it.fill()) }.size > 1
+        if (!needToSplit) {
+            return listOf(dataPoints.toList())
+        }
+
         val dataPointBunches = mutableListOf<MutableList<DataPointAesthetics>>()
         iterateThroughSortedDataPoints(dataPoints, axisAes) { sortedDataPoints ->
             var quantilePoints = mutableListOf(sortedDataPoints.first())
