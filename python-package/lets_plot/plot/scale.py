@@ -158,7 +158,7 @@ def scale_manual(aesthetic, values, *,
         ggplot({'x': x, 'y': x}, aes('x', 'y')) + \\
             geom_point(aes(color='x', fill='x'), shape=21, size=5) + \\
             scale_manual(aesthetic=['color', 'fill'], values=['red', 'green', 'blue'], name='color', \\
-                               breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
+                         breaks=[2, 4, 7], labels=['red', 'green', 'blue'])
 
     """
     return _scale(aesthetic,

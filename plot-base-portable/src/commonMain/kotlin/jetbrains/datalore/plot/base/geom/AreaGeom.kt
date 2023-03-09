@@ -32,42 +32,34 @@ open class AreaGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
-
         val helper = LinesHelper(pos, coord, ctx)
-
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
+        val dataPoints = dataPoints(aesthetics)
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group).forEach { (_, groupDataPoints) ->
-            groupDataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
+            quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
                 val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
                 // If you want to retain the side edges of area: comment out the following codes,
                 // and switch decorate method in LinesHelper.createBands
                 appendNodes(paths, root)
-            }
 
-            helper.setAlphaEnabled(false)
-            groupDataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+                helper.setAlphaEnabled(false)
                 appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y), root)
+
+                buildHints(points, pos, coord, ctx)
             }
 
             if (quantileLines) {
-                createQuantileLines(groupDataPoints, pos, coord, ctx).forEach { quantileLine ->
+                createQuantileLines(groupDataPoints, quantilesHelper).forEach { quantileLine ->
                     root.add(quantileLine)
                 }
-            }
-
-            groupDataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
-                buildHints(points, pos, coord, ctx)
             }
         }
     }
 
     private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
+        quantilesHelper: QuantilesHelper
     ): List<SvgLineElement> {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val definedPoints = GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             GeomUtil.TO_LOCATION_X_Y(p)!!

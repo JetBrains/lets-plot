@@ -50,8 +50,8 @@ def joint_plot(data, x, y, *,
         The data to be displayed.
     x, y : str
         Names of a variables.
-    geom : {'point', 'tile', 'density2d', 'density2df', 'none'}, default='point'
-        The geometric object to use to display the data. No object will be used if `geom='none'`.
+    geom : {'point', 'tile', 'density2d', 'density2df'}, default='point'
+        The geometric object to use to display the data.
     bins : int or list of int
         Number of bins in both directions, vertical and horizontal. Overridden by `binwidth`.
         If only one value given - interpret it as list of two equal values.

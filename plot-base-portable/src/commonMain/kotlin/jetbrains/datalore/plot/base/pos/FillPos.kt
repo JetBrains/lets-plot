@@ -15,7 +15,8 @@ internal class FillPos(aes: Aesthetics, vjust: Double?, stackingMode: StackingMo
     private val myOffsetByIndex: Map<Int, StackOffset> = mapIndexToOffset(aes, vjust ?: DEF_VJUST, stackingMode)
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
-        val scale = 1.0 / myOffsetByIndex.getValue(p.index()).max
+        val stackHeight = myOffsetByIndex.getValue(p.index()).max
+        val scale = if (stackHeight == 0.0) 1.0 else 1.0 / stackHeight
         return DoubleVector(v.x, scale * (v.y + myOffsetByIndex.getValue(p.index()).value))
     }
 

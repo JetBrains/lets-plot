@@ -54,39 +54,34 @@ class ViolinGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = LinesHelper(pos, coord, ctx)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val leftBoundTransform = toLocationBound(negativeSign, ctx)
         val rightBoundTransform = toLocationBound(positiveSign, ctx)
 
-        dataPoints.groupBy(DataPointAesthetics::fill).forEach { (_, points) ->
+        quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform)
             appendNodes(paths, root)
-        }
 
-        helper.setAlphaEnabled(false)
-        dataPoints.groupBy(DataPointAesthetics::color).forEach { (_, points) ->
+            helper.setAlphaEnabled(false)
             appendNodes(helper.createLines(points, leftBoundTransform), root)
             appendNodes(helper.createLines(points, rightBoundTransform), root)
+
+            buildHints(points, ctx, helper, leftBoundTransform)
+            buildHints(points, ctx, helper, rightBoundTransform)
         }
 
         if (quantileLines) {
-            createQuantileLines(dataPoints, pos, coord, ctx).forEach { quantileLine ->
+            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach { quantileLine ->
                 root.add(quantileLine)
             }
-        }
-
-        dataPoints.groupBy { Pair(it.color(), it.fill()) }.forEach { (_, points) ->
-            buildHints(points, ctx, helper, leftBoundTransform)
-            buildHints(points, ctx, helper, rightBoundTransform)
         }
     }
 
     private fun createQuantileLines(
         dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        quantilesHelper: QuantilesHelper,
         ctx: GeomContext
     ): List<SvgLineElement> {
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             DoubleVector(toLocationBound(negativeSign, ctx)(p).x, p.y()!!)
         }

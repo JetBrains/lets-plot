@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.plot.builder.sampling.Samplings.pick
 import jetbrains.datalore.plot.builder.sampling.Samplings.random
 import jetbrains.datalore.plot.builder.sampling.Samplings.systematic
 import jetbrains.datalore.plot.builder.sampling.Samplings.systematicGroup
@@ -20,55 +19,66 @@ import jetbrains.datalore.plot.builder.sampling.Samplings.vertexDp
 object DefaultSampling {
     private const val SEED = 37L
 
-    val SAFETY_SAMPLING = random(200000, SEED)
+    val SAFETY_SAMPLING = random(200_000, SEED)
 
-    // point-like
-    val POINT = random(50000, SEED)   // optimized
-    val TILE = random(50000, SEED)    // optimized
-    val BIN_2D = TILE
-    val AB_LINE = random(5000, SEED)
-    val H_LINE = random(5000, SEED)
-    val V_LINE = random(5000, SEED)
-    val JITTER = random(5000, SEED)
-    val Q_Q = random(5000, SEED)
-    val Q_Q_LINE = random(5000, SEED)
-    val RECT = random(5000, SEED)
-    val SEGMENT = random(5000, SEED)
-    val TEXT = random(500, SEED)
+    // basis
+    val POINT = random(100_000, SEED)   // optimized
+    val LINE = systematic(50_000)
+    val PATH = vertexDp(50_000)  // ToDo: vertex sampling has issues.
+    val SEGMENT = random(10_000, SEED)
 
-    // range
-    val ERROR_BAR = random(500, SEED)
-    val CROSS_BAR = random(500, SEED)
-    // val BOX_PLOT = random(500, SEED) - tmp disabled (see GeomProto)
-    val LINE_RANGE = random(500, SEED)
-    val POINT_RANGE = random(500, SEED)
+    val RECT = random(20_000, SEED)
+    val TEXT = random(5_000, SEED)
 
-    // bars
-    val BAR = pick(50)
-    val HISTOGRAM = systematic(500)
-    val DOT_PLOT = systematic(500)
-    val Y_DOT_PLOT = systematic(500)
-    val PIE = systematic(500)
+    val BAR = systematic(5_000)
+    private val COMPLEX_STAT = systematic(50_000)
+
+    val CONTOUR = systematicGroup(5_000)
+
+
+    // points
+    val TILE = POINT    // optimized
+    val BIN_2D = POINT
+    val JITTER = POINT
+    val Q_Q = POINT
+    val PIE = POINT
 
     // lines
-    val LINE = systematic(5000)
-    val RIBBON = systematic(5000)
-    val AREA = systematic(5000)
-    val DENSITY = systematic(5000)
-    val AREA_RIDGES = systematic(5000)
-    val VIOLIN = pick(50)
-    val FREQPOLY = systematic(5000)
-    val STEP = systematic(5000)
+    val Q_Q_LINE = LINE
+    val RIBBON = LINE
+    val AREA = LINE
+    val DENSITY = LINE
+    val FREQPOLY = LINE
+    val STEP = LINE
+    val SMOOTH = LINE
 
-    // polygons
-    val PATH = vertexDp(20000)
-    val POLYGON = vertexDp(20000)
-    val MAP = vertexDp(20000)
+    // segments
+    val AB_LINE = SEGMENT
+    val H_LINE = SEGMENT
+    val V_LINE = SEGMENT
 
-    // groups
-    val SMOOTH = systematicGroup(200)
-    val CONTOUR = systematicGroup(200)
-    val CONTOURF = systematicGroup(200)
-    val DENSITY2D = systematicGroup(200)
-    val DENSITY2DF = systematicGroup(200)
+    // paths
+    val POLYGON = PATH
+    val MAP = PATH
+
+    // bars
+    val ERROR_BAR = BAR
+    val CROSS_BAR = BAR
+
+    // val BOX_PLOT = random(500, SEED) - tmp disabled (see GeomProto)
+    val LINE_RANGE = BAR
+    val POINT_RANGE = BAR
+
+    val HISTOGRAM = BAR
+    val DOT_PLOT = BAR
+
+    // complex
+    val AREA_RIDGES = COMPLEX_STAT
+    val VIOLIN = COMPLEX_STAT
+    val Y_DOT_PLOT = COMPLEX_STAT
+
+    // contours
+    val CONTOURF = CONTOUR
+    val DENSITY2D = CONTOUR
+    val DENSITY2DF = CONTOUR
 }
