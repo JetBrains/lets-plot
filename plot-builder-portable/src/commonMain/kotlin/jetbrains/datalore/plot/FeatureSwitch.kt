@@ -7,7 +7,7 @@ package jetbrains.datalore.plot
 
 object FeatureSwitch {
 
-    const val PLOT_VIEW_TOOLBOX = true
+    const val PLOT_VIEW_TOOLBOX = false
 
     const val PLOT_DEBUG_DRAWING = false
     const val LEGEND_DEBUG_DRAWING = false
