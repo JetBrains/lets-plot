@@ -5,13 +5,12 @@
 
 package jetbrains.livemap.demo
 
+import jetbrains.datalore.base.event.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
-import jetbrains.datalore.vis.canvas.dom.DomCanvasControl.*
-import org.w3c.dom.HTMLElement
 import kotlinx.browser.document
+import org.w3c.dom.HTMLElement
 
 class DemoBaseJs(private val demoModelProvider: (DoubleVector) -> DemoModelBase) {
     private val size: Vector get() = Vector(800, 600)
@@ -20,9 +19,10 @@ class DemoBaseJs(private val demoModelProvider: (DoubleVector) -> DemoModelBase)
         val rootElement: HTMLElement = document.createElement("div") as HTMLElement
         val canvasControl = DomCanvasControl(
             rootElement,
-            size,
-            DomEventPeer(rootElement, Rectangle(Vector.ZERO, size))
+            size
         )
+        DomEventMapper(rootElement, destMouseEventPeer = canvasControl.mousePeer::dispatch)
+
         demoModelProvider(size.toDoubleVector()).show(canvasControl)
 
         document.getElementById(parentNodeId)

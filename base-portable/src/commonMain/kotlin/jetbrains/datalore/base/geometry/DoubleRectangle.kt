@@ -179,13 +179,18 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         }
 
         @Suppress("FunctionName")
-        fun LTRB(left: Double, top: Double, right: Double, bottom: Double): DoubleRectangle {
-            return DoubleRectangle(left, top, right - left, bottom - top)
+        fun LTRB(left: Number, top: Number, right: Number, bottom: Number): DoubleRectangle {
+            return DoubleRectangle(
+                left.toDouble(),
+                top.toDouble(),
+                right.toDouble() - left.toDouble(),
+                bottom.toDouble() - top.toDouble()
+            )
         }
 
         @Suppress("FunctionName")
-        fun XYWH(x: Double, y: Double, width: Double, height: Double): DoubleRectangle {
-            return DoubleRectangle(x, y, width, height)
+        fun XYWH(x: Number, y: Number, width: Number, height: Number): DoubleRectangle {
+            return DoubleRectangle(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
         }
 
         fun hvRange(hRange: DoubleSpan, vRange: DoubleSpan): DoubleRectangle {

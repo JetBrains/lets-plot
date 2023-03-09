@@ -6,22 +6,23 @@
 package jetbrains.livemap.canvasDemo
 
 import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.geometry.Rectangle
+import jetbrains.datalore.base.event.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import jetbrains.livemap.demo.DemoBaseJs
-import org.w3c.dom.HTMLElement
 import kotlinx.browser.document
+import org.w3c.dom.HTMLElement
 
 fun baseCanvasDemo(demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {
     val size = Vector(800, 600)
     val rootElement: HTMLElement = document.createElement("div") as HTMLElement
     val canvasControl = DomCanvasControl(
         rootElement,
-        size,
-        DomCanvasControl.DomEventPeer(rootElement, Rectangle(Vector.ZERO, size))
+        size
     )
+
+    DomEventMapper(rootElement, destMouseEventPeer = canvasControl.mousePeer::dispatch)
 
     val canvas = canvasControl.createCanvas(size)
     demoModel(canvas, canvasControl::createSnapshot)

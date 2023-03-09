@@ -4,7 +4,9 @@
  */
 
 import jetbrains.datalore.base.event.dom.DomEventMapper
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
@@ -162,9 +164,7 @@ internal class FigureToHtml(
                 }
             }
 
-            DomEventMapper(svg) { eventSpec, mouseEvent ->
-                plotContainer.mouseEventPeer.dispatch(eventSpec, mouseEvent)
-            }
+            DomEventMapper(svg, destMouseEventPeer = plotContainer.mouseEventPeer::dispatch)
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
                 val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -179,8 +179,13 @@ internal class FigureToHtml(
 
                 val canvasControl = DomCanvasControl(
                     liveMapDiv,
-                    bounds.dimension,
-                    DomCanvasControl.DomEventPeer(svg, bounds)
+                    Vector(bounds.dimension.x, bounds.dimension.y),
+                )
+
+                DomEventMapper(
+                    myEventTarget = svg,
+                    myTargetBounds = DoubleRectangle.XYWH(bounds.origin.x,  bounds.origin.y, bounds.dimension.x, bounds.dimension.y),
+                    destMouseEventPeer = canvasControl.mousePeer::dispatch
                 )
 
                 liveMapFigure.mapToCanvas(canvasControl)
