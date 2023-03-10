@@ -242,9 +242,9 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
-    flat : Boolean, default=False.
+    flat : bool, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
-    geodesic : Boolean, default=False
+    geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -5512,7 +5512,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specify appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
-    flat : Boolean, default=False.
+    flat : bool, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
