@@ -2018,6 +2018,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+    - z : evaluate function values over grid of points with coordinates (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : lines width.
@@ -2157,6 +2158,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+    - z : evaluate function values over grid of points with coordinates (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - fill : color of the geometry areas. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
 
