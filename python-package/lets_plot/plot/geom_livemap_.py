@@ -106,7 +106,7 @@ def geom_livemap(*,
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
             geom_livemap(projection='epsg4326', tiles=maptiles_lets_plot(theme='dark')) + \\
-            geom_path(color='white') + \\
+            geom_path(color='white', geodesic=True) + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle("The shortest path between New York and Prague")
 
