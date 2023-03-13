@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -85,10 +86,18 @@ open class QuantilesHelper(
         return quantileLineElements
     }
 
+    // true if in any group there is at least two distinct values of color or fill aesthetic
     private fun needToSplit(dataPoints: Iterable<DataPointAesthetics>): Boolean {
-        for (pointsGroup in dataPoints.groupBy(DataPointAesthetics::group).values) {
-            if (pointsGroup.distinctBy { Pair(it.color(), it.fill()) }.size > 1) {
-                return true
+        val groupColor = mutableMapOf<Int?, Pair<Color?, Color?>>()
+        for (p in dataPoints) {
+            val group = p.group()
+            val color = Pair(p.color(), p.fill())
+            if (group in groupColor.keys) {
+                if (color != groupColor[group]) {
+                    return true
+                }
+            } else {
+                groupColor[group] = color
             }
         }
         return false
