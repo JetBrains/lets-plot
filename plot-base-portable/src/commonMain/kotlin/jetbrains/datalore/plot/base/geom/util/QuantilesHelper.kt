@@ -88,16 +88,14 @@ open class QuantilesHelper(
 
     // true if in any group there is at least two distinct values of color or fill aesthetic
     private fun needToSplit(dataPoints: Iterable<DataPointAesthetics>): Boolean {
-        val groupColor = mutableMapOf<Int?, Pair<Color?, Color?>>()
+        val groupColors = mutableMapOf<Int?, Pair<Color?, Color?>>()
         for (p in dataPoints) {
-            val group = p.group()
-            val color = Pair(p.color(), p.fill())
-            if (group in groupColor.keys) {
-                if (color != groupColor[group]) {
-                    return true
-                }
-            } else {
-                groupColor[group] = color
+            val pointColors = Pair(p.fill(), p.color())
+
+            when {
+                p.group() !in groupColors -> groupColors[p.group()] = pointColors
+                groupColors[p.group()] == pointColors -> continue
+                groupColors[p.group()] != pointColors -> return true
             }
         }
         return false
