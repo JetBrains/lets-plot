@@ -26,8 +26,7 @@ open class QuantilesHelper(
         }
 
         // Fix semi-transparent quantile edges when colored/filled with a single color
-        val needToSplit = dataPoints.distinctBy { Pair(it.color(), it.fill()) }.size > 1
-        if (!needToSplit) {
+        if (!needToSplit(dataPoints)) {
             return listOf(dataPoints.toList())
         }
 
@@ -84,6 +83,15 @@ open class QuantilesHelper(
         }
 
         return quantileLineElements
+    }
+
+    private fun needToSplit(dataPoints: Iterable<DataPointAesthetics>): Boolean {
+        for (pointsGroup in dataPoints.groupBy(DataPointAesthetics::group).values) {
+            if (pointsGroup.distinctBy { Pair(it.color(), it.fill()) }.size > 1) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun iterateThroughSortedDataPoints(
