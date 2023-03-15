@@ -18,7 +18,7 @@ import org.junit.Test
 
 class PointLocatorTest {
     private val manager = EcsComponentManager()
-    private val locator = PointLocator()
+    private val locator = PointLocator
     private val radius = 10.0
     private val entity = manager.createEntity("")
         .addComponents {

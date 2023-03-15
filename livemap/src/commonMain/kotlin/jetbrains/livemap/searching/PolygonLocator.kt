@@ -15,7 +15,7 @@ import jetbrains.livemap.fragment.RegionFragmentsComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
-class PolygonLocator : Locator {
+object PolygonLocator : Locator {
 
     override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
         if (target.contains<RegionFragmentsComponent>()) {
@@ -23,7 +23,9 @@ class PolygonLocator : Locator {
                 if (isCoordinateOnEntity(coord, fragment)) {
                     return HoverObject(
                         layerIndex = target.get<IndexComponent>().layerIndex,
-                        index = target.get<IndexComponent>().index
+                        index = target.get<IndexComponent>().index,
+                        distance = 0.0,
+                        this
                     )
                 }
             }
@@ -33,13 +35,19 @@ class PolygonLocator : Locator {
             return when (isCoordinateOnEntity(coord, target)) {
                 true -> HoverObject(
                     layerIndex = target.get<IndexComponent>().layerIndex,
-                    index = target.get<IndexComponent>().index
+                    index = target.get<IndexComponent>().index,
+                    distance = 0.0,
+                    this
                 )
 
                 false -> null
             }
         }
     }
+
+    // Top polygon - actual for heightmaps, when cursor hovers over multiple polygons,
+    // but only highest polygon is visible and actually hovered.
+    override fun reduce(hoverObjects: Collection<HoverObject>) = hoverObjects.maxByOrNull(HoverObject::index)
 
     private fun isCoordinateOnEntity(coord: Vec<Client>, target: EcsEntity): Boolean {
         if (!target.contains(LOCATABLE_COMPONENTS)) {
@@ -73,7 +81,5 @@ class PolygonLocator : Locator {
         return false
     }
 
-    companion object {
-        val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
-    }
+    private val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
 }

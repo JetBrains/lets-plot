@@ -62,3 +62,28 @@ interface Context2d {
 }
 
 fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
+
+
+enum class TextBaseline {
+    ALPHABETIC, BOTTOM, MIDDLE, TOP
+}
+
+enum class TextAlign {
+    CENTER, END, START
+}
+
+enum class LineJoin {
+    BEVEL, MITER, ROUND
+}
+
+enum class LineCap {
+    BUTT, ROUND, SQUARE
+}
+
+enum class FontWeight {
+    NORMAL, BOLD
+}
+
+enum class FontStyle {
+    NORMAL, ITALIC
+}

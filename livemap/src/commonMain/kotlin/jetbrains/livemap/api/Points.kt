@@ -119,7 +119,7 @@ class PointBuilder(
                 +ScreenOriginComponent()
 
                 if (!nonInteractive) {
-                    +LocatorComponent(PointLocator())
+                    +LocatorComponent(PointLocator)
                 }
             }
         }

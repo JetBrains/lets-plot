@@ -7,6 +7,7 @@ package jetbrains.livemap.searching
 
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
+import jetbrains.livemap.core.ecs.getEntities2
 import jetbrains.livemap.core.ecs.onEachEntity2
 import jetbrains.livemap.core.input.MouseInputComponent
 import jetbrains.livemap.mapengine.LiveMapContext
@@ -62,17 +63,17 @@ class HoverObjectDetectionSystem(
                 return
             }
 
+            val objects = getEntities2<LocatorComponent, IndexComponent>()
+                .mapNotNull { it.get<LocatorComponent>().locator.search(mouseLocation, it) }
+                .groupBy(HoverObject::layerIndex)
+                .values
+                .filter(List<HoverObject>::isNotEmpty)
+                .mapNotNull { hoverObjects -> hoverObjects.first().locator.reduce(hoverObjects) }
+
             hoverObjectComponent.apply {
                 cursorPosition = mouseLocation
                 zoom = context.camera.zoom.toInt()
-                hoverObjects = getEntities(SEARCH_COMPONENTS)
-                    .map { it.get<LocatorComponent>().locator.search(mouseLocation, it) }
-                    .filterNotNull()
-                    .groupBy(HoverObject::layerIndex)
-                    // Only one object per layer, especially important fot heightmaps, where polygons are layered
-                    // one above another and tooltip should be displayed only for the top polygon
-                    .map { (_, hoverObjects) -> hoverObjects.maxBy(HoverObject::index) }
-                    .toList()
+                hoverObjects = objects
             }
         }
     }

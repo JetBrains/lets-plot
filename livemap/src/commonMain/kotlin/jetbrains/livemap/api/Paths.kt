@@ -153,7 +153,7 @@ class PathBuilder(
                     +NeedLocationComponent
                     +NeedCalculateLocationComponent
                     if (!nonInteractive) {
-                        +LocatorComponent(PathLocator())
+                        +LocatorComponent(PathLocator)
                     }
                 }
 

@@ -8,6 +8,9 @@ package jetbrains.datalore.base.typedGeometry
 import jetbrains.datalore.base.algorithms.isClockwise
 import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.geometry.DoubleRectangles
+import kotlin.math.sqrt
+
+val <T> Vec<T>.length get() = sqrt(x * x + y * y)
 
 fun <T> createMultiPolygon(points: List<Vec<T>>): MultiPolygon<T> {
     if (points.isEmpty()) {

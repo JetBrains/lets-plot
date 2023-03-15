@@ -20,7 +20,7 @@ import org.junit.Test
 
 class PolygonLocatorTest {
     private val manager = EcsComponentManager()
-    private val locator = PolygonLocator()
+    private val locator = PolygonLocator
     private val entity = manager.createEntity("")
         .addComponents {
             +IndexComponent(0, 0)

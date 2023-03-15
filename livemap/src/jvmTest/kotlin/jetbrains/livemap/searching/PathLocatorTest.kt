@@ -21,7 +21,7 @@ import org.junit.Test
 
 class PathLocatorTest {
     private val manager = EcsComponentManager()
-    private val locator = PathLocator()
+    private val locator = PathLocator
     private val entity = manager.createEntity("")
         .addComponents {
             +IndexComponent(0, 0)
