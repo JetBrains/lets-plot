@@ -6,4 +6,5 @@
 
 ### Fixed
 - livemap: memory leak caused by a document event handler.   
+- livemap: flickering when zooming with the buttons.   
 - livemap: tooltip text doesn't reflect data under the cursor [[#709](https://github.com/JetBrains/lets-plot/issues/709)].
