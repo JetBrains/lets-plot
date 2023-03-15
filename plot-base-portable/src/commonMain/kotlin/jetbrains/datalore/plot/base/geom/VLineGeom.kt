@@ -52,7 +52,12 @@ class VLineGeom : GeomBase() {
                 // tooltip
                 val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
                 val w = AesScaling.strokeWidth(p) + 4.0
-                val targetRect = extendTrueWidth(rect, w, ctx)
+                val targetRect = extendTrueWidth(rect, w, ctx).let {
+                    // The tooltip point is on the top of the rectangle = on the plot border.
+                    // To ensure that it will be displayed, move the rectangle a little inside the plot.
+                    // https://github.com/JetBrains/lets-plot/issues/610:
+                    DoubleRectangle.XYWH(it.left, it.top + 2.0, it.width, it.height)
+                }
 
                 ctx.targetCollector.addRectangle(
                     p.index(),
