@@ -10,6 +10,7 @@ import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.*
@@ -172,7 +173,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val radius: Double = AesScaling.pieDiameter(p) / 2
         val holeRadius = radius * holeSize
         val direction = startAngle + angle / 2
-        private val explode =  p.explode()?.let { radius * it } ?: 0.0
+        private val explode = p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
         private val fullCircleDrawingFix = if (angle % (2 * PI) == 0.0) 0.0001 else 0.0
 
@@ -185,15 +186,14 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         fun outerArcPoint(angle: Double) = arcPoint(radius, angle)
         fun innerArcPoint(angle: Double) = arcPoint(holeRadius, angle)
 
-        private fun arcPoint(radius: Double, angle: Double): DoubleVector {
+        fun arcPoint(radius: Double, angle: Double): DoubleVector {
             return position.add(DoubleVector(radius * cos(angle), radius * sin(angle)))
         }
 
         val sectorCenter: DoubleVector // center of the pie slice geometry
             get() {
-                val offset = 0.5 * (radius - holeRadius)
-                return position.add(DoubleVector(holeRadius * cos(direction), holeRadius * sin(direction)))
-                    .add(DoubleVector(offset * cos(direction), offset * sin(direction)))
+                val offset = holeRadius + 0.5 * (radius - holeRadius)
+                return arcPoint(offset, direction)
             }
     }
 
@@ -300,19 +300,44 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val canBePlacedInside =
             textRect.parts.flatMap { listOf(it.start, it.end) }.distinct().all(::isPointInsideSector)
 
-        val pointerLocation = if (canBePlacedInside) {
+        fun canBePlacedInsideRotated(): Boolean {
+            if (textSize.x > sector.radius - sector.holeRadius) {
+                return false
+            }
+
+            fun checkChord(p1: DoubleVector, p2: DoubleVector, h: Double) = p1.subtract(p2).length() < h
+
+            // outer
+            if (checkChord(sector.outerArcStart, sector.outerArcEnd, textSize.y)) {
+                return false
+            }
+            // inner
+            val offset = sector.radius - textSize.x
+            val onStartArc = sector.arcPoint(offset, sector.startAngle)
+            val onEndArc = sector.arcPoint(offset, sector.endAngle)
+            if (checkChord(onStartArc, onEndArc, textSize.y)) {
+                return false
+            }
+            return true
+        }
+
+        val canBePlacedInsideWithRotation = if (!canBePlacedInside) canBePlacedInsideRotated() else false
+
+        val location = if (canBePlacedInside) {
             sector.sectorCenter
+        } else if (canBePlacedInsideWithRotation) {
+            val offset = sector.radius - textSize.x / 2
+            sector.arcPoint(offset, sector.direction)
         } else {
             val offset = sector.holeRadius + 0.8 * (sector.radius - sector.holeRadius)
-            sector.position.add(DoubleVector(offset * cos(sector.direction), offset * sin(sector.direction)))
-
+            sector.arcPoint(offset, sector.direction)
         }
         val side = when {
-            canBePlacedInside -> Side.INSIDE
-            pointerLocation.x < sector.pieCenter.x -> Side.LEFT
+            canBePlacedInside || canBePlacedInsideWithRotation -> Side.INSIDE
+            location.x < sector.pieCenter.x -> Side.LEFT
             else -> Side.RIGHT
         }
-        val outerPointerCoord: DoubleVector? = if (canBePlacedInside) {
+        val outerPointerCoord: DoubleVector? = if (side == Side.INSIDE) {
             null
         } else {
             sector.position.add(
@@ -327,13 +352,23 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             Colors.luminance(sector.p.fill()!!) < 0.5 -> Color.WHITE // if fill is dark
             else -> Color.BLACK
         }
+        val rotationAngle = if (canBePlacedInsideWithRotation) {
+            toDegrees(-sector.direction) + when {
+                location.x < sector.pieCenter.x -> 180.0
+                else -> 0.0
+            }
+        } else {
+            0.0
+        }
+
         return AnnotationLabel(
             text,
             textSize,
-            pointerLocation,
+            location,
             outerPointerCoord,
             textColor,
-            side
+            side,
+            rotationAngle
         )
     }
 
@@ -348,7 +383,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             p: DataPointAesthetics = AestheticsBuilder().build().dataPointAt(0),
             textStyle: TextStyle,
             color: Color? = null,
-            hjust: String? = null
+            hjust: String? = null,
+            angle: Double? = null
         ): DataPointAesthetics {
             return object : DataPointAestheticsDelegate(p) {
                 override operator fun <T> get(aes: Aes<T>): T? {
@@ -359,6 +395,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                         Aes.COLOR -> color
                         Aes.HJUST -> hjust ?: "middle"
                         Aes.VJUST -> "center"
+                        Aes.ANGLE -> angle ?: 0.0
                         else -> super.get(aes)
                     }
                     @Suppress("UNCHECKED_CAST")
@@ -388,7 +425,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             val location: DoubleVector,             // to place text element or pointer
             val outerPointerCoord: DoubleVector?,   // position for middle point of pointer line
             val textColor: Color,
-            val side: Side
+            val side: Side,
+            val rotationAngle: Double?
         )
 
         private fun createAnnotationElements(
@@ -453,7 +491,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 toTextDataPointAesthetics(
                     textStyle = textStyle,
                     color = label.textColor,
-                    hjust = label.side.getHJust()
+                    hjust = label.side.getHJust(),
+                    angle = label.rotationAngle
                 ),
                 textLocation,
                 label.text,
