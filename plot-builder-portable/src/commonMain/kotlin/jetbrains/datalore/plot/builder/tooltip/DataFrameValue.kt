@@ -33,8 +33,7 @@ class DataFrameValue(
 
         myFormatter = when {
             format != null -> StringFormat.forOneArg(format, formatFor = name)::format
-            myVariable.isStat -> Stats.defaultFormatter(myVariable)
-            else -> { v: Any -> v.toString() }
+            else -> TooltipFormatting.createFormatter(myVariable)
         }
     }
 
