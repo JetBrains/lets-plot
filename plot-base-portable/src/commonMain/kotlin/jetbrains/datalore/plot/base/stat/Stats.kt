@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable.Source.STAT
@@ -83,6 +84,15 @@ object Stats {
     fun statVar(varName: String): DataFrame.Variable {
         require(VARS.containsKey(varName)) { "Unknown stat variable $varName" }
         return VARS[varName]!!
+    }
+
+    fun defaultFormatter(variable: DataFrame.Variable): (Any) -> String {
+        require(variable.isStat)
+        val pattern = when (variable) {
+            PROPPCT -> "{.1f} %"
+            else -> ".2f"
+        }
+        return StringFormat.forOneArg(pattern, formatFor = variable.name)::format
     }
 
     fun defaultMapping(stat: Stat): Map<Aes<*>, DataFrame.Variable> {

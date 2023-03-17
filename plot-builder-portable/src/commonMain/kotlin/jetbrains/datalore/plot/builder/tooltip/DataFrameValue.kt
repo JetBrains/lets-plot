@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import jetbrains.datalore.plot.base.stat.Stats
 
 class DataFrameValue(
     private val name: String,
@@ -19,9 +20,7 @@ class DataFrameValue(
 
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
-    private val myFormatter = format?.let {
-        StringFormat.forOneArg(format, formatFor = name)
-    }
+    private lateinit var myFormatter: ((Any) -> String)
 
     override val isOutlier: Boolean = false
     override val isAxis: Boolean = false
@@ -31,13 +30,19 @@ class DataFrameValue(
         myDataFrame = data
 
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
+
+        myFormatter = when {
+            format != null -> StringFormat.forOneArg(format, formatFor = name)::format
+            myVariable.isStat -> Stats.defaultFormatter(myVariable)
+            else -> { v: Any -> v.toString() }
+        }
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint? {
         val originalValue = myDataFrame[myVariable][index] ?: return null
         return DataPoint(
             label = name,
-            value = myFormatter?.format(originalValue) ?: originalValue.toString(),
+            value = myFormatter(originalValue),
             aes = null,
             isAxis = false,
             isOutlier = false
@@ -54,6 +59,6 @@ class DataFrameValue(
 
     override fun getAnnotationText(index: Int): String? {
         val originalValue = myDataFrame[myVariable][index] ?: return null
-        return myFormatter?.format(originalValue) ?: originalValue.toString()
+        return myFormatter(originalValue)
     }
 }
