@@ -290,30 +290,32 @@ object GeomInteractionUtil {
         // retain continuous mappings or discrete with checking of number of factors
         aesListForTooltip.retainAll { isTooltipForAesEnabled(it, scaleMap) }
 
+        // remove hidden aes
+        aesListForTooltip.removeAll { it in hiddenAesList }
+
         // remove duplicated mappings
         val mappingsToShow = HashMap<DataFrame.Variable, Aes<*>>()
-        for (aes in aesListForTooltip) {
-            if (aes in hiddenAesList) continue
+        aesListForTooltip
+            .forEach { aes ->
+                val variable = layerConfig.getVariableForAes(aes)!!
+                val mappingToShow = mappingsToShow[variable]
+                when {
+                    mappingToShow == null -> {
+                        mappingsToShow[variable] = aes
+                    }
 
-            val variable = layerConfig.getVariableForAes(aes)!!
-            val mappingToShow = mappingsToShow[variable]
-            when {
-                mappingToShow == null -> {
-                    mappingsToShow[variable] = aes
-                }
+                    !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
+                        // If the same variable is mapped twice as continuous and discrete - use the continuous value
+                        // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
+                        mappingsToShow[variable] = aes
+                    }
 
-                !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
-                    // If the same variable is mapped twice as continuous and discrete - use the continuous value
-                    // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
-                    mappingsToShow[variable] = aes
-                }
-
-                scaleMap.getValue(aes).name != variable.label -> {
-                    // Use variable which is shown by the scale with its name
-                    mappingsToShow[variable] = aes
+                    scaleMap.getValue(aes).name != variable.label -> {
+                        // Use variable which is shown by the scale with its name
+                        mappingsToShow[variable] = aes
+                    }
                 }
             }
-        }
         return mappingsToShow.values.toList()
     }
 
