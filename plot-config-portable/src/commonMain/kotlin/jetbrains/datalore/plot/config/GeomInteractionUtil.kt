@@ -85,9 +85,9 @@ object GeomInteractionUtil {
             layerConfig,
             scaleMap,
             layerRendersAesAfterOrientation,
-            axisAesFromFunctionTypeAfterOrientation
-        ) - hiddenAesList
-
+            axisAesFromFunctionTypeAfterOrientation,
+            hiddenAesList
+        )
 
         val builder = GeomInteractionBuilder(
             locatorLookupSpace = tooltipSetup.locatorLookupSpace,
@@ -270,7 +270,8 @@ object GeomInteractionUtil {
         layerConfig: LayerConfig,
         scaleMap: Map<Aes<*>, Scale>,
         layerRendersAes: List<Aes<*>>,
-        axisAes: List<Aes<*>>
+        axisAes: List<Aes<*>>,
+        hiddenAesList: List<Aes<*>>
     ): List<Aes<*>> {
 
         // remove axis mapping: if aes and axis are bound to the same data
@@ -291,27 +292,28 @@ object GeomInteractionUtil {
 
         // remove duplicated mappings
         val mappingsToShow = HashMap<DataFrame.Variable, Aes<*>>()
-        aesListForTooltip
-            .forEach { aes ->
-                val variable = layerConfig.getVariableForAes(aes)!!
-                val mappingToShow = mappingsToShow[variable]
-                when {
-                    mappingToShow == null -> {
-                        mappingsToShow[variable] = aes
-                    }
+        for (aes in aesListForTooltip) {
+            if (aes in hiddenAesList) continue
 
-                    !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
-                        // If the same variable is mapped twice as continuous and discrete - use the continuous value
-                        // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
-                        mappingsToShow[variable] = aes
-                    }
+            val variable = layerConfig.getVariableForAes(aes)!!
+            val mappingToShow = mappingsToShow[variable]
+            when {
+                mappingToShow == null -> {
+                    mappingsToShow[variable] = aes
+                }
 
-                    scaleMap.getValue(aes).name != variable.label -> {
-                        // Use variable which is shown by the scale with its name
-                        mappingsToShow[variable] = aes
-                    }
+                !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
+                    // If the same variable is mapped twice as continuous and discrete - use the continuous value
+                    // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
+                    mappingsToShow[variable] = aes
+                }
+
+                scaleMap.getValue(aes).name != variable.label -> {
+                    // Use variable which is shown by the scale with its name
+                    mappingsToShow[variable] = aes
                 }
             }
+        }
         return mappingsToShow.values.toList()
     }
 
