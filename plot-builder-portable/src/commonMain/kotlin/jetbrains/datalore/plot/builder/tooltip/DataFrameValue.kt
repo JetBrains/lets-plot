@@ -31,9 +31,9 @@ class DataFrameValue(
 
         myVariable = DataFrameUtil.findVariableOrFail(myDataFrame, name)
 
-        myFormatter = when {
-            format != null -> StringFormat.forOneArg(format, formatFor = name)::format
-            else -> TooltipFormatting.createFormatter(myVariable)
+        myFormatter = when (format) {
+            null -> TooltipFormatting.createFormatter(myVariable)
+            else -> StringFormat.forOneArg(format, formatFor = name)::format
         }
     }
 
