@@ -33,6 +33,7 @@ class BatikMapperComponentHelper private constructor(
     private val myMapper: SvgRootDocumentMapper
     private val myUserAgent: UserAgent
     private val myBridgeContext: BridgeContext
+    private val myRenderer: BatikGraphicsNodeRenderer
 
     val preferredSize: Dimension
         get() {
@@ -75,6 +76,8 @@ class BatikMapperComponentHelper private constructor(
         myGraphicsNode = builder.build(myBridgeContext, myMapper.target)
 
         myUserAgent.eventDispatcher.rootNode = myGraphicsNode
+
+        myRenderer = BatikGraphicsNodeRenderer.getInstance()
     }
 
     internal fun addSvgNodeContainerListener(l: SvgNodeContainerListener) {
@@ -99,7 +102,7 @@ class BatikMapperComponentHelper private constructor(
     }
 
     fun paint(g: Graphics2D) {
-        myGraphicsNode.paint(g)
+        myRenderer.paint(myGraphicsNode, g, preferredSize)
     }
 
 //    fun handleMouseEvent(e: MouseEvent) {
