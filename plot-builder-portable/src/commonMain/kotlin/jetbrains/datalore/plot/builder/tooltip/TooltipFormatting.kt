@@ -5,9 +5,12 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.base.stat.Stats
 
 internal object TooltipFormatting {
     fun createFormatter(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
@@ -24,6 +27,14 @@ internal object TooltipFormatting {
         } else {
             val labelsMap = ScaleUtil.labelByBreak(scale)
             return { value -> value?.let { labelsMap[it] } ?: "n/a" }
+        }
+    }
+
+    fun createFormatter(variable: DataFrame.Variable): (Any) -> String {
+        return when (variable) {
+            Stats.PROP -> StringFormat.forOneArg(".2f", formatFor = variable.name)::format
+            Stats.PROPPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name)::format
+            else -> { value -> value.toString() }
         }
     }
 }

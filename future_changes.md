@@ -9,3 +9,4 @@
 - livemap: flickering when zooming with the buttons.   
 - livemap: tooltip text doesn't reflect data under the cursor [[#709](https://github.com/JetBrains/lets-plot/issues/709)].
 - Quantile should be shown in tooltip if the variable `..quantile..` is mapped to geom aesthetic.
+- Bad default formatting for stat variables [[#654](https://github.com/JetBrains/lets-plot/issues/654)].
