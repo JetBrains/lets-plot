@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
+import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.PlotContext
@@ -30,11 +31,10 @@ internal object TooltipFormatting {
     }
 
     fun createFormatter(variable: DataFrame.Variable): (Any) -> String {
-        val formatter = if (variable.isStat) {
-            Stats.defaultFormatter(variable)
-        } else {
-            null
+        return when (variable) {
+            Stats.PROP -> StringFormat.forOneArg(".2f", formatFor = variable.name)::format
+            Stats.PROPPCT -> StringFormat.forOneArg("{.1f} %", formatFor = variable.name)::format
+            else -> { value -> value.toString() }
         }
-        return formatter ?: { value -> value.toString() }
     }
 }

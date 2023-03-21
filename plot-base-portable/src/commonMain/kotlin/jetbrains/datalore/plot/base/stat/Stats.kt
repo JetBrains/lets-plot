@@ -86,16 +86,6 @@ object Stats {
         return VARS[varName]!!
     }
 
-    fun defaultFormatter(variable: DataFrame.Variable): ((Any) -> String)? {
-        require(variable.isStat)
-        val pattern = when (variable) {
-            PROP -> ".2f"
-            PROPPCT -> "{.1f} %"
-            else -> return null
-        }
-        return StringFormat.forOneArg(pattern, formatFor = variable.name)::format
-    }
-
     fun defaultMapping(stat: Stat): Map<Aes<*>, DataFrame.Variable> {
         val map = HashMap<Aes<*>, DataFrame.Variable>()
         for (aes in Aes.values()) {
