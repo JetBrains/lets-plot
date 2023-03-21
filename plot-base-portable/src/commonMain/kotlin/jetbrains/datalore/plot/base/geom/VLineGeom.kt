@@ -56,7 +56,11 @@ class VLineGeom : GeomBase() {
                     // The tooltip point is on the top of the rectangle = on the plot border.
                     // To ensure that it will be displayed, move the rectangle a little inside the plot.
                     // https://github.com/JetBrains/lets-plot/issues/610:
-                    DoubleRectangle.XYWH(it.left, it.top + 2.0, it.width, it.height)
+                    if (!ctx.flipped) {
+                        DoubleRectangle(it.xRange(), it.yRange().expanded(-2.0))
+                    } else {
+                        it
+                    }
                 }
 
                 ctx.targetCollector.addRectangle(
