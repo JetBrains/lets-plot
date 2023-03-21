@@ -11,7 +11,6 @@ import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
-import jetbrains.datalore.plot.base.stat.Stats
 
 class DataFrameValue(
     private val name: String,
