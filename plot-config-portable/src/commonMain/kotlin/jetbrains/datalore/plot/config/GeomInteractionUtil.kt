@@ -85,9 +85,9 @@ object GeomInteractionUtil {
             layerConfig,
             scaleMap,
             layerRendersAesAfterOrientation,
-            axisAesFromFunctionTypeAfterOrientation
-        ) - hiddenAesList
-
+            axisAesFromFunctionTypeAfterOrientation,
+            hiddenAesList
+        )
 
         val builder = GeomInteractionBuilder(
             locatorLookupSpace = tooltipSetup.locatorLookupSpace,
@@ -270,7 +270,8 @@ object GeomInteractionUtil {
         layerConfig: LayerConfig,
         scaleMap: Map<Aes<*>, Scale>,
         layerRendersAes: List<Aes<*>>,
-        axisAes: List<Aes<*>>
+        axisAes: List<Aes<*>>,
+        hiddenAesList: List<Aes<*>>
     ): List<Aes<*>> {
 
         // remove axis mapping: if aes and axis are bound to the same data
@@ -288,6 +289,9 @@ object GeomInteractionUtil {
 
         // retain continuous mappings or discrete with checking of number of factors
         aesListForTooltip.retainAll { isTooltipForAesEnabled(it, scaleMap) }
+
+        // remove hidden aes
+        aesListForTooltip.removeAll { it in hiddenAesList }
 
         // remove duplicated mappings
         val mappingsToShow = HashMap<DataFrame.Variable, Aes<*>>()
