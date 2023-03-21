@@ -30,10 +30,11 @@ internal object TooltipFormatting {
     }
 
     fun createFormatter(variable: DataFrame.Variable): (Any) -> String {
-        return if (variable.isStat) {
+        val formatter = if (variable.isStat) {
             Stats.defaultFormatter(variable)
         } else {
-            { value -> value.toString() }
+            null
         }
+        return formatter ?: { value -> value.toString() }
     }
 }

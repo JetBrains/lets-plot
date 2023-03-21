@@ -86,11 +86,12 @@ object Stats {
         return VARS[varName]!!
     }
 
-    fun defaultFormatter(variable: DataFrame.Variable): (Any) -> String {
+    fun defaultFormatter(variable: DataFrame.Variable): ((Any) -> String)? {
         require(variable.isStat)
         val pattern = when (variable) {
+            PROP -> ".2f"
             PROPPCT -> "{.1f} %"
-            else -> ".2f"
+            else -> return null
         }
         return StringFormat.forOneArg(pattern, formatFor = variable.name)::format
     }
