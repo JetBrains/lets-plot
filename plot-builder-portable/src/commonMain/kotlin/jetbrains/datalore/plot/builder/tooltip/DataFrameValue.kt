@@ -19,7 +19,7 @@ class DataFrameValue(
 
     private lateinit var myDataFrame: DataFrame
     private lateinit var myVariable: DataFrame.Variable
-    private lateinit var myFormatter: ((Any) -> String)
+    private lateinit var myFormatter: (Any) -> String
 
     override val isOutlier: Boolean = false
     override val isAxis: Boolean = false
