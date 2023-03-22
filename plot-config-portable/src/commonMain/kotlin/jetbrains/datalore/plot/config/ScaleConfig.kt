@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
+import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
@@ -237,9 +238,11 @@ class ScaleConfig<T> constructor(
     }
 
     private fun applyCommons(b: ScaleProviderBuilder<T>): ScaleProviderBuilder<T> {
-        if (has(NAME)) {
-            b.name(getString(NAME)!!)
+
+        (getString(NAME) ?: getString(MappingAnnotation.LABEL))?.let {
+            b.name(it)
         }
+
         if (has(BREAKS)) {
             b.breaks(getList(BREAKS).mapNotNull { it })
         }
