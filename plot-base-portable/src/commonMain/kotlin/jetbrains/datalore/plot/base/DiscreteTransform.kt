@@ -8,13 +8,13 @@ package jetbrains.datalore.plot.base
 import kotlin.math.roundToInt
 
 final class DiscreteTransform(
-    private val domainValues: Collection<Any>,
-    private val domainLimits: List<Any>
+    private val domainValues: Collection<Any?>,
+    private val domainLimits: List<Any?>
 ) : Transform {
 
-    private val indexByDomainValue: Map<Any, Int>
+    private val indexByDomainValue: Map<Any?, Int>
 
-    val effectiveDomain: List<Any>
+    val effectiveDomain: List<Any?>
     val effectiveDomainTransformed: List<Double>
 
     init {
@@ -49,16 +49,11 @@ final class DiscreteTransform(
     }
 
     private fun asNumber(input: Any?): Double? {
-        if (input == null) {
-            return null
-        }
         if (indexByDomainValue.containsKey(input)) {
             return indexByDomainValue.getValue(input).toDouble()
         }
 
-        throw IllegalStateException(
-            "value $input is not in the domain: ${effectiveDomain}"
-        )
+        return null
     }
 
     private fun fromNumber(v: Double?): Any? {
@@ -79,8 +74,8 @@ final class DiscreteTransform(
             val domainValues = LinkedHashSet<Any>()
             val domainLimits = LinkedHashSet<Any>()
             for (transform in l) {
-                domainValues.addAll(transform.domainValues)
-                domainLimits.addAll(transform.domainLimits)
+                domainValues.addAll(transform.domainValues.filterNotNull())
+                domainLimits.addAll(transform.domainLimits.filterNotNull())
             }
             return DiscreteTransform(domainValues.toList(), domainLimits.toList())
         }

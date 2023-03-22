@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 class ScaleBreaks(
-    val domainValues: List<Any>,
+    val domainValues: List<Any?>,
     val transformedValues: List<Double>,
     val labels: List<String>
 ) {

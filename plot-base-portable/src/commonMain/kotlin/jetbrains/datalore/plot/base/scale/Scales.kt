@@ -31,8 +31,8 @@ object Scales {
     object DemoAndTest {
         fun discreteDomain(
             name: String,
-            domainValues: List<Any>,
-            domainLimits: List<Any> = emptyList(),
+            domainValues: List<Any?>,
+            domainLimits: List<Any?> = emptyList(),
         ): Scale {
             return DiscreteScale(
                 name,
@@ -42,7 +42,7 @@ object Scales {
 
         fun pureDiscrete(
             name: String,
-            domainValues: List<Any>,
+            domainValues: List<Any?>,
         ): Scale {
             val transform = DiscreteTransform(domainValues, emptyList())
             return DiscreteScale(name, transform)

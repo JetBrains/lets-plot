@@ -9,7 +9,7 @@ import jetbrains.datalore.plot.base.Scale
 
 internal abstract class AbstractScale<DomainT> : Scale {
 
-    private val definedBreaks: List<DomainT>?
+    private val definedBreaks: List<DomainT?>?
     private val definedLabels: List<String>?
 
     final override val name: String
@@ -20,7 +20,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         protected set
     final override val labelFormatter: ((Any) -> String)?
 
-    protected constructor(name: String, breaks: List<DomainT>? = null) {
+    protected constructor(name: String, breaks: List<DomainT?>? = null) {
         this.name = name
         this.definedBreaks = breaks
         definedLabels = null
@@ -43,7 +43,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
     protected fun hasDefinedBreaks() = definedBreaks != null
 
-    protected open fun getBreaksIntern(): List<DomainT> {
+    protected open fun getBreaksIntern(): List<DomainT?> {
         check(definedBreaks != null) { "No breaks defined for scale $name" }
         return definedBreaks
     }
@@ -69,15 +69,14 @@ internal abstract class AbstractScale<DomainT> : Scale {
             .filterNotNull()
             .toSet()
 
-        @Suppress("UNCHECKED_CAST")
         return ScaleBreaks(
-            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices } as List<Any>,
+            domainValues = breakValuesIntern.filterIndexed { i, _ -> i in keepIndices },
             transformedValues = transformed.filterNotNull(),
             labels = labels.filterIndexed { i, _ -> i in keepIndices }
         )
     }
 
-    private fun getLabels(breaks: List<DomainT>): List<String> {
+    private fun getLabels(breaks: List<DomainT?>): List<String> {
         if (definedLabels != null) {
             val labels = getLabelsIntern()
             return when {
@@ -88,14 +87,22 @@ internal abstract class AbstractScale<DomainT> : Scale {
         }
 
         // generate labels
-        val formatter: (Any) -> String = labelFormatter ?: { v: Any -> v.toString() }
-        return breaks.map { formatter(it as Any) }
+        return breaks.map { br ->
+            when {
+                br == null -> "N/A"
+                labelFormatter != null -> labelFormatter.invoke(br)
+                else -> br.toString()
+            }
+        }
+
+        //val formatter: (Any?) -> String = labelFormatter ?: { v: Any? -> v?.toString() ?: "N/A" }
+        //return breaks.map(formatter)
     }
 
     protected abstract class AbstractBuilder<DomainT>(scale: AbstractScale<DomainT>) : Scale.Builder {
         internal var myName: String = scale.name
 
-        internal var myBreaks: List<DomainT>? = scale.definedBreaks
+        internal var myBreaks: List<DomainT?>? = scale.definedBreaks
         internal var myLabels: List<String>? = scale.definedLabels
         internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
 
@@ -107,10 +114,10 @@ internal abstract class AbstractScale<DomainT> : Scale {
             return this
         }
 
-        override fun breaks(l: List<Any>): Scale.Builder {
+        override fun breaks(l: List<Any?>): Scale.Builder {
             myBreaks = l.map {
                 @Suppress("UNCHECKED_CAST")
-                it as DomainT
+                it as DomainT?
             }
             return this
         }

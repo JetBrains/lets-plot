@@ -37,7 +37,7 @@ interface Scale {
     interface Builder {
         fun name(v: String): Builder
 
-        fun breaks(l: List<Any>): Builder
+        fun breaks(l: List<Any?>): Builder
 
         fun labels(l: List<String>): Builder
 

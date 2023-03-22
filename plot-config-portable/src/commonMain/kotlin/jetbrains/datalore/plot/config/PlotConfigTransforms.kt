@@ -76,7 +76,7 @@ internal object PlotConfigTransforms {
         val discreteDataByVarBinding: Map<VarBinding, DataFrame> = dataByVarBinding.filterKeys {
             it.aes in discreteAesSet
         }
-        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any>>()
+        val discreteDomainByAes = HashMap<Aes<*>, LinkedHashSet<Any?>>()
         for ((varBinding, data) in discreteDataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
@@ -104,7 +104,7 @@ internal object PlotConfigTransforms {
             } else {
                 effectiveDomain
             }
-            val transformDomainLimits = (scaleProvider.limits ?: emptyList()).filterNotNull().let {
+            val transformDomainLimits = (scaleProvider.limits ?: emptyList()).let {
                 if (scaleProvider.discreteDomainReverse) {
                     it.reversed()
                 } else {

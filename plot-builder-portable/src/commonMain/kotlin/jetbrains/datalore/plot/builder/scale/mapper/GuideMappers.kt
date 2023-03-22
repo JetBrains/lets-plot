@@ -25,7 +25,7 @@ object GuideMappers {
         return GuideMapperWithGuideBreaks(
             mapper = Mappers.discrete(discreteTransform, outputValues, naValue),
             breaks = discreteTransform.effectiveDomain,
-            formatter = { v: Any -> v.toString() }
+            formatter = { v: Any? -> v?.toString() ?: "N/A" }
         )
     }
 
@@ -49,7 +49,7 @@ object GuideMappers {
         return GuideMapperWithGuideBreaks(
             mapper,
             discreteTransform.effectiveDomain,
-            formatter = { v: Any -> v.toString() }
+            formatter = { v: Any? -> v?.toString() ?: "N/A" }
         )
     }
 

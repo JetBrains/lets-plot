@@ -45,7 +45,7 @@ internal class DiscreteScale : AbstractScale<Any> {
         return true
     }
 
-    protected override fun getBreaksIntern(): List<Any> {
+    protected override fun getBreaksIntern(): List<Any?> {
         return if (hasDefinedBreaks()) {
             // Intersect, preserve the order in the 'domain'.
             val breaksSet = super.getBreaksIntern().toSet()

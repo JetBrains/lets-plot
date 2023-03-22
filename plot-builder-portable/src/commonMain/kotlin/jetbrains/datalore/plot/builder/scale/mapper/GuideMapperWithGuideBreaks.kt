@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.builder.scale.WithGuideBreaks
 
 internal class GuideMapperWithGuideBreaks<DomainT, TargetT>(
     mapper: ScaleMapper<TargetT>,
-    override val breaks: List<DomainT>,
-    override val formatter: (DomainT) -> String
+    override val breaks: List<DomainT?>,
+    override val formatter: (DomainT?) -> String
 ) : WithGuideBreaks<DomainT>, GuideMapper<TargetT>(
     mapper,
     isContinuous = false

@@ -15,7 +15,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
     private var _mapperProvider: MapperProvider<T>? = null
     private var myName: String? = null
-    private var myBreaks: List<Any>? = null
+    private var myBreaks: List<Any?>? = null
     private var myLabels: List<String>? = null
     private var myLabelFormat: String? = null
     private var myMultiplicativeExpand: Double? = null
@@ -38,7 +38,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         return this
     }
 
-    fun breaks(breaks: List<Any>): ScaleProviderBuilder<T> {
+    fun breaks(breaks: List<Any?>): ScaleProviderBuilder<T> {
         myBreaks = breaks
         return this
     }
@@ -138,7 +138,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         override val discreteDomain: Boolean = b.myDiscreteDomain
         override val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
 
-        override val breaks: List<Any>? = b.myBreaks?.let { ArrayList(it) }
+        override val breaks: List<Any?>? = b.myBreaks?.let { ArrayList(it) }
         override val limits: List<Any?>? = b.myLimits?.let { ArrayList(it) }
 
         override val continuousTransform: ContinuousTransform = b.myContinuousTransform

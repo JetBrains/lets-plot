@@ -241,7 +241,7 @@ class ScaleConfig<T> constructor(
             b.name(getString(NAME)!!)
         }
         if (has(BREAKS)) {
-            b.breaks(getList(BREAKS).mapNotNull { it })
+            b.breaks(getList(BREAKS))
         }
         if (has(LABELS)) {
             b.labels(getStringList(LABELS))
