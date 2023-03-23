@@ -58,7 +58,7 @@ class LegendComponent(
         val breakComponent = GroupComponent()
 
         // key element
-        breakComponent.add(createKeyElement(br, keySize, (keyLabelBox.height - keySize.y) / 2 + 1.0))
+        breakComponent.add(createKeyElement(br, keySize, yOffset = (keyLabelBox.height - keySize.y) / 2))
 
         // add label at position as was layout
         val label = MultilineLabel(br.label)
@@ -73,7 +73,7 @@ class LegendComponent(
         return breakComponent.rootGroup
     }
 
-    private fun createKeyElement(legendBreak: LegendBreak, size: DoubleVector, vOffset:Double): SvgGElement {
+    private fun createKeyElement(legendBreak: LegendBreak, size: DoubleVector, yOffset:Double): SvgGElement {
         val g = SvgGElement()
 
         // common background
@@ -87,14 +87,14 @@ class LegendComponent(
         // key
         val innerSize = DoubleVector(size.x - 2, size.y - 2)
         val keyElement = legendBreak.createKeyElement(innerSize)
-        val keyElementTransform = buildTransform(DoubleVector(1.0, vOffset), 0.0)
+        val keyElementTransform = buildTransform(DoubleVector(1.0, yOffset + 1.0), 0.0)
         keyElement.transform().set(keyElementTransform)
 
         g.children().add(keyElement)
 
         // add a frame (To nicely trim internals?)
         val frame = createTransparentRect(
-            keyBounds.add(DoubleVector(0.0, vOffset)),
+            keyBounds.add(DoubleVector(0.0, yOffset)),
             strokeColor = theme.backgroundFill(),
             1.0
         )
