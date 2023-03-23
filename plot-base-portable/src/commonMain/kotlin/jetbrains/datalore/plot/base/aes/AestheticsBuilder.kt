@@ -25,6 +25,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.STROKE
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
 import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
@@ -100,6 +101,10 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun size(v: (Int) -> Double?): AestheticsBuilder {
         return aes(SIZE, v)
+    }
+
+    fun stroke(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(STROKE, v)
     }
 
     fun width(v: (Int) -> Double?): AestheticsBuilder {

@@ -20,6 +20,10 @@ object AesScaling {
         return p.size()!! * UNIT_SHAPE_SIZE
     }
 
+    fun pointStrokeWidth(p: DataPointAesthetics): Double {
+        return p.stroke()!! * UNIT_SHAPE_SIZE
+    }
+
     fun pieDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
         return p.size()!! * 10.0

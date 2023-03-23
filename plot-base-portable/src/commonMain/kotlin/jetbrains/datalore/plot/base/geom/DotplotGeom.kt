@@ -188,7 +188,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             builder.closePath()
 
             val path = LinePath(builder)
-            decorate(path, p, true)
+            decorate(path, p, filled = true, isLine = false)
 
             return path
         }

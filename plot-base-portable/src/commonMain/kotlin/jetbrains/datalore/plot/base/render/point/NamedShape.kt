@@ -64,11 +64,9 @@ enum class NamedShape(
 
     @Suppress("RedundantModalityModifier")
     final override fun strokeWidth(dataPoint: DataPointAesthetics): Double {
-        // 'size' aes is used for other purpose and
-        // no 'stroke width' aes (?)
         return if (isSolid)
             0.0
         else
-            1.0
+            AesScaling.pointStrokeWidth(dataPoint)
     }
 }

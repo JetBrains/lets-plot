@@ -64,6 +64,10 @@ abstract class DataPointAesthetics {
         return get(Aes.SIZE)
     }
 
+    fun stroke(): Double? {
+        return get(Aes.STROKE)
+    }
+
     fun stacksize(): Double? {
         return get(Aes.STACKSIZE)
     }
