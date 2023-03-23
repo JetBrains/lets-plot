@@ -14,6 +14,7 @@ class LegendTheme {
         return listOf(
             defaultPosition(),
             topRightHoriz(),
+            multiLineLegendItems()
         )
     }
 
@@ -25,6 +26,14 @@ class LegendTheme {
     private fun topRightHoriz(): MutableMap<String, Any> {
         val plotSpec = plotSpec("Top-right, horizontal")
         plotSpec["theme"] = themeTopRightHoriz()
+        return plotSpec
+    }
+
+    private fun multiLineLegendItems(): MutableMap<String, Any> {
+        val plotSpec = plotSpec("Multiline legend items")
+        plotSpec["scales"] = listOf(scaleLabels())
+        val legendTextSize = """{ 'legend_text': { 'size': 15, 'blank':  false } }""".trimIndent()
+        plotSpec["theme"] = parsePlotSpec(legendTextSize)
         return plotSpec
     }
 
@@ -58,6 +67,23 @@ class LegendTheme {
     {  'legend_position': [1, 1],
                 'legend_justification': [1, 1],
                 'legend_direction': 'horizontal'}                
+            """.trimIndent()
+
+            return parsePlotSpec(spec)
+        }
+
+        private fun scaleLabels(): Map<String, Any> {
+            val spec = """
+            {
+                'name': 'The origin \nof car',
+                'aesthetic': 'shape',
+                'labels': [
+                    'a)\nUS',
+                    'b)\nAsia\n(Japan, Korea...)',
+                    'c) Europe'
+                ],
+                'discrete': true
+            }
             """.trimIndent()
 
             return parsePlotSpec(spec)
