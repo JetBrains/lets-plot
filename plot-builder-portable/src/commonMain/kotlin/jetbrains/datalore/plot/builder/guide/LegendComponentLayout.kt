@@ -9,6 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.layout.GeometryUtil
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import kotlin.math.max
 
@@ -61,17 +62,18 @@ abstract class LegendComponentLayout(
     }
 
     private fun doLayout() {
-        val labelHeight = PlotLabelSpecFactory.legendItem(theme).height()
         val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
+        val labelVerticalDistance = PlotLabelSpecFactory.legendItem(theme).height() / 3
 
         val contentOrigin = DoubleVector.ZERO
         var breakBoxBounds: DoubleRectangle? = null
         for (i in breaks.indices) {
-            val labelSize = labelSize(i)
+            val labelSize = labelSize(i).add(DoubleVector(0.0, labelVerticalDistance))
             val keySize = keySizes[i]
-            val labelVOffset = (keySize.y - labelHeight) / 2
+            val height = max(keySize.y, labelSize.y)
+            val labelVOffset = (height - labelSize.y) / 2
             val labelHOffset = keySize.x + labelLeftMargin
-            val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, keySize.y)
+            val breakBoxSize = DoubleVector(labelHOffset + labelSize.x, height)
             breakBoxBounds = DoubleRectangle(
                 breakBoxBounds?.let { breakBoxOrigin(i, it) } ?: contentOrigin,
                 breakBoxSize
@@ -114,7 +116,7 @@ abstract class LegendComponentLayout(
 
         override fun labelSize(index: Int): DoubleVector {
             val label = breaks[index].label
-            return DoubleVector(PlotLabelSpecFactory.legendItem(theme).width(label), PlotLabelSpecFactory.legendItem(theme).height())
+            return PlotLayoutUtil.textDimensions(label, PlotLabelSpecFactory.legendItem(theme))
         }
     }
 
@@ -161,7 +163,10 @@ abstract class LegendComponentLayout(
 
         init {
             for (br in breaks) {
-                myMaxLabelWidth = max(myMaxLabelWidth, PlotLabelSpecFactory.legendItem(theme).width(br.label))
+                myMaxLabelWidth = max(
+                    myMaxLabelWidth,
+                    PlotLayoutUtil.textDimensions(br.label, PlotLabelSpecFactory.legendItem(theme)).x
+                )
             }
         }
 
@@ -180,7 +185,10 @@ abstract class LegendComponentLayout(
         }
 
         override fun labelSize(index: Int): DoubleVector {
-            return DoubleVector(myMaxLabelWidth, PlotLabelSpecFactory.legendItem(theme).height())
+            return DoubleVector(
+                myMaxLabelWidth,
+                PlotLayoutUtil.textDimensions(breaks[index].label, PlotLabelSpecFactory.legendItem(theme)).y
+            )
         }
     }
 
