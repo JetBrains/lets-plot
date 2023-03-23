@@ -31,9 +31,10 @@ class LegendTheme {
 
     private fun multiLineLegendItems(): MutableMap<String, Any> {
         val plotSpec = plotSpec("Multiline legend items")
-        plotSpec["scales"] = listOf(scaleLabels())
+        plotSpec["scales"] = listOf(colorScaleLabels(), shapeScaleLabels())
         val legendTextSize = """{ 'legend_text': { 'size': 15, 'blank':  false } }""".trimIndent()
         plotSpec["theme"] = parsePlotSpec(legendTextSize)
+        // plotSpec["theme"] = themeTopRightHoriz()
         return plotSpec
     }
 
@@ -72,7 +73,7 @@ class LegendTheme {
             return parsePlotSpec(spec)
         }
 
-        private fun scaleLabels(): Map<String, Any> {
+        private fun colorScaleLabels(): Map<String, Any> {
             val spec = """
             {
                 'name': 'The origin \nof car',
@@ -85,7 +86,22 @@ class LegendTheme {
                 'discrete': true
             }
             """.trimIndent()
-
+            return parsePlotSpec(spec)
+        }
+        private fun shapeScaleLabels(): Map<String, Any> {
+            val spec = """
+            {
+                'name': 'Miles per gallon',
+                'aesthetic': 'color',
+                'breaks': [40,30,20,10],
+                'labels': [
+                    '40\n\n(mpg)',
+                    '30 (mpg)',
+                    '20\n(mpg)',
+                    '10 (mpg)' 
+                ]
+            }
+            """.trimIndent()
             return parsePlotSpec(spec)
         }
     }

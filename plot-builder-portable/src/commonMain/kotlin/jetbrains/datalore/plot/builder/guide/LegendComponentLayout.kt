@@ -63,12 +63,12 @@ abstract class LegendComponentLayout(
 
     private fun doLayout() {
         val labelLeftMargin = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
-        val labelVerticalDistance = PlotLabelSpecFactory.legendItem(theme).height() / 3
+        val intervalBetweenLabels = PlotLabelSpecFactory.legendItem(theme).height() / 3
 
         val contentOrigin = DoubleVector.ZERO
         var breakBoxBounds: DoubleRectangle? = null
         for (i in breaks.indices) {
-            val labelSize = labelSize(i).add(DoubleVector(0.0, labelVerticalDistance))
+            val labelSize = labelSize(i).add(DoubleVector(0.0, intervalBetweenLabels))
             val keySize = keySizes[i]
             val height = max(keySize.y, labelSize.y)
             val labelVOffset = (height - labelSize.y) / 2
