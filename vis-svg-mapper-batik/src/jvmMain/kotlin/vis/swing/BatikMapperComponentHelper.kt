@@ -74,6 +74,7 @@ class BatikMapperComponentHelper private constructor(
         // Build graphic nodes
         val builder = GVTBuilder()
         myGraphicsNode = builder.build(myBridgeContext, myMapper.target)
+        GraphicsNodeInitializer.initialize(myGraphicsNode)
 
         myUserAgent.eventDispatcher.rootNode = myGraphicsNode
 
