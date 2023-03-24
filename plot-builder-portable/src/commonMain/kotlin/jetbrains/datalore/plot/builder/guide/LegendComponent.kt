@@ -66,7 +66,7 @@ class LegendComponent(
         label.addClassName(Style.LEGEND_ITEM)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setLineHeight(lineHeight)
-        label.moveTo(labelBox.origin.add(DoubleVector(0.0, lineHeight)))
+        label.moveTo(labelBox.origin.add(DoubleVector(0.0, lineHeight * 0.35)))// centre the first line
         breakComponent.add(label)
 
         breakComponent.moveTo(keyLabelBox.origin)
