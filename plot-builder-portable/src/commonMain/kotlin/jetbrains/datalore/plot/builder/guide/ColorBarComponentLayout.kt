@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.base.scale.Mappers
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 abstract class ColorBarComponentLayout(
@@ -76,7 +77,13 @@ abstract class ColorBarComponentLayout(
 
         init {
             // Bar + labels bounds
-            graphSize = DoubleVector(guideBarSize.x, guideBarSize.y + labelDistance + PlotLabelSpecFactory.legendItem(theme).height())
+            val maxLabelHeight = breaks.labels.maxOf { label ->
+                PlotLayoutUtil.textDimensions(label, PlotLabelSpecFactory.legendItem(theme)).y
+            }
+            graphSize = DoubleVector(
+                guideBarSize.x,
+                guideBarSize.y + labelDistance + maxLabelHeight
+            )
         }
 
         override fun createBreakInfo(tickLocation: Double): BreakInfo {

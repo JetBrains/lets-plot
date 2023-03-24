@@ -9,8 +9,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgElement
 import jetbrains.datalore.vis.svg.SvgGElement
@@ -60,11 +61,12 @@ class LegendComponent(
         breakComponent.add(createKeyElement(br, keySize))
 
         // add label at position as was layout
-        val label = TextLabel(br.label)
+        val label = MultilineLabel(br.label)
+        val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
         label.addClassName(Style.LEGEND_ITEM)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
-        label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.moveTo(labelBox.origin.add(DoubleVector(0.0, labelBox.height / 2)))
+        label.setLineHeight(lineHeight)
+        label.moveTo(labelBox.origin.add(DoubleVector(0.0, lineHeight * 0.35)))// centre the first line
         breakComponent.add(label)
 
         breakComponent.moveTo(keyLabelBox.origin)
