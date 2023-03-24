@@ -5,8 +5,10 @@
 ### Changed
 
 ### Fixed
-- livemap: memory leak caused by a document event handler.   
-- livemap: flickering when zooming with the buttons.   
+
+- livemap: memory leak caused by a document event handler.
+- livemap: flickering when zooming with the buttons.
+- Implement the 'stroke' aesthetic [[#320](https://github.com/JetBrains/lets-plot/issues/320)].
 - livemap: tooltip text doesn't reflect data under the cursor [[#709](https://github.com/JetBrains/lets-plot/issues/709)].
 - Quantile should be shown in tooltip if the variable `..quantile..` is mapped to geom aesthetic.
 - Bad default formatting for stat variables [[#654](https://github.com/JetBrains/lets-plot/issues/654)].
