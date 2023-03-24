@@ -216,6 +216,7 @@ object Option {
             const val FILL = "outlier_fill"
             const val SHAPE = "outlier_shape"
             const val SIZE = "outlier_size"
+            const val STROKE = "outlier_stroke"
         }
 
         object AreaRidges {

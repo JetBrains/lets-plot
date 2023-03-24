@@ -120,6 +120,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 geom.outlierShape = opts.getShape(BoxplotOutlier.SHAPE)
                 geom.outlierSize = opts.getDouble(BoxplotOutlier.SIZE)
+                geom.outlierStroke = opts.getDouble(BoxplotOutlier.STROKE)
                 geom
             }
 

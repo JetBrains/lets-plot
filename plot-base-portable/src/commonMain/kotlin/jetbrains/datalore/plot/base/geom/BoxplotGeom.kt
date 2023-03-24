@@ -29,6 +29,7 @@ class BoxplotGeom : GeomBase() {
     var outlierFill: Color? = null
     var outlierShape: PointShape? = null
     var outlierSize: Double? = null
+    var outlierStroke: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
@@ -156,6 +157,7 @@ class BoxplotGeom : GeomBase() {
                     Aes.FILL -> outlierFill ?: super.get(aes)
                     Aes.SHAPE -> outlierShape ?: super.get(aes)
                     Aes.SIZE -> outlierSize ?: OUTLIER_DEF_SIZE  // 'size' of 'super' is line thickness on box-plot
+                    Aes.STROKE -> outlierStroke ?: OUTLIER_DEF_STROKE // other elements of boxplot has no 'stroke' aes
                     Aes.ALPHA -> 1.0 // Don't apply boxplot' alpha to outlier points.
                     else -> super.get(aes)
                 }
@@ -171,6 +173,7 @@ class BoxplotGeom : GeomBase() {
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
+        private val OUTLIER_DEF_STROKE = AestheticsDefaults.point().defaultValue(Aes.STROKE)
 
         private fun clientRectByDataPoint(
             ctx: GeomContext,
