@@ -147,7 +147,7 @@ open class GeomHelper(
             if (node is SvgElement) {
                 val lineType = p.lineType()
                 if (!(lineType.isBlank || lineType.isSolid)) {
-                    StrokeDashArraySupport.apply(node, AesScaling.lineStrokeWidth(p), lineType.dashArray)
+                    StrokeDashArraySupport.apply(node, AesScaling.strokeWidth(p), lineType.dashArray)
                 }
             }
         }
@@ -155,7 +155,7 @@ open class GeomHelper(
         private fun decorateShape(shape: SvgShape, p: DataPointAesthetics, applyAlphaToAll: Boolean) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
             AestheticsUtil.updateFill(shape, p)
-            shape.strokeWidth().set(AesScaling.lineStrokeWidth(p))
+            shape.strokeWidth().set(AesScaling.strokeWidth(p))
         }
 
         internal fun decorateSlimShape(shape: SvgSlimShape, p: DataPointAesthetics) {
@@ -167,7 +167,7 @@ open class GeomHelper(
 
             shape.setFill(fill, fillAlpha)
             shape.setStroke(stroke, strokeAlpha)
-            shape.setStrokeWidth(AesScaling.lineStrokeWidth(p))
+            shape.setStrokeWidth(AesScaling.strokeWidth(p))
         }
     }
 }

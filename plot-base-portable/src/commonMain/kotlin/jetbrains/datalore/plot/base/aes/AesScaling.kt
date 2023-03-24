@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 object AesScaling {
     const val UNIT_SHAPE_SIZE = 2.2
 
-    fun lineStrokeWidth(p: DataPointAesthetics): Double {
+    fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
         return p.size()!! * 2.0
     }

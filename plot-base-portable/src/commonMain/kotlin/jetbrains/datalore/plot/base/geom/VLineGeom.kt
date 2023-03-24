@@ -51,7 +51,7 @@ class VLineGeom : GeomBase() {
 
                 // tooltip
                 val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
-                val w = AesScaling.lineStrokeWidth(p) + 4.0
+                val w = AesScaling.strokeWidth(p) + 4.0
                 val targetRect = extendTrueWidth(rect, w, ctx)
 
                 ctx.targetCollector.addRectangle(

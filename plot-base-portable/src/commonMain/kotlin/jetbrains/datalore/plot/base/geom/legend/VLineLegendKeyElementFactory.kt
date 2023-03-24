@@ -25,7 +25,7 @@ internal class VLineLegendKeyElementFactory :
     }
 
     override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
-        val strokeWidth = AesScaling.lineStrokeWidth(p)
+        val strokeWidth = AesScaling.strokeWidth(p)
         return DoubleVector(strokeWidth + 4, 4.0)
     }
 }

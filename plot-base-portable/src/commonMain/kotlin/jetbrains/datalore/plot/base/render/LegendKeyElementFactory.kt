@@ -14,7 +14,7 @@ interface LegendKeyElementFactory {
     fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement
 
     fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
-        val strokeWidth = AesScaling.lineStrokeWidth(p)
+        val strokeWidth = AesScaling.strokeWidth(p)
         val size = 2 * strokeWidth + 4
         return DoubleVector(size, size)
     }
