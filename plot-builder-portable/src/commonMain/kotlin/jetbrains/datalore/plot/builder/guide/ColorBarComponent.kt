@@ -11,6 +11,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
+import jetbrains.datalore.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.Style
@@ -74,13 +75,11 @@ class ColorBarComponent(
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setLineHeight(lineHeight)
-            val yOffset =  if (horizontal) {
-                // top alignment
-                lineHeight * 0.7
-            } else {
-                // central alignment
-                val labelHeight = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme)).y
-                lineHeight * 0.85 - labelHeight / 2
+            fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
+            val yOffset = when (brInfo.labelVerticalAnchor) {
+                Text.VerticalAnchor.TOP -> lineHeight * 0.7
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeight
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeight * 0.85
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
