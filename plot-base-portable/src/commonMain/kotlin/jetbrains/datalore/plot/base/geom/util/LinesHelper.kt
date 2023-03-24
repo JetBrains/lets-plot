@@ -163,7 +163,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return PolylineSimplifier.douglasPeucker(points).setWeightLimit(weightLimit).points
     }
 
-    protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean, isLine: Boolean = true) {
+    protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean, strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth) {
 
         val stroke = p.color()
         val strokeAlpha = myAlphaFilter(AestheticsUtil.alpha(stroke!!, p))!!
@@ -176,11 +176,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             decorateFillingPart(path, p)
         }
 
-        val size = if (isLine) {
-            myWidthFilter(AesScaling.strokeWidth(p))!!
-        } else {
-            myWidthFilter(AesScaling.dotStrokeWidth(p))!!
-        }
+        val size = myWidthFilter(strokeScaler(p))!!
         path.width().set(size)
 
         val lineType = p.lineType()

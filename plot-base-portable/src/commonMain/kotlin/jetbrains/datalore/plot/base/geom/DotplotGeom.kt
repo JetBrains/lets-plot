@@ -11,6 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.GeomKind.DOT_PLOT
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
@@ -188,7 +189,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             builder.closePath()
 
             val path = LinePath(builder)
-            decorate(path, p, filled = true, isLine = false)
+            decorate(path, p, true, AesScaling::dotStrokeWidth)
 
             return path
         }
