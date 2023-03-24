@@ -36,7 +36,7 @@ internal class TextLegendKeyElementFactory :
     }
 
     override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
-        val strokeWidth = AesScaling.strokeWidth(p)
+        val strokeWidth = AesScaling.lineStrokeWidth(p)
         return DoubleVector(4.0, strokeWidth + 4)
     }
 }

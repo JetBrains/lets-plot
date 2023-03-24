@@ -73,7 +73,7 @@ class LineRangeGeom : GeomBase() {
                         DoubleRectangle(DoubleVector(x, ymax - height / 2), DoubleVector.ZERO),
                         p
                     )!!
-                    val width = max(AesScaling.strokeWidth(p), 2.0)
+                    val width = max(AesScaling.lineStrokeWidth(p), 2.0)
                     extendTrueWidth(rect, width, ctx)
                 } else {
                     null

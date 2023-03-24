@@ -77,7 +77,7 @@ open class PointDemo : SimpleDemoBase() {
             .stroke(array(stroke))
             .color(array(color))
             .fill(constant(Color.BLACK))
-            .shape(constant(NamedShape.FILLED_TRIANGLE_UP))
+            .shape(constant(NamedShape.FILLED_CIRCLE))
             .size(constant(50.0))
             .alpha(constant(0.5))
             .build()
@@ -97,6 +97,7 @@ open class PointDemo : SimpleDemoBase() {
             EMPTY_GEOM_CONTEXT
         )
         groupComponent.add(layer.rootGroup)
+
         return groupComponent
     }
 }

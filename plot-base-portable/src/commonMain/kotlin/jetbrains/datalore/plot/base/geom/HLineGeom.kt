@@ -54,7 +54,7 @@ class HLineGeom : GeomBase() {
 
                 // tooltip
                 val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
-                val h = AesScaling.strokeWidth(p) + 4.0
+                val h = AesScaling.lineStrokeWidth(p) + 4.0
                 val targetRect = extendTrueHeight(rect, h, ctx)
 
                 ctx.targetCollector.addRectangle(

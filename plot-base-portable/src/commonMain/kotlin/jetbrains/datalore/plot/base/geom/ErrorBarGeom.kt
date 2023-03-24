@@ -115,7 +115,7 @@ class ErrorBarGeom : GeomBase() {
         LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
-            val strokeWidth = AesScaling.strokeWidth(p)
+            val strokeWidth = AesScaling.lineStrokeWidth(p)
 
             val width = p.width()!! * (size.x - strokeWidth)
             val height = size.y - strokeWidth

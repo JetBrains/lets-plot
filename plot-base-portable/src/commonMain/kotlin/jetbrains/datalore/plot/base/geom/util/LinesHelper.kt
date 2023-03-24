@@ -177,9 +177,9 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         }
 
         val size = if (isLine) {
-            myWidthFilter(AesScaling.strokeWidth(p))!!
+            myWidthFilter(AesScaling.lineStrokeWidth(p))!!
         } else {
-            myWidthFilter(AesScaling.pointStrokeWidth(p))!!
+            myWidthFilter(AesScaling.dotStrokeWidth(p))!!
         }
         path.width().set(size)
 

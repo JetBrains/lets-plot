@@ -73,7 +73,7 @@ private class CrossBarLegendKeyElementFactory(val whiskers: Boolean) :
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         val whiskerSize = .2
 
-        val strokeWidth = AesScaling.strokeWidth(p)
+        val strokeWidth = AesScaling.lineStrokeWidth(p)
         val width = (size.x - strokeWidth) * .8 // a bit narrower
         val height = size.y - strokeWidth
         val x = (size.x - width) / 2
