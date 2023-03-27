@@ -15,7 +15,10 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.theme.LegendTheme
+import kotlin.math.max
 
 class ColorBarAssembler(
     private val legendTitle: String,
@@ -80,9 +83,19 @@ class ColorBarAssembler(
             var barSize = ColorBarComponentSpec.barAbsoluteSize(horizontal, theme)
             if (width != null) {
                 barSize = DoubleVector(width, barSize.y)
+            } else if (horizontal) {
+                val labelMaxWidth = breaks.labels.maxOf { label ->
+                    PlotLayoutUtil.textDimensions(label, PlotLabelSpecFactory.legendItem(theme)).x
+                }
+                barSize = DoubleVector(max(barSize.x, labelMaxWidth * (breaks.size + 1)), barSize.y)
             }
             if (height != null) {
                 barSize = DoubleVector(barSize.x, height)
+            } else if (!horizontal) {
+                val labelMaxHeight = breaks.labels.maxOf { label ->
+                    PlotLayoutUtil.textDimensions(label, PlotLabelSpecFactory.legendItem(theme)).y
+                }
+                barSize = DoubleVector(barSize.x, max(barSize.y, labelMaxHeight * (breaks.size + 1)))
             }
 
             val reverse = !horizontal
