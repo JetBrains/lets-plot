@@ -118,9 +118,7 @@ open class ThemeValuesBase : ThemeValues(VALUES) {
 
             // Legend
             LEGEND_TITLE to mapOf(
-                Elem.SIZE to Defaults.FONT_MEDIUM,
-                Elem.HJUST to 0.0,
-                Elem.VJUST to 1.0
+                Elem.SIZE to Defaults.FONT_MEDIUM
             ),
             LEGEND_POSITION to LegendPosition.RIGHT,
             LEGEND_JUSTIFICATION to LegendJustification.CENTER,
