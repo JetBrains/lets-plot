@@ -41,7 +41,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, nameX)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameX)
-                    levelsX.addAll(data.distinctValues(variable))
+                    levelsX.addAll(data.distinctValues(variable).filterNotNull())
                 }
             }
         }
@@ -53,7 +53,7 @@ internal class FacetConfig(options: Map<String, Any>) : OptionsAccessor(options)
             for (data in dataByLayer) {
                 if (DataFrameUtil.hasVariable(data, nameY)) {
                     val variable = DataFrameUtil.findVariableOrFail(data, nameY)
-                    levelsY.addAll(data.distinctValues(variable))
+                    levelsY.addAll(data.distinctValues(variable).filterNotNull())
                 }
             }
         }

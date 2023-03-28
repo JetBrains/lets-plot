@@ -80,12 +80,7 @@ internal object PlotConfigTransforms {
         for ((varBinding, data) in discreteDataByVarBinding) {
             val aes = varBinding.aes
             val variable = varBinding.variable
-            val factors = mutableListOf<Any?>().apply {
-                addAll(data.distinctValues(variable))
-                if (data.isNullable(variable)) {
-                    add(null)
-                }
-            }
+            val factors = data.distinctValues(variable)
             discreteDomainByAes.getOrPut(aes) { LinkedHashSet() }.addAll(factors)
         }
 
