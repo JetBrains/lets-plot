@@ -238,11 +238,9 @@ class ScaleConfig<T> constructor(
     }
 
     private fun applyCommons(b: ScaleProviderBuilder<T>): ScaleProviderBuilder<T> {
-
-        (getString(NAME) ?: getString(MappingAnnotation.LABEL))?.let {
-            b.name(it)
+        if (has(NAME)) {
+            b.name(getString(NAME)!!)
         }
-
         if (has(BREAKS)) {
             b.breaks(getList(BREAKS).mapNotNull { it })
         }

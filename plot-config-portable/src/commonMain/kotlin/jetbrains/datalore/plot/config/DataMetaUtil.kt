@@ -72,7 +72,7 @@ object DataMetaUtil {
                 mutableMapOf(
                     Scale.AES to aes,
                     Scale.DISCRETE_DOMAIN to true,
-                    LABEL to label
+                    Scale.NAME to label
                 )
         }
     }

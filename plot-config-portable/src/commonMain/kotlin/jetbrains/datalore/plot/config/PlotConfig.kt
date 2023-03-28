@@ -74,7 +74,7 @@ abstract class PlotConfig(
         // build all scales
         val excludeStatVariables = !isClientSide
 
-        scaleConfigs = PlotConfigUtil.createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
+        scaleConfigs = PlotConfigUtil.createScaleConfigs(DataMetaUtil.createScaleSpecs(opts) + getList(SCALES))
 
         mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
             layerConfigs,
