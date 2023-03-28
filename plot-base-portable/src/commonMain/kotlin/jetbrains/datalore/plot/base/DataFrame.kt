@@ -17,7 +17,7 @@ class DataFrame private constructor(builder: Builder) {
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, DoubleSpan?>()
-    private val myDistinctValues = HashMap<Variable, Set<Any?>>()
+    private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
     class OrderSpec(
         val variable: Variable,
@@ -87,6 +87,10 @@ class DataFrame private constructor(builder: Builder) {
         return !has(variable) || isEmpty(variable)
     }
 
+    fun isNullable(variable: Variable): Boolean {
+        return get(variable).contains(null)
+    }
+
     operator fun get(variable: Variable): List<*> {
         assertDefined(variable)
         return myVectorByVar.getValue(variable)
@@ -103,16 +107,14 @@ class DataFrame private constructor(builder: Builder) {
         return list as List<Double?>
     }
 
-    fun distinctValues(variable: Variable): Collection<Any?> {
+    fun distinctValues(variable: Variable): Collection<Any> {
         assertDefined(variable)
         return myDistinctValues.getOrPut(variable) {
             val values = LinkedHashSet(get(variable)).apply {
-                // move to the end
-                if (this.remove(null)) {
-                    this.add(null)
-                }
+                this.remove(null)
             }
-            values
+            @Suppress("UNCHECKED_CAST")
+            return values as Collection<Any>
         }
     }
 
@@ -195,7 +197,7 @@ class DataFrame private constructor(builder: Builder) {
         return builder.build()
     }
 
-    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any?> {
+    private fun getOrderedDistinctValues(orderSpec: OrderSpec): Set<Any> {
         fun isValueComparable(value: Any?) = value != null && (value !is Double || value.isFinite())
 
         val orderedValues = if (orderSpec.aggregateOperation != null) {
@@ -210,18 +212,12 @@ class DataFrame private constructor(builder: Builder) {
         }
             .filter { isValueComparable(it.second) && isValueComparable(it.first) }
             .sortedWith(compareBy({ it.second as Comparable<*> }, { it.first as Comparable<*> }))
-            .map { it.first }
+            .mapNotNull { it.first }
 
         // the values corresponding to non-comparable values will be placed at the end of the result
         val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
             .filterNot { isValueComparable(it.second) }
-            .map { it.first }
-            .toMutableList().apply {
-                // move to end
-                if (this.remove(null)) {
-                    this.add(null)
-                }
-            }
+            .mapNotNull { it.first }
 
         return (if (orderSpec.direction < 0) {
             orderedValues.reversed()

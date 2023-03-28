@@ -24,7 +24,7 @@ internal class PickSampling(sampleSize: Int) : SamplingBase(sampleSize),
         require(isApplicable(population))
 
         val xVar = xVar(population)
-        val xFactors = population.distinctValues(xVar).filterNotNull()
+        val xFactors = population.distinctValues(xVar)
         if (xFactors.size <= sampleSize) {
             return population
         }

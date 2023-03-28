@@ -117,21 +117,21 @@ class DataFrameDistinctValuesTest {
     }
 
     @Test
-    fun `data variable has null values`() {
+    fun `data variable has null values (which should be skipped)`() {
         val builder = DataFrame.Builder()
             .put(variable, listOf("B", "A", null, "C", null, "A"))
 
         run {
             // Default distinct function will be used
             val df = builder.build()
-            assertDistinctValues(df, mapOf(variable to listOf("B", "A", "C", null)))
+            assertDistinctValues(df, mapOf(variable to listOf("B", "A", "C")))
         }
         run {
             // Add ordering specs
             val df = builder
                 .addOrderSpec(OrderSpec(variable, orderBy = variable, direction = 1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "C", null)))
+            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "C")))
         }
     }
 
@@ -143,14 +143,14 @@ class DataFrameDistinctValuesTest {
         run {
             // Default
             val df = builder.build()
-            assertDistinctValues(df, mapOf(variable to listOf(null)))
+            assertDistinctValues(df, mapOf(variable to emptyList()))
         }
         run {
             // Add ordering specs
             val df = builder
                 .addOrderSpec(OrderSpec(variable, orderBy = variable, direction = 1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf(null)))
+            assertDistinctValues(df, mapOf(variable to emptyList()))
         }
     }
 
@@ -179,7 +179,7 @@ class DataFrameDistinctValuesTest {
                 .put(orderByVariable, listOf(1.0, null, 2.0, null, 2.0, null, null))
                 .addOrderSpec(OrderSpec(variable, orderByVariable, direction = -1))
                 .build()
-            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "D", "C", null)))
+            assertDistinctValues(df, mapOf(variable to listOf("A", "B", "D", "C")))
         }
     }
 
@@ -320,7 +320,7 @@ class DataFrameDistinctValuesTest {
         assertDistinctValues(df, expectedDistinctValues)
     }
 
-    private fun assertDistinctValues(df: DataFrame, expectedDistinctValues: Map<DataFrame.Variable, List<Any?>>) {
+    private fun assertDistinctValues(df: DataFrame, expectedDistinctValues: Map<DataFrame.Variable, List<Any>>) {
         expectedDistinctValues.forEach { (variable, expected) ->
             assertEquals(expected, df.distinctValues(variable).toList())
         }
