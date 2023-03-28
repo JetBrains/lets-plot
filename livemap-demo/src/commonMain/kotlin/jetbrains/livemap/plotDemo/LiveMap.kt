@@ -1753,6 +1753,7 @@ class LiveMap {
         'y': 46.920255,
         'size': 10,
         'shape': 9,
+        'stroke': 2,
         'color': 'red'
   },
   {

@@ -19,4 +19,8 @@ object TinyPointShape : PointShape {
     override fun strokeWidth(dataPoint: DataPointAesthetics): Double {
         return 0.0
     }
+
+    override fun totalSize(dataPoint: DataPointAesthetics): Double {
+        return size(dataPoint)
+    }
 }

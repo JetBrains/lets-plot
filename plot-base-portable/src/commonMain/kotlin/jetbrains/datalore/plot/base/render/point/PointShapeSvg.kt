@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.render.point.symbol.Glyph
 import jetbrains.datalore.plot.base.render.point.symbol.Glyphs
 import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimObject
-import kotlin.math.sqrt
 
 object PointShapeSvg {
     fun create(shape: PointShape, location: DoubleVector, p: DataPointAesthetics, fatten: Double = 1.0): SvgSlimObject {
@@ -24,7 +23,7 @@ object PointShapeSvg {
             )
         }
         if (shape is NamedShape) {
-            val size = totalSizePx(shape, p) * fatten
+            val size = shape.totalSize(p) * fatten
             check(size.isFinite()) { "Invalid point size: $size" }
             return createNamedShape(
                 shape,
@@ -58,22 +57,6 @@ object PointShapeSvg {
         )
         AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, shape.strokeWidth(p))
         return glyph
-    }
-
-    private fun totalSizePx(shape: PointShape, p: DataPointAesthetics): Double {
-        val strokeWidthPx = shape.strokeWidth(p)
-        val shapeCoeff = when (p.shape()) {
-            STICK_DIAMOND,
-            STICK_DIAMOND_PLUS,
-            FILLED_DIAMOND -> sqrt(2.0)
-            STICK_TRIANGLE_UP,
-            STICK_TRIANGLE_DOWN,
-            STICK_TRIANGLE_UP_DOWN,
-            FILLED_TRIANGLE_UP,
-            FILLED_TRIANGLE_DOWN -> sqrt(3.0)
-            else -> 1.0
-        }
-        return shape.size(p) + shapeCoeff * strokeWidthPx
     }
 
     private fun createSlimGlyph(shape: NamedShape, location: DoubleVector, size: Double): Glyph {
