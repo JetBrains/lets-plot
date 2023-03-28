@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.*
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.*
-import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Scale.AES
 import jetbrains.datalore.plot.config.Option.Scale.BREAKS
 import jetbrains.datalore.plot.config.Option.Scale.CHROMA
