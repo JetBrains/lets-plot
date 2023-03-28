@@ -106,13 +106,12 @@ class DataFrame private constructor(builder: Builder) {
     fun distinctValues(variable: Variable): Collection<Any?> {
         assertDefined(variable)
         return myDistinctValues.getOrPut(variable) {
-            val values = LinkedHashSet(get(variable)).apply {
-                // move to the end
-                if (this.remove(null)) {
-                    this.add(null)
-                }
+            LinkedHashSet(get(variable))
+        }.toMutableList().apply {
+            // move to the end
+            if (this.remove(null)) {
+                this.add(null)
             }
-            values
         }
     }
 
@@ -216,12 +215,6 @@ class DataFrame private constructor(builder: Builder) {
         val nonComparableAppendix = get(orderSpec.variable).zip(get(orderSpec.orderBy))
             .filterNot { isValueComparable(it.second) }
             .map { it.first }
-            .toMutableList().apply {
-                // move to end
-                if (this.remove(null)) {
-                    this.add(null)
-                }
-            }
 
         return (if (orderSpec.direction < 0) {
             orderedValues.reversed()
