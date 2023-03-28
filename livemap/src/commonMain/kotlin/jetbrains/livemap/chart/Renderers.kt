@@ -57,7 +57,7 @@ object Renderers {
             }
             if (chartElement.strokeColor != null && !chartElement.strokeWidth.isNaN()) {
                 ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
-                ctx.setLineWidth(chartElement.strokeWidth)
+                ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
                 ctx.stroke()
             }
         }
