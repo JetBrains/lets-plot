@@ -48,16 +48,17 @@ object Renderers {
             val chartElement = entity.get<ChartElementComponent>()
             val pointData = entity.get<PointComponent>()
             val radius = pointData.size * chartElement.scalingSizeFactor / 2.0
+            val stroke = chartElement.strokeWidth * chartElement.scalingSizeFactor
 
             ctx.beginPath()
-            drawPath(ctx, radius, shape)
+            drawPath(ctx, radius, stroke, shape)
             if (chartElement.fillColor != null) {
                 ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
                 ctx.fill()
             }
             if (chartElement.strokeColor != null && !chartElement.strokeWidth.isNaN()) {
                 ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
-                ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
+                ctx.setLineWidth(stroke)
                 ctx.stroke()
             }
         }

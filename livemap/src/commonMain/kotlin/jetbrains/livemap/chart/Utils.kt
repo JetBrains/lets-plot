@@ -13,7 +13,7 @@ import kotlin.math.sqrt
 
 object Utils {
 
-    internal fun drawPath(ctx: Context2d, radius: Double, shape: Int) {
+    internal fun drawPath(ctx: Context2d, radius: Double, stroke: Double, shape: Int) {
         when (shape) {
             0 -> square(ctx, radius)
             1 -> circle(ctx, radius)
@@ -28,7 +28,7 @@ object Utils {
             }
             8 -> {
                 plus(ctx, radius)
-                cross(ctx, radius)
+                cross(ctx, radius / sqrt(2.0))
             }
             9 -> {
                 diamond(ctx, radius)
@@ -48,9 +48,9 @@ object Utils {
             }
             13 -> {
                 circle(ctx, radius)
-                cross(ctx, radius)
+                cross(ctx, radius / sqrt(2.0))
             }
-            14 -> squareTriangle(ctx, radius)
+            14 -> squareTriangle(ctx, radius, stroke)
             15 -> square(ctx, radius)
             16 -> circle(ctx, radius)
             17 -> triangleUp(ctx, radius)
@@ -75,17 +75,20 @@ object Utils {
         ctx.lineTo(r, -r)
         ctx.lineTo(r, r)
         ctx.lineTo(-r, r)
-        ctx.lineTo(-r, -r)
+        ctx.closePath()
     }
 
-    internal fun squareTriangle(ctx: Context2d, r: Double) {
-        ctx.moveTo(-r, r)
-        ctx.lineTo(0.0, -r)
-        ctx.lineTo(r, r)
+    internal fun squareTriangle(ctx: Context2d, r: Double, stroke: Double) {
+        val outerSize = 2 * r + stroke
+        val triangleHeight = outerSize - stroke / 2 - sqrt(5.0) * stroke / 2
+        ctx.moveTo(-triangleHeight / 2, r)
+        ctx.lineTo(0.0, r - triangleHeight)
+        ctx.lineTo(triangleHeight / 2, r)
         ctx.lineTo(-r, r)
         ctx.lineTo(-r, -r)
         ctx.lineTo(r, -r)
         ctx.lineTo(r, r)
+        ctx.closePath()
     }
 
     internal fun triangleUp(ctx: Context2d, r: Double) {
@@ -94,7 +97,7 @@ object Utils {
         ctx.moveTo(0.0, -r)
         ctx.lineTo(a / 2, r / 2)
         ctx.lineTo(-a / 2, r / 2)
-        ctx.lineTo(0.0, -r)
+        ctx.closePath()
     }
 
     internal fun triangleDown(ctx: Context2d, r: Double) {
@@ -103,7 +106,7 @@ object Utils {
         ctx.moveTo(0.0, r)
         ctx.lineTo(-a / 2, -r / 2)
         ctx.lineTo(a / 2, -r / 2)
-        ctx.lineTo(0.0, r)
+        ctx.closePath()
     }
 
     internal fun plus(ctx: Context2d, r: Double) {
@@ -125,7 +128,7 @@ object Utils {
         ctx.lineTo(r, 0.0)
         ctx.lineTo(0.0, r)
         ctx.lineTo(-r, 0.0)
-        ctx.lineTo(0.0, -r)
+        ctx.closePath()
     }
 
     fun changeAlphaWithMin(color: Color, newAlpha: Int?): Color {
