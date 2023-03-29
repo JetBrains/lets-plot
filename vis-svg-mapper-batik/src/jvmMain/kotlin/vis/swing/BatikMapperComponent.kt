@@ -12,6 +12,8 @@ import jetbrains.datalore.base.registration.DisposableRegistration
 import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
+import org.apache.batik.gvt.event.GraphicsNodeChangeListener
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics
@@ -27,6 +29,7 @@ class BatikMapperComponent(
     private var isDisposed: Boolean = false
 
     private val registrations = CompositeRegistration()
+    private val repaintManager = BatikMapperComponentRepaintManager(this, 10)
 
     init {
         isFocusable = true
@@ -37,30 +40,48 @@ class BatikMapperComponent(
 
         myHelper = BatikMapperComponentHelper.forUnattached(svgRoot, messageCallback)
 
-//        registrations.add(
-//            myHelper.nodeContainer
-            myHelper.addSvgNodeContainerListener(object : SvgNodeContainerAdapter() {
-                    override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
-                        if (element === svgRoot && (SvgConstants.HEIGHT.equals(
-                                event.attrSpec.name,
-                                ignoreCase = true
-                            ) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))
-                        ) {
-                            println("onAttributeSet: ${event.attrSpec.name}")
-                            this@BatikMapperComponent.invalidate()
-                        }
-                        this@BatikMapperComponent.parent.repaint()
+        myHelper.addSvgNodeContainerListener(object : SvgNodeContainerAdapter() {
+            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) {
+                if (element === svgRoot && (SvgConstants.HEIGHT.equals(
+                        event.attrSpec.name,
+                        ignoreCase = true
+                    ) || SvgConstants.WIDTH.equals(event.attrSpec.name, ignoreCase = true))
+                ) {
+                    println("onAttributeSet: ${event.attrSpec.name}")
+                    this@BatikMapperComponent.invalidate()
+                }
+
+                if (!USE_NEW_REPAINT_MANAGER) {
+                    this@BatikMapperComponent.parent.repaint()
+                }
+            }
+
+            override fun onNodeAttached(node: SvgNode) {
+                if (!USE_NEW_REPAINT_MANAGER) {
+                    this@BatikMapperComponent.parent.repaint()
+                }
+            }
+
+            override fun onNodeDetached(node: SvgNode) {
+                if (!USE_NEW_REPAINT_MANAGER) {
+                    this@BatikMapperComponent.parent.repaint()
+                }
+            }
+        })
+
+        if (USE_NEW_REPAINT_MANAGER) {
+            myHelper.addGraphicsNodeChangeListener(
+                object : GraphicsNodeChangeListener {
+                    override fun changeStarted(gnce: GraphicsNodeChangeEvent?) {
+                        repaintManager.repaintNode(gnce!!.graphicsNode)
                     }
 
-                    override fun onNodeAttached(node: SvgNode) {
-                        this@BatikMapperComponent.parent.repaint()
+                    override fun changeCompleted(gnce: GraphicsNodeChangeEvent?) {
+                        repaintManager.repaintNode(gnce!!.graphicsNode)
                     }
-
-                    override fun onNodeDetached(node: SvgNode) {
-                        this@BatikMapperComponent.parent.repaint()
-                    }
-                })
-//        )
+                }
+            )
+        }
     }
 
     override fun paintComponent(g: Graphics) {
@@ -78,6 +99,7 @@ class BatikMapperComponent(
 
     override fun dispose() {
         require(!isDisposed) { "Alreadey disposed." }
+        repaintManager.stop()
         myHelper.dispose()
         registrations.dispose()
 
@@ -85,6 +107,11 @@ class BatikMapperComponent(
     }
 
     companion object {
+
+        internal const val USE_NEW_REPAINT_MANAGER = true
+        internal const val USE_WEIRD_PERFORMANCE_TUNEUP = true
+        internal const val DEBUG_REPAINT_MAPPER_COMPONENT = false
+
         val DEF_MESSAGE_CALLBACK = object : BatikMessageCallback {
             override fun handleMessage(message: String) {
                 println(message)

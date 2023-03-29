@@ -9,6 +9,8 @@ import jetbrains.datalore.base.interval.IntSpan
 
 class Rectangle(val origin: Vector, val dimension: Vector) {
 
+    val isEmpty: Boolean get() = (dimension.x <= 0) || (dimension.y <= 0)
+
     val boundSegments: Array<Segment>
         get() {
             val p = boundPoints
