@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueWidth
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendWidth
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -74,7 +74,7 @@ class LineRangeGeom : GeomBase() {
                         p
                     )!!
                     val width = max(AesScaling.strokeWidth(p), 2.0)
-                    extendTrueWidth(rect, width, ctx)
+                    extendWidth(rect, width, ctx.flipped)
                 } else {
                     null
                 }

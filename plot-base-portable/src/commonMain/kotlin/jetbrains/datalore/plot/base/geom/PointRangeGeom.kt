@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueWidth
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendWidth
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -102,7 +102,7 @@ class PointRangeGeom : GeomBase() {
                     val shapeSize = shape.size(p) * fatten / 2
                     val strokeWidth = shape.strokeWidth(p)
                     val width = shapeSize + strokeWidth
-                    extendTrueWidth(rect, width, ctx)
+                    extendWidth(rect, width, ctx.flipped)
                 } else {
                     null
                 }
