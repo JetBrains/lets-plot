@@ -11,6 +11,8 @@ import jetbrains.datalore.vis.svg.SvgImageElementEx.RGBEncoder
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svg.SvgTextNode
 import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_NAMESPACE_URI
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_PREFIX
 
 class SvgToString(private val rgbEncoder: RGBEncoder?) {
 
@@ -27,6 +29,7 @@ class SvgToString(private val rgbEncoder: RGBEncoder?) {
         buffer.append('<').append(svgElement.elementName)
         if (svgElement.elementName.equals("svg")) {
             buffer.append(" xmlns").append("=\"").append(SVG_NAMESPACE_URI).append('"')
+            buffer.append(" xmlns:").append(XLINK_PREFIX).append("=\"").append(XLINK_NAMESPACE_URI).append('"')
         }
 
         for (key in svgElement.attributeKeys) {

@@ -26,10 +26,6 @@ open class SvgImageElement() : SvgGraphicsElement(),
         val HEIGHT: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
         val HREF: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("href")
-
-        // Workaround for Batik: The attribute "xlink:href" of the element <image> is required
-        val HREF_BATIK: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpecNS(
                 "href",
                 XLINK_PREFIX,
@@ -75,11 +71,6 @@ open class SvgImageElement() : SvgGraphicsElement(),
 
     open fun href(): Property<String?> {
         return getAttribute(HREF)
-    }
-
-    @Suppress("FunctionName")
-    fun xlink_href(): Property<String?> {
-        return getAttribute(HREF_BATIK)
     }
 
     fun preserveAspectRatio(): Property<String?> {

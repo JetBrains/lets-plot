@@ -79,8 +79,7 @@ object PlotSvgExportPortable {
             |${list.joinToString(separator = "\n", transform = ::getBunchItemSvgStyle)}
             |</style>
         """.trimMargin()
-
-        return """<svg xmlns="http://www.w3.org/2000/svg" class="plt-container" width="${bunchBounds.width}" height="${bunchBounds.height}">
+        return """<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="plt-container" width="${bunchBounds.width}" height="${bunchBounds.height}">
             |$svgStyle
             |${bunchItemSvgList.joinToString(separator = "\n")}
             |</svg>

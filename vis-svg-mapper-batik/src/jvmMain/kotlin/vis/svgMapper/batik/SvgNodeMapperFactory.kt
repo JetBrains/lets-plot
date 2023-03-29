@@ -32,11 +32,6 @@ internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private
             val sourceBatik = SvgImageElement()
             SvgUtils.copyAttributes(src as SvgElement, sourceBatik)
             sourceBatik.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, null)
-
-            // Batik still requires "xlink:href" attribute, not just "href"
-            val href = sourceBatik.href().get()
-            sourceBatik.href().set(null)
-            sourceBatik.xlink_href().set(href)
             src = sourceBatik
         }
 
