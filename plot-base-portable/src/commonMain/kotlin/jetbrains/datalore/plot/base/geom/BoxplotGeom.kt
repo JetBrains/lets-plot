@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueHeight
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendHeight
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.colorWithAlpha
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -193,7 +193,7 @@ class BoxplotGeom : GeomBase() {
                     )?.let {
                         if (isHintRect && upper == lower) {
                             // Add tooltips for geom_boxplot with zero height (issue #563)
-                            extendTrueHeight(it, 2.0, ctx)
+                            extendHeight(it, 2.0, ctx.flipped)
                         } else {
                             it
                         }

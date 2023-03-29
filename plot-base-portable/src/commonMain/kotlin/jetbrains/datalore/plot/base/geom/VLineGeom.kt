@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueWidth
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extend
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -51,8 +51,12 @@ class VLineGeom : GeomBase() {
 
                 // tooltip
                 val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
-                val w = AesScaling.strokeWidth(p) + 4.0
-                val targetRect = extendTrueWidth(rect, w, ctx)
+                val widthExpand = AesScaling.strokeWidth(p) + 4.0
+                // The tooltip point is on the top of the rectangle = on the plot border.
+                // To ensure that it will be displayed, move the rectangle a little inside the plot
+                // https://github.com/JetBrains/lets-plot/issues/610
+                val heightExpand = -2.0
+                val targetRect = extend(rect, ctx.flipped, widthExpand, heightExpand)
 
                 ctx.targetCollector.addRectangle(
                     p.index(),
