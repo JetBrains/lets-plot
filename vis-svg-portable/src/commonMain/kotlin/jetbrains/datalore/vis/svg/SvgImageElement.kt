@@ -10,6 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svg.SvgTransformable.Companion.TRANSFORM
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_NAMESPACE_URI
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_PREFIX
 
 open class SvgImageElement() : SvgGraphicsElement(),
     SvgTransformable {
@@ -25,6 +27,14 @@ open class SvgImageElement() : SvgGraphicsElement(),
             SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
         val HREF: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("href")
+
+        // Workaround for Batik: The attribute "xlink:href" of the element <image> is required
+        val HREF_BATIK: SvgAttributeSpec<String> =
+            SvgAttributeSpec.createSpecNS(
+                "href",
+                XLINK_PREFIX,
+                XLINK_NAMESPACE_URI
+            )
         val PRESERVE_ASPECT_RATIO: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("preserveAspectRatio")
     }
@@ -65,6 +75,11 @@ open class SvgImageElement() : SvgGraphicsElement(),
 
     open fun href(): Property<String?> {
         return getAttribute(HREF)
+    }
+
+    @Suppress("FunctionName")
+    fun xlink_href(): Property<String?> {
+        return getAttribute(HREF_BATIK)
     }
 
     fun preserveAspectRatio(): Property<String?> {
