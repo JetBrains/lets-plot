@@ -80,11 +80,9 @@ enum class NamedShape(
                 STICK_DIAMOND,
                 STICK_DIAMOND_PLUS,
                 FILLED_DIAMOND -> sqrt(2.0)
-                STICK_TRIANGLE_UP,
-                STICK_TRIANGLE_DOWN,
-                STICK_TRIANGLE_UP_DOWN,
-                FILLED_TRIANGLE_UP,
-                FILLED_TRIANGLE_DOWN -> sqrt(3.0)
+                STICK_PLUS,
+                STICK_STAR,
+                STICK_CROSS -> 2.0
                 else -> 1.0
             }
             size(dataPoint) + shapeCoeff * strokeWidth(dataPoint)

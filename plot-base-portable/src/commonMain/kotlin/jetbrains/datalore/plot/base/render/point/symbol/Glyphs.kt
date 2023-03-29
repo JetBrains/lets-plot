@@ -57,10 +57,10 @@ object Glyphs {
         )
     }
 
-    fun stickCirclePlus(location: DoubleVector, size: Double): Glyph {
+    fun stickCirclePlus(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             CircleGlyph(location, size),
-            PlusGlyph(location, size)
+            PlusGlyph(location, size + stroke)
         )
     }
 
@@ -71,28 +71,29 @@ object Glyphs {
         )
     }
 
-    fun stickSquarePlus(location: DoubleVector, size: Double): Glyph {
+    fun stickSquarePlus(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             SquareGlyph(location, size),
-            PlusGlyph(location, size)
+            PlusGlyph(location, size + stroke)
         )
     }
 
-    fun stickCircleCross(location: DoubleVector, size: Double): Glyph {
+    fun stickCircleCross(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             CircleGlyph(location, size),
-            CrossGlyph(location, size)
+            CrossGlyph(location, size + stroke)
         )
     }
 
-    fun stickSquareTriangleUp(location: DoubleVector, size: Double): Glyph {
+    fun stickSquareTriangleUp(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             SquareGlyph(location, size),
             TriangleGlyph(
                 location,
                 size,
                 true,
-                true
+                true,
+                stroke
             )
         )
     }
