@@ -1,0 +1,15 @@
+name: Assign Milestone to a New Issue
+
+on:
+  issues:
+    types: [opened, reopened]
+
+jobs:
+  assign-milestone:
+    steps:
+      - name: set milestone
+        uses: zoispag/action-assign-milestone@v2
+        with:
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          milestone: "New"
+
