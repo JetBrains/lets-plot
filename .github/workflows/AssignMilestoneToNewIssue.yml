@@ -6,10 +6,12 @@ on:
 
 jobs:
   assign-milestone:
+    runs-on: ubuntu-latest
+
     steps:
       - name: set milestone
         uses: zoispag/action-assign-milestone@v2
         with:
           repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          milestone: "New"
+          milestone: New
 
