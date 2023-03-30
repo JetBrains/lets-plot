@@ -19,7 +19,7 @@ internal object TooltipFormatting {
             "Positional aesthetic should be either X or Y but was $aes"
         }
 
-        val scale = ctx.getScale(aes)
+        val scale = ctx.getScale(aes) ?: return Any?::toString
         if (scale.isContinuousDomain) {
             val domain = ctx.overallTransformedDomain(aes)
             val formatter = scale.getBreaksGenerator().defaultFormatter(domain, 100)

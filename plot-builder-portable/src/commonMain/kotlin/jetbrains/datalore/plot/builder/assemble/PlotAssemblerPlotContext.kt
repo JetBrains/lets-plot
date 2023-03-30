@@ -28,7 +28,7 @@ internal class PlotAssemblerPlotContext(
 
     override fun getScale(aes: Aes<*>): Scale {
         checkPositionalAes(aes)
-        return scaleMap.getValue(aes)
+        return scaleMap[aes]
     }
 
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {

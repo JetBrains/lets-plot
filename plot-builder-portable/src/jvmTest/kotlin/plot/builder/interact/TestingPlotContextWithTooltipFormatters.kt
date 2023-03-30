@@ -17,7 +17,7 @@ class TestingPlotContextWithTooltipFormatters : PlotContext {
     override val layers: List<PlotContext.Layer>
         get() = UNSUPPORTED("Not yet implemented")
 
-    override fun getScale(aes: Aes<*>): Scale {
+    override fun getScale(aes: Aes<*>): Scale? {
         UNSUPPORTED("Not yet implemented")
     }
 

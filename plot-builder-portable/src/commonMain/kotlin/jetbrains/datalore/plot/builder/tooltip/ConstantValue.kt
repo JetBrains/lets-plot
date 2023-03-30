@@ -48,7 +48,7 @@ class ConstantValue(
                 else -> aes
             }
             val scale = ctx.getScale(tooltipAes)
-            if (scale.isContinuousDomain && value is Number) {
+            if (scale != null && scale.isContinuousDomain && value is Number) {
                 ctx.getTooltipFormatter(tooltipAes) {
                     TooltipFormatting.createFormatter(tooltipAes, ctx)
                 }.invoke(value)

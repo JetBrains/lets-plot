@@ -60,7 +60,7 @@ internal object PlotAssemblerUtil {
             val aesList = mappedRenderedAesToCreateGuides(contextLayer, guideOptionsMap)
             for (aes in aesList) {
                 var colorBar = false
-                val scale = ctx.getScale(aes)
+                val scale = ctx.getScale(aes) ?: continue
                 val scaleName = scale.name
                 if (guideOptionsMap.containsKey(aes)) {
                     val guideOptions = guideOptionsMap[aes]
