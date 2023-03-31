@@ -15,16 +15,18 @@ import kotlin.math.*
 internal class TriangleGlyph @JvmOverloads constructor(
     location: DoubleVector,
     size: Double,
+    stroke: Double,
     pointingUp: Boolean,
-    inscribedInSquare: Boolean = false,
-    stroke: Double = 0.0
+    pinnedToCentroid: Boolean = false,
+    inscribedInSquare: Boolean = false
 ) : SingletonGlyph(
     createTriangleShape(
         location,
         size,
+        stroke,
         pointingUp,
-        inscribedInSquare,
-        stroke
+        pinnedToCentroid,
+        inscribedInSquare
     )
 ) {
 
@@ -40,9 +42,10 @@ internal class TriangleGlyph @JvmOverloads constructor(
         private fun createTriangleShape(
             location: DoubleVector,
             size: Double,
+            stroke: Double,
             pointingUp: Boolean,
-            inscribedInSquare: Boolean,
-            stroke: Double = 0.0
+            pinnedToCentroid: Boolean = false,
+            inscribedInSquare: Boolean
         ): SvgSlimShape {
             val half = size / 2
             val height = if (inscribedInSquare) {
@@ -56,11 +59,12 @@ internal class TriangleGlyph @JvmOverloads constructor(
             else
                 size
 
-            val centeringOffset = (height - size) / 2.0
-            val vOffset = if (inscribedInSquare)
-                centeringOffset
-            else
-                height * VERTICAL_OFFSET_RATIO - centeringOffset
+            val halfOfHeightVOffset = (height - size) / 2.0
+            val vOffset = when {
+                pinnedToCentroid -> height * VERTICAL_OFFSET_RATIO - halfOfHeightVOffset
+                inscribedInSquare -> halfOfHeightVOffset
+                else -> -stroke / 4.0
+            }
 
             val x: List<Double>
             val y: List<Double>
