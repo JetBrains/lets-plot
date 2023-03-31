@@ -14,6 +14,7 @@ class DataFrame private constructor(builder: Builder) {
     private val myVectorByVar: Map<Variable, List<*>>
     private val myIsNumeric: MutableMap<Variable, Boolean>
     private val myIsDateTime: MutableMap<Variable, Boolean>
+    private val myIsNullable: MutableMap<Variable, Boolean>
 
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, DoubleSpan?>()
@@ -36,6 +37,7 @@ class DataFrame private constructor(builder: Builder) {
         myVectorByVar = HashMap(builder.myVectorByVar)
         myIsNumeric = HashMap(builder.myIsNumeric)
         myIsDateTime = HashMap(builder.myIsDateTime)
+        myIsNullable = HashMap(builder.myIsNullable)
         myOrderSpecs = builder.myOrderSpecs
         myOrderSpecs.forEach { orderSpec ->
             myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
@@ -87,10 +89,6 @@ class DataFrame private constructor(builder: Builder) {
         return !has(variable) || isEmpty(variable)
     }
 
-    fun isNullable(variable: Variable): Boolean {
-        return get(variable).contains(null)
-    }
-
     operator fun get(variable: Variable): List<*> {
         assertDefined(variable)
         return myVectorByVar.getValue(variable)
@@ -134,6 +132,14 @@ class DataFrame private constructor(builder: Builder) {
     fun isDateTime(variable: Variable): Boolean {
         assertDefined(variable)
         return myIsDateTime.containsKey(variable)
+    }
+
+    fun isNullable(variable: Variable): Boolean {
+        assertDefined(variable)
+        if (!myIsNullable.containsKey(variable)) {
+            myIsNullable[variable] = get(variable).contains(null)
+        }
+        return myIsNullable.containsKey(variable)
     }
 
     fun range(variable: Variable): DoubleSpan? {
@@ -277,6 +283,7 @@ class DataFrame private constructor(builder: Builder) {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
         internal val myIsDateTime = HashMap<Variable, Boolean>()
+        internal val myIsNullable = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderSpec>()
 
         constructor()
@@ -286,6 +293,7 @@ class DataFrame private constructor(builder: Builder) {
                 data.myVectorByVar,
                 data.myIsNumeric,
                 data.myIsDateTime,
+                data.myIsNullable,
                 data.myOrderSpecs,
             )
         }
@@ -299,7 +307,8 @@ class DataFrame private constructor(builder: Builder) {
                 newVectors,
                 data.myIsNumeric,
                 data.myIsDateTime,
-                data.myOrderSpecs,
+                data.myIsNullable,
+                data.myOrderSpecs
             )
         }
 
@@ -307,11 +316,13 @@ class DataFrame private constructor(builder: Builder) {
             vectorByVar: Map<Variable, List<*>>,
             isNumeric: Map<Variable, Boolean>,
             isDateTime: Map<Variable, Boolean>,
+            isNullable: Map<Variable, Boolean>,
             orderSpecs: List<OrderSpec>,
         ) {
             myVectorByVar.putAll(vectorByVar)
             myIsNumeric.putAll(isNumeric)
             myIsDateTime.putAll(isDateTime)
+            myIsNullable.putAll(isNullable)
             myOrderSpecs.addAll(orderSpecs)
         }
 
@@ -319,6 +330,7 @@ class DataFrame private constructor(builder: Builder) {
             putIntern(variable, v)
             myIsNumeric.remove(variable)  // unknown state
             myIsDateTime.remove(variable)
+            myIsNullable.remove(variable)
             return this
         }
 
@@ -348,6 +360,7 @@ class DataFrame private constructor(builder: Builder) {
             myVectorByVar.remove(variable)
             myIsNumeric.remove(variable)
             myIsDateTime.remove(variable)
+            myIsNullable.remove(variable)
             return this
         }
 
