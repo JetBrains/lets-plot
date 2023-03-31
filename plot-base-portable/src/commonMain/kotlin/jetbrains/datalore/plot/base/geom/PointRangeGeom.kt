@@ -99,7 +99,7 @@ class PointRangeGeom : GeomBase() {
                         p
                     )!!
 
-                    val shapeSize = shape.size(p) * fatten / 2
+                    val shapeSize = (shape.size(p) - shape.strokeWidth(p)) * fatten / 2
                     val strokeWidth = shape.strokeWidth(p)
                     val width = shapeSize + strokeWidth
                     extendTrueWidth(rect, width, ctx)

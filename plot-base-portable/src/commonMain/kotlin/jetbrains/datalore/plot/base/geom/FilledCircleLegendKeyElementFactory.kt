@@ -27,7 +27,7 @@ internal class FilledCircleLegendKeyElementFactory :
     }
 
     override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
-        val shapeSize = SHAPE.totalSize(p)
+        val shapeSize = SHAPE.size(p)
         val strokeWidth = SHAPE.strokeWidth(p)
         val size = shapeSize + strokeWidth + 2.0
         return DoubleVector(size, size)

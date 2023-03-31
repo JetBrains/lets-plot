@@ -57,24 +57,12 @@ enum class NamedShape(
 
     @Suppress("RedundantModalityModifier")
     final override fun size(dataPoint: DataPointAesthetics): Double {
-        return if (isSmall)
+        val diameter = if (isSmall)
             AesScaling.circleDiameterSmaller(dataPoint)
         else
             AesScaling.circleDiameter(dataPoint)
-    }
-
-    @Suppress("RedundantModalityModifier")
-    final override fun strokeWidth(dataPoint: DataPointAesthetics): Double {
-        return if (isSolid)
+        val strokeCoeff = if (isSolid)
             0.0
-        else
-            AesScaling.pointStrokeWidth(dataPoint)
-    }
-
-    @Suppress("RedundantModalityModifier")
-    final override fun totalSize(dataPoint: DataPointAesthetics): Double {
-        return if (isSolid)
-            size(dataPoint)
         else {
             val shapeCoeff = when (this) {
                 STICK_DIAMOND,
@@ -85,7 +73,17 @@ enum class NamedShape(
                 STICK_CROSS -> 2.0
                 else -> 1.0
             }
-            size(dataPoint) + shapeCoeff * strokeWidth(dataPoint)
+            shapeCoeff * strokeWidth(dataPoint)
         }
+
+        return diameter + strokeCoeff
+    }
+
+    @Suppress("RedundantModalityModifier")
+    final override fun strokeWidth(dataPoint: DataPointAesthetics): Double {
+        return if (isSolid)
+            0.0
+        else
+            AesScaling.pointStrokeWidth(dataPoint)
     }
 }
