@@ -175,6 +175,7 @@ class YDotplot {
                 "                 'stackdir': 'right'," +
                 "                 'stackratio': 0.5," +
                 "                 'dotsize': 2," +
+                "                 'stroke': 2," +
                 "                 'color': '#f03b20'," +
                 "                 'fill': '#ffeda0'" +
                 "               }" +

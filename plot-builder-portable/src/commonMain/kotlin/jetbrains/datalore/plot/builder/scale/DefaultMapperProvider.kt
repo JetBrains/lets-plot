@@ -33,6 +33,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.STROKE
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
@@ -108,6 +109,7 @@ object DefaultMapperProvider {
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
 
             this.put(SIZE, SizeMapperProvider.DEFAULT)
+            this.put(STROKE, NUMERIC_IDENTITY)
             this.put(STACKSIZE, NUMERIC_IDENTITY)
             this.put(WIDTH, NUMERIC_IDENTITY)
             this.put(HEIGHT, NUMERIC_IDENTITY)

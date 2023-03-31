@@ -53,13 +53,14 @@ object PointShapeSvg {
         val glyph = createSlimGlyph(
             shape,
             location,
-            size
+            size,
+            shape.strokeWidth(p)
         )
         AestheticsUtil.decorate(glyph, shape.isFilled, shape.isSolid, p, shape.strokeWidth(p))
         return glyph
     }
 
-    private fun createSlimGlyph(shape: NamedShape, location: DoubleVector, size: Double): Glyph {
+    private fun createSlimGlyph(shape: NamedShape, location: DoubleVector, size: Double, stroke: Double): Glyph {
         when (shape) {
             STICK_SQUARE, SOLID_SQUARE, FILLED_SQUARE -> return Glyphs.square(location, size)
 
@@ -67,9 +68,9 @@ object PointShapeSvg {
                 , BULLET             // same as SOLID_CIRCLE but smaller
                 , FILLED_CIRCLE -> return Glyphs.circle(location, size)
 
-            STICK_TRIANGLE_UP, SOLID_TRIANGLE_UP, FILLED_TRIANGLE_UP -> return Glyphs.triangleUp(location, size)
+            STICK_TRIANGLE_UP, SOLID_TRIANGLE_UP, FILLED_TRIANGLE_UP -> return Glyphs.triangleUp(location, size, stroke)
 
-            STICK_TRIANGLE_DOWN, FILLED_TRIANGLE_DOWN -> return Glyphs.triangleDown(location, size)
+            STICK_TRIANGLE_DOWN, FILLED_TRIANGLE_DOWN -> return Glyphs.triangleDown(location, size, stroke)
 
             STICK_DIAMOND, SOLID_DIAMOND, FILLED_DIAMOND -> return Glyphs.diamond(location, size)
 
@@ -78,11 +79,11 @@ object PointShapeSvg {
             STICK_SQUARE_CROSS -> return Glyphs.stickSquareCross(location, size)
             STICK_STAR -> return Glyphs.stickStar(location, size)
             STICK_DIAMOND_PLUS -> return Glyphs.stickDiamondPlus(location, size)
-            STICK_CIRCLE_PLUS -> return Glyphs.stickCirclePlus(location, size)
-            STICK_TRIANGLE_UP_DOWN -> return Glyphs.stickTriangleUpDown(location, size)
-            STICK_SQUARE_PLUS -> return Glyphs.stickSquarePlus(location, size)
-            STICK_CIRCLE_CROSS -> return Glyphs.stickCircleCross(location, size)
-            STICK_SQUARE_TRIANGLE_UP -> return Glyphs.stickSquareTriangleUp(location, size)
+            STICK_CIRCLE_PLUS -> return Glyphs.stickCirclePlus(location, size, stroke)
+            STICK_TRIANGLE_UP_DOWN -> return Glyphs.stickTriangleUpDown(location, size, stroke)
+            STICK_SQUARE_PLUS -> return Glyphs.stickSquarePlus(location, size, stroke)
+            STICK_CIRCLE_CROSS -> return Glyphs.stickCircleCross(location, size, stroke)
+            STICK_SQUARE_TRIANGLE_UP -> return Glyphs.stickSquareTriangleUp(location, size, stroke)
         }
     }
 }

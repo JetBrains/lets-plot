@@ -13,22 +13,22 @@ import kotlin.math.sqrt
 
 object Utils {
 
-    internal fun drawPath(ctx: Context2d, radius: Double, shape: Int) {
+    internal fun drawPath(ctx: Context2d, radius: Double, stroke: Double, shape: Int) {
         when (shape) {
             0 -> square(ctx, radius)
             1 -> circle(ctx, radius)
-            2 -> triangleUp(ctx, radius)
+            2 -> triangle(ctx, radius, stroke)
             3 -> plus(ctx, radius)
-            4 -> cross(ctx, radius)
+            4 -> cross(ctx, radius / sqrt(2.0))
             5 -> diamond(ctx, radius)
-            6 -> triangleDown(ctx, radius)
+            6 -> triangle(ctx, radius, stroke, pointingUp = false)
             7 -> {
                 square(ctx, radius)
                 cross(ctx, radius)
             }
             8 -> {
                 plus(ctx, radius)
-                cross(ctx, radius)
+                cross(ctx, radius / sqrt(2.0))
             }
             9 -> {
                 diamond(ctx, radius)
@@ -39,8 +39,8 @@ object Utils {
                 plus(ctx, radius)
             }
             11 -> {
-                triangleUp(ctx, radius)
-                triangleDown(ctx, radius)
+                triangle(ctx, radius, stroke, pointingUp = true, pinnedToCentroid = true)
+                triangle(ctx, radius, stroke, pointingUp = false, pinnedToCentroid = true)
             }
             12 -> {
                 square(ctx, radius)
@@ -48,20 +48,20 @@ object Utils {
             }
             13 -> {
                 circle(ctx, radius)
-                cross(ctx, radius)
+                cross(ctx, radius / sqrt(2.0))
             }
-            14 -> squareTriangle(ctx, radius)
+            14 -> squareTriangle(ctx, radius, stroke)
             15 -> square(ctx, radius)
             16 -> circle(ctx, radius)
-            17 -> triangleUp(ctx, radius)
+            17 -> triangle(ctx, radius, 1.0)
             18 -> diamond(ctx, radius)
             19 -> circle(ctx, radius)
             20 -> circle(ctx, radius)
             21 -> circle(ctx, radius)
             22 -> square(ctx, radius)
             23 -> diamond(ctx, radius)
-            24 -> triangleUp(ctx, radius)
-            25 -> triangleDown(ctx, radius)
+            24 -> triangle(ctx, radius, stroke)
+            25 -> triangle(ctx, radius, stroke, pointingUp = false)
             else -> throw IllegalStateException("Unknown point shape")
         }
     }
@@ -75,35 +75,42 @@ object Utils {
         ctx.lineTo(r, -r)
         ctx.lineTo(r, r)
         ctx.lineTo(-r, r)
-        ctx.lineTo(-r, -r)
+        ctx.closePath()
     }
 
-    internal fun squareTriangle(ctx: Context2d, r: Double) {
-        ctx.moveTo(-r, r)
-        ctx.lineTo(0.0, -r)
-        ctx.lineTo(r, r)
+    internal fun squareTriangle(ctx: Context2d, r: Double, stroke: Double) {
+        val outerSize = 2 * r + stroke
+        val triangleHeight = outerSize - stroke / 2 - sqrt(5.0) * stroke / 2
+        ctx.moveTo(-triangleHeight / 2, r)
+        ctx.lineTo(0.0, r - triangleHeight)
+        ctx.lineTo(triangleHeight / 2, r)
         ctx.lineTo(-r, r)
         ctx.lineTo(-r, -r)
         ctx.lineTo(r, -r)
         ctx.lineTo(r, r)
+        ctx.closePath()
     }
 
-    internal fun triangleUp(ctx: Context2d, r: Double) {
-        val a = 3 * r / sqrt(3.0)
+    internal fun triangle(ctx: Context2d, r: Double, stroke: Double, pointingUp: Boolean = true, pinnedToCentroid: Boolean = false) {
+        val outerHeight = 2 * r + stroke
+        val height = outerHeight - 3.0 * stroke / 2.0
+        val side = 2.0 * height / sqrt(3.0)
+        val distanceToBase = (outerHeight - stroke) / 2.0
+        val distanceToPeak = height - distanceToBase
+        val pointingCoeff = if (pointingUp)
+            1.0
+        else
+            -1.0
+        val centroidOffset = if (pinnedToCentroid)
+            height / 6.0 + stroke / 4.0
+        else
+            0.0
 
-        ctx.moveTo(0.0, -r)
-        ctx.lineTo(a / 2, r / 2)
-        ctx.lineTo(-a / 2, r / 2)
-        ctx.lineTo(0.0, -r)
-    }
-
-    internal fun triangleDown(ctx: Context2d, r: Double) {
-        val a = 3 * r / sqrt(3.0)
-
-        ctx.moveTo(0.0, r)
-        ctx.lineTo(-a / 2, -r / 2)
-        ctx.lineTo(a / 2, -r / 2)
-        ctx.lineTo(0.0, r)
+        ctx.moveTo(0.0, -pointingCoeff * (distanceToPeak + centroidOffset))
+        ctx.lineTo(side / 2.0, pointingCoeff * (distanceToBase - centroidOffset))
+        ctx.lineTo(-side / 2.0, pointingCoeff * (distanceToBase - centroidOffset))
+        ctx.lineTo(0.0, -pointingCoeff * (distanceToPeak + centroidOffset))
+        ctx.closePath()
     }
 
     internal fun plus(ctx: Context2d, r: Double) {
@@ -125,7 +132,7 @@ object Utils {
         ctx.lineTo(r, 0.0)
         ctx.lineTo(0.0, r)
         ctx.lineTo(-r, 0.0)
-        ctx.lineTo(0.0, -r)
+        ctx.closePath()
     }
 
     fun changeAlphaWithMin(color: Color, newAlpha: Int?): Color {

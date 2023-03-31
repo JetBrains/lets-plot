@@ -37,6 +37,7 @@ object GeomMeta {
     private val POINT = listOf(
         Aes.X, Aes.Y,
         Aes.SIZE,
+        Aes.STROKE,
         Aes.COLOR,
         Aes.FILL,
         Aes.ALPHA,
@@ -120,7 +121,8 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE
+                Aes.SIZE,
+                Aes.STROKE
             )
 
             GeomKind.TILE,
@@ -175,7 +177,8 @@ object GeomMeta {
                 Aes.FILL,
                 Aes.LINETYPE,
                 Aes.SHAPE,
-                Aes.SIZE
+                Aes.SIZE,
+                Aes.STROKE
             )
 
             GeomKind.CONTOUR -> PATH
@@ -269,7 +272,8 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE
+                Aes.SIZE,
+                Aes.STROKE
             )
 
             GeomKind.RIBBON -> listOf(

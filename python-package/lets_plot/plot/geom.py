@@ -103,6 +103,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     |
 
@@ -1037,6 +1038,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
+    - stroke : width of the dot border.
 
     Examples
     --------
@@ -1791,6 +1793,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - size : line width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -2914,7 +2917,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  orientation=None,
                  fatten=None,
-                 outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
+                 outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None, outlier_stroke=None,
                  varwidth=None,
                  whisker_width=None,
                  color_by=None, fill_by=None,
@@ -2959,6 +2962,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Default shape aesthetic for outliers, an integer from 0 to 25.
     outlier_size : float
         Default size aesthetic for outliers.
+    outlier_stroke : float
+        Default width of the border for outliers.
     varwidth : bool, default=False
         If False, make a standard box plot.
         If True, boxes are drawn with widths proportional to the square-roots
@@ -3096,6 +3101,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_fill=outlier_fill,
                  outlier_shape=outlier_shape,
                  outlier_size=outlier_size,
+                 outlier_stroke=outlier_stroke,
                  varwidth=varwidth,
                  whisker_width=whisker_width,
                  color_by=color_by, fill_by=fill_by,
@@ -3409,6 +3415,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
+    - stroke : width of the dot border.
 
     Examples
     --------
@@ -4596,6 +4603,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4730,6 +4738,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4844,6 +4853,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------

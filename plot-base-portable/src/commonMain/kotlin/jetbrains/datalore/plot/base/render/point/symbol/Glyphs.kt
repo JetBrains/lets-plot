@@ -20,12 +20,12 @@ object Glyphs {
         return DiamondGlyph(location, width)
     }
 
-    fun triangleUp(location: DoubleVector, width: Double): Glyph {
-        return TriangleGlyph(location, width, true)
+    fun triangleUp(location: DoubleVector, width: Double, stroke: Double): Glyph {
+        return TriangleGlyph(location, width, stroke, true)
     }
 
-    fun triangleDown(location: DoubleVector, width: Double): Glyph {
-        return TriangleGlyph(location, width, false)
+    fun triangleDown(location: DoubleVector, width: Double, stroke: Double): Glyph {
+        return TriangleGlyph(location, width, stroke, false)
     }
 
     fun stickPlus(location: DoubleVector, width: Double): Glyph {
@@ -57,42 +57,44 @@ object Glyphs {
         )
     }
 
-    fun stickCirclePlus(location: DoubleVector, size: Double): Glyph {
+    fun stickCirclePlus(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             CircleGlyph(location, size),
-            PlusGlyph(location, size)
+            PlusGlyph(location, size + stroke)
         )
     }
 
-    fun stickTriangleUpDown(location: DoubleVector, size: Double): Glyph {
+    fun stickTriangleUpDown(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
-            TriangleGlyph(location, size, true),
-            TriangleGlyph(location, size, false)
+            TriangleGlyph(location, size, stroke, pointingUp = true, pinnedToCentroid = true),
+            TriangleGlyph(location, size, stroke, pointingUp = false, pinnedToCentroid = true)
         )
     }
 
-    fun stickSquarePlus(location: DoubleVector, size: Double): Glyph {
+    fun stickSquarePlus(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             SquareGlyph(location, size),
-            PlusGlyph(location, size)
+            PlusGlyph(location, size + stroke)
         )
     }
 
-    fun stickCircleCross(location: DoubleVector, size: Double): Glyph {
+    fun stickCircleCross(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             CircleGlyph(location, size),
-            CrossGlyph(location, size)
+            CrossGlyph(location, size + stroke)
         )
     }
 
-    fun stickSquareTriangleUp(location: DoubleVector, size: Double): Glyph {
+    fun stickSquareTriangleUp(location: DoubleVector, size: Double, stroke: Double): Glyph {
         return GlyphPair(
             SquareGlyph(location, size),
             TriangleGlyph(
                 location,
                 size,
-                true,
-                true
+                stroke,
+                pointingUp = true,
+                pinnedToCentroid = false,
+                inscribedInSquare = true
             )
         )
     }

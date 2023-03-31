@@ -13,6 +13,5 @@ interface PointShape {
     fun size(dataPoint: DataPointAesthetics): Double
 
     fun strokeWidth(dataPoint: DataPointAesthetics): Double
-
 //    fun create(location: DoubleVector, dataPoint: DataPointAesthetics): SvgSlimObject
 }

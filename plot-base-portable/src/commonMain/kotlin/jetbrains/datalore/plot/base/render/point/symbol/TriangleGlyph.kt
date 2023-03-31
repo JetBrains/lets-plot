@@ -10,19 +10,22 @@ import jetbrains.datalore.vis.svg.slim.SvgSlimElements
 import jetbrains.datalore.vis.svg.slim.SvgSlimShape
 
 import kotlin.jvm.JvmOverloads
-import kotlin.math.PI
-import kotlin.math.sin
+import kotlin.math.*
 
 internal class TriangleGlyph @JvmOverloads constructor(
     location: DoubleVector,
     size: Double,
+    stroke: Double,
     pointingUp: Boolean,
+    pinnedToCentroid: Boolean = false,
     inscribedInSquare: Boolean = false
 ) : SingletonGlyph(
     createTriangleShape(
         location,
         size,
+        stroke,
         pointingUp,
+        pinnedToCentroid,
         inscribedInSquare
     )
 ) {
@@ -33,40 +36,50 @@ internal class TriangleGlyph @JvmOverloads constructor(
 
     companion object {
         // equilateral triangle
-        private val SIDE_TO_HEIGHT_RATIO = sin(PI / 3)
+        private val HEIGHT_TO_SIDE_RATIO = sin(PI / 3)
         private const val VERTICAL_OFFSET_RATIO = 1.0 / 12
 
         private fun createTriangleShape(
             location: DoubleVector,
             size: Double,
+            stroke: Double,
             pointingUp: Boolean,
+            pinnedToCentroid: Boolean,
             inscribedInSquare: Boolean
         ): SvgSlimShape {
             val half = size / 2
-            val height = if (inscribedInSquare)
+            val height = if (inscribedInSquare) {
+                val outerHeight = size + stroke
+                val strokeSectionWidth = sqrt(5.0) * stroke
+                outerHeight - stroke / 2.0 - strokeSectionWidth / 2.0
+            } else
+                HEIGHT_TO_SIDE_RATIO * size
+            val base = if (inscribedInSquare)
+                height
+            else
                 size
-            else
-                SIDE_TO_HEIGHT_RATIO * size
 
-            val vOffset = if (inscribedInSquare)
-                0.0
-            else
-                height * VERTICAL_OFFSET_RATIO
+            val halfOfHeightVOffset = (height - size) / 2.0
+            val vOffset = when {
+                pinnedToCentroid -> height * VERTICAL_OFFSET_RATIO - halfOfHeightVOffset
+                inscribedInSquare -> halfOfHeightVOffset
+                else -> -stroke / 4.0
+            }
 
             val x: List<Double>
             val y: List<Double>
             var dy = (size - height) / 2
             if (pointingUp) {
                 dy -= vOffset
-                x = listOf(half, size, 0.0)
+                x = listOf(base / 2, base, 0.0)
                 y = listOf(0.0 + dy, height + dy, height + dy)
             } else {
                 dy += vOffset
-                x = listOf(0.0, size, half)
+                x = listOf(0.0, base, base / 2)
                 y = listOf(0.0 + dy, 0.0 + dy, height + dy)
             }
 
-            val ox = location.x - half
+            val ox = location.x - base / 2
             val oy = location.y - half
 
             val pathData = GlyphUtil.buildPathData(
