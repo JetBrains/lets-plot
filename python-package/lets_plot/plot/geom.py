@@ -103,7 +103,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
-    - stroke : width of the border for shapes that have it.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     |
 
@@ -1793,7 +1793,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - size : line width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
-    - stroke : width of the border for shapes that have it.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4603,7 +4603,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
-    - stroke : width of the border for shapes that have it.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4738,7 +4738,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
-    - stroke : width of the border for shapes that have it.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4853,7 +4853,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
-    - stroke : width of the border for shapes that have it.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
