@@ -44,7 +44,7 @@ internal class TriangleGlyph @JvmOverloads constructor(
             size: Double,
             stroke: Double,
             pointingUp: Boolean,
-            pinnedToCentroid: Boolean = false,
+            pinnedToCentroid: Boolean,
             inscribedInSquare: Boolean
         ): SvgSlimShape {
             val half = size / 2
