@@ -21,8 +21,7 @@ open class PointDemo : SimpleDemoBase() {
 
     fun createModels(): List<GroupComponent> {
         return listOf(
-            simple(),
-            withStroke()
+            simple()
         )
     }
 
@@ -61,43 +60,6 @@ open class PointDemo : SimpleDemoBase() {
             EMPTY_GEOM_CONTEXT
         )
         groupComponent.add(layer.rootGroup)
-        return groupComponent
-    }
-
-    private fun withStroke(): GroupComponent {
-        val count = 3
-        val x = arrayOf(0.0, 2.0, 4.0)
-        val y = arrayOf(0.0, 0.0, 0.0, 0.0)
-        val stroke = arrayOf(1.0, 0.0, 50.0)
-        val color = arrayOf(Color.RED, Color.BLACK, Color.RED)
-
-        val aes = AestheticsBuilder(count)
-            .x(array(x))
-            .y(array(y))
-            .stroke(array(stroke))
-            .color(array(color))
-            .fill(constant(Color.BLACK))
-            .shape(constant(NamedShape.FILLED_CIRCLE))
-            .size(constant(50.0))
-            .alpha(constant(0.5))
-            .build()
-
-        val groupComponent = GroupComponent()
-
-        val coord = Coords.DemoAndTest.create(
-            DoubleSpan(-1.0, 5.0),
-            DoubleSpan(-1.0, 1.0),
-            demoInnerSize
-        )
-        val layer = jetbrains.datalore.plot.builder.SvgLayerRenderer(
-            aes,
-            PointGeom(),
-            PositionAdjustments.identity(),
-            coord,
-            EMPTY_GEOM_CONTEXT
-        )
-        groupComponent.add(layer.rootGroup)
-
         return groupComponent
     }
 }
