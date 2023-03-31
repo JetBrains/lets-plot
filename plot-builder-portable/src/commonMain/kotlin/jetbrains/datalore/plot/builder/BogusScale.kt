@@ -14,7 +14,7 @@ internal class BogusScale : Scale {
     override val name: String
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
-    override val naInLegend: Boolean
+    override val nanInLegend: Boolean
         get() = throw IllegalStateException("Bogus scale is not supposed to be used.")
 
     override val labelFormatter: ((Any) -> String)

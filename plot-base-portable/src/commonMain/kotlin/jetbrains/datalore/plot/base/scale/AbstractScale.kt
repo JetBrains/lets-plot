@@ -18,7 +18,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         protected set
     final override var additiveExpand = 0.0
         protected set
-    final override val naInLegend: Boolean
+    final override val nanInLegend: Boolean
     final override val labelFormatter: ((Any) -> String)?
 
     protected constructor(name: String, breaks: List<DomainT>? = null) {
@@ -26,7 +26,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         this.definedBreaks = breaks
         definedLabels = null
         labelFormatter = null
-        naInLegend = false
+        nanInLegend = false
     }
 
     protected constructor(b: AbstractBuilder<DomainT>) {
@@ -34,7 +34,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
         definedBreaks = b.myBreaks
         definedLabels = b.myLabels
         labelFormatter = b.myLabelFormatter
-        naInLegend = b.myNaInLegend
+        nanInLegend = b.myNanInLegend
 
         multiplicativeExpand = b.myMultiplicativeExpand
         additiveExpand = b.myAdditiveExpand
@@ -100,7 +100,7 @@ internal abstract class AbstractScale<DomainT> : Scale {
 
         internal var myBreaks: List<DomainT>? = scale.definedBreaks
         internal var myLabels: List<String>? = scale.definedLabels
-        internal var myNaInLegend: Boolean = scale.naInLegend
+        internal var myNanInLegend: Boolean = scale.nanInLegend
         internal var myLabelFormatter: ((Any) -> String)? = scale.labelFormatter
 
         internal var myMultiplicativeExpand: Double = scale.multiplicativeExpand
@@ -124,8 +124,8 @@ internal abstract class AbstractScale<DomainT> : Scale {
             return this
         }
 
-        override fun naInLegend(b: Boolean): Scale.Builder {
-            myNaInLegend = b
+        override fun nanInLegend(b: Boolean): Scale.Builder {
+            myNanInLegend = b
             return this
         }
 

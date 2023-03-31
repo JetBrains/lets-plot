@@ -13,7 +13,7 @@ interface Scale {
 
     val labelFormatter: ((Any) -> String)?
 
-    val naInLegend: Boolean
+    val nanInLegend: Boolean
 
     /**
      * @return TRUE if both, domain and range are continuous
@@ -43,7 +43,7 @@ interface Scale {
 
         fun labels(l: List<String>): Builder
 
-        fun naInLegend(b: Boolean): Builder
+        fun nanInLegend(b: Boolean): Builder
 
         fun labelFormatter(v: (Any) -> String): Builder
 

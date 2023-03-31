@@ -169,7 +169,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 myName ?: defaultName,
                 discreteTransform,
             )
-            return completeScale(scale, naInLegend = hasNan)
+            return completeScale(scale, nanInLegend = hasNan)
         }
 
         override fun createScale(
@@ -204,10 +204,10 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                     .build()
             }
 
-            return completeScale(scale, naInLegend = false)
+            return completeScale(scale, nanInLegend = false)
         }
 
-        private fun completeScale(scale: Scale, naInLegend: Boolean): Scale {
+        private fun completeScale(scale: Scale, nanInLegend: Boolean): Scale {
             val with = scale.with()
             if (breaks != null) {
                 with.breaks(breaks)
@@ -216,7 +216,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                 with.labels(myLabels)
             }
 
-            with.naInLegend(naInLegend)
+            with.nanInLegend(nanInLegend)
 
             if (myLabelFormat != null) {
                 with.labelFormatter(StringFormat.forOneArg(myLabelFormat)::format)
