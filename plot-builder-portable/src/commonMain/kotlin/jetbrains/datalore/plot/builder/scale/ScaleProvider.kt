@@ -20,7 +20,7 @@ interface ScaleProvider {
     /**
      * Create scale for discrete input (domain)
      */
-    fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale
+    fun createScale(defaultName: String, discreteTransform: DiscreteTransform, hasNan: Boolean): Scale
 
     /**
      * Create scale for continuous (numeric) input (domain)

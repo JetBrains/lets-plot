@@ -31,6 +31,12 @@ internal object PlotConfigScales {
         // Exclude "stat positional" because we don't know which of axis they will use (i.e. orientation="y").
         // See also: PlotConfigClientSideUtil.createScalesForStatPositionalBindings()
         val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+        val isNullableDomainByAes = HashMap<Aes<*>, Boolean>()
+        for ((varBinding, data) in setup.dataByVarBinding) {
+            val aes = varBinding.aes
+            val variable = varBinding.variable
+            isNullableDomainByAes[aes] = data.isNullable(variable)
+        }
 
         val variablesByMappedAes = setup.variablesByMappedAes
 
@@ -44,7 +50,9 @@ internal object PlotConfigScales {
             val transform = transformByAes.getValue(aes)
 
             val scale = when (transform) {
-                is DiscreteTransform -> scaleProvider.createScale(defaultName, transform)
+                is DiscreteTransform -> scaleProvider.createScale(
+                    defaultName, transform, hasNan = isNullableDomainByAes[aes] == true
+                )
                 else -> {
                     transform as ContinuousTransform
                     val mapper = mappersByAes.getValue(aes)

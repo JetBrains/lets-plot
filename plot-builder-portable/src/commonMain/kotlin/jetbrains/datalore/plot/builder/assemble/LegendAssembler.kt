@@ -142,6 +142,12 @@ class LegendAssembler(
                 val scaleBreaks = scale.getScaleBreaks()
                 val aesValues = scaleBreaks.transformedValues.map {
                     scaleMappers.getValue(aes)(it) as Any // Don't expect nulls.
+                }.toMutableList()
+                val labels = scaleBreaks.labels.toMutableList()
+
+                if (scale.naInLegend) {
+                    aesValues += scaleMappers.getValue(aes)(null) as Any
+                    labels += "N/A" // todo scale.naLabel
                 }
                 val labels = scaleBreaks.labels
                 for ((label, aesValue) in labels.zip(aesValues)) {

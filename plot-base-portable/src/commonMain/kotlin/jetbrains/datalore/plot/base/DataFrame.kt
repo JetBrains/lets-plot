@@ -87,6 +87,10 @@ class DataFrame private constructor(builder: Builder) {
         return !has(variable) || isEmpty(variable)
     }
 
+    fun isNullable(variable: Variable): Boolean {
+        return get(variable).contains(null)
+    }
+
     operator fun get(variable: Variable): List<*> {
         assertDefined(variable)
         return myVectorByVar.getValue(variable)

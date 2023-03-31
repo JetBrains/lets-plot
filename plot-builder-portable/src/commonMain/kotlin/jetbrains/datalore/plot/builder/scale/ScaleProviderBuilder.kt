@@ -164,13 +164,12 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         /**
          * Discrete domain.
          */
-        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform): Scale {
+        override fun createScale(defaultName: String, discreteTransform: DiscreteTransform, hasNan: Boolean): Scale {
             var scale: Scale = Scales.discreteDomain(
                 myName ?: defaultName,
                 discreteTransform,
             )
-
-            return completeScale(scale)
+            return completeScale(scale, naInLegend = hasNan)
         }
 
         override fun createScale(
@@ -205,10 +204,10 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
                     .build()
             }
 
-            return completeScale(scale)
+            return completeScale(scale, naInLegend = false)
         }
 
-        private fun completeScale(scale: Scale): Scale {
+        private fun completeScale(scale: Scale, naInLegend: Boolean): Scale {
             val with = scale.with()
             if (breaks != null) {
                 with.breaks(breaks)
@@ -216,6 +215,9 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
             if (myLabels != null) {
                 with.labels(myLabels)
             }
+
+            with.naInLegend(naInLegend)
+
             if (myLabelFormat != null) {
                 with.labelFormatter(StringFormat.forOneArg(myLabelFormat)::format)
             }
