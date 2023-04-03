@@ -15,6 +15,8 @@ class DataFrame private constructor(builder: Builder) {
     private val myIsNumeric: MutableMap<Variable, Boolean>
     private val myIsDateTime: MutableMap<Variable, Boolean>
 
+    private val myOrderSpecs: List<OrderSpec>
+
     // volatile variables (yet)
     private val myRanges = HashMap<Variable, DoubleSpan?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
@@ -25,8 +27,6 @@ class DataFrame private constructor(builder: Builder) {
         val direction: Int,
         val aggregateOperation: ((List<Double?>) -> Double?)? = null
     )
-
-    private val myOrderSpecs: List<OrderSpec>
 
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()

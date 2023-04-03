@@ -15,39 +15,19 @@ import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
-import jetbrains.datalore.plot.config.*
+import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
+import jetbrains.datalore.plot.config.PlotConfig
+import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.config.getString
 
 open class PlotConfigServerSide(opts: Map<String, Any>) :
     PlotConfig(
         opts,
         isClientSide = false
     ) {
-
-    override fun createLayerConfig(
-        layerOptions: Map<String, Any>,
-        sharedData: DataFrame,
-        plotMappings: Map<*, *>,
-        plotDataMeta: Map<*, *>,
-        plotOrderOptions: List<OrderOption>,
-        isMapPlot: Boolean
-    ): LayerConfig {
-
-        val geomName = layerOptions[Option.Layer.GEOM] as String
-        val geomKind = Option.GeomName.toGeomKind(geomName)
-        return LayerConfig(
-            layerOptions,
-            sharedData,
-            plotMappings,
-            plotDataMeta,
-            plotOrderOptions,
-            GeomProto(geomKind),
-            clientSide = false,
-            isMapPlot
-        )
-    }
 
     /**
      * WARN! Side effects - performs modifications deep in specs tree
