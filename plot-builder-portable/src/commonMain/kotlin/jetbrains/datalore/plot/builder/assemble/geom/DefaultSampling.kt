@@ -42,6 +42,7 @@ object DefaultSampling {
     val JITTER = POINT
     val Q_Q = POINT
     val PIE = POINT
+    val LOLLIPOP = POINT
 
     // lines
     val Q_Q_LINE = LINE

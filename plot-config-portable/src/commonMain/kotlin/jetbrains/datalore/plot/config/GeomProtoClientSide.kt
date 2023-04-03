@@ -33,6 +33,7 @@ import jetbrains.datalore.plot.config.Option.Geom.Step
 import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
 import jetbrains.datalore.plot.config.Option.Geom.YDotplot
+import jetbrains.datalore.plot.config.Option.Geom.Lollipop
 import jetbrains.datalore.plot.config.Option.Layer.USE_CRS
 
 
@@ -268,6 +269,17 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
+            GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
+                val geom = LollipopGeom()
+                if (opts.hasOwn(Lollipop.SLOPE)) {
+                    geom.slope = opts.getDoubleDef(Lollipop.SLOPE, LollipopGeom.DEF_SLOPE)
+                }
+                if (opts.hasOwn(Lollipop.INTERCEPT)) {
+                    geom.intercept = opts.getDoubleDef(Lollipop.INTERCEPT, LollipopGeom.DEF_INTERCEPT)
+                }
+                geom
+            }
+
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 return PROVIDER[geomKind]!!
@@ -321,6 +333,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // image - special case
             // pie - special case
             PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
+            // lollipop - special case
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

@@ -270,6 +270,10 @@ open class AestheticsDefaults {
                 .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }
 
+        fun lollipop(): AestheticsDefaults {
+            return point()
+        }
+
         private fun base(): AestheticsDefaults {
             return AestheticsDefaults()
         }
