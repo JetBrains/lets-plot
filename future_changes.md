@@ -6,6 +6,12 @@
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/aes_stroke.ipynb).
 
+
+-  the 'newline' character (`\n`) now works as `line break` in legend text ([[#726](https://github.com/JetBrains/lets-plot/issues/726)])
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
+
+
 ### Changed
 
 ### Fixed
@@ -19,4 +25,3 @@
 - The scale name does not apply with `as_discrete()` [[#653](https://github.com/JetBrains/lets-plot/issues/653)]. 
 - Batik: geom_imshow() fail with an error: "The attribute "xlink:href" of the element <image> is required"
 - Tooltip is not shown when configured for 'const' value [[#610](https://github.com/JetBrains/lets-plot/issues/610)].
-- "newline" doesn't work in legend' texts [[#726](https://github.com/JetBrains/lets-plot/issues/726)].
