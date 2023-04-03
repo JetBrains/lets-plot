@@ -47,8 +47,8 @@ class ConstantValue(
                 Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, isYOrientation!!)
                 else -> aes
             }
-            val scale = ctx.getScale(tooltipAes)
-            if (scale != null && scale.isContinuousDomain && value is Number) {
+
+            if (ctx.hasScale(tooltipAes) && ctx.getScale(tooltipAes).isContinuousDomain && value is Number) {
                 ctx.getTooltipFormatter(tooltipAes) {
                     TooltipFormatting.createFormatter(tooltipAes, ctx)
                 }.invoke(value)

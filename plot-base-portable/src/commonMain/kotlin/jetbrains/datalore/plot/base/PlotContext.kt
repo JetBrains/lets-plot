@@ -13,7 +13,8 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 interface PlotContext {
     val layers: List<Layer>
 
-    fun getScale(aes: Aes<*>): Scale?
+    fun hasScale(aes: Aes<*>): Boolean
+    fun getScale(aes: Aes<*>): Scale
     fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
 
     fun getTooltipFormatter(aes: Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String

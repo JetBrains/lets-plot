@@ -132,7 +132,7 @@ class LegendAssembler(
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
             for (aes in aesList) {
 //                var scale = scaleMap[aes]
-                var scale = ctx.getScale(aes) ?: continue
+                var scale = ctx.getScale(aes)
                 if (!scale.hasBreaks()) {
 //                    scale = ScaleBreaksUtil.withBreaks(scale, transformedDomainByAes.getValue(aes), 5)
                     scale = ScaleBreaksUtil.withBreaks(scale, ctx.overallTransformedDomain(aes), 5)
