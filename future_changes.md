@@ -25,3 +25,4 @@
 - The scale name does not apply with `as_discrete()` [[#653](https://github.com/JetBrains/lets-plot/issues/653)]. 
 - Batik: geom_imshow() fail with an error: "The attribute "xlink:href" of the element <image> is required"
 - Tooltip is not shown when configured for 'const' value [[#610](https://github.com/JetBrains/lets-plot/issues/610)].
+- Fix crash when try to add a constant to a tooltip (e.g.`"^size"`, where `size` aesthetic is specified with a number).
