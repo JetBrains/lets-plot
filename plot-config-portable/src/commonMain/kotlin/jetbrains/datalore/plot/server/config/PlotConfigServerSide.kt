@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.server.config
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
+import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
@@ -35,51 +36,17 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
     internal fun updatePlotSpec() {
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
 
-        // apply tranform and stat
-        val dataByTileByLayerAfterStat = dataByTileByLayerAfterStat { layerIndex, message ->
+        val dataByLayerAfterStat = dataByLayerAfterStat() { layerIndex, message ->
             layerIndexWhereSamplingOccurred.add(layerIndex)
             PlotConfigUtil.addComputationMessage(this, message)
         }
 
-        // merge tiles
-        val dataByLayerAfterStat = ArrayList<DataFrame>()
-        val layerConfigs = layerConfigs
-        for (layerIndex in layerConfigs.indices) {
-
-            val layerSerieByVarName = HashMap<String, Pair<Variable, ArrayList<Any?>>>()
-            // merge tiles
-            for (tileDataByLayerAfterStat in dataByTileByLayerAfterStat) {
-                val tileLayerDataAfterStat = tileDataByLayerAfterStat[layerIndex]
-                val variables = tileLayerDataAfterStat.variables()
-                if (layerSerieByVarName.isEmpty()) {
-                    for (variable in variables) {
-                        layerSerieByVarName[variable.name] = Pair(variable, ArrayList(tileLayerDataAfterStat[variable]))
-                    }
-                } else {
-                    for (variable in variables) {
-                        layerSerieByVarName[variable.name]!!.second.addAll(tileLayerDataAfterStat[variable])
-                    }
-                }
-            }
-
-            val builder = DataFrame.Builder()
-            for (varName in layerSerieByVarName.keys) {
-                val variable = layerSerieByVarName[varName]!!.first
-                val serie = layerSerieByVarName[varName]!!.second
-                builder.put(variable, serie)
-            }
-            val layerDataAfterStat = builder.build()
-            dataByLayerAfterStat.add(layerDataAfterStat)
-        }
-
-        run {
-            // replace layer data with data after stat
-            for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
-                // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
-                if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
-                    val layerStatData = dataByLayerAfterStat[layerIndex]
-                    layerConfig.replaceOwnData(layerStatData)
-                }
+        // replace layer data with data after stat
+        layerConfigs.withIndex().forEach { (layerIndex, layerConfig) ->
+            // optimization: only replace layer' data if 'combined' data was changed (because of stat or sampling occurred)
+            if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
+                val layerStatData = dataByLayerAfterStat[layerIndex]
+                layerConfig.replaceOwnData(layerStatData)
             }
         }
 
@@ -128,54 +95,70 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         }
     }
 
-
-    private fun dataByTileByLayerAfterStat(layerIndexAndSamplingMessage: (Int, String) -> Unit): List<List<DataFrame>> {
-
-        // transform layers data before stat
-        val dataByLayer = ArrayList<DataFrame>()
-        for (layerConfig in layerConfigs) {
-            var layerData = layerConfig.combinedData
-            layerData = DataProcessing.transformOriginals(layerData, layerConfig.varBindings, transformByAes)
-            dataByLayer.add(layerData)
+    private fun dataByLayerAfterStat(layerMessageHandler: (Int, String) -> Unit): List<DataFrame> {
+        // transform data before stat
+        val dataByLayer: List<DataFrame> = layerConfigs.map { layer ->
+            DataProcessing.transformOriginals(layer.combinedData, layer.varBindings, transformByAes)
         }
+        val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
 
+        return layerConfigs.mapIndexed { layerIndex, layerConfig ->
+            applyLayerStatistic(
+                layerConfig,
+                layerData = dataByLayer[layerIndex],
+                statCtx,
+            ) { message ->
+                layerMessageHandler(layerIndex, message)
+            }
+        }
+    }
+
+    private fun applyLayerStatistic(
+        layerConfig: LayerConfig,
+        layerData: DataFrame,
+        statCtx: StatContext,
+        messageHandler: (String) -> Unit
+    ): DataFrame {
         // slice data to tiles
-        val facets = facets
-        val inputDataByTileByLayer = PlotConfigUtil.toLayersDataByTile(dataByLayer, facets)
+        val dataByTile = PlotConfigUtil.splitLayerDataByTile(layerData, facets)
 
-        // apply stat to each layer in each tile separately
-        val result = ArrayList<MutableList<DataFrame>>()
-        while (result.size < inputDataByTileByLayer.size) {
-            result.add(ArrayList())
-        }
-
-        for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
-
-            val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
-            for (tileIndex in inputDataByTileByLayer.indices) {
-                val tileLayerInputData = inputDataByTileByLayer[tileIndex][layerIndex]
-                val facetVariables = facets.variables.mapNotNull { facetVarName ->
-                    tileLayerInputData.variables().firstOrNull { it.name == facetVarName }
-                }
-
-                val tileLayerDataAfterStat = BackendDataProcUtil.applyStatisticalTransform(
-                    data = tileLayerInputData,
-                    layerConfig = layerConfig,
-                    statCtx = statCtx,
-                    transformByAes = transformByAes,
-                    facetVariables = facetVariables,
-                ) { message ->
-                    layerIndexAndSamplingMessage(
-                        layerIndex,
-                        message
-                    )
-                }
-                result[tileIndex].add(tileLayerDataAfterStat)
+        val dataByTileAfterStat = dataByTile.map { tileData ->
+            val facetVariables = facets.variables.mapNotNull { facetVarName ->
+                tileData.variables().firstOrNull { it.name == facetVarName }
             }
 
+            BackendDataProcUtil.applyStatisticalTransform(
+                data = tileData,
+                layerConfig = layerConfig,
+                statCtx = statCtx,
+                transformByAes = transformByAes,
+                facetVariables = facetVariables,
+            ) { message -> messageHandler(message) }
         }
 
-        return result
+        // merge tiles
+
+        val mergedSerieByVarName = HashMap<String, Pair<Variable, ArrayList<Any?>>>()
+        for (tileDataAfterStat in dataByTileAfterStat) {
+            val variables = tileDataAfterStat.variables()
+            if (mergedSerieByVarName.isEmpty()) {
+                for (variable in variables) {
+                    mergedSerieByVarName[variable.name] = Pair(variable, ArrayList(tileDataAfterStat[variable]))
+                }
+            } else {
+                for (variable in variables) {
+                    mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
+                }
+            }
+        }
+
+        val builder = DataFrame.Builder()
+        for (varName in mergedSerieByVarName.keys) {
+            val variable = mergedSerieByVarName.getValue(varName).first
+            val serie = mergedSerieByVarName.getValue(varName).second
+            builder.put(variable, serie)
+        }
+        return builder.build()
     }
 
     companion object {

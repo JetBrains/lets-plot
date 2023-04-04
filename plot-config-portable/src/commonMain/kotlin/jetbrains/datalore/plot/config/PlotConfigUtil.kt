@@ -40,6 +40,19 @@ object PlotConfigUtil {
         return layersDataByTile
     }
 
+    fun splitLayerDataByTile(
+        layerData: DataFrame,
+        facets: PlotFacets,
+    ): List<DataFrame> {
+        // Plot (and each plot layer) consists of one or more tiles,
+
+        return if (facets.isDefined) {
+            facets.dataByTile(layerData)
+        } else {
+            listOf(layerData)
+        }
+    }
+
     // backend
     fun addComputationMessage(accessor: OptionsAccessor, message: String?) {
         require(message != null)
