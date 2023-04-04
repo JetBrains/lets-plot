@@ -152,7 +152,8 @@ open class GeomHelper(
         val y0 = start.y
         val y1 = end.y
         if (x0 == x1) {
-            return DoubleVector(x1, y1 - extraTailSize)
+            val dy = if (y0 < y1) -extraTailSize else extraTailSize
+            return DoubleVector(x1, y1 + dy)
         }
         val dx = sqrt(extraTailSize.pow(2) / (1.0 + (y0 - y1).pow(2) / (x0 - x1).pow(2)))
         val x = if (x0 < x1) {
