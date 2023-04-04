@@ -31,7 +31,7 @@ class LollipopGeom : PointGeom() {
             val projX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
             val projY = slope * projX + intercept
             val proj = DoubleVector(projX, projY)
-            val line = helper.createLine(point, proj, p) ?: continue
+            val line = helper.createLine(proj, point, p, true) ?: continue
             root.add(line)
         }
 
