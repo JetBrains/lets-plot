@@ -105,11 +105,11 @@ open class GeomHelper(
         }
     }
 
-    fun createSvgElementHelper(): SvgElementHelper {
-        return SvgElementHelper()
+    fun createSvgElementHelper(decorateWidthBySize: Boolean = true): SvgElementHelper {
+        return SvgElementHelper(decorateWidthBySize)
     }
 
-    inner class SvgElementHelper {
+    inner class SvgElementHelper(private val decorateWidthBySize: Boolean) {
         private var myStrokeAlphaEnabled = false
 
         fun setStrokeAlphaEnabled(b: Boolean) {
@@ -128,34 +128,50 @@ open class GeomHelper(
                 start.x, start.y,
                 end.x, end.y
             )
-            decorate(line, p, myStrokeAlphaEnabled)
+            val strokeScaler = if (decorateWidthBySize) {
+                AesScaling::strokeWidth
+            } else {
+                AesScaling::pointStrokeWidth
+            }
+            decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
             return line
         }
     }
 
     companion object {
 
-        fun decorate(node: SvgNode, p: DataPointAesthetics, applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH) {
+        fun decorate(
+            node: SvgNode,
+            p: DataPointAesthetics,
+            applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ) {
             if (node is SvgShape) {
                 decorateShape(
                     node as SvgShape,
                     p,
-                    applyAlphaToAll
+                    applyAlphaToAll,
+                    strokeScaler
                 )
             }
 
             if (node is SvgElement) {
                 val lineType = p.lineType()
                 if (!(lineType.isBlank || lineType.isSolid)) {
-                    StrokeDashArraySupport.apply(node, AesScaling.strokeWidth(p), lineType.dashArray)
+                    StrokeDashArraySupport.apply(node, strokeScaler(p), lineType.dashArray)
                 }
             }
         }
 
-        private fun decorateShape(shape: SvgShape, p: DataPointAesthetics, applyAlphaToAll: Boolean) {
+        private fun decorateShape(
+            shape: SvgShape,
+            p: DataPointAesthetics,
+            applyAlphaToAll: Boolean,
+            strokeScaler: (DataPointAesthetics) -> Double
+        ) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
             AestheticsUtil.updateFill(shape, p)
-            shape.strokeWidth().set(AesScaling.strokeWidth(p))
+            shape.strokeWidth().set(strokeScaler(p))
         }
 
         internal fun decorateSlimShape(shape: SvgSlimShape, p: DataPointAesthetics) {
