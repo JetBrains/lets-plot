@@ -5654,7 +5654,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='nudge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -5842,7 +5842,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='nudge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
