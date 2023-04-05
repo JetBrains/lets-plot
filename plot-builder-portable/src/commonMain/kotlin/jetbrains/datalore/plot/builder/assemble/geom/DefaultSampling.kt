@@ -42,7 +42,6 @@ object DefaultSampling {
     val JITTER = POINT
     val Q_Q = POINT
     val PIE = POINT
-    val LOLLIPOP = POINT
 
     // lines
     val Q_Q_LINE = LINE
@@ -69,6 +68,7 @@ object DefaultSampling {
     // val BOX_PLOT = random(500, SEED) - tmp disabled (see GeomProto)
     val LINE_RANGE = BAR
     val POINT_RANGE = BAR
+    val LOLLIPOP = BAR
 
     val HISTOGRAM = BAR
     val DOT_PLOT = BAR
