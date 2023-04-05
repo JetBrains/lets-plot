@@ -37,9 +37,6 @@ class DataFrame private constructor(builder: Builder) {
         myIsNumeric = HashMap(builder.myIsNumeric)
         myIsDateTime = HashMap(builder.myIsDateTime)
         myOrderSpecs = builder.myOrderSpecs
-        myOrderSpecs.forEach { orderSpec ->
-            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
-        }
     }
 
     private fun assertAllSeriesAreSameSize(vectorByVar: Map<Variable, List<*>>) {
@@ -106,11 +103,10 @@ class DataFrame private constructor(builder: Builder) {
     fun distinctValues(variable: Variable): Collection<Any> {
         assertDefined(variable)
         return myDistinctValues.getOrPut(variable) {
-            val values = LinkedHashSet(get(variable)).apply {
-                this.remove(null)
-            }
-            @Suppress("UNCHECKED_CAST")
-            return values as Collection<Any>
+            val orderSpec = myOrderSpecs.findLast { it.variable == variable }
+            return orderSpec?.let {
+                getOrderedDistinctValues(it)
+            } ?: get(variable).filterNotNull().toSet()
         }
     }
 

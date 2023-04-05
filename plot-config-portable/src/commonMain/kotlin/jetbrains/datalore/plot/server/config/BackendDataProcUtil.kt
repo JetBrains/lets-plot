@@ -65,7 +65,7 @@ internal object BackendDataProcUtil {
             flipXY = layerConfig.isYOrientation
         )
 
-        val tileDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
+        return DataProcessing.buildStatData(
             statInput,
             stat,
             groupingContext,
@@ -74,8 +74,6 @@ internal object BackendDataProcUtil {
             layerConfig.orderOptions,
             layerConfig.aggregateOperation
         ) { message -> messageHandler(createStatMessage(message, layerConfig)) }
-
-        return tileDataAndGroupingContextAfterStat
     }
 
     private fun getStatName(layerConfig: LayerConfig): String {
