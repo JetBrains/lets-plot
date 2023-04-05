@@ -179,6 +179,7 @@ object GeomInteractionUtil {
                 GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             }
 
+            GeomKind.ERROR_BAR_H,
             GeomKind.PIE,
             GeomKind.BOX_PLOT,
             GeomKind.Y_DOT_PLOT,
@@ -212,7 +213,7 @@ object GeomInteractionUtil {
                     }
                 }
             }
-            GeomKind.ERROR_BAR_H,
+
             GeomKind.H_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
