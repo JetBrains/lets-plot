@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.SvgRoot
+import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.vis.svg.SvgLineElement
 import kotlin.math.*
 
@@ -58,13 +59,22 @@ class LollipopGeom : PointGeom() {
     ): SvgLineElement? {
         val base = helper.toClient(originalBase, p) ?: return null // base of the lollipop stick
         val head = helper.toClient(originalHead, p) ?: return null // center of the lollipop candy
-        val shape = p.shape()!!
-        val neckLength = (shape.size(p) + shape.strokeWidth(p)) / 2.0
-        val neck = shiftHeadToBase(base, head, neckLength) // meeting point of candy and stick
+        val neck = shiftHeadToBase(base, head, neckLength(p)) // meeting point of candy and stick
         val line = SvgLineElement(base.x, base.y, neck.x, neck.y)
         GeomHelper.decorate(line, p, strokeScaler = AesScaling::pointStrokeWidth)
 
         return line
+    }
+
+    private fun neckLength(p: DataPointAesthetics): Double {
+        val shape = p.shape()!!
+        val shapeCoeff = when (shape) {
+            NamedShape.STICK_PLUS,
+            NamedShape.STICK_STAR,
+            NamedShape.STICK_CROSS -> 0.0
+            else -> 1.0
+        }
+        return (shape.size(p) + shapeCoeff * shape.strokeWidth(p)) / 2.0
     }
 
     private fun shiftHeadToBase(
