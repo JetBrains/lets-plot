@@ -13,6 +13,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
+import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
@@ -120,20 +121,44 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         messageHandler: (String) -> Unit
     ): DataFrame {
         // slice data to tiles
-        val dataByTile = PlotConfigUtil.splitLayerDataByTile(layerData, facets)
+        val dataByTileBeforeStat = PlotConfigUtil.splitLayerDataByTile(layerData, facets)
 
-        val dataByTileAfterStat = dataByTile.map { tileData ->
+        val dataByTileAfterStat = dataByTileBeforeStat.map { tileDataBeforeStat ->
+
             val facetVariables = facets.variables.mapNotNull { facetVarName ->
-                tileData.variables().firstOrNull { it.name == facetVarName }
+                tileDataBeforeStat.variables().firstOrNull { it.name == facetVarName }
             }
 
-            BackendDataProcUtil.applyStatisticalTransform(
-                data = tileData,
-                layerConfig = layerConfig,
-                statCtx = statCtx,
-                transformByAes = transformByAes,
-                facetVariables = facetVariables,
-            ) { message -> messageHandler(message) }
+            val groupingContextBeforeStat = BackendDataProcUtil.createGroupingContext(tileDataBeforeStat, layerConfig)
+
+            val tileDataAfterStat: DataFrame
+            val groupingContextAfterStat: GroupingContext
+
+            if (layerConfig.stat == Stats.IDENTITY) {
+                tileDataAfterStat = tileDataBeforeStat
+                groupingContextAfterStat = groupingContextBeforeStat
+
+            } else {
+                val result: DataProcessing.DataAndGroupingContext = BackendDataProcUtil.applyStatisticTransform(
+                    data = tileDataBeforeStat,
+                    layerConfig = layerConfig,
+                    statCtx = statCtx,
+                    transformByAes = transformByAes,
+                    facetVariables = facetVariables,
+                    groupingContext = groupingContextBeforeStat
+                ) { message -> messageHandler(message) }
+
+                tileDataAfterStat = result.data
+                groupingContextAfterStat = result.groupingContext
+
+            }
+
+            // Apply sampling to layer tile data if necessary
+            PlotSampling.apply(
+                tileDataAfterStat,
+                layerConfig.samplings,
+                groupingContextAfterStat.groupMapper
+            ) { message -> messageHandler(BackendDataProcUtil.createSamplingMessage(message, layerConfig)) }
         }
 
         // merge tiles

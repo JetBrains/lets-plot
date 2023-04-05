@@ -12,12 +12,12 @@ import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {
     private val myVectorByVar: Map<Variable, List<*>>
+
     private val myIsNumeric: MutableMap<Variable, Boolean>
     private val myIsDateTime: MutableMap<Variable, Boolean>
 
     private val myOrderSpecs: List<OrderSpec>
 
-    // volatile variables (yet)
     private val myRanges = HashMap<Variable, DoubleSpan?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 

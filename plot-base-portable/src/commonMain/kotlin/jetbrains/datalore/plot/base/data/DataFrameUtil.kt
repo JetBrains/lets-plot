@@ -89,8 +89,8 @@ object DataFrameUtil {
     fun toMap(df: DataFrame): Map<String, List<*>> {
         val result = HashMap<String, List<*>>()
         val variables = df.variables()
-        for (`var` in variables) {
-            result[`var`.name] = df[`var`]
+        for (variable in variables) {
+            result[variable.name] = df[variable]
         }
         return result
     }

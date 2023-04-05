@@ -755,7 +755,7 @@ class ScaleOrderingTest {
 
         private val legendColors = ColorPalette.Qualitative.Set2.getColors(4).map(Colors::parseColor)
 
-        private fun assertScaleOrdering(
+        internal fun assertScaleOrdering(
             geomLayer: GeomLayer,
             expectedScaleBreaks: Map<Aes<*>, List<String>>,
             expectedOrderInBar: Map<Aes<*>, List<List<*>>>
@@ -766,7 +766,7 @@ class ScaleOrderingTest {
 
             expectedOrderInBar.forEach { (aes, expected) ->
                 val breaks = geomLayer.scaleMap.getValue(aes).getScaleBreaks().domainValues
-                val breakColors = breaks.zip(legendColors).map { it.second to it.first }.toMap()
+                val breakColors = breaks.zip(legendColors).associate { it.second to it.first }
                 val actual: Map<Int, List<Any?>> =
                     getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->
                         if (aes == Aes.FILL) p.fill() else p.color()
