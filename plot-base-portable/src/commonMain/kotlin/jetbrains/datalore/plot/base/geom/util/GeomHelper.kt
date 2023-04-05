@@ -20,7 +20,6 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 import jetbrains.datalore.vis.svg.SvgNode
 import jetbrains.datalore.vis.svg.SvgShape
 import jetbrains.datalore.vis.svg.slim.SvgSlimShape
-import kotlin.math.*
 
 open class GeomHelper(
     protected val pos: PositionAdjustment,
@@ -106,63 +105,32 @@ open class GeomHelper(
         }
     }
 
-    fun createSvgElementHelper(decorateWidthBySize: Boolean = true): SvgElementHelper {
-        return SvgElementHelper(decorateWidthBySize)
+    fun createSvgElementHelper(): SvgElementHelper {
+        return SvgElementHelper()
     }
 
-    inner class SvgElementHelper(private val decorateWidthBySize: Boolean) {
+    inner class SvgElementHelper() {
         private var myStrokeAlphaEnabled = false
 
         fun setStrokeAlphaEnabled(b: Boolean) {
             myStrokeAlphaEnabled = b
         }
 
-        fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics, cutTheEnd: Boolean = false): SvgLineElement? {
+        fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement? {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
             if (start == null) return null
-            val exactEnd = toClient(end, p)
-            if (exactEnd == null) return null
             @Suppress("NAME_SHADOWING")
-            val end = if (cutTheEnd) {
-                val shape = p.shape()!!
-                val extraTailSize = (shape.size(p) + shape.strokeWidth(p)) / 2.0
-                cutTheEnd(start, exactEnd, extraTailSize)
-            } else {
-                exactEnd
-            }
+            val end = toClient(end, p)
+            if (end == null) return null
 
             val line = SvgLineElement(
                 start.x, start.y,
                 end.x, end.y
             )
-            val strokeScaler = if (decorateWidthBySize) {
-                AesScaling::strokeWidth
-            } else {
-                AesScaling::pointStrokeWidth
-            }
-            decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
+            decorate(line, p, myStrokeAlphaEnabled)
             return line
         }
-    }
-
-    private fun cutTheEnd(start: DoubleVector, end: DoubleVector, extraTailSize: Double): DoubleVector {
-        val x0 = start.x
-        val x1 = end.x
-        val y0 = start.y
-        val y1 = end.y
-        if (x0 == x1) {
-            val dy = if (y0 < y1) -extraTailSize else extraTailSize
-            return DoubleVector(x1, y1 + dy)
-        }
-        val dx = sqrt(extraTailSize.pow(2) / (1.0 + (y0 - y1).pow(2) / (x0 - x1).pow(2)))
-        val x = if (x0 < x1) {
-            x1 - dx
-        } else {
-            x1 + dx
-        }
-        val y = (x - x1) * (y0 - y1) / (x0 - x1) + y1
-        return DoubleVector(x, y)
     }
 
     companion object {
