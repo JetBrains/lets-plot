@@ -105,6 +105,7 @@ class LocatedTargetsPicker(
             AREA,
             BAR,
             ERROR_BAR,
+            ERROR_BAR_H,
             CROSS_BAR,
             LINE_RANGE,
             POINT_RANGE

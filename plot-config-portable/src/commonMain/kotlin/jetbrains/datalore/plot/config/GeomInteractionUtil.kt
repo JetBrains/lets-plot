@@ -212,7 +212,7 @@ object GeomInteractionUtil {
                     }
                 }
             }
-
+            GeomKind.ERROR_BAR_H,
             GeomKind.H_LINE,
             GeomKind.DENSITY2DF,
             GeomKind.CONTOURF,
@@ -326,7 +326,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE,
             GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
-
+            GeomKind.ERROR_BAR_H -> listOf(Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()

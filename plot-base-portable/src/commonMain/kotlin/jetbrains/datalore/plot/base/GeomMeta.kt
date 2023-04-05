@@ -147,6 +147,16 @@ object GeomMeta {
                 Aes.SIZE
             )
 
+            GeomKind.ERROR_BAR_H -> listOf(
+                Aes.Y,
+                Aes.XMIN, Aes.XMAX,
+                Aes.HEIGHT,
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.LINETYPE,
+                Aes.SIZE
+            )
+
             GeomKind.CROSS_BAR -> listOf(
                 Aes.X,
                 Aes.YMIN, Aes.YMAX, Aes.MIDDLE,

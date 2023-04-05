@@ -62,7 +62,7 @@ class RibbonGeom : GeomBase() {
         if (coord != null) {
             val hint = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(0.0)
-                .defaultX(p.x()!!)
+                .defaultCoord(p.x()!!)
                 .defaultKind(
                     if (ctx.flipped) {
                         TipLayoutHint.Kind.VERTICAL_TOOLTIP

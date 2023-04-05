@@ -60,7 +60,7 @@ class SmoothGeom : GeomBase() {
 
             val hint = HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
-                .defaultX(pX)
+                .defaultCoord(pX)
                 .defaultKind(
                     if (ctx.flipped) VERTICAL_TOOLTIP else HORIZONTAL_TOOLTIP
                 )

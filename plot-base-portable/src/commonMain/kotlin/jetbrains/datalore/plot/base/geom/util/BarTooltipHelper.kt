@@ -37,7 +37,7 @@ object BarTooltipHelper {
             }
             val hintFactory = HintsCollection.HintConfigFactory()
                 .defaultObjectRadius(objectRadius)
-                .defaultX(p.x()!!)
+                .defaultCoord(p.x()!!)
                 .defaultKind(
                     if (ctx.flipped) {
                         TipLayoutHint.Kind.ROTATED_TOOLTIP

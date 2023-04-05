@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
+import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
@@ -22,10 +23,42 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 
-class ErrorBarGeom : GeomBase() {
+open class ErrorBarGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = MyLegendKeyElementFactory()
+        get() = ErrorBarLegendKeyElementFactory(::errorBarShapeSegments)
+
+    protected open fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+        return GeomUtil.withDefined(
+            aesthetics.dataPoints(),
+            Aes.X,
+            Aes.YMIN,
+            Aes.YMAX,
+            Aes.WIDTH
+        )
+    }
+
+    protected open fun errorBarRectangle(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
+        val x = p.x()!!
+        val ymin = p.ymin()!!
+        val ymax = p.ymax()!!
+        val width = p.width()!! * ctx.getResolution(Aes.X)
+        val height = ymax - ymin
+        return DoubleRectangle(x - width / 2, ymin, width, height)
+    }
+
+    protected open fun errorBarShapeSegments(r: DoubleRectangle): List<DoubleSegment> {
+        val left = r.left
+        val top = r.top
+        val right = r.right
+        val bottom = r.bottom
+        val center = left + r.width / 2
+        return listOf(
+            DoubleSegment(DoubleVector(left, top), DoubleVector(right, top)),
+            DoubleSegment(DoubleVector(left, bottom), DoubleVector(right, bottom)),
+            DoubleSegment(DoubleVector(center, top), DoubleVector(center, bottom))
+        )
+    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -37,40 +70,25 @@ class ErrorBarGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        for (p in GeomUtil.withDefined(
-            aesthetics.dataPoints(),
-            Aes.X,
-            Aes.YMIN,
-            Aes.YMAX,
-            Aes.WIDTH
-        )) {
-            val x = p.x()!!
-            val ymin = p.ymin()!!
-            val ymax = p.ymax()!!
-            val width = p.width()!! * ctx.getResolution(Aes.X)
-            val height = ymax - ymin
-
-            val r = DoubleRectangle(x - width / 2, ymin, width, height)
-            val g = errorBarShape(r, p, geomHelper)
+        for (p in dataPoints(aesthetics)) {
+            val rect = errorBarRectangle(p, ctx)
+            val g = errorBarShape(errorBarShapeSegments(rect), p, geomHelper)
             root.add(g)
 
-            buildHints(
-                DoubleRectangle(r.left, r.center.y, r.width, 0.0),
-                p,
-                ctx,
-                geomHelper,
-                colorsByDataPoint
-            )
+            buildHints(p, ctx, geomHelper, colorsByDataPoint, root)
         }
     }
 
-    private fun buildHints(
-        rect: DoubleRectangle,
+    protected open fun buildHints(
         p: DataPointAesthetics,
         ctx: GeomContext,
         geomHelper: GeomHelper,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>,
+        root: SvgRoot
     ) {
+        val rect = with(errorBarRectangle(p, ctx)) {
+            DoubleRectangle(left, center.y, width, 0.0)
+        }
         val clientRect = geomHelper.toClient(rect, p)
         val objectRadius = clientRect?.run {
             if (ctx.flipped) {
@@ -82,7 +100,7 @@ class ErrorBarGeom : GeomBase() {
 
         val hint = HintConfigFactory()
             .defaultObjectRadius(objectRadius)
-            .defaultX(p.x()!!)
+            .defaultCoord(p.x()!!)
             .defaultKind(
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.ROTATED_TOOLTIP
@@ -111,7 +129,7 @@ class ErrorBarGeom : GeomBase() {
         )
     }
 
-    private class MyLegendKeyElementFactory :
+    private class ErrorBarLegendKeyElementFactory(private val shapeFactory: (DoubleRectangle) -> List<DoubleSegment>) :
         LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
@@ -121,46 +139,34 @@ class ErrorBarGeom : GeomBase() {
             val height = size.y - strokeWidth
             val x = (size.x - width) / 2
             val y = strokeWidth / 2
-            return errorBarLegendShape(DoubleRectangle(x, y, width, height), p)
+            return errorBarLegendShape(
+                shapeFactory(DoubleRectangle(x, y, width, height)),
+                p
+            )
         }
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun errorBarLegendShape(r: DoubleRectangle, p: DataPointAesthetics): SvgGElement {
-            val left = r.left
-            val top = r.top
-            val right = r.right
-            val bottom = r.bottom
-            val center = left + r.width / 2
-            val shapeLines = ArrayList<SvgLineElement>()
-            shapeLines.add(SvgLineElement(left, top, right, top))
-            shapeLines.add(SvgLineElement(left, bottom, right, bottom))
-            shapeLines.add(SvgLineElement(center, top, center, bottom))
-
+        private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()
-            for (shapeLine in shapeLines) {
+            segments.forEach { segment ->
+                val shapeLine = SvgLineElement(segment.start.x, segment.start.y, segment.end.x, segment.end.y)
                 GeomHelper.decorate(shapeLine, p)
                 g.children().add(shapeLine)
             }
             return g
         }
 
-        private fun errorBarShape(r: DoubleRectangle, p: DataPointAesthetics, geomHelper: GeomHelper): SvgGElement {
-            val left = r.left
-            val top = r.top
-            val right = r.right
-            val bottom = r.bottom
-            val center = left + r.width / 2
-
+        private fun errorBarShape(segments: List<DoubleSegment>, p: DataPointAesthetics, geomHelper: GeomHelper) : SvgGElement {
             val g = SvgGElement()
             val elementHelper = geomHelper.createSvgElementHelper()
             elementHelper.setStrokeAlphaEnabled(true)
-            with(g.children()) {
-                add(elementHelper.createLine(DoubleVector(left, top), DoubleVector(right, top), p)!!)
-                add(elementHelper.createLine(DoubleVector(left, bottom), DoubleVector(right, bottom), p)!!)
-                add(elementHelper.createLine(DoubleVector(center, top), DoubleVector(center, bottom), p)!!)
+            segments.forEach { segment ->
+                g.children().add(
+                    elementHelper.createLine(segment.start, segment.end, p)!!
+                )
             }
             return g
         }
