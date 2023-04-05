@@ -23,7 +23,7 @@ object PointShapeSvg {
             )
         }
         if (shape is NamedShape) {
-            val size = shape.size(p) * fatten
+            val size = shape.size(p, fatten)
             check(size.isFinite()) { "Invalid point size: $size" }
             return createNamedShape(
                 shape,

@@ -135,6 +135,10 @@ object DataProcessing {
                 put(variable, resultSeries[variable]!!)
             }
 
+// ToDo: why do we need ordering specs after stat?
+
+// ToDo: why do apply ordering specs to partial data? (i.e. when facets are used)
+
             // set ordering specifications
             val orderSpecs = orderOptions.map { orderOption ->
                 OrderOptionUtil.createOrderSpec(resultSeries.keys, statInput.bindings, orderOption, aggregateOperation)
@@ -291,6 +295,7 @@ object DataProcessing {
                 .filter { stat.hasDefaultMapping(it) }.associateBy { stat.getDefaultMapping(it) }
 
             val aesByStatVarMapped = bindings
+                // ToDo: why do we filter out stat variables here? 'Original' variables are not used in the code below.
                 .filterNot { it.variable.isStat }.associate { it.variable to it.aes }
 
             aesByStatVarDefault + aesByStatVarMapped

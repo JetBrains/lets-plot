@@ -91,6 +91,22 @@ class TooltipWithConstantTest {
         )
     }
 
+    @Test
+    fun `add constant 'size' to tooltip`() {
+        val layerSpec = """
+            "geom": "vline",
+            "xintercept": 0.25,
+            "size": 1.0,
+            "tooltips": {"lines": ["^xintercept", "^size"]}
+        """
+        val layer = buildGeomLayer(layerSpec)
+
+        assertEquals(
+            expected = listOf("0.25", "1.0"),
+            actual = getTooltipLines(layer)
+        )
+    }
+
     private fun buildGeomLayer(layerSpec: String): GeomLayer {
         val spec = """{
             "data": { "x": [0.0, 0.5] },

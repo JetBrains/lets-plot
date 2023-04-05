@@ -6,13 +6,11 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -78,29 +76,6 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
 
         xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
         yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition
-    }
-
-    override fun createLayerConfig(
-        layerOptions: Map<String, Any>,
-        sharedData: DataFrame,
-        plotMappings: Map<*, *>,
-        plotDataMeta: Map<*, *>,
-        plotOrderOptions: List<OrderOptionUtil.OrderOption>,
-        isMapPlot: Boolean
-    ): LayerConfig {
-
-        val geomName = layerOptions[Option.Layer.GEOM] as String
-        val geomKind = Option.GeomName.toGeomKind(geomName)
-        return LayerConfig(
-            layerOptions,
-            sharedData,
-            plotMappings,
-            plotDataMeta,
-            plotOrderOptions,
-            GeomProtoClientSide(geomKind),
-            clientSide = true,
-            isMapPlot
-        )
     }
 
     companion object {

@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.plotDemo.model.plotConfig.Issue_slow_tooltip
+import jetbrains.datalore.plotDemo.model.plotConfig.Issue_facet_ordering_boxplot_746
 import jetbrains.datalore.vis.demoUtils.PlotSpecsDemoWindowBatik
 
 fun main() {
-    with(Issue_slow_tooltip()) {
+    with(Issue_facet_ordering_boxplot_746()) {
         PlotSpecsDemoWindowBatik(
-            "Issue_slow_tooltip",
+            "Issue_facet_ordering_boxplot_746",
             plotSpecList()
         ).open()
     }

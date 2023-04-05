@@ -16,28 +16,16 @@ import jetbrains.datalore.plot.config.PlotConfig.Companion.PLOT_COMPUTATION_MESS
 
 object PlotConfigUtil {
 
-    fun toLayersDataByTile(dataByLayer: List<DataFrame>, facets: PlotFacets): List<List<DataFrame>> {
-        // Plot consists of one or more tiles,
-        // each tile consists of layers
-
-        val layersDataByTile: List<MutableList<DataFrame>> = if (facets.isDefined) {
-            List(facets.numTiles) { ArrayList() }
+    fun splitLayerDataByTile(
+        layerData: DataFrame,
+        facets: PlotFacets,
+    ): List<DataFrame> {
+        // Plot (i.e. each plot layer) consists of one or more tiles,
+        return if (facets.isDefined) {
+            facets.dataByTile(layerData)
         } else {
-            // Just one tile.
-            listOf(ArrayList())
+            listOf(layerData)
         }
-
-        for (layerData in dataByLayer) {
-            if (facets.isDefined) {
-                val dataByTile = facets.dataByTile(layerData)
-                for ((tileIndex, tileData) in dataByTile.withIndex()) {
-                    layersDataByTile[tileIndex].add(tileData)
-                }
-            } else {
-                layersDataByTile[0].add(layerData)
-            }
-        }
-        return layersDataByTile
     }
 
     // backend

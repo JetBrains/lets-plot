@@ -69,7 +69,7 @@ abstract class PlotConfig(
             update(MAPPING, plotMappings)
         }
 
-        layerConfigs = createLayerConfigs(sharedData)
+        layerConfigs = createLayerConfigs(sharedData, isClientSide)
 
         // build all scales
         val excludeStatVariables = !isClientSide
@@ -108,7 +108,7 @@ abstract class PlotConfig(
         }
     }
 
-    private fun createLayerConfigs(sharedData: DataFrame): List<LayerConfig> {
+    private fun createLayerConfigs(sharedData: DataFrame, isClientSide: Boolean): List<LayerConfig> {
 
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
@@ -129,6 +129,7 @@ abstract class PlotConfig(
                 getMap(MAPPING),
                 getMap(DATA_META),
                 DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
+                isClientSide,
                 isMapPlot
             )
             layerConfigs.add(layerConfig)
@@ -136,14 +137,35 @@ abstract class PlotConfig(
         return layerConfigs
     }
 
-    protected abstract fun createLayerConfig(
+    private fun createLayerConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<*, *>,
         plotDataMeta: Map<*, *>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
+        isClientSide: Boolean,
         isMapPlot: Boolean
-    ): LayerConfig
+    ): LayerConfig {
+        val geomName = layerOptions[Option.Layer.GEOM] as String
+        val geomKind = Option.GeomName.toGeomKind(geomName)
+
+        val geomProto = if (isClientSide) {
+            GeomProtoClientSide(geomKind)
+        } else {
+            GeomProto(geomKind)
+        }
+
+        return LayerConfig(
+            layerOptions,
+            sharedData,
+            plotMappings,
+            plotDataMeta,
+            plotOrderOptions,
+            geomProto,
+            clientSide = isClientSide,
+            isMapPlot
+        )
+    }
 
 
     protected fun replaceSharedData(plotData: DataFrame) {

@@ -8,8 +8,6 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.config.Option.Layer.POS
