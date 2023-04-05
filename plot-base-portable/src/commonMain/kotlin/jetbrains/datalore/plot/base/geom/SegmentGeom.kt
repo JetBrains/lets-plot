@@ -38,6 +38,7 @@ class SegmentGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val helper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
+        helper.setStrokeAlphaEnabled(true)
 
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SEGMENT, ctx)
 

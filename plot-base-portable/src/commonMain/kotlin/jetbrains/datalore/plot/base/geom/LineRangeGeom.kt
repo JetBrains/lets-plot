@@ -32,6 +32,7 @@ class LineRangeGeom : GeomBase() {
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
+        helper.setStrokeAlphaEnabled(true)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LINE_RANGE, ctx)
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX)) {
             val x = p.x()!!
