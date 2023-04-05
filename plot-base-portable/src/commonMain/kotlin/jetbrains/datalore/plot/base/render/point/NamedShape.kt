@@ -56,7 +56,7 @@ enum class NamedShape(
 
 
     @Suppress("RedundantModalityModifier")
-    final override fun size(dataPoint: DataPointAesthetics): Double {
+    final override fun size(dataPoint: DataPointAesthetics, fatten: Double): Double {
         val diameter = if (isSmall)
             AesScaling.circleDiameterSmaller(dataPoint)
         else
@@ -76,7 +76,7 @@ enum class NamedShape(
             shapeCoeff * strokeWidth(dataPoint)
         }
 
-        return diameter + strokeCoeff
+        return diameter * fatten + strokeCoeff
     }
 
     @Suppress("RedundantModalityModifier")

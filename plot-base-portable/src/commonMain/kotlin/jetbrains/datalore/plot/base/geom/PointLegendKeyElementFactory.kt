@@ -23,7 +23,7 @@ internal class PointLegendKeyElementFactory(private val fatten: Double = 1.0) :
 
     override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
         val shape = p.shape()!!
-        val shapeSize = shape.size(p) * fatten
+        val shapeSize = shape.size(p, fatten)
         val strokeWidth = shape.strokeWidth(p)
         val size = shapeSize + strokeWidth + 2.0
         return DoubleVector(size, size)

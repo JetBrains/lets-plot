@@ -16,7 +16,7 @@ object TinyPointShape : PointShape {
         return 0.0
     }
 
-    override fun size(dataPoint: DataPointAesthetics): Double {
+    override fun size(dataPoint: DataPointAesthetics, fatten: Double): Double {
         return 1.0
     }
 }
