@@ -6,16 +6,18 @@
 package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.NamedShape
+import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgLineElement
 import kotlin.math.*
 
-class LollipopGeom : PointGeom() {
+class LollipopGeom : PointGeom(), WithWidth, WithHeight {
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
 
@@ -43,9 +45,7 @@ class LollipopGeom : PointGeom() {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
-            val baseY = slope * baseX + intercept
-            val base = DoubleVector(baseX, baseY)
+            val base = getBase(x, y)
             val stick = createStick(base, head, p, helper) ?: continue
             root.add(stick)
         }
@@ -100,6 +100,49 @@ class LollipopGeom : PointGeom() {
         val y = (x - x1) * (y0 - y1) / (x0 - x1) + y1
 
         return DoubleVector(x, y)
+    }
+
+    override fun widthSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return span(p, coordAes)
+    }
+
+    override fun heightSpan(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>,
+        resolution: Double,
+        isDiscrete: Boolean
+    ): DoubleSpan? {
+        return span(p, coordAes)
+    }
+
+    private fun span(
+        p: DataPointAesthetics,
+        coordAes: Aes<Double>
+    ): DoubleSpan? {
+        val x = p.x()
+        val y = p.y()
+        if (!SeriesUtil.allFinite(x, y)) {
+            return null
+        }
+        val base = getBase(x!!, y!!)
+
+        return when (coordAes) {
+            Aes.X -> DoubleSpan(base.x, x)
+            Aes.Y -> DoubleSpan(base.y, y)
+            else -> throw IllegalArgumentException("Aesthetic ${coordAes.name} is not consumed by spanning function")
+        }
+    }
+
+    private fun getBase(x: Double, y: Double): DoubleVector {
+        val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
+        val baseY = slope * baseX + intercept
+
+        return DoubleVector(baseX, baseY)
     }
 
     companion object {

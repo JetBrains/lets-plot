@@ -52,12 +52,6 @@ class Lollipop {
                 "                'name': 'fixed'," +
                 "                'ratio': 1.0" +
                 "             }," +
-                "   'scales': [" +
-                "                 {" +
-                "                    'aesthetic': 'x'," +
-                "                    'limits': [-2, 5]" +
-                "                 }" +
-                "             ]," +
                 "   'ggtitle': {" +
                 "                'text': 'Perpendicular to the line'" +
                 "              }," +
