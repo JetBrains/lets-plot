@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
@@ -24,6 +25,9 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = PointLegendKeyElementFactory()
 
     override fun buildIntern(
         root: SvgRoot,
