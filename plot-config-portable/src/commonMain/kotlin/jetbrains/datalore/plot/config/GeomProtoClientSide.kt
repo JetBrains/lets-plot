@@ -280,6 +280,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Lollipop.INTERCEPT)) {
                     geom.intercept = opts.getDoubleDef(Lollipop.INTERCEPT, LollipopGeom.DEF_INTERCEPT)
                 }
+                if (opts.hasOwn(Lollipop.DIRECTION)) {
+                    geom.direction = LollipopGeom.Direction.safeValueOf(opts.getString(Lollipop.DIRECTION)!!)
+                }
                 geom
             }
 

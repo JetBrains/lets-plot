@@ -6209,7 +6209,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
 
 def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                  fatten=None, slope=None, intercept=None,
+                  fatten=None, slope=None, intercept=None, direction=None,
                   color_by=None, fill_by=None,
                   **other_args):
     """
@@ -6248,6 +6248,11 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         The baseline slope.
     intercept : float
         The value of y at the point where the baseline crosses the y axis.
+    direction : {'perpendicular', 'vertical', 'horizontal'}, default='perpendicular'
+        Direction of the lollipop sticks.
+        If `direction='perpendicular'`, they are perpendicular to the base line.
+        If `direction='vertical'`, they are perpendicular to the x axis.
+        If `direction='horizontal'`, they are perpendicular to the y axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
@@ -6319,7 +6324,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 fatten=fatten, slope=slope, intercept=intercept,
+                 fatten=fatten, slope=slope, intercept=intercept, direction=direction,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 

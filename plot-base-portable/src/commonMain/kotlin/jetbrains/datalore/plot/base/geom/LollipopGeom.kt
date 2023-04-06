@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
@@ -25,6 +26,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
+    var direction: Direction = DEF_DIRECTION
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -168,16 +170,41 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     }
 
     private fun getBase(x: Double, y: Double): DoubleVector {
-        val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
-        val baseY = slope * baseX + intercept
+        return when (direction) {
+            Direction.PERPENDICULAR -> {
+                val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
+                val baseY = slope * baseX + intercept
+                DoubleVector(baseX, baseY)
+            }
+            Direction.VERTICAL -> DoubleVector(x, slope * x + intercept)
+            Direction.HORIZONTAL -> {
+                require(slope != 0.0) { "Horizontal lollipop direction is incompatible with zero slope of baseline" }
+                DoubleVector((y - intercept) / slope, y)
+            }
+        }
+    }
 
-        return DoubleVector(baseX, baseY)
+    enum class Direction {
+        PERPENDICULAR, VERTICAL, HORIZONTAL;
+
+        companion object {
+
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Direction>()
+
+            fun safeValueOf(v: String): Direction {
+                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
+                    "Unsupported direction: '$v'\n" +
+                    "Use one of: perpendicular, vertical, horizontal."
+                )
+            }
+        }
     }
 
     companion object {
         const val DEF_FATTEN = 2.5
         const val DEF_SLOPE = 0.0
         const val DEF_INTERCEPT = 0.0
+        val DEF_DIRECTION = Direction.PERPENDICULAR
 
         const val HANDLES_GROUPS = PointGeom.HANDLES_GROUPS
     }
