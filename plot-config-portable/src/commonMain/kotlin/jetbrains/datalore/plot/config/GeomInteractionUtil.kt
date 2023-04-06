@@ -179,7 +179,6 @@ object GeomInteractionUtil {
                 GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             }
 
-            GeomKind.ERROR_BAR_H,
             GeomKind.PIE,
             GeomKind.BOX_PLOT,
             GeomKind.Y_DOT_PLOT,
@@ -189,6 +188,7 @@ object GeomInteractionUtil {
                 axisTooltipVisibilityFromConfig = true
             )
 
+            GeomKind.ERROR_BAR_H,
             GeomKind.TEXT,
             GeomKind.LABEL,
             GeomKind.POINT,
