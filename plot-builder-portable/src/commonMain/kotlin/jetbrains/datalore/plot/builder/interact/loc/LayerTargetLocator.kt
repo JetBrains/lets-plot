@@ -57,7 +57,7 @@ internal class LayerTargetLocator(
         fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
                 POINT -> PointTargetProjection.create(
-                    prototype.hitShape.point.center,
+                    prototype.hitShape.point,
                     lookupSpec.lookupSpace
                 )
 
@@ -180,8 +180,9 @@ internal class LayerTargetLocator(
         if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
-            val yOffset = when (target.prototype.tooltipKind) {
-                CURSOR_TOOLTIP -> rect.height / 2.0
+            val yOffset = when {
+                target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
+                geomKind == GeomKind.ERROR_BAR_H -> rect.height / 2.0
                 else -> 0.0
             }
 
@@ -211,7 +212,7 @@ internal class LayerTargetLocator(
 
             resultCollector.collect(
                 target.prototype.createGeomTarget(
-                    target.prototype.hitShape.point.center,
+                    target.prototype.hitShape.point,
                     getKeyForSingleObjectGeometry(target.prototype)
                 )
             )

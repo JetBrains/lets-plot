@@ -97,7 +97,8 @@ class ErrorBarHGeom : ErrorBarGeom() {
                 TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
             } else {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
-            }
+            },
+            useWidthForHintOffset = false
         )
     }
 

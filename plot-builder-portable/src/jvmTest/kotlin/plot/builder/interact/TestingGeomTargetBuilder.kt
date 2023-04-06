@@ -37,7 +37,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
     }
 
     fun withRectHitShape(rect: DoubleRectangle): TestingGeomTargetBuilder {
-        myHintShape = HitShape.rect(rect)
+        myHintShape = HitShape.rect(rect, hintOffset = rect.width / 2)
         return this
     }
 

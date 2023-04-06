@@ -55,7 +55,7 @@ class TargetPrototype(
                     VERTICAL_TOOLTIP ->
                         verticalTooltip(
                             hitCoord,
-                            hitShape.point.radius,
+                            hitShape.hintOffset,
                             stemLength,
                             fillColor,
                             markerColors
@@ -66,10 +66,22 @@ class TargetPrototype(
                 }
 
                 RECT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> verticalTooltip(hitCoord, hitShape.rect.width / 2, stemLength, fillColor, markerColors)
-                    HORIZONTAL_TOOLTIP -> horizontalTooltip(hitCoord, hitShape.rect.width / 2, stemLength, fillColor, markerColors)
+                    VERTICAL_TOOLTIP -> verticalTooltip(
+                        hitCoord,
+                        hitShape.hintOffset,
+                        stemLength,
+                        fillColor,
+                        markerColors
+                    )
+                    HORIZONTAL_TOOLTIP -> horizontalTooltip(
+                        hitCoord,
+                        hitShape.hintOffset,
+                        stemLength,
+                        fillColor,
+                        markerColors
+                    )
                     CURSOR_TOOLTIP -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
-                    ROTATED_TOOLTIP -> rotatedTooltip(hitCoord, 0.0, null, stemLength)
+                    ROTATED_TOOLTIP -> rotatedTooltip(hitCoord, objectRadius = 0.0, color = null, stemLength)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
                 }
 

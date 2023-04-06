@@ -45,16 +45,18 @@ class LayerTargetCollectorWithLocator(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipKind: TipLayoutHint.Kind,
+        useWidthForHintOffset: Boolean
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
             if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColors.all { it.alpha == 0 }) {
                 return
             }
         }
+        val hintOffset = if (useWidthForHintOffset) rectangle.width / 2 else rectangle.height / 2
         addTarget(
             TargetPrototype(
-                HitShape.rect(rectangle),
+                HitShape.rect(rectangle, hintOffset),
                 { index },
                 tooltipParams,
                 tooltipKind
