@@ -137,7 +137,7 @@ Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories
 
 Close and release repository to the Maven Central:
 
-`./gradlew findMavenStagingRepository closeMavenStagingRepository`
+`./gradlew findMavenStagingRepository closeAndReleaseMavenStagingRepository`
 
 This operation can take up to 5 minutes.
 
