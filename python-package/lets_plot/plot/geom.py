@@ -6209,7 +6209,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
 
 def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                  slope=None, intercept=None,
+                  fatten=None, slope=None, intercept=None,
                   color_by=None, fill_by=None,
                   **other_args):
     """
@@ -6242,6 +6242,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
+    fatten : float, default=2.5
+        A multiplicative factor applied to size of the point.
     slope : float
         The baseline slope.
     intercept : float
@@ -6316,7 +6318,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
-                 slope=slope, intercept=intercept,
+                 fatten=fatten, slope=slope, intercept=intercept,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 

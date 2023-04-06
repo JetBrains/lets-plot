@@ -298,6 +298,7 @@ object Option {
         }
 
         object Lollipop {
+            const val FATTEN = "fatten"
             const val SLOPE = "slope"
             const val INTERCEPT = "intercept"
         }

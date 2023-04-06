@@ -271,6 +271,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
                 val geom = LollipopGeom()
+                if (opts.hasOwn(Lollipop.FATTEN)) {
+                    geom.fatten = opts.getDoubleDef(Lollipop.FATTEN, LollipopGeom.DEF_FATTEN)
+                }
                 if (opts.hasOwn(Lollipop.SLOPE)) {
                     geom.slope = opts.getDoubleDef(Lollipop.SLOPE, LollipopGeom.DEF_SLOPE)
                 }

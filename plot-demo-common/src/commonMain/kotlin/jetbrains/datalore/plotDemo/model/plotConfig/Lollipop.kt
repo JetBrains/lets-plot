@@ -63,9 +63,9 @@ class Lollipop {
                 "               }," +
                 "               {" +
                 "                 'geom': 'lollipop'," +
-                "                 'size': 10," +
+                "                 'size': 4," +
                 "                 'stroke': 5," +
-                "                 'shape': 25," +
+                "                 'shape': 21," +
                 "                 'color': 'blue'," +
                 "                 'fill': 'red'," +
                 "                 'linetype': 'dotted'," +

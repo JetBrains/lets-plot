@@ -13,26 +13,18 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.NamedShape
+import jetbrains.datalore.plot.base.render.point.PointShapeSvg
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 import kotlin.math.*
 
-class LollipopGeom : PointGeom(), WithWidth, WithHeight {
+class LollipopGeom : GeomBase(), WithWidth, WithHeight {
+    var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
 
     override fun buildIntern(
-        root: SvgRoot,
-        aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
-    ) {
-        buildSticks(root, aesthetics, pos, coord, ctx)
-        super.buildIntern(root, aesthetics, pos, coord, ctx)
-    }
-
-    private fun buildSticks(
         root: SvgRoot,
         aesthetics: Aesthetics,
         pos: PositionAdjustment,
@@ -45,10 +37,22 @@ class LollipopGeom : PointGeom(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
+            root.add(createCandy(head, p, helper))
             val base = getBase(x, y)
             val stick = createStick(base, head, p, helper) ?: continue
             root.add(stick)
         }
+    }
+
+    private fun createCandy(
+        place: DoubleVector,
+        p: DataPointAesthetics,
+        helper: GeomHelper
+    ): SvgGElement {
+        val location = helper.toClient(place, p)!!
+        val shape = p.shape()!!
+        val o = PointShapeSvg.create(shape, location, p, fatten)
+        return wrap(o)
     }
 
     private fun createStick(
@@ -74,7 +78,7 @@ class LollipopGeom : PointGeom(), WithWidth, WithHeight {
             NamedShape.STICK_CROSS -> 0.0
             else -> 1.0
         }
-        return (shape.size(p) + shapeCoeff * shape.strokeWidth(p)) / 2.0
+        return (shape.size(p, fatten) + shapeCoeff * shape.strokeWidth(p)) / 2.0
     }
 
     private fun shiftHeadToBase(
@@ -146,6 +150,7 @@ class LollipopGeom : PointGeom(), WithWidth, WithHeight {
     }
 
     companion object {
+        const val DEF_FATTEN = 2.5
         const val DEF_SLOPE = 0.0
         const val DEF_INTERCEPT = 0.0
 
