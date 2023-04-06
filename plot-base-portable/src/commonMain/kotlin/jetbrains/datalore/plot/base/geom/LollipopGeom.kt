@@ -67,14 +67,31 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     ): SvgLineElement? {
         val base = helper.toClient(originalBase, p) ?: return null // base of the lollipop stick
         val head = helper.toClient(originalHead, p) ?: return null // center of the lollipop candy
-        val neck = shiftHeadToBase(base, head, neckLength(p)) // meeting point of candy and stick
+        val neck = shiftHeadToBase(base, head, candyRadius(p)) // meeting point of candy and stick
         val line = SvgLineElement(base.x, base.y, neck.x, neck.y)
         GeomHelper.decorate(line, p, strokeScaler = AesScaling::pointStrokeWidth)
 
         return line
     }
 
-    private fun neckLength(p: DataPointAesthetics): Double {
+    private fun buildHint(
+        place: DoubleVector,
+        p: DataPointAesthetics,
+        helper: GeomHelper,
+        targetCollector: GeomTargetCollector,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    ) {
+        targetCollector.addPoint(
+            p.index(),
+            helper.toClient(place, p)!!,
+            candyRadius(p),
+            GeomTargetCollector.TooltipParams(
+                markerColors = colorsByDataPoint(p)
+            )
+        )
+    }
+
+    private fun candyRadius(p: DataPointAesthetics): Double {
         val shape = p.shape()!!
         val shapeCoeff = when (shape) {
             NamedShape.STICK_PLUS,
@@ -108,25 +125,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val y = (x - x1) * (y0 - y1) / (x0 - x1) + y1
 
         return DoubleVector(x, y)
-    }
-
-    private fun buildHint(
-        place: DoubleVector,
-        p: DataPointAesthetics,
-        helper: GeomHelper,
-        targetCollector: GeomTargetCollector,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
-    ) {
-        val shape = p.shape()!!
-        val radius = (shape.size(p, fatten) + shape.strokeWidth(p)) / 2.0
-        targetCollector.addPoint(
-            p.index(),
-            helper.toClient(place, p)!!,
-            radius,
-            GeomTargetCollector.TooltipParams(
-                markerColors = colorsByDataPoint(p)
-            )
-        )
     }
 
     override fun widthSpan(
