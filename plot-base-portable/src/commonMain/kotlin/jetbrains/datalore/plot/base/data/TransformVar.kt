@@ -26,6 +26,7 @@ object TransformVar {
     val LINETYPE = DataFrame.Variable("transform.LINETYPE", TRANSFORM)
     val SIZE = DataFrame.Variable("transform.SIZE", TRANSFORM)
     val STROKE = DataFrame.Variable("transform.STROKE", TRANSFORM)
+    val LINEWIDTH = DataFrame.Variable("transform.LINEWIDTH", TRANSFORM)
     val STACKSIZE = DataFrame.Variable("transform.STACKSIZE", TRANSFORM)
     val WIDTH = DataFrame.Variable("transform.WIDTH", TRANSFORM)
     val HEIGHT = DataFrame.Variable("transform.HEIGHT", TRANSFORM)
@@ -151,6 +152,10 @@ object TransformVar {
 
         override fun stroke(): DataFrame.Variable {
             return STROKE
+        }
+
+        override fun linewidth(): DataFrame.Variable {
+            return LINEWIDTH
         }
 
         override fun stacksize(): DataFrame.Variable {

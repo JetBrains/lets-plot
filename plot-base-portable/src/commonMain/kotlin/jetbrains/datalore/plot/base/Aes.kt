@@ -41,6 +41,7 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         val SIZE: Aes<Double> = Aes("size")
         val STROKE: Aes<Double> = Aes("stroke")
+        val LINEWIDTH: Aes<Double> = Aes("linewidth")
         val STACKSIZE: Aes<Double> = Aes("stacksize")
         val WIDTH: Aes<Double> = Aes("width")
         val HEIGHT: Aes<Double> = Aes("height")

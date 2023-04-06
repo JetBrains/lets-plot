@@ -387,6 +387,7 @@ object GeomMeta {
                 Aes.X, Aes.Y,
                 Aes.SIZE,
                 Aes.STROKE,
+                Aes.LINEWIDTH,
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
