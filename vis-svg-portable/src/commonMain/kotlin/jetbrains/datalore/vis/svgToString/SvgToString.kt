@@ -85,11 +85,28 @@ class SvgToString(private val rgbEncoder: RGBEncoder?) {
 
     private fun renderTextNode(node: SvgTextNode, buffer: StringBuilder, level: Int) {
         crlf(buffer, level)
-        buffer.append(node.textContent().get())
+        buffer.append(htmlEscape(node.textContent().get()))
     }
 
     companion object {
         private const val TAB = 2
+
+        fun htmlEscape(str: String): String {
+            val escaped = StringBuilder()
+            str.forEach { ch ->
+                escaped.append(
+                    when (ch) {
+                        '&' -> "&amp;"
+                        '<' -> "&lt;"
+                        '>' -> "&gt;"
+                        '"' -> "&quot;"
+                        '\'' -> "&#39;"
+                        else -> ch
+                    }
+                )
+            }
+            return escaped.toString()
+        }
 
         fun crlf(buffer: StringBuilder, level: Int) {
             buffer.append('\n')
