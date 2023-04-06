@@ -7,10 +7,11 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.*
+import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
@@ -32,6 +33,8 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val helper = GeomHelper(pos, coord, ctx)
+        val targetCollector = getGeomTargetCollector(ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LOLLIPOP, ctx)
 
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
             val x = p.x()!!
@@ -41,6 +44,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val base = getBase(x, y)
             val stick = createStick(base, head, p, helper) ?: continue
             root.add(stick)
+            buildHint(head, p, helper, targetCollector, colorsByDataPoint)
         }
     }
 
@@ -104,6 +108,25 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val y = (x - x1) * (y0 - y1) / (x0 - x1) + y1
 
         return DoubleVector(x, y)
+    }
+
+    private fun buildHint(
+        place: DoubleVector,
+        p: DataPointAesthetics,
+        helper: GeomHelper,
+        targetCollector: GeomTargetCollector,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    ) {
+        val shape = p.shape()!!
+        val radius = (shape.size(p, fatten) + shape.strokeWidth(p)) / 2.0
+        targetCollector.addPoint(
+            p.index(),
+            helper.toClient(place, p)!!,
+            radius,
+            GeomTargetCollector.TooltipParams(
+                markerColors = colorsByDataPoint(p)
+            )
+        )
     }
 
     override fun widthSpan(

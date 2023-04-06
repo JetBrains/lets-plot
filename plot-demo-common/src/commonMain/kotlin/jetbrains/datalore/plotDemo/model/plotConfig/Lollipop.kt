@@ -19,11 +19,13 @@ class Lollipop {
         val spec = "{" +
                 "   'kind': 'plot'," +
                 "   'data' : {'x': [0, 1, 2, 3]," +
-                "             'y': [1, 3, -1, 2]" +
+                "             'y': [1, 3, -1, 2]," +
+                "             'g': ['a', 'a', 'b', 'a']" +
                 "            }," +
                 "   'mapping': {" +
                 "                'x': 'x'," +
-                "                'y': 'y'" +
+                "                'y': 'y'," +
+                "                'color': 'g'" +
                 "              }," +
                 "   'ggtitle': {" +
                 "                'text': 'Default lollipop'" +

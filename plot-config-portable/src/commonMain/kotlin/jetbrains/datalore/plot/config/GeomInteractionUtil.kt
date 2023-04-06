@@ -367,8 +367,7 @@ object GeomInteractionUtil {
             GeomKind.PATH,
             GeomKind.SEGMENT,
             GeomKind.RIBBON,
-            GeomKind.SMOOTH,
-            GeomKind.LOLLIPOP -> true
+            GeomKind.SMOOTH -> true
 
             else -> false
         }
