@@ -36,8 +36,8 @@ object DataMetaUtil {
         return variable.removePrefix(prefix)
     }
 
-    private fun Map<*, *>.getMappingAnnotationsSpec(annotation: String): List<Map<*, *>> {
-        return this
+    private fun getMappingAnnotationsSpec(options: Map<*, *>, annotation: String): List<Map<*, *>> {
+        return options
             .getMap(Option.Meta.DATA_META)
             ?.getMaps(MappingAnnotation.TAG)
             ?.filter { it.read(ANNOTATION) == annotation }
@@ -57,16 +57,16 @@ object DataMetaUtil {
     }
 
     fun createScaleSpecs(plotOptions: Map<String, Any>): List<MutableMap<String, Any?>> {
-        val plotDiscreteAnnotations = plotOptions.getMappingAnnotationsSpec(AS_DISCRETE)
+        val plotDiscreteAnnotations = getMappingAnnotationsSpec(plotOptions, AS_DISCRETE)
 
         val layersDiscreteAnnotations = plotOptions
             .getMaps(Option.Plot.LAYERS)
-            ?.map { layerOptions -> layerOptions.getMappingAnnotationsSpec(AS_DISCRETE) }
+            ?.map { layerOptions -> getMappingAnnotationsSpec(layerOptions, AS_DISCRETE) }
             ?.flatten()
             ?: emptyList()
 
         return (plotDiscreteAnnotations + layersDiscreteAnnotations)
-            .groupBy ({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
+            .groupBy({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
             .mapValues { (_, labels) -> labels.findLast { it != null } } // {aes: last_not_null_label}
             .map { (aes, label) ->
                 mutableMapOf(
@@ -74,7 +74,7 @@ object DataMetaUtil {
                     Scale.DISCRETE_DOMAIN to true,
                     Scale.NAME to label
                 )
-        }
+            }
     }
 
     /**
@@ -120,7 +120,8 @@ object DataMetaUtil {
         // Original (not encoded) discrete var names from both common and own mappings.
         val combinedDiscreteVars = run {
             // common names already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
-            val commonDiscreteVars = commonMappings.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
+            val commonDiscreteVars =
+                commonMappings.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
 
             val ownSimpleVars = ownMappings.variables() - ownDiscreteMappings.variables()
 
@@ -144,11 +145,10 @@ object DataMetaUtil {
         )
     }
 
-    fun getOrderOptions(options: Map<*, *>?, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
-        return options
-            ?.getMappingAnnotationsSpec(AS_DISCRETE)
-            ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
-            ?.mapNotNull { (aesName, parameters) ->
+    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+        return getMappingAnnotationsSpec(options, AS_DISCRETE)
+            .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
+            .mapNotNull { (aesName, parameters) ->
                 check(aesName in commonMappings)
                 val variableName = commonMappings[aesName] as String
                 OrderOptionUtil.OrderOption.create(
@@ -157,7 +157,6 @@ object DataMetaUtil {
                     parameters?.read(ORDER)
                 )
             }
-            ?: emptyList()
     }
 
     fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {

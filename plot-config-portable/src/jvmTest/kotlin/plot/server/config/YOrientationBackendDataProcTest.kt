@@ -57,8 +57,9 @@ class YOrientationBackendDataProcTest {
         val dataAfterStat = DataFrameUtil.toMap(layerConfig.ownData!!)
         assertEquals(expected.data, dataAfterStat)
 
-        val layerOptions = layerConfig.mergedOptions
-        val dataMeta = layerOptions.getValue(DATA_META) as Map<*, *>
+//        val layerOptions = layerConfig.mergedOptions
+//        val dataMeta = layerOptions.getValue(DATA_META) as Map<*, *>
+        val dataMeta = layerConfig.getMap(DATA_META)
         if (expected.asDiscreteAesSet.isNotEmpty()) {
             val asDiscreteAesSet = DataMetaUtil.getAsDiscreteAesSet(dataMeta)
             assertEquals(expected.asDiscreteAesSet, asDiscreteAesSet)

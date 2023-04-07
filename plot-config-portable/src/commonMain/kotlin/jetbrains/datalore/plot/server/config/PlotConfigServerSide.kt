@@ -226,7 +226,8 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             return HashSet<String>() +
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
-                    listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
+//                    listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
+                    listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
                     facets.variables +
                     listOfNotNull(layerConfig.explicitGroupingVarName) +

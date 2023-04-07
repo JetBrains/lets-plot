@@ -163,7 +163,8 @@ class LayerConfig constructor(
         fillByAes = getPaintAes(Aes.FILL, explicitConstantAes)
         renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
 
-        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
+//        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
+        stat = StatProto.createStat(statKind, this)
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
                 true -> it

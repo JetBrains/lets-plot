@@ -128,7 +128,8 @@ abstract class PlotConfig(
                 sharedData,
                 getMap(MAPPING),
                 getMap(DATA_META),
-                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
+//                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
+                DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING)),
                 isClientSide,
                 isMapPlot
             )
