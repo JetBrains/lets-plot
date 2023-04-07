@@ -158,27 +158,9 @@ class LayerConfig constructor(
             .filter(::hasOwn)
             .map(Option.Mapping::toAes)
 
-        // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
-        // And the constant cancels mappings => the constant cancels color/fill_by.
-        fun getAesOverriding(aes: Aes<Color>): Aes<Color> {
-            val optionName = when (aes) {
-                Aes.COLOR -> Option.Layer.COLOR_BY
-                Aes.FILL -> Option.Layer.FILL_BY
-                else -> aes.name
-            }
-            return when (aes) {
-                in explicitConstantAes -> aes
-                else -> when (val colorBy = getColorAes(optionName)) {
-                    null -> aes
-                    in explicitConstantAes -> aes
-                    else -> colorBy
-                }
-            }
-        }
-
-        colorByAes = getAesOverriding(Aes.COLOR)
-        fillByAes = getAesOverriding(Aes.FILL)
         // Get renders with replacing color aesthetics
+        colorByAes = getPaintAes(Aes.COLOR, explicitConstantAes)
+        fillByAes = getPaintAes(Aes.FILL, explicitConstantAes)
         renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
 
         stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
@@ -378,12 +360,32 @@ class LayerConfig constructor(
         return Pair(dataVar, mapVar)
     }
 
-    private fun OptionsAccessor.getColorAes(option: String): Aes<Color>? {
-        return getString(option)?.let {
-            val aes = Option.Mapping.toAes(it)
-            require(Aes.isColor(aes)) { "'$option' should be an aesthetic related to color" }
-            @Suppress("UNCHECKED_CAST")
-            aes as Aes<Color>
+    // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
+    // And the constant cancels mappings => the constant cancels color/fill_by.
+    private fun getPaintAes(aes: Aes<Color>, explicitConstantAes: List<Aes<*>>): Aes<Color> {
+
+        return when (aes) {
+            in explicitConstantAes -> aes
+            else -> {
+                val optionName = when (aes) {
+                    Aes.COLOR -> Option.Layer.COLOR_BY
+                    Aes.FILL -> Option.Layer.FILL_BY
+                    else -> aes.name
+                }
+
+                val colorBy: Aes<Color>? = getString(optionName)?.let { aesName ->
+                    val aesByName = Option.Mapping.toAes(aesName)
+                    require(Aes.isColor(aesByName)) { "'$optionName' should be an aesthetic related to color" }
+                    @Suppress("UNCHECKED_CAST")
+                    aesByName as Aes<Color>
+                }
+
+                when (colorBy) {
+                    null -> aes
+                    in explicitConstantAes -> aes
+                    else -> colorBy
+                }
+            }
         }
     }
 
