@@ -60,9 +60,12 @@ object Option {
 
         object SeriesAnnotation {
             const val TAG = "series_annotations"
-            const val COLUMN = "column"
-            const val TYPE = "type"
 
+            const val COLUMN = "column"   // a.k.a. variable name
+            const val TYPE = "type"
+            const val FACTOR_LEVELS = "factor_levels" // annotation for discrete variables
+
+            // Values of the "TYPE" property
             object DateTime {
                 const val DATE_TIME = "datetime"
                 const val TIME_ZONE = "time_zone"
