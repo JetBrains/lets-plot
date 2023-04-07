@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class TooltipSpecFactoryHintShapeTest : jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper() {
+class TooltipSpecFactoryHintShapeTest : TooltipSpecTestHelper() {
 
     @BeforeTest
     fun setUp() {

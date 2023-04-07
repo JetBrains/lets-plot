@@ -35,11 +35,11 @@ internal class LayerTargetLocator(
                 // fix overlapping tooltips under cursor
                 Collector.CollectingStrategy.REPLACE
             }
-            lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X && lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NEAREST -> {
+            lookupSpec.lookupSpace.isUnivariate() && lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.NEAREST -> {
                 // collect all with a minimum distance from cursor
                 Collector.CollectingStrategy.APPEND_IF_EQUAL
             }
-            lookupSpec.lookupSpace === GeomTargetLocator.LookupSpace.X -> {
+            lookupSpec.lookupSpace.isUnivariate() -> {
                 Collector.CollectingStrategy.APPEND
             }
             lookupSpec.lookupStrategy === GeomTargetLocator.LookupStrategy.HOVER -> {
@@ -57,7 +57,7 @@ internal class LayerTargetLocator(
         fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
                 POINT -> PointTargetProjection.create(
-                    prototype.hitShape.point,
+                    prototype.hitShape.point.center,
                     lookupSpec.lookupSpace
                 )
 
@@ -100,7 +100,7 @@ internal class LayerTargetLocator(
         targets.add(
             GeomTargetLocator.LookupResult(
                 collector.collection(),
-                // Distance can be negative when lookup space is X
+                // Distance can be negative when lookup space is X or Y
                 // In this case use 0.0 as a distance - we have a direct hit.
                 max(0.0, collector.closestPointChecker.distance),
                 geomKind,
@@ -182,14 +182,20 @@ internal class LayerTargetLocator(
             val rect = target.prototype.hitShape.rect
             val yOffset = when {
                 target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
-                geomKind == GeomKind.ERROR_BAR_H -> rect.height / 2.0
+                lookupSpec.lookupSpace == GeomTargetLocator.LookupSpace.Y -> rect.height / 2.0
+                else -> 0.0
+            }
+            val hintOffset = when (lookupSpec.lookupSpace) {
+                GeomTargetLocator.LookupSpace.X -> rect.width / 2
+                GeomTargetLocator.LookupSpace.Y -> rect.height / 2
                 else -> 0.0
             }
 
             resultCollector.collect(
                 target.prototype.createGeomTarget(
                     rect.origin.add(DoubleVector(rect.width / 2, yOffset)),
-                    getKeyForSingleObjectGeometry(target.prototype)
+                    getKeyForSingleObjectGeometry(target.prototype),
+                    objectRadius = hintOffset
                 )
             )
         }
@@ -212,8 +218,9 @@ internal class LayerTargetLocator(
 
             resultCollector.collect(
                 target.prototype.createGeomTarget(
-                    target.prototype.hitShape.point,
-                    getKeyForSingleObjectGeometry(target.prototype)
+                    target.prototype.hitShape.point.center,
+                    getKeyForSingleObjectGeometry(target.prototype),
+                    objectRadius = target.prototype.hitShape.point.radius
                 )
             )
         }
@@ -263,10 +270,10 @@ internal class LayerTargetLocator(
         lookupSpace: GeomTargetLocator.LookupSpace
     ) {
         private val result = ArrayList<T>()
-        val closestPointChecker: ClosestPointChecker = if (lookupSpace == GeomTargetLocator.LookupSpace.X) {
-            ClosestPointChecker(DoubleVector(cursor.x, 0.0))
-        } else {
-            ClosestPointChecker(cursor)
+        val closestPointChecker: ClosestPointChecker = when (lookupSpace) {
+            GeomTargetLocator.LookupSpace.X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
+            GeomTargetLocator.LookupSpace.Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))
+            else -> ClosestPointChecker(cursor)
         }
         private var myLastAddedDistance: Double = -1.0
 

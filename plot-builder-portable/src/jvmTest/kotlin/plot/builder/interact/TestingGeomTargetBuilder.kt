@@ -37,7 +37,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
     }
 
     fun withRectHitShape(rect: DoubleRectangle): TestingGeomTargetBuilder {
-        myHintShape = HitShape.rect(rect, hintOffset = rect.width / 2)
+        myHintShape = HitShape.rect(rect)
         return this
     }
 
@@ -67,11 +67,16 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
             IGNORED_HIT_INDEX,
             createTipLayoutHint(
                 myTargetHitCoord,
-                myHintShape,
+                myHintShape.kind,
                 detectTipLayoutHint(myHintShape.kind),
                 TipLayoutHint.StemLength.NORMAL,
                 fillColor = myFill,
-                markerColors = emptyList()
+                markerColors = emptyList(),
+                objectRadius = if (myHintShape.kind == HitShape.Kind.RECT) {
+                    myHintShape.rect.width / 2
+                } else {
+                    0.0
+                }
             ),
             myAesTipLayoutHints
         )

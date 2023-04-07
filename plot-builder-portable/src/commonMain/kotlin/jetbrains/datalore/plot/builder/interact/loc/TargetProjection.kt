@@ -22,13 +22,14 @@ import kotlin.math.min
 internal open class TargetProjection
 
 internal class PointTargetProjection private constructor(val data: Any) : TargetProjection() {
-    fun x() = data as Double
+    fun double() = data as Double
     fun xy() = data as DoubleVector
 
     companion object {
         fun create(p: DoubleVector, lookupSpace: LookupSpace): PointTargetProjection {
             return when (lookupSpace) {
                 X -> PointTargetProjection(p.x)
+                Y -> PointTargetProjection(p.y)
                 XY -> PointTargetProjection(p)
                 NONE -> undefinedLookupSpaceError()
             }
@@ -37,13 +38,14 @@ internal class PointTargetProjection private constructor(val data: Any) : Target
 }
 
 internal class RectTargetProjection private constructor(val data: Any) : TargetProjection() {
-    fun x() = data as DoubleSpan
+    fun range() = data as DoubleSpan
     fun xy() = data as DoubleRectangle
 
     companion object {
         fun create(rect: DoubleRectangle, lookupSpace: LookupSpace): RectTargetProjection {
             return when (lookupSpace) {
-                X -> RectTargetProjection(DoubleSpan(rect.left, rect.right))
+                X -> RectTargetProjection(rect.xRange())
+                Y -> RectTargetProjection(rect.yRange())
                 XY -> RectTargetProjection(rect)
                 NONE -> undefinedLookupSpaceError()
             }
@@ -52,7 +54,7 @@ internal class RectTargetProjection private constructor(val data: Any) : TargetP
 }
 
 internal class PolygonTargetProjection private constructor(val data: Any) : TargetProjection() {
-    fun x() = data as DoubleSpan
+    fun range() = data as DoubleSpan
     fun xy(): List<RingXY> {
         @Suppress("UNCHECKED_CAST")
         return data as List<RingXY>
@@ -67,19 +69,20 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
             val rings = splitRings(points)
 
             return when (lookupSpace) {
-                X -> PolygonTargetProjection(mapToX(rings))
+                X -> PolygonTargetProjection(mapToCoord(rings, DoubleVector::x))
+                Y -> PolygonTargetProjection(mapToCoord(rings, DoubleVector::y))
                 XY -> PolygonTargetProjection(mapToXY(rings))
                 NONE -> undefinedLookupSpaceError()
             }
         }
 
-        private fun mapToX(rings: List<List<DoubleVector>>): DoubleSpan {
-            var min = rings[0][0].x
+        private fun mapToCoord(rings: List<List<DoubleVector>>, coord: (DoubleVector) -> Double): DoubleSpan {
+            var min = coord(rings[0][0])
             var max = min
             for (ring in rings) {
                 for (point in ring) {
-                    min = min(min, point.x)
-                    max = max(max, point.x)
+                    min = min(min, coord(point))
+                    max = max(max, coord(point))
                 }
             }
             return DoubleSpan(min, max)
@@ -160,6 +163,7 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
             internal fun create(p: DoubleVector, index: Int, lookupSpace: LookupSpace): PathPoint {
                 return when (lookupSpace) {
                     X -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
+                    Y -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
                     XY -> PathPoint(PointTargetProjection.create(p, lookupSpace), p, index)
                     NONE -> undefinedLookupSpaceError()
                 }
@@ -179,8 +183,8 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
             }
 
             // Sort for fast search
-            if (lookupSpace == X) {
-                pointsLocation.sortBy { it.projection().x() }
+            if (lookupSpace.isUnivariate()) {
+                pointsLocation.sortBy { it.projection().double() }
             }
 
             return PathTargetProjection(pointsLocation)

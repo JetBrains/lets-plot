@@ -59,7 +59,9 @@ class ErrorBarHGeom : ErrorBarGeom() {
         colorsByDataPoint: (DataPointAesthetics) -> List<Color>,
         root: SvgRoot
     ) {
-        val rect = errorBarRectangle(p, ctx)
+        val rect = with(errorBarRectangle(p, ctx)) {
+            DoubleRectangle(center.x, top, 0.0, height)
+        }
 
         val clientRect = geomHelper.toClient(rect, p)
         val objectRadius = clientRect?.run {
@@ -77,7 +79,7 @@ class ErrorBarHGeom : ErrorBarGeom() {
                 if (ctx.flipped) {
                     TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
                 } else {
-                    TipLayoutHint.Kind.VERTICAL_TOOLTIP  // or TipLayoutHint.Kind.ROTATED_TOOLTIP
+                    TipLayoutHint.Kind.ROTATED_TOOLTIP
                 }
             )
 
@@ -97,8 +99,7 @@ class ErrorBarHGeom : ErrorBarGeom() {
                 TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
             } else {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
-            },
-            useWidthForHintOffset = false
+            }
         )
     }
 

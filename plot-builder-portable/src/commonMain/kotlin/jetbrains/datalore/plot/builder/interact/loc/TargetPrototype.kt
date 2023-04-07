@@ -25,16 +25,17 @@ class TargetPrototype(
     internal val tooltipKind: TipLayoutHint.Kind
 ) {
 
-    internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int): GeomTarget {
+    internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int, objectRadius: Double = 0.0): GeomTarget {
         return GeomTarget(
             hitIndex,
             createTipLayoutHint(
                 hitCoord = hitCoord,
-                hitShape = hitShape,
+                hitShapeKind = hitShape.kind,
                 tooltipKind = tooltipKind,
                 stemLength = tooltipParams.stemLength,
                 fillColor = tooltipParams.fillColor,
                 markerColors = tooltipParams.markerColors,
+                objectRadius = objectRadius
             ),
             tooltipParams.tipLayoutHints
         )
@@ -43,19 +44,20 @@ class TargetPrototype(
     companion object {
         fun createTipLayoutHint(
             hitCoord: DoubleVector,
-            hitShape: HitShape,
+            hitShapeKind: HitShape.Kind,
             tooltipKind: TipLayoutHint.Kind,
             stemLength: TipLayoutHint.StemLength,
             fillColor: Color?,
-            markerColors: List<Color>
+            markerColors: List<Color>,
+            objectRadius: Double
         ): TipLayoutHint {
 
-            return when (hitShape.kind) {
+            return when (hitShapeKind) {
                 POINT -> when (tooltipKind) {
                     VERTICAL_TOOLTIP ->
                         verticalTooltip(
                             hitCoord,
-                            hitShape.hintOffset,
+                            objectRadius,
                             stemLength,
                             fillColor,
                             markerColors
@@ -68,14 +70,14 @@ class TargetPrototype(
                 RECT -> when (tooltipKind) {
                     VERTICAL_TOOLTIP -> verticalTooltip(
                         hitCoord,
-                        hitShape.hintOffset,
+                        objectRadius,
                         stemLength,
                         fillColor,
                         markerColors
                     )
                     HORIZONTAL_TOOLTIP -> horizontalTooltip(
                         hitCoord,
-                        hitShape.hintOffset,
+                        objectRadius,
                         stemLength,
                         fillColor,
                         markerColors
@@ -86,8 +88,8 @@ class TargetPrototype(
                 }
 
                 PATH -> when (tooltipKind) {
-                    HORIZONTAL_TOOLTIP -> horizontalTooltip(hitCoord, 0.0, stemLength, fillColor, markerColors)
-                    VERTICAL_TOOLTIP -> verticalTooltip(hitCoord, 0.0, stemLength, fillColor, markerColors)
+                    HORIZONTAL_TOOLTIP -> horizontalTooltip(hitCoord, objectRadius = 0.0, stemLength, fillColor, markerColors)
+                    VERTICAL_TOOLTIP -> verticalTooltip(hitCoord, objectRadius = 0.0, stemLength, fillColor, markerColors)
                     else -> error("Wrong TipLayoutHint.kind = $tooltipKind for PATH")
                 }
 

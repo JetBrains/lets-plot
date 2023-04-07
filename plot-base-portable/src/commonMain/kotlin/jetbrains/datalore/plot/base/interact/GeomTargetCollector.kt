@@ -25,8 +25,7 @@ interface GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
-        tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP,
-        useWidthForHintOffset: Boolean = true
+        tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
     )
 
     fun addPath(

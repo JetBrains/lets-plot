@@ -67,7 +67,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
         fun univariateFunctionBuilder(): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
                 GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
-                    .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+                    .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                     .build()
             )
         }

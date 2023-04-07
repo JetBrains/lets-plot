@@ -32,15 +32,13 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind,
-        useWidthForHintOffset: Boolean
+        tooltipKind: TipLayoutHint.Kind
     ) {
         targetCollector.addRectangle(
             index,
             rectangle.flip(),
             tooltipParams,
-            tooltipKind,
-            useWidthForHintOffset
+            tooltipKind
         )
     }
 

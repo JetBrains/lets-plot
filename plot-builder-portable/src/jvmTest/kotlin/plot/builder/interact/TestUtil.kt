@@ -305,7 +305,7 @@ object TestUtil {
     }
 
     internal fun rectTarget(key: Any, rect: DoubleRectangle): TargetPrototype {
-        val rectShape = HitShape.rect(rect, hintOffset = rect.width / 2)
+        val rectShape = HitShape.rect(rect)
         return TargetPrototype(
             rectShape, { key as Int },
             TooltipParams(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP

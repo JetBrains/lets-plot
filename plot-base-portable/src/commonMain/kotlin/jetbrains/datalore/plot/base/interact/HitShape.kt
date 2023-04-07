@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.base.interact
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 
-open class HitShape private constructor(val kind: Kind, private val shape: Any, val hintOffset: Double) {
+open class HitShape private constructor(val kind: Kind, private val shape: Any) {
 
-    val point: DoubleVector
-        get() = shape as DoubleVector
+    val point: DoubleCircle
+        get() = shape as DoubleCircle
 
     val rect: DoubleRectangle
         get() = shape as DoubleRectangle
@@ -23,13 +23,15 @@ open class HitShape private constructor(val kind: Kind, private val shape: Any, 
         POINT, RECT, POLYGON, PATH
     }
 
+    class DoubleCircle(val center: DoubleVector, val radius: Double)
+
     companion object {
         fun point(p: DoubleVector, radius: Double): HitShape {
-            return HitShape(Kind.POINT, p, radius)
+            return HitShape(Kind.POINT, DoubleCircle(p, radius))
         }
 
-        fun rect(r: DoubleRectangle, hintOffset: Double): HitShape {
-            return HitShape(Kind.RECT, r, hintOffset)
+        fun rect(r: DoubleRectangle): HitShape {
+            return HitShape(Kind.RECT, r)
         }
 
         fun path(points: List<DoubleVector>): HitShape {
@@ -41,7 +43,7 @@ open class HitShape private constructor(val kind: Kind, private val shape: Any, 
         }
 
         private fun shapeWithPath(kind: Kind, points: List<DoubleVector>): HitShape {
-            return object : HitShape(kind, points, hintOffset = 0.0) {
+            return object : HitShape(kind, points) {
                 override val points: List<DoubleVector>
                     get() = points
             }

@@ -33,15 +33,13 @@ internal class YOrientationTargetCollector(private val targetCollector: GeomTarg
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind,
-        useWidthForHintOffset: Boolean
+        tooltipKind: TipLayoutHint.Kind
     ) {
         targetCollector.addRectangle(
             index,
             rectangle,
             afterYOrientation(tooltipParams),
-            tooltipKind,
-            useWidthForHintOffset
+            tooltipKind
         )
     }
 

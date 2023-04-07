@@ -23,8 +23,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind,
-        useWidthForHintOffset: Boolean
+        tooltipKind: TipLayoutHint.Kind
     ) {
     }
 
