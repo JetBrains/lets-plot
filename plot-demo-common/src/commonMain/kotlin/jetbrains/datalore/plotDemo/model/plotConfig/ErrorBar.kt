@@ -17,7 +17,7 @@ class ErrorBar {
             pointrange(),
             linerange(),
             withBars(),
-            horizontalErrorBar()
+            horizontalErrorBar(), horizontalErrorBarFlipped()
         )
     }
 
@@ -178,11 +178,36 @@ class ErrorBar {
     private fun horizontalErrorBar(): MutableMap<String, Any> {
         val spec = """
             |{'kind': 'plot',
+            | 'ggtitle'  : {'text' : 'Horizontal errorbar'},
             | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
             |           'dose': [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
             |           'len': [13.23, 22.7, 26.06, 7.98, 16.77, 26.14],
             |           'se': [2.4, 1.9, 2.05, 2.74, 1.51, 1.79]},
             | 'mapping': {'x': 'len', 'y': 'dose', 'color': 'supp'},
+            | 'layers': [
+            |       {'geom': 'errorbarh',
+            |        'mapping': {
+            |         'xmin': [10.83, 20.8, 24.0, 5.24, 15.26, 24.35],
+            |         'xmax': [15.63, 24.6, 28.11, 10.72, 18.28, 27.93]
+            |        },
+            |        'height': 0.2
+            |       }
+            |   ]
+            |}
+            """.trimMargin()
+        return parsePlotSpec(spec)
+    }
+
+    private fun horizontalErrorBarFlipped(): MutableMap<String, Any> {
+        val spec = """
+            |{'kind': 'plot',
+            | 'ggtitle'  : {'text' : 'Horizontal errorbar + coord_flip()'},
+            | 'data': {'supp': ['OJ', 'OJ', 'OJ', 'VC', 'VC', 'VC'],
+            |           'dose': [0.5, 1.0, 2.0, 0.5, 1.0, 2.0],
+            |           'len': [13.23, 22.7, 26.06, 7.98, 16.77, 26.14],
+            |           'se': [2.4, 1.9, 2.05, 2.74, 1.51, 1.79]},
+            | 'mapping': {'x': 'len', 'y': 'dose', 'color': 'supp'},
+            | 'coord': {'name': 'flip', 'flip': true},
             | 'layers': [
             |       {'geom': 'errorbarh',
             |        'mapping': {

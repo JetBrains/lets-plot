@@ -10,59 +10,66 @@ import jetbrains.datalore.base.geometry.DoubleSegment
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.geom.ErrorBarGeom.Companion.errorBarShape
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.HintsCollection
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
-class ErrorBarHGeom : ErrorBarGeom() {
+class ErrorBarHGeom : GeomBase() {
 
-    override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.withDefined(
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = ErrorBarGeom.ErrorBarLegendKeyElementFactory(::errorBarShapeSegments)
+
+    override fun buildIntern(
+        root: SvgRoot,
+        aesthetics: Aesthetics,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
+        val geomHelper = GeomHelper(pos, coord, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR_H, ctx)
+
+        for (p in GeomUtil.withDefined(
             aesthetics.dataPoints(),
             Aes.Y,
             Aes.XMIN,
             Aes.XMAX,
             Aes.HEIGHT
-        )
+        )) {
+            val y = p.y()!!
+            val xmin = p.xmin()!!
+            val xmax = p.xmax()!!
+            val height = p.height()!! * ctx.getResolution(Aes.Y)
+            val width = xmax - xmin
+
+            val r = DoubleRectangle(xmin, y - height / 2, width, height)
+            val segments = errorBarShapeSegments(r)
+            val g = errorBarShape(segments, p, geomHelper)
+            root.add(g)
+
+            buildHints(
+                DoubleRectangle(r.center.x, r.top, 0.0, height),
+                p,
+                ctx,
+                geomHelper,
+                colorsByDataPoint
+            )
+        }
     }
 
-    override fun errorBarRectangle(p: DataPointAesthetics, ctx: GeomContext): DoubleRectangle {
-        val y = p.y()!!
-        val xmin = p.xmin()!!
-        val xmax = p.xmax()!!
-        val height = p.height()!! * ctx.getResolution(Aes.Y)
-        val width = xmax - xmin
-        return DoubleRectangle(xmin, y - height / 2, width, height)
-    }
-
-    override fun errorBarShapeSegments(r: DoubleRectangle): List<DoubleSegment> {
-        val left = r.left
-        val top = r.top
-        val right = r.right
-        val bottom = r.bottom
-        val center = top + r.height / 2
-
-        return listOf(
-            DoubleSegment(DoubleVector(left, top), DoubleVector(left, bottom)),
-            DoubleSegment(DoubleVector(right, top), DoubleVector(right, bottom)),
-            DoubleSegment(DoubleVector(left, center), DoubleVector(right, center))
-        )
-    }
-
-    override fun buildHints(
+    private fun buildHints(
+        rect: DoubleRectangle,
         p: DataPointAesthetics,
         ctx: GeomContext,
         geomHelper: GeomHelper,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>,
-        root: SvgRoot
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
-        val rect = with(errorBarRectangle(p, ctx)) {
-            DoubleRectangle(center.x, top, 0.0, height)
-        }
-
         val clientRect = geomHelper.toClient(rect, p)
         val objectRadius = clientRect?.run {
             if (ctx.flipped) {
@@ -101,6 +108,17 @@ class ErrorBarHGeom : ErrorBarGeom() {
                 TipLayoutHint.Kind.VERTICAL_TOOLTIP
             }
         )
+    }
+
+    private fun errorBarShapeSegments(r: DoubleRectangle): List<DoubleSegment> {
+        val center = r.top + r.height / 2
+        return with(r) {
+            listOf(
+                DoubleSegment(DoubleVector(left, top), DoubleVector(left, bottom)),
+                DoubleSegment(DoubleVector(right, top), DoubleVector(right, bottom)),
+                DoubleSegment(DoubleVector(left, center), DoubleVector(right, center))
+            )
+        }
     }
 
     companion object {
