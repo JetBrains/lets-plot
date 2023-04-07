@@ -51,7 +51,7 @@ class LayerConfig constructor(
     isMapPlot: Boolean
 ) : OptionsAccessor(
     layerOptions,
-    initDefaultOptions(layerOptions, geomProto)
+    initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
     val stat: Stat
@@ -226,8 +226,8 @@ class LayerConfig constructor(
             else -> sharedData
         }.run {
             // Mark 'DateTime' variables
-            val dateTimeVariables =
-                DataMetaUtil.getDateTimeColumns(plotDataMeta) + DataMetaUtil.getDateTimeColumns(ownDataMeta)
+            val dateTimeVariables = DataMetaUtil.getDateTimeColumns(plotDataMeta) +
+                    DataMetaUtil.getDateTimeColumns(ownDataMeta)
             DataFrameUtil.addDateTimeVariables(this, dateTimeVariables)
         }
 
@@ -279,25 +279,11 @@ class LayerConfig constructor(
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
-            when (get(TOOLTIPS)) {
-                is Map<*, *> -> {
-                    TooltipConfig(
-                        opts = getMap(TOOLTIPS),
-                        constantsMap = constantsMap,
-                        groupingVarName = explicitGroupingVarName,
-                        varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
-                    ).createTooltips()
-                }
-
-                NONE -> {
-                    // not show tooltips
-                    TooltipSpecification.withoutTooltip()
-                }
-
-                else -> {
-                    error("Incorrect tooltips specification")
-                }
-            }
+            initTooltipsSpec(
+                tooltipOptions = getSafe(TOOLTIPS),
+                varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
+                constantsMap, explicitGroupingVarName
+            )
         } else {
             TooltipSpecification.defaultTooltip()
         }
@@ -305,9 +291,8 @@ class LayerConfig constructor(
         annotations = if (has(ANNOTATIONS)) {
             AnnotationConfig(
                 opts = getMap(ANNOTATIONS),
-                constantsMap = constantsMap,
-                groupingVarName = explicitGroupingVarName,
-                varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
+                varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
+                constantsMap, explicitGroupingVarName
             ).createAnnotations()
         } else {
             AnnotationSpecification.NONE
@@ -405,7 +390,7 @@ class LayerConfig constructor(
 
     private companion object {
 
-        private fun initDefaultOptions(
+        private fun initLayerDefaultOptions(
             layerOptions: Map<*, *>,
             geomProto: GeomProto
         ): Map<String, Any> {
@@ -422,6 +407,34 @@ class LayerConfig constructor(
             }
 
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
+        }
+
+        private fun initTooltipsSpec(
+            tooltipOptions: Any,  // An options map or just string "none"
+            varBindings: List<VarBinding>,
+            constantsMap: Map<Aes<*>, Any>,
+            explicitGroupingVarName: String?
+        ): TooltipSpecification {
+            return when (tooltipOptions) {
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    TooltipConfig(
+                        opts = tooltipOptions as Map<String, Any>,
+                        constantsMap = constantsMap,
+                        groupingVarName = explicitGroupingVarName,
+                        varBindings = varBindings
+                    ).createTooltips()
+                }
+
+                NONE -> {
+                    // not show tooltips
+                    TooltipSpecification.withoutTooltip()
+                }
+
+                else -> {
+                    error("Incorrect tooltips specification")
+                }
+            }
         }
 
         private fun initOrderOptions(
