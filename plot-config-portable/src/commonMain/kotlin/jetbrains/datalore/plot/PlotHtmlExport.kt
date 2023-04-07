@@ -6,12 +6,19 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.jsObject.JsObjectSupport
+import jetbrains.datalore.base.logging.PortableLogging
+import jetbrains.datalore.base.random.RandomString
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
+import jetbrains.datalore.plot.config.PlotConfigUtil
+import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import kotlin.math.round
 
 object PlotHtmlExport {
+    private val LOG = PortableLogging.logger(PlotHtmlExport::class)
+
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
      * @param scriptUrl An URL to load the Lets-plot JS library from.
@@ -26,8 +33,8 @@ object PlotHtmlExport {
         plotSize: DoubleVector? = null
     ): String {
 
-        val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
-        val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(plotSpec, plotSize)
+        val configureHtml = getStaticConfigureHtml(scriptUrl)
+        val displayHtml = getStaticDisplayHtmlForRawSpec(plotSpec, plotSize)
 
         val style = if (iFrame) {
             "\n       <style> html, body { margin: 0; overflow: hidden; } </style>"
@@ -101,5 +108,39 @@ object PlotHtmlExport {
         } catch (e: RuntimeException) {
             return null
         }
+    }
+
+    private fun getStaticConfigureHtml(scriptUrl: String): String {
+        return "<script type=\"text/javascript\" ${PlotHtmlHelper.ATT_SCRIPT_KIND}=\"${PlotHtmlHelper.SCRIPT_KIND_LIB_LOADING}\" src=\"$scriptUrl\"></script>"
+    }
+
+    private fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
+        // server-side transforms: statistics, sampling, etc.
+        @Suppress("NAME_SHADOWING")
+        val plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
+
+        PlotConfigUtil.findComputationMessages(plotSpec).forEach { LOG.info { "[when HTML generating] $it" } }
+
+        // Remove computation messages from the output
+        PlotConfigUtil.removeComputationMessages(plotSpec)
+
+        val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
+        return getStaticDisplayHtml(plotSpecJs, size)
+    }
+
+    private fun getStaticDisplayHtml(
+        plotSpecAsJsObjectInitializer: String,
+        size: DoubleVector?
+    ): String {
+        val outputId = RandomString.randomString(6)
+        val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
+        return """
+            |   <div id="$outputId"></div>
+            |   <script type="text/javascript" ${PlotHtmlHelper.ATT_SCRIPT_KIND}="${PlotHtmlHelper.SCRIPT_KIND_PLOT}">
+            |       var plotSpec=$plotSpecAsJsObjectInitializer;
+            |       var plotContainer = document.getElementById("$outputId");
+            |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer);
+            |   </script>
+        """.trimMargin()
     }
 }

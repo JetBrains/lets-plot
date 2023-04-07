@@ -14,9 +14,9 @@ object PlotHtmlHelper {
     // Data-attributes used to store extra information about the meaning of 'script' elements
     // See also: python-package/lets_plot/frontend_context/_jupyter_notebook_ctx.py
     // Duplication?
-    private const val ATT_SCRIPT_KIND = "data-lets-plot-script"
-    private const val SCRIPT_KIND_LIB_LOADING = "library"
-    private const val SCRIPT_KIND_PLOT = "plot"
+    internal const val ATT_SCRIPT_KIND = "data-lets-plot-script"
+    internal const val SCRIPT_KIND_LIB_LOADING = "library"
+    internal const val SCRIPT_KIND_PLOT = "plot"
 
     /**
      * This method is used in Lets-Plot Kotlin API.
@@ -112,31 +112,7 @@ object PlotHtmlHelper {
         """.trimMargin()
     }
 
-    fun getStaticConfigureHtml(scriptUrl: String): String {
-        return "<script type=\"text/javascript\" $ATT_SCRIPT_KIND=\"$SCRIPT_KIND_LIB_LOADING\" src=\"$scriptUrl\"></script>"
-    }
 
-    fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
-        // server-side transforms: statistics, sampling, etc.
-        @Suppress("NAME_SHADOWING")
-        val plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
-        val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
-        return getStaticDisplayHtml(plotSpecJs, size)
-    }
 
-    private fun getStaticDisplayHtml(
-        plotSpecAsJsObjectInitializer: String,
-        size: DoubleVector?
-    ): String {
-        val outputId = randomString(6)
-        val dim = if (size == null) "-1, -1" else "${size.x}, ${size.y}"
-        return """
-            |   <div id="$outputId"></div>
-            |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
-            |       var plotSpec=$plotSpecAsJsObjectInitializer;
-            |       var plotContainer = document.getElementById("$outputId");
-            |       LetsPlot.buildPlotFromProcessedSpecs(plotSpec, ${dim}, plotContainer);
-            |   </script>
-        """.trimMargin()
-    }
+
 }
