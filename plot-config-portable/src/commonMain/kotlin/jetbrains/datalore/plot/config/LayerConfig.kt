@@ -6,11 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomMeta
-import jetbrains.datalore.plot.base.Stat
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.base.stat.Stats
@@ -61,21 +57,23 @@ class LayerConfig constructor(
     val stat: Stat
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
 
+    val isLiveMap: Boolean = geomProto.geomKind == GeomKind.LIVE_MAP
+    private val ownDataMeta = getMap(Option.Meta.DATA_META)
+
     val explicitGroupingVarName: String?
     val posProvider: PosProvider
-    private val myCombinedData: DataFrame
 
     val varBindings: List<VarBinding>
     val constantsMap: Map<Aes<*>, Any>
 
-    private val mySamplings: List<Sampling>?
-    private val myOrderOptions: List<OrderOption>
     val tooltips: TooltipSpecification
     val annotations: AnnotationSpecification
 
     var ownData: DataFrame? = null
         private set
+
     private var myOwnDataUpdated = false
+    private val myCombinedData: DataFrame
 
     val combinedData: DataFrame
         get() {
@@ -85,21 +83,24 @@ class LayerConfig constructor(
         }
 
     val isLegendDisabled: Boolean
-        get() = if (hasOwn(SHOW_LEGEND)) {
-            !getBoolean(SHOW_LEGEND, true)
-        } else false
+        get() = when (hasOwn(SHOW_LEGEND)) {
+            true -> !getBoolean(SHOW_LEGEND, true)
+            else -> false
+        }
+
+    private val _samplings: List<Sampling> = when (clientSide) {
+        true -> emptyList()
+        else -> LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+    }
 
     val samplings: List<Sampling>
         get() {
             check(!clientSide)
-            return mySamplings!!
+            return _samplings
         }
 
-    val isLiveMap: Boolean
-        get() = geomProto.geomKind == GeomKind.LIVE_MAP
-
-    val orderOptions: List<OrderOption>
-        get() = myOrderOptions
+    var orderOptions: List<OrderOption>
+        private set
 
     val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
         PosProto.STACK -> SeriesUtil::sum
@@ -115,6 +116,7 @@ class LayerConfig constructor(
                     else -> throw IllegalArgumentException("$ORIENTATION expected x|y but was $it")
                 }
             } ?: false
+
             false -> false
         }
 
@@ -199,6 +201,7 @@ class LayerConfig constructor(
                 when (statKind) {
                     StatKind.QQ,
                     StatKind.QQ_LINE -> consumedAesSet.contains(aes) || aes == Aes.SAMPLE
+
                     else -> consumedAesSet.contains(aes)
                 }
             } else {
@@ -218,12 +221,13 @@ class LayerConfig constructor(
             !(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount() -> {
                 DataFrameUtil.appendReplace(sharedData, layerData)
             }
+
             !layerData.isEmpty -> layerData
             else -> sharedData
         }.run {
             // Mark 'DateTime' variables
             val dateTimeVariables =
-                DataMetaUtil.getDateTimeColumns(plotDataMeta) + DataMetaUtil.getDateTimeColumns(getMap(Option.Meta.DATA_META))
+                DataMetaUtil.getDateTimeColumns(plotDataMeta) + DataMetaUtil.getDateTimeColumns(ownDataMeta)
             DataFrameUtil.addDateTimeVariables(this, dateTimeVariables)
         }
 
@@ -273,12 +277,6 @@ class LayerConfig constructor(
         )
         ownData = layerData
 
-        mySamplings = if (clientSide) {
-            null
-        } else {
-            LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
-        }
-
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
             when (get(TOOLTIPS)) {
@@ -290,10 +288,12 @@ class LayerConfig constructor(
                         varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
                     ).createTooltips()
                 }
+
                 NONE -> {
                     // not show tooltips
                     TooltipSpecification.withoutTooltip()
                 }
+
                 else -> {
                     error("Incorrect tooltips specification")
                 }
@@ -314,17 +314,10 @@ class LayerConfig constructor(
         }
 
         // TODO: handle order options combining to a config parsing stage
-        myOrderOptions = (
-                plotOrderOptions.filter { orderOption -> orderOption.variableName in varBindings.map { it.variable.name } }
-                        + DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
-                )
-            .inheritToNonDiscrete(combinedMappingOptions)
-            .groupingBy(OrderOption::variableName)
-            .reduce { _, combined, element -> combined.mergeWith(element) }
-            .values.toList()
+        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, combinedMappingOptions)
 
         myCombinedData = if (clientSide) {
-            val orderSpecs = myOrderOptions.map {
+            val orderSpecs = orderOptions.map {
                 createOrderSpec(combinedData.variables(), varBindings, it, aggregateOperation)
             }
             DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
@@ -409,7 +402,9 @@ class LayerConfig constructor(
         }
     }
 
+
     private companion object {
+
         private fun initDefaultOptions(
             layerOptions: Map<*, *>,
             geomProto: GeomProto
@@ -427,6 +422,29 @@ class LayerConfig constructor(
             }
 
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
+        }
+
+        private fun initOrderOptions(
+            plotOrderOptions: List<OrderOption>,
+            layerOptions: Map<String, Any>,
+            varBindings: List<VarBinding>,
+            combinedMappingOptions: Map<*, *>
+        ): List<OrderOption> {
+            val mappedVariables = varBindings.map { it.variable.name }
+
+            @Suppress("NAME_SHADOWING")
+            val plotOrderOptions = plotOrderOptions.filter { orderOption ->
+                orderOption.variableName in mappedVariables
+            }
+
+            val ownOrderOptions = DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+            val orderOptions = plotOrderOptions + ownOrderOptions
+
+            return orderOptions
+                .inheritToNonDiscrete(combinedMappingOptions)
+                .groupingBy(OrderOption::variableName)
+                .reduce { _, combined, element -> combined.mergeWith(element) }
+                .values.toList()
         }
     }
 }
