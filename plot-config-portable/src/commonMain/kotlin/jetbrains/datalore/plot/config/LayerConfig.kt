@@ -54,14 +54,28 @@ class LayerConfig constructor(
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    val stat: Stat
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
+    val stat: Stat = StatProto.createStat(statKind, options = this)
+
+    val posProvider: PosProvider =
+        PosProto.createPosProvider(
+            LayerConfigUtil.positionAdjustmentOptions(layerOptions = this, geomProto)
+        )
 
     val isLiveMap: Boolean = geomProto.geomKind == GeomKind.LIVE_MAP
+
     private val ownDataMeta = getMap(Option.Meta.DATA_META)
 
+    private val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
+        .filter(::hasOwn)
+        .map(Option.Mapping::toAes)
+
+    // Color aesthetics
+    val colorByAes: Aes<Color> = getPaintAes(Aes.COLOR, explicitConstantAes)
+    val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
+    val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
+
     val explicitGroupingVarName: String?
-    val posProvider: PosProvider
 
     val varBindings: List<VarBinding>
     val constantsMap: Map<Aes<*>, Any>
@@ -135,11 +149,6 @@ class LayerConfig constructor(
     }
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 
-    // Color aesthetics
-    val colorByAes: Aes<Color>
-    val fillByAes: Aes<Color>
-
-    val renderedAes: List<Aes<*>>
 
     init {
         val (layerMappings, layerData) = createDataFrame(
@@ -154,17 +163,6 @@ class LayerConfig constructor(
             update(MAPPING, layerMappings)
         }
 
-        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
-            .filter(::hasOwn)
-            .map(Option.Mapping::toAes)
-
-        // Get renders with replacing color aesthetics
-        colorByAes = getPaintAes(Aes.COLOR, explicitConstantAes)
-        fillByAes = getPaintAes(Aes.FILL, explicitConstantAes)
-        renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
-
-//        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
-        stat = StatProto.createStat(statKind, this)
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
                 true -> it
@@ -175,7 +173,6 @@ class LayerConfig constructor(
         // mapping (inherit from plot) + 'layer' mapping
         val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
             // Only keep those mapping options which can be consumed by this layer.
-            // ToDo: report to user that some mappings are not applicable to this layer.
             @Suppress("CascadeIf")
             if (it == Option.Mapping.GROUP) {
                 true
@@ -250,14 +247,13 @@ class LayerConfig constructor(
         // grouping
         explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappingOptions)
 
-        posProvider = PosProto.createPosProvider(LayerConfigUtil.positionAdjustmentOptions(this, geomProto))
-
         varBindings = LayerConfigUtil.createBindings(
             combinedData,
             aesMappings,
             consumedAesSet,
             clientSide
         )
+
         ownData = layerData
 
         // tooltip list
