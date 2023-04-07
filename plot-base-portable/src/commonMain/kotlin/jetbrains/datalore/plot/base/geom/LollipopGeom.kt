@@ -26,7 +26,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
-    var direction: Direction = DEF_DIRECTION
+    var orientationIsSpecified: Boolean = false
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -47,7 +47,11 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val y = p.y()!!
             val head = DoubleVector(x, y)
             root.add(createCandy(head, p, helper))
-            val base = getBase(x, y)
+            val base = if (orientationIsSpecified) {
+                getBase(x, y, Orientation.VERTICAL)
+            } else {
+                getBase(x, y, Orientation.PERPENDICULAR)
+            }
             val stick = createStick(base, head, p, helper) ?: continue
             root.add(stick)
             buildHint(head, p, helper, targetCollector, colorsByDataPoint)
@@ -137,30 +141,37 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        isYOrientation: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes)
+        return span(p, coordAes, isYOrientation)
     }
 
     override fun heightSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean
+        isDiscrete: Boolean,
+        isYOrientation: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes)
+        return span(p, coordAes, isYOrientation)
     }
 
     private fun span(
         p: DataPointAesthetics,
-        coordAes: Aes<Double>
+        coordAes: Aes<Double>,
+        isYOrientation: Boolean
     ): DoubleSpan? {
         val x = p.x()
         val y = p.y()
         if (!SeriesUtil.allFinite(x, y)) {
             return null
         }
-        val base = getBase(x!!, y!!)
+        val base = when {
+            !orientationIsSpecified -> getBase(x!!, y!!, Orientation.PERPENDICULAR)
+            isYOrientation -> getBase(x!!, y!!, Orientation.HORIZONTAL)
+            else -> getBase(x!!, y!!, Orientation.VERTICAL)
+        }
 
         return when (coordAes) {
             Aes.X -> DoubleSpan(base.x, x)
@@ -169,31 +180,28 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun getBase(x: Double, y: Double): DoubleVector {
-        return when (direction) {
-            Direction.PERPENDICULAR -> {
+    private fun getBase(x: Double, y: Double, orientation: Orientation): DoubleVector {
+        return when (orientation) {
+            Orientation.PERPENDICULAR -> {
                 val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
                 val baseY = slope * baseX + intercept
                 DoubleVector(baseX, baseY)
             }
-            Direction.VERTICAL -> DoubleVector(x, slope * x + intercept)
-            Direction.HORIZONTAL -> {
-                require(slope != 0.0) { "Horizontal lollipop direction is incompatible with zero slope of baseline" }
-                DoubleVector((y - intercept) / slope, y)
-            }
+            Orientation.VERTICAL -> DoubleVector(x, slope * x + intercept)
+            Orientation.HORIZONTAL -> DoubleVector(slope * y + intercept, y)
         }
     }
 
-    enum class Direction {
+    enum class Orientation {
         PERPENDICULAR, VERTICAL, HORIZONTAL;
 
         companion object {
 
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Direction>()
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Orientation>()
 
-            fun safeValueOf(v: String): Direction {
+            fun safeValueOf(v: String): Orientation {
                 return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
-                    "Unsupported direction: '$v'\n" +
+                    "Unsupported orientation: '$v'\n" +
                     "Use one of: perpendicular, vertical, horizontal."
                 )
             }
@@ -204,7 +212,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         const val DEF_FATTEN = 2.5
         const val DEF_SLOPE = 0.0
         const val DEF_INTERCEPT = 0.0
-        val DEF_DIRECTION = Direction.PERPENDICULAR
 
         const val HANDLES_GROUPS = PointGeom.HANDLES_GROUPS
     }

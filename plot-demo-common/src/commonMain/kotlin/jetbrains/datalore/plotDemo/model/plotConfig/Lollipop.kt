@@ -74,8 +74,7 @@ class Lollipop {
                 "                 'linetype': 'dotted'," +
                 "                 'alpha': 0.5," +
                 "                 'slope': 1," +
-                "                 'intercept': 1," +
-                "                 'direction': 'perpendicular'" +
+                "                 'intercept': 1" +
                 "               }" +
                 "             ]" +
                 "}"

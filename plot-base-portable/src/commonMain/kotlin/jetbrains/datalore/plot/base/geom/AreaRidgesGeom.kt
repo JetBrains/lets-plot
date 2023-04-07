@@ -147,7 +147,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         }
     }
 
-    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
+    override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean, isYOrientation: Boolean): DoubleSpan? {
         val sizeAes = Aes.HEIGHT
         val scaledResolution = resolution * this.scale
 

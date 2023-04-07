@@ -10,5 +10,5 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 
 interface WithHeight {
-    fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean):DoubleSpan?
+    fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean, isYOrientation: Boolean): DoubleSpan?
 }
