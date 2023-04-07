@@ -77,7 +77,12 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     ): SvgLineElement? {
         val base = helper.toClient(originalBase, p) ?: return null // base of the lollipop stick
         val head = helper.toClient(originalHead, p) ?: return null // center of the lollipop candy
-        val neck = shiftHeadToBase(base, head, candyRadius(p)) // meeting point of candy and stick
+        val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
+        val candyRadius = candyRadius(p)
+        if (candyRadius > stickLength) {
+            return null
+        }
+        val neck = shiftHeadToBase(base, head, candyRadius) // meeting point of candy and stick
         val line = SvgLineElement(base.x, base.y, neck.x, neck.y)
         GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
 
