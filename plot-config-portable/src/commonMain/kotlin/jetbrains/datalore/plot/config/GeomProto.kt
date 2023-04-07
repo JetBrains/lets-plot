@@ -34,6 +34,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
             ERROR_BAR -> DefaultSampling.ERROR_BAR
+            ERROR_BAR_H -> DefaultSampling.ERROR_BAR_H
             CROSS_BAR -> DefaultSampling.CROSS_BAR
             LINE_RANGE -> DefaultSampling.LINE_RANGE
             POINT_RANGE -> DefaultSampling.POINT_RANGE

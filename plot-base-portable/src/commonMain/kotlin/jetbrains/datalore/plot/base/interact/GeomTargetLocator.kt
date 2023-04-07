@@ -13,7 +13,9 @@ interface GeomTargetLocator {
     fun search(coord: DoubleVector): LookupResult?
 
     enum class LookupSpace {
-        X, XY, NONE
+        X, Y, XY, NONE;
+
+        fun isUnivariate() = this === X || this === Y
     }
 
     enum class LookupStrategy {

@@ -146,7 +146,7 @@ object GeomInteractionUtil {
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
                 GeomKind.POINT,
-                GeomKind.CONTOUR -> return GeomTooltipSetup.univariateFunction(
+                GeomKind.CONTOUR -> return GeomTooltipSetup.xUnivariateFunction(
                     GeomTargetLocator.LookupStrategy.NEAREST
                 )
 
@@ -167,14 +167,19 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.SEGMENT,
-            GeomKind.V_LINE -> return GeomTooltipSetup.univariateFunction(
+            GeomKind.V_LINE -> return GeomTooltipSetup.xUnivariateFunction(
                 GeomTargetLocator.LookupStrategy.HOVER,
                 axisTooltipVisibilityFromConfig = true
             )
 
-            GeomKind.RIBBON -> return GeomTooltipSetup.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            GeomKind.ERROR_BAR_H -> return GeomTooltipSetup.yUnivariateFunction(
+                GeomTargetLocator.LookupStrategy.HOVER,
+                axisTooltipVisibilityFromConfig = true
+            )
+
+            GeomKind.RIBBON -> return GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
-                GeomTooltipSetup.univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+                GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             } else {
                 GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
             }
@@ -326,7 +331,7 @@ object GeomInteractionUtil {
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE,
             GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
-
+            GeomKind.ERROR_BAR_H -> listOf(Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()

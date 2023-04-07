@@ -658,6 +658,7 @@ object Option {
         private const val BIN_2D = "bin2d"
         private const val MAP = "map"
         private const val ERROR_BAR = "errorbar"
+        private const val ERROR_BAR_H = "errorbarh"
         private const val CROSS_BAR = "crossbar"
         private const val LINE_RANGE = "linerange"
         private const val POINT_RANGE = "pointrange"
@@ -708,6 +709,7 @@ object Option {
             map[BIN_2D] = GeomKind.BIN_2D
             map[MAP] = GeomKind.MAP
             map[ERROR_BAR] = GeomKind.ERROR_BAR
+            map[ERROR_BAR_H] = GeomKind.ERROR_BAR_H
             map[CROSS_BAR] = GeomKind.CROSS_BAR
             map[LINE_RANGE] = GeomKind.LINE_RANGE
             map[POINT_RANGE] = GeomKind.POINT_RANGE
