@@ -22,7 +22,8 @@ import kotlin.math.min
 internal open class TargetProjection
 
 internal class PointTargetProjection private constructor(val data: Any) : TargetProjection() {
-    fun double() = data as Double
+    fun x() = data as Double
+    fun y() = data as Double
     fun xy() = data as DoubleVector
 
     companion object {
@@ -38,7 +39,8 @@ internal class PointTargetProjection private constructor(val data: Any) : Target
 }
 
 internal class RectTargetProjection private constructor(val data: Any) : TargetProjection() {
-    fun range() = data as DoubleSpan
+    fun x() = data as DoubleSpan
+    fun y() = data as DoubleSpan
     fun xy() = data as DoubleRectangle
 
     companion object {
@@ -54,7 +56,8 @@ internal class RectTargetProjection private constructor(val data: Any) : TargetP
 }
 
 internal class PolygonTargetProjection private constructor(val data: Any) : TargetProjection() {
-    fun range() = data as DoubleSpan
+    fun x() = data as DoubleSpan
+    fun y() = data as DoubleSpan
     fun xy(): List<RingXY> {
         @Suppress("UNCHECKED_CAST")
         return data as List<RingXY>
@@ -183,8 +186,10 @@ internal class PathTargetProjection(val data: List<PathPoint>) : TargetProjectio
             }
 
             // Sort for fast search
-            if (lookupSpace.isUnivariate()) {
-                pointsLocation.sortBy { it.projection().double() }
+            if (lookupSpace == X) {
+                pointsLocation.sortBy { it.projection().x() }
+            } else if (lookupSpace == Y) {
+                pointsLocation.sortBy { it.projection().y() }
             }
 
             return PathTargetProjection(pointsLocation)
