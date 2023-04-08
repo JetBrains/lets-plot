@@ -9,8 +9,6 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
-import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
@@ -22,9 +20,9 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
+import jetbrains.datalore.plot.config.LayerConfigUtil.adjustLayerSituation
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -104,7 +102,7 @@ class LayerConfig constructor(
 
     private val _samplings: List<Sampling> = when (clientSide) {
         true -> emptyList()
-        else -> LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        else -> initSampling(this, geomProto.preferredSampling())
     }
 
     val samplings: List<Sampling>
@@ -170,82 +168,48 @@ class LayerConfig constructor(
             }
         }.afterOrientation(isYOrientation)
 
-        // mapping (inherit from plot) + 'layer' mapping
-        val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
-            // Only keep those mapping options which can be consumed by this layer.
-            @Suppress("CascadeIf")
-            if (it == Option.Mapping.GROUP) {
-                true
-            } else if (it is String) {
-                val aes = Option.Mapping.toAes(it)
-                when (statKind) {
-                    StatKind.QQ,
-                    StatKind.QQ_LINE -> consumedAesSet.contains(aes) || aes == Aes.SAMPLE
+        // Combine plot + layer mappings.
+        // Only keep those mappings which can be consumed by this layer.
+        val consumedAesMappings = (plotMappings + layerMappings).filterKeys { aesName ->
+            when (aesName) {
+                Option.Mapping.GROUP -> true
+                is String -> {
+                    val aes = Option.Mapping.toAes(aesName)
+                    when (statKind) {
+                        StatKind.QQ,
+                        StatKind.QQ_LINE -> consumedAesSet.contains(aes) || aes == Aes.SAMPLE
 
-                    else -> consumedAesSet.contains(aes)
+                        else -> consumedAesSet.contains(aes)
+                    }
                 }
-            } else {
-                false
+
+                else -> false
             }
         }
 
-        // If layer has no mapping then no data is needed.
-        val dropData: Boolean = (combinedMappingOptions.isEmpty() &&
-                // Do not touch GeoDataframe - empty mapping is OK in this case.
-                !GeoConfig.isGeoDataframe(layerOptions, DATA) &&
-                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isMapPlot)
-                )
-
-        var combinedData = when {
-            dropData -> DataFrame.Builder.emptyFrame()
-            !(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount() -> {
-                DataFrameUtil.appendReplace(sharedData, layerData)
-            }
-
-            !layerData.isEmpty -> layerData
-            else -> sharedData
-        }.run {
-            // Mark 'DateTime' variables
-            val dateTimeVariables = DataMetaUtil.getDateTimeColumns(plotDataMeta) +
-                    DataMetaUtil.getDateTimeColumns(ownDataMeta)
-            DataFrameUtil.addDateTimeVariables(this, dateTimeVariables)
-        }
-
-        var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isMapPlot)) {
-            val geoConfig = GeoConfig(
-                geomProto.geomKind,
-                combinedData,
-                layerOptions,
-                combinedMappingOptions
-            )
-            combinedData = geoConfig.dataAndCoordinates
-            aesMappings = geoConfig.mappings
-
-        } else {
-            aesMappings = createAesMapping(combinedData, combinedMappingOptions)
-        }
-
-        if (clientSide) {
-            // add stat default mappings
-            val statDefMapping = Stats.defaultMapping(stat).let {
-                when (isYOrientation) {
-                    true -> YOrientationBaseUtil.flipAesKeys(it)
-                    false -> it
-                }
-            }
-            // Only keys (aes) in 'statDefMapping' that are not already present in 'aesMappinds'.
-            aesMappings = statDefMapping + aesMappings
-        }
-
-        // drop from aes mapping constant that were defined explicitly.
-        aesMappings = aesMappings - explicitConstantAes
+        val (aesMappings, combinedData) = adjustLayerSituation(
+            layerOptions = layerOptions,
+            geomKind = geomProto.geomKind,
+            stat = stat,
+            sharedData = sharedData,
+            layerData = layerData,
+            plotDataMeta = plotDataMeta,
+            ownDataMeta = ownDataMeta,
+            consumedAesMappings = consumedAesMappings,
+            explicitConstantAes = explicitConstantAes,
+            isYOrientation = isYOrientation,
+            clientSide = clientSide,
+            isMapPlot = isMapPlot
+        )
 
         // init AES constants excluding mapped AES
-        constantsMap = LayerConfigUtil.initConstants(this, consumedAesSet - aesMappings.keys)
+        constantsMap = LayerConfigUtil.initConstants(
+            layerOptions = this,
+            consumedAesSet = consumedAesSet - aesMappings.keys
+        )
 
         // grouping
-        explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappingOptions)
+        explicitGroupingVarName = initGroupingVarName(combinedData, consumedAesMappings)
 
         varBindings = LayerConfigUtil.createBindings(
             combinedData,
@@ -278,7 +242,7 @@ class LayerConfig constructor(
         }
 
         // TODO: handle order options combining to a config parsing stage
-        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, combinedMappingOptions)
+        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
 
         myCombinedData = if (clientSide) {
             val orderSpecs = orderOptions.map {
@@ -406,6 +370,14 @@ class LayerConfig constructor(
             }
 
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
+        }
+
+        private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
+            return if (opts.has(Option.Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
+            } else {
+                listOf(defaultSampling)
+            }
         }
 
         private fun initTooltipsSpec(
