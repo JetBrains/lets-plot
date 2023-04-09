@@ -22,7 +22,7 @@ import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
 import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
-import jetbrains.datalore.plot.config.LayerConfigUtil.adjustLayerSituation
+import jetbrains.datalore.plot.config.LayerConfigUtil.aesMappingAndCombinedData
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -72,28 +72,6 @@ class LayerConfig constructor(
     val colorByAes: Aes<Color> = getPaintAes(Aes.COLOR, explicitConstantAes)
     val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
     val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
-
-    val explicitGroupingVarName: String?
-
-    val varBindings: List<VarBinding>
-    val constantsMap: Map<Aes<*>, Any>
-
-    val tooltips: TooltipSpecification
-    val annotations: AnnotationSpecification
-
-    var ownData: DataFrame? = null
-        private set
-
-    private var myOwnDataUpdated = false
-    private val myCombinedData: DataFrame
-
-    val combinedData: DataFrame
-        get() {
-            // 'combinedData' is only valid before 'stst'/'sampling' occurs.
-            check(!myOwnDataUpdated)
-            return myCombinedData
-        }
-
     val isLegendDisabled: Boolean
         get() = when (hasOwn(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
@@ -110,14 +88,6 @@ class LayerConfig constructor(
             check(!clientSide)
             return _samplings
         }
-
-    var orderOptions: List<OrderOption>
-        private set
-
-    val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
-        PosProto.STACK -> SeriesUtil::sum
-        else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
-    }
 
     val isYOrientation: Boolean
         get() = when (hasOwn(ORIENTATION)) {
@@ -148,14 +118,44 @@ class LayerConfig constructor(
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 
 
+    val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
+        PosProto.STACK -> SeriesUtil::sum
+        else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
+    }
+
+    var orderOptions: List<OrderOption>
+        private set
+
+    val explicitGroupingVarName: String?
+
+    val varBindings: List<VarBinding>
+    val constantsMap: Map<Aes<*>, Any>
+
+    val tooltips: TooltipSpecification
+    val annotations: AnnotationSpecification
+
+    var ownData: DataFrame
+        private set
+
+    private var combinedDataValid = true
+    var combinedData: DataFrame
+        private set
+        get() {
+            check(combinedDataValid)
+            return field
+        }
+
     init {
-        val (layerMappings, layerData) = createDataFrame(
+        val layerMappings = createDataFrame(
             options = this,
             commonData = sharedData,
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
             commonMappings = plotMappings,
             isClientSide = clientSide
-        )
+        ).let {
+            ownData = it.second
+            it.first
+        }
 
         if (!clientSide) {
             update(MAPPING, layerMappings)
@@ -187,12 +187,13 @@ class LayerConfig constructor(
             }
         }
 
-        val (aesMappings, combinedData) = adjustLayerSituation(
+        val (aesMappings: Map<Aes<*>, DataFrame.Variable>,
+            rawCombinedData: DataFrame) = aesMappingAndCombinedData(
             layerOptions = layerOptions,
             geomKind = geomProto.geomKind,
             stat = stat,
             sharedData = sharedData,
-            layerData = layerData,
+            layerData = ownData,
             plotDataMeta = plotDataMeta,
             ownDataMeta = ownDataMeta,
             consumedAesMappings = consumedAesMappings,
@@ -209,16 +210,14 @@ class LayerConfig constructor(
         )
 
         // grouping
-        explicitGroupingVarName = initGroupingVarName(combinedData, consumedAesMappings)
+        explicitGroupingVarName = initGroupingVarName(rawCombinedData, consumedAesMappings)
 
         varBindings = LayerConfigUtil.createBindings(
-            combinedData,
+            rawCombinedData,
             aesMappings,
             consumedAesSet,
             clientSide
         )
-
-        ownData = layerData
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
@@ -241,16 +240,15 @@ class LayerConfig constructor(
             AnnotationSpecification.NONE
         }
 
-        // TODO: handle order options combining to a config parsing stage
         orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
 
-        myCombinedData = if (clientSide) {
+        combinedData = if (clientSide) {
             val orderSpecs = orderOptions.map {
-                createOrderSpec(combinedData.variables(), varBindings, it, aggregateOperation)
+                createOrderSpec(rawCombinedData.variables(), varBindings, it, aggregateOperation)
             }
-            DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
+            DataFrame.Builder(rawCombinedData).addOrderSpecs(orderSpecs).build()
         } else {
-            combinedData
+            rawCombinedData
         }
     }
 
@@ -285,7 +283,9 @@ class LayerConfig constructor(
         require(dataFrame != null)
         update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame
-        myOwnDataUpdated = true
+
+        // Invalidate layer' "combined data"
+        combinedDataValid = false
     }
 
     fun hasExplicitGrouping(): Boolean {

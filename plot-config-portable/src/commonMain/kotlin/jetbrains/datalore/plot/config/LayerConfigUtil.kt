@@ -80,8 +80,7 @@ internal object LayerConfigUtil {
         return result
     }
 
-    // ToDo: name
-    fun adjustLayerSituation(
+    fun aesMappingAndCombinedData(
         layerOptions: Map<*, *>,
         geomKind: GeomKind,
         stat: Stat,
@@ -98,13 +97,16 @@ internal object LayerConfigUtil {
         isYOrientation: Boolean,
         clientSide: Boolean,
         isMapPlot: Boolean,
-    ): AdjustmentResult {
+    ): Pair<Map<Aes<*>, Variable>, DataFrame> {
+
+        val isGeoConfigApplicable = GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)
+        val isDataGeoDF = GeoConfig.isGeoDataframe(layerOptions, Option.PlotBase.DATA)
 
         // If layer has no mapping then no data is needed.
         val dropData: Boolean = (consumedAesMappings.isEmpty() &&
                 // Do not touch GeoDataframe - empty mapping is OK in this case.
-                !GeoConfig.isGeoDataframe(layerOptions, Option.PlotBase.DATA) &&
-                !GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)
+                !isDataGeoDF &&
+                !isGeoConfigApplicable
                 )
 
         var combinedData = when {
@@ -123,7 +125,7 @@ internal object LayerConfigUtil {
         }
 
         var aesMappings: Map<Aes<*>, Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)) {
+        if (clientSide && isGeoConfigApplicable) {
             val geoConfig = GeoConfig(
                 geomKind,
                 combinedData,
@@ -150,16 +152,12 @@ internal object LayerConfigUtil {
         }
 
         // drop from aes mapping constant that were defined explicitly.
+        @Suppress("ConvertArgumentToSet")
         aesMappings = aesMappings - explicitConstantAes
 
-        return AdjustmentResult(
-            consumedAesMappingsAdjusted = aesMappings,
-            combinedDataAdjusted = combinedData
+        return Pair(
+            first = aesMappings,
+            second = combinedData
         )
     }
-
-    data class AdjustmentResult(
-        val consumedAesMappingsAdjusted: Map<Aes<*>, Variable>,
-        val combinedDataAdjusted: DataFrame
-    )
 }

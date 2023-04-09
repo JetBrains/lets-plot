@@ -65,7 +65,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
         for (plotVar in plotVars.keys) {
             var canDropPlotVar = true
             for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
-                val layerData = layerConfig.ownData!!
+                val layerData = layerConfig.ownData
                 if (DataFrameUtil.variables(layerData).containsKey(plotVar)) {
                     // This variable not needed for this layer
                     // because there is same variable in the plot's data.
@@ -90,7 +90,7 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
 
         // Clean-up data in layers.
         for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
-            val layerData = layerConfig.ownData!!
+            val layerData = layerConfig.ownData
             val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep)
             layerConfig.replaceOwnData(layerDataCleaned)
         }

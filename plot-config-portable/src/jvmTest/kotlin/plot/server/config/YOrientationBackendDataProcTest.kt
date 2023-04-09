@@ -54,7 +54,7 @@ class YOrientationBackendDataProcTest {
         // See related: TestUtil.createGeomLayers()
         val layerConfig = ServerSideTestUtil.createLayerConfigs(plotSpec)[0]
 
-        val dataAfterStat = DataFrameUtil.toMap(layerConfig.ownData!!)
+        val dataAfterStat = DataFrameUtil.toMap(layerConfig.ownData)
         assertEquals(expected.data, dataAfterStat)
 
 //        val layerOptions = layerConfig.mergedOptions
