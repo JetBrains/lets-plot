@@ -50,8 +50,10 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             } else {
                 getBase(x, y, Orientation.PERPENDICULAR)
             }
-            val stick = createStick(base, head, p, helper) ?: continue
-            root.add(stick)
+            val stick = createStick(base, head, p, helper)
+            if (stick != null) {
+                root.add(stick)
+            }
             root.add(createCandy(head, p, helper))
             buildHint(head, p, helper, targetCollector, colorsByDataPoint)
         }
