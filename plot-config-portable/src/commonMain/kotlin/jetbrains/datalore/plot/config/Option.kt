@@ -304,7 +304,6 @@ object Option {
             const val FATTEN = "fatten"
             const val SLOPE = "slope"
             const val INTERCEPT = "intercept"
-            const val DIRECTION = "direction"
         }
 
         object LiveMap {

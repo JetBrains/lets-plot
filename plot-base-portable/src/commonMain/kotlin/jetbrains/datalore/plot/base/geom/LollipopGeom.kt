@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
@@ -199,18 +198,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     enum class Orientation {
         PERPENDICULAR, VERTICAL, HORIZONTAL;
-
-        companion object {
-
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Orientation>()
-
-            fun safeValueOf(v: String): Orientation {
-                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
-                    "Unsupported orientation: '$v'\n" +
-                    "Use one of: perpendicular, vertical, horizontal."
-                )
-            }
-        }
     }
 
     companion object {

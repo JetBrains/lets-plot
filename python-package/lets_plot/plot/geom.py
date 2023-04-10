@@ -6280,7 +6280,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
-    - linewidth : line width.
+    - linewidth : stick width.
+    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
     --------

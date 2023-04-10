@@ -109,7 +109,7 @@ open class GeomHelper(
         return SvgElementHelper()
     }
 
-    inner class SvgElementHelper() {
+    inner class SvgElementHelper {
         private var myStrokeAlphaEnabled = false
 
         fun setStrokeAlphaEnabled(b: Boolean) {
