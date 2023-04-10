@@ -6300,6 +6300,22 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     .. jupyter-execute::
         :linenos:
+        :emphasize-lines: 8-9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'v': np.random.randint(5, size=20)}
+        ggplot(data, aes(y='v')) + \\
+            geom_vline(xintercept=10) + \\
+            geom_lollipop(stat='count', orientation='y', intercept=10, \\
+                          fatten=5, linewidth=2)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
         :emphasize-lines: 10-11
 
         from lets_plot import *
@@ -6310,8 +6326,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
             'g': ['a', 'a', 'b', 'b', 'b', 'a', 'a'],
         }
         ggplot(data, aes('x', 'y')) + \\
-            geom_abline(slope=1, intercept=1, size=1.5, color="black") + \\
-            geom_lollipop(aes(fill='g'), slope=1, intercept=1, shape=22, \\
+            geom_abline(slope=1, size=1.5, color="black") + \\
+            geom_lollipop(aes(fill='g'), slope=1, shape=22, \\
                           size=5, stroke=2, color="black") + \\
             coord_fixed()
 
