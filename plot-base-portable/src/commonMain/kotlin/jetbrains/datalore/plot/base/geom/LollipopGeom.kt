@@ -46,7 +46,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            root.add(createCandy(head, p, helper))
             val base = if (orientationIsSpecified) {
                 getBase(x, y, Orientation.VERTICAL)
             } else {
@@ -54,6 +53,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             }
             val stick = createStick(base, head, p, helper) ?: continue
             root.add(stick)
+            root.add(createCandy(head, p, helper))
             buildHint(head, p, helper, targetCollector, colorsByDataPoint)
         }
     }
