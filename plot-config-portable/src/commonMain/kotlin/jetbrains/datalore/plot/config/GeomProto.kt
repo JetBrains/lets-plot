@@ -71,6 +71,14 @@ open class GeomProto constructor(val geomKind: GeomKind) {
         }
     }
 
+    fun hasOwnPositionAdjustmentOptions(layerOptions: OptionsAccessor): Boolean {
+        return when (geomKind) {
+            JITTER -> layerOptions.hasOwn(Geom.Jitter.WIDTH) || layerOptions.hasOwn(Geom.Jitter.HEIGHT)
+            TEXT, LABEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
+            else -> false
+        }
+    }
+
     fun preferredPositionAdjustmentOptions(layerOptions: OptionsAccessor): Map<String, Any> {
         val posOptionValue: Any = when (geomKind) {
             JITTER -> mapOf(

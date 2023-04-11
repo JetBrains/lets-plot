@@ -21,6 +21,7 @@ internal object LayerConfigUtil {
 
     fun positionAdjustmentOptions(layerOptions: OptionsAccessor, geomProto: GeomProto): Map<String, Any> {
         val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
+        val hasOwnPositionOptions = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
         val specifiedPosOptions: Map<String, Any> = when (val v = layerOptions[POS]) {
             null -> preferredPosOptions
             is Map<*, *> ->
@@ -31,11 +32,18 @@ internal object LayerConfigUtil {
                 mapOf(Option.Meta.NAME to v.toString())
         }
 
-        return if (specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME]) {
-            // Merge
-            preferredPosOptions + specifiedPosOptions
-        } else {
-            specifiedPosOptions
+        // Geom's parameters have priority over function parameters
+        return when {
+            specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME] -> {
+                // Merge
+                if (hasOwnPositionOptions) {
+                    specifiedPosOptions + preferredPosOptions
+                } else {
+                    preferredPosOptions + specifiedPosOptions
+                }
+            }
+            hasOwnPositionOptions -> preferredPosOptions
+            else -> specifiedPosOptions
         }
     }
 
