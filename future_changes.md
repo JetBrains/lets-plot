@@ -12,7 +12,12 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/aes_stroke.ipynb).
 
 
--  the 'newline' character (`\n`) now works as `line break` in legend text ([[#726](https://github.com/JetBrains/lets-plot/issues/726)])
+- New aesthetic `linewidth`. Used only for `geom_lollipop()` at the moment.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/lollipop_plot.ipynb).
+
+
+- the 'newline' character (`\n`) now works as `line break` in legend text ([[#726](https://github.com/JetBrains/lets-plot/issues/726)])
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
 
