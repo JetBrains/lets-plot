@@ -28,16 +28,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var intercept: Double = DEF_INTERCEPT
     var orientation: Orientation = DEF_ORIENTATION
 
-    fun setOrientation(value: String?) {
-        orientation = if (value == null) {
-            Orientation.UNSPECIFIED
-        } else when (value.lowercase()) {
-            "x" -> Orientation.X
-            "y" -> Orientation.Y
-            else -> Orientation.UNSPECIFIED
-        }
-    }
-
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
 
