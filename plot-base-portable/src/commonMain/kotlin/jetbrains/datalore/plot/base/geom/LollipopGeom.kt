@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
+import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
@@ -25,7 +26,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
-    private var orientation: Orientation = DEF_ORIENTATION
+    var orientation: Orientation = DEF_ORIENTATION
 
     fun setOrientation(value: String?) {
         orientation = if (value == null) {
@@ -200,6 +201,14 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     enum class Orientation {
         UNSPECIFIED, X, Y;
+
+        companion object {
+            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Orientation>()
+
+            fun safeValueOf(v: String): Orientation {
+                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException("orientation expected x|y but was $v")
+            }
+        }
     }
 
     companion object {

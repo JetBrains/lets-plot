@@ -280,7 +280,9 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Lollipop.INTERCEPT)) {
                     geom.intercept = opts.getDoubleDef(Lollipop.INTERCEPT, LollipopGeom.DEF_INTERCEPT)
                 }
-                geom.setOrientation(opts.getString(Option.Layer.ORIENTATION))
+                if (opts.hasOwn(Option.Layer.ORIENTATION)) {
+                    geom.orientation = LollipopGeom.Orientation.safeValueOf(opts.getString(Option.Layer.ORIENTATION)!!)
+                }
                 geom
             }
 
