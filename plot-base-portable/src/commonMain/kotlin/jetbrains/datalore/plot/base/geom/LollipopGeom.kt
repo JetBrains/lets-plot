@@ -25,7 +25,17 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
-    var orientationIsSpecified: Boolean = false
+    private var orientation: Orientation = DEF_ORIENTATION
+
+    fun setOrientation(value: String?) {
+        orientation = if (value == null) {
+            Orientation.UNSPECIFIED
+        } else when (value.lowercase()) {
+            "x" -> Orientation.X
+            "y" -> Orientation.Y
+            else -> Orientation.UNSPECIFIED
+        }
+    }
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -45,11 +55,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            val base = if (orientationIsSpecified) {
-                getBase(x, y, Orientation.VERTICAL)
-            } else {
-                getBase(x, y, Orientation.PERPENDICULAR)
-            }
+            val base = getBase(x, y, true)
             val stick = createStick(base, head, p, helper)
             if (stick != null) {
                 root.add(stick)
@@ -147,37 +153,30 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean,
-        isYOrientation: Boolean
+        isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes, isYOrientation)
+        return span(p, coordAes)
     }
 
     override fun heightSpan(
         p: DataPointAesthetics,
         coordAes: Aes<Double>,
         resolution: Double,
-        isDiscrete: Boolean,
-        isYOrientation: Boolean
+        isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes, isYOrientation)
+        return span(p, coordAes)
     }
 
     private fun span(
         p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        isYOrientation: Boolean
+        coordAes: Aes<Double>
     ): DoubleSpan? {
         val x = p.x()
         val y = p.y()
         if (!SeriesUtil.allFinite(x, y)) {
             return null
         }
-        val base = when {
-            !orientationIsSpecified -> getBase(x!!, y!!, Orientation.PERPENDICULAR)
-            isYOrientation -> getBase(x!!, y!!, Orientation.HORIZONTAL)
-            else -> getBase(x!!, y!!, Orientation.VERTICAL)
-        }
+        val base = getBase(x!!, y!!, false)
 
         return when (coordAes) {
             Aes.X -> DoubleSpan(base.x, x)
@@ -186,26 +185,28 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun getBase(x: Double, y: Double, orientation: Orientation): DoubleVector {
-        return when (orientation) {
-            Orientation.PERPENDICULAR -> {
+    private fun getBase(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
+        return when {
+            orientation == Orientation.UNSPECIFIED -> {
                 val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
                 val baseY = slope * baseX + intercept
                 DoubleVector(baseX, baseY)
             }
-            Orientation.VERTICAL -> DoubleVector(x, slope * x + intercept)
-            Orientation.HORIZONTAL -> DoubleVector(slope * y + intercept, y)
+            orientation == Orientation.X -> DoubleVector(x, slope * x + intercept)
+            orientation == Orientation.Y && orientationHasBeenApplied -> DoubleVector(x, slope * x + intercept)
+            else -> DoubleVector(slope * y + intercept, y)
         }
     }
 
     enum class Orientation {
-        PERPENDICULAR, VERTICAL, HORIZONTAL;
+        UNSPECIFIED, X, Y;
     }
 
     companion object {
         const val DEF_FATTEN = 2.5
         const val DEF_SLOPE = 0.0
         const val DEF_INTERCEPT = 0.0
+        val DEF_ORIENTATION = Orientation.UNSPECIFIED
 
         const val HANDLES_GROUPS = PointGeom.HANDLES_GROUPS
     }
