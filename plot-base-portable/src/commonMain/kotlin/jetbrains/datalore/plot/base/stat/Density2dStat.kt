@@ -42,8 +42,11 @@ class Density2dStat constructor(
             return withEmptyStatValues()
         }
 
-        val xVector = data.getNumeric(TransformVar.X)
-        val yVector = data.getNumeric(TransformVar.Y)
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        val (xVector, yVector) = (xs zip ys)
+            .filter { it.first?.isFinite() == true && it.second?.isFinite() == true }
+            .unzip()
 
         // if no data, return empty
         if (xVector.isEmpty()) {
