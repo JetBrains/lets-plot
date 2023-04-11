@@ -20,9 +20,9 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataConfigUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataConfigUtil.layerMappingsAndCombinedData
 import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
-import jetbrains.datalore.plot.config.LayerConfigUtil.aesMappingAndCombinedData
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -41,7 +41,7 @@ import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 class LayerConfig constructor(
     layerOptions: Map<String, Any>,
     plotData: DataFrame,
-    plotMappings: Map<*, *>,
+    plotMappings: Map<String, String>,
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
@@ -150,7 +150,7 @@ class LayerConfig constructor(
             commonData = plotData,
             ownData = ConfigUtil.createDataFrame(get(DATA)),
             commonMappings = plotMappings,
-            ownMappings = getMap(MAPPING),
+            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(Option.Meta.DATA_META)),
             isClientSide = clientSide
@@ -175,7 +175,7 @@ class LayerConfig constructor(
         val consumedAesMappings = (plotMappings + layerMappings).filterKeys { aesName ->
             when (aesName) {
                 Option.Mapping.GROUP -> true
-                is String -> {
+                else -> {
                     val aes = Option.Mapping.toAes(aesName)
                     when (statKind) {
                         StatKind.QQ,
@@ -184,13 +184,11 @@ class LayerConfig constructor(
                         else -> consumedAesSet.contains(aes)
                     }
                 }
-
-                else -> false
             }
         }
 
         val (aesMappings: Map<Aes<*>, DataFrame.Variable>,
-            rawCombinedData: DataFrame) = aesMappingAndCombinedData(
+            rawCombinedData: DataFrame) = layerMappingsAndCombinedData(
             layerOptions = layerOptions,
             geomKind = geomProto.geomKind,
             stat = stat,
@@ -414,7 +412,7 @@ class LayerConfig constructor(
             plotOrderOptions: List<OrderOption>,
             layerOptions: Map<String, Any>,
             varBindings: List<VarBinding>,
-            combinedMappingOptions: Map<*, *>
+            combinedMappingOptions: Map<String, String>
         ): List<OrderOption> {
             val mappedVariables = varBindings.map { it.variable.name }
 

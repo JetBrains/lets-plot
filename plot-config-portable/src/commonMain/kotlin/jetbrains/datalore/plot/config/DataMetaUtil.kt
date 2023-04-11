@@ -5,10 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
-import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
@@ -24,14 +20,14 @@ import jetbrains.datalore.plot.config.Option.Scale
 object DataMetaUtil {
     private const val prefix = "@as_discrete@"
 
-    private fun isDiscrete(variable: String) = variable.startsWith(prefix)
+    internal fun isDiscrete(variable: String) = variable.startsWith(prefix)
 
     public fun toDiscrete(variable: String): String {
         require(!isDiscrete(variable)) { "toDiscrete() - variable already encoded: $variable" }
         return "$prefix$variable"
     }
 
-    private fun fromDiscrete(variable: String): String {
+    internal fun fromDiscrete(variable: String): String {
         require(isDiscrete(variable)) { "fromDiscrete() - variable is not encoded: $variable" }
         return variable.removePrefix(prefix)
     }
@@ -77,73 +73,6 @@ object DataMetaUtil {
             }
     }
 
-    /**
-     * returns mappings and DataFrame extended with auto-generated discrete mappings and variables
-     */
-    fun createDataFrame(
-        commonData: DataFrame,
-        ownData: DataFrame,
-        commonMappings: Map<*, *>,
-        ownMappings: Map<*, *>,
-        commonDiscreteAes: Set<String>,
-        ownDiscreteAes: Set<String>,
-        isClientSide: Boolean
-    ): Pair<Map<*, *>, DataFrame> {
-
-        if (isClientSide) {
-            return Pair(
-                // no new discrete mappings, all job was done on server side
-                ownMappings,
-                // re-insert existing variables as discrete
-                DataFrameUtil.toMap(ownData)
-                    .filter { (varName, _) -> isDiscrete(varName) }
-                    .entries
-                    .fold(DataFrame.Builder(ownData)) { acc, (varName, values) ->
-                        val variable = findVariableOrFail(ownData, varName)
-                        // re-insert as discrete
-                        acc.remove(variable)
-                        acc.putDiscrete(variable, values)
-                    }
-                    .build()
-            )
-
-        }
-
-        // server side
-
-        // own names not yet encoded, i.e. 'cyl'
-        val ownDiscreteMappings = run {
-            return@run ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
-        }
-
-        // Original (not encoded) discrete var names from both common and own mappings.
-        val combinedDiscreteVars = run {
-            // common names already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
-            val commonDiscreteVars =
-                commonMappings.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
-
-            val ownSimpleVars = ownMappings.variables() - ownDiscreteMappings.variables()
-
-            // minus own non-discrete mappings (simple layer var overrides discrete plot var)
-            return@run ownDiscreteMappings.variables() + commonDiscreteVars - ownSimpleVars
-        }
-
-        val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(ownData)
-
-        return Pair(
-            ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
-                require(varName is String)
-                toDiscrete(varName)
-            },
-            combinedDfVars
-                .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
-                .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
-                .entries
-                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values) }
-                .build()
-        )
-    }
-
     fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
         return getMappingAnnotationsSpec(options, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
@@ -158,9 +87,9 @@ object DataMetaUtil {
             }
     }
 
-    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<String, String>): List<OrderOptionUtil.OrderOption> {
         // non-discrete mappings should inherit settings from the as_discrete
-        return this + mappings.variables()
+        return this + mappings.values.toSet()
             .filterNot(::isDiscrete)
             .mapNotNull { varName ->
                 val orderOptionForVar = this
@@ -195,9 +124,4 @@ object DataMetaUtil {
             ?.mapValues { (_, list) -> list!!.map { v -> v as Any } }
             ?: emptyMap())
     }
-}
-
-
-private fun Map<*, *>.variables(): Set<String> {
-    return values.map { it as String }.toSet()
 }
