@@ -40,7 +40,7 @@ import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 class LayerConfig constructor(
     layerOptions: Map<String, Any>,
-    sharedData: DataFrame,
+    plotData: DataFrame,
     plotMappings: Map<*, *>,
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
@@ -147,10 +147,12 @@ class LayerConfig constructor(
 
     init {
         val layerMappings = createDataFrame(
-            options = this,
-            commonData = sharedData,
-            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
+            commonData = plotData,
+            ownData = ConfigUtil.createDataFrame(get(DATA)),
             commonMappings = plotMappings,
+            ownMappings = getMap(MAPPING),
+            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(Option.Meta.DATA_META)),
             isClientSide = clientSide
         ).let {
             ownData = it.second
@@ -192,7 +194,7 @@ class LayerConfig constructor(
             layerOptions = layerOptions,
             geomKind = geomProto.geomKind,
             stat = stat,
-            sharedData = sharedData,
+            sharedData = plotData,
             layerData = ownData,
             plotDataMeta = plotDataMeta,
             ownDataMeta = ownDataMeta,

@@ -56,10 +56,12 @@ abstract class PlotConfig(
     init {
 
         val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
-            options = this,
             commonData = DataFrame.Builder.emptyFrame(),
-            commonDiscreteAes = emptySet(),
+            ownData = ConfigUtil.createDataFrame(get(DATA)),
             commonMappings = emptyMap<Any, Any>(),
+            ownMappings = getMap(MAPPING),
+            commonDiscreteAes = emptySet(),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(Option.Meta.DATA_META)),
             isClientSide = isClientSide
         )
 
@@ -128,7 +130,6 @@ abstract class PlotConfig(
                 sharedData,
                 getMap(MAPPING),
                 getMap(DATA_META),
-//                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
                 DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING)),
                 isClientSide,
                 isMapPlot

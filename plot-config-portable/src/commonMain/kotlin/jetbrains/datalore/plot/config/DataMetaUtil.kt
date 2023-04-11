@@ -81,14 +81,14 @@ object DataMetaUtil {
      * returns mappings and DataFrame extended with auto-generated discrete mappings and variables
      */
     fun createDataFrame(
-        options: OptionsAccessor,
         commonData: DataFrame,
-        commonDiscreteAes: Set<String>,
+        ownData: DataFrame,
         commonMappings: Map<*, *>,
+        ownMappings: Map<*, *>,
+        commonDiscreteAes: Set<String>,
+        ownDiscreteAes: Set<String>,
         isClientSide: Boolean
     ): Pair<Map<*, *>, DataFrame> {
-        val ownData = ConfigUtil.createDataFrame(options.get(Option.PlotBase.DATA))
-        val ownMappings = options.getMap(Option.PlotBase.MAPPING)
 
         if (isClientSide) {
             return Pair(
@@ -113,7 +113,6 @@ object DataMetaUtil {
 
         // own names not yet encoded, i.e. 'cyl'
         val ownDiscreteMappings = run {
-            val ownDiscreteAes = getAsDiscreteAesSet(options.getMap(Option.Meta.DATA_META))
             return@run ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
         }
 
@@ -182,10 +181,19 @@ object DataMetaUtil {
     fun getDateTimeColumns(options: Map<*, *>): Set<String> {
         return options
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE)!! }
+            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
             ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
             ?.keys
             ?: emptySet()
+    }
+
+    fun getFactorLevelsByDateTimeColumns(dataMeta: Map<*, *>): Map<String, List<Any>> {
+        return (dataMeta
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.getList(SeriesAnnotation.FACTOR_LEVELS) }
+            ?.filterValues { list -> list?.isNotEmpty() ?: false }
+            ?.mapValues { (_, list) -> list!!.map { v -> v as Any } }
+            ?: emptyMap())
     }
 }
 
