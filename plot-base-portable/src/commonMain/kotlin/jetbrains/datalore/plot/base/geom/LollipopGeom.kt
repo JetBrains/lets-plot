@@ -190,15 +190,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     }
 
     enum class Orientation {
-        UNSPECIFIED, X, Y;
-
-        companion object {
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Orientation>()
-
-            fun safeValueOf(v: String): Orientation {
-                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException("orientation expected x|y but was $v")
-            }
-        }
+        UNSPECIFIED, X, Y
     }
 
     companion object {

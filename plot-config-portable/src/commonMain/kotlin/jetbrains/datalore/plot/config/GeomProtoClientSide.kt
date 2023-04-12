@@ -281,7 +281,15 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.intercept = opts.getDoubleDef(Lollipop.INTERCEPT, LollipopGeom.DEF_INTERCEPT)
                 }
                 if (opts.hasOwn(Option.Layer.ORIENTATION)) {
-                    geom.orientation = LollipopGeom.Orientation.safeValueOf(opts.getString(Option.Layer.ORIENTATION)!!)
+                    geom.orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
+                        when (it.lowercase()) {
+                            "x" -> LollipopGeom.Orientation.X
+                            "y" -> LollipopGeom.Orientation.Y
+                            else -> throw IllegalArgumentException(
+                                "orientation expected x|y but was $it"
+                            )
+                        }
+                    } ?: LollipopGeom.DEF_ORIENTATION
                 }
                 geom
             }
