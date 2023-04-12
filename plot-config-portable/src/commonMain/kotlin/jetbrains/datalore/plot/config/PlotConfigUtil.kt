@@ -42,22 +42,33 @@ object PlotConfigUtil {
 
     // frontend
     fun findComputationMessages(figSpec: Map<String, Any>): List<String> {
-        val result: List<String> = when (val kind = PlotConfig.figSpecKind(figSpec)) {
-            FigKind.PLOT_SPEC -> getComputationMessages(figSpec)
-            FigKind.SUBPLOTS_SPEC -> {
-                val figures = OptionsAccessor(figSpec).getList(Option.SubPlots.FIGURES)
-                figures.flatMap {
-                    @Suppress("UNCHECKED_CAST")
-                    findComputationMessages(it as Map<String, Any>)
-                }
-            }
+        val messages = mutableListOf<String>()
+        enumPlots(figSpec) {
+            messages.addAll(getComputationMessages(it))
+        }
+        return messages.distinct()
+    }
 
-            FigKind.GG_BUNCH_SPEC -> {
-                val bunchConfig = BunchConfig(figSpec)
-                bunchConfig.bunchItems.flatMap { getComputationMessages(it.featureSpec) }
+    fun removeComputationMessages(figSpec: MutableMap<String, Any>) {
+        enumPlots(figSpec) {
+            (it as MutableMap<String, Any>).remove(PLOT_COMPUTATION_MESSAGES)
+        }
+    }
+
+    private fun enumPlots(figSpec: Map<String, Any>, plotSpecHandler: (Map<String, Any>) -> Unit) {
+        when (PlotConfig.figSpecKind(figSpec)) {
+            FigKind.PLOT_SPEC -> plotSpecHandler(figSpec)
+            FigKind.GG_BUNCH_SPEC -> BunchConfig(figSpec).bunchItems.forEach { plotSpecHandler(it.featureSpec) }
+            FigKind.SUBPLOTS_SPEC -> {
+                OptionsAccessor(figSpec)
+                    .getList(Option.SubPlots.FIGURES)
+                    .mapNotNull { it as? Map<*, *> } // skip "blank"
+                    .forEach {
+                        @Suppress("UNCHECKED_CAST")
+                        enumPlots(it as Map<String, Any>, plotSpecHandler)
+                    }
             }
         }
-        return result.distinct()
     }
 
     private fun getComputationMessages(opts: Map<String, Any>): List<String> {
