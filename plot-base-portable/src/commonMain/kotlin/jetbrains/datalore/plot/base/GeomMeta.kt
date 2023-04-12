@@ -301,9 +301,25 @@ object GeomMeta {
             GeomKind.DENSITY2D -> PATH
             GeomKind.DENSITY2DF -> POLYGON
             GeomKind.JITTER -> POINT
-            GeomKind.Q_Q -> POINT
+            GeomKind.Q_Q -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SAMPLE,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE
+            )
             GeomKind.Q_Q_2 -> POINT
-            GeomKind.Q_Q_LINE -> PATH
+            GeomKind.Q_Q_LINE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SAMPLE,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
+            )
             GeomKind.Q_Q_2_LINE -> PATH
             GeomKind.FREQPOLY -> PATH
             GeomKind.STEP -> PATH

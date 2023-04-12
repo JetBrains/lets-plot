@@ -177,12 +177,7 @@ class LayerConfig constructor(
                 Option.Mapping.GROUP -> true
                 else -> {
                     val aes = Option.Mapping.toAes(aesName)
-                    when (statKind) {
-                        StatKind.QQ,
-                        StatKind.QQ_LINE -> consumedAesSet.contains(aes) || aes == Aes.SAMPLE
-
-                        else -> consumedAesSet.contains(aes)
-                    }
+                    consumedAesSet.contains(aes)
                 }
             }
         }
