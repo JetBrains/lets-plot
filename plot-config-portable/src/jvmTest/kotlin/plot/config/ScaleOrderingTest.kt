@@ -520,10 +520,8 @@ class ScaleOrderingTest {
         val geomLayer = getSingleGeomLayer(spec)
         assertScaleOrdering(
             geomLayer,
-            expectedScaleBreaks = mapOf(Aes.FILL to emptyList()),
-            expectedOrderInBar = mapOf(
-                Aes.FILL to emptyList()
-            )
+            expectedScaleBreaks = emptyMap(),
+            expectedOrderInBar = emptyMap()
         )
     }
 
