@@ -284,9 +284,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     when (it.lowercase()) {
                         "x" -> LollipopGeom.Orientation.X
                         "y" -> LollipopGeom.Orientation.Y
-                        else -> throw IllegalArgumentException(
-                            "orientation expected x|y but was $it"
-                        )
+                        else -> error("orientation expected x|y but was $it")
                     }
                 } ?: LollipopGeom.DEF_ORIENTATION
                 val defaultDirection = when (geom.orientation) {
@@ -298,7 +296,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                         "v", "vertical" -> LollipopGeom.Direction.VERTICAL
                         "h", "horizontal" -> LollipopGeom.Direction.HORIZONTAL
                         "s", "slope" -> LollipopGeom.Direction.SLOPE
-                        else -> throw IllegalArgumentException(
+                        else -> error(
                             "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'\n" +
                             "Use one of: v, vertical, h, horizontal, s, slope."
                         )

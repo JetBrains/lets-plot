@@ -42,108 +42,40 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LOLLIPOP, ctx)
 
-        val lollipopData = mutableListOf<LollipopData>()
+        val lollipops = mutableListOf<Lollipop>()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
             val base = getBase(x, y, true)
             val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
-            lollipopData.add(LollipopData(p, head, base, stickLength))
+            lollipops.add(Lollipop(p, head, base, stickLength))
         }
         // Sort lollipops to better displaying when they are intersects
-        for (lollipop in lollipopData.sortedByDescending { it.length }) {
-            val stick = createStick(lollipop.base, lollipop.head, lollipop.point, helper)
+        for (lollipop in lollipops.sortedByDescending { it.length }) {
+            val stick = lollipop.createStick(helper)
             if (stick != null) {
                 root.add(stick)
             }
-            root.add(createCandy(lollipop.head, lollipop.point, helper))
-            buildHint(lollipop.head, lollipop.point, helper, targetCollector, colorsByDataPoint)
+            root.add(lollipop.createCandy(helper))
+            buildHint(lollipop, helper, targetCollector, colorsByDataPoint)
         }
-    }
-
-    private fun createCandy(
-        place: DoubleVector,
-        p: DataPointAesthetics,
-        helper: GeomHelper
-    ): SvgGElement {
-        val location = helper.toClient(place, p)!!
-        val shape = p.shape()!!
-        val o = PointShapeSvg.create(shape, location, p, fatten)
-        return wrap(o)
-    }
-
-    private fun createStick(
-        originalBase: DoubleVector,
-        originalHead: DoubleVector,
-        p: DataPointAesthetics,
-        helper: GeomHelper
-    ): SvgLineElement? {
-        val base = helper.toClient(originalBase, p) ?: return null // base of the lollipop stick
-        val head = helper.toClient(originalHead, p) ?: return null // center of the lollipop candy
-        val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
-        val candyRadius = candyRadius(p)
-        if (candyRadius > stickLength) {
-            return null
-        }
-        val neck = shiftHeadToBase(base, head, candyRadius) // meeting point of candy and stick
-        val line = SvgLineElement(base.x, base.y, neck.x, neck.y)
-        GeomHelper.decorate(line, p, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
-
-        return line
     }
 
     private fun buildHint(
-        place: DoubleVector,
-        p: DataPointAesthetics,
+        lollipop: Lollipop,
         helper: GeomHelper,
         targetCollector: GeomTargetCollector,
         colorsByDataPoint: (DataPointAesthetics) -> List<Color>
     ) {
         targetCollector.addPoint(
-            p.index(),
-            helper.toClient(place, p)!!,
-            candyRadius(p),
+            lollipop.point.index(),
+            helper.toClient(lollipop.head, lollipop.point)!!,
+            lollipop.candyRadius(),
             GeomTargetCollector.TooltipParams(
-                markerColors = colorsByDataPoint(p)
+                markerColors = colorsByDataPoint(lollipop.point)
             )
         )
-    }
-
-    private fun candyRadius(p: DataPointAesthetics): Double {
-        val shape = p.shape()!!
-        val shapeCoeff = when (shape) {
-            NamedShape.STICK_PLUS,
-            NamedShape.STICK_STAR,
-            NamedShape.STICK_CROSS -> 0.0
-            else -> 1.0
-        }
-        return (shape.size(p, fatten) + shapeCoeff * shape.strokeWidth(p)) / 2.0
-    }
-
-    private fun shiftHeadToBase(
-        base: DoubleVector,
-        head: DoubleVector,
-        shiftLength: Double
-    ): DoubleVector {
-        val x0 = base.x
-        val x1 = head.x
-        val y0 = base.y
-        val y1 = head.y
-
-        if (x0 == x1) {
-            val dy = if (y0 < y1) -shiftLength else shiftLength
-            return DoubleVector(x1, y1 + dy)
-        }
-        val dx = sqrt(shiftLength.pow(2) / (1.0 + (y0 - y1).pow(2) / (x0 - x1).pow(2)))
-        val x = if (x0 < x1) {
-            x1 - dx
-        } else {
-            x1 + dx
-        }
-        val y = (x - x1) * (y0 - y1) / (x0 - x1) + y1
-
-        return DoubleVector(x, y)
     }
 
     override fun widthSpan(
@@ -191,10 +123,10 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     }
 
     private fun getBaseForOrthogonalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
-        val calculateBaseCoordinates = { z: Double, w: Double ->
+        fun calculateBaseCoordinates(z: Double, w: Double): DoubleVector {
             val baseZ = (z + slope * (w - intercept)) / (1 + slope.pow(2))
             val baseW = slope * baseZ + intercept
-            DoubleVector(baseZ, baseW)
+            return DoubleVector(baseZ, baseW)
         }
         return when (orientation) {
             Orientation.X -> calculateBaseCoordinates(x, y)
@@ -210,11 +142,9 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     private fun getBaseForVerticalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
         return when (orientation) {
-            Orientation.X -> {
-                DoubleVector(x, slope * x + intercept)
-            }
+            Orientation.X -> DoubleVector(x, slope * x + intercept)
             Orientation.Y -> {
-                require(slope != 0.0) { "Baseline slope couldn't be zero" }
+                require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
                 if (orientationHasBeenApplied)
                     DoubleVector((y - intercept) / slope, y)
                 else
@@ -226,7 +156,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     private fun getBaseForHorizontalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
         return when (orientation) {
             Orientation.X -> {
-                require(slope != 0.0) { "Baseline slope couldn't be zero" }
+                require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
                 DoubleVector((y - intercept) / slope, y)
             }
             Orientation.Y -> {
@@ -238,7 +168,74 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    data class LollipopData(val point: DataPointAesthetics, val head: DoubleVector, val base: DoubleVector, val length: Double)
+    private inner class Lollipop(
+        val point: DataPointAesthetics,
+        val head: DoubleVector,
+        val base: DoubleVector,
+        val length: Double
+    ) {
+        fun createCandy(
+            helper: GeomHelper
+        ): SvgGElement {
+            val location = helper.toClient(head, point)!!
+            val shape = point.shape()!!
+            val o = PointShapeSvg.create(shape, location, point, fatten)
+            return wrap(o)
+        }
+
+        fun createStick(
+            helper: GeomHelper
+        ): SvgLineElement? {
+            val clientBase = helper.toClient(base, point) ?: return null // base of the lollipop stick
+            val clientHead = helper.toClient(head, point) ?: return null // center of the lollipop candy
+            val stickLength = sqrt((clientHead.x - clientBase.x).pow(2) + (clientHead.y - clientBase.y).pow(2))
+            val candyRadius = candyRadius()
+            if (candyRadius > stickLength) {
+                return null
+            }
+            val neck = shiftHeadToBase(clientBase, clientHead, candyRadius) // meeting point of candy and stick
+            val line = SvgLineElement(clientBase.x, clientBase.y, neck.x, neck.y)
+            GeomHelper.decorate(line, point, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
+
+            return line
+        }
+
+        fun candyRadius(): Double {
+            val shape = point.shape()!!
+            val shapeCoeff = when (shape) {
+                NamedShape.STICK_PLUS,
+                NamedShape.STICK_STAR,
+                NamedShape.STICK_CROSS -> 0.0
+                else -> 1.0
+            }
+            return (shape.size(point, fatten) + shapeCoeff * shape.strokeWidth(point)) / 2.0
+        }
+
+        private fun shiftHeadToBase(
+            clientBase: DoubleVector,
+            clientHead: DoubleVector,
+            shiftLength: Double
+        ): DoubleVector {
+            val x0 = clientBase.x
+            val x1 = clientHead.x
+            val y0 = clientBase.y
+            val y1 = clientHead.y
+
+            if (x0 == x1) {
+                val dy = if (y0 < y1) -shiftLength else shiftLength
+                return DoubleVector(x1, y1 + dy)
+            }
+            val dx = sqrt(shiftLength.pow(2) / (1.0 + (y0 - y1).pow(2) / (x0 - x1).pow(2)))
+            val x = if (x0 < x1) {
+                x1 - dx
+            } else {
+                x1 + dx
+            }
+            val y = (x - x1) * (y0 - y1) / (x0 - x1) + y1
+
+            return DoubleVector(x, y)
+        }
+    }
 
     enum class Orientation {
         X, Y
