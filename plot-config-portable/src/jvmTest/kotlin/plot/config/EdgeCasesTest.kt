@@ -134,7 +134,7 @@ class EdgeCasesTest {
     }
 
     @Test
-    fun `issue652 - smooth with 2 points and stat var in tooltip`() {
+    fun `issue681 - smooth with 2 points and stat var in tooltip`() {
         val spec = """
             |{
             |  "data": { "x": [1, 2], "y": [1, 2] },
@@ -152,7 +152,7 @@ class EdgeCasesTest {
     }
 
     @Test
-    fun `issue652 - smooth 2 points`() {
+    fun `issue681 - smooth 2 points`() {
         val spec = """
             |{
             |  "data": { "x": [1, 2], "y": [1, 2] },
@@ -169,7 +169,7 @@ class EdgeCasesTest {
     }
 
     @Test
-    fun `issue652 - empty data`() {
+    fun `issue681 - empty data`() {
         val spec = """
             |{
             |  "mapping": { "x": "x", "y": "y" },
