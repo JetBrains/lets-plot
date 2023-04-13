@@ -178,16 +178,28 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     private fun getBase(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
         return when (direction) {
-            Direction.SLOPE -> getBaseForOrthogonalStick(x, y)
+            Direction.SLOPE -> getBaseForOrthogonalStick(x, y, orientationHasBeenApplied)
             Direction.VERTICAL -> getBaseForVerticalStick(x, y, orientationHasBeenApplied)
             Direction.HORIZONTAL -> getBaseForHorizontalStick(x, y, orientationHasBeenApplied)
         }
     }
 
-    private fun getBaseForOrthogonalStick(x: Double, y: Double): DoubleVector {
-        val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
-        val baseY = slope * baseX + intercept
-        return DoubleVector(baseX, baseY)
+    private fun getBaseForOrthogonalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
+        val calculateBaseCoordinates = { z: Double, w: Double ->
+            val baseZ = (z + slope * (w - intercept)) / (1 + slope.pow(2))
+            val baseW = slope * baseZ + intercept
+            DoubleVector(baseZ, baseW)
+        }
+        return when (orientation) {
+            Orientation.X -> calculateBaseCoordinates(x, y)
+            Orientation.Y -> {
+                if (orientationHasBeenApplied) {
+                    calculateBaseCoordinates(x, y)
+                } else {
+                    calculateBaseCoordinates(y, x).flip()
+                }
+            }
+        }
     }
 
     private fun getBaseForVerticalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
