@@ -79,7 +79,6 @@ object Stats {
         .fold(DataFrame.Builder()) { acc, variable -> acc.put(variable, emptyList<Any>()) }
         .build()
 
-
     fun isStatVar(varName: String): Boolean {
         return VARS.containsKey(varName)
     }
@@ -343,7 +342,7 @@ object Stats {
         return QQ2LineStat(lineQuantiles = lineQuantiles)
     }
 
-    private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
+    private class IdentityStat() : BaseStat(emptyMap()) {
 
         override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
             return withEmptyStatValues()

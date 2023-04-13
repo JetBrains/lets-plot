@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 
 class ScaleOrderingTest {
@@ -520,8 +521,8 @@ class ScaleOrderingTest {
         val geomLayer = getSingleGeomLayer(spec)
         assertScaleOrdering(
             geomLayer,
-            expectedScaleBreaks = emptyMap(),
-            expectedOrderInBar = emptyMap()
+            expectedScaleBreaks = mapOf(Aes.FILL to null),
+            expectedOrderInBar = mapOf(Aes.FILL to null)
         )
     }
 
@@ -726,10 +727,18 @@ class ScaleOrderingTest {
         private fun assertScaleBreaks(
             layer: GeomLayer,
             aes: Aes<*>,
-            breaks: List<Any>
+            expectedScaleBreaks: List<Any>?
         ) {
-            val scaleBreaks = layer.scaleMap.getValue(aes).getScaleBreaks()
-            assertEquals(breaks, scaleBreaks.domainValues, "Wrong ticks order on ${aes.name.uppercase()}.")
+            val scale = layer.scaleMap[aes]
+            if (expectedScaleBreaks == null) {
+                assertNull(scale, "Scale for ${aes.name.uppercase()} should not be present")
+            } else {
+                assertEquals(
+                    expectedScaleBreaks,
+                    scale!!.getScaleBreaks().domainValues,
+                    "Wrong ticks order on ${aes.name.uppercase()}."
+                )
+            }
         }
 
         private fun getBarColumnValues(
@@ -755,23 +764,28 @@ class ScaleOrderingTest {
 
         internal fun assertScaleOrdering(
             geomLayer: GeomLayer,
-            expectedScaleBreaks: Map<Aes<*>, List<String>>,
-            expectedOrderInBar: Map<Aes<*>, List<List<*>>>
+            expectedScaleBreaks: Map<Aes<*>, List<String>?>,
+            expectedOrderInBar: Map<Aes<*>, List<List<*>>?>
         ) {
             expectedScaleBreaks.forEach { (aes, breaks) ->
                 assertScaleBreaks(geomLayer, aes, breaks)
             }
 
             expectedOrderInBar.forEach { (aes, expected) ->
-                val breaks = geomLayer.scaleMap.getValue(aes).getScaleBreaks().domainValues
-                val breakColors = breaks.zip(legendColors).associate { it.second to it.first }
-                val actual: Map<Int, List<Any?>> =
-                    getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->
-                        if (aes == Aes.FILL) p.fill() else p.color()
+                val scale = geomLayer.scaleMap[aes]
+                if (expected == null) {
+                    assertNull(scale, "Scale for ${aes.name.uppercase()} should not be present")
+                } else {
+                    val breaks = scale!!.getScaleBreaks().domainValues
+                    val breakColors = breaks.zip(legendColors).associate { it.second to it.first }
+                    val actual: Map<Int, List<Any?>> =
+                        getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->
+                            if (aes == Aes.FILL) p.fill() else p.color()
+                        }
+                    assertEquals(expected.size, actual.size)
+                    for (i in expected.indices) {
+                        assertEquals(expected[i], actual[i], "Wrong color order in ${aes.name.uppercase()}.")
                     }
-                assertEquals(expected.size, actual.size)
-                for (i in expected.indices) {
-                    assertEquals(expected[i], actual[i], "Wrong color order in ${aes.name.uppercase()}.")
                 }
             }
         }
