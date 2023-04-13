@@ -42,17 +42,23 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LOLLIPOP, ctx)
 
+        val lollipopData = mutableListOf<LollipopData>()
         for (p in GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)) {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
             val base = getBase(x, y, true)
-            val stick = createStick(base, head, p, helper)
+            val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
+            lollipopData.add(LollipopData(p, head, base, stickLength))
+        }
+        // Sort lollipops to better displaying when they are intersects
+        for (lollipop in lollipopData.sortedByDescending { it.length }) {
+            val stick = createStick(lollipop.base, lollipop.head, lollipop.point, helper)
             if (stick != null) {
                 root.add(stick)
             }
-            root.add(createCandy(head, p, helper))
-            buildHint(head, p, helper, targetCollector, colorsByDataPoint)
+            root.add(createCandy(lollipop.head, lollipop.point, helper))
+            buildHint(lollipop.head, lollipop.point, helper, targetCollector, colorsByDataPoint)
         }
     }
 
@@ -231,6 +237,8 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             }
         }
     }
+
+    data class LollipopData(val point: DataPointAesthetics, val head: DoubleVector, val base: DoubleVector, val length: Double)
 
     enum class Orientation {
         X, Y
