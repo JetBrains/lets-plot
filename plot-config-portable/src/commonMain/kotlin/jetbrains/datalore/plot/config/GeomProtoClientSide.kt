@@ -280,17 +280,30 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Lollipop.INTERCEPT)) {
                     geom.intercept = opts.getDoubleDef(Lollipop.INTERCEPT, LollipopGeom.DEF_INTERCEPT)
                 }
-                if (opts.hasOwn(Option.Layer.ORIENTATION)) {
-                    geom.orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
-                        when (it.lowercase()) {
-                            "x" -> LollipopGeom.Orientation.X
-                            "y" -> LollipopGeom.Orientation.Y
-                            else -> throw IllegalArgumentException(
-                                "orientation expected x|y but was $it"
-                            )
-                        }
-                    } ?: LollipopGeom.DEF_ORIENTATION
+                geom.orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
+                    when (it.lowercase()) {
+                        "x" -> LollipopGeom.Orientation.X
+                        "y" -> LollipopGeom.Orientation.Y
+                        else -> throw IllegalArgumentException(
+                            "orientation expected x|y but was $it"
+                        )
+                    }
+                } ?: LollipopGeom.DEF_ORIENTATION
+                val defaultDirection = when (geom.orientation) {
+                    LollipopGeom.Orientation.X -> LollipopGeom.Direction.VERTICAL
+                    LollipopGeom.Orientation.Y -> LollipopGeom.Direction.HORIZONTAL
                 }
+                geom.direction = opts.getString(Lollipop.DIRECTION)?.let {
+                    when (it.lowercase()) {
+                        "v", "vertical" -> LollipopGeom.Direction.VERTICAL
+                        "h", "horizontal" -> LollipopGeom.Direction.HORIZONTAL
+                        "s", "slope" -> LollipopGeom.Direction.SLOPE
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'\n" +
+                            "Use one of: v, vertical, h, horizontal, s, slope."
+                        )
+                    }
+                } ?: defaultDirection
                 geom
             }
 

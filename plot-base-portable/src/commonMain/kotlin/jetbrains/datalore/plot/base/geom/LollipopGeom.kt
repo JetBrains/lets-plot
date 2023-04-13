@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
@@ -27,6 +26,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
     var orientation: Orientation = DEF_ORIENTATION
+    var direction: Direction = DEF_DIRECTION
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -177,27 +177,63 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     }
 
     private fun getBase(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
-        return when {
-            orientation == Orientation.UNSPECIFIED -> {
-                val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
-                val baseY = slope * baseX + intercept
-                DoubleVector(baseX, baseY)
+        return when (direction) {
+            Direction.SLOPE -> getBaseForOrthogonalStick(x, y)
+            Direction.VERTICAL -> getBaseForVerticalStick(x, y, orientationHasBeenApplied)
+            Direction.HORIZONTAL -> getBaseForHorizontalStick(x, y, orientationHasBeenApplied)
+        }
+    }
+
+    private fun getBaseForOrthogonalStick(x: Double, y: Double): DoubleVector {
+        val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
+        val baseY = slope * baseX + intercept
+        return DoubleVector(baseX, baseY)
+    }
+
+    private fun getBaseForVerticalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
+        return when (orientation) {
+            Orientation.X -> {
+                DoubleVector(x, slope * x + intercept)
             }
-            orientation == Orientation.X -> DoubleVector(x, slope * x + intercept)
-            orientation == Orientation.Y && orientationHasBeenApplied -> DoubleVector(x, slope * x + intercept)
-            else -> DoubleVector(slope * y + intercept, y)
+            Orientation.Y -> {
+                require(slope != 0.0) { "Baseline slope couldn't be zero" }
+                if (orientationHasBeenApplied)
+                    DoubleVector((y - intercept) / slope, y)
+                else
+                    DoubleVector(x, (x - intercept) / slope)
+            }
+        }
+    }
+
+    private fun getBaseForHorizontalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
+        return when (orientation) {
+            Orientation.X -> {
+                require(slope != 0.0) { "Baseline slope couldn't be zero" }
+                DoubleVector((y - intercept) / slope, y)
+            }
+            Orientation.Y -> {
+                if (orientationHasBeenApplied)
+                    DoubleVector(x, slope * x + intercept)
+                else
+                    DoubleVector(slope * y + intercept, y)
+            }
         }
     }
 
     enum class Orientation {
-        UNSPECIFIED, X, Y
+        X, Y
+    }
+
+    enum class Direction {
+        VERTICAL, HORIZONTAL, SLOPE
     }
 
     companion object {
         const val DEF_FATTEN = 2.5
         const val DEF_SLOPE = 0.0
         const val DEF_INTERCEPT = 0.0
-        val DEF_ORIENTATION = Orientation.UNSPECIFIED
+        val DEF_ORIENTATION = Orientation.X
+        val DEF_DIRECTION = Direction.VERTICAL
 
         const val HANDLES_GROUPS = PointGeom.HANDLES_GROUPS
     }

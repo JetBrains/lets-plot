@@ -61,7 +61,8 @@ class Lollipop {
                 "               {" +
                 "                 'geom': 'abline'," +
                 "                 'slope': 1," +
-                "                 'intercept': 1" +
+                "                 'intercept': 1," +
+                "                 'orientation': 'y'" +
                 "               }," +
                 "               {" +
                 "                 'geom': 'lollipop'," +
@@ -74,7 +75,9 @@ class Lollipop {
                 "                 'linetype': 'dotted'," +
                 "                 'alpha': 0.5," +
                 "                 'slope': 1," +
-                "                 'intercept': 1" +
+                "                 'intercept': 1," +
+                "                 'orientation': 'y'," +
+                "                 'dir': 's'" +
                 "               }" +
                 "             ]" +
                 "}"
