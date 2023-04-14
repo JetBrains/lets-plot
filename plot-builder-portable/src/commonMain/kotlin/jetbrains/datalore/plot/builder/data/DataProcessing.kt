@@ -75,8 +75,13 @@ object DataProcessing {
             )
             groupSizeListAfterStat = listOf(statData.rowCount())
             resultSeries = statData.variables().associateWith { variable -> statData[variable] }
-        } else { // add offset to each group
-            val groupMerger = GroupMerger()
+        } else {
+            // add offset to each group
+            val groupMerger = GroupMerger(
+                statInput.bindings,
+                orderOptions,
+                aggregateOperation,
+            )
             var lastStatGroupEnd = -1
             for (d in splitByGroup(statInput.data, groups)) {
                 var statData = applyStat(
@@ -89,10 +94,8 @@ object DataProcessing {
                     varsWithoutBinding,
                     messageConsumer
                 )
-                if (statData.isEmpty) {
-                    continue
-                }
-                groupMerger.initOrderSpecs(orderOptions, statData.variables(), statInput.bindings, aggregateOperation)
+
+                check(!statData.isEmpty)
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
@@ -135,11 +138,8 @@ object DataProcessing {
                 put(variable, resultSeries[variable]!!)
             }
 
-// ToDo: why do we need ordering specs after stat?
-
-// ToDo: why do apply ordering specs to partial data? (i.e. when facets are used)
-
-            // set ordering specifications
+            // Set ordering specifications
+            // Ordering is required for possible "pick sampling" down the stream
             val orderSpecs = orderOptions.map { orderOption ->
                 OrderOptionUtil.createOrderSpec(resultSeries.keys, statInput.bindings, orderOption, aggregateOperation)
             }

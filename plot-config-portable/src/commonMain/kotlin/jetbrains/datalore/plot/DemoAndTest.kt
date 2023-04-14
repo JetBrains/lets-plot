@@ -27,7 +27,9 @@ object DemoAndTest {
             plot.ensureBuilt()
         }
 
-        plotBuildErrorMessage(plot)?.let { throw Error(it) }
+        plotBuildErrorMessage(plot)?.let {
+            throw RuntimeException(it)
+        }
 
         return plot
     }
