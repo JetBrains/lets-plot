@@ -303,14 +303,15 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     when (orientation to direction) {
                         Orientation.X to Direction.HORIZONTAL,
                         Orientation.Y to Direction.VERTICAL -> {
-                            val slopeMessage = if (opts.hasOwn(Lollipop.SLOPE)) {
-                                "Set a non-zero value for the slope."
-                            } else {
-                                "Change slope from 0 (default) to a different value."
-                            }
-                            error(slopeMessage +
+                            error(
+                                if (opts.hasOwn(Lollipop.SLOPE)) {
+                                    "Set a non-zero value for the slope."
+                                } else {
+                                    "Change slope from 0 (default) to a different value."
+                                } +
                                   " With this combination of ${Option.Layer.ORIENTATION} and ${Lollipop.DIRECTION}," +
-                                  " the baseline cannot be parallel to the $orientation axis.")
+                                  " the baseline cannot be parallel to the $orientation axis."
+                            )
                         }
                     }
                 }
