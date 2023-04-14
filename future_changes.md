@@ -26,3 +26,7 @@
 - Batik: geom_imshow() fail with an error: "The attribute "xlink:href" of the element <image> is required"
 - Tooltip is not shown when configured for 'const' value [[#610](https://github.com/JetBrains/lets-plot/issues/610)].
 - Fix crash when try to add a constant to a tooltip (e.g.`"^size"`, where `size` aesthetic is specified with a number).
+- `geom_segment()` doesn't take into account the alpha [[#748](https://github.com/JetBrains/lets-plot/issues/748)].
+- Batik bug with usage of "&" [[#713](https://github.com/JetBrains/lets-plot/issues/713)].
+- HTML export: exclude computation messages from the output [[#725](https://github.com/JetBrains/lets-plot/issues/725)].
+- "Variable not found" error in ggmarginal [[#681](https://github.com/JetBrains/lets-plot/issues/681)].
