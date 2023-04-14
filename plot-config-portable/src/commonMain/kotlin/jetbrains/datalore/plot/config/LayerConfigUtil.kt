@@ -66,7 +66,7 @@ internal object LayerConfigUtil {
     ): List<VarBinding> {
 
         val result = ArrayList<VarBinding>()
-        if (mapping != null) {
+        if (mapping != null && data.rowCount() > 0) {
             val aesSet = HashSet(consumedAesSet)
             aesSet.retainAll(mapping.keys)
             for (aes in aesSet) {

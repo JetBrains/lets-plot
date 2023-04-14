@@ -133,6 +133,62 @@ class EdgeCasesTest {
         (GeomName.values() - listOf(LIVE_MAP, IMAGE)).forEach(::checkGeom)
     }
 
+    @Test
+    fun `issue681 - smooth with 2 points and stat var in tooltip`() {
+        val spec = """
+            |{
+            |  "data": { "x": [1, 2], "y": [1, 2] },
+            |  "kind": "plot",
+            |  "layers": [ 
+            |    { 
+            |        "geom": "smooth", 
+            |        "mapping": { "x": "x", "y": "y" },
+            |        "tooltips": { "lines": [ "@..se.." ] }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+    }
+
+    @Test
+    fun `issue681 - smooth 2 points`() {
+        val spec = """
+            |{
+            |  "data": { "x": [1, 2], "y": [1, 2] },
+            |  "kind": "plot",
+            |  "layers": [ 
+            |    { 
+            |        "geom": "smooth", 
+            |        "mapping": { "x": "x", "y": "y" }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+    }
+
+    @Test
+    fun `issue681 - empty data`() {
+        val spec = """
+            |{
+            |  "mapping": { "x": "x", "y": "y" },
+            |  "kind": "plot",
+            |  "layers": [
+            |    { "geom": "point" },
+            |    {
+            |      "geom": "histogram",
+            |      "mapping": { "y": "..density.." },
+            |      "marginal": true,
+            |      "margin_side": "t"
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+    }
+
+
     private fun checkWithNaNInXYSeries(geom: String) {
         val spec = "{" +
                 "   'kind': 'plot'," +

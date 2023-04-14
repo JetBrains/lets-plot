@@ -47,7 +47,7 @@ class Density2dfStat(
 
         // if no data, return empty
         if (xVector.isEmpty()) {
-            return DataFrame.Builder.emptyFrame()
+            return withEmptyStatValues()
         }
 
         // if length of x and y doesn't match, throw error

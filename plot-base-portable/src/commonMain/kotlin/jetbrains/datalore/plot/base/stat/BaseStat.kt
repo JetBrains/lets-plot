@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.TransformVar
+import jetbrains.datalore.plot.base.stat.Stats.EMPTY_STATS_DATAFRAME
 
 abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Variable>) : Stat {
     override fun normalize(dataAfterStat: DataFrame): DataFrame {
@@ -37,12 +38,6 @@ abstract class BaseStat(private val defaultMappings: Map<Aes<*>, DataFrame.Varia
     }
 
     protected fun withEmptyStatValues(): DataFrame {
-        val newData = DataFrame.Builder()
-        for (aes in Aes.values()) {
-            if (hasDefaultMapping(aes)) {
-                newData.put(getDefaultMapping(aes), emptyList<Any>())
-            }
-        }
-        return newData.build()
+        return EMPTY_STATS_DATAFRAME
     }
 }

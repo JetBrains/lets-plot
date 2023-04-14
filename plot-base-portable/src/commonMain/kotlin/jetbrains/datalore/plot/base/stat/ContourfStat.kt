@@ -24,7 +24,7 @@ class ContourfStat(binCount: Int, binWidth: Double?) : BaseStat(DEF_MAPPING) {
         }
 
         val levels = ContourStatUtil.computeLevels(data, myBinOptions)
-            ?: return DataFrame.Builder.emptyFrame()
+            ?: return withEmptyStatValues()
 
         val pathListByLevel = ContourStatUtil.computeContours(data, levels)
 
