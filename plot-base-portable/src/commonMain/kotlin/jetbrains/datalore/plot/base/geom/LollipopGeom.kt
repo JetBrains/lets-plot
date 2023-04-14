@@ -96,10 +96,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         return span(p, coordAes)
     }
 
-    private fun span(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>
-    ): DoubleSpan? {
+    private fun span(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {
         val x = p.x()
         val y = p.y()
         if (!SeriesUtil.allFinite(x, y)) {
@@ -174,18 +171,14 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val base: DoubleVector,
         val length: Double
     ) {
-        fun createCandy(
-            helper: GeomHelper
-        ): SvgGElement {
+        fun createCandy(helper: GeomHelper): SvgGElement {
             val location = helper.toClient(head, point)!!
             val shape = point.shape()!!
             val o = PointShapeSvg.create(shape, location, point, fatten)
             return wrap(o)
         }
 
-        fun createStick(
-            helper: GeomHelper
-        ): SvgLineElement? {
+        fun createStick(helper: GeomHelper): SvgLineElement? {
             val clientBase = helper.toClient(base, point) ?: return null // base of the lollipop stick
             val clientHead = helper.toClient(head, point) ?: return null // center of the lollipop candy
             val stickLength = sqrt((clientHead.x - clientBase.x).pow(2) + (clientHead.y - clientBase.y).pow(2))

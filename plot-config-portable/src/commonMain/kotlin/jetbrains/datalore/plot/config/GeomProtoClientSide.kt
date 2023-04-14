@@ -272,7 +272,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
-                val geom = LollipopGeom()
                 val orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
                     when (it.lowercase()) {
                         "x" -> Orientation.X
@@ -310,21 +309,22 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                                 "Change slope from 0 (default) to a different value."
                             }
                             error(slopeMessage +
-                                  "With this combination of ${Option.Layer.ORIENTATION} and ${Lollipop.DIRECTION}, " +
-                                  "the baseline cannot be parallel to the $orientation axis.")
+                                  " With this combination of ${Option.Layer.ORIENTATION} and ${Lollipop.DIRECTION}," +
+                                  " the baseline cannot be parallel to the $orientation axis.")
                         }
                     }
                 }
-                geom.orientation = orientation
-                geom.direction = direction
-                geom.slope = slope
-                if (opts.hasOwn(Lollipop.INTERCEPT)) {
-                    geom.intercept = opts.getDouble(Lollipop.INTERCEPT)!!
+                LollipopGeom().apply {
+                    this.orientation = orientation
+                    this.direction = direction
+                    this.slope = slope
+                    if (opts.hasOwn(Lollipop.INTERCEPT)) {
+                        this.intercept = opts.getDouble(Lollipop.INTERCEPT)!!
+                    }
+                    if (opts.hasOwn(Lollipop.FATTEN)) {
+                        this.fatten = opts.getDouble(Lollipop.FATTEN)!!
+                    }
                 }
-                if (opts.hasOwn(Lollipop.FATTEN)) {
-                    geom.fatten = opts.getDouble(Lollipop.FATTEN)!!
-                }
-                geom
             }
 
             else -> {
