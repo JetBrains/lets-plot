@@ -107,12 +107,13 @@ class EdgeCasesTest {
     }
 
     @Test
-    fun allWithNaNInXYSeries() {
+    fun allWithNotFiniteValuesInXYSeries() {
         for (geomName in GeomName.values()) {
             if (LIVE_MAP == geomName || IMAGE == geomName) {
                 continue
             }
             checkWithNaNInXYSeries(geomName)
+            checkWithNullInXYSeries(geomName)
         }
     }
 
@@ -216,6 +217,31 @@ class EdgeCasesTest {
         )
 
         plotSpec["data"] = data
+        assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+    }
+
+    private fun checkWithNullInXYSeries(geom: String) {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'x': [0, 1, 2, null, 4],
+                'y': [0, 1, 4, 9, null]
+              },
+              'mapping': {
+                'x': 'x',
+                'y': 'y'
+              },
+              'layers': [
+                {
+                  'geom': '$geom'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
         assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
     }
 
