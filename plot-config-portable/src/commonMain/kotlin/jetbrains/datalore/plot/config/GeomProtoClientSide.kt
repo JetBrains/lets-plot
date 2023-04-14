@@ -34,6 +34,8 @@ import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
 import jetbrains.datalore.plot.config.Option.Geom.YDotplot
 import jetbrains.datalore.plot.config.Option.Geom.Lollipop
+import jetbrains.datalore.plot.base.geom.LollipopGeom.Orientation
+import jetbrains.datalore.plot.base.geom.LollipopGeom.Direction
 import jetbrains.datalore.plot.config.Option.Layer.USE_CRS
 
 
@@ -271,37 +273,57 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
 
             GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
                 val geom = LollipopGeom()
-                if (opts.hasOwn(Lollipop.FATTEN)) {
-                    geom.fatten = opts.getDoubleDef(Lollipop.FATTEN, LollipopGeom.DEF_FATTEN)
-                }
-                if (opts.hasOwn(Lollipop.SLOPE)) {
-                    geom.slope = opts.getDoubleDef(Lollipop.SLOPE, LollipopGeom.DEF_SLOPE)
-                }
-                if (opts.hasOwn(Lollipop.INTERCEPT)) {
-                    geom.intercept = opts.getDoubleDef(Lollipop.INTERCEPT, LollipopGeom.DEF_INTERCEPT)
-                }
-                geom.orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
+                val orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
                     when (it.lowercase()) {
-                        "x" -> LollipopGeom.Orientation.X
-                        "y" -> LollipopGeom.Orientation.Y
+                        "x" -> Orientation.X
+                        "y" -> Orientation.Y
                         else -> error("orientation expected x|y but was $it")
                     }
-                } ?: LollipopGeom.DEF_ORIENTATION
-                val defaultDirection = when (geom.orientation) {
-                    LollipopGeom.Orientation.X -> LollipopGeom.Direction.VERTICAL
-                    LollipopGeom.Orientation.Y -> LollipopGeom.Direction.HORIZONTAL
+                } ?: Orientation.X
+                val defaultDirection = when (orientation) {
+                    Orientation.X -> Direction.VERTICAL
+                    Orientation.Y -> Direction.HORIZONTAL
                 }
-                geom.direction = opts.getString(Lollipop.DIRECTION)?.let {
+                val direction = opts.getString(Lollipop.DIRECTION)?.let {
                     when (it.lowercase()) {
-                        "v", "vertical" -> LollipopGeom.Direction.VERTICAL
-                        "h", "horizontal" -> LollipopGeom.Direction.HORIZONTAL
-                        "s", "slope" -> LollipopGeom.Direction.SLOPE
+                        "v", "vertical" -> Direction.VERTICAL
+                        "h", "horizontal" -> Direction.HORIZONTAL
+                        "s", "slope" -> Direction.SLOPE
                         else -> error(
                             "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'\n" +
                             "Use one of: v, vertical, h, horizontal, s, slope."
                         )
                     }
                 } ?: defaultDirection
+                val slope = if (opts.hasOwn(Lollipop.SLOPE)) {
+                    opts.getDouble(Lollipop.SLOPE)!!
+                } else {
+                    0.0
+                }
+                if (slope == 0.0) {
+                    when (orientation to direction) {
+                        Orientation.X to Direction.HORIZONTAL,
+                        Orientation.Y to Direction.VERTICAL -> {
+                            val slopeMessage = if (opts.hasOwn(Lollipop.SLOPE)) {
+                                "Set a non-zero value for the slope."
+                            } else {
+                                "Change slope from 0 (default) to a different value."
+                            }
+                            error(slopeMessage +
+                                  "With this combination of ${Option.Layer.ORIENTATION} and ${Lollipop.DIRECTION}, " +
+                                  "the baseline cannot be parallel to the $orientation axis.")
+                        }
+                    }
+                }
+                geom.orientation = orientation
+                geom.direction = direction
+                geom.slope = slope
+                if (opts.hasOwn(Lollipop.INTERCEPT)) {
+                    geom.intercept = opts.getDouble(Lollipop.INTERCEPT)!!
+                }
+                if (opts.hasOwn(Lollipop.FATTEN)) {
+                    geom.fatten = opts.getDouble(Lollipop.FATTEN)!!
+                }
                 geom
             }
 
