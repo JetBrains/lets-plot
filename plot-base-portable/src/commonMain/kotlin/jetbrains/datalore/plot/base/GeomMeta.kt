@@ -87,6 +87,8 @@ object GeomMeta {
                 Aes.X, Aes.Y,
                 Aes.YMIN, Aes.YMAX,
 
+                Aes.XMIN, Aes.XMAX, // horizontal representation (orientation="y")
+
                 Aes.SIZE, // path width
                 Aes.LINETYPE,
                 Aes.COLOR,
@@ -144,7 +146,11 @@ object GeomMeta {
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.LINETYPE,
-                Aes.SIZE
+                Aes.SIZE,
+
+                // horizontal representation (orientation="y")
+                Aes.Y,
+                Aes.XMIN, Aes.XMAX,
             )
 
             GeomKind.ERROR_BAR_H -> listOf(
@@ -236,6 +242,8 @@ object GeomMeta {
                 Aes.Y, // NaN for 'box' data-point (used for outliers)
                 Aes.YMAX,
                 Aes.YMIN,
+
+                Aes.XMAX, Aes.XMIN, // horizontal representation (orientation="y")
 
                 Aes.ALPHA,
                 Aes.COLOR,

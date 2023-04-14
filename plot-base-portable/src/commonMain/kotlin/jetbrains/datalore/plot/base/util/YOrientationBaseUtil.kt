@@ -35,6 +35,10 @@ object YOrientationBaseUtil {
         return when (aes) {
             Aes.X -> Aes.Y as Aes<T>
             Aes.Y -> Aes.X as Aes<T>
+            Aes.XMIN -> Aes.YMIN as Aes<T>
+            Aes.XMAX -> Aes.YMAX as Aes<T>
+            Aes.YMIN -> Aes.XMIN as Aes<T>
+            Aes.YMAX -> Aes.XMAX as Aes<T>
             else -> aes
         }
     }

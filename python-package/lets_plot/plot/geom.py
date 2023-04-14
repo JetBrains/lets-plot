@@ -1701,16 +1701,22 @@ def geom_errorbarh(mapping=None, *, data=None, stat=None, position=None, show_le
             geom_jitter(aes(x='x', y='y'), data=df, width=.2, size=1)
 
     """
-    return _geom('errorbarh',
-                 mapping=mapping,
-                 data=data,
-                 stat=stat,
-                 position=position,
-                 show_legend=show_legend,
-                 sampling=sampling,
-                 tooltips=tooltips,
-                 color_by=color_by,
-                 **other_args)
+    # height -> width
+    if 'height' in other_args:
+        other_args['width'] = other_args.pop('height')
+
+    return geom_errorbar(
+        mapping=mapping,
+        data=data,
+        stat=stat,
+        position=position,
+        show_legend=show_legend,
+        sampling=sampling,
+        tooltips=tooltips,
+        color_by=color_by,
+        orientation='y',
+        **other_args
+    )
 
 
 def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,

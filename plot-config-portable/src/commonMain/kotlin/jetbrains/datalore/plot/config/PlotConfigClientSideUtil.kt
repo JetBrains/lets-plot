@@ -183,15 +183,12 @@ object PlotConfigClientSideUtil {
                 .filterNot { it.aes == Aes.X || it.aes == Aes.Y }
                 .filter { Aes.isPositionalXY(it.aes) }
 
-        return statPositionalBindings.map { binding ->
-            val positionalAes = when (isYOrientation) {
-                true -> if (Aes.isPositionalX(binding.aes)) Aes.Y else Aes.X
-                false -> if (Aes.isPositionalX(binding.aes)) Aes.X else Aes.Y
-            }
+        return statPositionalBindings.associate { binding ->
+            val positionalAes = Aes.toAxisAes(binding.aes, isYOrientation)
             val scaleProto = commonScaleMap.getValue(positionalAes)
             val aesScale = scaleProto.with().name(binding.variable.label).build()
             binding.aes to aesScale
-        }.toMap()
+        }
     }
 
     private fun createLayerBuilder(

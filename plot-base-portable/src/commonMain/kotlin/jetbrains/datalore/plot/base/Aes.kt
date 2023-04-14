@@ -132,8 +132,10 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
 
         fun toAxisAes(aes: Aes<*>, isYOrientation: Boolean): Aes<*> {
             // Aes like `LOWER` (boxplot) are mapped on either X or Y-axis depending on the geom orientation.
+            // `XMIN`/`XMAX` - on X-axis.
             return when {
                 aes == X || aes == Y -> aes
+                aes == XMIN || aes == XMAX -> X
                 isPositionalX(aes) -> if (isYOrientation) Y else X
                 isPositionalY(aes) -> if (isYOrientation) X else Y
                 else -> throw IllegalArgumentException("Expected a positional aes by was $aes")

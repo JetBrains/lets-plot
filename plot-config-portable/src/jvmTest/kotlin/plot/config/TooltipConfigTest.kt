@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
@@ -1004,12 +1005,14 @@ class TooltipConfigTest {
             orientationY = true
         )
 
-        val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.84",
-            Aes.MIDDLE to "0.54",
-            Aes.LOWER to "0.20",
-            Aes.YMIN to "0.02",
+        val expected = YOrientationBaseUtil.flipAesKeys(
+            mapOf(
+                Aes.YMAX to "0.99",
+                Aes.UPPER to "0.84",
+                Aes.MIDDLE to "0.54",
+                Aes.LOWER to "0.20",
+                Aes.YMIN to "0.02",
+            )
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
@@ -1034,12 +1037,14 @@ class TooltipConfigTest {
             orientationY = true
         )
 
-        val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.94",
-            Aes.MIDDLE to "0.64",
-            Aes.LOWER to "0.34",
-            Aes.YMIN to "0.02",
+        val expected = YOrientationBaseUtil.flipAesKeys(
+            mapOf(
+                Aes.YMAX to "0.99",
+                Aes.UPPER to "0.94",
+                Aes.MIDDLE to "0.64",
+                Aes.LOWER to "0.34",
+                Aes.YMIN to "0.02",
+            )
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
