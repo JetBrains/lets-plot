@@ -276,7 +276,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     when (it.lowercase()) {
                         "x" -> Orientation.X
                         "y" -> Orientation.Y
-                        else -> error("orientation expected x|y but was $it")
+                        else -> throw IllegalArgumentException("orientation expected x|y but was $it")
                     }
                 } ?: Orientation.X
                 val defaultDirection = when (orientation) {
@@ -288,7 +288,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                         "v", "vertical" -> Direction.VERTICAL
                         "h", "horizontal" -> Direction.HORIZONTAL
                         "s", "slope" -> Direction.SLOPE
-                        else -> error(
+                        else -> throw IllegalArgumentException(
                             "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'\n" +
                             "Use one of: v, vertical, h, horizontal, s, slope."
                         )
@@ -303,14 +303,10 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     when (orientation to direction) {
                         Orientation.X to Direction.HORIZONTAL,
                         Orientation.Y to Direction.VERTICAL -> {
-                            error(
-                                if (opts.hasOwn(Lollipop.SLOPE)) {
-                                    "Set a non-zero value for the slope."
-                                } else {
-                                    "Change slope from 0 (default) to a different value."
-                                } +
-                                  " With this combination of ${Option.Layer.ORIENTATION} and ${Lollipop.DIRECTION}," +
-                                  " the baseline cannot be parallel to the $orientation axis."
+                            throw IllegalArgumentException(
+                                "Incompatible lollipop parameters: " +
+                                "${Lollipop.SLOPE}=$slope, ${Option.Layer.ORIENTATION}='${orientation.name.lowercase()}', " +
+                                "${Lollipop.DIRECTION}='${direction.name.lowercase()}'"
                             )
                         }
                     }
