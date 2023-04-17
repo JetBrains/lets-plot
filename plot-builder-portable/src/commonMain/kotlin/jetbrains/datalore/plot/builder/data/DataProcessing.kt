@@ -224,10 +224,11 @@ object DataProcessing {
         )
 
         val statDataSize = statData.rowCount()
+        if (statDataSize == 0) return statData
 
         // generate new series for facet variables
         val inputSeriesForFacetVars: Map<Variable, List<Any?>> = run {
-            val facetLevelByFacetVar = facetVariables.filterNot(data::isEmpty).associateWith { data[it][0] }
+            val facetLevelByFacetVar = facetVariables.associateWith { data[it][0] }
             facetLevelByFacetVar.mapValues { (_, facetLevel) -> List(statDataSize) { facetLevel } }
         }
 

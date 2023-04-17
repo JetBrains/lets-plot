@@ -184,6 +184,7 @@ open class PlotConfigServerSide(
 
         val mergedSerieByVarName = HashMap<String, Pair<Variable, ArrayList<Any?>>>()
         for (tileDataAfterStat in dataByTileAfterStat) {
+            if (tileDataAfterStat.rowCount() == 0) continue
             val variables = tileDataAfterStat.variables()
             if (mergedSerieByVarName.isEmpty()) {
                 for (variable in variables) {
