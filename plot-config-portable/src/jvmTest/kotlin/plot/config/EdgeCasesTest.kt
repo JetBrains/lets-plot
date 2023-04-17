@@ -113,8 +113,7 @@ class EdgeCasesTest {
                 continue
             }
             checkWithNaNInXYSeries(geomName)
-            // fixme: AreaGeom - java.util.NoSuchElementException: Key 4 is missing in the map.
-            //checkWithNullInXYSeries(geomName)
+            checkWithNullInXYSeries(geomName)
         }
     }
 
@@ -213,8 +212,8 @@ class EdgeCasesTest {
         val plotSpec = parsePlotSpec(spec)
 
         val data = mapOf(
-            "x" to listOf(0.0, Double.NaN, 1.0, 2.0),
-            "y" to listOf(0.0, Double.NaN, 1.0, 2.0)
+            "x" to listOf(0.0, 1.0, 2.0, Double.NaN, 0.0, Double.NaN),
+            "y" to listOf(0.0, 1.0, 2.0, 0.0, Double.NaN, Double.NaN)
         )
 
         plotSpec["data"] = data
@@ -226,8 +225,8 @@ class EdgeCasesTest {
             {
               'kind': 'plot',
               'data': {
-                'x': [0, 1, 2, null, 4],
-                'y': [0, 1, 4, 9, null]
+                'x': [0, 1, 2, null, 0, null],
+                'y': [0, 1, 2, 0, null, null]
               },
               'mapping': {
                 'x': 'x',
