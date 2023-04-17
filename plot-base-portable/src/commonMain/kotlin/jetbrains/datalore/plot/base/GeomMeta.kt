@@ -121,7 +121,6 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE,
                 Aes.STROKE
             )
 
@@ -282,7 +281,6 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE,
                 Aes.STROKE
             )
 
