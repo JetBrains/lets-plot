@@ -30,3 +30,4 @@
 - Batik bug with usage of "&" [[#713](https://github.com/JetBrains/lets-plot/issues/713)].
 - HTML export: exclude computation messages from the output [[#725](https://github.com/JetBrains/lets-plot/issues/725)].
 - "Variable not found" error in ggmarginal [[#681](https://github.com/JetBrains/lets-plot/issues/681)].
+- Image export not working with `geom_imshow()` and `geom_raster()`.
