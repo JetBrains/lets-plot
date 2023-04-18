@@ -220,19 +220,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
     }
 
     enum class Stackdir {
-        UP, DOWN, CENTER, CENTERWHOLE;
-
-        companion object {
-
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Stackdir>()
-
-            fun safeValueOf(v: String): Stackdir {
-                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
-                    "Unsupported stackdir: '$v'\n" +
-                            "Use one of: up, down, center, centerwhole."
-                )
-            }
-        }
+        UP, DOWN, CENTER, CENTERWHOLE
     }
 
     override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {
