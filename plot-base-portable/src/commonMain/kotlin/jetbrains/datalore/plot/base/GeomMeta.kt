@@ -165,7 +165,6 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.LINETYPE,
-                Aes.SHAPE,
                 Aes.SIZE
             )
 
