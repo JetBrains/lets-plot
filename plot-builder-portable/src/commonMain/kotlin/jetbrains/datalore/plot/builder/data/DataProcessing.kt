@@ -226,9 +226,9 @@ object DataProcessing {
         val statDataSize = statData.rowCount()
 
         // generate new series for facet variables
-        val inputSeriesForFacetVars: Map<Variable, List<Any?>> = run {
-            val facetLevelByFacetVar = facetVariables.associateWith { data[it][0] }
-            facetLevelByFacetVar.mapValues { (_, facetLevel) -> List(statDataSize) { facetLevel } }
+        val inputSeriesForFacetVars: Map<Variable, List<Any?>> = when (statDataSize) {
+            0 -> facetVariables.associateWith { emptyList() }
+            else -> facetVariables.associateWith { data[it][0].let { facetLevel -> List(statDataSize) { facetLevel } } }
         }
 
         // generate new series for input variables

@@ -190,8 +190,12 @@ open class PlotConfigServerSide(
                     mergedSerieByVarName[variable.name] = Pair(variable, ArrayList(tileDataAfterStat[variable]))
                 }
             } else {
-                for (variable in variables) {
-                    mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
+                // Have to skip to not fail on mergedSerieByVarName.getValue(statVar)
+                // Empty stat data contains all existing stat variables and mergedSerieByVarName doesn't
+                if (tileDataAfterStat.rowCount() > 0) {
+                    for (variable in variables) {
+                        mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
+                    }
                 }
             }
         }
