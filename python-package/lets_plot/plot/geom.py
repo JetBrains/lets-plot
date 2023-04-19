@@ -948,7 +948,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
+def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
                  binwidth=None,
                  bins=None,
                  method=None,
@@ -973,10 +973,6 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='dotplot'
-        The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'dotplot' (depends on `method` parameter).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1087,7 +1083,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     return _geom('dotplot',
                  mapping=mapping,
                  data=data,
-                 stat=stat,
+                 stat=None,
                  position=None,
                  show_legend=show_legend,
                  sampling=sampling,
@@ -3433,7 +3429,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
                   binwidth=None,
                   bins=None,
                   method=None,
@@ -3459,10 +3455,6 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='ydotplot'
-        The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'ydotplot' (depends on `method` parameter).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -3587,7 +3579,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     return _geom('ydotplot',
                  mapping=mapping,
                  data=data,
-                 stat=stat,
+                 stat=None,
                  position=None,
                  show_legend=show_legend,
                  sampling=sampling,
