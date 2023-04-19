@@ -14,6 +14,8 @@
 
 ### Changed
 
+- [BREAKING] `geom_dotplot()` and `geom_ydotplot()` no longer supports parameter `stat`. Only default stats make sense for these geometries. 
+
 ### Fixed
 
 - livemap: memory leak caused by a document event handler.
