@@ -8,12 +8,13 @@ package jetbrains.datalore.plot.builder.data
 object GroupUtil {
     internal val SINGLE_GROUP = { _: Int -> 0 }
 
-    fun wrap(l: List<Number?>): (Int) -> Int {
+    fun wrap(l: List<Number>): (Int) -> Int {
         return { index ->
-            if (index > 0 && index < l.size)
-                l[index]!!.toInt()
-            else
-                0
+            if (index >= 0 && index < l.size) {
+                l[index].toInt()
+            } else {
+                throw IllegalStateException("Can't determin 'group' for data index $index. Expected range: [0, ${l.size}]")
+            }
         }
     }
 

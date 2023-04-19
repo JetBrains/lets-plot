@@ -5,19 +5,31 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.base.DataFrame.OrderSpec
 
 internal class GroupMerger(
-    private val bindings: List<VarBinding>,
-    private val orderOptions: List<OrderOptionUtil.OrderOption>,
     private val aggregateOperation: ((List<Double?>) -> Double?)?,
 ) {
 
-    private val orderedGroups = ArrayList<ComparableGroup>()
+    lateinit var orderSpecs: List<OrderSpec>
 
-    fun getResultSeries(): HashMap<DataFrame.Variable, MutableList<Any?>> {
+    private val groups = ArrayList<ComparableGroup>()
+    val isEmpty: Boolean get() = groups.isEmpty()
+
+    private var orderedGroupsIntialized: Boolean = false
+    private val orderedGroups: List<ComparableGroup> by lazy {
+        orderedGroupsIntialized = true
+        val sortedById = groups.sortedBy { it.groupId }
+        val sortedTwoWays = ArrayList<ComparableGroup>()
+        for (group in sortedById) {
+            val indexToInsert = findIndexToInsert(group, sortedTwoWays, orderSpecs)
+            sortedTwoWays.add(indexToInsert, group)
+        }
+        sortedTwoWays
+    }
+
+    fun getResultSeries(): Map<DataFrame.Variable, List<Any?>> {
         val resultSeries = HashMap<DataFrame.Variable, MutableList<Any?>>()
         orderedGroups.forEach { group ->
             group.df.variables().forEach { variable ->
@@ -31,50 +43,67 @@ internal class GroupMerger(
         return orderedGroups.map(ComparableGroup::groupSize)
     }
 
-    fun addGroup(d: DataFrame, groupSize: Int) {
-        val orderSpecs = createOrderSpecs(d)
-        val group = ComparableGroup(d, groupSize, orderSpecs)
-        val indexToInsert = findIndexToInsert(group, orderSpecs)
-        orderedGroups.add(indexToInsert, group)
+    fun addGroup(groupId: Int, d: DataFrame, groupSize: Int) {
+        check(!orderedGroupsIntialized) { "Can't any longer add a group" }
+        val group = ComparableGroup(groupId, d, groupSize)
+        groups.add(group)
     }
 
-    private fun createOrderSpecs(d: DataFrame): List<DataFrame.OrderSpec> {
-        return orderOptions
-            .filter { orderOption ->
-                // no need to reorder groups by X
-                bindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } == null
+    private companion object {
+        fun findIndexToInsert(
+            group: ComparableGroup,
+            orderedGroups: List<ComparableGroup>,
+            orderSpecs: List<OrderSpec>
+        ): Int {
+            if (orderSpecs.isEmpty()) {
+                return orderedGroups.size
             }
-            .map { orderOption ->
-                OrderOptionUtil.createOrderSpec(d.variables(), bindings, orderOption, aggregateOperation)
-            }
-    }
-
-    private fun findIndexToInsert(group: ComparableGroup, orderSpecs: List<DataFrame.OrderSpec>): Int {
-        if (orderSpecs.isEmpty()) {
-            return orderedGroups.size
+            var index = orderedGroups.binarySearch(group)
+            if (index < 0) index = index.inv()
+            return index
         }
-        var index = orderedGroups.binarySearch(group)
-        if (index < 0) index = index.inv()
-        return index
+
+        fun compareGroupValue(v1: Any?, v2: Any?, dir: Int): Int {
+            // null value is always greater - will be at the end of the result
+            if (v1 == null && v2 == null) return 0
+            if (v1 == null) return 1
+            if (v2 == null) return -1
+            return compareValues(v1 as Comparable<*>, v2 as Comparable<*>) * dir
+        }
+
+        fun getGroupValue(
+            df: DataFrame,
+            variable: DataFrame.Variable,
+            aggregateOperation: ((List<Double?>) -> Double?)? = null
+        ): Any? {
+            return if (aggregateOperation != null) {
+                require(df.isNumeric(variable)) { "Can't apply aggregate operation to non-numeric values" }
+                aggregateOperation.invoke(df.getNumeric(variable).requireNoNulls())
+            } else {
+                // group has no more than one unique element
+                df[variable].firstOrNull()
+            }
+        }
     }
 
-    private class ComparableGroup(
+
+    inner class ComparableGroup(
+        val groupId: Int,
         val df: DataFrame,
         val groupSize: Int,
-        val orderSpecs: List<DataFrame.OrderSpec>?,
     ) : Comparable<ComparableGroup> {
         override fun compareTo(other: ComparableGroup): Int {
-            orderSpecs?.forEach { spec ->
+            orderSpecs.forEach { spec ->
                 var cmp = compareGroupValue(
-                    getValue(df, spec.orderBy, spec.aggregateOperation),
-                    getValue(other.df, spec.orderBy, spec.aggregateOperation),
+                    getGroupValue(df, spec.orderBy, spec.aggregateOperation),
+                    getGroupValue(other.df, spec.orderBy, spec.aggregateOperation),
                     spec.direction
                 )
                 if (cmp == 0) {
                     // ensure the order as in the legend
                     cmp = compareGroupValue(
-                        getValue(df, spec.variable),
-                        getValue(other.df, spec.variable),
+                        getGroupValue(df, spec.variable),
+                        getGroupValue(other.df, spec.variable),
                         spec.direction
                     )
                 }
@@ -83,30 +112,6 @@ internal class GroupMerger(
                 }
             }
             return 0
-        }
-
-        companion object {
-            fun compareGroupValue(v1: Any?, v2: Any?, dir: Int): Int {
-                // null value is always greater - will be at the end of the result
-                if (v1 == null && v2 == null) return 0
-                if (v1 == null) return 1
-                if (v2 == null) return -1
-                return compareValues(v1 as Comparable<*>, v2 as Comparable<*>) * dir
-            }
-
-            fun getValue(
-                df: DataFrame,
-                variable: DataFrame.Variable,
-                aggregateOperation: ((List<Double?>) -> Double?)? = null
-            ): Any? {
-                return if (aggregateOperation != null) {
-                    require(df.isNumeric(variable)) { "Can't apply aggregate operation to non-numeric values" }
-                    aggregateOperation.invoke(df.getNumeric(variable).requireNoNulls())
-                } else {
-                    // group has no more than one unique element
-                    df[variable].firstOrNull()
-                }
-            }
         }
     }
 }

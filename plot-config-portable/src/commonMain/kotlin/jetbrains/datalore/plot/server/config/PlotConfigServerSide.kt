@@ -6,30 +6,28 @@
 package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.plot.base.DataFrame
+import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
-import jetbrains.datalore.plot.config.LayerConfig
+import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
-import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.plot.config.PlotConfigUtil
-import jetbrains.datalore.plot.config.getString
 
-open class PlotConfigServerSide(opts: Map<String, Any>) :
-    PlotConfig(
-        opts,
-        isClientSide = false
-    ) {
+open class PlotConfigServerSide(
+    opts: Map<String, Any>
+) : PlotConfig(
+    opts,
+    isClientSide = false
+) {
 
     /**
      * WARN! Side effects - performs modifications deep in specs tree
@@ -51,7 +49,28 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             }
         }
 
+        // Clean-up data before sending it to the front-end.
         dropUnusedDataBeforeEncoding(layerConfigs)
+
+        // Re-create the "natural order" existed before faceting.
+        if (facets.isDefined) {
+            // When faceting, each layer' data was split to panels, then re-combined with loss of 'natural order'.
+            layerConfigs.forEach { layerConfig ->
+                val layerData = layerConfig.ownData
+                if (facets.isFacettable(layerData)) {
+                    val layerDataMetaUpdated = addFactorLevelsDataMeta(
+                        layerData = layerData,
+                        layerDataMeta = layerConfig.getMap(DATA_META),
+                        stat = layerConfig.stat,
+                        varBindings = layerConfig.varBindings,
+                        transformByAes = transformByAes,
+                        orderOptions = layerConfig.orderOptions,
+                        yOrientation = layerConfig.isYOrientation
+                    )
+                    layerConfig.update(DATA_META, layerDataMetaUpdated)
+                }
+            }
+        }
     }
 
     private fun dropUnusedDataBeforeEncoding(layerConfigs: List<LayerConfig>) {
@@ -226,7 +245,6 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
             return HashSet<String>() +
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
-//                    listOfNotNull(layerConfig.mergedOptions.getString(DATA_META, GDF, GEOMETRY)) +
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
                     facets.variables +
@@ -235,6 +253,55 @@ open class PlotConfigServerSide(opts: Map<String, Any>) :
                         .filterIsInstance<DataFrameValue>()
                         .map(DataFrameValue::getVariableName) +
                     layerConfig.orderOptions.mapNotNull(OrderOption::byVariable)
+        }
+
+        private fun addFactorLevelsDataMeta(
+            layerData: DataFrame,
+            layerDataMeta: Map<String, Any>,
+            stat: Stat,
+            varBindings: List<VarBinding>,
+            transformByAes: Map<Aes<*>, Transform>,
+            orderOptions: List<OrderOption>,
+            yOrientation: Boolean,
+        ): Map<String, Any> {
+
+            // Use "discrete transforms" to re-create the "natural order" existed before faceting.
+
+            val orderedVariables = orderOptions.map { it.variableName }
+
+            @Suppress("UNCHECKED_CAST")
+            val discreteTransformByAes = transformByAes
+                .filterValues { it is DiscreteTransform } as Map<Aes<*>, DiscreteTransform>
+
+            val statDefaultMappings = stat.getDefaultVariableMappings(yOrientation)
+            val explicitMappings = varBindings
+                .associate { it.variable to it.aes }
+
+            val discreteAesByMappedVariable = (statDefaultMappings + explicitMappings)
+                .filterValues { aes -> aes in discreteTransformByAes.keys }
+                .filterKeys { variable -> layerData.has(variable) }
+                .filterKeys { variable -> !(variable.name in orderedVariables) }
+
+            val discreteTransformByVariable = discreteAesByMappedVariable
+                .mapValues { (_, aes) -> discreteTransformByAes.getValue(aes) }
+
+            val levelsByVariableRaw: MutableMap<String, List<Any>> = mutableMapOf()
+            for ((variable, transform) in discreteTransformByVariable) {
+                val distinctValues = layerData.distinctValues(variable)
+                val indices = transform.apply(distinctValues.toList())
+                // null values -> last
+                val orderedDistinctValues = distinctValues.zip(indices).sortedBy { it.second }.map { it.first }
+                levelsByVariableRaw[variable.name] = orderedDistinctValues
+            }
+
+            val levelsByVariable = levelsByVariableRaw.mapKeys { (varName, _) ->
+                if (DataMetaUtil.isDiscrete(varName)) {
+                    DataMetaUtil.fromDiscrete(varName)
+                } else {
+                    varName
+                }
+            }
+            return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)
         }
     }
 }

@@ -36,8 +36,9 @@ object ServerSideTestUtil {
     /**
      * Single plot only (not GGBunch)
      */
-    fun createPlotConfig(plotSpecRaw: MutableMap<String, Any>): PlotConfigServerSide {
-        val (plotSpec, plotConfig) = BackendSpecTransformUtil.getTransformedSpecsAndPlotConfig(plotSpecRaw)
+    private fun createPlotConfig(plotSpecRaw: MutableMap<String, Any>): PlotConfigServerSide {
+        val (plotSpec,
+            plotConfig) = BackendSpecTransformUtil.getTransformedSpecsAndPlotConfig(plotSpecRaw)
         if (PlotConfig.isFailure(plotSpec)) {
             val errorMessage = PlotConfig.getErrorMessage(plotSpec)
             throw IllegalStateException(errorMessage)
@@ -60,18 +61,6 @@ object ServerSideTestUtil {
 
         return PlotConfigServerSide(plotSpec).layerConfigs
     }
-
-//    internal fun createLayerConfigsByLayerSpec(layerSpec: Map<String, Any?>): List<LayerConfig> {
-//        return createLayerConfigs(
-//            mutableMapOf(
-//                KIND to PLOT,
-//                SCALES to emptyList,
-//                LAYERS to listOf(
-//                    layerSpec
-//                )
-//            )
-//        )
-//    }
 
     internal fun geomPolygonSpec(
         mapData: Map<String, Any>,

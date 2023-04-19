@@ -15,6 +15,8 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.COLUMN
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.FACTOR_LEVELS
 import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
@@ -77,7 +79,9 @@ object DataMetaUtil {
         return getMappingAnnotationsSpec(options, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             .mapNotNull { (aesName, parameters) ->
-                check(aesName in commonMappings)
+                check(aesName in commonMappings) {
+                    "Aes '$aesName' not found in mappings: $commonMappings"
+                }
                 val variableName = commonMappings[aesName] as String
                 OrderOptionUtil.OrderOption.create(
                     variableName,
@@ -110,18 +114,63 @@ object DataMetaUtil {
     fun getDateTimeColumns(options: Map<*, *>): Set<String> {
         return options
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
+            ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
             ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
             ?.keys
             ?: emptySet()
     }
 
-    fun getFactorLevelsByDateTimeColumns(dataMeta: Map<*, *>): Map<String, List<Any>> {
+    fun getFactorLevelsByVariable(dataMeta: Map<*, *>): Map<String, List<Any>> {
         return (dataMeta
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.getList(SeriesAnnotation.FACTOR_LEVELS) }
+            ?.associate { it.getString(COLUMN)!! to it.getList(FACTOR_LEVELS) }
             ?.filterValues { list -> list?.isNotEmpty() ?: false }
             ?.mapValues { (_, list) -> list!!.map { v -> v as Any } }
             ?: emptyMap())
+    }
+
+    fun updateFactorLevelsByVariable(
+        dataMeta: Map<String, Any>,
+        levelsByVariable: Map<String, List<Any>>
+    ): Map<String, Any> {
+        val seriesAnnotations = dataMeta.getMaps(SeriesAnnotation.TAG) ?: listOf()
+
+        val varsWithAnnotation = seriesAnnotations.map { it.getString(COLUMN)!! }.toSet()
+        val varsToAddAnnotation = levelsByVariable.keys - varsWithAnnotation
+
+        val updatedSeriesAnnotations = ArrayList(
+            // Existing annotationa to keep untouched.
+            seriesAnnotations.filter { !levelsByVariable.containsKey(it.getString(COLUMN)) }
+        )
+
+        // Modify existing annotations
+        val seriesAnnotationsToUpdate = seriesAnnotations.filter { levelsByVariable.containsKey(it.getString(COLUMN)) }
+        val seriesAnnotationsUpdated = seriesAnnotationsToUpdate.map {
+            val variable = it.getString(COLUMN)!!
+            val factorLevels = levelsByVariable.getValue(variable)
+
+            // Just add factor levels to annotation
+            HashMap(it).apply {
+                this[FACTOR_LEVELS] = factorLevels
+            }
+        }
+        updatedSeriesAnnotations.addAll(seriesAnnotationsUpdated)
+
+        // Add new annotations
+        updatedSeriesAnnotations.addAll(
+            levelsByVariable
+                .filter { (variable, _) -> variable in varsToAddAnnotation }
+                .map { (variable, levels) ->
+                    mapOf(
+                        COLUMN to variable,
+                        FACTOR_LEVELS to levels
+                    )
+                }
+
+        )
+
+        return dataMeta + mapOf(
+            SeriesAnnotation.TAG to updatedSeriesAnnotations
+        )
     }
 }

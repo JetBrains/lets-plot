@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -16,7 +17,7 @@ import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpecs
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -35,6 +36,7 @@ import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
@@ -61,8 +63,6 @@ class LayerConfig constructor(
         )
 
     val isLiveMap: Boolean = geomProto.geomKind == GeomKind.LIVE_MAP
-
-    private val ownDataMeta = getMap(Option.Meta.DATA_META)
 
     private val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
         .filter(::hasOwn)
@@ -152,7 +152,7 @@ class LayerConfig constructor(
             commonMappings = plotMappings,
             ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
-            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(Option.Meta.DATA_META)),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
             isClientSide = clientSide
         ).let {
             ownData = it.second
@@ -190,7 +190,7 @@ class LayerConfig constructor(
             sharedData = plotData,
             layerData = ownData,
             plotDataMeta = plotDataMeta,
-            ownDataMeta = ownDataMeta,
+            ownDataMeta = getMap(DATA_META),
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,
@@ -238,10 +238,16 @@ class LayerConfig constructor(
         orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
 
         combinedData = if (clientSide) {
-            val orderSpecs = orderOptions.map {
-                createOrderSpec(rawCombinedData.variables(), varBindings, it, aggregateOperation)
-            }
-            DataFrame.Builder(rawCombinedData).addOrderSpecs(orderSpecs).build()
+            val variables = rawCombinedData.variables()
+            val orderSpecs = createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
+            val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(getMap(DATA_META))
+                .mapKeys { (varName, _) -> variables.find { it.name == varName } }
+                .filterNotNullKeys()
+
+            DataFrame.Builder(rawCombinedData)
+                .addOrderSpecs(orderSpecs)
+                .addFactorLevels(factorLevelsByVar)
+                .build()
         } else {
             rawCombinedData
         }
@@ -249,10 +255,10 @@ class LayerConfig constructor(
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
         val groupBy = mappingOptions[Option.Mapping.GROUP]
-        var fieldName: String? = if (groupBy is String)
-            groupBy
-        else
-            null
+        var fieldName: String? = when (groupBy) {
+            is String -> groupBy
+            else -> null
+        }
 
         if (fieldName == null && has(GEO_POSITIONS)) {
             // 'default' group is important for 'geom_map'

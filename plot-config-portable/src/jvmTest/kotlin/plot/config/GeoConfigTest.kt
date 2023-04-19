@@ -509,7 +509,7 @@ class GeoConfigTest {
 
     // excluding LiveMap layer
     private fun getGeomLayer(spec: String): GeomLayer {
-        val layers = TestUtil.createGeomLayers(parsePlotSpec(spec))
+        val layers = TestUtil.createSingleTileGeomLayers(parsePlotSpec(spec))
         val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
         assertTrue(geomLayers.size == 1, "No layers")
         return geomLayers.single()
