@@ -38,7 +38,6 @@ internal object PlotConfigScaleProviders {
 
         dateTimeDataByVarBinding
             .map { (varBinding, _) -> varBinding.aes }
-            .filter { aes -> aes in setOf(Aes.X, Aes.Y) }
             .filter { aes -> aes !in scaleProviderByAes }
             .forEach { aes ->
                 val name = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)

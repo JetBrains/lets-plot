@@ -16,7 +16,8 @@ import kotlin.random.Random
 class DateTimeAnnotation {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plot(Duration.DAY)
+            plot(Duration.DAY),
+            colorMapping(),
         )
     }
 
@@ -55,6 +56,27 @@ class DateTimeAnnotation {
                     }
                   ]
                 }""".trimIndent()
+
+            return parsePlotSpec(spec)
+        }
+
+        fun colorMapping(): MutableMap<String, Any> {
+            val spec = """
+                {
+                    "kind": "plot",
+                     "ggtitle": { "text": "Color datetime mapping" },
+                    "data": {
+                        "val": [1.0, 2.0, 3.0, 4.0, 5.0], 
+                        "days": [1609459200000, 1614038400000, 1617408000000, 1620086400000, 1633392000000]
+                    }, 
+                    "layers": [
+                        { "geom": "bar", "mapping": { "x": "days", "color": "days" } }
+                    ], 
+                    "data_meta": { 
+                        "series_annotations": [{"column": "days", "type": "datetime"}]
+                    }
+                }
+            """.trimIndent()
 
             return parsePlotSpec(spec)
         }
