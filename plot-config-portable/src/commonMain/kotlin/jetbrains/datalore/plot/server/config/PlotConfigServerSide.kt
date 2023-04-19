@@ -184,15 +184,18 @@ open class PlotConfigServerSide(
 
         val mergedSerieByVarName = HashMap<String, Pair<Variable, ArrayList<Any?>>>()
         for (tileDataAfterStat in dataByTileAfterStat) {
-            if (tileDataAfterStat.rowCount() == 0) continue
             val variables = tileDataAfterStat.variables()
             if (mergedSerieByVarName.isEmpty()) {
                 for (variable in variables) {
                     mergedSerieByVarName[variable.name] = Pair(variable, ArrayList(tileDataAfterStat[variable]))
                 }
             } else {
-                for (variable in variables) {
-                    mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
+                // Have to skip to not fail on mergedSerieByVarName.getValue(statVar)
+                // Empty stat data contains all existing stat variables and mergedSerieByVarName doesn't
+                if (tileDataAfterStat.rowCount() > 0) {
+                    for (variable in variables) {
+                        mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
+                    }
                 }
             }
         }

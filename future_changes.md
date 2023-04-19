@@ -32,6 +32,7 @@
 - HTML export: exclude computation messages from the output [[#725](https://github.com/JetBrains/lets-plot/issues/725)].
 - "Variable not found" error in ggmarginal [[#681](https://github.com/JetBrains/lets-plot/issues/681)].
 - Image export not working with `geom_imshow()` and `geom_raster()` [[LPK-175](https://github.com/JetBrains/lets-plot-kotlin/issues/175)].
-- DateTime metadata is not applied for scales others than X/Y [[LPK-174](https://github.com/JetBrains/lets-plot-kotlin/issues/174)].
+- DateTime metadata is not applied for scales other than X/Y [[LPK-174](https://github.com/JetBrains/lets-plot-kotlin/issues/174)].
 - Groups not sorted similarly when using facets [[#679](https://github.com/JetBrains/lets-plot-kotlin/issues/679)].
 - Categorical ordering, it's not respected for Boxplot and violin plot [[#746](https://github.com/JetBrains/lets-plot-kotlin/issues/746)].
+- facet_grid: Internal error [[#699](https://github.com/JetBrains/lets-plot/issues/699)].
