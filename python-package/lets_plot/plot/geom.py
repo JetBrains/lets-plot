@@ -14,7 +14,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_smooth', 'geom_bar',
            'geom_histogram', 'geom_dotplot', 'geom_bin2d',
            'geom_tile', 'geom_raster',
-           'geom_errorbar', 'geom_errorbarh', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
+           'geom_errorbar', 'geom_crossbar', 'geom_linerange', 'geom_pointrange',
            'geom_contour',
            'geom_contourf', 'geom_polygon', 'geom_map',
            'geom_abline', 'geom_hline', 'geom_vline',
@@ -1532,17 +1532,18 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Notes
     -----
-    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+     or a horizontal interval, defined by `y`, `xmin`, `xmax`.
 
     `geom_errorbar()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : lower bound for error bar.
-    - ymax : upper bound for error bar.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal error bar, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal error bar, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal error bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : line width. Define bar line width.
-    - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
+    - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1586,118 +1587,6 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     """
     return _geom('errorbar',
-                 mapping=mapping,
-                 data=data,
-                 stat=stat,
-                 position=position,
-                 show_legend=show_legend,
-                 sampling=sampling,
-                 tooltips=tooltips,
-                 color_by=color_by,
-                 **other_args)
-
-
-def geom_errorbarh(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
-                   color_by=None,
-                   **other_args):
-    """
-    Horizontal version of `geom_errorbar()`.
-
-    Parameters
-    ----------
-    mapping : `FeatureSpec`
-        Set of aesthetic mappings created by `aes()` function.
-        Aesthetic mappings describe the way that variables in the data are
-        mapped to plot "aesthetics".
-    data : dict or `DataFrame` or `polars.DataFrame`
-        The data to be displayed in this layer. If None, the default, the data
-        is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='identity'
-        The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'count' (counts number of points with same x-axis coordinate),
-        'bin' (counts number of points with x-axis coordinate in the same bin),
-        'smooth' (performs smoothing - linear default),
-        'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='identity'
-        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
-        or the result of a call to a position adjustment function.
-    show_legend : bool, default=True
-        False - do not show legend for this layer.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
-        To prevent any sampling for this layer pass value "none" (string "none").
-    tooltips : `layer_tooltips`
-        Result of the call to the `layer_tooltips()` function.
-        Specify appearance, style and content.
-    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
-        Define the color aesthetic for the geometry.
-    other_args
-        Other arguments passed on to the layer.
-        These are often aesthetics settings used to set an aesthetic to a fixed value,
-        like color='red', fill='blue', size=3 or shape=21.
-        They may also be parameters to the paired geom/stat.
-
-    Returns
-    -------
-    `LayerSpec`
-        Geom object specification.
-
-    Notes
-    -----
-    `geom_errorbarh()` represents a horizontal interval, defined by `xmin`, `xmax`, `y`.
-
-    `geom_errorbarh()` understands the following aesthetics mappings:
-
-    - xmin : lower bound for horizontal error bar.
-    - xmax : upper bound for horizontal error bar.
-    - y : y-axis coordinates.
-    - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - size : line width. Define bar line width.
-    - height : height of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
-    - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
-
-    Examples
-    --------
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 9
-
-        from lets_plot import *
-        LetsPlot.setup_html()
-        data = {
-            'y': ['a', 'b', 'c', 'd'],
-            'xmin': [5, 7, 3, 5],
-            'xmax': [8, 11, 6, 9],
-        }
-        ggplot(data, aes(y='y')) + \\
-            geom_errorbarh(aes(xmin='xmin', xmax='xmax'))
-
-    |
-
-    .. jupyter-execute::
-        :linenos:
-        :emphasize-lines: 13-14
-
-        import numpy as np
-        import pandas as pd
-        from lets_plot import *
-        LetsPlot.setup_html()
-        np.random.seed(42)
-        n = 1000
-        y = np.random.randint(10, size=n)
-        x = np.sqrt(y) + np.random.normal(scale=.3, size=n)
-        df = pd.DataFrame({'x': x, 'y': y})
-        err_df = df.groupby('y').agg({'x': ['min', 'max']}).reset_index()
-        err_df.columns = ['y', 'xmin', 'xmax']
-        ggplot() + \\
-            geom_errorbarh(aes(y='y', xmin='xmin', xmax='xmax'), \\
-                          data=err_df, height=.5, color='red') + \\
-            geom_jitter(aes(x='x', y='y'), data=df, width=.2, size=1)
-
-    """
-    return _geom('errorbarh',
                  mapping=mapping,
                  data=data,
                  stat=stat,
