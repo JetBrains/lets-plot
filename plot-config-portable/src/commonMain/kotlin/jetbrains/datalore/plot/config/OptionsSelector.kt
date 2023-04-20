@@ -77,28 +77,33 @@ fun Map<*, *>.getBool(vararg query: String): Boolean? {
 
 fun Map<*, *>.getBool(path: List<String>, item: String): Boolean? {
     return when (val v = getMap(path)?.get(item)) {
-        is String -> when(v.lowercase()) {
+        is String -> when (v.lowercase()) {
             "1", "true" -> true
             "0", "false" -> false
             else -> throw IllegalArgumentException("Unexpected boolean value: '$v'")
         }
+
         is Number -> v.toInt() != 0
         is Boolean -> v
         else -> null
     }
 }
 
-inline fun <reified EnumT: Enum<EnumT>>Map<*, *>.getEnum(path: List<String>, item: String): EnumT? {
+inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(path: List<String>, item: String): EnumT? {
     val name = getString(path, item) ?: return null
     val enumInfo = EnumInfoFactory.createEnumInfo<EnumT>()
     val value = enumInfo.safeValueOf(name)
     require(value != null) {
-        "Unknown value \'$name\'. Expected: " + enumInfo.originalNames.joinToString(prefix = " [", separator = "|", postfix = "]") { "'${it.lowercase()}'"}
+        "Unknown value \'$name\'. Expected: " + enumInfo.originalNames.joinToString(
+            prefix = " [",
+            separator = "|",
+            postfix = "]"
+        ) { "'${it.lowercase()}'" }
     }
     return value
 }
 
-inline fun <reified EnumT: Enum<EnumT>>Map<*, *>.getEnum(vararg query: String): EnumT? {
+inline fun <reified EnumT : Enum<EnumT>> Map<*, *>.getEnum(vararg query: String): EnumT? {
     return getEnum<EnumT>(query.dropLast(1), query.last())
 }
 
@@ -107,7 +112,9 @@ fun Map<*, *>.getMap(vararg query: String): Map<String, Any>? {
 }
 
 fun Map<*, *>.getMap(path: List<String>): Map<String, Any>? {
-    return path.fold<String, Map<*, *>?>(this, { section, next -> section?.read(next)?.let { it as? Map<*, *> } ?: return@fold null } )?.typed()
+    return path.fold<String, Map<*, *>?>(this) { section, next ->
+        section?.read(next)?.let { it as? Map<*, *> } ?: return@fold null
+    }?.typed()
 }
 
 fun Map<*, *>.getList(vararg query: String): List<*>? {
@@ -143,7 +150,9 @@ fun Map<*, *>.provideMaps(vararg query: String): MutableList<Map<*, *>> {
 
 fun Map<*, *>.provideMaps(path: List<String>, item: String): MutableList<Map<*, *>> {
     @Suppress("UNCHECKED_CAST")
-    return provideMap(path).getOrPut(item, { mutableListOf<Map<*, *>>() }) as MutableList<Map<*, *>>
+    return provideMap(path).getOrPut(item) {
+        mutableListOf<Map<*, *>>()
+    } as MutableList<Map<*, *>>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -156,7 +165,6 @@ fun <K, V> Map<*, *>.typed(): Map<K, V> {
     return this as Map<K, V>
 }
 
-@Suppress("UNCHECKED_CAST")
 fun <T> List<T>.asMutable(): MutableList<T> {
     return this as MutableList<T>
 }

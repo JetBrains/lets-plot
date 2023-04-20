@@ -4,6 +4,7 @@
  */
 
 package jetbrains.datalore.plot.builder.data
+
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
@@ -77,10 +78,24 @@ object OrderOptionUtil {
         }
     }
 
-    fun createOrderSpec(
+    fun createOrderSpecs(
+        orderOptionList: List<OrderOption>,
         variables: Set<DataFrame.Variable>,
         varBindings: List<VarBinding>,
+        aggregateOperation: ((List<Double?>) -> Double?)?
+    ): List<DataFrame.OrderSpec> {
+        return orderOptionList.map {
+            createOrderSpecs(
+                orderOption = it,
+                variables, varBindings, aggregateOperation
+            )
+        }
+    }
+
+    private fun createOrderSpecs(
         orderOption: OrderOption,
+        variables: Set<DataFrame.Variable>,
+        varBindings: List<VarBinding>,
         aggregateOperation: ((List<Double?>) -> Double?)?
     ): DataFrame.OrderSpec {
         fun getVariableByName(varName: String): DataFrame.Variable {

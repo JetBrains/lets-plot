@@ -9,40 +9,48 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.config.Option.Layer.POS
-import jetbrains.datalore.plot.config.Option.Layer.SAMPLING
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 
 internal object LayerConfigUtil {
 
     fun positionAdjustmentOptions(layerOptions: OptionsAccessor, geomProto: GeomProto): Map<String, Any> {
         val preferredPosOptions: Map<String, Any> = geomProto.preferredPositionAdjustmentOptions(layerOptions)
+        val hasOwnPositionOptions = geomProto.hasOwnPositionAdjustmentOptions(layerOptions)
         val specifiedPosOptions: Map<String, Any> = when (val v = layerOptions[POS]) {
             null -> preferredPosOptions
             is Map<*, *> ->
                 @Suppress("UNCHECKED_CAST")
                 v as Map<String, Any>
+
             else ->
                 mapOf(Option.Meta.NAME to v.toString())
         }
 
-        return if (specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME]) {
-            // Merge
-            preferredPosOptions + specifiedPosOptions
-        } else {
-            specifiedPosOptions
+        // Geom's parameters have priority over function parameters
+        return when {
+            specifiedPosOptions[Option.Meta.NAME] == preferredPosOptions[Option.Meta.NAME] -> {
+                // Merge
+                if (hasOwnPositionOptions) {
+                    specifiedPosOptions + preferredPosOptions
+                } else {
+                    preferredPosOptions + specifiedPosOptions
+                }
+            }
+
+            hasOwnPositionOptions -> preferredPosOptions
+            else -> specifiedPosOptions
         }
     }
 
-    fun initConstants(layerConfig: OptionsAccessor, consumedAesSet: Set<Aes<*>>): Map<Aes<*>, Any> {
+    fun initConstants(layerOptions: OptionsAccessor, consumedAesSet: Set<Aes<*>>): Map<Aes<*>, Any> {
         val result = HashMap<Aes<*>, Any>()
         Option.Mapping.REAL_AES_OPTION_NAMES
-            .filter(layerConfig::has)
+            .filter(layerOptions::has)
             .associateWith(Option.Mapping::toAes)
             .filterValues { aes -> aes in consumedAesSet }
             .forEach { (option, aes) ->
-                val optionValue = layerConfig[option]!!
+                val optionValue = layerOptions.getSafe(option)
                 val constantValue = AesOptionConversion.apply(aes, optionValue)
                     ?: throw IllegalArgumentException("Can't convert to '$option' value: $optionValue")
                 result[aes] = constantValue
@@ -58,7 +66,7 @@ internal object LayerConfigUtil {
     ): List<VarBinding> {
 
         val result = ArrayList<VarBinding>()
-        if (mapping != null) {
+        if (mapping != null && data.rowCount() > 0) {
             val aesSet = HashSet(consumedAesSet)
             aesSet.retainAll(mapping.keys)
             for (aes in aesSet) {
@@ -76,9 +84,4 @@ internal object LayerConfigUtil {
         return result
     }
 
-    fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
-        return if (opts.has(SAMPLING)) {
-            SamplingConfig.create(opts[SAMPLING]!!)
-        } else listOf(defaultSampling)
-    }
 }

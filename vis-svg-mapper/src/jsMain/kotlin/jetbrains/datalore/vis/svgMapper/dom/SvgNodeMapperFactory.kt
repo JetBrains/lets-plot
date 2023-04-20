@@ -21,6 +21,12 @@ class SvgNodeMapperFactory(private val myPeer: SvgDomPeer): MapperFactory<SvgNod
                     if (s is SvgImageElementEx) {
                         s = s.asImageElement(RGBEncoderDom())
                     }
+
+                    val pixelated = SvgImageElement()
+                    SvgUtils.copyAttributes(s as SvgElement, pixelated)
+                    pixelated.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "image-rendering: pixelated;image-rendering: crisp-edges;")
+                    s = pixelated
+
                     SvgElementMapper(
                         s,
                         DomUtil.generateElement(source),

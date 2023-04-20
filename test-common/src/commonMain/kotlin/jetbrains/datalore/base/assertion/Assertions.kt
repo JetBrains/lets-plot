@@ -5,12 +5,17 @@
 
 package jetbrains.datalore.base.assertion
 
+import jetbrains.datalore.base.gcommon.base.Throwables
 import kotlin.math.abs
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 fun assertEquals(expected: Double?, actual: Double?, precision: Double, message: String? = null) {
-    assertTrue(doubleEquals(expected, actual, precision), messagePrefix(message) + "Expected <$expected>, actual <$actual>.")
+    assertTrue(
+        doubleEquals(expected, actual, precision),
+        messagePrefix(message) + "Expected <$expected>, actual <$actual>."
+    )
 }
 
 fun <T> assertArrayEquals(expecteds: Array<T>, actuals: Array<T>, message: String? = null) {
@@ -42,7 +47,8 @@ fun assertDoesNotFail(message: String, r: () -> Unit) {
     try {
         r()
     } catch (e: RuntimeException) {
-        throw Error(message, e)
+        val rootCause = Throwables.getRootCause(e)
+        fail(message + rootCause.message, cause = rootCause)
     }
 }
 

@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.model.plotConfig
 import jetbrains.datalore.plot.parsePlotSpec
 
 /**
- * https://github.com/JetBrains/lets-plot-kotlin/issues/105
+ * https://github.com/JetBrains/lets-plot/issues/746
  */
 @Suppress("ClassName")
 class Issue_facet_ordering_boxplot_746 {

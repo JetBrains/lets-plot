@@ -83,7 +83,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.stackGroups = opts.getBoolean(Dotplot.STACKGROUPS)
                 }
                 if (opts.hasOwn(Dotplot.STACKDIR)) {
-                    geom.stackDir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
+                    geom.stackDir = opts.getString(Dotplot.STACKDIR)!!.let {
+                        when (it.lowercase()) {
+                            "up" -> DotplotGeom.Stackdir.UP
+                            "down" -> DotplotGeom.Stackdir.DOWN
+                            "center" -> DotplotGeom.Stackdir.CENTER
+                            "centerwhole" -> DotplotGeom.Stackdir.CENTERWHOLE
+                            else -> throw IllegalArgumentException(
+                                "Unsupported ${Dotplot.STACKDIR}: '$it'. " +
+                                "Use one of: up, down, center, centerwhole."
+                            )
+                        }
+                    }
                 }
                 if (opts.hasOwn(Dotplot.METHOD)) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(Dotplot.METHOD)!!)
@@ -170,7 +181,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.stackGroups = opts.getBoolean(YDotplot.STACKGROUPS)
                 }
                 if (opts.hasOwn(YDotplot.STACKDIR)) {
-                    geom.yStackDir = YDotplotGeom.YStackdir.safeValueOf(opts.getString(YDotplot.STACKDIR)!!)
+                    geom.yStackDir = opts.getString(YDotplot.STACKDIR)!!.let {
+                        when (it.lowercase()) {
+                            "left" -> YDotplotGeom.YStackdir.LEFT
+                            "right" -> YDotplotGeom.YStackdir.RIGHT
+                            "center" -> YDotplotGeom.YStackdir.CENTER
+                            "centerwhole" -> YDotplotGeom.YStackdir.CENTERWHOLE
+                            else -> throw IllegalArgumentException(
+                                "Unsupported ${YDotplot.STACKDIR}: '$it'. " +
+                                "Use one of: left, right, center, centerwhole."
+                            )
+                        }
+                    }
                 }
                 if (opts.hasOwn(YDotplot.METHOD)) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(YDotplot.METHOD)!!)
@@ -345,6 +367,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
+            PROVIDER[GeomKind.ERROR_BAR_H] = GeomProvider.errorBarH()
             // crossbar - special case
             // pointrange - special case
             PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()

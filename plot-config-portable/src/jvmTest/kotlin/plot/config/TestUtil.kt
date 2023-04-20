@@ -60,15 +60,20 @@ object TestUtil {
         assertEquals(expectedNumLayers, plotConfigClientSide.layerConfigs.size)
     }
 
-    internal fun createGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {
+    internal fun createMultiTileGeomLayers(plotSpec: MutableMap<String, Any>): List<List<GeomLayer>> {
         val transformed = BackendSpecTransformUtil.processTransform(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
         val config = PlotConfigClientSide.create(transformed) {}
-        return PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile.single()
+        return PlotConfigClientSideUtil.createPlotAssembler(config).coreLayersByTile
+    }
+
+    internal fun createSingleTileGeomLayers(plotSpec: MutableMap<String, Any>): List<GeomLayer> {
+        val coreLayersByTile = createMultiTileGeomLayers(plotSpec)
+        return coreLayersByTile.single()
     }
 
     internal fun getSingleGeomLayer(plotSpec: MutableMap<String, Any>): GeomLayer {
-        val geomLayers = createGeomLayers(plotSpec)
+        val geomLayers = createSingleTileGeomLayers(plotSpec)
         require(geomLayers.isNotEmpty())
         return geomLayers.single()
     }
@@ -91,7 +96,9 @@ object TestUtil {
                 mutableMapOf<String, Any?>().apply {
                     put(GEOM, geom)
                     put(TOOLTIPS, tooltips)
-                    if (orientationY) { put(ORIENTATION, "Y") }
+                    if (orientationY) {
+                        put(ORIENTATION, "Y")
+                    }
                 }
             ),
             SCALES to scales,

@@ -34,6 +34,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             TILE -> DefaultSampling.TILE
             BIN_2D -> DefaultSampling.BIN_2D
             ERROR_BAR -> DefaultSampling.ERROR_BAR
+            ERROR_BAR_H -> DefaultSampling.ERROR_BAR_H
             CROSS_BAR -> DefaultSampling.CROSS_BAR
             LINE_RANGE -> DefaultSampling.LINE_RANGE
             POINT_RANGE -> DefaultSampling.POINT_RANGE
@@ -68,6 +69,14 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE -> Samplings.NONE
+        }
+    }
+
+    fun hasOwnPositionAdjustmentOptions(layerOptions: OptionsAccessor): Boolean {
+        return when (geomKind) {
+            JITTER -> layerOptions.hasOwn(Geom.Jitter.WIDTH) || layerOptions.hasOwn(Geom.Jitter.HEIGHT)
+            TEXT, LABEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
+            else -> false
         }
     }
 

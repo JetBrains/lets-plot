@@ -35,23 +35,27 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
     }
 
     private fun getCoord(hintConfig: HintConfig): DoubleVector? {
-        if (hintConfig.x == null) {
-            throw IllegalArgumentException("x coord is not set")
+        if (hintConfig.baseCoord == null) {
+            throw IllegalArgumentException("coord is not set")
         }
 
         val aes = hintConfig.aes
-        return if (!myPoint.defined(aes)) {
-            null
-        } else {
-            myHelper.toClient(hintConfig.x!!, myPoint.get(aes)!!, myPoint)!!.let {
-                if (myHelper.ctx.flipped) {
-                    it.flip()
-                } else {
-                    it
-                }
-            }
+        if (!myPoint.defined(aes)) {
+            return null
         }
 
+        val coord = when {
+            Aes.isPositionalX(aes) -> DoubleVector(myPoint.get(aes)!!, hintConfig.baseCoord!!)
+            Aes.isPositionalY(aes) -> DoubleVector(hintConfig.baseCoord!!, myPoint.get(aes)!!)
+            else -> throw IllegalStateException("Positional aes expected but was $aes.")
+        }
+        return myHelper.toClient(coord, myPoint)!!.let {
+            if (myHelper.ctx.flipped) {
+                it.flip()
+            } else {
+                it
+            }
+        }
     }
 
     private fun createHint(hintConfig: HintConfig, coord: DoubleVector): TipLayoutHint {
@@ -79,7 +83,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
     class HintConfigFactory {
 
         private var myDefaultObjectRadius: Double? = null
-        private var myDefaultX: Double? = null
+        private var myDefaultBaseCoord: Double? = null
         private var myDefaultColor: Color? = null
         private var myDefaultKind: Kind? = null
 
@@ -88,21 +92,22 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             return this
         }
 
-        fun defaultX(defaultX: Double): HintConfigFactory {
-            myDefaultX = defaultX
+        fun defaultCoord(defaultCoord: Double): HintConfigFactory {
+            myDefaultBaseCoord = defaultCoord
             return this
         }
 
         fun defaultColor(v: Color, alpha: Double?): HintConfigFactory {
-            if (alpha != null) {
-                myDefaultColor = v.changeAlpha((255 * alpha).toInt())
+            myDefaultColor = if (alpha != null) {
+                v.changeAlpha((255 * alpha).toInt())
             } else {
-                myDefaultColor = v
+                v
             }
             return this
         }
 
         fun create(aes: Aes<Double>): HintConfig {
+            require(Aes.isPositional(aes))
             return HintConfig(aes)
         }
 
@@ -115,25 +120,20 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             val kind: Kind?
             var objectRadius: Double? = null
                 private set
-            var x: Double? = null
+            var baseCoord: Double? = null
                 private set
             internal var color: Color? = null
                 private set
 
             init {
                 objectRadius = myDefaultObjectRadius
-                x = myDefaultX
+                baseCoord = myDefaultBaseCoord
                 kind = myDefaultKind
                 color = myDefaultColor
             }
 
             fun objectRadius(v: Double): HintConfig {
                 objectRadius = v
-                return this
-            }
-
-            fun x(v: Double): HintConfig {
-                x = v
                 return this
             }
 

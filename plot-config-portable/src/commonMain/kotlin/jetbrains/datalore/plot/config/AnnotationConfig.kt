@@ -12,9 +12,9 @@ import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 
 class AnnotationConfig(
     opts: Map<String, Any>,
+    varBindings: List<VarBinding>,
     constantsMap: Map<Aes<*>, Any>,
-    groupingVarName: String?,
-    varBindings: List<VarBinding>
+    groupingVarName: String?
 ) : LineSpecConfigParser(opts, constantsMap, groupingVarName, varBindings) {
 
     fun createAnnotations(): AnnotationSpecification {

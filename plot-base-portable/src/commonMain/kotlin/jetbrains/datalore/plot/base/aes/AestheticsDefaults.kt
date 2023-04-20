@@ -120,6 +120,10 @@ open class AestheticsDefaults {
                 .update(Aes.COLOR, Color.BLACK)
         }
 
+        fun errorBarH(): AestheticsDefaults {
+            return errorBar()
+        }
+
         fun crossBar(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.WIDTH, 0.9)

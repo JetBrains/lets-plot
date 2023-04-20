@@ -42,14 +42,15 @@ class GroupingContext constructor(
     private fun computeGroups(): (Int) -> Int {
         if (data.rowCount() == 0) return GroupUtil.SINGLE_GROUP
         if (data.has(Stats.GROUP)) {
-            val list = data.getNumeric(Stats.GROUP)
+            val list = data.getNumeric(Stats.GROUP).map {
+                checkNotNull(it) { "Value of ${Stats.GROUP} must be not null." }
+            }
             return GroupUtil.wrap(list)
         } else if (groupSizeList != null) {
             if (groupSizeList.size == data.rowCount()) {
                 return GroupUtil.SINGLE_GROUP
             } else {
-                val groupByPointIndex =
-                    toIndexMap(groupSizeList)
+                val groupByPointIndex = toIndexMap(groupSizeList)
                 return GroupUtil.wrap(groupByPointIndex)
             }
         } else if (expectMultiple) {
@@ -71,7 +72,7 @@ class GroupingContext constructor(
             return GroupingContext(
                 data,
                 groupingVariables,
-                explicitGroupingVarName = null,
+                explicitGroupingVarName = null,       // ???
                 expectMultiple = false,
                 groupSizeList = ArrayList(groupSizeList)
             )

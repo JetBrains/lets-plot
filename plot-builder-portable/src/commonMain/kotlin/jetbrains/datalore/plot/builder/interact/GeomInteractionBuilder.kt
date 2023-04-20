@@ -76,8 +76,8 @@ class GeomInteractionBuilder constructor(
         private val supportedAes: List<Aes<*>>,
         private val axisAes: List<Aes<*>>? = null,
     ) {
-        fun univariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
-            return createBuilder(GeomTooltipSetup.univariateFunction(lookupStrategy))
+        fun xUnivariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
+            return createBuilder(GeomTooltipSetup.xUnivariateFunction(lookupStrategy))
         }
 
         fun bivariateFunction(area: Boolean): GeomInteractionBuilder {

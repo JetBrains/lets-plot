@@ -27,7 +27,7 @@ object PlotHtmlExport {
     ): String {
 
         val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
-        val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(plotSpec, plotSize)
+        val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(plotSpec, plotSize, removeComputationMessages = true, logComputationMessages = true)
 
         val style = if (iFrame) {
             "\n       <style> html, body { margin: 0; overflow: hidden; } </style>"

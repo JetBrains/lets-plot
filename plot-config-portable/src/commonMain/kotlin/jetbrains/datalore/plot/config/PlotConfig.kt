@@ -55,11 +55,13 @@ abstract class PlotConfig(
 
     init {
 
-        val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
-            options = this,
+        val (plotMappings, plotData) = DataConfigUtil.createDataFrame(
             commonData = DataFrame.Builder.emptyFrame(),
+            ownData = ConfigUtil.createDataFrame(get(DATA)),
+            commonMappings = emptyMap(),
+            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
             commonDiscreteAes = emptySet(),
-            commonMappings = emptyMap<Any, Any>(),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
             isClientSide = isClientSide
         )
 
@@ -126,9 +128,9 @@ abstract class PlotConfig(
             val layerConfig = createLayerConfig(
                 layerOptions,
                 sharedData,
-                getMap(MAPPING),
-                getMap(DATA_META),
-                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
+                plotMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
+                plotDataMeta = getMap(DATA_META),
+                plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING)),
                 isClientSide,
                 isMapPlot
             )
@@ -140,8 +142,8 @@ abstract class PlotConfig(
     private fun createLayerConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
-        plotMappings: Map<*, *>,
-        plotDataMeta: Map<*, *>,
+        plotMappings: Map<String, String>,
+        plotDataMeta: Map<String, Any>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
         isClientSide: Boolean,
         isMapPlot: Boolean

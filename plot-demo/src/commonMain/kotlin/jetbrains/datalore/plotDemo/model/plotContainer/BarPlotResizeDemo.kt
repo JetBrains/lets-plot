@@ -75,7 +75,7 @@ class BarPlotResizeDemo private constructor(
                 Aes.FILL
             )
         )
-            .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+            .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             .build()
 
         val layer = layerBuilder

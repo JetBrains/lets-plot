@@ -21,6 +21,14 @@ abstract class PlotFacets {
     abstract val freeHScale: Boolean
     abstract val freeVScale: Boolean
 
+    fun isFacettable(data: DataFrame): Boolean {
+        return !data.isEmpty
+                && data.rowCount() > 0
+                && variables.any {
+            DataFrameUtil.hasVariable(data, it)
+        }
+    }
+
     /**
      * @return List of Dataframes, one Dataframe per tile.
      *          Tiles are enumerated by rows, i.e.:
@@ -105,6 +113,7 @@ abstract class PlotFacets {
                             val variable = DataFrameUtil.findVariableOrFail(data, varName)
                             SeriesUtil.matchingIndices(data[variable], level)
                         }
+
                         else -> {
                             // 'data' has no column 'varName' -> the entire data should be shown in each facet.
                             (0 until data.rowCount()).toList()
@@ -179,7 +188,7 @@ abstract class PlotFacets {
             if (name == null) return levels
 
             // We expect either a list of Doubles or a list of Strings.
-            @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
+            @Suppress("UNCHECKED_CAST")
             levels as List<Comparable<Any>>
 
             return when {

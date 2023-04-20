@@ -7,13 +7,13 @@ package jetbrains.datalore.plot.server.config
 
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.data.DataFrameUtil
+import jetbrains.datalore.plot.config.DataMetaUtil
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlin.test.fail
+import kotlin.test.*
 
 class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     AbstractAssert<SingleLayerAssert, List<LayerConfig>>(layers, SingleLayerAssert::class.java) {
@@ -35,6 +35,18 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
             assertBinding(aes, expectedBindings[aes]!!)
         }
         return this
+    }
+
+    private fun assertBinding(aes: Aes<*>, varName: String) {
+        val varBindings = myLayer.varBindings
+        for (varBinding in varBindings) {
+            if (varBinding.aes == aes) {
+                assertEquals(varName, varBinding.variable.name)
+                return
+            }
+        }
+
+        fail("No binding $aes -> $varName")
     }
 
     fun haveDataVector(key: String, value: List<*>): SingleLayerAssert {
@@ -66,16 +78,61 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         return this
     }
 
-    private fun assertBinding(aes: Aes<*>, varName: String) {
-        val varBindings = myLayer.varBindings
-        for (varBinding in varBindings) {
-            if (varBinding.aes == aes) {
-                assertEquals(varName, varBinding.variable.name)
-                return
-            }
+    fun hasDataMetaFacetLevels(variable: String, levels: List<Any>): SingleLayerAssert {
+        val layerDataMeta = myLayer.getMap(DATA_META)
+        val factorLevelsByVariable = DataMetaUtil.getFactorLevelsByVariable(layerDataMeta)
+        assertTrue(factorLevelsByVariable.containsKey(variable), "'$variable' - 'factor levels' annotation not found.")
+
+        val factorLevels = factorLevelsByVariable.getValue(variable)
+        assertEquals(
+            expected = levels,
+            actual = factorLevels
+        )
+        return this
+    }
+
+    fun noDataMetaFacetLevels(variable: String): SingleLayerAssert {
+        val layerDataMeta = myLayer.getMap(DATA_META)
+        val factorLevelsByVariable = DataMetaUtil.getFactorLevelsByVariable(layerDataMeta)
+        assertFalse(
+            factorLevelsByVariable.containsKey(variable),
+            "'$variable' - unexpected 'factor levels' annotation found."
+        )
+        return this
+    }
+
+    fun hasDataMetaDateTime(variable: String): SingleLayerAssert {
+        val layerDataMeta = myLayer.getMap(DATA_META)
+        val dateTimeVariables = DataMetaUtil.getDateTimeColumns(layerDataMeta)
+        assertTrue(dateTimeVariables.contains(variable), "'$variable' - 'date-time' annotation not found.")
+        return this
+    }
+
+    fun hasDataMetaAesAsDiscrete(aes: String): SingleLayerAssert {
+        val layerDataMeta = myLayer.getMap(DATA_META)
+        val asDiscreteAesSet = DataMetaUtil.getAsDiscreteAesSet(layerDataMeta)
+        assertTrue(asDiscreteAesSet.contains(aes), "'aes $aes' - 'as_discrete' annotation not found.")
+        return this
+    }
+
+    fun hasDataMetaAesOrderOption(aes: String): SingleLayerAssert {
+        val commonMappings = Aes.values().associate {
+            it.name to "${it.name} dummy var"
         }
 
-        fail("No binding $aes -> $varName")
+        val orderOptionsList = DataMetaUtil.getOrderOptions(
+            myLayer.toMap(),
+            commonMappings
+        )
+
+        // Extra checks just to make shure that our assumptions about 'as disctere' annotation didn't change:
+        //      If aes is 'as discrete' then the ordering is guarateed (the mapped var is ordered)
+        val orderOption = orderOptionsList.find {
+            it.variableName == commonMappings.getValue(aes)
+        }
+        assertNotNull(orderOption)
+        assertTrue(orderOption.getOrderDir() != 0)
+        return this
     }
 
     companion object {

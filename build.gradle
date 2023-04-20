@@ -1,7 +1,6 @@
 buildscript {
     dependencies {
         classpath "org.yaml:snakeyaml:1.25"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0"
     }
 }
 
@@ -10,7 +9,7 @@ plugins {
     id "org.jetbrains.kotlin.js" apply false
     id "org.jetbrains.gradle.plugin.idea-ext" apply false
     id "com.github.johnrengelman.shadow" apply false
-    id "io.codearte.nexus-staging"
+    id("io.github.gradle-nexus.publish-plugin") version "1.3.0"
 }
 
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -208,15 +207,16 @@ if (project.hasProperty("build_arch")) {
 project.ext.localMavenRepository = "$rootDir/.maven-publish-dev-repo"
 
 // define Sonatype nexus repository manager settings:
-def sonatypeSnapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-def sonatypeReleaseUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-project.ext.sonatypeUrl = version.contains('SNAPSHOT') ? sonatypeSnapshotUrl : sonatypeReleaseUrl
-
-// nexus-staging plugin settings:
-nexusStaging {
-    packageGroup = 'org.jetbrains'
-    username = project.buildSettings?.sonatype?.username
-    password = project.buildSettings?.sonatype?.password
+nexusPublishing {
+    repositories {
+        maven{
+            username = project.buildSettings?.sonatype?.username
+            password = project.buildSettings?.sonatype?.password
+            stagingProfileId = "11c25ff9a87b89"
+            nexusUrl.set(uri("https://oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
 }
 
 
@@ -234,7 +234,6 @@ task publishKotlinApiDependenciesToMavenLocalRepository {
 task publishKotlinApiDependenciesToMavenRepository {
     group project.letsPlotTaskGroup
 }
-
 
 subprojects {
     // Configure Kotlin targets.
@@ -326,13 +325,6 @@ subprojects {
                 }
             }
             repositories {
-                maven {
-                    url = project.sonatypeUrl
-                    credentials {
-                        username = project.buildSettings?.sonatype?.username
-                        password = project.buildSettings?.sonatype?.password
-                    }
-                }
                 mavenLocal {
                     url = uri(project.localMavenRepository)
                 }

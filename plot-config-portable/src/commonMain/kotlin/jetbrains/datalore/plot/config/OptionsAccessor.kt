@@ -16,20 +16,16 @@ open class OptionsAccessor(
     private val options: Map<String, Any>,
     private val defaultOptions: Map<String, Any> = emptyMap<String, Any>()
 ) {
-    val mergedOptions: Map<String, Any>
-        get() = defaultOptions + options
-
-    val isEmpty: Boolean
-        get() = options.isEmpty() && defaultOptions.isEmpty()
+//    val mergedOptions: Map<String, Any> = defaultOptions + options
+//    val isEmpty: Boolean = mergedOptions.isEmpty()
 
     fun update(key: String, value: Any) {
-        @Suppress("UNCHECKED_CAST")
         (options as MutableMap<String, Any>)[key] = value
     }
 
-    protected fun update(otherOptions: Map<String, Any>) {
-        (options as MutableMap<String, Any>).putAll(otherOptions)
-    }
+//    protected fun update(otherOptions: Map<String, Any>) {
+//        (options as MutableMap<String, Any>).putAll(otherOptions)
+//    }
 
     fun has(option: String): Boolean {
         return hasOwn(option) || defaultOptions[option] != null
@@ -62,8 +58,7 @@ open class OptionsAccessor(
 
     fun getNumPair(option: String): Pair<Number, Number> {
         val list = getNumList(option)
-        @Suppress("UNCHECKED_CAST")
-        return pickTwo(option, list) as Pair<Number, Number>
+        return pickTwo(option, list)
     }
 
     fun getNumQPair(option: String): Pair<Number?, Number?> {
@@ -273,7 +268,6 @@ open class OptionsAccessor(
             predicate: (Any?) -> Boolean,
             message: (Any?, Int) -> String
         ) {
-//            items.filterNot { predicate(it) }.firstOrNull()?.let { require(false) { message(it) } }
             require(items.all(predicate)) {
                 val el = items.find { !(predicate(it)) }
                 val i = items.indexOf(el)

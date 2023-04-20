@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil.pickAtIndices
 
 object DataProcessing {
 
@@ -75,10 +74,10 @@ object DataProcessing {
             )
             groupSizeListAfterStat = listOf(statData.rowCount())
             resultSeries = statData.variables().associateWith { variable -> statData[variable] }
-        } else { // add offset to each group
-            val groupMerger = GroupMerger()
+        } else {
+            val groupMerger = GroupMerger(aggregateOperation)
             var lastStatGroupEnd = -1
-            for (d in splitByGroup(statInput.data, groups)) {
+            for ((groupId, d) in splitByGroup(statInput.data, groups)) {
                 var statData = applyStat(
                     d,
                     stat,
@@ -89,10 +88,8 @@ object DataProcessing {
                     varsWithoutBinding,
                     messageConsumer
                 )
-                if (statData.isEmpty) {
-                    continue
-                }
-                groupMerger.initOrderSpecs(orderOptions, statData.variables(), statInput.bindings, aggregateOperation)
+
+                check(!statData.isEmpty)
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
@@ -121,8 +118,23 @@ object DataProcessing {
                     }
                 }
 
-                // Add group's data
-                groupMerger.addGroup(statData, curGroupSizeAfterStat)
+                // Add data "after stat" (i.e. group data) to the group merger.
+                if (groupMerger.isEmpty) {
+                    val orderOptionsMinusX = orderOptions
+                        .filter { orderOption ->
+                            // no need to reorder groups by X
+                            statInput.bindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } == null
+                        }
+                    // Init order specs in Group merger.
+                    groupMerger.orderSpecs = OrderOptionUtil.createOrderSpecs(
+                        orderOptionsMinusX,
+                        statData.variables(),
+                        statInput.bindings,
+                        aggregateOperation
+                    )
+                }
+
+                groupMerger.addGroup(groupId, statData, curGroupSizeAfterStat)
             }
             // Get merged series
             resultSeries = groupMerger.getResultSeries()
@@ -135,14 +147,14 @@ object DataProcessing {
                 put(variable, resultSeries[variable]!!)
             }
 
-// ToDo: why do we need ordering specs after stat?
-
-// ToDo: why do apply ordering specs to partial data? (i.e. when facets are used)
-
-            // set ordering specifications
-            val orderSpecs = orderOptions.map { orderOption ->
-                OrderOptionUtil.createOrderSpec(resultSeries.keys, statInput.bindings, orderOption, aggregateOperation)
-            }
+            // Set ordering specifications to the tile data "after stat".
+            // Ordering is required for possible "pick sampling" down the stream.
+            val orderSpecs = OrderOptionUtil.createOrderSpecs(
+                orderOptions,
+                resultSeries.keys,
+                statInput.bindings,
+                aggregateOperation
+            )
             addOrderSpecs(orderSpecs)
 
             // build DataFrame
@@ -169,15 +181,18 @@ object DataProcessing {
             DataFrameUtil.findVariableOrFail(data, name)
     }
 
-    private fun splitByGroup(data: DataFrame, groups: (Int) -> Int): List<DataFrame> {
-        return indicesByGroup(data.rowCount(), groups).values.map { indices ->
-            data.variables().fold(Builder()) { b, variable ->
+    private fun splitByGroup(data: DataFrame, groups: (Int) -> Int): Map<Int, DataFrame> {
+        val indicesByGroup = indicesByGroup(data.rowCount(), groups)
+        val dataByGroup = indicesByGroup.mapValues { (_, indices) ->
+            val builder = data.variables().fold(Builder()) { b, variable ->
                 when (data.isNumeric(variable)) {
-                    true -> b.putNumeric(variable, pickAtIndices(data.getNumeric(variable), indices))
-                    false -> b.putDiscrete(variable, pickAtIndices(data[variable], indices))
+                    true -> b.putNumeric(variable, data.getNumeric(variable).slice(indices))
+                    false -> b.putDiscrete(variable, data[variable].slice(indices))
                 }
             }
-        }.map(Builder::build)
+            builder.build()
+        }
+        return dataByGroup
     }
 
     /**
@@ -211,9 +226,9 @@ object DataProcessing {
         val statDataSize = statData.rowCount()
 
         // generate new series for facet variables
-        val inputSeriesForFacetVars: Map<Variable, List<Any?>> = run {
-            val facetLevelByFacetVar = facetVariables.associateWith { data[it][0] }
-            facetLevelByFacetVar.mapValues { (_, facetLevel) -> List(statDataSize) { facetLevel } }
+        val inputSeriesForFacetVars: Map<Variable, List<Any?>> = when (statDataSize) {
+            0 -> facetVariables.associateWith { emptyList() }
+            else -> facetVariables.associateWith { data[it][0].let { facetLevel -> List(statDataSize) { facetLevel } } }
         }
 
         // generate new series for input variables
@@ -290,6 +305,7 @@ object DataProcessing {
             return false
         }
 
+        // ToDo: ??? id orientation=y, flip Aes in stat.hasDefaultMapping(it) ?
         val aesByStatVar: Map<Variable, Aes<*>> = run {
             val aesByStatVarDefault = Aes.values()
                 .filter { stat.hasDefaultMapping(it) }.associateBy { stat.getDefaultMapping(it) }
@@ -330,7 +346,8 @@ object DataProcessing {
         var currentGroups: List<Int>? = null
         for (groupingVariable in groupingVariables) {
             val values = data[groupingVariable]
-            val groups = computeGroups(values)
+            val distinctValues = data.distinctValues(groupingVariable)
+            val groups = computeGroups(values, distinctValues)
             if (currentGroups == null) {
                 currentGroups = groups
                 continue
@@ -341,7 +358,7 @@ object DataProcessing {
                         "${currentGroups?.size}, ${groups.size} )"
             }
             val dummies = computeDummyValues(currentGroups, groups)
-            currentGroups = computeGroups(dummies)
+            currentGroups = computeGroups(dummies, dummies.toSet())
         }
 
         return if (currentGroups != null) {
@@ -351,15 +368,19 @@ object DataProcessing {
         }
     }
 
-    private fun computeGroups(values: List<*>): List<Int> {
-        val groups = ArrayList<Int>()
+    private fun computeGroups(values: List<*>, distinctValues: Collection<Any>): List<Int> {
         val groupByVal = HashMap<Any?, Int>()
-        var count = 0
+        for ((index, distinctValue) in distinctValues.withIndex()) {
+            groupByVal[distinctValue] = index
+        }
+        var groupCount = groupByVal.size
+
+        val groups = ArrayList<Int>()
         for (v in values) {
             if (!groupByVal.containsKey(v)) {
-                groupByVal[v] = count++
+                groupByVal[v] = groupCount++
             }
-            groups.add(groupByVal.get(v)!!)
+            groups.add(groupByVal.getValue(v))
         }
         return groups
     }
@@ -410,7 +431,6 @@ object DataProcessing {
         // 'origin' discrete vars (but not positional)
         return variable.isOrigin && !(Aes.isPositional(aes) || data.isNumeric(variable))
     }
-
 
     class DataAndGroupingContext internal constructor(
         val data: DataFrame,

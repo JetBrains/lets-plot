@@ -31,9 +31,10 @@ class GeomTooltipSetup private constructor(
         const val NON_AREA_GEOM = false
 
         private val AES_X = listOf(Aes.X)
+        private val AES_Y = listOf(Aes.Y)
         private val AES_XY = listOf(Aes.X, Aes.Y)
 
-        fun univariateFunction(
+        fun xUnivariateFunction(
             lookupStrategy: GeomTargetLocator.LookupStrategy,
             axisTooltipVisibilityFromConfig: Boolean? = null
         ): GeomTooltipSetup {
@@ -42,6 +43,23 @@ class GeomTooltipSetup private constructor(
                 locatorLookupStrategy = lookupStrategy,
                 locatorLookupSpace = GeomTargetLocator.LookupSpace.X,
                 axisAesFromFunctionKind = AES_X,
+                axisTooltipVisibilityFromFunctionKind = axisTooltipVisibilityFromFunctionKind,
+                axisTooltipEnabled = isAxisTooltipEnabled(
+                    axisTooltipVisibilityFromConfig,
+                    axisTooltipVisibilityFromFunctionKind
+                )
+            )
+        }
+
+        fun yUnivariateFunction(
+            lookupStrategy: GeomTargetLocator.LookupStrategy,
+            axisTooltipVisibilityFromConfig: Boolean? = null
+        ): GeomTooltipSetup {
+            val axisTooltipVisibilityFromFunctionKind = true
+            return GeomTooltipSetup(
+                locatorLookupStrategy = lookupStrategy,
+                locatorLookupSpace = GeomTargetLocator.LookupSpace.Y,
+                axisAesFromFunctionKind = AES_Y,
                 axisTooltipVisibilityFromFunctionKind = axisTooltipVisibilityFromFunctionKind,
                 axisTooltipEnabled = isAxisTooltipEnabled(
                     axisTooltipVisibilityFromConfig,

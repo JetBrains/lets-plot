@@ -5,12 +5,11 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
-import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
@@ -18,12 +17,12 @@ import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpec
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpecs
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
-import jetbrains.datalore.plot.config.DataMetaUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataConfigUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataConfigUtil.layerMappingsAndCombinedData
 import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
@@ -37,13 +36,14 @@ import jetbrains.datalore.plot.config.Option.Layer.POS
 import jetbrains.datalore.plot.config.Option.Layer.SHOW_LEGEND
 import jetbrains.datalore.plot.config.Option.Layer.STAT
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
+import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
 import jetbrains.datalore.plot.config.Option.PlotBase.MAPPING
 
 class LayerConfig constructor(
     layerOptions: Map<String, Any>,
-    sharedData: DataFrame,
-    plotMappings: Map<*, *>,
+    plotData: DataFrame,
+    plotMappings: Map<String, String>,
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
@@ -51,37 +51,27 @@ class LayerConfig constructor(
     isMapPlot: Boolean
 ) : OptionsAccessor(
     layerOptions,
-    initDefaultOptions(layerOptions, geomProto)
+    initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    val stat: Stat
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
+    val stat: Stat = StatProto.createStat(statKind, options = this)
+
+    val posProvider: PosProvider =
+        PosProto.createPosProvider(
+            LayerConfigUtil.positionAdjustmentOptions(layerOptions = this, geomProto)
+        )
 
     val isLiveMap: Boolean = geomProto.geomKind == GeomKind.LIVE_MAP
-    private val ownDataMeta = getMap(Option.Meta.DATA_META)
 
-    val explicitGroupingVarName: String?
-    val posProvider: PosProvider
+    private val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
+        .filter(::hasOwn)
+        .map(Option.Mapping::toAes)
 
-    val varBindings: List<VarBinding>
-    val constantsMap: Map<Aes<*>, Any>
-
-    val tooltips: TooltipSpecification
-    val annotations: AnnotationSpecification
-
-    var ownData: DataFrame? = null
-        private set
-
-    private var myOwnDataUpdated = false
-    private val myCombinedData: DataFrame
-
-    val combinedData: DataFrame
-        get() {
-            // 'combinedData' is only valid before 'stst'/'sampling' occurs.
-            check(!myOwnDataUpdated)
-            return myCombinedData
-        }
-
+    // Color aesthetics
+    val colorByAes: Aes<Color> = getPaintAes(Aes.COLOR, explicitConstantAes)
+    val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
+    val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
     val isLegendDisabled: Boolean
         get() = when (hasOwn(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
@@ -90,7 +80,7 @@ class LayerConfig constructor(
 
     private val _samplings: List<Sampling> = when (clientSide) {
         true -> emptyList()
-        else -> LayerConfigUtil.initSampling(this, geomProto.preferredSampling())
+        else -> initSampling(this, geomProto.preferredSampling())
     }
 
     val samplings: List<Sampling>
@@ -98,14 +88,6 @@ class LayerConfig constructor(
             check(!clientSide)
             return _samplings
         }
-
-    var orderOptions: List<OrderOption>
-        private set
-
-    val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
-        PosProto.STACK -> SeriesUtil::sum
-        else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
-    }
 
     val isYOrientation: Boolean
         get() = when (hasOwn(ORIENTATION)) {
@@ -135,53 +117,52 @@ class LayerConfig constructor(
     }
     val marginalSize: Double = getDoubleDef(Marginal.SIZE, Marginal.SIZE_DEFAULT)
 
-    // Color aesthetics
-    val colorByAes: Aes<Color>
-    val fillByAes: Aes<Color>
 
-    val renderedAes: List<Aes<*>>
+    val aggregateOperation: ((List<Double?>) -> Double?) = when (getString(POS)) {
+        PosProto.STACK -> SeriesUtil::sum
+        else -> { v: List<Double?> -> SeriesUtil.mean(v, defaultValue = null) }
+    }
+
+    var orderOptions: List<OrderOption>
+        private set
+
+    val explicitGroupingVarName: String?
+
+    val varBindings: List<VarBinding>
+    val constantsMap: Map<Aes<*>, Any>
+
+    val tooltips: TooltipSpecification
+    val annotations: AnnotationSpecification
+
+    var ownData: DataFrame
+        private set
+
+    private var combinedDataValid = true
+    var combinedData: DataFrame
+        private set
+        get() {
+            check(combinedDataValid)
+            return field
+        }
 
     init {
-        val (layerMappings, layerData) = createDataFrame(
-            options = this,
-            commonData = sharedData,
-            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
+        val layerMappings = createDataFrame(
+            commonData = plotData,
+            ownData = ConfigUtil.createDataFrame(get(DATA)),
             commonMappings = plotMappings,
+            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
+            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
             isClientSide = clientSide
-        )
+        ).let {
+            ownData = it.second
+            it.first
+        }
 
         if (!clientSide) {
             update(MAPPING, layerMappings)
         }
 
-        val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
-            .filter(::hasOwn)
-            .map(Option.Mapping::toAes)
-
-        // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
-        // And the constant cancels mappings => the constant cancels color/fill_by.
-        fun getAesOverriding(aes: Aes<Color>): Aes<Color> {
-            val optionName = when (aes) {
-                Aes.COLOR -> Option.Layer.COLOR_BY
-                Aes.FILL -> Option.Layer.FILL_BY
-                else -> aes.name
-            }
-            return when (aes) {
-                in explicitConstantAes -> aes
-                else -> when (val colorBy = getColorAes(optionName)) {
-                    null -> aes
-                    in explicitConstantAes -> aes
-                    else -> colorBy
-                }
-            }
-        }
-
-        colorByAes = getAesOverriding(Aes.COLOR)
-        fillByAes = getAesOverriding(Aes.FILL)
-        // Get renders with replacing color aesthetics
-        renderedAes = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
-
-        stat = StatProto.createStat(statKind, OptionsAccessor(mergedOptions))
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
                 true -> it
@@ -189,115 +170,57 @@ class LayerConfig constructor(
             }
         }.afterOrientation(isYOrientation)
 
-        // mapping (inherit from plot) + 'layer' mapping
-        val combinedMappingOptions = (plotMappings + layerMappings).filterKeys {
-            // Only keep those mapping options which can be consumed by this layer.
-            // ToDo: report to user that some mappings are not applicable to this layer.
-            @Suppress("CascadeIf")
-            if (it == Option.Mapping.GROUP) {
-                true
-            } else if (it is String) {
-                val aes = Option.Mapping.toAes(it)
-                when (statKind) {
-                    StatKind.QQ,
-                    StatKind.QQ_LINE -> consumedAesSet.contains(aes) || aes == Aes.SAMPLE
-
-                    else -> consumedAesSet.contains(aes)
-                }
-            } else {
-                false
-            }
-        }
-
-        // If layer has no mapping then no data is needed.
-        val dropData: Boolean = (combinedMappingOptions.isEmpty() &&
-                // Do not touch GeoDataframe - empty mapping is OK in this case.
-                !GeoConfig.isGeoDataframe(layerOptions, DATA) &&
-                !GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isMapPlot)
-                )
-
-        var combinedData = when {
-            dropData -> DataFrame.Builder.emptyFrame()
-            !(sharedData.isEmpty || layerData.isEmpty) && sharedData.rowCount() == layerData.rowCount() -> {
-                DataFrameUtil.appendReplace(sharedData, layerData)
-            }
-
-            !layerData.isEmpty -> layerData
-            else -> sharedData
-        }.run {
-            // Mark 'DateTime' variables
-            val dateTimeVariables =
-                DataMetaUtil.getDateTimeColumns(plotDataMeta) + DataMetaUtil.getDateTimeColumns(ownDataMeta)
-            DataFrameUtil.addDateTimeVariables(this, dateTimeVariables)
-        }
-
-        var aesMappings: Map<Aes<*>, DataFrame.Variable>
-        if (clientSide && GeoConfig.isApplicable(layerOptions, combinedMappingOptions, isMapPlot)) {
-            val geoConfig = GeoConfig(
-                geomProto.geomKind,
-                combinedData,
-                layerOptions,
-                combinedMappingOptions
-            )
-            combinedData = geoConfig.dataAndCoordinates
-            aesMappings = geoConfig.mappings
-
-        } else {
-            aesMappings = createAesMapping(combinedData, combinedMappingOptions)
-        }
-
-        if (clientSide) {
-            // add stat default mappings
-            val statDefMapping = Stats.defaultMapping(stat).let {
-                when (isYOrientation) {
-                    true -> YOrientationBaseUtil.flipAesKeys(it)
-                    false -> it
+        // Combine plot + layer mappings.
+        // Only keep those mappings which can be consumed by this layer.
+        val consumedAesMappings = (plotMappings + layerMappings).filterKeys { aesName ->
+            when (aesName) {
+                Option.Mapping.GROUP -> true
+                else -> {
+                    val aes = Option.Mapping.toAes(aesName)
+                    consumedAesSet.contains(aes)
                 }
             }
-            // Only keys (aes) in 'statDefMapping' that are not already present in 'aesMappinds'.
-            aesMappings = statDefMapping + aesMappings
         }
 
-        // drop from aes mapping constant that were defined explicitly.
-        aesMappings = aesMappings - explicitConstantAes
+        val (aesMappings: Map<Aes<*>, DataFrame.Variable>,
+            rawCombinedData: DataFrame) = layerMappingsAndCombinedData(
+            layerOptions = layerOptions,
+            geomKind = geomProto.geomKind,
+            stat = stat,
+            sharedData = plotData,
+            layerData = ownData,
+            plotDataMeta = plotDataMeta,
+            ownDataMeta = getMap(DATA_META),
+            consumedAesMappings = consumedAesMappings,
+            explicitConstantAes = explicitConstantAes,
+            isYOrientation = isYOrientation,
+            clientSide = clientSide,
+            isMapPlot = isMapPlot
+        )
 
         // init AES constants excluding mapped AES
-        constantsMap = LayerConfigUtil.initConstants(this, consumedAesSet - aesMappings.keys)
+        constantsMap = LayerConfigUtil.initConstants(
+            layerOptions = this,
+            consumedAesSet = consumedAesSet - aesMappings.keys
+        )
 
         // grouping
-        explicitGroupingVarName = initGroupingVarName(combinedData, combinedMappingOptions)
-
-        posProvider = PosProto.createPosProvider(LayerConfigUtil.positionAdjustmentOptions(this, geomProto))
+        explicitGroupingVarName = initGroupingVarName(rawCombinedData, consumedAesMappings)
 
         varBindings = LayerConfigUtil.createBindings(
-            combinedData,
+            rawCombinedData,
             aesMappings,
             consumedAesSet,
             clientSide
         )
-        ownData = layerData
 
         // tooltip list
         tooltips = if (has(TOOLTIPS)) {
-            when (get(TOOLTIPS)) {
-                is Map<*, *> -> {
-                    TooltipConfig(
-                        opts = getMap(TOOLTIPS),
-                        constantsMap = constantsMap,
-                        groupingVarName = explicitGroupingVarName,
-                        varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
-                    ).createTooltips()
-                }
-
-                NONE -> {
-                    // not show tooltips
-                    TooltipSpecification.withoutTooltip()
-                }
-
-                else -> {
-                    error("Incorrect tooltips specification")
-                }
-            }
+            initTooltipsSpec(
+                tooltipOptions = getSafe(TOOLTIPS),
+                varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
+                constantsMap, explicitGroupingVarName
+            )
         } else {
             TooltipSpecification.defaultTooltip()
         }
@@ -305,33 +228,37 @@ class LayerConfig constructor(
         annotations = if (has(ANNOTATIONS)) {
             AnnotationConfig(
                 opts = getMap(ANNOTATIONS),
-                constantsMap = constantsMap,
-                groupingVarName = explicitGroupingVarName,
-                varBindings = varBindings.filter { it.aes in renderedAes } // use rendered only (without stat.consumes())
+                varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
+                constantsMap, explicitGroupingVarName
             ).createAnnotations()
         } else {
             AnnotationSpecification.NONE
         }
 
-        // TODO: handle order options combining to a config parsing stage
-        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, combinedMappingOptions)
+        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
 
-        myCombinedData = if (clientSide) {
-            val orderSpecs = orderOptions.map {
-                createOrderSpec(combinedData.variables(), varBindings, it, aggregateOperation)
-            }
-            DataFrame.Builder(combinedData).addOrderSpecs(orderSpecs).build()
+        combinedData = if (clientSide) {
+            val variables = rawCombinedData.variables()
+            val orderSpecs = createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
+            val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(getMap(DATA_META))
+                .mapKeys { (varName, _) -> variables.find { it.name == varName } }
+                .filterNotNullKeys()
+
+            DataFrame.Builder(rawCombinedData)
+                .addOrderSpecs(orderSpecs)
+                .addFactorLevels(factorLevelsByVar)
+                .build()
         } else {
-            combinedData
+            rawCombinedData
         }
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
         val groupBy = mappingOptions[Option.Mapping.GROUP]
-        var fieldName: String? = if (groupBy is String)
-            groupBy
-        else
-            null
+        var fieldName: String? = when (groupBy) {
+            is String -> groupBy
+            else -> null
+        }
 
         if (fieldName == null && has(GEO_POSITIONS)) {
             // 'default' group is important for 'geom_map'
@@ -357,7 +284,9 @@ class LayerConfig constructor(
         require(dataFrame != null)
         update(DATA, DataFrameUtil.toMap(dataFrame))
         ownData = dataFrame
-        myOwnDataUpdated = true
+
+        // Invalidate layer' "combined data"
+        combinedDataValid = false
     }
 
     fun hasExplicitGrouping(): Boolean {
@@ -393,19 +322,39 @@ class LayerConfig constructor(
         return Pair(dataVar, mapVar)
     }
 
-    private fun OptionsAccessor.getColorAes(option: String): Aes<Color>? {
-        return getString(option)?.let {
-            val aes = Option.Mapping.toAes(it)
-            require(Aes.isColor(aes)) { "'$option' should be an aesthetic related to color" }
-            @Suppress("UNCHECKED_CAST")
-            aes as Aes<Color>
+    // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
+    // And the constant cancels mappings => the constant cancels color/fill_by.
+    private fun getPaintAes(aes: Aes<Color>, explicitConstantAes: List<Aes<*>>): Aes<Color> {
+
+        return when (aes) {
+            in explicitConstantAes -> aes
+            else -> {
+                val optionName = when (aes) {
+                    Aes.COLOR -> Option.Layer.COLOR_BY
+                    Aes.FILL -> Option.Layer.FILL_BY
+                    else -> aes.name
+                }
+
+                val colorBy: Aes<Color>? = getString(optionName)?.let { aesName ->
+                    val aesByName = Option.Mapping.toAes(aesName)
+                    require(Aes.isColor(aesByName)) { "'$optionName' should be an aesthetic related to color" }
+                    @Suppress("UNCHECKED_CAST")
+                    aesByName as Aes<Color>
+                }
+
+                when (colorBy) {
+                    null -> aes
+                    in explicitConstantAes -> aes
+                    else -> colorBy
+                }
+            }
         }
     }
 
 
     private companion object {
 
-        private fun initDefaultOptions(
+        private fun initLayerDefaultOptions(
             layerOptions: Map<*, *>,
             geomProto: GeomProto
         ): Map<String, Any> {
@@ -424,11 +373,47 @@ class LayerConfig constructor(
             return defaults + StatProto.defaultOptions(statName, geomProto.geomKind)
         }
 
+        private fun initSampling(opts: OptionsAccessor, defaultSampling: Sampling): List<Sampling> {
+            return if (opts.has(Option.Layer.SAMPLING)) {
+                SamplingConfig.create(opts.getSafe(Option.Layer.SAMPLING))
+            } else {
+                listOf(defaultSampling)
+            }
+        }
+
+        private fun initTooltipsSpec(
+            tooltipOptions: Any,  // An options map or just string "none"
+            varBindings: List<VarBinding>,
+            constantsMap: Map<Aes<*>, Any>,
+            explicitGroupingVarName: String?
+        ): TooltipSpecification {
+            return when (tooltipOptions) {
+                is Map<*, *> -> {
+                    @Suppress("UNCHECKED_CAST")
+                    TooltipConfig(
+                        opts = tooltipOptions as Map<String, Any>,
+                        constantsMap = constantsMap,
+                        groupingVarName = explicitGroupingVarName,
+                        varBindings = varBindings
+                    ).createTooltips()
+                }
+
+                NONE -> {
+                    // not show tooltips
+                    TooltipSpecification.withoutTooltip()
+                }
+
+                else -> {
+                    error("Incorrect tooltips specification")
+                }
+            }
+        }
+
         private fun initOrderOptions(
             plotOrderOptions: List<OrderOption>,
             layerOptions: Map<String, Any>,
             varBindings: List<VarBinding>,
-            combinedMappingOptions: Map<*, *>
+            combinedMappingOptions: Map<String, String>
         ): List<OrderOption> {
             val mappedVariables = varBindings.map { it.variable.name }
 
