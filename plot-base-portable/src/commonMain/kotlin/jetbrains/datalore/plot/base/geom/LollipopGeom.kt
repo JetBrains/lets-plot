@@ -46,7 +46,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            val base = getBase(x, y, Orientation.X, true)
+            val base = getBase(x, y, isYOrientation = false, orientationHasBeenApplied = true)
             val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
             lollipops.add(Lollipop(p, head, base, stickLength))
         }
@@ -83,12 +83,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val orientation = if (coordAes == Aes.Y) {
-            Orientation.Y
-        } else {
-            Orientation.X
-        }
-        return span(p, coordAes, orientation)
+        return span(p, coordAes, coordAes == Aes.Y)
     }
 
     override fun heightSpan(
@@ -97,21 +92,16 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        val orientation = if (coordAes == Aes.X) {
-            Orientation.Y
-        } else {
-            Orientation.X
-        }
-        return span(p, coordAes, orientation)
+        return span(p, coordAes, coordAes == Aes.X)
     }
 
-    private fun span(p: DataPointAesthetics, coordAes: Aes<Double>, orientation: Orientation): DoubleSpan? {
+    private fun span(p: DataPointAesthetics, coordAes: Aes<Double>, isYOrientation: Boolean): DoubleSpan? {
         val x = p.x()
         val y = p.y()
         if (!SeriesUtil.allFinite(x, y)) {
             return null
         }
-        val base = getBase(x!!, y!!, orientation, false)
+        val base = getBase(x!!, y!!, isYOrientation, orientationHasBeenApplied = false)
 
         return when (coordAes) {
             Aes.X -> DoubleSpan(base.x, x)
@@ -120,27 +110,27 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun getBase(x: Double, y: Double, orientation: Orientation, orientationHasBeenApplied: Boolean): DoubleVector {
+    private fun getBase(x: Double, y: Double, isYOrientation: Boolean, orientationHasBeenApplied: Boolean): DoubleVector {
         return when (direction) {
-            Direction.ORTHOGONAL_TO_AXIS -> when (orientation) {
-                Orientation.X -> getYByX(x)
-                Orientation.Y -> if (orientationHasBeenApplied) {
+            Direction.ORTHOGONAL_TO_AXIS -> when (isYOrientation) {
+                false -> getYByX(x)
+                true -> if (orientationHasBeenApplied) {
                     getYByX(x)
                 } else {
                     getYByX(y).flip()
                 }
             }
-            Direction.ALONG_AXIS -> when (orientation) {
-                Orientation.X -> getXByY(y)
-                Orientation.Y -> if (orientationHasBeenApplied) {
+            Direction.ALONG_AXIS -> when (isYOrientation) {
+                false -> getXByY(y)
+                true -> if (orientationHasBeenApplied) {
                     getYByX(x)
                 } else {
                     getXByY(x).flip()
                 }
             }
-            Direction.SLOPE -> when (orientation) {
-                Orientation.X -> getBaseForOrthogonalStick(x, y)
-                Orientation.Y -> if (orientationHasBeenApplied) {
+            Direction.SLOPE -> when (isYOrientation) {
+                false -> getBaseForOrthogonalStick(x, y)
+                true -> if (orientationHasBeenApplied) {
                     getBaseForOrthogonalStick(x, y)
                 } else {
                     getBaseForOrthogonalStick(y, x).flip()
@@ -231,10 +221,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     enum class Direction {
         ORTHOGONAL_TO_AXIS, ALONG_AXIS, SLOPE
-    }
-
-    private enum class Orientation {
-        X, Y
     }
 
     companion object {
