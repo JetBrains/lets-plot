@@ -1585,6 +1585,23 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
             geom_jitter(aes(x='x', y='y'), data=df, width=.2, size=1) + \\
             scale_x_continuous(breaks=list(range(10)))
 
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'xmin': [0.2, 4.6, 1.6, 3.5],
+            'xmax': [1.5, 5.3, 3.0, 4.4],
+            'y': ['a', 'a', 'b', 'b'],
+            'c': ['gr1', 'gr2', 'gr1', 'gr2']
+        }
+        ggplot(data) + \\
+            geom_errorbar(aes(y='y', xmin='xmin', xmax='xmax', color='c'), height=0.1, size=2)
+
     """
     return _geom('errorbar',
                  mapping=mapping,
