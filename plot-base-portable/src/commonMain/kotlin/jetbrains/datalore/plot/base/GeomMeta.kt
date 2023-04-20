@@ -137,19 +137,16 @@ object GeomMeta {
             )
 
             GeomKind.ERROR_BAR -> listOf(
+                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
                 Aes.WIDTH,
-                Aes.ALPHA,
-                Aes.COLOR,
-                Aes.LINETYPE,
-                Aes.SIZE
-            )
 
-            GeomKind.ERROR_BAR_H -> listOf(
+                // horizontal
                 Aes.Y,
                 Aes.XMIN, Aes.XMAX,
                 Aes.HEIGHT,
+
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.LINETYPE,

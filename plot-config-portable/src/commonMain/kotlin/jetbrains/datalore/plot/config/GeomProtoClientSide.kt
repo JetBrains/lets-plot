@@ -311,7 +311,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             PROVIDER[GeomKind.TILE] = GeomProvider.tile()
             PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
             PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
-            PROVIDER[GeomKind.ERROR_BAR_H] = GeomProvider.errorBarH()
             // crossbar - special case
             // pointrange - special case
             PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()

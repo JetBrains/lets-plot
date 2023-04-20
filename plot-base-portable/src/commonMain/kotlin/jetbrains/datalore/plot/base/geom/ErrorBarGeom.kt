@@ -26,7 +26,7 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 class ErrorBarGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = ErrorBarLegendKeyElementFactory(::errorBarShapeSegments)
+        get() = ErrorBarLegendKeyElementFactory()
 
     override fun buildIntern(
         root: SvgRoot,
@@ -38,13 +38,23 @@ class ErrorBarGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        for (p in GeomUtil.withDefined(
-            aesthetics.dataPoints(),
-            Aes.X,
-            Aes.YMIN,
-            Aes.YMAX,
-            Aes.WIDTH
-        )) {
+        val vDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
+        if (vDataPoints.any()) {
+            buildVertical(root, vDataPoints, ctx, geomHelper, colorsByDataPoint)
+        } else {
+            val hDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
+            buildHorizontal(root, hDataPoints, ctx, geomHelper, colorsByDataPoint)
+        }
+    }
+
+    private fun buildVertical(
+        root: SvgRoot,
+        dataPoints: Iterable<DataPointAesthetics>,
+        ctx: GeomContext,
+        geomHelper: GeomHelper,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    ) {
+        for (p in dataPoints) {
             val x = p.x()!!
             val ymin = p.ymin()!!
             val ymax = p.ymax()!!
@@ -52,7 +62,7 @@ class ErrorBarGeom : GeomBase() {
             val height = ymax - ymin
 
             val r = DoubleRectangle(x - width / 2, ymin, width, height)
-            val segments = errorBarShapeSegments(r)
+            val segments = errorBarVerticalShape(r)
             val g = errorBarShape(segments, p, geomHelper)
             root.add(g)
 
@@ -61,7 +71,38 @@ class ErrorBarGeom : GeomBase() {
                 p,
                 ctx,
                 geomHelper,
-                colorsByDataPoint
+                colorsByDataPoint,
+                isVerticalGeom = true
+            )
+        }
+    }
+
+    private fun buildHorizontal(
+        root: SvgRoot,
+        dataPoints: Iterable<DataPointAesthetics>,
+        ctx: GeomContext,
+        geomHelper: GeomHelper,
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+    ) {
+        for (p in dataPoints) {
+            val y = p.y()!!
+            val xmin = p.xmin()!!
+            val xmax = p.xmax()!!
+            val height = p.height()!! * ctx.getResolution(Aes.Y)
+            val width = xmax - xmin
+
+            val r = DoubleRectangle(xmin, y - height / 2, width, height)
+            val segments = errorBarHorizontalShape(r)
+            val g = errorBarShape(segments, p, geomHelper)
+            root.add(g)
+
+            buildHints(
+                DoubleRectangle(r.center.x, r.top, 0.0, r.height),
+                p,
+                ctx,
+                geomHelper,
+                colorsByDataPoint,
+                isVerticalGeom = false
             )
         }
     }
@@ -71,31 +112,37 @@ class ErrorBarGeom : GeomBase() {
         p: DataPointAesthetics,
         ctx: GeomContext,
         geomHelper: GeomHelper,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> List<Color>,
+        isVerticalGeom: Boolean
     ) {
+        val isVerticallyOriented = if (isVerticalGeom) !ctx.flipped else ctx.flipped
+
         val clientRect = geomHelper.toClient(rect, p)
         val objectRadius = clientRect?.run {
-            if (ctx.flipped) {
-                height / 2.0
-            } else {
+            if (isVerticallyOriented) {
                 width / 2.0
+            } else {
+                height / 2.0
             }
         }!!
 
+        val aes = if (isVerticalGeom) Aes.X else Aes.Y
         val hint = HintConfigFactory()
             .defaultObjectRadius(objectRadius)
-            .defaultCoord(p.x()!!)
+            .defaultCoord(p[aes]!!)
             .defaultKind(
-                if (ctx.flipped) {
-                    TipLayoutHint.Kind.ROTATED_TOOLTIP
-                } else {
+                if (isVerticallyOriented) {
                     TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                } else {
+                    TipLayoutHint.Kind.ROTATED_TOOLTIP
                 }
             )
 
+        val lower = if (isVerticalGeom) Aes.YMIN else Aes.XMIN
+        val upper = if (isVerticalGeom) Aes.YMAX else Aes.XMAX
         val hints = HintsCollection(p, geomHelper)
-            .addHint(hint.create(Aes.YMAX))
-            .addHint(hint.create(Aes.YMIN))
+            .addHint(hint.create(lower))
+            .addHint(hint.create(upper))
             .hints
 
         ctx.targetCollector.addRectangle(
@@ -105,27 +152,15 @@ class ErrorBarGeom : GeomBase() {
                 tipLayoutHints = hints,
                 markerColors = colorsByDataPoint(p)
             ),
-            tooltipKind = if (ctx.flipped) {
-                TipLayoutHint.Kind.VERTICAL_TOOLTIP
-            } else {
+            tooltipKind = if (isVerticallyOriented) {
                 TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            } else {
+                TipLayoutHint.Kind.VERTICAL_TOOLTIP
             }
         )
     }
 
-    private fun errorBarShapeSegments(r: DoubleRectangle): List<DoubleSegment> {
-        val center = r.left + r.width / 2
-        return with (r) {
-            listOf(
-                DoubleSegment(DoubleVector(left, top), DoubleVector(right, top)),
-                DoubleSegment(DoubleVector(left, bottom), DoubleVector(right, bottom)),
-                DoubleSegment(DoubleVector(center, top), DoubleVector(center, bottom))
-            )
-        }
-    }
-
-    internal class ErrorBarLegendKeyElementFactory(private val shapeFactory: (DoubleRectangle) -> List<DoubleSegment>) :
-        LegendKeyElementFactory {
+    internal class ErrorBarLegendKeyElementFactory : LegendKeyElementFactory {
 
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
             val strokeWidth = AesScaling.strokeWidth(p)
@@ -135,7 +170,7 @@ class ErrorBarGeom : GeomBase() {
             val x = (size.x - width) / 2
             val y = strokeWidth / 2
             return errorBarLegendShape(
-                shapeFactory(DoubleRectangle(x, y, width, height)),
+                errorBarVerticalShape(DoubleRectangle(x, y, width, height)),
                 p
             )
         }
@@ -154,7 +189,33 @@ class ErrorBarGeom : GeomBase() {
             return g
         }
 
-        internal fun errorBarShape(segments: List<DoubleSegment>, p: DataPointAesthetics, geomHelper: GeomHelper): SvgGElement {
+        private fun errorBarVerticalShape(r: DoubleRectangle): List<DoubleSegment> {
+            val center = r.left + r.width / 2
+            return with(r) {
+                listOf(
+                    DoubleSegment(DoubleVector(left, top), DoubleVector(right, top)),
+                    DoubleSegment(DoubleVector(left, bottom), DoubleVector(right, bottom)),
+                    DoubleSegment(DoubleVector(center, top), DoubleVector(center, bottom))
+                )
+            }
+        }
+
+        private fun errorBarHorizontalShape(r: DoubleRectangle): List<DoubleSegment> {
+            val center = r.top + r.height / 2
+            return with(r) {
+                listOf(
+                    DoubleSegment(DoubleVector(left, top), DoubleVector(left, bottom)),
+                    DoubleSegment(DoubleVector(right, top), DoubleVector(right, bottom)),
+                    DoubleSegment(DoubleVector(left, center), DoubleVector(right, center))
+                )
+            }
+        }
+
+        private fun errorBarShape(
+            segments: List<DoubleSegment>,
+            p: DataPointAesthetics,
+            geomHelper: GeomHelper
+        ): SvgGElement {
             val g = SvgGElement()
             val elementHelper = geomHelper.createSvgElementHelper()
             elementHelper.setStrokeAlphaEnabled(true)

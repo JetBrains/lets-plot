@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.util.afterOrientation
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.GeomTooltipSetup
@@ -35,7 +36,8 @@ object GeomInteractionUtil {
             geomKind = layerConfig.geomProto.geomKind,
             statKind = layerConfig.statKind,
             isCrosshairEnabled = isCrosshairEnabled(layerConfig),
-            multilayerWithTooltips = multilayerWithTooltips
+            multilayerWithTooltips = multilayerWithTooltips,
+            definedAesList = layerConfig.varBindings.map(VarBinding::aes) + layerConfig.constantsMap.keys
         )
         return createGeomInteractionBuilder(layerConfig, scaleMap, tooltipSetup, isLiveMap, theme)
     }
@@ -108,11 +110,13 @@ object GeomInteractionUtil {
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
         multilayerWithTooltips: Boolean,
+        definedAesList: List<Aes<*>>,
     ): GeomTooltipSetup {
         val tooltipSetup = createGeomTooltipSetup(
             geomKind,
             statKind,
             isCrosshairEnabled,
+            definedAesList
         ).let {
             var multilayerLookup: Boolean = false
             if (multilayerWithTooltips && !isCrosshairEnabled) {
@@ -142,6 +146,7 @@ object GeomInteractionUtil {
         geomKind: GeomKind,
         statKind: StatKind,
         isCrosshairEnabled: Boolean,
+        definedAesList: List<Aes<*>>
     ): GeomTooltipSetup {
         if (statKind === StatKind.SMOOTH) {
             when (geomKind) {
@@ -162,7 +167,6 @@ object GeomInteractionUtil {
             GeomKind.LINE,
             GeomKind.AREA,
             GeomKind.BAR,
-            GeomKind.ERROR_BAR,
             GeomKind.CROSS_BAR,
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
@@ -172,10 +176,21 @@ object GeomInteractionUtil {
                 axisTooltipVisibilityFromConfig = true
             )
 
-            GeomKind.ERROR_BAR_H -> return GeomTooltipSetup.yUnivariateFunction(
-                GeomTargetLocator.LookupStrategy.HOVER,
-                axisTooltipVisibilityFromConfig = true
-            )
+            GeomKind.ERROR_BAR -> {
+                return if (definedAesList.containsAll(listOf(Aes.YMIN, Aes.YMAX))) {
+                    GeomTooltipSetup.xUnivariateFunction(
+                        GeomTargetLocator.LookupStrategy.HOVER,
+                        axisTooltipVisibilityFromConfig = true
+                    )
+                } else if (definedAesList.containsAll(listOf(Aes.XMIN, Aes.XMAX))) {
+                     GeomTooltipSetup.yUnivariateFunction(
+                        GeomTargetLocator.LookupStrategy.HOVER,
+                        axisTooltipVisibilityFromConfig = true
+                    )
+                } else {
+                    GeomTooltipSetup.none()
+                }
+            }
 
             GeomKind.RIBBON -> return GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
             GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
@@ -327,11 +342,10 @@ object GeomInteractionUtil {
     private fun createOutlierAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.CROSS_BAR,
-            GeomKind.ERROR_BAR,
             GeomKind.LINE_RANGE,
             GeomKind.POINT_RANGE,
             GeomKind.RIBBON -> listOf(Aes.YMAX, Aes.YMIN)
-            GeomKind.ERROR_BAR_H -> listOf(Aes.XMAX, Aes.XMIN)
+            GeomKind.ERROR_BAR -> listOf(Aes.YMAX, Aes.YMIN, Aes.XMAX, Aes.XMIN)
             GeomKind.BOX_PLOT -> listOf(Aes.YMAX, Aes.UPPER, Aes.MIDDLE, Aes.LOWER, Aes.YMIN)
             GeomKind.SMOOTH -> listOf(Aes.YMAX, Aes.YMIN, Aes.Y)
             else -> emptyList()

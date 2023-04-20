@@ -9,28 +9,31 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
-internal class DodgePos(
+internal abstract class BaseDodgePos(
     aesthetics: Aesthetics,
     private val myGroupCount: Int,
-    private val myWidth: Double?
+    private val mySize: Double?,
+    private val myIsHorizontalPos: Boolean
 ) : PositionAdjustment {
 
     private val myDodgingNeeded: Boolean
+
     private fun isDodgingNeeded(aesthetics: Aesthetics): Boolean {
-        // if for some X there are more then just 1 group, then dodging is needed
-        val groupByX = HashMap<Double, Int?>()
+        // if for some Value there are more than just 1 group, then dodging is needed
+        val groupBy = HashMap<Double, Int?>()
+        val aes = if (myIsHorizontalPos) Aes.X else Aes.Y
         for (i in 0 until aesthetics.dataPointCount()) {
             val p = aesthetics.dataPointAt(i)
-            if (p.defined(Aes.X)) {
-                val x = p.x()!!
+            if (p.defined(aes)) {
+                val value = p[aes]!!
                 val group = p.group()
-                if (groupByX.containsKey(x)) {
-                    if (groupByX[x] != group) {
-                        // >1 group for this X
+                if (groupBy.containsKey(value)) {
+                    if (groupBy[value] != group) {
+                        // >1 group for this Y
                         return true
                     }
                 } else {
-                    groupByX[x] = group
+                    groupBy[value] = group
                 }
             }
         }
@@ -42,28 +45,48 @@ internal class DodgePos(
     }
 
     override fun translate(v: DoubleVector, p: DataPointAesthetics, ctx: GeomContext): DoubleVector {
-        if (myDodgingNeeded) {
-            val dataResolution = ctx.getResolution(Aes.X)
-            val width = myWidth ?: p.width()
-
-            if (!SeriesUtil.isFinite(width)) {
-                return v
-            }
-
-            val slotIndex = p.group()!!
-            val median = (myGroupCount - 1) / 2.0
-            val xOffset = (slotIndex - median) * dataResolution * width!!
-            val xCenter = p.x()!!
-            val xScaler = 1.0 / myGroupCount
-
-            val newX = (v.x + xOffset - xCenter) * xScaler + xCenter
-
-            return DoubleVector(newX, v.y)
+        if (!myDodgingNeeded) {
+            return v
         }
-        return v
+
+        val aes = if (myIsHorizontalPos) Aes.X else Aes.Y
+        val dataResolution = ctx.getResolution(aes)
+        val size = mySize ?: if (myIsHorizontalPos) p.width() else p.height()
+
+        if (!SeriesUtil.isFinite(size)) {
+            return v
+        }
+
+        val slotIndex = p.group()!!
+        val median = (myGroupCount - 1) / 2.0
+        val offset = (slotIndex - median) * dataResolution * size!!
+        val center = p[aes]!!
+        val scaler = 1.0 / myGroupCount
+
+        return if (myIsHorizontalPos) {
+            val newX = (v.x + offset - center) * scaler + center
+            DoubleVector(newX, v.y)
+        } else {
+            val newY = (v.y + offset - center) * scaler + center
+            DoubleVector(v.x, newY)
+        }
     }
 
     override fun handlesGroups(): Boolean {
         return PositionAdjustments.Meta.DODGE.handlesGroups()
     }
 }
+
+// adjusting horizontal position
+internal class DodgePos(
+    aesthetics: Aesthetics,
+    groupCount: Int,
+    width: Double?
+) : BaseDodgePos(aesthetics, groupCount, width, myIsHorizontalPos = true)
+
+// adjusting vertical position
+internal class DodgeVPos(
+    aesthetics: Aesthetics,
+    groupCount: Int,
+    height: Double?
+) : BaseDodgePos(aesthetics, groupCount, height, myIsHorizontalPos = false)
