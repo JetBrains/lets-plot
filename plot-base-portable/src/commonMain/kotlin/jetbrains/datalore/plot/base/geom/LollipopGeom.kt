@@ -25,7 +25,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
     var slope: Double = DEF_SLOPE
     var intercept: Double = DEF_INTERCEPT
-    var orientation: Orientation = DEF_ORIENTATION
     var direction: Direction = DEF_DIRECTION
 
     override val legendKeyElementFactory: LegendKeyElementFactory
@@ -47,7 +46,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            val base = getBase(x, y, true)
+            val base = getBase(x, y, Orientation.X, true)
             val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
             lollipops.add(Lollipop(p, head, base, stickLength))
         }
@@ -84,7 +83,12 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes)
+        val orientation = if (coordAes == Aes.Y) {
+            Orientation.Y
+        } else {
+            Orientation.X
+        }
+        return span(p, coordAes, orientation)
     }
 
     override fun heightSpan(
@@ -93,16 +97,21 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes)
+        val orientation = if (coordAes == Aes.X) {
+            Orientation.Y
+        } else {
+            Orientation.X
+        }
+        return span(p, coordAes, orientation)
     }
 
-    private fun span(p: DataPointAesthetics, coordAes: Aes<Double>): DoubleSpan? {
+    private fun span(p: DataPointAesthetics, coordAes: Aes<Double>, orientation: Orientation): DoubleSpan? {
         val x = p.x()
         val y = p.y()
         if (!SeriesUtil.allFinite(x, y)) {
             return null
         }
-        val base = getBase(x!!, y!!, false)
+        val base = getBase(x!!, y!!, orientation, false)
 
         return when (coordAes) {
             Aes.X -> DoubleSpan(base.x, x)
@@ -111,58 +120,48 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun getBase(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
+    private fun getBase(x: Double, y: Double, orientation: Orientation, orientationHasBeenApplied: Boolean): DoubleVector {
         return when (direction) {
-            Direction.SLOPE -> getBaseForOrthogonalStick(x, y, orientationHasBeenApplied)
-            Direction.VERTICAL -> getBaseForVerticalStick(x, y, orientationHasBeenApplied)
-            Direction.HORIZONTAL -> getBaseForHorizontalStick(x, y, orientationHasBeenApplied)
-        }
-    }
-
-    private fun getBaseForOrthogonalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
-        fun calculateBaseCoordinates(z: Double, w: Double): DoubleVector {
-            val baseZ = (z + slope * (w - intercept)) / (1 + slope.pow(2))
-            val baseW = slope * baseZ + intercept
-            return DoubleVector(baseZ, baseW)
-        }
-        return when (orientation) {
-            Orientation.X -> calculateBaseCoordinates(x, y)
-            Orientation.Y -> {
-                if (orientationHasBeenApplied) {
-                    calculateBaseCoordinates(x, y)
+            Direction.ORTHOGONAL_TO_AXIS -> when (orientation) {
+                Orientation.X -> getYByX(x)
+                Orientation.Y -> if (orientationHasBeenApplied) {
+                    getYByX(x)
                 } else {
-                    calculateBaseCoordinates(y, x).flip()
+                    getYByX(y).flip()
+                }
+            }
+            Direction.ALONG_AXIS -> when (orientation) {
+                Orientation.X -> getXByY(y)
+                Orientation.Y -> if (orientationHasBeenApplied) {
+                    getYByX(x)
+                } else {
+                    getXByY(x).flip()
+                }
+            }
+            Direction.SLOPE -> when (orientation) {
+                Orientation.X -> getBaseForOrthogonalStick(x, y)
+                Orientation.Y -> if (orientationHasBeenApplied) {
+                    getBaseForOrthogonalStick(x, y)
+                } else {
+                    getBaseForOrthogonalStick(y, x).flip()
                 }
             }
         }
     }
 
-    private fun getBaseForVerticalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
-        return when (orientation) {
-            Orientation.X -> DoubleVector(x, slope * x + intercept)
-            Orientation.Y -> {
-                require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
-                if (orientationHasBeenApplied)
-                    DoubleVector((y - intercept) / slope, y)
-                else
-                    DoubleVector(x, (x - intercept) / slope)
-            }
-        }
+    private fun getBaseForOrthogonalStick(x: Double, y: Double): DoubleVector {
+        val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
+        val baseY = slope * baseX + intercept
+        return DoubleVector(baseX, baseY)
     }
 
-    private fun getBaseForHorizontalStick(x: Double, y: Double, orientationHasBeenApplied: Boolean): DoubleVector {
-        return when (orientation) {
-            Orientation.X -> {
-                require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
-                DoubleVector((y - intercept) / slope, y)
-            }
-            Orientation.Y -> {
-                if (orientationHasBeenApplied)
-                    DoubleVector(x, slope * x + intercept)
-                else
-                    DoubleVector(slope * y + intercept, y)
-            }
-        }
+    private fun getYByX(x: Double): DoubleVector {
+        return DoubleVector(x, slope * x + intercept)
+    }
+
+    private fun getXByY(y: Double): DoubleVector {
+        require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
+        return DoubleVector((y - intercept) / slope, y)
     }
 
     private inner class Lollipop(
@@ -230,20 +229,19 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    enum class Orientation {
-        X, Y
+    enum class Direction {
+        ORTHOGONAL_TO_AXIS, ALONG_AXIS, SLOPE
     }
 
-    enum class Direction {
-        VERTICAL, HORIZONTAL, SLOPE
+    private enum class Orientation {
+        X, Y
     }
 
     companion object {
         const val DEF_FATTEN = 2.5
         const val DEF_SLOPE = 0.0
         const val DEF_INTERCEPT = 0.0
-        val DEF_ORIENTATION = Orientation.X
-        val DEF_DIRECTION = Direction.VERTICAL
+        val DEF_DIRECTION = Direction.ORTHOGONAL_TO_AXIS
 
         const val HANDLES_GROUPS = PointGeom.HANDLES_GROUPS
     }

@@ -34,7 +34,6 @@ import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
 import jetbrains.datalore.plot.config.Option.Geom.YDotplot
 import jetbrains.datalore.plot.config.Option.Geom.Lollipop
-import jetbrains.datalore.plot.base.geom.LollipopGeom.Orientation
 import jetbrains.datalore.plot.base.geom.LollipopGeom.Direction
 import jetbrains.datalore.plot.config.Option.Layer.USE_CRS
 
@@ -294,47 +293,52 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
-                val orientation = opts.getString(Option.Layer.ORIENTATION)?.let {
-                    when (it.lowercase()) {
-                        "x" -> Orientation.X
-                        "y" -> Orientation.Y
-                        else -> throw IllegalArgumentException("orientation expected x|y but was $it")
-                    }
-                } ?: Orientation.X
-                val defaultDirection = when (orientation) {
-                    Orientation.X -> Direction.VERTICAL
-                    Orientation.Y -> Direction.HORIZONTAL
+                // As in LayerConfig
+                val isYOrientation: Boolean = when (opts.hasOwn(Option.Layer.ORIENTATION)) {
+                    true -> opts.getString(Option.Layer.ORIENTATION)?.lowercase()?.let {
+                        when (it) {
+                            "y" -> true
+                            "x" -> false
+                            else -> throw IllegalArgumentException("${Option.Layer.ORIENTATION} expected x|y but was $it")
+                        }
+                    } ?: false
+
+                    false -> false
                 }
-                val direction = opts.getString(Lollipop.DIRECTION)?.let {
-                    when (it.lowercase()) {
-                        "v", "vertical" -> Direction.VERTICAL
-                        "h", "horizontal" -> Direction.HORIZONTAL
-                        "s", "slope" -> Direction.SLOPE
+                val directionValue = opts.getString(Lollipop.DIRECTION)?.lowercase()
+                val direction = directionValue?.let {
+                    when (it) {
+                        "v" -> if (isYOrientation) {
+                            Direction.ALONG_AXIS
+                        } else {
+                            Direction.ORTHOGONAL_TO_AXIS
+                        }
+                        "h" -> if (isYOrientation) {
+                            Direction.ORTHOGONAL_TO_AXIS
+                        } else {
+                            Direction.ALONG_AXIS
+                        }
+                        "s" -> Direction.SLOPE
                         else -> throw IllegalArgumentException(
-                            "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'\n" +
-                            "Use one of: v, vertical, h, horizontal, s, slope."
+                            "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'. " +
+                            "Use one of: v, h, s."
                         )
                     }
-                } ?: defaultDirection
+                } ?: Direction.ORTHOGONAL_TO_AXIS
                 val slope = if (opts.hasOwn(Lollipop.SLOPE)) {
                     opts.getDouble(Lollipop.SLOPE)!!
                 } else {
                     0.0
                 }
-                if (slope == 0.0) {
-                    when (orientation to direction) {
-                        Orientation.X to Direction.HORIZONTAL,
-                        Orientation.Y to Direction.VERTICAL -> {
-                            throw IllegalArgumentException(
-                                "Incompatible lollipop parameters: " +
-                                "${Lollipop.SLOPE}=$slope, ${Option.Layer.ORIENTATION}='${orientation.name.lowercase()}', " +
-                                "${Lollipop.DIRECTION}='${direction.name.lowercase()}'"
-                            )
-                        }
-                    }
+                if (direction == Direction.ALONG_AXIS && slope == 0.0) {
+                    throw IllegalArgumentException(
+                        "Incompatible lollipop parameters: " +
+                        "${Lollipop.SLOPE}=$slope, " +
+                        "${Option.Layer.ORIENTATION}='${if (isYOrientation) "y" else "x"}', " +
+                        "${Lollipop.DIRECTION}='${directionValue}'"
+                    )
                 }
                 LollipopGeom().apply {
-                    this.orientation = orientation
                     this.direction = direction
                     this.slope = slope
                     if (opts.hasOwn(Lollipop.INTERCEPT)) {
