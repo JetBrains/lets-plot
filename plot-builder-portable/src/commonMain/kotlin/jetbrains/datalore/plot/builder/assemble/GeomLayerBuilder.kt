@@ -40,7 +40,7 @@ import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
-class GeomLayerBuilder constructor(
+class GeomLayerBuilder(
     private val geomProvider: GeomProvider,
     private val stat: Stat,
     private val posProvider: PosProvider,
@@ -367,7 +367,7 @@ class GeomLayerBuilder constructor(
                             transformedData,
                             groupingVariables,
                             builder.myGroupingVarName,
-                            expectMultiple = true  // ?
+                            expectMultiple = true
                         )
                         val statInput = StatInput(
                             transformedData,

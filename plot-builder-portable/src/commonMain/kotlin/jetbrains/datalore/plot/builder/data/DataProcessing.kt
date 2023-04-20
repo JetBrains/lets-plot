@@ -12,6 +12,8 @@ import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.data.GroupMapperHelper.SINGLE_GROUP
+import jetbrains.datalore.plot.builder.data.GroupMapperHelper.createGroupMapperByGroupSizes
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
@@ -52,7 +54,7 @@ object DataProcessing {
         orderOptions: List<OrderOptionUtil.OrderOption>,
         aggregateOperation: ((List<Double?>) -> Double?)?,
         messageConsumer: Consumer<String>
-    ): DataAndGroupingContext {
+    ): DataAndGroupMapper {
         check(stat != Stats.IDENTITY)
 
         val groups = groupingContext.groupMapper
@@ -61,7 +63,7 @@ object DataProcessing {
         val groupSizeListAfterStat: List<Int>
 
         // if only one group no need to modify
-        if (groups === GroupUtil.SINGLE_GROUP) {
+        if (groups === SINGLE_GROUP) {
             val statData = applyStat(
                 statInput.data,
                 stat,
@@ -163,14 +165,18 @@ object DataProcessing {
 
         val normalizedData = stat.normalize(dataAfterStat)
 
-        val groupingContextAfterStat = GroupingContext.withOrderedGroups(
-            normalizedData,
-            groupSizeListAfterStat
-        )
+//        val groupingContextAfterStat = GroupingContext.withOrderedGroups(
+//            normalizedData,
+//            groupSizeListAfterStat
+//        )
 
-        return DataAndGroupingContext(
-            normalizedData,
-            groupingContextAfterStat
+        return DataAndGroupMapper(
+            data = normalizedData,
+//            groupingContextAfterStat
+            groupMapper = createGroupMapperByGroupSizes(
+                data = normalizedData,
+                groupSizeList = groupSizeListAfterStat
+            )
         )
     }
 
@@ -362,9 +368,9 @@ object DataProcessing {
         }
 
         return if (currentGroups != null) {
-            GroupUtil.wrap(currentGroups)
+            GroupMapperHelper.wrap(currentGroups)
         } else {
-            GroupUtil.SINGLE_GROUP
+            SINGLE_GROUP
         }
     }
 
@@ -432,8 +438,8 @@ object DataProcessing {
         return variable.isOrigin && !(Aes.isPositional(aes) || data.isNumeric(variable))
     }
 
-    class DataAndGroupingContext internal constructor(
+    class DataAndGroupMapper internal constructor(
         val data: DataFrame,
-        val groupingContext: GroupingContext
+        val groupMapper: (Int) -> Int  // data index --> group id
     )
 }

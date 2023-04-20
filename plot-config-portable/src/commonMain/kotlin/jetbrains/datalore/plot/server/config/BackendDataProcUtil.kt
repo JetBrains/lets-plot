@@ -43,7 +43,7 @@ internal object BackendDataProcUtil {
         facetVariables: List<DataFrame.Variable>,
         groupingContext: GroupingContext,
         messageHandler: (String) -> Unit
-    ): DataProcessing.DataAndGroupingContext {
+    ): DataProcessing.DataAndGroupMapper {
 
         val stat = layerConfig.stat
         check(stat != Stats.IDENTITY)

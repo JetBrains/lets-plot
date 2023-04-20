@@ -13,7 +13,6 @@ import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
-import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
 import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
@@ -151,14 +150,14 @@ open class PlotConfigServerSide(
             val groupingContextBeforeStat = BackendDataProcUtil.createGroupingContext(tileDataBeforeStat, layerConfig)
 
             val tileDataAfterStat: DataFrame
-            val groupingContextAfterStat: GroupingContext
+            val groupMapperAfterStat: (Int) -> Int
 
             if (layerConfig.stat == Stats.IDENTITY) {
                 tileDataAfterStat = tileDataBeforeStat
-                groupingContextAfterStat = groupingContextBeforeStat
+                groupMapperAfterStat = groupingContextBeforeStat.groupMapper
 
             } else {
-                val result: DataProcessing.DataAndGroupingContext = BackendDataProcUtil.applyStatisticTransform(
+                val result: DataProcessing.DataAndGroupMapper = BackendDataProcUtil.applyStatisticTransform(
                     data = tileDataBeforeStat,
                     layerConfig = layerConfig,
                     statCtx = statCtx,
@@ -168,15 +167,14 @@ open class PlotConfigServerSide(
                 ) { message -> messageHandler(message) }
 
                 tileDataAfterStat = result.data
-                groupingContextAfterStat = result.groupingContext
-
+                groupMapperAfterStat = result.groupMapper
             }
 
             // Apply sampling to layer tile data if necessary
             PlotSampling.apply(
                 tileDataAfterStat,
                 layerConfig.samplings,
-                groupingContextAfterStat.groupMapper
+                groupMapperAfterStat
             ) { message -> messageHandler(BackendDataProcUtil.createSamplingMessage(message, layerConfig)) }
         }
 
