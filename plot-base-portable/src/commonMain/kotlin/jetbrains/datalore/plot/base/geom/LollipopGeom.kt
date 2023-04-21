@@ -19,7 +19,8 @@ import jetbrains.datalore.plot.base.render.point.PointShapeSvg
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
-import kotlin.math.*
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var fatten: Double = DEF_FATTEN
@@ -46,7 +47,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            val base = getBase(x, y, isYOrientation = false, orientationHasBeenApplied = true)
+            val base = getBase(x, y)
             val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
             lollipops.add(Lollipop(p, head, base, stickLength))
         }
@@ -83,7 +84,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes, coordAes == Aes.Y)
+        return span(p, isWidth = true, isFlipped = coordAes == Aes.Y)
     }
 
     override fun heightSpan(
@@ -92,50 +93,29 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, coordAes, coordAes == Aes.X)
+        return span(p, isWidth = false, isFlipped = coordAes == Aes.X)
     }
 
-    private fun span(p: DataPointAesthetics, coordAes: Aes<Double>, isYOrientation: Boolean): DoubleSpan? {
-        val x = p.x()
-        val y = p.y()
+    private fun span(p: DataPointAesthetics, isWidth: Boolean, isFlipped: Boolean): DoubleSpan? {
+        val x = p.x().takeUnless { isFlipped } ?: p.y()
+        val y = p.y().takeUnless { isFlipped } ?: p.x()
         if (!SeriesUtil.allFinite(x, y)) {
             return null
         }
-        val base = getBase(x!!, y!!, isYOrientation, orientationHasBeenApplied = false)
+        val base = getBase(x!!, y!!)
 
-        return when (coordAes) {
-            Aes.X -> DoubleSpan(base.x, x)
-            Aes.Y -> DoubleSpan(base.y, y)
-            else -> throw IllegalArgumentException("Aesthetic ${coordAes.name} is not consumed by spanning function")
+        return if (isWidth) {
+            DoubleSpan(base.x, x)
+        } else {
+            DoubleSpan(base.y, y)
         }
     }
 
-    private fun getBase(x: Double, y: Double, isYOrientation: Boolean, orientationHasBeenApplied: Boolean): DoubleVector {
+    private fun getBase(x: Double, y: Double): DoubleVector {
         return when (direction) {
-            Direction.ORTHOGONAL_TO_AXIS -> when (isYOrientation) {
-                false -> getYByX(x)
-                true -> if (orientationHasBeenApplied) {
-                    getYByX(x)
-                } else {
-                    getYByX(y).flip()
-                }
-            }
-            Direction.ALONG_AXIS -> when (isYOrientation) {
-                false -> getXByY(y)
-                true -> if (orientationHasBeenApplied) {
-                    getYByX(x)
-                } else {
-                    getXByY(x).flip()
-                }
-            }
-            Direction.SLOPE -> when (isYOrientation) {
-                false -> getBaseForOrthogonalStick(x, y)
-                true -> if (orientationHasBeenApplied) {
-                    getBaseForOrthogonalStick(x, y)
-                } else {
-                    getBaseForOrthogonalStick(y, x).flip()
-                }
-            }
+            Direction.ORTHOGONAL_TO_AXIS -> getYByX(x)
+            Direction.ALONG_AXIS -> getXByY(y)
+            Direction.SLOPE -> getBaseForOrthogonalStick(x, y)
         }
     }
 
