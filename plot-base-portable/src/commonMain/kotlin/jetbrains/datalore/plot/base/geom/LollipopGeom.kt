@@ -71,7 +71,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         targetCollector.addPoint(
             lollipop.point.index(),
             helper.toClient(lollipop.head, lollipop.point)!!,
-            lollipop.candyRadius(),
+            lollipop.candyRadius,
             GeomTargetCollector.TooltipParams(
                 markerColors = colorsByDataPoint(lollipop.point)
             )
@@ -131,6 +131,19 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         val base: DoubleVector,
         val length: Double
     ) {
+        val candyRadius: Double
+            get() {
+                val shape = point.shape()!!
+                val shapeCoeff = when (shape) {
+                    NamedShape.STICK_PLUS,
+                    NamedShape.STICK_STAR,
+                    NamedShape.STICK_CROSS -> 0.0
+
+                    else -> 1.0
+                }
+                return (shape.size(point, fatten) + shapeCoeff * shape.strokeWidth(point)) / 2.0
+            }
+
         fun createCandy(helper: GeomHelper): SvgGElement {
             val location = helper.toClient(head, point)!!
             val shape = point.shape()!!
@@ -142,7 +155,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val clientBase = helper.toClient(base, point) ?: return null // base of the lollipop stick
             val clientHead = helper.toClient(head, point) ?: return null // center of the lollipop candy
             val stickLength = sqrt((clientHead.x - clientBase.x).pow(2) + (clientHead.y - clientBase.y).pow(2))
-            val candyRadius = candyRadius()
             if (candyRadius > stickLength) {
                 return null
             }
@@ -151,17 +163,6 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             GeomHelper.decorate(line, point, applyAlphaToAll = true, strokeScaler = AesScaling::lineWidth)
 
             return line
-        }
-
-        fun candyRadius(): Double {
-            val shape = point.shape()!!
-            val shapeCoeff = when (shape) {
-                NamedShape.STICK_PLUS,
-                NamedShape.STICK_STAR,
-                NamedShape.STICK_CROSS -> 0.0
-                else -> 1.0
-            }
-            return (shape.size(point, fatten) + shapeCoeff * shape.strokeWidth(point)) / 2.0
         }
 
         private fun shiftHeadToBase(
