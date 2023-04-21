@@ -33,6 +33,7 @@ import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
 import jetbrains.datalore.plot.base.Aes.Companion.STROKE
+import jetbrains.datalore.plot.base.Aes.Companion.LINEWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
@@ -115,6 +116,9 @@ abstract class AesVisitor<T> {
         }
         if (aes == STROKE) {
             return stroke()
+        }
+        if (aes == LINEWIDTH) {
+            return linewidth()
         }
         if (aes == STACKSIZE) {
             return stacksize()
@@ -250,6 +254,8 @@ abstract class AesVisitor<T> {
     protected abstract fun size(): T
 
     protected abstract fun stroke(): T
+
+    protected abstract fun linewidth(): T
 
     protected abstract fun stacksize(): T
 

@@ -33,6 +33,8 @@ import jetbrains.datalore.plot.config.Option.Geom.Step
 import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
 import jetbrains.datalore.plot.config.Option.Geom.YDotplot
+import jetbrains.datalore.plot.config.Option.Geom.Lollipop
+import jetbrains.datalore.plot.base.geom.LollipopGeom.Direction
 import jetbrains.datalore.plot.config.Option.Layer.USE_CRS
 
 
@@ -290,6 +292,64 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
+            GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
+                // As in LayerConfig
+                val isYOrientation: Boolean = when (opts.hasOwn(Option.Layer.ORIENTATION)) {
+                    true -> opts.getString(Option.Layer.ORIENTATION)?.lowercase()?.let {
+                        when (it) {
+                            "y" -> true
+                            "x" -> false
+                            else -> throw IllegalArgumentException("${Option.Layer.ORIENTATION} expected x|y but was $it")
+                        }
+                    } ?: false
+
+                    false -> false
+                }
+                val directionValue = opts.getString(Lollipop.DIRECTION)?.lowercase()
+                val direction = directionValue?.let {
+                    when (it) {
+                        "v" -> if (isYOrientation) {
+                            Direction.ALONG_AXIS
+                        } else {
+                            Direction.ORTHOGONAL_TO_AXIS
+                        }
+                        "h" -> if (isYOrientation) {
+                            Direction.ORTHOGONAL_TO_AXIS
+                        } else {
+                            Direction.ALONG_AXIS
+                        }
+                        "s" -> Direction.SLOPE
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'. " +
+                            "Use one of: v, h, s."
+                        )
+                    }
+                } ?: Direction.ORTHOGONAL_TO_AXIS
+                val slope = if (opts.hasOwn(Lollipop.SLOPE)) {
+                    opts.getDouble(Lollipop.SLOPE)!!
+                } else {
+                    0.0
+                }
+                if (direction == Direction.ALONG_AXIS && slope == 0.0) {
+                    throw IllegalArgumentException(
+                        "Incompatible lollipop parameters: " +
+                        "${Lollipop.SLOPE}=$slope, " +
+                        "${Option.Layer.ORIENTATION}='${if (isYOrientation) "y" else "x"}', " +
+                        "${Lollipop.DIRECTION}='${directionValue}'"
+                    )
+                }
+                LollipopGeom().apply {
+                    this.direction = direction
+                    this.slope = slope
+                    if (opts.hasOwn(Lollipop.INTERCEPT)) {
+                        this.intercept = opts.getDouble(Lollipop.INTERCEPT)!!
+                    }
+                    if (opts.hasOwn(Lollipop.FATTEN)) {
+                        this.fatten = opts.getDouble(Lollipop.FATTEN)!!
+                    }
+                }
+            }
+
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 return PROVIDER[geomKind]!!
@@ -344,6 +404,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // image - special case
             // pie - special case
             PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
+            // lollipop - special case
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

@@ -50,5 +50,6 @@ enum class GeomKind {
     LABEL,
     RASTER,
     IMAGE,
-    PIE
+    PIE,
+    LOLLIPOP
 }

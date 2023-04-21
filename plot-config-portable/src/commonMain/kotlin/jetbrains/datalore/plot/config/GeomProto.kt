@@ -65,6 +65,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             SEGMENT -> DefaultSampling.SEGMENT
             TEXT, LABEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
+            LOLLIPOP -> DefaultSampling.LOLLIPOP
             LIVE_MAP,
             RASTER,
             IMAGE -> Samplings.NONE

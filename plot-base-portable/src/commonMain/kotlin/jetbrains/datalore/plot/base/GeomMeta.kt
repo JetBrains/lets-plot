@@ -405,6 +405,18 @@ object GeomMeta {
                 Aes.FILL,
                 Aes.ALPHA
             )
+
+            GeomKind.LOLLIPOP -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.LINEWIDTH,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE,
+                Aes.LINETYPE
+            )
         }
     }
 }

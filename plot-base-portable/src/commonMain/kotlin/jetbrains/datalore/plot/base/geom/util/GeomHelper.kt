@@ -135,27 +135,38 @@ open class GeomHelper(
 
     companion object {
 
-        fun decorate(node: SvgNode, p: DataPointAesthetics, applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH) {
+        fun decorate(
+            node: SvgNode,
+            p: DataPointAesthetics,
+            applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ) {
             if (node is SvgShape) {
                 decorateShape(
                     node as SvgShape,
                     p,
-                    applyAlphaToAll
+                    applyAlphaToAll,
+                    strokeScaler
                 )
             }
 
             if (node is SvgElement) {
                 val lineType = p.lineType()
                 if (!(lineType.isBlank || lineType.isSolid)) {
-                    StrokeDashArraySupport.apply(node, AesScaling.strokeWidth(p), lineType.dashArray)
+                    StrokeDashArraySupport.apply(node, strokeScaler(p), lineType.dashArray)
                 }
             }
         }
 
-        private fun decorateShape(shape: SvgShape, p: DataPointAesthetics, applyAlphaToAll: Boolean) {
+        private fun decorateShape(
+            shape: SvgShape,
+            p: DataPointAesthetics,
+            applyAlphaToAll: Boolean,
+            strokeScaler: (DataPointAesthetics) -> Double
+        ) {
             AestheticsUtil.updateStroke(shape, p, applyAlphaToAll)
             AestheticsUtil.updateFill(shape, p)
-            shape.strokeWidth().set(AesScaling.strokeWidth(p))
+            shape.strokeWidth().set(strokeScaler(p))
         }
 
         internal fun decorateSlimShape(shape: SvgSlimShape, p: DataPointAesthetics) {

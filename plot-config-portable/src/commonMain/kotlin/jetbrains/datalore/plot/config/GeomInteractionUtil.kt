@@ -202,7 +202,8 @@ object GeomInteractionUtil {
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,
-            GeomKind.VIOLIN -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
+            GeomKind.VIOLIN,
+            GeomKind.LOLLIPOP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
 
             GeomKind.Q_Q_LINE,
             GeomKind.Q_Q_2_LINE,

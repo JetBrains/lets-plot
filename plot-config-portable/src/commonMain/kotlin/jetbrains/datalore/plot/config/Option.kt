@@ -300,6 +300,13 @@ object Option {
             const val STROKE_COLOR = "stroke_color"
         }
 
+        object Lollipop {
+            const val FATTEN = "fatten"
+            const val SLOPE = "slope"
+            const val INTERCEPT = "intercept"
+            const val DIRECTION = "dir"
+        }
+
         object LiveMap {
             const val INTERACTIVE = "interactive"
             const val LOCATION = "location"
@@ -693,6 +700,7 @@ object Option {
         private const val RASTER = "raster"
         const val IMAGE = "image"
         const val PIE = "pie"
+        const val LOLLIPOP = "lollipop"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -743,6 +751,7 @@ object Option {
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
+            map[LOLLIPOP] = GeomKind.LOLLIPOP
             GEOM_KIND_MAP = map
         }
 
