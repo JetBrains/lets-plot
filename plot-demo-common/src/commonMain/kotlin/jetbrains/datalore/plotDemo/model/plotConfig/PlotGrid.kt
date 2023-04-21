@@ -193,6 +193,7 @@ open class PlotGrid {
               ]
             }
         """.trimIndent()
+//            'sampling': {'name': 'random', 'n': 10},
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = Iris.df

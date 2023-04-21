@@ -151,16 +151,38 @@ object MonolithicCommon {
         plotSpec: Map<String, Any>,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
-        plotPreferredWidth: Double?
+        plotPreferredWidth: Double?,
+        compositeFigureComputationMessages: MutableList<String>? = null
     ): PlotFigureBuildInfo {
-
         val computationMessages = ArrayList<String>()
         val config = PlotConfigClientSide.create(plotSpec) {
             computationMessages.addAll(it)
         }
 
+        val ownComputationMessages = compositeFigureComputationMessages?.let {
+            // Rerout all messages upstream to the root composite figure.
+            it.addAll(computationMessages)
+            emptyList()
+        } ?: computationMessages
+
+        return buildSinglePlot(
+            config,
+            plotSize,
+            plotMaxWidth, plotPreferredWidth,
+            ownComputationMessages
+        )
+    }
+
+    private fun buildSinglePlot(
+        config: PlotConfigClientSide,
+        plotSize: DoubleVector?,
+        plotMaxWidth: Double?,
+        plotPreferredWidth: Double?,
+        computationMessages: List<String>
+    ): PlotFigureBuildInfo {
+
         val preferredSize = PlotSizeHelper.singlePlotSize(
-            plotSpec,
+            config.toMap(),
             plotSize,
             plotMaxWidth,
             plotPreferredWidth,
@@ -171,7 +193,7 @@ object MonolithicCommon {
         val assembler = createPlotAssembler(config)
         return PlotFigureBuildInfo(
             assembler,
-            plotSpec,
+            config.toMap(),
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
             computationMessages
         )
@@ -183,14 +205,13 @@ object MonolithicCommon {
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
     ): CompositeFigureBuildInfo {
-        // ToDo: collect computationMessages.
         val computationMessages = ArrayList<String>()
         val compositeFigureConfig = CompositeFigureConfig(plotSpec) {
             computationMessages.addAll(it)
         }
 
-        val preferredSize = PlotSizeHelper.subPlotsSize(
-            plotSpec,
+        val preferredSize = PlotSizeHelper.compositeFigureSize(
+            compositeFigureConfig,
             plotSize,
             plotMaxWidth,
             plotPreferredWidth,
@@ -198,30 +219,37 @@ object MonolithicCommon {
 
         return buildCompositeFigure(
             compositeFigureConfig,
-            preferredSize
+            preferredSize,
+            computationMessages
         )
     }
 
     private fun buildCompositeFigure(
         compositeFigureConfig: CompositeFigureConfig,
         preferredSize: DoubleVector,
+        computationMessages: MutableList<String>,
     ): CompositeFigureBuildInfo {
 
         val elements: List<FigureBuildInfo?> = compositeFigureConfig.elementConfigs.map {
             it?.let {
                 when (PlotConfig.figSpecKind(it)) {
-                    FigKind.PLOT_SPEC -> buildSinglePlotFromProcessedSpecs(
-                        plotSpec = it.toMap(),
+//                    FigKind.PLOT_SPEC -> buildSinglePlotFromProcessedSpecs(
+//                        plotSpec = it.toMap(),
+                    FigKind.PLOT_SPEC -> buildSinglePlot(
+                        config = it as PlotConfigClientSide,
                         plotSize = null,           // Will be updateed by sub-plots layout.
                         plotMaxWidth = null,
-                        plotPreferredWidth = null
+                        plotPreferredWidth = null,
+//                        compositeFigureComputationMessages = computationMessages
+                        computationMessages = emptyList()  // No "own messages" when a part of a composite.
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
                         val gridOptions = it as CompositeFigureConfig
                         buildCompositeFigure(
                             gridOptions,
-                            preferredSize = DoubleVector.ZERO // Will be updateed by sub-plots layout.
+                            preferredSize = DoubleVector.ZERO, // Will be updateed by sub-plots layout.
+                            computationMessages
                         )
                     }
 
@@ -234,6 +262,7 @@ object MonolithicCommon {
             elements = elements,
             layout = compositeFigureConfig.createLayout(),
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            computationMessages
         )
     }
 

@@ -7,7 +7,6 @@
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
@@ -17,7 +16,9 @@ import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
 import kotlinx.dom.createElement
 import mu.KotlinLogging
-import org.w3c.dom.*
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLParagraphElement
+import org.w3c.dom.get
 
 private val LOG = KotlinLogging.logger {}
 
@@ -155,6 +156,8 @@ private fun showInfo(message: String, parentElement: HTMLElement) {
 
 private fun showText(message: String, className: String, style: String, parentElement: HTMLElement) {
     val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
+
+    // ToDo: fix when composite figure (where the container style position:relative)
     if (style.isNotBlank()) {
         paragraphElement.setAttribute("style", style)
     }
@@ -162,27 +165,3 @@ private fun showText(message: String, className: String, style: String, parentEl
     paragraphElement.className = className
     parentElement.appendChild(paragraphElement)
 }
-
-//@Suppress("DuplicatedCode")
-//private fun processSpecs(plotSpec: MutableMap<String, Any>, frontendOnly: Boolean): MutableMap<String, Any> {
-//    PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
-//    if (PlotConfig.isFailure(plotSpec)) {
-//        return plotSpec
-//    }
-//
-//    // Backend transforms
-//    @Suppress("NAME_SHADOWING")
-//    val plotSpec =
-//        if (frontendOnly) {
-//            plotSpec
-//        } else {
-//            BackendSpecTransformUtil.processTransform(plotSpec)
-//        }
-//
-//    if (PlotConfig.isFailure(plotSpec)) {
-//        return plotSpec
-//    }
-//
-//    // Frontend transforms
-//    return PlotConfigClientSide.processTransform(plotSpec)
-//}

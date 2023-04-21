@@ -3,6 +3,7 @@ package jetbrains.datalore.vis.swing
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.MonolithicAwt
 import jetbrains.datalore.plot.PlotSizeHelper
+import jetbrains.datalore.plot.config.CompositeFigureConfig
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
@@ -98,8 +99,12 @@ abstract class PlotSpecComponentProvider(
                         return containerSize
                     }
 
-                    val defaultSize = PlotSizeHelper.subPlotsSize(
-                        figureSpec,
+                    val compositeFigureConfig = CompositeFigureConfig(figureSpec) {
+                        // ignore message when computing a figure size.
+                    }
+
+                    val defaultSize = PlotSizeHelper.compositeFigureSize(
+                        compositeFigureConfig,
                         plotSize = null,
                         plotMaxWidth = null,
                         plotPreferredWidth = null,

@@ -18,15 +18,13 @@ internal class CompositeFigureBuildInfo(
     private val elements: List<FigureBuildInfo?>,
     private val layout: CompositeFigureLayout,
     override val bounds: DoubleRectangle,
+    override val computationMessages: List<String>,
 ) : FigureBuildInfo {
 
     override val isComposite: Boolean = true
 
     override val layoutInfo: FigureLayoutInfo
         get() = _layoutInfo
-
-    override val computationMessages: List<String>
-        get() = elements.filterNotNull().flatMap { it.computationMessages }
 
     override val containsLiveMap: Boolean
         get() = elements.filterNotNull().any { it.containsLiveMap }
@@ -58,7 +56,8 @@ internal class CompositeFigureBuildInfo(
             CompositeFigureBuildInfo(
                 elements,
                 layout,
-                bounds
+                bounds,
+                computationMessages
             )
         }
     }
@@ -74,7 +73,8 @@ internal class CompositeFigureBuildInfo(
         return CompositeFigureBuildInfo(
             elements = layoutedElements,
             layout,
-            bounds
+            bounds,
+            computationMessages
         ).apply {
             this._layoutInfo = FigureLayoutInfo(outerSize, geomBounds)
         }
