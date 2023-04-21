@@ -113,25 +113,17 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     private fun getBase(x: Double, y: Double): DoubleVector {
         return when (direction) {
-            Direction.ORTHOGONAL_TO_AXIS -> getYByX(x)
-            Direction.ALONG_AXIS -> getXByY(y)
-            Direction.SLOPE -> getBaseForOrthogonalStick(x, y)
+            Direction.ORTHOGONAL_TO_AXIS -> DoubleVector(x, slope * x + intercept)
+            Direction.ALONG_AXIS -> {
+                require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
+                DoubleVector((y - intercept) / slope, y)
+            }
+            Direction.SLOPE -> {
+                val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
+                val baseY = slope * baseX + intercept
+                DoubleVector(baseX, baseY)
+            }
         }
-    }
-
-    private fun getBaseForOrthogonalStick(x: Double, y: Double): DoubleVector {
-        val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
-        val baseY = slope * baseX + intercept
-        return DoubleVector(baseX, baseY)
-    }
-
-    private fun getYByX(x: Double): DoubleVector {
-        return DoubleVector(x, slope * x + intercept)
-    }
-
-    private fun getXByY(y: Double): DoubleVector {
-        require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
-        return DoubleVector((y - intercept) / slope, y)
     }
 
     private inner class Lollipop(
