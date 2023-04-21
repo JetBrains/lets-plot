@@ -47,7 +47,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
             val x = p.x()!!
             val y = p.y()!!
             val head = DoubleVector(x, y)
-            val base = getBase(x, y)
+            val base = getBase(head)
             val stickLength = sqrt((head.x - base.x).pow(2) + (head.y - base.y).pow(2))
             lollipops.add(Lollipop(p, head, base, stickLength))
         }
@@ -84,7 +84,9 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, isWidth = true, isFlipped = coordAes == Aes.Y)
+        val flip = coordAes == Aes.Y
+        val head = xyVec(p, flip) ?: return null
+        return DoubleSpan(getBase(head).x, head.x)
     }
 
     override fun heightSpan(
@@ -93,33 +95,30 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         resolution: Double,
         isDiscrete: Boolean
     ): DoubleSpan? {
-        return span(p, isWidth = false, isFlipped = coordAes == Aes.X)
+        val flip = coordAes == Aes.X
+        val head = xyVec(p, flip) ?: return null
+        return DoubleSpan(getBase(head).y, head.y)
     }
 
-    private fun span(p: DataPointAesthetics, isWidth: Boolean, isFlipped: Boolean): DoubleSpan? {
-        val x = p.x().takeUnless { isFlipped } ?: p.y()
-        val y = p.y().takeUnless { isFlipped } ?: p.x()
+    private fun xyVec(p: DataPointAesthetics, flip: Boolean): DoubleVector? {
+        val x = p.x().takeUnless { flip } ?: p.y()
+        val y = p.y().takeUnless { flip } ?: p.x()
         if (!SeriesUtil.allFinite(x, y)) {
             return null
         }
-        val base = getBase(x!!, y!!)
 
-        return if (isWidth) {
-            DoubleSpan(base.x, x)
-        } else {
-            DoubleSpan(base.y, y)
-        }
+        return DoubleVector(x!!, y!!)
     }
 
-    private fun getBase(x: Double, y: Double): DoubleVector {
+    private fun getBase(head: DoubleVector): DoubleVector {
         return when (direction) {
-            Direction.ORTHOGONAL_TO_AXIS -> DoubleVector(x, slope * x + intercept)
+            Direction.ORTHOGONAL_TO_AXIS -> DoubleVector(head.x, slope * head.x + intercept)
             Direction.ALONG_AXIS -> {
                 require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
-                DoubleVector((y - intercept) / slope, y)
+                DoubleVector((head.y - intercept) / slope, head.y)
             }
             Direction.SLOPE -> {
-                val baseX = (x + slope * (y - intercept)) / (1 + slope.pow(2))
+                val baseX = (head.x + slope * (head.y - intercept)) / (1 + slope.pow(2))
                 val baseY = slope * baseX + intercept
                 DoubleVector(baseX, baseY)
             }
