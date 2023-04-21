@@ -106,13 +106,13 @@ class DataFrame private constructor(builder: Builder) {
         assertDefined(variable)
         return myDistinctValues.getOrPut(variable) {
             val orderSpec = myOrderSpecs.findLast { it.variable == variable }
-            return if (orderSpec != null) {
+            if (orderSpec != null) {
                 getOrderedDistinctValues(orderSpec)
             } else if (myFactorLevelsByVar.containsKey(variable)) {
                 myFactorLevelsByVar.getValue(variable).toSet().intersect(get(variable)).filterNotNull()
             } else {
                 get(variable).filterNotNull().toSet()
-            }
+            }.toSet()
         }
     }
 
