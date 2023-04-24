@@ -31,8 +31,19 @@ import org.w3c.dom.svg.SVGSVGElement
 
 internal class FigureToHtml(
     private val buildInfo: FigureBuildInfo,
-    private val parentElement: HTMLElement
+    containerElement: HTMLElement
 ) {
+
+    private val parentElement: HTMLElement = if (buildInfo.isComposite) {
+        // The `containerElement` may also contain "computation messages".
+        // Container for a composite figure must be another `div`
+        // because it is going to have "relative" positioning.
+        document.createElement("div") {
+            containerElement.appendChild(this)
+        } as HTMLElement
+    } else {
+        containerElement
+    }
 
     fun eval() {
 
@@ -184,7 +195,12 @@ internal class FigureToHtml(
 
                 DomEventMapper(
                     myEventTarget = svg,
-                    myTargetBounds = DoubleRectangle.XYWH(bounds.origin.x,  bounds.origin.y, bounds.dimension.x, bounds.dimension.y),
+                    myTargetBounds = DoubleRectangle.XYWH(
+                        bounds.origin.x,
+                        bounds.origin.y,
+                        bounds.dimension.x,
+                        bounds.dimension.y
+                    ),
                     destMouseEventPeer = canvasControl.mousePeer::dispatch
                 )
 
