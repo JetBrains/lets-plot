@@ -165,14 +165,8 @@ object DataProcessing {
 
         val normalizedData = stat.normalize(dataAfterStat)
 
-//        val groupingContextAfterStat = GroupingContext.withOrderedGroups(
-//            normalizedData,
-//            groupSizeListAfterStat
-//        )
-
         return DataAndGroupMapper(
             data = normalizedData,
-//            groupingContextAfterStat
             groupMapper = createGroupMapperByGroupSizes(
                 data = normalizedData,
                 groupSizeList = groupSizeListAfterStat
@@ -311,14 +305,15 @@ object DataProcessing {
             return false
         }
 
-        // ToDo: ??? id orientation=y, flip Aes in stat.hasDefaultMapping(it) ?
         val aesByStatVar: Map<Variable, Aes<*>> = run {
+            // No need to flip stat 'default' aes with the y-orientation
+            // because Aes in bindings / transformByAes are adjuasted so that
+            // the stat operates as though the orientation is X.
             val aesByStatVarDefault = Aes.values()
                 .filter { stat.hasDefaultMapping(it) }.associateBy { stat.getDefaultMapping(it) }
 
             val aesByStatVarMapped = bindings
-                // ToDo: why do we filter out stat variables here? 'Original' variables are not used in the code below.
-                .filterNot { it.variable.isStat }.associate { it.variable to it.aes }
+                .filter { it.variable.isStat }.associate { it.variable to it.aes }
 
             aesByStatVarDefault + aesByStatVarMapped
         }
