@@ -38,71 +38,48 @@ class ErrorBarGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        val vDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
-        if (vDataPoints.any()) {
-            buildVertical(root, vDataPoints, ctx, geomHelper, colorsByDataPoint)
-        } else {
-            val hDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
-            buildHorizontal(root, hDataPoints, ctx, geomHelper, colorsByDataPoint)
+        var dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
+        val isVertical = dataPoints.any()
+        if (!isVertical) {
+            dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
         }
-    }
 
-    private fun buildVertical(
-        root: SvgRoot,
-        dataPoints: Iterable<DataPointAesthetics>,
-        ctx: GeomContext,
-        geomHelper: GeomHelper,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
-    ) {
+        val xAes = if (isVertical) Aes.X else Aes.Y
+        val lowerAes = if (isVertical) Aes.YMIN else Aes.XMIN
+        val upperAes = if (isVertical) Aes.YMAX else Aes.XMAX
+        val widthAes = if (isVertical) Aes.WIDTH else Aes.HEIGHT
+
         for (p in dataPoints) {
-            val x = p.x()!!
-            val ymin = p.ymin()!!
-            val ymax = p.ymax()!!
-            val width = p.width()!! * ctx.getResolution(Aes.X)
+            val x = p[xAes]!!
+            val ymin = p[lowerAes]!!
+            val ymax = p[upperAes]!!
+
+            val width = p[widthAes]!! * ctx.getResolution(xAes)
             val height = ymax - ymin
 
-            val r = DoubleRectangle(x - width / 2, ymin, width, height)
-            val segments = errorBarVerticalShape(r)
+            val rect = DoubleRectangle(x - width / 2, ymin, width, height)
+            val segments = errorBarShapeSegments(rect).map {
+                when (isVertical) {
+                    true -> it
+                    else -> DoubleSegment(it.start.flip(), it.end.flip())
+                }
+            }
             val g = errorBarShape(segments, p, geomHelper)
             root.add(g)
 
+            val hintRect = DoubleRectangle(rect.left, rect.center.y, rect.width, 0.0).let {
+                when (isVertical) {
+                    true -> it
+                    else -> it.flip()
+                }
+            }
             buildHints(
-                DoubleRectangle(r.left, r.center.y, r.width, 0.0),
+                hintRect,
                 p,
                 ctx,
                 geomHelper,
                 colorsByDataPoint,
-                isVerticalGeom = true
-            )
-        }
-    }
-
-    private fun buildHorizontal(
-        root: SvgRoot,
-        dataPoints: Iterable<DataPointAesthetics>,
-        ctx: GeomContext,
-        geomHelper: GeomHelper,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
-    ) {
-        for (p in dataPoints) {
-            val y = p.y()!!
-            val xmin = p.xmin()!!
-            val xmax = p.xmax()!!
-            val height = p.height()!! * ctx.getResolution(Aes.Y)
-            val width = xmax - xmin
-
-            val r = DoubleRectangle(xmin, y - height / 2, width, height)
-            val segments = errorBarHorizontalShape(r)
-            val g = errorBarShape(segments, p, geomHelper)
-            root.add(g)
-
-            buildHints(
-                DoubleRectangle(r.center.x, r.top, 0.0, r.height),
-                p,
-                ctx,
-                geomHelper,
-                colorsByDataPoint,
-                isVerticalGeom = false
+                isVerticalGeom = isVertical
             )
         }
     }
@@ -170,7 +147,7 @@ class ErrorBarGeom : GeomBase() {
             val x = (size.x - width) / 2
             val y = strokeWidth / 2
             return errorBarLegendShape(
-                errorBarVerticalShape(DoubleRectangle(x, y, width, height)),
+                errorBarShapeSegments(DoubleRectangle(x, y, width, height)),
                 p
             )
         }
@@ -189,24 +166,13 @@ class ErrorBarGeom : GeomBase() {
             return g
         }
 
-        private fun errorBarVerticalShape(r: DoubleRectangle): List<DoubleSegment> {
+        private fun errorBarShapeSegments(r: DoubleRectangle): List<DoubleSegment> {
             val center = r.left + r.width / 2
             return with(r) {
                 listOf(
                     DoubleSegment(DoubleVector(left, top), DoubleVector(right, top)),
                     DoubleSegment(DoubleVector(left, bottom), DoubleVector(right, bottom)),
                     DoubleSegment(DoubleVector(center, top), DoubleVector(center, bottom))
-                )
-            }
-        }
-
-        private fun errorBarHorizontalShape(r: DoubleRectangle): List<DoubleSegment> {
-            val center = r.top + r.height / 2
-            return with(r) {
-                listOf(
-                    DoubleSegment(DoubleVector(left, top), DoubleVector(left, bottom)),
-                    DoubleSegment(DoubleVector(right, top), DoubleVector(right, bottom)),
-                    DoubleSegment(DoubleVector(left, center), DoubleVector(right, center))
                 )
             }
         }
