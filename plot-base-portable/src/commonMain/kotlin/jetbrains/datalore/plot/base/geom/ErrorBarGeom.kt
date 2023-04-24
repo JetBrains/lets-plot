@@ -45,14 +45,14 @@ class ErrorBarGeom : GeomBase() {
         }
 
         val xAes = if (isVertical) Aes.X else Aes.Y
-        val lowerAes = if (isVertical) Aes.YMIN else Aes.XMIN
-        val upperAes = if (isVertical) Aes.YMAX else Aes.XMAX
+        val minAes = if (isVertical) Aes.YMIN else Aes.XMIN
+        val maxAes = if (isVertical) Aes.YMAX else Aes.XMAX
         val widthAes = if (isVertical) Aes.WIDTH else Aes.HEIGHT
 
         for (p in dataPoints) {
             val x = p[xAes]!!
-            val ymin = p[lowerAes]!!
-            val ymax = p[upperAes]!!
+            val ymin = p[minAes]!!
+            val ymax = p[maxAes]!!
 
             val width = p[widthAes]!! * ctx.getResolution(xAes)
             val height = ymax - ymin
@@ -61,7 +61,7 @@ class ErrorBarGeom : GeomBase() {
             val segments = errorBarShapeSegments(rect).map {
                 when (isVertical) {
                     true -> it
-                    else -> DoubleSegment(it.start.flip(), it.end.flip())
+                    false -> DoubleSegment(it.start.flip(), it.end.flip())
                 }
             }
             val g = errorBarShape(segments, p, geomHelper)
@@ -70,7 +70,7 @@ class ErrorBarGeom : GeomBase() {
             val hintRect = DoubleRectangle(rect.left, rect.center.y, rect.width, 0.0).let {
                 when (isVertical) {
                     true -> it
-                    else -> it.flip()
+                    false -> it.flip()
                 }
             }
             buildHints(
