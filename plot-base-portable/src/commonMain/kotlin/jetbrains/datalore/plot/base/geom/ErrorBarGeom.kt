@@ -115,11 +115,11 @@ class ErrorBarGeom : GeomBase() {
                 }
             )
 
-        val lower = if (isVerticalGeom) Aes.YMIN else Aes.XMIN
-        val upper = if (isVerticalGeom) Aes.YMAX else Aes.XMAX
+        val minAes = if (isVerticalGeom) Aes.YMIN else Aes.XMIN
+        val maxAes = if (isVerticalGeom) Aes.YMAX else Aes.XMAX
         val hints = HintsCollection(p, geomHelper)
-            .addHint(hint.create(lower))
-            .addHint(hint.create(upper))
+            .addHint(hint.create(minAes))
+            .addHint(hint.create(maxAes))
             .hints
 
         ctx.targetCollector.addRectangle(
