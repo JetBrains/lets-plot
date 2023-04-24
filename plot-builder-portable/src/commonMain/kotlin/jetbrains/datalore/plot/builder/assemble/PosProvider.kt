@@ -59,6 +59,20 @@ abstract class PosProvider {
             }
         }
 
+        fun dodgev(height: Double? = null): PosProvider {
+            return object : PosProvider() {
+                override fun createPos(ctx: PosProviderContext): PositionAdjustment {
+                    val aesthetics = ctx.aesthetics
+                    val groupCount = ctx.groupCount
+                    return PositionAdjustments.dodgev(aesthetics, groupCount, height)
+                }
+
+                override fun handlesGroups(): Boolean {
+                    return PositionAdjustments.Meta.DODGE.handlesGroups()
+                }
+            }
+        }
+
         fun fill(vjust: Double? = null, stackingMode: StackingMode = StackablePos.DEF_STACKING_MODE): PosProvider {
             return object : PosProvider() {
                 override fun createPos(ctx: PosProviderContext): PositionAdjustment {

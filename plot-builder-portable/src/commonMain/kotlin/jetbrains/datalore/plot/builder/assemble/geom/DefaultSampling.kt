@@ -63,7 +63,6 @@ object DefaultSampling {
 
     // bars
     val ERROR_BAR = BAR
-    val ERROR_BAR_H = BAR
     val CROSS_BAR = BAR
 
     // val BOX_PLOT = random(500, SEED) - tmp disabled (see GeomProto)

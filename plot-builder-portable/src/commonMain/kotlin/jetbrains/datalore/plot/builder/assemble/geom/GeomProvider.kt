@@ -139,14 +139,6 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
             ) { ErrorBarGeom() }.build()
         }
 
-        fun errorBarH(): GeomProvider {
-            return GeomProviderBuilder(
-                GeomKind.ERROR_BAR_H,
-                AestheticsDefaults.errorBarH(),
-                ErrorBarHGeom.HANDLES_GROUPS
-            ) { ErrorBarHGeom() }.build()
-        }
-
         fun crossBar(supplier: () -> Geom): GeomProvider {
             return GeomProviderBuilder(
                 GeomKind.CROSS_BAR,

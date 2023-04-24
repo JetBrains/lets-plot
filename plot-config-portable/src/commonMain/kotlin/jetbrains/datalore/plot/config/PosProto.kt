@@ -17,6 +17,7 @@ internal object PosProto {
     const val IDENTITY = "identity"
     const val STACK = "stack"
     const val DODGE = "dodge"
+    const val DODGE_V = "dodgev"
     const val FILL = "fill"
     const val NUDGE = "nudge"
     const val JITTER = "jitter"
@@ -29,6 +30,7 @@ internal object PosProto {
             IDENTITY -> PosProvider.wrap(PositionAdjustments.identity())
             STACK -> configureStackPosition(opts)
             DODGE -> PosProvider.dodge(opts.getDouble(Pos.Dodge.WIDTH))
+            DODGE_V -> PosProvider.dodgev(opts.getDouble(Pos.DodgeV.HEIGHT))
             FILL -> configureFillPosition(opts)
             JITTER -> PosProvider.jitter(
                 opts.getDouble(Pos.Jitter.WIDTH),
