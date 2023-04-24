@@ -20,7 +20,7 @@ object BackendSpecTransformUtil {
 
     fun processTransform(plotSpecRaw: MutableMap<String, Any>): MutableMap<String, Any> {
         return try {
-            when (val kind = PlotConfig.figSpecKind(plotSpecRaw)) {
+            when (PlotConfig.figSpecKind(plotSpecRaw)) {
                 FigKind.PLOT_SPEC -> processTransformIntern(plotSpecRaw)
                 FigKind.SUBPLOTS_SPEC -> processTransformInSubPlots(plotSpecRaw)
                 FigKind.GG_BUNCH_SPEC -> processTransformInBunch(plotSpecRaw)

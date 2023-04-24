@@ -196,7 +196,7 @@ object PlotSizeHelper {
      * @return Figure dimatsions width/height ratio.
      */
     fun figureAspectRatio(figureFpec: Map<*, *>): Double {
-        return when (val kind = PlotConfig.figSpecKind(figureFpec)) {
+        return when (PlotConfig.figSpecKind(figureFpec)) {
             FigKind.PLOT_SPEC,
             FigKind.SUBPLOTS_SPEC -> {
                 // single plot

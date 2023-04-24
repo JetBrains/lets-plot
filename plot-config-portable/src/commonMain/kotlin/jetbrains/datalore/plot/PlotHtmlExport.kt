@@ -14,7 +14,7 @@ import kotlin.math.round
 object PlotHtmlExport {
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
-     * @param scriptUrl An URL to load the Lets-plot JS library from.
+     * @param scriptUrl A URL to load the Lets-plot JS library from.
      * @param iFrame Whether to wrap HTML in IFrame
      * @param plotSize Desired plot size. Has no effect on GGBunch.
      */
@@ -82,7 +82,7 @@ object PlotHtmlExport {
                 return null
             }
 
-            return when (val kind = PlotConfig.figSpecKind(plotSpec)) {
+            return when (PlotConfig.figSpecKind(plotSpec)) {
                 FigKind.PLOT_SPEC,
                 FigKind.SUBPLOTS_SPEC -> {
                     val config = PlotConfigClientSide.create(plotSpec) { /*ignore messages*/ }
