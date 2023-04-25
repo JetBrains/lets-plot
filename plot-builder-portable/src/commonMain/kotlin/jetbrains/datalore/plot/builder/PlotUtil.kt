@@ -169,16 +169,15 @@ object PlotUtil {
         range: DoubleSpan?,
         scale: Scale,
         includeZero: Boolean,
-        requireAdditionalExpand: Boolean
+        wideExpand: Boolean
     ): DoubleSpan? {
         if (range == null) return null
 
-        val mulExp = if (requireAdditionalExpand) {
-            2 * scale.multiplicativeExpand
-        } else {
-            scale.multiplicativeExpand
+        val multExpand = when (wideExpand) {
+            false -> scale.multiplicativeExpand
+            true -> scale.multiplicativeExpand * 2.0
         }
-        val addExp = scale.additiveExpand
+        val addExpand = scale.additiveExpand
 
         // Compute expands in terms of the original data.
         // Otherwise, can easily run into Infinities then using 'log10' transform
@@ -193,7 +192,7 @@ object PlotUtil {
         val upperEndpoint = domain.upperEnd
 
         val length = upperEndpoint - lowerEndpoint
-        var lowerExpand = addExp + length * mulExp
+        var lowerExpand = addExpand + length * multExpand
         var upperExpand = lowerExpand
         if (includeZero) {
             // zero-based plots (like bar) - do not 'expand' on the zero-end
