@@ -8,7 +8,10 @@ import random
 import string
 from typing import Dict
 
-from IPython.display import display_html
+try:
+    from IPython.display import display_html
+except ImportError:
+    display_html = None
 
 from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
