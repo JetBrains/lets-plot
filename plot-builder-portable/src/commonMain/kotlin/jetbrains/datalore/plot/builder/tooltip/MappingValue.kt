@@ -22,7 +22,7 @@ class MappingValue(
 
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = null
-    private var myIsLabelEqualToMappedXY: Boolean? = null
+    private var myIsLabelEqualToMappedXY: Boolean = false
     private val myFormatter = format?.let {
         StringFormat.forOneArg(format, formatFor = aes.name)
     }
@@ -67,7 +67,7 @@ class MappingValue(
             aes = aes,
             isAxis = isAxis,
             isOutlier = isOutlier,
-            useEmptyLabelForOneLineTooltip = myIsLabelEqualToMappedXY ?: false
+            useEmptyLabelForOneLineTooltip = myIsLabelEqualToMappedXY
         )
     }
 

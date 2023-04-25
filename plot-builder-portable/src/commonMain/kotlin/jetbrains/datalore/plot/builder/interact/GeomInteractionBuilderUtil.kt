@@ -100,7 +100,10 @@ internal object GeomInteractionBuilderUtil {
         }
         val constantValues = constantsMap?.map { (aes, value) ->
             val userDefined = userDefinedValueSources?.filterIsInstance<ConstantValue>()?.find { it.aes == aes }
-            userDefined ?: ConstantValue(aes, value, format = null)
+            // will use empty label for constants in a one-line default tooltip
+            userDefined?.withFlags(useEmptyLabelForOneLineTooltip = true)
+                ?:
+                ConstantValue(aes, value, format = null, useEmptyLabelForOneLineTooltip = true)
         } ?: emptyList()
         return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
     }

@@ -5,13 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
-import jetbrains.datalore.plot.builder.interact.TooltipSpec
-import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
+import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltips
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class TooltipWithConstantTest {
 
@@ -24,9 +20,9 @@ class TooltipWithConstantTest {
             }
         """)
         val layer = getSingleGeomLayer(spec)
-        assertEquals(
-            expected = listOf("xintercept: 0.25"),
-            actual = getTooltipLines(layer)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("xintercept: 0.25")
         )
     }
 
@@ -37,10 +33,9 @@ class TooltipWithConstantTest {
             "xintercept": 0.25
         """)
         val layer = getSingleGeomLayer(spec)
-
-        assertEquals(
-            expected = listOf("0.25"),
-            actual = getTooltipLines(layer)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("0.25")
         )
     }
 
@@ -52,10 +47,9 @@ class TooltipWithConstantTest {
             "size": 1
         """)
         val layer = getSingleGeomLayer(spec)
-
-        assertEquals(
-            expected = listOf("0.25"),
-            actual = getTooltipLines(layer)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("0.25")
         )
     }
 
@@ -69,10 +63,9 @@ class TooltipWithConstantTest {
             "xintercept": 0.25
         """)
         val layer = getSingleGeomLayer(spec)
-
-        assertEquals(
-            expected = listOf("0.25"),
-            actual = getTooltipLines(layer)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("0.25")
         )
     }
 
@@ -84,10 +77,9 @@ class TooltipWithConstantTest {
             "y": 0
         """)
         val layer = getSingleGeomLayer(spec)
-
-        assertEquals(
-            expected = emptyList(),
-            actual = getTooltipLines(layer)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = emptyList()
         )
     }
 
@@ -100,10 +92,9 @@ class TooltipWithConstantTest {
             "tooltips": {"lines": ["^xintercept", "^size"]}
         """)
         val layer = getSingleGeomLayer(spec)
-
-        assertEquals(
-            expected = listOf("0.25", "1.0"),
-            actual = getTooltipLines(layer)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("0.25", "1.0")
         )
     }
 
@@ -115,10 +106,78 @@ class TooltipWithConstantTest {
             "tooltips": {"formats": [{ "field": "^xintercept", "format": "mean = {.2f}" } ] } 
         """)
         val layer = getSingleGeomLayer(spec)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("mean = 0.25")
+        )
+    }
 
-        assertEquals(
-            expected = listOf("mean = 0.25"),
-            actual = getTooltipLines(layer)
+    @Test
+    fun `multiline default tooltip should have labels`() {
+        val spec = makePlotSpec("""
+            "geom": "vline",
+            "xintercept": 0.25,
+            "mapping": {
+                "size": [ 1.0 ]
+            }
+        """)
+        val layer = getSingleGeomLayer(spec)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf( "size: 1.00", "xintercept: 0.25")
+        )
+    }
+
+    @Test
+    fun `multiline default tooltip with specified format`() {
+        val spec = makePlotSpec("""
+            "geom": "vline",
+            "xintercept": 0.25,
+            "mapping": {
+                "size": [ 1.0 ]
+            },
+            "tooltips": { 
+                "formats": [
+                    { "field": "^xintercept", "format": ".3f" },
+                    { "field": "^size", "format": "d" }
+                ]
+            } 
+        """)
+        val layer = getSingleGeomLayer(spec)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf( "size: 1", "xintercept: 0.250")
+        )
+    }
+
+    @Test
+    fun `one-line specified tooltip - '@' should add label`() {
+        val spec = makePlotSpec("""
+            "geom": "vline",
+            "xintercept": 0.25,
+            "tooltips": {"lines": ["@|^xintercept"]}
+        """)
+        val layer = getSingleGeomLayer(spec)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("xintercept: 0.25")
+        )
+    }
+
+    @Test
+    fun `multiline specified tooltip - '@' should add label`() {
+        val spec = makePlotSpec("""
+            "geom": "vline",
+            "xintercept": 0.25,
+            "mapping": {
+                "size": [ 1.0 ]
+            },
+            "tooltips": {"lines": ["@|^xintercept", "@|^size"]}
+        """)
+        val layer = getSingleGeomLayer(spec)
+        assertGeneralTooltips(
+            layer,
+            expectedLines = listOf("xintercept: 0.25",  "size: 1.00")
         )
     }
 
@@ -132,12 +191,5 @@ class TooltipWithConstantTest {
                 }
             ]
         }""".trimIndent()
-    }
-
-    private fun getTooltipLines(geomLayer: GeomLayer): List<String> {
-        val ctx = TestingPlotContext.create(geomLayer)
-        return geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
-            .map { dataPoint -> Line.withLabelAndValue(dataPoint.label, dataPoint.value) }
-            .map(TooltipSpec.Line::toString)
     }
 }

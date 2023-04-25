@@ -15,28 +15,35 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 class ConstantValue(
     val aes: Aes<*>,
     private val value: Any,
-    private val format: String? = null
+    private val format: String? = null,
+    private val useEmptyLabelForOneLineTooltip: Boolean = false
 ) : ValueSource {
 
     private var formattedValue: String? = null
     private var isYOrientation: Boolean? = null
+    private var myDataLabel: String? = null
 
     override val isOutlier: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         isYOrientation = mappedDataAccess.isYOrientation
+        myDataLabel = if (mappedDataAccess.isMapped(aes)) {
+            mappedDataAccess.getMappedDataLabel(aes)
+        } else {
+            aes.name
+        }
     }
 
     override fun getDataPoint(index: Int, ctx: PlotContext): DataPoint {
         val presentation = formattedValue ?: initFormattedValue(ctx)
         return DataPoint(
-            label = "",
+            label = myDataLabel,
             value = presentation,
             aes = null,
             isAxis = false,
             isOutlier = false,
-            useEmptyLabelForOneLineTooltip = false
+            useEmptyLabelForOneLineTooltip = useEmptyLabelForOneLineTooltip
         )
     }
 
@@ -65,7 +72,17 @@ class ConstantValue(
         return ConstantValue(
             aes,
             value,
-            format
+            format,
+            useEmptyLabelForOneLineTooltip
+        )
+    }
+
+    fun withFlags(useEmptyLabelForOneLineTooltip: Boolean): ConstantValue {
+        return ConstantValue(
+            aes,
+            value,
+            format,
+            useEmptyLabelForOneLineTooltip
         )
     }
 
