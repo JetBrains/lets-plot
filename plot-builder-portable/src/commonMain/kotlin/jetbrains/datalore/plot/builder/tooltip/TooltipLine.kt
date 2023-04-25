@@ -38,7 +38,8 @@ class TooltipLine(
                 value = myLineFormatter.format(dataValue.value),
                 aes = dataValue.aes,
                 isAxis = dataValue.isAxis,
-                isOutlier = dataValue.isOutlier
+                isOutlier = dataValue.isOutlier,
+                useEmptyLabelForOneLineTooltip = dataValue.useEmptyLabelForOneLineTooltip
             )
         } else {
             DataPoint(
@@ -46,7 +47,8 @@ class TooltipLine(
                 value = myLineFormatter.format(dataValues.map { it.value }),
                 aes = null,
                 isAxis = false,
-                isOutlier = false
+                isOutlier = false,
+                useEmptyLabelForOneLineTooltip = false
             )
         }
     }

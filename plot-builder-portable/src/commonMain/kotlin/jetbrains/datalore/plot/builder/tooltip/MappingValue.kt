@@ -16,11 +16,13 @@ class MappingValue(
     val aes: Aes<*>,
     override val isOutlier: Boolean = false,
     override val isAxis: Boolean = false,
-    private val format: String? = null
+    private val format: String? = null,
+    private val checkXYLabel: Boolean = false
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
     private var myDataLabel: String? = null
+    private var myIsLabelEqualToMappedXY: Boolean? = null
     private val myFormatter = format?.let {
         StringFormat.forOneArg(format, formatFor = aes.name)
     }
@@ -31,16 +33,17 @@ class MappingValue(
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
 
-        val axisLabels = listOf(Aes.X, Aes.Y)
-            .filter(myDataAccess::isMapped)
-            .map(myDataAccess::getMappedDataLabel)
-        val dataLabel = myDataAccess.getMappedDataLabel(aes)
         myDataLabel = when {
             isAxis -> null
             isOutlier -> null
-            dataLabel.isEmpty() -> ""
-            dataLabel in axisLabels -> ""
-            else -> dataLabel
+            else -> myDataAccess.getMappedDataLabel(aes)
+        }
+
+        if (checkXYLabel && myDataLabel != null && myDataLabel!!.isNotEmpty()) {
+            val axisLabels = listOf(Aes.X, Aes.Y)
+                .filter(myDataAccess::isMapped)
+                .map(myDataAccess::getMappedDataLabel)
+            myIsLabelEqualToMappedXY = myDataLabel in axisLabels
         }
     }
 
@@ -63,7 +66,8 @@ class MappingValue(
             value = formattedValue,
             aes = aes,
             isAxis = isAxis,
-            isOutlier = isOutlier
+            isOutlier = isOutlier,
+            useEmptyLabelForOneLineTooltip = myIsLabelEqualToMappedXY ?: false
         )
     }
 
@@ -72,16 +76,18 @@ class MappingValue(
             aes = aes,
             isOutlier = isOutlier,
             isAxis = isAxis,
-            format = format
+            format = format,
+            checkXYLabel = checkXYLabel
         )
     }
 
-    fun withFlags(isOutlier: Boolean, isAxis: Boolean): MappingValue {
+    fun withFlags(isOutlier: Boolean, isAxis: Boolean, checkXYLabel: Boolean): MappingValue {
         return MappingValue(
             aes = aes,
             isOutlier = isOutlier,
             isAxis = isAxis,
-            format = format
+            format = format,
+            checkXYLabel = checkXYLabel
         )
     }
 

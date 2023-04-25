@@ -35,7 +35,8 @@ class ConstantValue(
             value = presentation,
             aes = null,
             isAxis = false,
-            isOutlier = false
+            isOutlier = false,
+            useEmptyLabelForOneLineTooltip = false
         )
     }
 

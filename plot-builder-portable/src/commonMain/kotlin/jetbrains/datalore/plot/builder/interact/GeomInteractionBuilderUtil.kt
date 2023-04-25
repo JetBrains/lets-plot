@@ -74,10 +74,11 @@ internal object GeomInteractionBuilderUtil {
         userDefinedValueSources: List<ValueSource>?
     ): ValueSource {
         val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
-        return userDefined?.withFlags(isOutlier, isAxis) ?: MappingValue(
+        return userDefined?.withFlags(isOutlier, isAxis, checkXYLabel = true) ?: MappingValue(
             aes,
             isOutlier = isOutlier,
-            isAxis = isAxis
+            isAxis = isAxis,
+            checkXYLabel = true
         )
     }
 
