@@ -168,11 +168,12 @@ object PlotUtil {
     internal fun rangeWithExpand(
         range: DoubleSpan?,
         scale: Scale,
-        includeZero: Boolean
+        includeZero: Boolean,
+        mulExpCoeff: Double
     ): DoubleSpan? {
         if (range == null) return null
 
-        val mulExp = scale.multiplicativeExpand
+        val mulExp = mulExpCoeff * scale.multiplicativeExpand
         val addExp = scale.additiveExpand
 
         // Compute expands in terms of the original data.

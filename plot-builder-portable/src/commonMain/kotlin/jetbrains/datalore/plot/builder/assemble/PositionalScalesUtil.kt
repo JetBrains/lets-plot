@@ -362,8 +362,9 @@ internal object PositionalScalesUtil {
                 true -> updateRange(DoubleSpan.singleton(0.0), range)
                 false -> range
             }
+            val mulExpCoeff = 1.0.takeUnless { layers.any { it.geomKind == GeomKind.LOLLIPOP } } ?: 2.0
 
-            return PlotUtil.rangeWithExpand(range, scale, includeZero)
+            return PlotUtil.rangeWithExpand(range, scale, includeZero, mulExpCoeff)
         }
 
         private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan {
