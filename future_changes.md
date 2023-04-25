@@ -1,4 +1,4 @@
-## [3.1.1] - 2023-03-??
+## [3.2.0] - 2023-05-??
 
 ### Added
 
@@ -53,3 +53,4 @@
 - Groups not sorted similarly when using facets [[#679](https://github.com/JetBrains/lets-plot-kotlin/issues/679)].
 - Categorical ordering, it's not respected for Boxplot and violin plot [[#746](https://github.com/JetBrains/lets-plot-kotlin/issues/746)].
 - facet_grid: Internal error [[#699](https://github.com/JetBrains/lets-plot/issues/699)].
+- Export to SVG fails if breaks are given by integers [[#763](https://github.com/JetBrains/lets-plot/issues/763)]
