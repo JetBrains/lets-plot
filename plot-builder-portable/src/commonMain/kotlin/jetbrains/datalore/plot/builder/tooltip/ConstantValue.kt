@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class ConstantValue(
-    private val aes: Aes<*>,
+    val aes: Aes<*>,
     private val value: Any,
     private val format: String? = null
 ) : ValueSource {

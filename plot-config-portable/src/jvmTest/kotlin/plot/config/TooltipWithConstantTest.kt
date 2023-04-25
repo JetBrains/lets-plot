@@ -17,13 +17,13 @@ class TooltipWithConstantTest {
 
     @Test
     fun `tooltip with value from aes mapping`() {
-        val layerSpec = """
+        val spec = makePlotSpec("""
             "geom": "vline",
             "mapping": {
                 "xintercept": [ 0.25 ]
             }
-        """
-        val layer = buildGeomLayer(layerSpec)
+        """)
+        val layer = getSingleGeomLayer(spec)
         assertEquals(
             expected = listOf("xintercept: 0.25"),
             actual = getTooltipLines(layer)
@@ -32,11 +32,11 @@ class TooltipWithConstantTest {
 
     @Test
     fun `tooltip with constant value`() {
-        val layerSpec = """
+        val spec = makePlotSpec("""
             "geom": "vline",
             "xintercept": 0.25
-        """
-        val layer = buildGeomLayer(layerSpec)
+        """)
+        val layer = getSingleGeomLayer(spec)
 
         assertEquals(
             expected = listOf("0.25"),
@@ -46,12 +46,12 @@ class TooltipWithConstantTest {
 
     @Test
     fun `should add positionals only`() {
-        val layerSpec = """
+        val spec = makePlotSpec("""
             "geom": "vline",
             "xintercept": 0.25,
             "size": 1
-        """
-        val layer = buildGeomLayer(layerSpec)
+        """)
+        val layer = getSingleGeomLayer(spec)
 
         assertEquals(
             expected = listOf("0.25"),
@@ -61,14 +61,14 @@ class TooltipWithConstantTest {
 
     @Test
     fun `should use value from constant`() {
-        val layerSpec = """
+        val spec = makePlotSpec("""
             "geom": "vline",
             "mapping": {
                 "xintercept": [ 0.10 ]
             },
             "xintercept": 0.25
-        """
-        val layer = buildGeomLayer(layerSpec)
+        """)
+        val layer = getSingleGeomLayer(spec)
 
         assertEquals(
             expected = listOf("0.25"),
@@ -78,12 +78,12 @@ class TooltipWithConstantTest {
 
     @Test
     fun `should not add positional constants for geoms other than hline or vline`() {
-        val layerSpec = """
+        val spec = makePlotSpec("""
             "geom": "point",
             "x": 0,
             "y": 0
-        """
-        val layer = buildGeomLayer(layerSpec)
+        """)
+        val layer = getSingleGeomLayer(spec)
 
         assertEquals(
             expected = emptyList(),
@@ -93,13 +93,13 @@ class TooltipWithConstantTest {
 
     @Test
     fun `add constant 'size' to tooltip`() {
-        val layerSpec = """
+        val spec = makePlotSpec("""
             "geom": "vline",
             "xintercept": 0.25,
             "size": 1.0,
             "tooltips": {"lines": ["^xintercept", "^size"]}
-        """
-        val layer = buildGeomLayer(layerSpec)
+        """)
+        val layer = getSingleGeomLayer(spec)
 
         assertEquals(
             expected = listOf("0.25", "1.0"),
@@ -107,14 +107,31 @@ class TooltipWithConstantTest {
         )
     }
 
-    private fun buildGeomLayer(layerSpec: String): GeomLayer {
-        val spec = """{
-            "data": { "x": [0.0, 0.5] },
-            "mapping": { "x": "x" },
+    @Test
+    fun `specify format for the constant`() {
+        val spec = makePlotSpec("""
+            "geom": "vline",
+            "xintercept": 0.25,
+            "tooltips": {"formats": [{ "field": "^xintercept", "format": "mean = {.2f}" } ] } 
+        """)
+        val layer = getSingleGeomLayer(spec)
+
+        assertEquals(
+            expected = listOf("mean = 0.25"),
+            actual = getTooltipLines(layer)
+        )
+    }
+
+    private fun makePlotSpec(layerSpec: String): String {
+        return """
+        {
             "kind": "plot",
-            "layers": [  { $layerSpec } ]
-        }"""
-        return getSingleGeomLayer(spec)
+            "layers": [ 
+                {  
+                    $layerSpec  
+                }
+            ]
+        }""".trimIndent()
     }
 
     private fun getTooltipLines(geomLayer: GeomLayer): List<String> {

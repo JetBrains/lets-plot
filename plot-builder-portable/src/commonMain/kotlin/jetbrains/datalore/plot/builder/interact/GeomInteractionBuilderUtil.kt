@@ -97,7 +97,10 @@ internal object GeomInteractionBuilderUtil {
         val aesValueSources = aesListForTooltip.map { aes ->
             getMappingValueSource(aes, isOutlier = false, isAxis = false, userDefinedValueSources)
         }
-        val constantValues = constantsMap?.map { (aes, value) -> ConstantValue(aes, value, format = null) } ?: emptyList()
+        val constantValues = constantsMap?.map { (aes, value) ->
+            val userDefined = userDefinedValueSources?.filterIsInstance<ConstantValue>()?.find { it.aes == aes }
+            userDefined ?: ConstantValue(aes, value, format = null)
+        } ?: emptyList()
         return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
     }
 
