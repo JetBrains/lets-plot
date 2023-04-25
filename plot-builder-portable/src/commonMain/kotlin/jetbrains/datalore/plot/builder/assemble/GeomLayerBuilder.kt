@@ -322,7 +322,8 @@ class GeomLayerBuilder(
             @Suppress("NAME_SHADOWING")
             val aes = aes.afterOrientation(isYOrientation)
             return if (geom is LollipopGeom && aes == Aes.Y) {
-                geom.direction == LollipopGeom.Direction.ORTHOGONAL_TO_AXIS && geom.slope == 0.0 && geom.intercept == 0.0
+                // Pin the lollipops to an axis when baseline coincides with this axis and sticks are perpendicular to it
+                geom.slope == 0.0 && geom.intercept == 0.0 && geom.direction != LollipopGeom.Direction.ALONG_AXIS
             } else {
                 aestheticsDefaults.rangeIncludesZero(aes)
             }
