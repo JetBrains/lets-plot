@@ -26,6 +26,9 @@
  
    See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/horizontal_error_bars.ipynb).
 
+       
+- Colorbar in `geom_imshow()`. Parameters `show_legend` and `color_by` [[#717](https://github.com/JetBrains/lets-plot/issues/717)].
+
 
 ### Changed
 

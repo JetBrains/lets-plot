@@ -129,7 +129,8 @@ def image_matrix(image_data_array, cmap=None, *, norm=None, vmin=None, vmax=None
                 cmap=cmap,
                 norm=norm,
                 vmin=vmin,
-                vmax=vmax
+                vmax=vmax,
+                show_legend=False
             )
             p += options
             ggbunch.add_plot(p, col * w_max, row * h_max, w, h)

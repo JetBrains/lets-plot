@@ -214,6 +214,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.ALPHA
             )
+
             GeomKind.V_LINE -> listOf(
                 Aes.XINTERCEPT,
                 Aes.SIZE, // path width
@@ -305,6 +306,7 @@ object GeomMeta {
                 Aes.ALPHA,
                 Aes.SHAPE
             )
+
             GeomKind.Q_Q_2 -> POINT
             GeomKind.Q_Q_LINE -> listOf(
                 Aes.X, Aes.Y,
@@ -314,6 +316,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.ALPHA
             )
+
             GeomKind.Q_Q_2_LINE -> PATH
             GeomKind.FREQPOLY -> PATH
             GeomKind.STEP -> PATH
@@ -390,7 +393,8 @@ object GeomMeta {
                 Aes.XMIN,
                 Aes.XMAX,
                 Aes.YMIN,
-                Aes.YMAX
+                Aes.YMAX,
+                Aes.COLOR  // not rendered but necessary for color legend to appear.
             )
 
             GeomKind.PIE -> listOf(
