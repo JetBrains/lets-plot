@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
-import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltips
+import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltip
 import kotlin.test.Test
 
 
@@ -34,7 +34,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("2.00")
         )
@@ -66,7 +66,7 @@ class TooltipSkippedAesTest {
 
         val layer = getSingleGeomLayer(spec)
         // No tooltips
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = emptyList()
         )
@@ -100,7 +100,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("z: 5.00")
         )
@@ -119,7 +119,7 @@ class TooltipSkippedAesTest {
         }"""
 
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("z: 5.00")
         )
@@ -138,7 +138,7 @@ class TooltipSkippedAesTest {
             ]
         }"""
             val layer = getSingleGeomLayer(spec)
-            assertGeneralTooltips(
+            assertGeneralTooltip(
                 layer,
                 expectedLines = listOf("Color: 5.00")
             )
@@ -154,7 +154,7 @@ class TooltipSkippedAesTest {
             ]
         }"""
             val layer = getSingleGeomLayer(spec)
-            assertGeneralTooltips(
+            assertGeneralTooltip(
                 layer,
                 expectedLines = listOf("Size: 5.00")
             )

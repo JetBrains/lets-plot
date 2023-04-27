@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltips
+import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltip
 import kotlin.test.Test
 
 
@@ -31,7 +31,7 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.00")
         )
@@ -52,7 +52,7 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.0")
         )
@@ -72,7 +72,7 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.00", "n: 20.00")
         )
@@ -99,7 +99,7 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.0", "n: 20")
         )
@@ -120,7 +120,7 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.00")
         )
@@ -141,7 +141,7 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("y: 10.00")
         )
@@ -162,9 +162,35 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("10.00")
+        )
+    }
+
+    @Test
+    fun `default tooltips with outliers - general will be one-line without label`() {
+        val spec = """
+        {
+          "data": { 
+              "x": ["a"],
+              "y": [ 10 ],
+              "ymin": [ 5 ],
+              "ymax": [ 15 ]
+          },
+          "kind": "plot",
+          "mapping": { "x" : "x", "y" : "y" },
+          "layers": [
+            {
+                "geom" : "errorbar",
+                "mapping": { "ymin" : "ymin", "ymax" : "ymax" }
+            }
+          ]
+        }""".trimIndent()
+        val layer = TestUtil.getSingleGeomLayer(spec)
+        assertGeneralTooltip(
+            layer,
+            expectedLines = listOf("10.0")
         )
     }
 }

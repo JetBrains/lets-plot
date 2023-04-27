@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
-import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltips
+import jetbrains.datalore.plot.config.TooltipTestUtil.assertGeneralTooltip
 import kotlin.test.Test
 
 class TooltipWithConstantTest {
@@ -20,7 +20,7 @@ class TooltipWithConstantTest {
             }
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("xintercept: 0.25")
         )
@@ -33,7 +33,7 @@ class TooltipWithConstantTest {
             "xintercept": 0.25
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("0.25")
         )
@@ -47,7 +47,7 @@ class TooltipWithConstantTest {
             "size": 1
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("0.25")
         )
@@ -63,7 +63,7 @@ class TooltipWithConstantTest {
             "xintercept": 0.25
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("0.25")
         )
@@ -77,7 +77,7 @@ class TooltipWithConstantTest {
             "y": 0
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = emptyList()
         )
@@ -92,7 +92,7 @@ class TooltipWithConstantTest {
             "tooltips": {"lines": ["^xintercept", "^size"]}
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("0.25", "1.0")
         )
@@ -106,7 +106,7 @@ class TooltipWithConstantTest {
             "tooltips": {"formats": [{ "field": "^xintercept", "format": "mean = {.2f}" } ] } 
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("mean = 0.25")
         )
@@ -122,7 +122,7 @@ class TooltipWithConstantTest {
             }
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf( "size: 1.00", "xintercept: 0.25")
         )
@@ -144,7 +144,7 @@ class TooltipWithConstantTest {
             } 
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf( "size: 1", "xintercept: 0.250")
         )
@@ -158,7 +158,7 @@ class TooltipWithConstantTest {
             "tooltips": {"lines": ["@|^xintercept"]}
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("xintercept: 0.25")
         )
@@ -175,7 +175,7 @@ class TooltipWithConstantTest {
             "tooltips": {"lines": ["@|^xintercept", "@|^size"]}
         """)
         val layer = getSingleGeomLayer(spec)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             layer,
             expectedLines = listOf("xintercept: 0.25",  "size: 1.00")
         )

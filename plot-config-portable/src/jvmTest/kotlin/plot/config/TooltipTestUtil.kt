@@ -74,7 +74,7 @@ object TooltipTestUtil {
         )
     }
 
-    private fun assertGeneralTooltips(tooltipSpecs: List<TooltipSpec>, expectedLines: List<String>) {
+    private fun assertGeneralTooltip(tooltipSpecs: List<TooltipSpec>, expectedLines: List<String>) {
         val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isOutlier)
         assertEquals(expectedLines.isEmpty(), actualGeneralTooltips.isEmpty())
         if (actualGeneralTooltips.isNotEmpty()) {
@@ -84,10 +84,10 @@ object TooltipTestUtil {
         }
     }
 
-    internal fun assertGeneralTooltips(layer: GeomLayer, expectedLines: List<String>) {
+    internal fun assertGeneralTooltip(layer: GeomLayer, expectedLines: List<String>) {
         val ctx = TestingPlotContext.create(layer)
         val tooltipSpecs = createTooltipSpecs(layer.createContextualMapping(), ctx)
-        assertGeneralTooltips(
+        assertGeneralTooltip(
             tooltipSpecs,
             expectedLines
         )
