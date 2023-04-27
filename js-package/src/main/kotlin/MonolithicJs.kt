@@ -14,7 +14,6 @@ import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
-import kotlinx.dom.createElement
 import mu.KotlinLogging
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
@@ -116,26 +115,15 @@ fun buildGGBunchComponent(plotInfos: List<FigureBuildInfo>, parentElement: HTMLE
 
     for (plotInfo in plotInfos) {
         val origin = plotInfo.bounds.origin
-        val itemElement = parentElement.ownerDocument!!.createElement("div") {
-            setAttribute(
-                "style",
-                "position: absolute; left: ${origin.x}px; top: ${origin.y}px;"
-            )
-        } as HTMLElement
+        val itemContainerElement = FigureToHtml.createContainerElement(origin)
+        parentElement.appendChild(itemContainerElement)
 
-        parentElement.appendChild(itemElement)
-        FigureToHtml(plotInfo, itemElement).eval()
+        FigureToHtml(
+            buildInfo = plotInfo,
+            containerElement = itemContainerElement
+        ).eval()
 
     }
-
-//    var style = "position: relative; width: ${bunchBounds.width}px; height: ${bunchBounds.height}px;"
-//
-////    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
-////    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
-////        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
-////    }
-//    parentElement.setAttribute("style", style)
-
 }
 
 private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
@@ -157,7 +145,6 @@ private fun showInfo(message: String, parentElement: HTMLElement) {
 private fun showText(message: String, className: String, style: String, parentElement: HTMLElement) {
     val paragraphElement = parentElement.ownerDocument!!.createElement("p") as HTMLParagraphElement
 
-    // ToDo: fix when composite figure (where the container style position:relative)
     if (style.isNotBlank()) {
         paragraphElement.setAttribute("style", style)
     }

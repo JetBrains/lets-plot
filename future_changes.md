@@ -58,3 +58,4 @@
 - facet_grid: Internal error [[#699](https://github.com/JetBrains/lets-plot/issues/699)].
 - Export to SVG fails if breaks are given by integers [[#763](https://github.com/JetBrains/lets-plot/issues/763)].
 - Remove hard IPython dependency [[#749](https://github.com/JetBrains/lets-plot/issues/749)].
+- livemap: doesn't work well with gggrid [[#750](https://github.com/JetBrains/lets-plot/issues/750)].
