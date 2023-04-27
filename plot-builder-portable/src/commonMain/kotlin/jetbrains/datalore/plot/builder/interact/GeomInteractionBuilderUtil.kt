@@ -88,7 +88,8 @@ internal object GeomInteractionBuilderUtil {
         }
 
         // will use empty label in one-line tooltip for positional aes and constants
-        val isOneLineTooltip = (aesListForTooltip.size + (constantsMap?.size ?: 0)) == 1
+        val aesForGeneralTooltip = aesListForTooltip - outliers + (constantsMap?.keys ?: emptyList())
+        val isOneLineTooltip = aesForGeneralTooltip.size  == 1
 
         val aesValueSources = aesListForTooltip.map { aes ->
             val label = if (isOneLineTooltip && aes in listOf(Aes.X, Aes.Y)) "" else null
