@@ -16,22 +16,24 @@ class ConstantValue(
     val aes: Aes<*>,
     private val value: Any,
     private val format: String? = null,
-    private val useEmptyLabelForOneLineTooltip: Boolean = false
+    label: String? = null
 ) : ValueSource {
 
     private var formattedValue: String? = null
     private var isYOrientation: Boolean? = null
-    private var myDataLabel: String? = null
+    private var myDataLabel: String? = label
 
     override val isOutlier: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         isYOrientation = mappedDataAccess.isYOrientation
-        myDataLabel = if (mappedDataAccess.isMapped(aes)) {
-            mappedDataAccess.getMappedDataLabel(aes)
-        } else {
-            aes.name
+        if (myDataLabel == null) {
+            myDataLabel = if (mappedDataAccess.isMapped(aes)) {
+                mappedDataAccess.getMappedDataLabel(aes)
+            } else {
+                aes.name
+            }
         }
     }
 
@@ -42,8 +44,7 @@ class ConstantValue(
             value = presentation,
             aes = null,
             isAxis = false,
-            isOutlier = false,
-            useEmptyLabelForOneLineTooltip = useEmptyLabelForOneLineTooltip
+            isOutlier = false
         )
     }
 
@@ -73,16 +74,16 @@ class ConstantValue(
             aes,
             value,
             format,
-            useEmptyLabelForOneLineTooltip
+            myDataLabel
         )
     }
 
-    fun withFlags(useEmptyLabelForOneLineTooltip: Boolean): ConstantValue {
+    fun withLabel(label: String? = null): ConstantValue {
         return ConstantValue(
             aes,
             value,
             format,
-            useEmptyLabelForOneLineTooltip
+            label
         )
     }
 

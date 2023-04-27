@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.builder.tooltip.*
 internal object GeomInteractionBuilderUtil {
 
     fun createTooltipLines(
-        userTooltipSpec: TooltipSpecification?,
+        userTooltipSpec: TooltipSpecification,
         tooltipAes: List<Aes<*>>,
         tooltipAxisAes: List<Aes<*>>,
         sideTooltipAes: List<Aes<*>>,
@@ -19,16 +19,6 @@ internal object GeomInteractionBuilderUtil {
     ): List<TooltipLine> {
 
         return when {
-            userTooltipSpec == null -> {
-                // No user tooltip specification => use default tooltips
-                defaultValueSourceTooltipLines(
-                    tooltipAes,
-                    tooltipAxisAes,
-                    sideTooltipAes,
-                    userDefinedValueSources = null,
-                    constantsMap = tooltipConstantAes
-                )
-            }
             userTooltipSpec.useDefaultTooltips() -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
                 defaultValueSourceTooltipLines(
@@ -71,14 +61,15 @@ internal object GeomInteractionBuilderUtil {
         aes: Aes<*>,
         isOutlier: Boolean,
         isAxis: Boolean,
-        userDefinedValueSources: List<ValueSource>?
+        userDefinedValueSources: List<ValueSource>?,
+        label: String? = null
     ): ValueSource {
         val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
-        return userDefined?.withFlags(isOutlier, isAxis, checkXYLabel = true) ?: MappingValue(
+        return userDefined?.withFlags(isOutlier, isAxis, label) ?: MappingValue(
             aes,
             isOutlier = isOutlier,
             isAxis = isAxis,
-            checkXYLabel = true
+            label = label
         )
     }
 
@@ -95,16 +86,20 @@ internal object GeomInteractionBuilderUtil {
         val outlierValueSources = outliers.map { aes ->
             getMappingValueSource(aes, isOutlier = true, isAxis = false, userDefinedValueSources)
         }
+
+        // will use empty label in one-line tooltip for positional aes and constants
+        val isOneLineTooltip = (aesListForTooltip.size + (constantsMap?.size ?: 0)) == 1
+
         val aesValueSources = aesListForTooltip.map { aes ->
-            getMappingValueSource(aes, isOutlier = false, isAxis = false, userDefinedValueSources)
+            val label = if (isOneLineTooltip && aes in listOf(Aes.X, Aes.Y)) "" else null
+            getMappingValueSource(aes, isOutlier = false, isAxis = false, userDefinedValueSources, label)
         }
         val constantValues = constantsMap?.map { (aes, value) ->
+            val label = if (isOneLineTooltip) "" else null
             val userDefined = userDefinedValueSources?.filterIsInstance<ConstantValue>()?.find { it.aes == aes }
-            // will use empty label for constants in a one-line default tooltip
-            userDefined?.withFlags(useEmptyLabelForOneLineTooltip = true)
-                ?:
-                ConstantValue(aes, value, format = null, useEmptyLabelForOneLineTooltip = true)
+            userDefined?.withLabel(label) ?: ConstantValue(aes, value, format = null, label = label)
         } ?: emptyList()
+
         return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
     }
 

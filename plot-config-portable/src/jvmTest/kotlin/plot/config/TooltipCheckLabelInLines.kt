@@ -31,7 +31,6 @@ class TooltipCheckLabelInLines {
           ]
         }""".trimIndent()
         val layer = TestUtil.getSingleGeomLayer(spec)
-
         assertGeneralTooltips(
             layer,
             expectedLines = listOf("10.00")

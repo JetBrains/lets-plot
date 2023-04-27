@@ -43,8 +43,7 @@ class DataFrameValue(
             value = myFormatter(originalValue),
             aes = null,
             isAxis = false,
-            isOutlier = false,
-            useEmptyLabelForOneLineTooltip = false
+            isOutlier = false
         )
     }
 

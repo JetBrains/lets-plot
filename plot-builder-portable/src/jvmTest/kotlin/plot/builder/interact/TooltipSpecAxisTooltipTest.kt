@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
@@ -44,30 +43,6 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
 
     @Test
-    fun shouldNotAddLabel_WhenMappedToYAxisVar() {
-        val v = variable().name("var_for_y").value("sedan")
-
-        val fillMapping = addMappedData(v.mapping(Aes.FILL))
-        val yMapping = addMappedData(v.mapping(Aes.Y))
-
-        createTooltipSpecs(
-            geomTargetBuilder.withPathHitShape()
-                .withLayoutHint(
-                    Aes.FILL,
-                    TipLayoutHint.verticalTooltip(
-                        TARGET_HIT_COORD,
-                        OBJECT_RADIUS,
-                        markerColors = emptyList()
-                    )
-                )
-                .build()
-        )
-
-        assertLines(0, fillMapping.shortTooltipText())
-        assertLines(1, yMapping.shortTooltipText())
-    }
-
-    @Test
     fun shouldNotAddLabel_When_MappedToYAxisVar_And_OneLineTooltip() {
         val v = variable().name("var_for_y").value("sedan")
         val yMapping = addMappedData(v.mapping(Aes.Y))
@@ -83,7 +58,6 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
         buildTooltipSpecs()
-
         assertLines(0, fillMapping.longTooltipText(), yMapping.longTooltipText())
     }
 }

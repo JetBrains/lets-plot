@@ -104,11 +104,7 @@ class TooltipSpecFactory(
 
         private fun generalTooltipSpec(): List<TooltipSpec> {
             val generalDataPoints = generalDataPoints()
-            val isOneLineTooltip = generalDataPoints.size == 1
-            val generalLines = generalDataPoints.map {
-                val label = if (isOneLineTooltip && it.useEmptyLabelForOneLineTooltip) "" else it.label
-                TooltipSpec.Line.withLabelAndValue(label, it.value)
-            }
+            val generalLines = generalDataPoints.map { TooltipSpec.Line.withLabelAndValue(it.label, it.value) }
 
             return if (generalLines.isNotEmpty()) {
                 listOf(
