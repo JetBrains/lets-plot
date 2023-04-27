@@ -293,31 +293,11 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             }
 
             GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
-                // As in LayerConfig
-                val isYOrientation: Boolean = when (opts.hasOwn(Option.Layer.ORIENTATION)) {
-                    true -> opts.getString(Option.Layer.ORIENTATION)?.lowercase()?.let {
-                        when (it) {
-                            "y" -> true
-                            "x" -> false
-                            else -> throw IllegalArgumentException("${Option.Layer.ORIENTATION} expected x|y but was $it")
-                        }
-                    } ?: false
-
-                    false -> false
-                }
                 val directionValue = opts.getString(Lollipop.DIRECTION)?.lowercase()
                 val direction = directionValue?.let {
                     when (it) {
-                        "v" -> if (isYOrientation) {
-                            Direction.ALONG_AXIS
-                        } else {
-                            Direction.ORTHOGONAL_TO_AXIS
-                        }
-                        "h" -> if (isYOrientation) {
-                            Direction.ORTHOGONAL_TO_AXIS
-                        } else {
-                            Direction.ALONG_AXIS
-                        }
+                        "v" -> Direction.ORTHOGONAL_TO_AXIS
+                        "h" -> Direction.ALONG_AXIS
                         "s" -> Direction.SLOPE
                         else -> throw IllegalArgumentException(
                             "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'. " +
@@ -334,7 +314,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     throw IllegalArgumentException(
                         "Incompatible lollipop parameters: " +
                         "${Lollipop.SLOPE}=$slope, " +
-                        "${Option.Layer.ORIENTATION}='${if (isYOrientation) "y" else "x"}', " +
                         "${Lollipop.DIRECTION}='${directionValue}'"
                     )
                 }
