@@ -143,6 +143,15 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
+    fun withDefined(
+        dataPoints: Iterable<DataPointAesthetics>,
+        aesList: List<Aes<*>>
+    ): Iterable<DataPointAesthetics> {
+        return dataPoints.filter { p ->
+            aesList.all { aes -> p.defined(aes) }
+        }
+    }
+
     fun createGroups(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<DataPointAesthetics>> {
         val pointsByGroup = HashMap<Int, MutableList<DataPointAesthetics>>()
         for (p in dataPoints) {

@@ -135,12 +135,14 @@ internal object PositionalScalesUtil {
     }
 
     private fun positionalDryRunAesthetics(layer: GeomLayer): Aesthetics {
-        val aesList = layer.renderedAes().filter {
-            Aes.affectingScaleX(it) ||
-                    Aes.affectingScaleY(it) ||
-                    it == Aes.HEIGHT ||
-                    it == Aes.WIDTH
-        }
+        val aesList = layer.renderedAes()
+            .filter {
+                Aes.affectingScaleX(it) ||
+                        Aes.affectingScaleY(it) ||
+                        it == Aes.HEIGHT ||
+                        it == Aes.WIDTH
+            }
+            .filter { layer.hasBinding(it) || layer.hasConstant(it) }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
         return PlotUtil.createLayerAesthetics(layer, aesList, mappers)
@@ -191,8 +193,8 @@ internal object PositionalScalesUtil {
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
         layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext
     ): Pair<DoubleSpan?, DoubleSpan?> {
-        val posAesX = Aes.affectingScaleX(layer.renderedAes())
-        val posAesY = Aes.affectingScaleY(layer.renderedAes())
+        val posAesX = Aes.affectingScaleX(layer.renderedAes().filter { layer.hasBinding(it) || layer.hasConstant(it) })
+        val posAesY = Aes.affectingScaleY(layer.renderedAes().filter { layer.hasBinding(it) || layer.hasConstant(it) })
 
         val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aes)
         if (pos.isIdentity) {
