@@ -6256,11 +6256,9 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     orientation : {'x', 'y'}, default='x'
         Specify the axis that the baseline should run along.
         Possible values: 'x', 'y'.
-    dir : {'v', 'h', 's'}
+    dir : {'v', 'h', 's'}, default='v'
         Direction of the lollipop stick.
         'v' for vertical, 'h' for horizontal, 's' for orthogonal to the baseline.
-        If `orientation='x'`, default `dir` is 'v'.
-        If `orientation='y'`, default `dir` is 'h'.
     fatten : float, default=2.5
         A multiplicative factor applied to size of the point.
     slope : float

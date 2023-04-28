@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.geom.GeomBase
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.geom.LollipopGeom
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
@@ -320,7 +321,12 @@ class GeomLayerBuilder(
         override fun rangeIncludesZero(aes: Aes<*>): Boolean {
             @Suppress("NAME_SHADOWING")
             val aes = aes.afterOrientation(isYOrientation)
-            return aestheticsDefaults.rangeIncludesZero(aes)
+            return if (geom is LollipopGeom && aes == Aes.Y) {
+                // Pin the lollipops to an axis when baseline coincides with this axis and sticks are perpendicular to it
+                geom.slope == 0.0 && geom.intercept == 0.0 && geom.direction != LollipopGeom.Direction.ALONG_AXIS
+            } else {
+                aestheticsDefaults.rangeIncludesZero(aes)
+            }
         }
 
         override fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
