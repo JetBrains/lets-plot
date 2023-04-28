@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.scale.ScaleProviderHelper
 
@@ -31,13 +32,19 @@ internal object PlotConfigScaleProviders {
         val variablesByMappedAes = setup.variablesByMappedAes
 
         // Append date-time scale provider
-        val dateTimeDataByVarBinding = dataByVarBinding
-            .filter { (varBinding, df) ->
-                df.isDateTime(varBinding.variable)
-            }
+        val dateTimeAesByVarBinding = dataByVarBinding
+            .filter { (varBinding, df) -> df.isDateTime(varBinding.variable) }
+            .keys
+            .map(VarBinding::aes)
 
-        dateTimeDataByVarBinding
-            .map { (varBinding, _) -> varBinding.aes }
+        // Axis that don't have an explicit mapping but have a corresponding positional mapping to a datetime variable
+        val dateTimeAxisAesByPositionalVarBinding = listOfNotNull(
+            if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalX)) Aes.X else null,
+            if (dateTimeAesByVarBinding.any(Aes.Companion::isPositionalY)) Aes.Y else null,
+        )
+
+        (dateTimeAesByVarBinding + dateTimeAxisAesByPositionalVarBinding)
+            .distinct()
             .filter { aes -> aes !in scaleProviderByAes }
             .forEach { aes ->
                 val name = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)

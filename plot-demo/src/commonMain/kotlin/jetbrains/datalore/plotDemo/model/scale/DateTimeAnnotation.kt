@@ -18,6 +18,7 @@ class DateTimeAnnotation {
         return listOf(
             plot(Duration.DAY),
             colorMapping(),
+            yminAndYmaxMapping()
         )
     }
 
@@ -77,6 +78,45 @@ class DateTimeAnnotation {
                     }
                 }
             """.trimIndent()
+
+            return parsePlotSpec(spec)
+        }
+
+        fun yminAndYmaxMapping(): MutableMap<String, Any> {
+            val instant = TimeZone.UTC.toInstant(DateTime(Date(1, Month.FEBRUARY, 2003)))
+            val errDuration = 7 * Duration.DAY.duration.toDouble()
+            val rnd = Random(0)
+
+            val n = 7
+            val t1 = (0..n).map { instant.timeSinceEpoch + rnd.nextDouble(errDuration) }
+            val t2 = (0..n).map { instant.timeSinceEpoch - rnd.nextDouble(errDuration) }
+            val v = (0..n).map { "\"${Char('a'.code + it)}\"" }.toList()
+
+            val spec = """
+            |{
+            |   "kind": "plot", 
+            |   "data": {
+            |       "val": [${v.joinToString(", ")}], 
+            |       "t1": [${t1.joinToString(", ")}], 
+            |       "t2": [${t2.joinToString(", ")}]
+            |   }, 
+            |   "layers": [
+            |       {
+            |           "mapping": { "x": "val", "ymin": "t1", "ymax": "t2"}, 
+            |           "stat": "identity", 
+            |           "position": "identity", 
+            |           "geom": "linerange",
+            |           "size": 2
+            |       }
+            |   ], 
+            |   "data_meta": {
+            |       "series_annotations": [
+            |           {"column": "t1", "type": "datetime"}, 
+            |           {"column": "t2", "type": "datetime"}
+            |       ]
+            |   }
+            |}
+            """.trimMargin()
 
             return parsePlotSpec(spec)
         }
