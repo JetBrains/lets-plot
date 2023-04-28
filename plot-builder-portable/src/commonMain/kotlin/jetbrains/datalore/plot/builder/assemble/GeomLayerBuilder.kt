@@ -267,8 +267,8 @@ class GeomLayerBuilder(
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults()
 
+        private val myConstantByAes: TypedKeyHashMap = TypedKeyHashMap()
         private val myRenderedAes: List<Aes<*>>
-        private val myConstantByAes: TypedKeyHashMap
 
         override val legendKeyElementFactory: LegendKeyElementFactory
             get() = geom.legendKeyElementFactory
@@ -277,12 +277,36 @@ class GeomLayerBuilder(
             get() = geom is LiveMapGeom
 
         init {
-            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes)
-
             // constant value by aes (default + specified)
-            myConstantByAes = TypedKeyHashMap()
             for (key in constantByAes.keys<Any>()) {
                 myConstantByAes.put(key, constantByAes[key])
+            }
+
+            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes).let { allRenderedAes ->
+                if (geomKind == GeomKind.ERROR_BAR) {
+                    // ToDo Need refactoring...
+                    // This geometry supports a dual set of aesthetics (vertical and horizontal representation).
+                    // Check that the settings are not inconsistent
+                    // and set the aesthetics needed for that geometry.
+                    val definedAes = allRenderedAes.filter { aes -> hasBinding(aes) || hasConstant(aes) }
+                    val isHorizontal = listOf(Aes.Y, Aes.XMIN, Aes.XMAX).all { aes -> aes in definedAes }
+                    val isVertical = listOf(Aes.X, Aes.YMIN, Aes.YMAX).all { aes -> aes in definedAes }
+                    require(!(isHorizontal && isVertical)) {
+                        "For errorbar either x, ymin, ymax or y, xmin, xmax must be specified."
+                    }
+                    when {
+                        isVertical -> listOf(
+                            Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH,
+                            Aes.ALPHA, Aes.COLOR, Aes.LINETYPE, Aes.SIZE
+                        )
+                        else -> listOf(
+                            Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT,
+                            Aes.ALPHA, Aes.COLOR, Aes.LINETYPE, Aes.SIZE
+                        )
+                    }
+                } else {
+                    allRenderedAes
+                }
             }
         }
 

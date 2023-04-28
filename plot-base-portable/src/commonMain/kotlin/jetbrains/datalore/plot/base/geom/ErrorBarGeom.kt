@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 
-class ErrorBarGeom : GeomBase(), WithWidth, WithHeight {
+class ErrorBarGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = ErrorBarLegendKeyElementFactory()
@@ -39,10 +39,10 @@ class ErrorBarGeom : GeomBase(), WithWidth, WithHeight {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        var dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), verticalAes())
+        var dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
         val isVertical = dataPoints.any()
         if (!isVertical) {
-            dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), horizontalAes())
+            dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
         }
 
         val xAes = if (isVertical) Aes.X else Aes.Y
@@ -157,9 +157,6 @@ class ErrorBarGeom : GeomBase(), WithWidth, WithHeight {
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun verticalAes() = listOf(Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
-        private fun horizontalAes() = listOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
-
         private fun errorBarLegendShape(segments: List<DoubleSegment>, p: DataPointAesthetics): SvgGElement {
             val g = SvgGElement()
             segments.forEach { segment ->
@@ -196,27 +193,5 @@ class ErrorBarGeom : GeomBase(), WithWidth, WithHeight {
             }
             return g
         }
-    }
-
-    override fun heightSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        val isHorizontal = horizontalAes().all(p::defined)
-        if (!isHorizontal) return null
-        return PointDimensionsUtil.dimensionSpan(p, coordAes, Aes.HEIGHT, resolution)
-    }
-
-    override fun widthSpan(
-        p: DataPointAesthetics,
-        coordAes: Aes<Double>,
-        resolution: Double,
-        isDiscrete: Boolean
-    ): DoubleSpan? {
-        val isVertical = verticalAes().all(p::defined)
-        if (!isVertical) return null
-        return PointDimensionsUtil.dimensionSpan(p, coordAes, Aes.WIDTH, resolution)
     }
 }
