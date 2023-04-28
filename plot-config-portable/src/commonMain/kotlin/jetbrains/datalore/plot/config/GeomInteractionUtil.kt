@@ -315,7 +315,7 @@ object GeomInteractionUtil {
         aesListForTooltip.removeAll { it in hiddenAesList }
 
         // remove duplicated mappings
-        val mappingsToShow = HashMap<DataFrame.Variable, Aes<*>>()
+        val mappingsToShow = LinkedHashMap<DataFrame.Variable, Aes<*>>()
         aesListForTooltip
             .forEach { aes ->
                 val variable = layerConfig.getVariableForAes(aes)!!

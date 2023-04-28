@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.TooltipSpecTestHelper() {
+class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
     @BeforeTest
     fun setUp() {
@@ -24,6 +24,30 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
     @Test
     fun whenXIsNotMapped_ShouldNotThrowException() {
         createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
+    }
+
+    @Test
+    fun shouldNotAddLabel_WhenMappedToYAxisVar() {
+        val v = variable().name("var_for_y").value("sedan")
+
+        val fillMapping = addMappedData(v.mapping(Aes.FILL))
+        val yMapping = addMappedData(v.mapping(Aes.Y))
+
+        createTooltipSpecs(
+            geomTargetBuilder.withPathHitShape()
+                .withLayoutHint(
+                    Aes.FILL,
+                    TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        markerColors = emptyList()
+                    )
+                )
+                .build()
+        )
+
+        assertLines(0, fillMapping.shortTooltipText())
+        assertLines(1, yMapping.shortTooltipText())
     }
 
     @Test
@@ -44,25 +68,21 @@ class TooltipSpecAxisTooltipTest : jetbrains.datalore.plot.builder.interact.Tool
 
 
     @Test
-    fun shouldNotAddLabel_WhenMappedToYAxisVar() {
+    fun shouldNotAddLabel_When_MappedToYAxisVar_And_OneLineTooltip() {
         val v = variable().name("var_for_y").value("sedan")
+        val yMapping = addMappedData(v.mapping(Aes.Y))
 
+        buildTooltipSpecs()
+        assertLines(0, yMapping.shortTooltipText())
+    }
+
+    @Test
+    fun multilineTooltip_shouldAddLabels() {
+        val v = variable().name("var_for_y").value("sedan")
         val fillMapping = addMappedData(v.mapping(Aes.FILL))
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
-        createTooltipSpecs(
-            geomTargetBuilder.withPathHitShape()
-                .withLayoutHint(
-                    Aes.FILL, TipLayoutHint.verticalTooltip(
-                        TARGET_HIT_COORD,
-                        OBJECT_RADIUS,
-                        markerColors = emptyList()
-                    )
-                )
-                .build()
-        )
-
-        assertLines(0, fillMapping.shortTooltipText())
-        assertLines(1, yMapping.shortTooltipText())
+        buildTooltipSpecs()
+        assertLines(0, fillMapping.longTooltipText(), yMapping.longTooltipText())
     }
 }
