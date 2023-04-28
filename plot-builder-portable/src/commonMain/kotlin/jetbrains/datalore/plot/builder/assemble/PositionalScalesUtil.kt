@@ -363,9 +363,7 @@ internal object PositionalScalesUtil {
                 false -> range
             }
 
-            val wideExpand = layers.any { it.geomKind == GeomKind.LOLLIPOP }
-
-            return PlotUtil.rangeWithExpand(range, scale, includeZero, wideExpand)
+            return PlotUtil.rangeWithExpand(range, scale, includeZero)
         }
 
         private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan {
