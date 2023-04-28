@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.X_AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
@@ -23,6 +24,30 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
     @Test
     fun whenXIsNotMapped_ShouldNotThrowException() {
         createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
+    }
+
+    @Test
+    fun shouldNotAddLabel_WhenMappedToYAxisVar() {
+        val v = variable().name("var_for_y").value("sedan")
+
+        val fillMapping = addMappedData(v.mapping(Aes.FILL))
+        val yMapping = addMappedData(v.mapping(Aes.Y))
+
+        createTooltipSpecs(
+            geomTargetBuilder.withPathHitShape()
+                .withLayoutHint(
+                    Aes.FILL,
+                    TipLayoutHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        markerColors = emptyList()
+                    )
+                )
+                .build()
+        )
+
+        assertLines(0, fillMapping.shortTooltipText())
+        assertLines(1, yMapping.shortTooltipText())
     }
 
     @Test

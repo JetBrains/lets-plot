@@ -18,7 +18,7 @@ class TooltipCheckLabelInLines {
     }""".trimIndent()
 
     @Test
-    fun `default one line tooltip with mapped to Y axis - no label`() {
+    fun `default one-line tooltip with mapped to Y axis - no label`() {
         val spec = """
         {
           "data": $myData,
@@ -38,7 +38,7 @@ class TooltipCheckLabelInLines {
     }
 
     @Test
-    fun `default one line tooltip with mapped to Y axis and specified format - no label`() {
+    fun `default one-line tooltip with mapped to Y axis and specified format - no label`() {
         val spec = """
         {
           "data": $myData,
@@ -182,7 +182,7 @@ class TooltipCheckLabelInLines {
           "mapping": { "x" : "x", "y" : "y" },
           "layers": [
             {
-                "geom" : "errorbar",
+                "geom" : "pointrange",
                 "mapping": { "ymin" : "ymin", "ymax" : "ymax" }
             }
           ]
