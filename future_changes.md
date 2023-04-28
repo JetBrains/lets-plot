@@ -4,7 +4,7 @@
 
 - New geometry `geom_lollipop()`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/lollipop_plot.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
 
 
 - `stroke` aesthetic for `geom_point()`, `geom_jitter()`, `geom_qq()`, `geom_qq2()`, `geom_pointrange()`, `geom_dotplot()`, `geom_ydotplot()` and `outlier_stroke` parameter for `geom_boxplot()`.
@@ -14,7 +14,7 @@
 
 - New aesthetic `linewidth`. Used only for `geom_lollipop()` at the moment.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/lollipop_plot.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
 
 
 - the 'newline' character (`\n`) now works as `line break` in legend text ([[#726](https://github.com/JetBrains/lets-plot/issues/726)])
