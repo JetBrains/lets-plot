@@ -33,7 +33,6 @@ import jetbrains.livemap.mapengine.camera.CameraListenerComponent
 import jetbrains.livemap.mapengine.camera.CenterChangedComponent
 import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
@@ -153,7 +152,6 @@ class FragmentEmitSystem(
                             + ZoomFractionChangedComponent()
                             + ScaleComponent().apply { zoom = fragmentKey.zoom() }
                             + FragmentComponent(fragmentKey)
-                            + ScreenLoopComponent()
                             + ScreenGeometryComponent().apply { geometry = Geometry.of(screenMultiPolygon) }
                             + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
                         }

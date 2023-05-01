@@ -10,6 +10,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.basemap.BasemapLayerComponent
 
 class LayersRenderingSystem internal constructor(
     componentManager: EcsComponentManager,
@@ -30,8 +31,11 @@ class LayersRenderingSystem internal constructor(
                 return
             }
 
-            val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>().toList()
-            myDirtyLayers = dirtyLayerEntities.map(EcsEntity::id)
+            val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>()
+                .toList()
+                .takeIf(List<EcsEntity>::isNotEmpty)
+                ?: getEntities<BasemapLayerComponent>().toList()
+
             updated = dirtyLayerEntities.isNotEmpty()
             val dirtyLayers = dirtyLayerEntities.map { it.get<CanvasLayerComponent>().canvasLayer }
             myDirtyLayers = dirtyLayerEntities.map(EcsEntity::id)

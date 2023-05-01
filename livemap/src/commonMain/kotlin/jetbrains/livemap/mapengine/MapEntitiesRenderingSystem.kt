@@ -7,6 +7,7 @@ package jetbrains.livemap.mapengine
 
 import jetbrains.datalore.base.typedGeometry.unaryMinus
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -15,7 +16,8 @@ import jetbrains.livemap.core.graphics.RenderObject
 import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.mapengine.camera.CameraComponent
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 // Common rendering data - used for lines, polygons, pies, bars, points.
 class RenderableComponent : EcsComponent {
@@ -49,18 +51,29 @@ internal class MapEntitiesRenderingSystem(
                 layerCtx.translate(-scaleOrigin)
             }
 
-            for (mapEntity in getEntitiesById(children.entities).filter { it.tryGet<ScreenLoopComponent>() != null }) {
+            for (mapEntity in getEntitiesById(children.entities)) {
                 val renderer = mapEntity.get<RenderableComponent>().renderer
-                mapEntity.get<ScreenLoopComponent>().origins.forEach { origin ->
-                    context.mapRenderContext.draw(
-                        layerCtx,
-                        origin,
-                        object : RenderObject {
-                            override fun render(ctx: Context2d) {
-                                renderer.render(mapEntity, ctx)
+                //val origins = mapEntity.get<ScreenLoopComponent>().origins
+
+                run {
+                    val worldOrigin = mapEntity.tryGet<WorldOriginComponent>()?.origin ?: return@run
+                    val screenDimension = mapEntity.tryGet<ScreenDimensionComponent>()?.dimension ?: Client.ZERO_VEC
+                    val screenOrigin = context.mapRenderContext.viewport.getViewCoord(worldOrigin)
+                    val calculatedOrigins = context.mapRenderContext.viewport.getOrigins(screenOrigin, screenDimension)
+
+                    calculatedOrigins.forEach {
+
+                        context.mapRenderContext.draw(
+                            layerCtx,
+                            it,
+                            object : RenderObject {
+                                override fun render(ctx: Context2d) {
+                                    renderer.render(mapEntity, ctx)
+                                }
                             }
-                        }
-                    )
+                        )
+
+                    }
                 }
             }
 

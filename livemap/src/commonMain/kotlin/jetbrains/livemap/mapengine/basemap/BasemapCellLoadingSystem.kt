@@ -18,8 +18,10 @@ import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.basemap.BasemapCellRendererComponent.Companion.NULL_RENDERER
 import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugCellRenderer
-import jetbrains.livemap.mapengine.placement.*
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent.Rounding.FLOOR
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.CellKey
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
 
@@ -84,7 +86,6 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
                     .addComponents {
                         + WorldOriginComponent(tileRect.origin)
                         + RenderableComponent().apply { NULL_RENDERER }
-                        + ScreenLoopComponent().apply { rounding = FLOOR }
                         + ScreenOriginComponent()
                         + ScreenDimensionComponent().apply {
                             dimension = WorldDimension2ScreenUpdateSystem.world2Screen(tileRect.dimension, zoom)

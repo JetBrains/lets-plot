@@ -34,7 +34,3 @@ class ScreenDimensionComponent : EcsComponent {
 class ScreenOriginComponent : EcsComponent {
     var origin: Vec<Client> = Client.ZERO_VEC
 }
-
-class ScreenOffsetComponent : EcsComponent {
-    var offset: Vec<Client> = Client.ZERO_VEC
-}

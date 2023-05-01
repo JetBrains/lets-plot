@@ -10,7 +10,6 @@ import jetbrains.livemap.core.layers.RenderTarget
 class DevParams(private val devParams: Map<*, *>) {
 
     companion object {
-        val ENABLE_SCALING = BoolParam("scalable_symbols", true)
         val SHOW_RESET_POSITION_ACTION = BoolParam("show_reset_position_action", true)
 
         val PERF_STATS = BoolParam("perf_stats", false)

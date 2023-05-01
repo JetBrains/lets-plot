@@ -36,7 +36,6 @@ import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
@@ -148,7 +147,6 @@ class PathBuilder(
                     +WorldOriginComponent(bbox.origin)
                     +WorldGeometryComponent().apply { geometry = Geometry.of(visGeometry) }
                     +WorldDimensionComponent(bbox.dimension)
-                    +ScreenLoopComponent()
                     +ScreenOriginComponent()
                     +NeedLocationComponent
                     +NeedCalculateLocationComponent

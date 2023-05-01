@@ -20,7 +20,9 @@ import jetbrains.livemap.core.graphics.TextMeasurer
 import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
-import jetbrains.livemap.mapengine.placement.*
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class Texts(
@@ -112,9 +114,7 @@ class TextBuilder(
                 }
                 +TextSpecComponent().apply { this.textSpec = textSpec }
                 +WorldOriginComponent(worldPoint)
-                +ScreenLoopComponent()
                 +ScreenOriginComponent()
-                +ScreenOffsetComponent()
                 +ScreenDimensionComponent().apply {
                     dimension = textSpec.dimension
                 }

@@ -64,7 +64,6 @@ import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugDataSystem
 import jetbrains.livemap.mapengine.camera.*
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopsUpdateSystem
 import jetbrains.livemap.mapengine.placement.WorldDimension2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.viewport.Viewport
@@ -255,7 +254,7 @@ class LiveMap(
                 WorldDimension2ScreenUpdateSystem(componentManager),
                 WorldOrigin2ScreenUpdateSystem(componentManager),
                 WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
-                ScreenLoopsUpdateSystem(componentManager),
+                //ScreenLoopsUpdateSystem(componentManager),
                 HoverObjectDetectionSystem(myUiService, componentManager),
 
                 // Charts

@@ -8,13 +8,11 @@ package jetbrains.livemap.demo
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
-import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.model.Cities.GERMANY
 
 class FragmentDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
-            devParams = DevParams(mapOf(DevParams.ENABLE_SCALING.key to true))
             geocodingService = Services.devGeocodingService()
             layers {
 

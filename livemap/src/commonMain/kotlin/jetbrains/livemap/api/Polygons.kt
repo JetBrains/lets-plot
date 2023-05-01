@@ -10,7 +10,6 @@ import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.values.Color
-import jetbrains.livemap.Client
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.Renderers.PolygonRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -27,7 +26,6 @@ import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
@@ -114,7 +112,6 @@ class PolygonsBuilder(
                 +WorldOriginComponent(worldBbox.origin)
                 +WorldGeometryComponent().apply { this.geometry = Geometry.of(worldGeometry) }
                 +WorldDimensionComponent(worldBbox.dimension)
-                +ScreenLoopComponent()
                 +ScreenOriginComponent()
                 +ScaleComponent()
                 +NeedLocationComponent
@@ -141,11 +138,8 @@ class PolygonsBuilder(
                 + RegionIdComponent(geoObject.id)
                 + RegionFragmentsComponent()
                 + RegionBBoxComponent(geoObject.bbox)
-                + ScreenLoopComponent()
                 + NeedLocationComponent
                 + NeedCalculateLocationComponent
-            }.apply {
-                get<ScreenLoopComponent>().origins = listOf(Client.ZERO_VEC)
             }
     }
 }

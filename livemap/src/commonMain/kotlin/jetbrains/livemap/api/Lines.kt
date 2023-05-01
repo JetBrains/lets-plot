@@ -23,7 +23,6 @@ import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
@@ -91,7 +90,6 @@ class LineBuilder(
         +WorldOriginComponent(bbox.origin)
         +WorldGeometryComponent().apply { geometry = Geometry.of(line) }
         +WorldDimensionComponent(bbox.dimension)
-        +ScreenLoopComponent()
         +ScreenOriginComponent()
     }
         .remove<NeedLocationComponent>()
