@@ -289,16 +289,14 @@ class GeomLayerBuilder(
                     // Check that the settings are consistent
                     // and set the aesthetics needed for that geometry.
                     val definedAes = allRenderedAes.filter { aes -> hasBinding(aes) || hasConstant(aes) }
-                    val verticalAesSet = setOf(Aes.X, Aes.YMIN, Aes.YMAX)
-                    val horizontalAesSet = setOf(Aes.Y, Aes.XMIN, Aes.XMAX)
-                    val isVertical = verticalAesSet.all { aes -> aes in definedAes }
-                    val isHorizontal = horizontalAesSet.all { aes -> aes in definedAes }
+                    val isVertical = setOf(Aes.YMIN, Aes.YMAX).all { aes -> aes in definedAes }
+                    val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).all { aes -> aes in definedAes }
                     require(!(isVertical && isHorizontal)) {
-                        "For errorbar either x, ymin, ymax or y, xmin, xmax must be specified."
+                        "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
                     }
                     allRenderedAes - when (isVertical) {
-                        true -> horizontalAesSet + Aes.HEIGHT
-                        false -> verticalAesSet + Aes.WIDTH
+                        true -> setOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
+                        false -> setOf(Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
                     }
                 } else {
                     allRenderedAes
