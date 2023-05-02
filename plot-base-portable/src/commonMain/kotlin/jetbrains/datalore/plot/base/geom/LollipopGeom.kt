@@ -114,8 +114,11 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         return when (direction) {
             Direction.ORTHOGONAL_TO_AXIS -> DoubleVector(head.x, slope * head.x + intercept)
             Direction.ALONG_AXIS -> {
-                require(slope != 0.0) { "For current combination of parameters lollipop sticks are parallel to the baseline" }
-                DoubleVector((head.y - intercept) / slope, head.y)
+                if (slope == 0.0) {
+                    DoubleVector(intercept, head.y)
+                } else {
+                    DoubleVector((head.y - intercept) / slope, head.y)
+                }
             }
             Direction.SLOPE -> {
                 val baseX = (head.x + slope * (head.y - intercept)) / (1 + slope.pow(2))

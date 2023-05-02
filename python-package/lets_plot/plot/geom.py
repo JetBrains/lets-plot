@@ -6295,6 +6295,11 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - linewidth : stick width.
     - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
+    |
+
+    When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
+    So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
+
     Examples
     --------
     .. jupyter-execute::

@@ -305,18 +305,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                         )
                     }
                 } ?: Direction.ORTHOGONAL_TO_AXIS
-                val slope = if (opts.hasOwn(Lollipop.SLOPE)) {
-                    opts.getDouble(Lollipop.SLOPE)!!
-                } else {
-                    0.0
-                }
-                if (direction == Direction.ALONG_AXIS && slope == 0.0) {
-                    throw IllegalArgumentException(
-                        "Incompatible lollipop parameters: " +
-                        "${Lollipop.SLOPE}=$slope, " +
-                        "${Lollipop.DIRECTION}='${directionValue}'"
-                    )
-                }
+                val slope = opts.getDouble(Lollipop.SLOPE) ?: 0.0
                 LollipopGeom().apply {
                     this.direction = direction
                     this.slope = slope
