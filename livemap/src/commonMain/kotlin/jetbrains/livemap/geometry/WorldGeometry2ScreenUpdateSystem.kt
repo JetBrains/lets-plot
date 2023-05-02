@@ -18,8 +18,6 @@ import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.mapengine.LiveMapContext
-import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
-import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 
@@ -74,10 +72,8 @@ class WorldGeometry2ScreenUpdateSystem(
 
     companion object {
         private val COMPONENT_TYPES = listOf(
-            ZoomFractionChangedComponent::class,
             WorldOriginComponent::class,
             WorldGeometryComponent::class,
-            ScreenOriginComponent::class,
             ParentLayerComponent::class
         )
     }

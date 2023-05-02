@@ -18,7 +18,6 @@ import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
-import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorComponent
@@ -114,7 +113,6 @@ class PointBuilder(
 
                 +WorldOriginComponent(worldPoint)
                 +ScreenDimensionComponent()
-                +ScreenOriginComponent()
 
                 if (!nonInteractive) {
                     +LocatorComponent(PointLocator)

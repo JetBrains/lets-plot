@@ -21,7 +21,6 @@ import jetbrains.livemap.core.layers.LayerKind
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
-import jetbrains.livemap.mapengine.placement.ScreenOriginComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
@@ -114,7 +113,6 @@ class TextBuilder(
                 }
                 +TextSpecComponent().apply { this.textSpec = textSpec }
                 +WorldOriginComponent(worldPoint)
-                +ScreenOriginComponent()
                 +ScreenDimensionComponent().apply {
                     dimension = textSpec.dimension
                 }

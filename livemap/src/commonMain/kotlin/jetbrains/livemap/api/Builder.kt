@@ -39,9 +39,6 @@ import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.mapengine.basemap.Tilesets.chessboard
-import jetbrains.livemap.mapengine.camera.CameraListenerComponent
-import jetbrains.livemap.mapengine.camera.CenterChangedComponent
-import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportHelper
 import jetbrains.livemap.toClientPoint
@@ -184,9 +181,6 @@ fun mapEntity(
         .createEntity(name)
         .addComponents {
             + parentLayerComponent
-            + CameraListenerComponent()
-            + CenterChangedComponent()
-            + ZoomFractionChangedComponent()
         }
 }
 

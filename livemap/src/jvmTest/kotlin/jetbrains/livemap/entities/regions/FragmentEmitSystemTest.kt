@@ -20,7 +20,6 @@ import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.camera.CameraInputSystem
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
@@ -215,7 +214,6 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             FragmentComponent::class,
             WorldDimensionComponent::class,
             WorldOriginComponent::class,
-            ScreenLoopComponent::class,
             ScaleComponent::class,
             ParentLayerComponent::class
         )
