@@ -17,14 +17,14 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
 
 
-- the 'newline' character (`\n`) now works as `line break` in legend text ([[#726](https://github.com/JetBrains/lets-plot/issues/726)])
+- The 'newline' character (`\n`) now works as `line break` in legend text ([[#726](https://github.com/JetBrains/lets-plot/issues/726)])
 
-   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
 
 
--  Horizontal error bars ([[#735](https://github.com/JetBrains/lets-plot/issues/735)]).
+- Horizontal error bars and vertical "dodge" ([[#735](https://github.com/JetBrains/lets-plot/issues/735)]).
  
-   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/horizontal_error_bars.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/horizontal_error_bars.ipynb).
 
        
 - Colorbar in `geom_imshow()`. Parameters `show_legend` and `color_by` [[#717](https://github.com/JetBrains/lets-plot/issues/717)].
@@ -32,7 +32,14 @@
 
 ### Changed
 
-- [BREAKING] `geom_dotplot()` and `geom_ydotplot()` no longer supports parameter `stat`. Only default stats make sense for these geometries. 
+- [BREAKING] `geom_dotplot()` and `geom_ydotplot()` no longer supports parameter `stat`. Only default stats make sense for these geometries.
+
+
+- Position adjustment settings:
+    - `width, height` parameters of `geom_jitter()` have priority over the `width, height` parameters of `position_jitter()` function;
+    - `geom_text(), geom_label()` use `stat='identity'` by default;
+    - `nudge_x, nudge_y` parameters of `geom_text(), geom_label()` have priority over `x, y` parameters of position_nudge() function.
+
 
 ### Fixed
 
@@ -59,3 +66,4 @@
 - Export to SVG fails if breaks are given by integers [[#763](https://github.com/JetBrains/lets-plot/issues/763)].
 - Remove hard IPython dependency [[#749](https://github.com/JetBrains/lets-plot/issues/749)].
 - livemap: doesn't work well with gggrid [[#750](https://github.com/JetBrains/lets-plot/issues/750)].
+- Tooltips bug [[LPK-176](https://github.com/JetBrains/lets-plot-kotlin/issues/176)].
