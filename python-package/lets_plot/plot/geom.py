@@ -6298,7 +6298,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     |
 
     When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
-    So, in this case, `dir='h'` will be interpreted as `dir='v'`.
+    So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
 
     Examples
     --------

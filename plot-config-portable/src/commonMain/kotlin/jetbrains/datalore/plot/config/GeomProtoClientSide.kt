@@ -307,11 +307,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 } ?: Direction.ORTHOGONAL_TO_AXIS
                 val slope = opts.getDouble(Lollipop.SLOPE) ?: 0.0
                 LollipopGeom().apply {
-                    this.direction = if (slope == 0.0 && direction == Direction.ALONG_AXIS) {
-                        Direction.ORTHOGONAL_TO_AXIS
-                    } else {
-                        direction
-                    }
+                    this.direction = direction
                     this.slope = slope
                     if (opts.hasOwn(Lollipop.INTERCEPT)) {
                         this.intercept = opts.getDouble(Lollipop.INTERCEPT)!!
