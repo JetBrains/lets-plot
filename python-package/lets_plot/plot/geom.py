@@ -100,7 +100,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4612,7 +4612,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4747,7 +4747,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - sample : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4862,7 +4862,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -6290,7 +6290,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
