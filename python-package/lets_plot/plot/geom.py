@@ -100,7 +100,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -578,7 +578,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : filling color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
@@ -731,7 +731,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width. Define bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
@@ -882,7 +882,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1033,7 +1033,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - stroke : width of the dot border.
 
     Examples
@@ -1162,7 +1162,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     Computed variables:
 
-    - ..count.. : number of points with coordinates in the same bin. By default, associated with the `fill` aesthetic.
+    - ..count.. : number of points with coordinates in the same bin.
 
     `geom_bin2d()` understands the following aesthetics mappings:
 
@@ -1170,7 +1170,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1314,7 +1314,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
@@ -1445,7 +1445,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
 
     Examples
     --------
@@ -1679,7 +1679,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -1803,7 +1803,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
@@ -2177,7 +2177,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
     - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : color of the geometry areas. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
 
     Examples
     --------
@@ -2320,7 +2320,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2500,7 +2500,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
 
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of the geometry internals. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -3020,7 +3020,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ymax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
@@ -3220,7 +3220,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'ydensity' stat to compute weighted density.
@@ -3426,7 +3426,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - stroke : width of the dot border.
 
     Examples
@@ -3599,7 +3599,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'densityridges' stat to compute weighted density.
@@ -3735,7 +3735,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ymax : y-axis coordinates of the upper bound.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -3850,7 +3850,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -4003,7 +4003,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density' stat to compute weighted density.
@@ -4405,7 +4405,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
 
     |
 
@@ -4612,7 +4612,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4747,7 +4747,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - sample : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4862,7 +4862,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -5402,7 +5402,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ymax : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -6109,7 +6109,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - slice : values associated to pie sectors.
     - explode : values to explode slices away from their center point, detaching it from the main pie.
     - size : pie diameter.
-    - fill : color of geometry filling. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
 
@@ -6290,7 +6290,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
     - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - fill : color to paint shape's inner area. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
