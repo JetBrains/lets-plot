@@ -23,7 +23,7 @@ Upgrade `Lets-Plot` version to just released RC version:
 
 `conda activate my_test_env`
 
-`conda install jupyter`
+`pip install jupyter`
 
 ##### 3. Open and evaluate the example notebooks.
                                                    
