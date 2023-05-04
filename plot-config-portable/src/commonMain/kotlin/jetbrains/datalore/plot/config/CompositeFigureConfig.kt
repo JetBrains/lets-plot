@@ -24,7 +24,7 @@ import jetbrains.datalore.plot.config.Option.SubPlots.Grid.VSPACE
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout
 import jetbrains.datalore.plot.config.Option.SubPlots.Layout.NAME
 
-internal class CompositeFigureConfig(
+class CompositeFigureConfig(
     opts: Map<String, Any>,
     computationMessagesHandler: ((List<String>) -> Unit)
 ) : OptionsAccessor(opts) {

@@ -40,6 +40,8 @@ class LayerOptions : Options() {
     var shape: PointShape? by map(Aes.SHAPE)
     var linetype: LineType? by map(Aes.LINETYPE)
     var size: Double? by map(Aes.SIZE)
+    var stroke: Double? by map(Aes.STROKE)
+    var linewidth: Double? by map(Aes.LINEWIDTH)
     var width: Double? by map(Aes.WIDTH)
     var height: Double? by map(Aes.HEIGHT)
     var violinwidth: Double? by map(Aes.VIOLINWIDTH)

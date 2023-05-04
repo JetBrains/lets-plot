@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -26,8 +27,7 @@ open class QuantilesHelper(
         }
 
         // Fix semi-transparent quantile edges when colored/filled with a single color
-        val needToSplit = dataPoints.distinctBy { Pair(it.color(), it.fill()) }.size > 1
-        if (!needToSplit) {
+        if (!needToSplit(dataPoints)) {
             return listOf(dataPoints.toList())
         }
 
@@ -84,6 +84,21 @@ open class QuantilesHelper(
         }
 
         return quantileLineElements
+    }
+
+    // true if in any group there is at least two distinct values of color or fill aesthetic
+    private fun needToSplit(dataPoints: Iterable<DataPointAesthetics>): Boolean {
+        val groupColors = mutableMapOf<Int?, Pair<Color?, Color?>>()
+        for (p in dataPoints) {
+            val pointColors = Pair(p.fill(), p.color())
+
+            when {
+                p.group() !in groupColors -> groupColors[p.group()] = pointColors
+                groupColors[p.group()] == pointColors -> continue
+                groupColors[p.group()] != pointColors -> return true
+            }
+        }
+        return false
     }
 
     private fun iterateThroughSortedDataPoints(

@@ -14,7 +14,7 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
-class PathLocator : Locator {
+object PathLocator : Locator {
     override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
         if (!target.contains(LOCATABLE_COMPONENTS)) {
             return null
@@ -22,10 +22,17 @@ class PathLocator : Locator {
 
         val strokeRadius: Double = target.get<ChartElementComponent>().strokeWidth / 2
         target.get<ScreenLoopComponent>().origins.forEach { origin ->
-            if (isCoordinateInPath(coord - origin, strokeRadius, target.get<ScreenGeometryComponent>().geometry.multiLineString)) {
+            if (isCoordinateInPath(
+                    coord - origin,
+                    strokeRadius,
+                    target.get<ScreenGeometryComponent>().geometry.multiLineString
+                )
+            ) {
                 return HoverObject(
                     layerIndex = target.get<IndexComponent>().layerIndex,
-                    index = target.get<IndexComponent>().index
+                    index = target.get<IndexComponent>().index,
+                    distance = 0.0,
+                    this
                 )
             }
         }
@@ -33,7 +40,14 @@ class PathLocator : Locator {
         return null
     }
 
-    private fun isCoordinateInPath(coord: Vec<Client>, strokeRadius: Double, multiLineString: MultiLineString<Client>): Boolean {
+    // Special logic is not yet determined.
+    override fun reduce(hoverObjects: Collection<HoverObject>): HoverObject? = hoverObjects.firstOrNull()
+
+    private fun isCoordinateInPath(
+        coord: Vec<Client>,
+        strokeRadius: Double,
+        multiLineString: MultiLineString<Client>
+    ): Boolean {
         for (lineString in multiLineString) {
             val bbox = lineString.bbox ?: continue
 
@@ -47,7 +61,5 @@ class PathLocator : Locator {
         return false
     }
 
-    companion object {
-        val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
-    }
+    private val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
 }

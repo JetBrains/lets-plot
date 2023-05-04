@@ -24,7 +24,7 @@ __all__ = ['geom_point', 'geom_path', 'geom_line',
            'geom_density2d', 'geom_density2df', 'geom_jitter',
            'geom_qq', 'geom_qq2', 'geom_qq_line', 'geom_qq2_line',
            'geom_freqpoly', 'geom_step', 'geom_rect', 'geom_segment',
-           'geom_text', 'geom_label', 'geom_pie']
+           'geom_text', 'geom_label', 'geom_pie', 'geom_lollipop']
 
 
 def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
@@ -103,6 +103,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     |
 
@@ -947,7 +948,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  **other_args)
 
 
-def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
+def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
                  binwidth=None,
                  bins=None,
                  method=None,
@@ -972,10 +973,6 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='dotplot'
-        The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'dotplot' (depends on `method` parameter).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -1037,6 +1034,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
+    - stroke : width of the dot border.
 
     Examples
     --------
@@ -1085,7 +1083,7 @@ def geom_dotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampli
     return _geom('dotplot',
                  mapping=mapping,
                  data=data,
-                 stat=stat,
+                 stat=None,
                  position=None,
                  show_legend=show_legend,
                  sampling=sampling,
@@ -1534,17 +1532,18 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     Notes
     -----
-    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`.
+    `geom_errorbar()` represents a vertical interval, defined by `x`, `ymin`, `ymax`,
+     or a horizontal interval, defined by `y`, `xmin`, `xmax`.
 
     `geom_errorbar()` understands the following aesthetics mappings:
 
-    - x : x-axis coordinates.
-    - ymin : lower bound for error bar.
-    - ymax : upper bound for error bar.
+    - x or y: x-axis or y-axis coordinates for vertical or horizontal error bar, respectively.
+    - ymin or xmin: lower bound for vertical or horizontal error bar, respectively.
+    - ymax or xmax: upper bound for vertical or horizontal error bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - size : line width. Define bar line width.
-    - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
+    - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
     Examples
@@ -1585,6 +1584,23 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                           data=err_df, width=.5, color='red') + \\
             geom_jitter(aes(x='x', y='y'), data=df, width=.2, size=1) + \\
             scale_x_continuous(breaks=list(range(10)))
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'xmin': [0.2, 4.6, 1.6, 3.5],
+            'xmax': [1.5, 5.3, 3.0, 4.4],
+            'y': ['a', 'a', 'b', 'b'],
+            'c': ['gr1', 'gr2', 'gr1', 'gr2']
+        }
+        ggplot(data) + \\
+            geom_errorbar(aes(y='y', xmin='xmin', xmax='xmax', color='c'), height=0.1, size=2)
 
     """
     return _geom('errorbar',
@@ -1791,6 +1807,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - size : line width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -2916,7 +2933,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
                  orientation=None,
                  fatten=None,
-                 outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None,
+                 outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None, outlier_stroke=None,
                  varwidth=None,
                  whisker_width=None,
                  color_by=None, fill_by=None,
@@ -2961,6 +2978,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Default shape aesthetic for outliers, an integer from 0 to 25.
     outlier_size : float
         Default size aesthetic for outliers.
+    outlier_stroke : float
+        Default width of the border for outliers.
     varwidth : bool, default=False
         If False, make a standard box plot.
         If True, boxes are drawn with widths proportional to the square-roots
@@ -3098,6 +3117,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  outlier_fill=outlier_fill,
                  outlier_shape=outlier_shape,
                  outlier_size=outlier_size,
+                 outlier_stroke=outlier_stroke,
                  varwidth=varwidth,
                  whisker_width=whisker_width,
                  color_by=color_by, fill_by=fill_by,
@@ -3317,7 +3337,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  **other_args)
 
 
-def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampling=None, tooltips=None,
+def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, tooltips=None,
                   binwidth=None,
                   bins=None,
                   method=None,
@@ -3343,10 +3363,6 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     data : dict or `DataFrame` or `polars.DataFrame`
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
-    stat : str, default='ydotplot'
-        The statistical transformation to use on the data for this layer, as a string.
-        Supported transformations: 'identity' (leaves the data unchanged),
-        'ydotplot' (depends on `method` parameter).
     show_legend : bool, default=True
         False - do not show legend for this layer.
     sampling : `FeatureSpec`
@@ -3411,6 +3427,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
     - fill : color of geometry filling.
+    - stroke : width of the dot border.
 
     Examples
     --------
@@ -3470,7 +3487,7 @@ def geom_ydotplot(mapping=None, *, data=None, stat=None, show_legend=None, sampl
     return _geom('ydotplot',
                  mapping=mapping,
                  data=data,
-                 stat=stat,
+                 stat=None,
                  position=None,
                  show_legend=show_legend,
                  sampling=sampling,
@@ -4598,6 +4615,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4732,6 +4750,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -4846,6 +4865,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
 
     Examples
     --------
@@ -5646,7 +5666,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='nudge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -5834,7 +5854,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         'bin' (counts number of points with x-axis coordinate in the same bin),
         'smooth' (performs smoothing - linear default),
         'density' (computes and draws kernel density estimate).
-    position : str or `FeatureSpec`, default='nudge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -6197,6 +6217,152 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  labels=labels,
                  map=map, map_join=map_join, use_crs=use_crs,
                  hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
+                 **other_args)
+
+
+def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+                  orientation=None,
+                  dir=None, fatten=None, slope=None, intercept=None,
+                  color_by=None, fill_by=None,
+                  **other_args):
+    """
+    Draw lollipop chart.
+
+    Parameters
+    ----------
+    mapping : `FeatureSpec`
+        Set of aesthetic mappings created by `aes()` function.
+        Aesthetic mappings describe the way that variables in the data are
+        mapped to plot "aesthetics".
+    data : dict or `DataFrame`
+        The data to be displayed in this layer. If None, the default, the data
+        is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with same x-axis coordinate),
+        'bin' (counts number of points with x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate).
+    position : str or `FeatureSpec`, default='identity'
+        Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
+        or the result of a call to a position adjustment function.
+    show_legend : bool, default=True
+        False - do not show legend for this layer.
+    sampling : `FeatureSpec`
+        Result of the call to the `sampling_xxx()` function.
+        To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
+    orientation : {'x', 'y'}, default='x'
+        Specify the axis that the baseline should run along.
+        Possible values: 'x', 'y'.
+    dir : {'v', 'h', 's'}, default='v'
+        Direction of the lollipop stick.
+        'v' for vertical, 'h' for horizontal, 's' for orthogonal to the baseline.
+    fatten : float, default=2.5
+        A multiplicative factor applied to size of the point.
+    slope : float
+        The baseline slope.
+    intercept : float
+        The value of y at the point where the baseline crosses the y axis.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
+        Define the color aesthetic for the geometry.
+    fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
+        Define the fill aesthetic for the geometry.
+    other_args
+        Other arguments passed on to the layer.
+        These are often aesthetics settings used to set an aesthetic to a fixed value,
+        like color='red', fill='blue', size=3 or shape=21.
+        They may also be parameters to the paired geom/stat.
+
+    Returns
+    -------
+    `LayerSpec`
+        Geom object specification.
+
+    Notes
+    -----
+    `geom_lollipop()` understands the following aesthetics mappings:
+
+    - x : x-axis value.
+    - y : y-axis value.
+    - alpha : transparency level of the point. Accept values between 0 and 1.
+    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - shape : shape of the point, an integer from 0 to 25.
+    - size : size of the point.
+    - stroke : width of the shape border. Applied only to the shapes having border.
+    - linewidth : stick width.
+    - linetype : type of the stick line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
+
+    |
+
+    When `slope=0`, the baseline cannot be parallel to the lollipop sticks.
+    So, in this case, if `dir='h'`, the baseline will becomes vertical, as for infinity slope.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 7
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [-3, -2, -1, 0, 1, 2, 3],
+            'y': [2, 3, -2, 3, -1, 0, 4],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop()
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 8-9
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        np.random.seed(42)
+        data = {'v': np.random.randint(5, size=20)}
+        ggplot(data, aes(y='v')) + \\
+            geom_vline(xintercept=10) + \\
+            geom_lollipop(stat='count', orientation='y', intercept=10, \\
+                          fatten=5, linewidth=2)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 10-11
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [-3, -2, -1, 0, 1, 2, 3],
+            'y': [-1, -3, -2, 3, -1, 2, -1],
+            'g': ['a', 'a', 'b', 'b', 'b', 'a', 'a'],
+        }
+        ggplot(data, aes('x', 'y')) + \\
+            geom_abline(slope=1, size=1.5, color="black") + \\
+            geom_lollipop(aes(fill='g'), slope=1, shape=22, \\
+                          size=5, stroke=2, color="black") + \\
+            coord_fixed()
+
+    """
+    return _geom('lollipop',
+                 mapping=mapping,
+                 data=data,
+                 stat=stat,
+                 position=position,
+                 show_legend=show_legend,
+                 sampling=sampling,
+                 tooltips=tooltips,
+                 orientation=orientation,
+                 dir=dir, fatten=fatten, slope=slope, intercept=intercept,
+                 color_by=color_by, fill_by=fill_by,
                  **other_args)
 
 

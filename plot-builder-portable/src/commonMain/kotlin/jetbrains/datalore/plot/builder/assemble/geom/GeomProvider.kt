@@ -423,5 +423,14 @@ abstract class GeomProvider private constructor(val geomKind: GeomKind) {
                 supplier
             ).build()
         }
+
+        fun lollipop(supplier: () -> Geom): GeomProvider {
+            return GeomProviderBuilder(
+                GeomKind.LOLLIPOP,
+                AestheticsDefaults.lollipop(),
+                LollipopGeom.HANDLES_GROUPS,
+                supplier
+            ).build()
+        }
     }
 }

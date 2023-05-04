@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 class YOrientationBoxplot {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            pointsAndBoxplots(),
+            pointsAndBoxplots_tmp(),
         )
     }
 
@@ -44,6 +44,25 @@ class YOrientationBoxplot {
         return map
     }
 
+    private fun pointsAndBoxplots_tmp(): MutableMap<String, Any> {
+        val spec = """
+            {
+                'mapping': {'x' : 'x', 'y' : 'y'},
+                'kind': 'plot',
+                'layers': [
+                    {
+                        'geom': 'boxplot',
+                        'orientation' : 'y'
+                    }
+                ]
+            }
+         """.trimIndent()
+
+        val map = parsePlotSpec(spec)
+        map["data"] = data
+        return map
+    }
+
 
     companion object {
         private val x = listOf(
@@ -52,16 +71,23 @@ class YOrientationBoxplot {
             -2.44764864, 0.62140045, -2.78634844, -0.77798494, -1.84775972,
             -0.68368036, -1.16449909, -2.54485003, -2.2036209, -1.68242049
         )
+//        private val y = listOf(
+//            -1.52369374, 0.10800142, -0.04456882, 0.24980294, 0.07656286,
+//            1.18430493, 0.60070862, -1.3039589, 0.54056665, 0.4756451,
+//            1.23440038, -2.64721071, 0.86629033, -1.01436946, -0.30687369,
+//            -1.23137015, -0.41737117, 0.54053481, -0.71151953, -1.37503288
+//        )
         private val y = listOf(
-            -1.52369374, 0.10800142, -0.04456882, 0.24980294, 0.07656286,
-            1.18430493, 0.60070862, -1.3039589, 0.54056665, 0.4756451,
-            1.23440038, -2.64721071, 0.86629033, -1.01436946, -0.30687369,
-            -1.23137015, -0.41737117, 0.54053481, -0.71151953, -1.37503288
+            "A", "A", "A", "A", "A",
+    "A", "A", "A", "A", "A",
+    "A", "A", "A", "A", "A",
+    "A", "A", "A", "A", "A"
         )
 
         private val data = mapOf(
             "x" to x.map { it - 5 },
-            "y" to y.map { it / 3 }
+//            "y" to y.map { it / 3 }
+            "y" to y
         )
     }
 }

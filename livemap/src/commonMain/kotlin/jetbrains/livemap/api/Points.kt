@@ -88,7 +88,7 @@ class PointBuilder(
                     sizeScalingRange = this@PointBuilder.sizeScalingRange
                     alphaScalingEnabled = this@PointBuilder.alphaScalingEnabled
                     when (shape) {
-                        in 1..14 -> {
+                        in 0..14 -> {
                             strokeColor = this@PointBuilder.strokeColor
                             strokeWidth = this@PointBuilder.strokeWidth
                         }
@@ -119,7 +119,7 @@ class PointBuilder(
                 +ScreenOriginComponent()
 
                 if (!nonInteractive) {
-                    +LocatorComponent(PointLocator())
+                    +LocatorComponent(PointLocator)
                 }
             }
         }

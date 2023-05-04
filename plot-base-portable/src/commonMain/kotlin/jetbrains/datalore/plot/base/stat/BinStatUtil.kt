@@ -213,6 +213,9 @@ object BinStatUtil {
             .map { it!! }
             .sorted()
         var binsData = BinsData(emptyList(), emptyList(), emptyList(), emptyList())
+        if (sortedX.isEmpty()) {
+            return binsData
+        }
         var stack = mutableListOf(sortedX.first())
         for (i in 1 until sortedX.size) {
             if (sortedX[i] - stack.first() < binWidth) {

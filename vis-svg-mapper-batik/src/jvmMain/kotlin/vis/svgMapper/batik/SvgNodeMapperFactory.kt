@@ -7,7 +7,10 @@ package jetbrains.datalore.vis.svgMapper.batik
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
-import jetbrains.datalore.vis.svg.*
+import jetbrains.datalore.vis.svg.SvgElement
+import jetbrains.datalore.vis.svg.SvgImageElementEx
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgTextNode
 import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.dom.AbstractDocument
@@ -23,16 +26,6 @@ internal class SvgNodeMapperFactory(private val myDoc: AbstractDocument, private
 
         if (src is SvgImageElementEx) {
             src = src.asImageElement(RGBEncoderAwt())
-        }
-
-        if (src is SvgImageElement) {
-            // Workaround:
-            // current Batik version (1.7) do not support "image-rendering: pixelated" style
-            // to avoid exception remove 'style' attribute altogether
-            val sourceBatik = SvgImageElement()
-            SvgUtils.copyAttributes(src as SvgElement, sourceBatik)
-            sourceBatik.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, null)
-            src = sourceBatik
         }
 
         return when (src) {

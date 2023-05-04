@@ -51,7 +51,7 @@ class PointConverterTest {
 
         matcher
             .radius(eq(3.0))
-            .strokeWidth(eq(1.0))
+            .strokeWidth(eq(0.55)) // STROKE_INIT * UNIT_SHAPE_SIZE / 2.0, where STROKE_INIT == 0.5 and UNIT_SHAPE_SIZE == 2.2
 
         assertMapObject(0)
         assertMapObject(1)
@@ -65,7 +65,7 @@ class PointConverterTest {
 
         matcher
             .radius(eq(5.0))
-            .strokeWidth(eq(1.0))
+            .strokeWidth(eq(0.55))
 
         assertMapObject(0)
         assertMapObject(1)

@@ -20,7 +20,7 @@ class GeomInteractionBuilder constructor(
     private val tooltipOutlierAes: List<Aes<*>>,
 ) {
 
-    private var myUserTooltipSpec: TooltipSpecification? = null
+    private var myUserTooltipSpec: TooltipSpecification = TooltipSpecification.defaultTooltip()
 
     var ignoreInvisibleTargets: Boolean = false
         private set
@@ -41,10 +41,10 @@ class GeomInteractionBuilder constructor(
         )
 
     val tooltipProperties: TooltipSpecification.TooltipProperties
-        get() = myUserTooltipSpec?.tooltipProperties ?: TooltipSpecification.TooltipProperties.NONE
+        get() = myUserTooltipSpec.tooltipProperties
 
     val tooltipTitle: TooltipLine?
-        get() = myUserTooltipSpec?.tooltipTitle
+        get() = myUserTooltipSpec.tooltipTitle
 
 
     fun tooltipConstants(v: Map<Aes<*>, Any>): GeomInteractionBuilder {
@@ -76,8 +76,8 @@ class GeomInteractionBuilder constructor(
         private val supportedAes: List<Aes<*>>,
         private val axisAes: List<Aes<*>>? = null,
     ) {
-        fun univariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
-            return createBuilder(GeomTooltipSetup.univariateFunction(lookupStrategy))
+        fun xUnivariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
+            return createBuilder(GeomTooltipSetup.xUnivariateFunction(lookupStrategy))
         }
 
         fun bivariateFunction(area: Boolean): GeomInteractionBuilder {

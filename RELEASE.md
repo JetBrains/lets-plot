@@ -124,23 +124,20 @@ Fill `pypi` and `sonatype` sections with credentials.
 
 Publish JVM artifacts from one of build machines:
 
- - `./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository`
- 
- - `./gradlew publishLetsPlotJvmJfxPublicationToMavenRepository`
- 
- - `./gradlew publishLetsPlotJvmBatikPublicationToMavenRepository`
- 
- - `./gradlew publishLetsPlotImageExportPublicationToMavenRepository`
-
- - `./gradlew publishLetsPlotGISPublicationToMavenRepository`
-
- - `./gradlew publishKotlinApiDependenciesToMavenRepository`
+```shell
+./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
+          publishLetsPlotJvmJfxPublicationToMavenRepository \
+          publishLetsPlotJvmBatikPublicationToMavenRepository \
+          publishLetsPlotImageExportPublicationToMavenRepository \
+          publishLetsPlotGISPublicationToMavenRepository \
+          publishKotlinApiDependenciesToMavenRepository
+```
 
 Check all artifacts were uploaded: https://oss.sonatype.org/#stagingRepositories
 
 Close and release repository to the Maven Central:
 
-`./gradlew closeAndReleaseRepository`
+`./gradlew findMavenStagingRepository closeAndReleaseMavenStagingRepository`
 
 This operation can take up to 5 minutes.
 

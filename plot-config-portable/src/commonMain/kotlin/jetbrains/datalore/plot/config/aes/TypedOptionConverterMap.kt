@@ -32,6 +32,8 @@ import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.STROKE
+import jetbrains.datalore.plot.base.Aes.Companion.LINEWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
@@ -74,6 +76,8 @@ internal class TypedOptionConverterMap {
         this.put(LINETYPE, LINETYPE_CVT)
 
         this.put(SIZE, DOUBLE_CVT)
+        this.put(STROKE, DOUBLE_CVT)
+        this.put(LINEWIDTH, DOUBLE_CVT)
         this.put(STACKSIZE, DOUBLE_CVT)
         this.put(WIDTH, DOUBLE_CVT)
         this.put(HEIGHT, DOUBLE_CVT)

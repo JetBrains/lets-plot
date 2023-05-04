@@ -26,7 +26,8 @@ internal class MapEntitiesRenderingSystem(
     componentManager: EcsComponentManager
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
-    override fun updateImpl(context: LiveMapContext, dt: Double) {        onEachEntity2<LayerEntitiesComponent, CanvasLayerComponent>() { _, children, layer ->
+    override fun updateImpl(context: LiveMapContext, dt: Double) {
+        onEachEntity2<LayerEntitiesComponent, CanvasLayerComponent> { _, children, layer ->
             layer.canvasLayer.clearRenderTaskss()
             addRenderTasks(layer, children, context)
         }
@@ -47,7 +48,6 @@ internal class MapEntitiesRenderingSystem(
                 layerCtx.scale(currentScale, currentScale)
                 layerCtx.translate(-scaleOrigin)
             }
-                ?: layerCtx.scale(1.0, 1.0)
 
             for (mapEntity in getEntitiesById(children.entities).filter { it.tryGet<ScreenLoopComponent>() != null }) {
                 val renderer = mapEntity.get<RenderableComponent>().renderer

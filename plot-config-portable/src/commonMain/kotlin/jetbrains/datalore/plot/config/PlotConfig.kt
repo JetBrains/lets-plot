@@ -55,11 +55,13 @@ abstract class PlotConfig(
 
     init {
 
-        val (plotMappings, plotData) = DataMetaUtil.createDataFrame(
-            options = this,
+        val (plotMappings, plotData) = DataConfigUtil.createDataFrame(
             commonData = DataFrame.Builder.emptyFrame(),
+            ownData = ConfigUtil.createDataFrame(get(DATA)),
+            commonMappings = emptyMap(),
+            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
             commonDiscreteAes = emptySet(),
-            commonMappings = emptyMap<Any, Any>(),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
             isClientSide = isClientSide
         )
 
@@ -69,12 +71,12 @@ abstract class PlotConfig(
             update(MAPPING, plotMappings)
         }
 
-        layerConfigs = createLayerConfigs(sharedData)
+        layerConfigs = createLayerConfigs(sharedData, isClientSide)
 
         // build all scales
         val excludeStatVariables = !isClientSide
 
-        scaleConfigs = PlotConfigUtil.createScaleConfigs(getList(SCALES) + DataMetaUtil.createScaleSpecs(opts))
+        scaleConfigs = PlotConfigUtil.createScaleConfigs(DataMetaUtil.createScaleSpecs(opts) + getList(SCALES))
 
         mapperProviderByAes = PlotConfigMapperProviders.createMapperProviders(
             layerConfigs,
@@ -108,7 +110,7 @@ abstract class PlotConfig(
         }
     }
 
-    private fun createLayerConfigs(sharedData: DataFrame): List<LayerConfig> {
+    private fun createLayerConfigs(sharedData: DataFrame, isClientSide: Boolean): List<LayerConfig> {
 
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
@@ -126,9 +128,10 @@ abstract class PlotConfig(
             val layerConfig = createLayerConfig(
                 layerOptions,
                 sharedData,
-                getMap(MAPPING),
-                getMap(DATA_META),
-                DataMetaUtil.getOrderOptions(this.mergedOptions, getMap(MAPPING)),
+                plotMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
+                plotDataMeta = getMap(DATA_META),
+                plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING)),
+                isClientSide,
                 isMapPlot
             )
             layerConfigs.add(layerConfig)
@@ -136,14 +139,35 @@ abstract class PlotConfig(
         return layerConfigs
     }
 
-    protected abstract fun createLayerConfig(
+    private fun createLayerConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
-        plotMappings: Map<*, *>,
-        plotDataMeta: Map<*, *>,
+        plotMappings: Map<String, String>,
+        plotDataMeta: Map<String, Any>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
+        isClientSide: Boolean,
         isMapPlot: Boolean
-    ): LayerConfig
+    ): LayerConfig {
+        val geomName = layerOptions[Option.Layer.GEOM] as String
+        val geomKind = Option.GeomName.toGeomKind(geomName)
+
+        val geomProto = if (isClientSide) {
+            GeomProtoClientSide(geomKind)
+        } else {
+            GeomProto(geomKind)
+        }
+
+        return LayerConfig(
+            layerOptions,
+            sharedData,
+            plotMappings,
+            plotDataMeta,
+            plotOrderOptions,
+            geomProto,
+            clientSide = isClientSide,
+            isMapPlot
+        )
+    }
 
 
     protected fun replaceSharedData(plotData: DataFrame) {

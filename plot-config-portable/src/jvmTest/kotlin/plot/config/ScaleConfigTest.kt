@@ -177,4 +177,48 @@ class ScaleConfigTest {
         val config = PlotConfigClientSide.create(opts) {}
         PlotConfigClientSideUtil.createPlotAssembler(config)
     }
+
+    @Test
+    fun `choosing a scale name`() {
+        fun makePlotSpec(scaleParams: String? = null, asDiscreteParams: String? = null) = """
+            {
+              "data": { "x": [0, 1], "v": [0, 1] },
+              "mapping": { "x": "x", "color": "v" },
+              "kind": "plot",
+              "scales": [ ${scaleParams.takeIf { it != null } ?: ""} ],
+              "layers": [
+                {
+                  "geom": "point",
+                  "data_meta": {
+                    "mapping_annotations": [
+                      {
+                        "aes": "color",
+                        "annotation": "as_discrete",
+                        "parameters": ${asDiscreteParams.takeIf { it != null }}          
+                      }
+                    ]
+                  }
+                }
+              ]
+            }""".trimIndent()
+
+        val scaleNameParam = "{ 'aesthetic': 'color', 'name': 'name from scale' }"
+        val asDiscreteLabelParam = "{ 'label': 'label from as_discrete' }"
+
+        // use variable name by default
+        transformToClientPlotConfig(makePlotSpec())
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "v")
+
+        // scale(name)
+        transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam))
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "name from scale")
+
+        // as_discrete(label)
+        transformToClientPlotConfig(makePlotSpec(asDiscreteParams = asDiscreteLabelParam))
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "label from as_discrete")
+
+        // scale(name) is a higher priority than as_discrete(label)
+        transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam, asDiscreteParams = asDiscreteLabelParam))
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "name from scale")
+    }
 }

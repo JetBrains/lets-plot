@@ -11,4 +11,5 @@ import jetbrains.livemap.core.ecs.EcsEntity
 
 interface Locator {
     fun search(coord: Vec<Client>, target: EcsEntity): HoverObject?
+    fun reduce(hoverObjects: Collection<HoverObject>): HoverObject?
 }

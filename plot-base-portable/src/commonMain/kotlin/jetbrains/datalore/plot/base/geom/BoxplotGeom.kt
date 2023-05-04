@@ -11,7 +11,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueHeight
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendHeight
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.colorWithAlpha
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -29,6 +29,7 @@ class BoxplotGeom : GeomBase() {
     var outlierFill: Color? = null
     var outlierShape: PointShape? = null
     var outlierSize: Double? = null
+    var outlierStroke: Double? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
@@ -156,6 +157,7 @@ class BoxplotGeom : GeomBase() {
                     Aes.FILL -> outlierFill ?: super.get(aes)
                     Aes.SHAPE -> outlierShape ?: super.get(aes)
                     Aes.SIZE -> outlierSize ?: OUTLIER_DEF_SIZE  // 'size' of 'super' is line thickness on box-plot
+                    Aes.STROKE -> outlierStroke ?: OUTLIER_DEF_STROKE // other elements of boxplot has no 'stroke' aes
                     Aes.ALPHA -> 1.0 // Don't apply boxplot' alpha to outlier points.
                     else -> super.get(aes)
                 }
@@ -171,6 +173,7 @@ class BoxplotGeom : GeomBase() {
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
         private val OUTLIER_DEF_SIZE = AestheticsDefaults.point().defaultValue(Aes.SIZE)
+        private val OUTLIER_DEF_STROKE = AestheticsDefaults.point().defaultValue(Aes.STROKE)
 
         private fun clientRectByDataPoint(
             ctx: GeomContext,
@@ -193,7 +196,7 @@ class BoxplotGeom : GeomBase() {
                     )?.let {
                         if (isHintRect && upper == lower) {
                             // Add tooltips for geom_boxplot with zero height (issue #563)
-                            extendTrueHeight(it, 2.0, ctx)
+                            extendHeight(it, 2.0, ctx.flipped)
                         } else {
                             it
                         }

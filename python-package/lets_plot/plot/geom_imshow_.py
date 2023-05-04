@@ -5,7 +5,10 @@
 import base64
 import io
 
+from .core import aes
 from .geom import _geom
+from .scale import scale_gradientn
+from .scale import scale_grey
 from .util import as_boolean
 from .util import is_ndarray
 
@@ -83,8 +86,10 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
         # no normalization
         image_data = numpy.copy(image_data)
         image_data.clip(min_lum, max_lum, out=image_data)
+        vmin = float(numpy.nanmin(image_data))
+        vmax = float(numpy.nanmax(image_data))
 
-    return image_data
+    return (image_data, vmin, vmax)
 
 
 def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent=None):
@@ -105,7 +110,14 @@ def geom_image(image_data, cmap=None, norm=None, *, vmin=None, vmax=None, extent
                        )
 
 
-def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax=None, extent=None, compression=None):
+def geom_imshow(image_data, cmap=None, *,
+                norm=None, alpha=None,
+                vmin=None, vmax=None,
+                extent=None,
+                compression=None,
+                show_legend=True,
+                color_by="paint_c",
+                ):
     """
     Display image specified by ndarray with shape.
 
@@ -153,6 +165,11 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         Values from 0 (no compression) to 9 (highest).
         Value `None` means that the `zlib` module uses
         the default level of compression (which is generally acceptable).
+    show_legend : bool, default=True
+        Greyscale images only.
+        False - do not show legend for this layer.
+    color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='paint_c'
+        Define the color aesthetic used by the legend shown for a greyscale image.
 
     Returns
     -------
@@ -233,7 +250,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
         has_nan = numpy.isnan(image_data.max())
         min_lum = 0 if not (has_nan and cmap) else 1  # index 0 reserved for NaN-s
 
-        image_data = _normalize_2D(image_data, norm, vmin, vmax, min_lum)
+        (image_data, greyscale_data_min, greyscale_data_max) = _normalize_2D(image_data, norm, vmin, vmax, min_lum)
         height, width = image_data.shape
         nchannels = 1
 
@@ -277,7 +294,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
                 nchannels = 4
             elif nchannels == 4:
                 # RGBA image: apply alpha scaling
-                image_data[:,:,3] *= alpha
+                image_data[:, :, 3] *= alpha
 
     # Make sure all values are ints in range 0-255.
     image_data.clip(0, 255, out=image_data)
@@ -321,8 +338,6 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     # PNG writer
     palette = None
     if cmap and greyscale:
-        greyscale = False
-
         # colormap via palettable
         if not palettable:
             raise ValueError(
@@ -344,7 +359,7 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
     png.Writer(
         width=width,
         height=height,
-        greyscale=greyscale,
+        greyscale=greyscale and not cmap,
         alpha=(nchannels == 4 or nchannels == 2),  # RGBA or LA
         bitdepth=8,
         palette=palette,
@@ -353,10 +368,51 @@ def geom_imshow(image_data, cmap=None, *, norm=None, alpha=None, vmin=None, vmax
 
     href = 'data:image/png;base64,' + str(base64.standard_b64encode(png_bytes.getvalue()), 'utf-8')
 
-    return _geom('image',
-                 href=href,
-                 xmin=ext_x0,
-                 ymin=ext_y0,
-                 xmax=ext_x1,
-                 ymax=ext_y1
-                 )
+    # The Legend (colorbar)
+    show_legend = as_boolean(show_legend, default=True)
+    normalize = as_boolean(norm, default=True)
+    legend_title = ""
+    color_scale = None
+    color_scale_mapping = None
+    if greyscale and show_legend:
+        # aes(color=[greyscale_data_min, greyscale_data_max])
+        color_scale_mapping = aes(**{color_by: [greyscale_data_min, greyscale_data_max]})
+        if cmap and normalize:
+            cmap_32 = palettable.get_map(cmap + "_32")
+            # color_scale = scale_color_gradientn(colors=cmap_32.hex_colors, name=legend_title)
+            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name=legend_title)
+        elif cmap and not normalize:
+            cmap_256 = palettable.get_map(cmap + "_256")
+            start = max(0, round(greyscale_data_min))
+            end = min(255, round(greyscale_data_max))
+            cmap_hex_colors = cmap_256.hex_colors[start:end]
+            if len(cmap_hex_colors) > 32:
+                # reduce number of colors to 32
+                indices = numpy.linspace(0, len(cmap_hex_colors) - 1, 32, dtype=int)
+                cmap_hex_colors = [cmap_hex_colors[i] for i in indices]
+
+            # color_scale = scale_color_gradientn(colors=cmap_hex_colors, name=legend_title)
+            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_hex_colors, name=legend_title)
+        else:
+            start = 0 if normalize else greyscale_data_min / 255.
+            end = 1 if normalize else greyscale_data_max / 255.
+            # color_scale = scale_color_grey(start=start, end=end, name=legend_title)
+            color_scale = scale_grey(aesthetic=color_by, start=start, end=end, name=legend_title)
+
+    # Image geom layer
+    geom_image_layer = _geom(
+        'image',
+        mapping=color_scale_mapping,
+        href=href,
+        xmin=ext_x0,
+        ymin=ext_y0,
+        xmax=ext_x1,
+        ymax=ext_y1,
+        show_legend=show_legend,
+        color_by=color_by if (show_legend and greyscale) else None,
+    )
+
+    if (color_scale is not None):
+        geom_image_layer = geom_image_layer + color_scale
+
+    return geom_image_layer

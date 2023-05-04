@@ -159,19 +159,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
     }
 
     enum class YStackdir {
-        LEFT, RIGHT, CENTER, CENTERWHOLE;
-
-        companion object {
-
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<YStackdir>()
-
-            fun safeValueOf(v: String): YStackdir {
-                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
-                    "Unsupported stackdir: '$v'\n" +
-                            "Use one of: left, right, center, centerwhole."
-                )
-            }
-        }
+        LEFT, RIGHT, CENTER, CENTERWHOLE
     }
 
     override fun heightSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {

@@ -64,9 +64,18 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             SEGMENT -> DefaultSampling.SEGMENT
             TEXT, LABEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
+            LOLLIPOP -> DefaultSampling.LOLLIPOP
             LIVE_MAP,
             RASTER,
             IMAGE -> Samplings.NONE
+        }
+    }
+
+    fun hasOwnPositionAdjustmentOptions(layerOptions: OptionsAccessor): Boolean {
+        return when (geomKind) {
+            JITTER -> layerOptions.hasOwn(Geom.Jitter.WIDTH) || layerOptions.hasOwn(Geom.Jitter.HEIGHT)
+            TEXT, LABEL -> layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)
+            else -> false
         }
     }
 
@@ -87,11 +96,15 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                     Pos.Dodge.WIDTH to 0.95
                 )
             }
-            TEXT, LABEL -> mapOf(
-                Meta.NAME to PosProto.NUDGE,
-                Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
-                Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y)
-            )
+            TEXT, LABEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)) {
+                mapOf(
+                    Meta.NAME to PosProto.NUDGE,
+                    Pos.Nudge.WIDTH to layerOptions.getDouble(Geom.Text.NUDGE_X),
+                    Pos.Nudge.HEIGHT to layerOptions.getDouble(Geom.Text.NUDGE_Y)
+                )
+            } else {
+                PosProto.IDENTITY
+            }
             else -> {
                 // Some other geoms has stateless position adjustments defined in `defaults`
                 // Otherwise it's just `identity`

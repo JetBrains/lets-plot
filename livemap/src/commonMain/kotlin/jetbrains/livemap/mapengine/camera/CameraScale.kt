@@ -80,6 +80,6 @@ object CameraScale {
         val delta: Double,
         val startZoom: Double
     ) : EcsComponent {
-        var currentScale: Double = 0.0
+        var currentScale: Double = 1.0
     }
 }

@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
+import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -23,6 +24,7 @@ import jetbrains.datalore.plot.parsePlotSpec
 import org.junit.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class GeoConfigTest {
@@ -505,18 +507,18 @@ class GeoConfigTest {
             .assertBinding(Aes.X, "price") // was not rebind to gdf
     }
 
+    // excluding LiveMap layer
+    private fun getGeomLayer(spec: String): GeomLayer {
+        val layers = TestUtil.createSingleTileGeomLayers(parsePlotSpec(spec))
+        val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
+        assertTrue(geomLayers.size == 1, "No layers")
+        return geomLayers.single()
+    }
+
     @Test
     fun `for map plot - should trigger even if positional mapping exist`() {
         val orangeCoord = """{\"type\": \"Point\", \"coordinates\": [1.0, 2.0]}"""
         val appleCoord = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
-
-        fun getGeomLayer(spec: String): GeomLayer {
-            val config = transformToClientPlotConfig(spec)
-            val layers = createPlotAssembler(config).coreLayersByTile.single()
-            val geomLayers = layers.filterNot(GeomLayer::isLiveMap)
-            assertTrue(geomLayers.size == 1, "No layers")
-            return geomLayers.single()
-        }
 
         // add tooltips - just to keep these variable to check stat variables
         val pieLayer = """
@@ -582,6 +584,67 @@ class GeoConfigTest {
             .assertValues("..count..", listOf(4.0, 6.0, 16.0, 9.0))
             .assertValues("..proppct..", listOf(20.0, 40.0, 80.0, 60.0))
             .assertValues("..sum..", listOf(20.0, 15.0, 20.0, 15.0))
+    }
+
+    @Test
+    // check point coordinates
+    fun `should handle geometries with positional mapping for map plot`() {
+        val BOSTON_LON = -71.0884755326693
+        val BOSTON_LAT = 42.3110405355692
+
+        val pointLayer = """
+            |        "geom": "point",
+            |        "data": { 
+            |           "Name": [ "Boston" ] 
+            |         },
+            |        "mapping": {
+            |           "x" : "Name"
+            |        },
+            |        "map": {
+            |            "city": ["Boston"],
+            |            "geometry": [
+            |               "{\"type\": \"Point\", \"coordinates\": [ $BOSTON_LON, $BOSTON_LAT]}"
+            |            ]
+            |        },
+            |        "map_data_meta": { "geodataframe": { "geometry": "geometry" } },
+            |        "map_join": [ ["Name"], ["city"] ]            
+        """.trimMargin()
+
+        // just point layer
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       {
+            |           $pointLayer
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        ).let {
+            assertFalse(DataFrameUtil.hasVariable(it.dataFrame, "lon"))
+            assertFalse(DataFrameUtil.hasVariable(it.dataFrame, "lat"))
+        }
+
+        // add livemap
+        getGeomLayer(
+            """
+            |{
+            |    "kind": "plot",
+            |    "layers": [
+            |       {
+            |          "geom": "livemap"
+            |       },
+            |       {
+            |           $pointLayer
+            |       }
+            |    ]
+            |}
+            """.trimMargin()
+        )
+            .assertValues("lon", listOf(BOSTON_LON))
+            .assertValues("lat", listOf(BOSTON_LAT))
     }
 
     @Test

@@ -15,6 +15,21 @@ object AesScaling {
         return p.size()!! * 2.0
     }
 
+    fun pointStrokeWidth(p: DataPointAesthetics): Double {
+        // aes Units -> px
+        return p.stroke()!! * UNIT_SHAPE_SIZE / 2.0
+    }
+
+    fun dotStrokeWidth(p: DataPointAesthetics): Double {
+        // aes Units -> px
+        return p.stroke()!! / 2.0
+    }
+
+    fun lineWidth(p: DataPointAesthetics): Double {
+        // aes Units -> px
+        return p.linewidth()!! * 2.0
+    }
+
     fun circleDiameter(p: DataPointAesthetics): Double {
         // aes Units -> px
         return p.size()!! * UNIT_SHAPE_SIZE

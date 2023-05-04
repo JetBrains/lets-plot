@@ -8,8 +8,9 @@ package jetbrains.datalore.vis.svg
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svg.SvgTransformable.Companion.TRANSFORM
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_NAMESPACE_URI
+import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_PREFIX
 
 open class SvgImageElement() : SvgGraphicsElement(),
     SvgTransformable {
@@ -24,7 +25,11 @@ open class SvgImageElement() : SvgGraphicsElement(),
         val HEIGHT: SvgAttributeSpec<Double> =
             SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
         val HREF: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("href")
+            SvgAttributeSpec.createSpecNS(
+                "href",
+                XLINK_PREFIX,
+                XLINK_NAMESPACE_URI
+            )
         val PRESERVE_ASPECT_RATIO: SvgAttributeSpec<String> =
             SvgAttributeSpec.createSpec("preserveAspectRatio")
     }
@@ -36,7 +41,6 @@ open class SvgImageElement() : SvgGraphicsElement(),
 
     init {
         setAttribute(PRESERVE_ASPECT_RATIO, "none")
-        setAttribute(SVG_STYLE_ATTRIBUTE, "image-rendering: pixelated;image-rendering: crisp-edges;")
     }
 
     constructor(x: Double, y: Double, width: Double, height: Double) : this() {

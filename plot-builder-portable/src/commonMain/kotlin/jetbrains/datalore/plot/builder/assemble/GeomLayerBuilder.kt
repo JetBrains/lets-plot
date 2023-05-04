@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.geom.GeomBase
 import jetbrains.datalore.plot.base.geom.LiveMapGeom
 import jetbrains.datalore.plot.base.geom.LiveMapProvider
+import jetbrains.datalore.plot.base.geom.LollipopGeom
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
@@ -40,7 +41,7 @@ import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 
-class GeomLayerBuilder constructor(
+class GeomLayerBuilder(
     private val geomProvider: GeomProvider,
     private val stat: Stat,
     private val posProvider: PosProvider,
@@ -267,8 +268,8 @@ class GeomLayerBuilder constructor(
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults()
 
+        private val myConstantByAes: TypedKeyHashMap = TypedKeyHashMap()
         private val myRenderedAes: List<Aes<*>>
-        private val myConstantByAes: TypedKeyHashMap
 
         override val legendKeyElementFactory: LegendKeyElementFactory
             get() = geom.legendKeyElementFactory
@@ -277,12 +278,30 @@ class GeomLayerBuilder constructor(
             get() = geom is LiveMapGeom
 
         init {
-            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes)
-
             // constant value by aes (default + specified)
-            myConstantByAes = TypedKeyHashMap()
             for (key in constantByAes.keys<Any>()) {
                 myConstantByAes.put(key, constantByAes[key])
+            }
+
+            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes).let { allRenderedAes ->
+                if (geomKind == GeomKind.ERROR_BAR) {
+                    // ToDo Need refactoring...
+                    // This geometry supports a dual set of aesthetics (vertical and horizontal representation).
+                    // Check that the settings are consistent
+                    // and set the aesthetics needed for that geometry.
+                    val definedAes = allRenderedAes.filter { aes -> hasBinding(aes) || hasConstant(aes) }
+                    val isVertical = setOf(Aes.YMIN, Aes.YMAX).all { aes -> aes in definedAes }
+                    val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).all { aes -> aes in definedAes }
+                    require(!(isVertical && isHorizontal)) {
+                        "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
+                    }
+                    allRenderedAes - when (isVertical) {
+                        true -> setOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
+                        false -> setOf(Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
+                    }
+                } else {
+                    allRenderedAes
+                }
             }
         }
 
@@ -320,7 +339,12 @@ class GeomLayerBuilder constructor(
         override fun rangeIncludesZero(aes: Aes<*>): Boolean {
             @Suppress("NAME_SHADOWING")
             val aes = aes.afterOrientation(isYOrientation)
-            return aestheticsDefaults.rangeIncludesZero(aes)
+            return if (geom is LollipopGeom && aes == Aes.Y) {
+                // Pin the lollipops to an axis when baseline coincides with this axis and sticks are perpendicular to it
+                geom.slope == 0.0 && geom.intercept == 0.0 && geom.direction != LollipopGeom.Direction.ALONG_AXIS
+            } else {
+                aestheticsDefaults.rangeIncludesZero(aes)
+            }
         }
 
         override fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
@@ -367,7 +391,7 @@ class GeomLayerBuilder constructor(
                             transformedData,
                             groupingVariables,
                             builder.myGroupingVarName,
-                            expectMultiple = true  // ?
+                            expectMultiple = true
                         )
                         val statInput = StatInput(
                             transformedData,

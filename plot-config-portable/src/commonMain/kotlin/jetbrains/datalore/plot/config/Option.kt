@@ -60,9 +60,12 @@ object Option {
 
         object SeriesAnnotation {
             const val TAG = "series_annotations"
-            const val COLUMN = "column"
-            const val TYPE = "type"
 
+            const val COLUMN = "column"   // a.k.a. variable name
+            const val TYPE = "type"
+            const val FACTOR_LEVELS = "factor_levels" // annotation for discrete variables
+
+            // Values of the "TYPE" property
             object DateTime {
                 const val DATE_TIME = "datetime"
                 const val TIME_ZONE = "time_zone"
@@ -216,6 +219,7 @@ object Option {
             const val FILL = "outlier_fill"
             const val SHAPE = "outlier_shape"
             const val SIZE = "outlier_size"
+            const val STROKE = "outlier_stroke"
         }
 
         object AreaRidges {
@@ -294,6 +298,13 @@ object Option {
             const val HOLE = "hole"
             const val STROKE = "stroke"
             const val STROKE_COLOR = "stroke_color"
+        }
+
+        object Lollipop {
+            const val FATTEN = "fatten"
+            const val SLOPE = "slope"
+            const val INTERCEPT = "intercept"
+            const val DIRECTION = "dir"
         }
 
         object LiveMap {
@@ -429,6 +440,9 @@ object Option {
     object Pos {
         object Dodge {
             const val WIDTH = "width"
+        }
+        object DodgeV {
+            const val HEIGHT = "height"
         }
 
         object Jitter {
@@ -688,6 +702,7 @@ object Option {
         private const val RASTER = "raster"
         const val IMAGE = "image"
         const val PIE = "pie"
+        const val LOLLIPOP = "lollipop"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
 
@@ -737,6 +752,7 @@ object Option {
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
+            map[LOLLIPOP] = GeomKind.LOLLIPOP
             GEOM_KIND_MAP = map
         }
 

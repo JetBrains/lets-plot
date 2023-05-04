@@ -12,6 +12,8 @@ import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
 import jetbrains.datalore.plot.config.PlotConfigClientSideUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
+import jetbrains.datalore.vis.svg.SvgNode
+import jetbrains.datalore.vis.svg.SvgTextNode
 
 object DemoAndTest {
 
@@ -24,7 +26,29 @@ object DemoAndTest {
         if (andBuildComponent) {
             plot.ensureBuilt()
         }
+
+        plotBuildErrorMessage(plot)?.let {
+            throw RuntimeException(it)
+        }
+
         return plot
+    }
+
+    private fun plotBuildErrorMessage(plotSvgComponent: PlotSvgComponent): String? {
+        fun flatChildren(node: SvgNode): List<SvgNode> {
+            return node.children() + node.children().flatMap(::flatChildren)
+        }
+
+        val (errorMessage, errorDescription) = flatChildren(plotSvgComponent.rootGroup)
+            .mapNotNull { it as? SvgTextNode }
+            .map { it.textContent().get() }
+            .partition { it.contains("Error building plot") }
+
+        if (errorMessage.isEmpty()) {
+            return null
+        }
+
+        return errorDescription.joinToString()
     }
 
     private fun createPlot(

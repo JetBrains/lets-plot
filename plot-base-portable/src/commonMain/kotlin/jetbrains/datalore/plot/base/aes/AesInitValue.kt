@@ -35,6 +35,8 @@ import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.STROKE
+import jetbrains.datalore.plot.base.Aes.Companion.LINEWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
@@ -76,7 +78,9 @@ object AesInitValue {
         VALUE_MAP[ALPHA] = 1.0
         VALUE_MAP[SHAPE] = NamedShape.SOLID_CIRCLE
         VALUE_MAP[LINETYPE] = NamedLineType.SOLID
-        VALUE_MAP[SIZE] = 0.5  // Line thickness. Should be redefined for other shapes
+        VALUE_MAP[SIZE] = 0.5 // Line thickness. Should be redefined for other shapes
+        VALUE_MAP[STROKE] = 0.5 // Point border thickness
+        VALUE_MAP[LINEWIDTH] = 0.5 // Line thickness for lollipop. Should be used for other line geoms.
         VALUE_MAP[STACKSIZE] = 0.0
         VALUE_MAP[WIDTH] = 1.0
         VALUE_MAP[HEIGHT] = 1.0

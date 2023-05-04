@@ -18,74 +18,62 @@ import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
 import jetbrains.datalore.plot.config.LayerConfig
 
 internal object BackendDataProcUtil {
-    fun applyStatisticalTransform(
+    fun createGroupingContext(
         data: DataFrame,
         layerConfig: LayerConfig,
-        statCtx: StatContext,
-        transformByAes: Map<Aes<*>, Transform>,
-        facetVariables: List<DataFrame.Variable>,
-        massageHandler: (String) -> Unit
-    ): DataFrame {
+    ): GroupingContext {
         val groupingVariables = DataProcessing.defaultGroupingVariables(
             data,
             layerConfig.varBindings,
             pathIdVarName = null // only on client side
         )
-        val groupingContext = GroupingContext(
+        return GroupingContext(
             data,
             groupingVariables,
             explicitGroupingVarName = layerConfig.explicitGroupingVarName,
             expectMultiple = true // ?
         )
+    }
 
-        val groupingContextAfterStat: GroupingContext
+    fun applyStatisticTransform(
+        data: DataFrame,
+        layerConfig: LayerConfig,
+        statCtx: StatContext,
+        transformByAes: Map<Aes<*>, Transform>,
+        facetVariables: List<DataFrame.Variable>,
+        groupingContext: GroupingContext,
+        messageHandler: (String) -> Unit
+    ): DataProcessing.DataAndGroupMapper {
+
         val stat = layerConfig.stat
-        var tileLayerDataAfterStat: DataFrame
-        if (stat === Stats.IDENTITY) {
-            // Do not apply stat
-            tileLayerDataAfterStat = data
-            groupingContextAfterStat = groupingContext
-        } else {
-            // Need to keep variables without bindings (used in tooltips and for ordering)
-            val varsWithoutBinding = layerConfig.run {
-                (tooltips.valueSources + annotations.valueSources)
-                    .filterIsInstance<DataFrameValue>()
-                    .map(DataFrameValue::getVariableName) +
-                        orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable) +
-                        (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList())
-            }
+        check(stat != Stats.IDENTITY)
 
-            val statInput = StatInput(
-                data,
-                layerConfig.varBindings,
-                transformByAes,
-                statCtx,
-                flipXY = layerConfig.isYOrientation
-            )
-
-            val tileLayerDataAndGroupingContextAfterStat = DataProcessing.buildStatData(
-                statInput,
-                stat,
-                groupingContext,
-                facetVariables,
-                varsWithoutBinding,
-                layerConfig.orderOptions,
-                layerConfig.aggregateOperation
-            ) { message -> massageHandler(createStatMessage(message, layerConfig)) }
-
-            tileLayerDataAfterStat = tileLayerDataAndGroupingContextAfterStat.data
-            groupingContextAfterStat = tileLayerDataAndGroupingContextAfterStat.groupingContext
+        // Need to keep variables without bindings (used in tooltips and for ordering)
+        val varsWithoutBinding = layerConfig.run {
+            (tooltips.valueSources + annotations.valueSources)
+                .filterIsInstance<DataFrameValue>()
+                .map(DataFrameValue::getVariableName) +
+                    orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable) +
+                    (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList())
         }
 
-        // Apply sampling to layer tile data if necessary
-        tileLayerDataAfterStat =
-            PlotSampling.apply(
-                tileLayerDataAfterStat,
-                layerConfig.samplings,
-                groupingContextAfterStat.groupMapper
-            ) { message -> massageHandler(createSamplingMessage(message, layerConfig)) }
+        val statInput = StatInput(
+            data,
+            layerConfig.varBindings,
+            transformByAes,
+            statCtx,
+            flipXY = layerConfig.isYOrientation
+        )
 
-        return tileLayerDataAfterStat
+        return DataProcessing.buildStatData(
+            statInput,
+            stat,
+            groupingContext,
+            facetVariables,
+            varsWithoutBinding,
+            layerConfig.orderOptions,
+            layerConfig.aggregateOperation
+        ) { message -> messageHandler(createStatMessage(message, layerConfig)) }
     }
 
     private fun getStatName(layerConfig: LayerConfig): String {
@@ -96,7 +84,7 @@ internal object BackendDataProcUtil {
         return stat
     }
 
-    private fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
+    internal fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
         val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
         val stat = getStatName(layerConfig)
 

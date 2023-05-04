@@ -33,6 +33,8 @@ import jetbrains.datalore.plot.config.Option.Geom.Step
 import jetbrains.datalore.plot.config.Option.Geom.Text
 import jetbrains.datalore.plot.config.Option.Geom.Violin
 import jetbrains.datalore.plot.config.Option.Geom.YDotplot
+import jetbrains.datalore.plot.config.Option.Geom.Lollipop
+import jetbrains.datalore.plot.base.geom.LollipopGeom.Direction
 import jetbrains.datalore.plot.config.Option.Layer.USE_CRS
 
 
@@ -80,7 +82,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.stackGroups = opts.getBoolean(Dotplot.STACKGROUPS)
                 }
                 if (opts.hasOwn(Dotplot.STACKDIR)) {
-                    geom.stackDir = DotplotGeom.Stackdir.safeValueOf(opts.getString(Dotplot.STACKDIR)!!)
+                    geom.stackDir = opts.getString(Dotplot.STACKDIR)!!.let {
+                        when (it.lowercase()) {
+                            "up" -> DotplotGeom.Stackdir.UP
+                            "down" -> DotplotGeom.Stackdir.DOWN
+                            "center" -> DotplotGeom.Stackdir.CENTER
+                            "centerwhole" -> DotplotGeom.Stackdir.CENTERWHOLE
+                            else -> throw IllegalArgumentException(
+                                "Unsupported ${Dotplot.STACKDIR}: '$it'. " +
+                                "Use one of: up, down, center, centerwhole."
+                            )
+                        }
+                    }
                 }
                 if (opts.hasOwn(Dotplot.METHOD)) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(Dotplot.METHOD)!!)
@@ -120,6 +133,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 }
                 geom.outlierShape = opts.getShape(BoxplotOutlier.SHAPE)
                 geom.outlierSize = opts.getDouble(BoxplotOutlier.SIZE)
+                geom.outlierStroke = opts.getDouble(BoxplotOutlier.STROKE)
                 geom
             }
 
@@ -166,7 +180,18 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                     geom.stackGroups = opts.getBoolean(YDotplot.STACKGROUPS)
                 }
                 if (opts.hasOwn(YDotplot.STACKDIR)) {
-                    geom.yStackDir = YDotplotGeom.YStackdir.safeValueOf(opts.getString(YDotplot.STACKDIR)!!)
+                    geom.yStackDir = opts.getString(YDotplot.STACKDIR)!!.let {
+                        when (it.lowercase()) {
+                            "left" -> YDotplotGeom.YStackdir.LEFT
+                            "right" -> YDotplotGeom.YStackdir.RIGHT
+                            "center" -> YDotplotGeom.YStackdir.CENTER
+                            "centerwhole" -> YDotplotGeom.YStackdir.CENTERWHOLE
+                            else -> throw IllegalArgumentException(
+                                "Unsupported ${YDotplot.STACKDIR}: '$it'. " +
+                                "Use one of: left, right, center, centerwhole."
+                            )
+                        }
+                    }
                 }
                 if (opts.hasOwn(YDotplot.METHOD)) {
                     geom.method = DotplotStat.Method.safeValueOf(opts.getString(YDotplot.METHOD)!!)
@@ -267,6 +292,32 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 geom
             }
 
+            GeomKind.LOLLIPOP -> return GeomProvider.lollipop {
+                val directionValue = opts.getString(Lollipop.DIRECTION)?.lowercase()
+                val direction = directionValue?.let {
+                    when (it) {
+                        "v" -> Direction.ORTHOGONAL_TO_AXIS
+                        "h" -> Direction.ALONG_AXIS
+                        "s" -> Direction.SLOPE
+                        else -> throw IllegalArgumentException(
+                            "Unsupported value for ${Lollipop.DIRECTION} parameter: '$it'. " +
+                            "Use one of: v, h, s."
+                        )
+                    }
+                } ?: Direction.ORTHOGONAL_TO_AXIS
+                val slope = opts.getDouble(Lollipop.SLOPE) ?: 0.0
+                LollipopGeom().apply {
+                    this.direction = direction
+                    this.slope = slope
+                    if (opts.hasOwn(Lollipop.INTERCEPT)) {
+                        this.intercept = opts.getDouble(Lollipop.INTERCEPT)!!
+                    }
+                    if (opts.hasOwn(Lollipop.FATTEN)) {
+                        this.fatten = opts.getDouble(Lollipop.FATTEN)!!
+                    }
+                }
+            }
+
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 return PROVIDER[geomKind]!!
@@ -320,6 +371,7 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
             // image - special case
             // pie - special case
             PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
+            // lollipop - special case
         }
 
         private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {

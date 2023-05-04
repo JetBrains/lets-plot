@@ -64,25 +64,25 @@ internal class TestingTooltipSpecsBuilder private constructor(
         private val DISPLAYABLE_AES_LIST =
             toList(Aes.values())
 
-        fun univariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+        fun univariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
-                GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
-                    .univariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
+                GeomInteractionBuilder.DemoAndTest(displayableAesList)
+                    .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                     .build()
             )
         }
 
-        fun bivariateFunctionBuilder(): TestingTooltipSpecsBuilder {
+        fun bivariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
-                GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
+                GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .bivariateFunction(false)
                     .build()
             )
         }
 
-        fun areaFunctionBuilder(): TestingTooltipSpecsBuilder {
+        fun areaFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
-                GeomInteractionBuilder.DemoAndTest(DISPLAYABLE_AES_LIST)
+                GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .bivariateFunction(true)
                     .build()
             )

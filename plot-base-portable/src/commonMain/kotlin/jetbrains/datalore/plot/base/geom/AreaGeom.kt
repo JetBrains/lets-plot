@@ -34,7 +34,7 @@ open class AreaGeom : GeomBase() {
     ) {
         val helper = LinesHelper(pos, coord, ctx)
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
-        val dataPoints = dataPoints(aesthetics)
+        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group).forEach { (_, groupDataPoints) ->
             quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
                 val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
@@ -60,14 +60,13 @@ open class AreaGeom : GeomBase() {
         dataPoints: Iterable<DataPointAesthetics>,
         quantilesHelper: QuantilesHelper
     ): List<SvgLineElement> {
-        val definedPoints = GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y)
         val toLocationBoundStart: (DataPointAesthetics) -> DoubleVector = { p ->
             GeomUtil.TO_LOCATION_X_Y(p)!!
         }
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p ->
             GeomUtil.TO_LOCATION_X_ZERO(p)!!
         }
-        return quantilesHelper.getQuantileLineElements(definedPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
+        return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
     private fun buildHints(dataPoints: Iterable<DataPointAesthetics>, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {

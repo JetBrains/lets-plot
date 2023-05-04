@@ -247,6 +247,50 @@ class GeomInteractionBuilderCreationTest {
         }
     }
 
+    @Test
+    fun `quantile should be in tooltip if it is mapped to FILL`() {
+
+        fun areaRidgePlotOpts(withFillMapping: Boolean): MutableMap<String, Any> {
+            val mapping: Map<String, Any> = mapOf(
+                Aes.X.name to listOf(0, 1, 2),
+                Aes.Y.name to listOf(0, 1, 0)
+            ).let {
+                if (withFillMapping) {
+                    it + mapOf(Aes.FILL.name to "..quantile..")
+                } else {
+                    it
+                }
+            }
+            val layer = mapOf(
+                GEOM to "area_ridges",
+                MAPPING to mapping,
+                Option.Geom.AreaRidges.QUANTILE_LINES to true
+            )
+            return mutableMapOf(
+                Meta.KIND to Meta.Kind.PLOT,
+                LAYERS to listOf(layer)
+            )
+        }
+
+        run {
+            val builder = createGeomInteractionBuilder(areaRidgePlotOpts(withFillMapping = false))
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertAesList(
+                listOf(Aes.HEIGHT, Aes.X),
+                aesListForTooltip
+            )
+        }
+        run {
+            val builder = createGeomInteractionBuilder(areaRidgePlotOpts(withFillMapping = true))
+            val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
+            assertAesList(
+                listOf(Aes.HEIGHT, Aes.FILL, Aes.X),
+                aesListForTooltip
+            )
+        }
+    }
+
+
     private fun tileWithBrewerScale(useBrewerScale: Boolean, useContinuousVars: Boolean): GeomInteractionBuilder {
         val mappedData = mapOf(
             Aes.X.name to listOf(0),

@@ -73,7 +73,7 @@ def _standardize_value(v):
         # some json parsers (like com.google.gson.Gson) do not handle them well.
         return None
     if is_int(v):
-        return int(v)
+        return float(v)
     if is_dict_or_dataframe(v):
         return standardize_dict(v)
     if is_polars_dataframe(v):

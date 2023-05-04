@@ -10,7 +10,10 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import jetbrains.datalore.plot.base.render.svg.MultilineLabel
+import jetbrains.datalore.plot.base.render.svg.Text
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
@@ -67,11 +70,18 @@ class ColorBarComponent(
             addTickMark(guideBarGroup, tickMarkPoints[0], tickMarkPoints[1])
             addTickMark(guideBarGroup, tickMarkPoints[2], tickMarkPoints[3])
 
-            val label = TextLabel(brLabel)
+            val lineHeight = PlotLabelSpecFactory.legendItem(theme).height()
+            val label = MultilineLabel(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
-            label.setVerticalAnchor(brInfo.labelVerticalAnchor)
-            label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top)
+            label.setLineHeight(lineHeight)
+            fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
+            val yOffset = when (brInfo.labelVerticalAnchor) {
+                Text.VerticalAnchor.TOP -> lineHeight * 0.7
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + lineHeight
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + lineHeight * 0.85
+            }
+            label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
         }
 

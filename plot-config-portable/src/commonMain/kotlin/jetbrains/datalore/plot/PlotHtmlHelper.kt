@@ -7,10 +7,14 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.jsObject.JsObjectSupport
+import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.random.RandomString.randomString
+import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 
 object PlotHtmlHelper {
+    private val LOG = PortableLogging.logger(PlotHtmlHelper::class)
+
     // Data-attributes used to store extra information about the meaning of 'script' elements
     // See also: python-package/lets_plot/frontend_context/_jupyter_notebook_ctx.py
     // Duplication?
@@ -116,10 +120,20 @@ object PlotHtmlHelper {
         return "<script type=\"text/javascript\" $ATT_SCRIPT_KIND=\"$SCRIPT_KIND_LIB_LOADING\" src=\"$scriptUrl\"></script>"
     }
 
-    fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null): String {
+    fun getStaticDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>, size: DoubleVector? = null, removeComputationMessages: Boolean = false, logComputationMessages: Boolean = false): String {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
         val plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
+
+        if (logComputationMessages) {
+            PlotConfigUtil.findComputationMessages(plotSpec).forEach { LOG.info { "[when HTML generating] $it" } }
+        }
+
+        // Remove computation messages from the output
+        if (removeComputationMessages) {
+            PlotConfigUtil.removeComputationMessages(plotSpec)
+        }
+
         val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
         return getStaticDisplayHtml(plotSpecJs, size)
     }

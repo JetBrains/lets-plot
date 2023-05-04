@@ -4,7 +4,9 @@
  */
 
 import jetbrains.datalore.base.event.dom.DomEventMapper
+import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.*
 import jetbrains.datalore.base.js.css.enumerables.CssCursor
 import jetbrains.datalore.base.js.css.enumerables.CssPosition
@@ -29,8 +31,19 @@ import org.w3c.dom.svg.SVGSVGElement
 
 internal class FigureToHtml(
     private val buildInfo: FigureBuildInfo,
-    private val parentElement: HTMLElement
+    containerElement: HTMLElement
 ) {
+
+    private val parentElement: HTMLElement = if (buildInfo.isComposite) {
+        // The `containerElement` may also contain "computation messages".
+        // Container for a composite figure must be another `div`
+        // because it is going to have "relative" positioning.
+        document.createElement("div") {
+            containerElement.appendChild(this)
+        } as HTMLElement
+    } else {
+        containerElement
+    }
 
     fun eval() {
 
@@ -46,98 +59,96 @@ internal class FigureToHtml(
         if (svgRoot is CompositeFigureSvgRoot) {
             processCompositeFigure(
                 svgRoot,
-                origin = null      // The topmost SVG
+                origin = null,      // The topmost SVG
+                parentElement = parentElement
             )
         } else {
             processPlotFigure(
                 svgRoot as PlotSvgRoot,
-                origin = null      // The topmost SVG
+                parentElement = parentElement
             )
         }
-    }
-
-    private fun processCompositeFigure(
-        svgRoot: CompositeFigureSvgRoot,
-        origin: DoubleVector?,
-    ) {
-        svgRoot.ensureContentBuilt()
-
-        val rootSvgSvg: SvgSvgElement = svgRoot.svg
-        val domSVGSVG: SVGSVGElement = mapSvgToSVG(rootSvgSvg)
-        val rootNode: Node = if (origin == null) {
-            setupRootHTMLElement(
-                parentElement,
-                svgRoot.bounds.dimension
-            )
-            domSVGSVG
-        } else {
-            wrapChildNode(domSVGSVG, origin)
-        }
-
-        parentElement.appendChild(rootNode)
-
-        @Suppress("NAME_SHADOWING")
-        val origin = origin ?: DoubleVector.ZERO
-
-        // Sub-figures
-
-        for (element in svgRoot.elements) {
-            val elementOrigin = element.bounds.origin.add(origin)
-            if (element is PlotSvgRoot) {
-                processPlotFigure(element, elementOrigin)
-            } else {
-                element as CompositeFigureSvgRoot
-                processCompositeFigure(element, elementOrigin)
-            }
-        }
-    }
-
-    private fun processPlotFigure(
-        svgRoot: PlotSvgRoot,
-        origin: DoubleVector?,
-    ) {
-
-        val plotContainer = PlotContainer(svgRoot)
-        val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement)
-        rootSVG.style.setCursor(CssCursor.CROSSHAIR)
-
-        // Livemap cursor pointer
-        if (svgRoot.isLiveMap) {
-            val cursorServiceConfig = svgRoot.liveMapCursorServiceConfig as CursorServiceConfig
-            cursorServiceConfig.defaultSetter { rootSVG.style.setCursor(CssCursor.CROSSHAIR) }
-            cursorServiceConfig.pointerSetter { rootSVG.style.setCursor(CssCursor.POINTER) }
-        }
-
-        val rootNode = if (origin == null) {
-            rootSVG
-        } else {
-            wrapChildNode(rootSVG, origin)
-        }
-
-        parentElement.appendChild(rootNode)
     }
 
 
     companion object {
+        private fun processPlotFigure(
+            svgRoot: PlotSvgRoot,
+            parentElement: HTMLElement,
+        ) {
+
+            val plotContainer = PlotContainer(svgRoot)
+            val rootSVG: SVGSVGElement = buildPlotFigureSVG(plotContainer, parentElement)
+            rootSVG.style.setCursor(CssCursor.CROSSHAIR)
+
+            // Livemap cursor pointer
+            if (svgRoot.isLiveMap) {
+                val cursorServiceConfig = svgRoot.liveMapCursorServiceConfig as CursorServiceConfig
+                cursorServiceConfig.defaultSetter { rootSVG.style.setCursor(CssCursor.CROSSHAIR) }
+                cursorServiceConfig.pointerSetter { rootSVG.style.setCursor(CssCursor.POINTER) }
+            }
+
+            parentElement.appendChild(rootSVG)
+        }
+
+        private fun processCompositeFigure(
+            svgRoot: CompositeFigureSvgRoot,
+            origin: DoubleVector?,
+            parentElement: HTMLElement,
+        ) {
+            svgRoot.ensureContentBuilt()
+
+            val rootSvgSvg: SvgSvgElement = svgRoot.svg
+            val domSVGSVG: SVGSVGElement = mapSvgToSVG(rootSvgSvg)
+            val rootNode: Node = if (origin == null) {
+                setupRootHTMLElement(
+                    parentElement,
+                    svgRoot.bounds.dimension
+                )
+                domSVGSVG
+            } else {
+                // Not a root - put in "container" with absolute positioning.
+                createContainerElement(origin).apply {
+                    appendChild(domSVGSVG)
+                }
+            }
+
+            parentElement.appendChild(rootNode)
+
+            @Suppress("NAME_SHADOWING")
+            val origin = origin ?: DoubleVector.ZERO
+
+            // Sub-figures
+
+            for (figureSvgRoot in svgRoot.elements) {
+                val elementOrigin = figureSvgRoot.bounds.origin.add(origin)
+                if (figureSvgRoot is PlotSvgRoot) {
+                    // Create "container" with absolute positioning.
+                    val figureContainer = createContainerElement(elementOrigin).apply {
+                        parentElement.appendChild(this)
+                    }
+                    processPlotFigure(
+                        svgRoot = figureSvgRoot,
+                        parentElement = figureContainer
+                    )
+                } else {
+                    figureSvgRoot as CompositeFigureSvgRoot
+                    processCompositeFigure(figureSvgRoot, elementOrigin, parentElement)
+                }
+            }
+        }
+
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {
             var style = "position: relative; width: ${size.x}px; height: ${size.y}px;"
-
-//    // 'background-color' makes livemap disappear - set only if no livemaps in the bunch.
-//    if (!plotInfos.any { it.plotAssembler.containsLiveMap }) {
-//        style = "$style background-color: ${Defaults.BACKDROP_COLOR};"
-//    }
             element.setAttribute("style", style)
         }
 
-        private fun wrapChildNode(node: Node, origin: DoubleVector): HTMLElement {
+        fun createContainerElement(origin: DoubleVector): HTMLElement {
             return document.createElement("div") {
                 setAttribute(
                     "style",
                     "position: absolute; left: ${origin.x}px; top: ${origin.y}px;"
                 )
-
-                appendChild(node)
-
             } as HTMLElement
         }
 
@@ -162,9 +173,7 @@ internal class FigureToHtml(
                 }
             }
 
-            DomEventMapper(svg) { eventSpec, mouseEvent ->
-                plotContainer.mouseEventPeer.dispatch(eventSpec, mouseEvent)
-            }
+            DomEventMapper(svg, destMouseEventPeer = plotContainer.mouseEventPeer::dispatch)
 
             plotContainer.liveMapFigures.forEach { liveMapFigure ->
                 val bounds = (liveMapFigure as CanvasFigure).bounds().get()
@@ -179,8 +188,18 @@ internal class FigureToHtml(
 
                 val canvasControl = DomCanvasControl(
                     liveMapDiv,
-                    bounds.dimension,
-                    DomCanvasControl.DomEventPeer(svg, bounds)
+                    Vector(bounds.dimension.x, bounds.dimension.y),
+                )
+
+                DomEventMapper(
+                    myEventTarget = svg,
+                    myTargetBounds = DoubleRectangle.XYWH(
+                        bounds.origin.x,
+                        bounds.origin.y,
+                        bounds.dimension.x,
+                        bounds.dimension.y
+                    ),
+                    destMouseEventPeer = canvasControl.mousePeer::dispatch
                 )
 
                 liveMapFigure.mapToCanvas(canvasControl)

@@ -35,6 +35,8 @@ import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
 import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
 import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
 import jetbrains.datalore.plot.base.Aes.Companion.SIZE
+import jetbrains.datalore.plot.base.Aes.Companion.STROKE
+import jetbrains.datalore.plot.base.Aes.Companion.LINEWIDTH
 import jetbrains.datalore.plot.base.Aes.Companion.SLICE
 import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
 import jetbrains.datalore.plot.base.Aes.Companion.SPEED
@@ -77,6 +79,8 @@ object DefaultNaValue {
         VALUE_MAP.put(SHAPE, TinyPointShape)
         VALUE_MAP.put(LINETYPE, NamedLineType.SOLID)
         VALUE_MAP.put(SIZE, AesScaling.sizeFromCircleDiameter(1.0))
+        VALUE_MAP.put(STROKE, 1.0)
+        VALUE_MAP.put(LINEWIDTH, 1.0)
         VALUE_MAP.put(STACKSIZE, 0.0)
         VALUE_MAP.put(WIDTH, 1.0)
         VALUE_MAP.put(HEIGHT, 1.0)

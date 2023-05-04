@@ -158,7 +158,7 @@ object DonutChart {
     }
 
 
-    class Locator : jetbrains.livemap.searching.Locator {
+    object Locator : jetbrains.livemap.searching.Locator {
         override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
             if (!target.contains(LOCATABLE_COMPONENTS)) {
                 return null
@@ -173,7 +173,9 @@ object DonutChart {
                     if (isCoordinateInPieSector(coord, loc.toClientPoint(), sector.holeRadius, sector.radius, sector.startAngle, sector.endAngle)) {
                         return HoverObject(
                             layerIndex = target.get<IndexComponent>().layerIndex,
-                            index = sector.index
+                            index = sector.index,
+                            distance = 0.0,
+                            this
                         )
                     }
                 }
@@ -181,6 +183,8 @@ object DonutChart {
 
             return null
         }
+
+        override fun reduce(hoverObjects: Collection<HoverObject>) = hoverObjects.firstOrNull()
 
         private fun isCoordinateInPieSector(
             coord: Vec<Client>,
@@ -204,8 +208,6 @@ object DonutChart {
             return startAngle <= angle && angle < endAngle
         }
 
-        companion object {
-            val LOCATABLE_COMPONENTS = listOf(PieSpecComponent::class, ScreenLoopComponent::class)
-        }
+        private val LOCATABLE_COMPONENTS = listOf(PieSpecComponent::class, ScreenLoopComponent::class)
     }
 }

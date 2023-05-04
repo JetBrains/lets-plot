@@ -107,12 +107,13 @@ class EdgeCasesTest {
     }
 
     @Test
-    fun allWithNaNInXYSeries() {
+    fun allWithNotFiniteValuesInXYSeries() {
         for (geomName in GeomName.values()) {
             if (LIVE_MAP == geomName || IMAGE == geomName) {
                 continue
             }
             checkWithNaNInXYSeries(geomName)
+            checkWithNullInXYSeries(geomName)
         }
     }
 
@@ -132,6 +133,62 @@ class EdgeCasesTest {
 
         (GeomName.values() - listOf(LIVE_MAP, IMAGE)).forEach(::checkGeom)
     }
+
+    @Test
+    fun `issue681 - smooth with 2 points and stat var in tooltip`() {
+        val spec = """
+            |{
+            |  "data": { "x": [1, 2], "y": [1, 2] },
+            |  "kind": "plot",
+            |  "layers": [ 
+            |    { 
+            |        "geom": "smooth", 
+            |        "mapping": { "x": "x", "y": "y" },
+            |        "tooltips": { "lines": [ "@..se.." ] }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+    }
+
+    @Test
+    fun `issue681 - smooth 2 points`() {
+        val spec = """
+            |{
+            |  "data": { "x": [1, 2], "y": [1, 2] },
+            |  "kind": "plot",
+            |  "layers": [ 
+            |    { 
+            |        "geom": "smooth", 
+            |        "mapping": { "x": "x", "y": "y" }
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+    }
+
+    @Test
+    fun `issue681 - empty data`() {
+        val spec = """
+            |{
+            |  "mapping": { "x": "x", "y": "y" },
+            |  "kind": "plot",
+            |  "layers": [
+            |    { "geom": "point" },
+            |    {
+            |      "geom": "histogram",
+            |      "mapping": { "y": "..density.." },
+            |      "marginal": true,
+            |      "margin_side": "t"
+            |    }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
+    }
+
 
     private fun checkWithNaNInXYSeries(geom: String) {
         val spec = "{" +
@@ -155,12 +212,62 @@ class EdgeCasesTest {
         val plotSpec = parsePlotSpec(spec)
 
         val data = mapOf(
-            "x" to listOf(0.0, Double.NaN, 1.0, 2.0),
-            "y" to listOf(0.0, Double.NaN, 1.0, 2.0)
+            "x" to listOf(0.0, 1.0, 2.0, Double.NaN, 0.0, Double.NaN),
+            "y" to listOf(0.0, 1.0, 2.0, 0.0, Double.NaN, Double.NaN)
         )
 
         plotSpec["data"] = data
         assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+    }
+
+    private fun checkWithNullInXYSeries(geom: String) {
+        val spec = """
+            {
+              'kind': 'plot',
+              'data': {
+                'x': [0, 1, 2, null, 0, null],
+                'y': [0, 1, 2, 0, null, null]
+              },
+              'mapping': {
+                'x': 'x',
+                'y': 'y'
+              },
+              'layers': [
+                {
+                  'geom': '$geom'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertDoesNotFail("geom $geom: ") { DemoAndTest.createPlot(plotSpec) }
+    }
+
+    @Test
+    fun `issue699 - empty data in facet`() {
+        val spec = """
+            |{
+            |  "data": { 
+            |      "x": [0, 0, 1, 1, 0, 0, 1, 1],
+            |      "f": ['A', 'B', 'B', 'A', 'B', 'A', 'A', 'B'],
+            |      "g": ['X', 'X', 'X', 'X', 'Y', 'Y', 'Y', 'Y'],
+            |      "p": ['q', 'q', 'q', 'w', 'w', 'w', 'w', 'w']
+            |  },
+            |  "mapping": { "x": "x", "fill": "f" },
+            |  "facet": {
+            |      "name": "grid", 
+            |      "x": "g", 
+            |      "y": "p"
+            |  },
+            |  "kind": "plot",
+            |  "layers": [
+            |    { "geom": "bar" }
+            |  ]
+            |}""".trimMargin()
+
+        assertDoesNotFail { DemoAndTest.createPlot(parsePlotSpec(spec)) }
     }
 
     @Test

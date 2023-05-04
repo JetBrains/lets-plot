@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.render.point
 
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesScaling
+import kotlin.math.sqrt
 
 
 // redundant `final` in overridden members are necessary due to kotlin-native issue:
@@ -55,20 +56,34 @@ enum class NamedShape(
 
 
     @Suppress("RedundantModalityModifier")
-    final override fun size(dataPoint: DataPointAesthetics): Double {
-        return if (isSmall)
+    final override fun size(dataPoint: DataPointAesthetics, fatten: Double): Double {
+        val diameter = if (isSmall)
             AesScaling.circleDiameterSmaller(dataPoint)
         else
             AesScaling.circleDiameter(dataPoint)
+        val strokeCoeff = if (isSolid)
+            0.0
+        else {
+            val shapeCoeff = when (this) {
+                STICK_DIAMOND,
+                STICK_DIAMOND_PLUS,
+                FILLED_DIAMOND -> sqrt(2.0)
+                STICK_PLUS,
+                STICK_STAR,
+                STICK_CROSS -> 2.0
+                else -> 1.0
+            }
+            shapeCoeff * strokeWidth(dataPoint)
+        }
+
+        return diameter * fatten + strokeCoeff
     }
 
     @Suppress("RedundantModalityModifier")
     final override fun strokeWidth(dataPoint: DataPointAesthetics): Double {
-        // 'size' aes is used for other purpose and
-        // no 'stroke width' aes (?)
         return if (isSolid)
             0.0
         else
-            1.0
+            AesScaling.pointStrokeWidth(dataPoint)
     }
 }

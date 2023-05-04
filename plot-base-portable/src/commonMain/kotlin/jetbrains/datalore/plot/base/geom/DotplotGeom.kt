@@ -11,6 +11,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.GeomKind.DOT_PLOT
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
@@ -188,7 +189,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             builder.closePath()
 
             val path = LinePath(builder)
-            decorate(path, p, true)
+            decorate(path, p, true, AesScaling::dotStrokeWidth)
 
             return path
         }
@@ -219,19 +220,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
     }
 
     enum class Stackdir {
-        UP, DOWN, CENTER, CENTERWHOLE;
-
-        companion object {
-
-            private val ENUM_INFO = EnumInfoFactory.createEnumInfo<Stackdir>()
-
-            fun safeValueOf(v: String): Stackdir {
-                return ENUM_INFO.safeValueOf(v) ?: throw IllegalArgumentException(
-                    "Unsupported stackdir: '$v'\n" +
-                            "Use one of: up, down, center, centerwhole."
-                )
-            }
-        }
+        UP, DOWN, CENTER, CENTERWHOLE
     }
 
     override fun widthSpan(p: DataPointAesthetics, coordAes: Aes<Double>, resolution: Double, isDiscrete: Boolean): DoubleSpan? {

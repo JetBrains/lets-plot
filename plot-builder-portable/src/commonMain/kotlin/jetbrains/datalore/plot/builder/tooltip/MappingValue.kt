@@ -16,11 +16,12 @@ class MappingValue(
     val aes: Aes<*>,
     override val isOutlier: Boolean = false,
     override val isAxis: Boolean = false,
-    private val format: String? = null
+    private val format: String? = null,
+    label: String? = null
 ) : ValueSource {
 
     private lateinit var myDataAccess: MappedDataAccess
-    private var myDataLabel: String? = null
+    private var myDataLabel: String? = label
     private val myFormatter = format?.let {
         StringFormat.forOneArg(format, formatFor = aes.name)
     }
@@ -31,16 +32,12 @@ class MappingValue(
 
         require(myDataAccess.isMapped(aes)) { "$aes have to be mapped" }
 
-        val axisLabels = listOf(Aes.X, Aes.Y)
-            .filter(myDataAccess::isMapped)
-            .map(myDataAccess::getMappedDataLabel)
-        val dataLabel = myDataAccess.getMappedDataLabel(aes)
-        myDataLabel = when {
-            isAxis -> null
-            isOutlier -> null
-            dataLabel.isEmpty() -> ""
-            dataLabel in axisLabels -> ""
-            else -> dataLabel
+        if (myDataLabel == null) {
+            myDataLabel = when {
+                isAxis -> null
+                isOutlier -> null
+                else -> myDataAccess.getMappedDataLabel(aes)
+            }
         }
     }
 
@@ -72,16 +69,18 @@ class MappingValue(
             aes = aes,
             isOutlier = isOutlier,
             isAxis = isAxis,
-            format = format
+            format = format,
+            label = myDataLabel
         )
     }
 
-    fun withFlags(isOutlier: Boolean, isAxis: Boolean): MappingValue {
+    fun withFlags(isOutlier: Boolean, isAxis: Boolean, label: String?): MappingValue {
         return MappingValue(
             aes = aes,
             isOutlier = isOutlier,
             isAxis = isAxis,
-            format = format
+            format = format,
+            label = label
         )
     }
 

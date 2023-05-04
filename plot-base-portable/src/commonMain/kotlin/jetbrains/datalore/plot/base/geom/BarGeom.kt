@@ -10,7 +10,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueWidth
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendWidth
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -73,7 +73,7 @@ open class BarGeom : GeomBase() {
                         DoubleRectangle(origin, dimensions)
                     }
                     geomHelper.toClient(rect, p)?.let { clientRect ->
-                        if (clientRect.width < 2.0) extendTrueWidth(clientRect, 2.0, ctx) else clientRect
+                        if (clientRect.width < 2.0) extendWidth(clientRect, 2.0, ctx.flipped) else clientRect
                     }
                 } else {
                     null

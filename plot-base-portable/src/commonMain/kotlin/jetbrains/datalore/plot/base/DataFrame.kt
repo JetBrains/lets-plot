@@ -12,10 +12,13 @@ import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {
     private val myVectorByVar: Map<Variable, List<*>>
+
     private val myIsNumeric: MutableMap<Variable, Boolean>
     private val myIsDateTime: MutableMap<Variable, Boolean>
 
-    // volatile variables (yet)
+    private val myOrderSpecs: List<OrderSpec>
+    private val myFactorLevelsByVar: Map<Variable, List<Any>>
+
     private val myRanges = HashMap<Variable, DoubleSpan?>()
     private val myDistinctValues = HashMap<Variable, Set<Any>>()
 
@@ -26,8 +29,6 @@ class DataFrame private constructor(builder: Builder) {
         val aggregateOperation: ((List<Double?>) -> Double?)? = null
     )
 
-    private val myOrderSpecs: List<OrderSpec>
-
     val isEmpty: Boolean
         get() = myVectorByVar.isEmpty()
 
@@ -37,9 +38,7 @@ class DataFrame private constructor(builder: Builder) {
         myIsNumeric = HashMap(builder.myIsNumeric)
         myIsDateTime = HashMap(builder.myIsDateTime)
         myOrderSpecs = builder.myOrderSpecs
-        myOrderSpecs.forEach { orderSpec ->
-            myDistinctValues[orderSpec.variable] = getOrderedDistinctValues(orderSpec)
-        }
+        myFactorLevelsByVar = builder.myFactorLevelsByVar
     }
 
     private fun assertAllSeriesAreSameSize(vectorByVar: Map<Variable, List<*>>) {
@@ -106,11 +105,14 @@ class DataFrame private constructor(builder: Builder) {
     fun distinctValues(variable: Variable): Collection<Any> {
         assertDefined(variable)
         return myDistinctValues.getOrPut(variable) {
-            val values = LinkedHashSet(get(variable)).apply {
-                this.remove(null)
-            }
-            @Suppress("UNCHECKED_CAST")
-            return values as Collection<Any>
+            val orderSpec = myOrderSpecs.findLast { it.variable == variable }
+            if (orderSpec != null) {
+                getOrderedDistinctValues(orderSpec)
+            } else if (myFactorLevelsByVar.containsKey(variable)) {
+                myFactorLevelsByVar.getValue(variable).toSet().intersect(get(variable)).filterNotNull()
+            } else {
+                get(variable).filterNotNull().toSet()
+            }.toSet()
         }
     }
 
@@ -120,11 +122,18 @@ class DataFrame private constructor(builder: Builder) {
 
     fun isNumeric(variable: Variable): Boolean {
         assertDefined(variable)
-        if (!myIsNumeric.containsKey(variable)) {
-            val checkedDoubles = SeriesUtil.checkedDoubles(get(variable))
-            myIsNumeric[variable] = checkedDoubles.notEmptyAndCanBeCast()
+        return if (variable.isTransform) {
+            true
+        } else {
+            myIsNumeric.getOrPut(variable) {
+                val checkedDoubles = SeriesUtil.checkedDoubles(get(variable))
+                checkedDoubles.notEmptyAndCanBeCast()
+            }
         }
-        return myIsNumeric[variable]!!
+    }
+
+    fun isDiscrete(variable: Variable): Boolean {
+        return !isNumeric(variable)
     }
 
     fun isDateTime(variable: Variable): Boolean {
@@ -274,6 +283,7 @@ class DataFrame private constructor(builder: Builder) {
         internal val myIsNumeric = HashMap<Variable, Boolean>()
         internal val myIsDateTime = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderSpec>()
+        internal val myFactorLevelsByVar = HashMap<Variable, List<Any>>()
 
         constructor()
 
@@ -283,10 +293,21 @@ class DataFrame private constructor(builder: Builder) {
                 data.myIsNumeric,
                 data.myIsDateTime,
                 data.myOrderSpecs,
+                data.myFactorLevelsByVar,
             )
         }
 
         internal constructor(data: DataFrame, indices: Iterable<Int>) {
+            // Preserve "ordering"
+            val addFactorLevelsByVar = data.variables()
+                .filter { v -> !v.isTransform }
+                .filter { v -> !(v in myFactorLevelsByVar) }
+                .filter { v -> myOrderSpecs.find { it.variable == v } == null }
+                .filter { v -> data.isDiscrete(v) }
+                .associateWith { data.distinctValues(it).toList() }
+
+            val newFactorLevelsByVar = data.myFactorLevelsByVar + addFactorLevelsByVar
+
             val newVectors = data.myVectorByVar.mapValues { (_, serie) ->
                 serie.slice(indices)
             }
@@ -296,6 +317,7 @@ class DataFrame private constructor(builder: Builder) {
                 data.myIsNumeric,
                 data.myIsDateTime,
                 data.myOrderSpecs,
+                newFactorLevelsByVar,
             )
         }
 
@@ -304,11 +326,13 @@ class DataFrame private constructor(builder: Builder) {
             isNumeric: Map<Variable, Boolean>,
             isDateTime: Map<Variable, Boolean>,
             orderSpecs: List<OrderSpec>,
+            factorLevelsByVar: Map<Variable, List<Any>>,
         ) {
             myVectorByVar.putAll(vectorByVar)
             myIsNumeric.putAll(isNumeric)
             myIsDateTime.putAll(isDateTime)
             myOrderSpecs.addAll(orderSpecs)
+            myFactorLevelsByVar.putAll(factorLevelsByVar)
         }
 
         fun put(variable: Variable, v: List<*>): Builder {
@@ -359,6 +383,11 @@ class DataFrame private constructor(builder: Builder) {
                 myOrderSpecs.remove(currentOrderSpec)
                 myOrderSpecs.add(orderSpec)
             }
+            return this
+        }
+
+        fun addFactorLevels(factorLevelsByVar: Map<Variable, List<Any>>): Builder {
+            myFactorLevelsByVar.putAll(factorLevelsByVar)
             return this
         }
 

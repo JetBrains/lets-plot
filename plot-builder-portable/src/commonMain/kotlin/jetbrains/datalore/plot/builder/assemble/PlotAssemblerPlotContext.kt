@@ -26,6 +26,8 @@ internal class PlotAssemblerPlotContext(
 
     override val layers: List<PlotContext.Layer> = stitchedPlotLayers.map(::ContextPlotLayer)
 
+    override fun hasScale(aes: Aes<*>) = scaleMap.containsKey(aes)
+
     override fun getScale(aes: Aes<*>): Scale {
         checkPositionalAes(aes)
         return scaleMap.getValue(aes)

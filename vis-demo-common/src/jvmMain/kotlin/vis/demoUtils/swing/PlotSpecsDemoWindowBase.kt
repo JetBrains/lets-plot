@@ -31,7 +31,7 @@ abstract class PlotSpecsDemoWindowBase(
         rootPanel.border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
         addWindowListener(object : WindowListener {
             override fun windowActivated(e: WindowEvent?) {
-                repaint()
+//                repaint()
             }
 
             override fun windowOpened(e: WindowEvent?) {}

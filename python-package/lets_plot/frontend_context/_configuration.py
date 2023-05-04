@@ -85,7 +85,8 @@ def _display_plot(spec: Any):
         except ImportError:
             pass
 
-        # ToDo: show HTML in brawser window.
+        # ToDo: show HTML in a browser window.
+        print(spec.as_dict())
         return
 
     if _default_mimetype == LETS_PLOT_JSON:

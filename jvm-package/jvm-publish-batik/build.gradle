@@ -95,8 +95,9 @@ task jarLetsPlotJvmBatikClasses(type: ShadowJar) {
     exclude 'svgMapper/**/*'
 
     // Fix for "META-INF/services files specify xalan" https://github.com/JetBrains/lets-plot/issues/576
-    // Get rid of "services" altogether.
-    exclude 'META-INF/services/**/*'
+    // Get rid only of harmful services.
+    exclude 'META-INF/services/org.apache.*'
+    exclude 'META-INF/services/javax.*'
 }
 
 task jarLetsPlotJvmBatikSources(type: ShadowJar) {
@@ -169,13 +170,6 @@ publishing {
         }
     }
     repositories {
-        maven {
-            url = project.sonatypeUrl
-            credentials {
-                username = project.buildSettings?.sonatype?.username
-                password = project.buildSettings?.sonatype?.password
-            }
-        }
         mavenLocal {
             url = uri(project.localMavenRepository)
         }

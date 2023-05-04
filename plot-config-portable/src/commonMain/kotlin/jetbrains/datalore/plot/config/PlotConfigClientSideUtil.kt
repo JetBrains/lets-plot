@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Scale
+import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.MarginalLayerUtil
@@ -16,6 +16,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
+import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -43,7 +44,7 @@ object PlotConfigClientSideUtil {
 
     fun createPlotAssembler(config: PlotConfigClientSide): PlotAssembler {
         val layersByTile = buildPlotLayers(config)
-        val assembler = PlotAssembler(
+        return PlotAssembler(
             layersByTile,
             config.scaleMap,
             config.mappersByAesNP,
@@ -57,98 +58,119 @@ object PlotConfigClientSideUtil {
             caption = config.caption,
             guideOptionsMap = config.guideOptionsMap
         )
-        return assembler
     }
 
     private fun buildPlotLayers(plotConfig: PlotConfigClientSide): List<List<GeomLayer>> {
-        val dataByLayer = ArrayList<DataFrame>()
-        for (layerConfig in plotConfig.layerConfigs) {
-            val layerData = layerConfig.combinedData
-            dataByLayer.add(layerData)
-        }
+        return buildPlotLayers(
+            plotConfig.layerConfigs,
+            plotConfig.facets,
+            plotConfig.scaleMap,
+            plotConfig.mappersByAesNP,
+            plotConfig.theme,
+            plotConfig.fontFamilyRegistry,
+        )
+    }
 
-        val layersDataByTile = PlotConfigUtil.toLayersDataByTile(dataByLayer, plotConfig.facets)
+    private fun buildPlotLayers(
+        layerConfigs: List<LayerConfig>,
+        facets: PlotFacets,
+        commonScaleMap: Map<Aes<*>, Scale>,
+        mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>, // all non-positional mappers
+        theme: Theme,
+        fontRegistry: FontFamilyRegistry
+    ): List<List<GeomLayer>> {
+        val isLiveMap = layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
+        val geomLayerListByTile: MutableList<MutableList<GeomLayer>> = mutableListOf()
 
-        val layerBuilders = ArrayList<GeomLayerBuilder>()
-        val layersByTile = ArrayList<List<GeomLayer>>()
-        for (tileDataByLayer in layersDataByTile) {
-            val panelLayers = ArrayList<GeomLayer>()
+        for ((layerIndex, layerConfig) in layerConfigs.withIndex()) {
+            //
+            // Layer scales
+            //
+            val layerCommonScales = when (layerConfig.isMarginal) {
+                true -> MarginalLayerUtil.toMarginalScaleMap(
+                    commonScaleMap,
+                    layerConfig.marginalSide,
+                    flipOrientation = false    // Positional aes are already flipped in the "common scale map".
+                )
 
-            val isLiveMap = plotConfig.layerConfigs.any { it.geomProto.geomKind == GeomKind.LIVE_MAP }
+                false -> commonScaleMap
+            }
 
-            for (layerIndex in tileDataByLayer.indices) {
-                check(layerBuilders.size >= layerIndex)
-
-                val layerConfig = plotConfig.layerConfigs[layerIndex]
-                val layerTileData = tileDataByLayer[layerIndex]
-
-                val commonScaleMap = plotConfig.scaleMap
-                val layerAddedScales = createScalesForStatPositionalBindings(
-                    layerConfig.varBindings,
-                    layerConfig.isYOrientation,
-                    commonScaleMap
-                ).let {
-                    when (layerConfig.isMarginal) {
-                        true -> MarginalLayerUtil.toMarginalScaleMap(
-                            it,
-                            layerConfig.marginalSide,
-                            flipOrientation = layerConfig.isYOrientation
-                        )
-
-                        false -> it
-                    }
-                }
-                val layerCommonScales = when (layerConfig.isMarginal) {
+            val layerAddedScales = createScalesForStatPositionalBindings(
+                layerConfig.varBindings,
+                layerConfig.isYOrientation,
+                commonScaleMap
+            ).let { scaleByAes ->
+                when (layerConfig.isMarginal) {
                     true -> MarginalLayerUtil.toMarginalScaleMap(
-                        commonScaleMap,
+                        scaleByAes,
                         layerConfig.marginalSide,
-                        flipOrientation = false    // Positional aes are already flipped in the "common scale map".
+                        flipOrientation = layerConfig.isYOrientation
                     )
 
-                    false -> commonScaleMap
+                    false -> scaleByAes
                 }
+            }
 
-                val layerScaleMap = layerCommonScales + layerAddedScales
+            val layerScaleMap = layerCommonScales + layerAddedScales
 
-                if (layerBuilders.size == layerIndex) {
-                    val otherLayerWithTooltips = plotConfig.layerConfigs
-                        .filterIndexed { index, _ -> index != layerIndex }
-                        .any { !it.tooltips.hideTooltips() }
+            //
+            // Layer geom interaction
+            //
+            val geomInteraction = if (layerConfig.isMarginal) {
+                // marginal layer doesn't have interactions
+                null
+            } else {
+                val otherLayerWithTooltips = layerConfigs
+                    .filterIndexed { index, _ -> index != layerIndex }
+                    .any { !it.tooltips.hideTooltips() }
 
-                    val geomInteraction = if (layerConfig.isMarginal) {
-                        // marginal layer doesn't have interactions
-                        null
-                    } else {
-                        GeomInteractionUtil.configGeomTargets(
-                            layerConfig,
-                            layerScaleMap,
-                            otherLayerWithTooltips,
-                            isLiveMap,
-                            plotConfig.theme
-                        )
-                    }
+                GeomInteractionUtil.configGeomTargets(
+                    layerConfig,
+                    layerScaleMap,
+                    otherLayerWithTooltips,
+                    isLiveMap,
+                    theme
+                )
+            }
 
-                    layerBuilders.add(
-                        createLayerBuilder(
-                            layerConfig,
-                            plotConfig.fontFamilyRegistry,
-                            geomInteraction,
-                            plotConfig.theme
-                        )
-                    )
-                }
+            //
+            // Layer builder
+            //
+            val geomLayerBuilder = createLayerBuilder(
+                layerConfig,
+                fontRegistry,
+                geomInteraction,
+                theme
+            )
 
-                val layer = layerBuilders[layerIndex].build(
+            //
+            // Layer tiles
+            //
+            val layerData = layerConfig.combinedData
+            val layerDataByTile = PlotConfigUtil.splitLayerDataByTile(layerData, facets)
+
+            val geomLayerByTile = layerDataByTile.map { layerTileData ->
+                geomLayerBuilder.build(
                     layerTileData,
                     layerScaleMap,
-                    plotConfig.mappersByAesNP,
+                    mappersByAesNP,
                 )
-                panelLayers.add(layer)
             }
-            layersByTile.add(panelLayers)
+
+            //
+            // Stack geom layers by tile.
+            //
+            if (geomLayerListByTile.isEmpty()) {
+                geomLayerByTile.forEach { _ -> geomLayerListByTile.add(ArrayList<GeomLayer>()) }
+            }
+            for ((tileIndex, geomLayer) in geomLayerByTile.withIndex()) {
+                val tileGeomLayers = geomLayerListByTile[tileIndex]
+                tileGeomLayers.add(geomLayer)
+            }
         }
 
-        return layersByTile
+        return geomLayerListByTile
     }
 
     private fun createScalesForStatPositionalBindings(

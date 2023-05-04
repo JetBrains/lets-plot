@@ -34,7 +34,7 @@ object PlotSizeHelper {
             return Pair(containerWidth, containerHeight)
         }
 
-        return when (val kind = PlotConfig.figSpecKind(figureSpec)) {
+        return when (PlotConfig.figSpecKind(figureSpec)) {
             FigKind.GG_BUNCH_SPEC -> {
                 // don't scale GGBunch size
                 val bunchSize = plotBunchSize(figureSpec)
@@ -81,8 +81,8 @@ object PlotSizeHelper {
         )
     }
 
-    fun subPlotsSize(
-        compositeFigureSpec: Map<*, *>,
+    fun compositeFigureSize(
+        config: CompositeFigureConfig,
         plotSize: DoubleVector?,
         plotMaxWidth: Double?,
         plotPreferredWidth: Double?
@@ -91,15 +91,9 @@ object PlotSizeHelper {
             return plotSize
         }
 
-        @Suppress("UNCHECKED_CAST")
-        compositeFigureSpec as Map<String, Any>
-        var compositeFigureConfig = CompositeFigureConfig(compositeFigureSpec) {
-            // no messages handler here
-        }
-
-        val specifiedFigureSize = getSizeOptionOrNull(compositeFigureSpec)
+        val specifiedFigureSize = getSizeOptionOrNull(config.toMap())
         val figureSize = specifiedFigureSize ?: run {
-            val gridColsRows = compositeFigureConfig.gridSizeOrNull()
+            val gridColsRows = config.gridSizeOrNull()
             gridColsRows?.let { (ncols, nrows) ->
                 defaultPlotGridSize(ncols, nrows)
             } ?: DEF_PLOT_SIZE
@@ -202,7 +196,7 @@ object PlotSizeHelper {
      * @return Figure dimatsions width/height ratio.
      */
     fun figureAspectRatio(figureFpec: Map<*, *>): Double {
-        return when (val kind = PlotConfig.figSpecKind(figureFpec)) {
+        return when (PlotConfig.figSpecKind(figureFpec)) {
             FigKind.PLOT_SPEC,
             FigKind.SUBPLOTS_SPEC -> {
                 // single plot

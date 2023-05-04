@@ -119,7 +119,7 @@ class PolygonsBuilder(
                 +ScaleComponent()
                 +NeedLocationComponent
                 +NeedCalculateLocationComponent
-                +LocatorComponent(PolygonLocator())
+                +LocatorComponent(PolygonLocator)
             }
     }
 

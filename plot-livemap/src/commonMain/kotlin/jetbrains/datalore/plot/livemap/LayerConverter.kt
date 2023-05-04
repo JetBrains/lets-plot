@@ -92,7 +92,7 @@ object LayerConverter {
                         radius = it.radius
                         fillColor = it.fillColor
                         strokeColor = it.strokeColor
-                        strokeWidth = 1.0
+                        strokeWidth = it.strokeWidth
                     }
                 }
             }

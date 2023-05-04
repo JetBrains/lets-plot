@@ -191,7 +191,9 @@ class Dotplot {
                 "   'layers': [" +
                 "               {" +
                 "                 'geom': 'dotplot'," +
-                "                 'stat': 'identity'" +
+                "                 'stat': 'identity'," +
+                "                 'color': 'black'," +
+                "                 'stroke': 5" +
                 "               }" +
                 "             ]" +
                 "}"

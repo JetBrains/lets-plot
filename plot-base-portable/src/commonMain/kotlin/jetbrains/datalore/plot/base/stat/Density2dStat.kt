@@ -42,12 +42,15 @@ class Density2dStat constructor(
             return withEmptyStatValues()
         }
 
-        val xVector = data.getNumeric(TransformVar.X)
-        val yVector = data.getNumeric(TransformVar.Y)
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        val (xVector, yVector) = (xs zip ys)
+            .filter { SeriesUtil.allFinite(it.first, it.second) }
+            .unzip()
 
         // if no data, return empty
         if (xVector.isEmpty()) {
-            return DataFrame.Builder.emptyFrame()
+            return withEmptyStatValues()
         }
 
         // if length of x and y doesn't match, throw error

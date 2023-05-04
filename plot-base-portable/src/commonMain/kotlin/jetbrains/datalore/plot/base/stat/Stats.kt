@@ -24,7 +24,6 @@ object Stats {
     val SE = DataFrame.Variable("..se..", STAT, "standard error")
     val LEVEL = DataFrame.Variable("..level..", STAT, "level")
     val QUANTILE = DataFrame.Variable("..quantile..", STAT, "quantile")
-
     val LOWER = DataFrame.Variable("..lower..", STAT, "lower")
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
@@ -75,6 +74,10 @@ object Stats {
         }
         result
     }
+
+    val EMPTY_STATS_DATAFRAME = VARS.values
+        .fold(DataFrame.Builder()) { acc, variable -> acc.put(variable, emptyList<Any>()) }
+        .build()
 
     fun isStatVar(varName: String): Boolean {
         return VARS.containsKey(varName)
@@ -339,10 +342,10 @@ object Stats {
         return QQ2LineStat(lineQuantiles = lineQuantiles)
     }
 
-    private class IdentityStat internal constructor() : BaseStat(emptyMap()) {
+    private class IdentityStat() : BaseStat(emptyMap()) {
 
         override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
-            return DataFrame.Builder.emptyFrame()
+            return withEmptyStatValues()
         }
 
         override fun consumes(): List<Aes<*>> {

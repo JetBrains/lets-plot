@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 
 class PieLocatorTest {
     private val manager = EcsComponentManager()
-    private val locator = DonutChart.Locator()
+    private val locator = DonutChart.Locator
     private val r = 10.0
     private val entities = createPie(listOf(2.0, 2.0, 2.0, 2.0))
 

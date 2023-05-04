@@ -8,16 +8,15 @@ package jetbrains.datalore.plot.builder.data
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
+import jetbrains.datalore.plot.builder.data.GroupMapperHelper.SINGLE_GROUP
 
-class GroupingContext constructor(
+class GroupingContext(
     private val data: DataFrame,
     defaultGroupingVariables: List<Variable>,
     explicitGroupingVarName: String?,
     private val expectMultiple: Boolean,
-    private val groupSizeList: List<Int>? = null
 ) {
 
     internal val optionalGroupingVar: Variable? = findOptionalVariable(data, explicitGroupingVarName)
@@ -29,68 +28,23 @@ class GroupingContext constructor(
         }
     }
 
-    private var _groupMapper: ((Int) -> Int)? = null
-
-    val groupMapper: (Int) -> Int
-        get() {
-            if (_groupMapper == null) {
-                _groupMapper = computeGroups()
-            }
-            return _groupMapper!!
-        }
+    val groupMapper: (Int) -> Int by lazy {
+        computeGroups()
+    }
 
     private fun computeGroups(): (Int) -> Int {
-        if (data.rowCount() == 0) return GroupUtil.SINGLE_GROUP
-        if (data.has(Stats.GROUP)) {
-            val list = data.getNumeric(Stats.GROUP)
-            return GroupUtil.wrap(list)
-        } else if (groupSizeList != null) {
-            if (groupSizeList.size == data.rowCount()) {
-                return GroupUtil.SINGLE_GROUP
-            } else {
-                val groupByPointIndex =
-                    toIndexMap(groupSizeList)
-                return GroupUtil.wrap(groupByPointIndex)
-            }
-        } else if (expectMultiple) {
-            return DataProcessing.computeGroups(
-                data,
-                groupingVariables
-            )
+        return if (!expectMultiple) {
+            SINGLE_GROUP
+        } else {
+            GroupMapperHelper.firstOptionGroupMapperOrNull(data)
+                ?: DataProcessing.computeGroups(
+                    data,
+                    groupingVariables
+                )
         }
-        return GroupUtil.SINGLE_GROUP
     }
 
     companion object {
-        internal fun withOrderedGroups(data: DataFrame, groupSizeList: List<Int>): GroupingContext {
-            val groupingVariables = DataProcessing.defaultGroupingVariables(
-                data,
-                bindings = emptyList(),
-                pathIdVarName = null
-            )
-            return GroupingContext(
-                data,
-                groupingVariables,
-                explicitGroupingVarName = null,
-                expectMultiple = false,
-                groupSizeList = ArrayList(groupSizeList)
-            )
-        }
-
-        private fun toIndexMap(groupSizeList: List<Int>): Map<Int, Int> {
-            val result = HashMap<Int, Int>()
-            var currentGroup = 0
-            var currentGroupIndexOffset = 0
-            for (groupSize in groupSizeList) {
-                for (i in 0 until groupSize) {
-                    result[currentGroupIndexOffset + i] = currentGroup
-                }
-                currentGroup++
-                currentGroupIndexOffset += groupSize
-            }
-            return result
-        }
-
         private fun getGroupingVariables(
             data: DataFrame,
             bindings: List<VarBinding>,

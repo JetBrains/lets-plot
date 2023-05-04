@@ -5,10 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.DataFrameUtil.createVariable
-import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.AES
@@ -19,25 +15,27 @@ import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.ORDER_BY
 import jetbrains.datalore.plot.config.Option.Meta.MappingAnnotation.PARAMETERS
 import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.COLUMN
+import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.FACTOR_LEVELS
 import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
     private const val prefix = "@as_discrete@"
 
-    private fun isDiscrete(variable: String) = variable.startsWith(prefix)
+    internal fun isDiscrete(variable: String) = variable.startsWith(prefix)
 
     public fun toDiscrete(variable: String): String {
         require(!isDiscrete(variable)) { "toDiscrete() - variable already encoded: $variable" }
         return "$prefix$variable"
     }
 
-    private fun fromDiscrete(variable: String): String {
+    internal fun fromDiscrete(variable: String): String {
         require(isDiscrete(variable)) { "fromDiscrete() - variable is not encoded: $variable" }
         return variable.removePrefix(prefix)
     }
 
-    private fun Map<*, *>.getMappingAnnotationsSpec(annotation: String): List<Map<*, *>> {
-        return this
+    private fun getMappingAnnotationsSpec(options: Map<*, *>, annotation: String): List<Map<*, *>> {
+        return options
             .getMap(Option.Meta.DATA_META)
             ?.getMaps(MappingAnnotation.TAG)
             ?.filter { it.read(ANNOTATION) == annotation }
@@ -57,16 +55,16 @@ object DataMetaUtil {
     }
 
     fun createScaleSpecs(plotOptions: Map<String, Any>): List<MutableMap<String, Any?>> {
-        val plotDiscreteAnnotations = plotOptions.getMappingAnnotationsSpec(AS_DISCRETE)
+        val plotDiscreteAnnotations = getMappingAnnotationsSpec(plotOptions, AS_DISCRETE)
 
         val layersDiscreteAnnotations = plotOptions
             .getMaps(Option.Plot.LAYERS)
-            ?.map { layerOptions -> layerOptions.getMappingAnnotationsSpec(AS_DISCRETE) }
+            ?.map { layerOptions -> getMappingAnnotationsSpec(layerOptions, AS_DISCRETE) }
             ?.flatten()
             ?: emptyList()
 
         return (plotDiscreteAnnotations + layersDiscreteAnnotations)
-            .groupBy ({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
+            .groupBy({ it.read(AES)!! }) { it.read(PARAMETERS, LABEL) } // {aes: [labels]}
             .mapValues { (_, labels) -> labels.findLast { it != null } } // {aes: last_not_null_label}
             .map { (aes, label) ->
                 mutableMapOf(
@@ -74,82 +72,16 @@ object DataMetaUtil {
                     Scale.DISCRETE_DOMAIN to true,
                     Scale.NAME to label
                 )
-        }
+            }
     }
 
-    /**
-     * returns mappings and DataFrame extended with auto-generated discrete mappings and variables
-     */
-    fun createDataFrame(
-        options: OptionsAccessor,
-        commonData: DataFrame,
-        commonDiscreteAes: Set<String>,
-        commonMappings: Map<*, *>,
-        isClientSide: Boolean
-    ): Pair<Map<*, *>, DataFrame> {
-        val ownData = ConfigUtil.createDataFrame(options.get(Option.PlotBase.DATA))
-        val ownMappings = options.getMap(Option.PlotBase.MAPPING)
-
-        if (isClientSide) {
-            return Pair(
-                // no new discrete mappings, all job was done on server side
-                ownMappings,
-                // re-insert existing variables as discrete
-                DataFrameUtil.toMap(ownData)
-                    .filter { (varName, _) -> isDiscrete(varName) }
-                    .entries
-                    .fold(DataFrame.Builder(ownData)) { acc, (varName, values) ->
-                        val variable = findVariableOrFail(ownData, varName)
-                        // re-insert as discrete
-                        acc.remove(variable)
-                        acc.putDiscrete(variable, values)
-                    }
-                    .build()
-            )
-
-        }
-
-        // server side
-
-        // own names not yet encoded, i.e. 'cyl'
-        val ownDiscreteMappings = run {
-            val ownDiscreteAes = getAsDiscreteAesSet(options.getMap(Option.Meta.DATA_META))
-            return@run ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
-        }
-
-        // Original (not encoded) discrete var names from both common and own mappings.
-        val combinedDiscreteVars = run {
-            // common names already encoded by PlotConfig, i.e. '@as_discrete@cyl'. Restore original name.
-            val commonDiscreteVars = commonMappings.filterKeys { it in commonDiscreteAes }.variables().map(::fromDiscrete)
-
-            val ownSimpleVars = ownMappings.variables() - ownDiscreteMappings.variables()
-
-            // minus own non-discrete mappings (simple layer var overrides discrete plot var)
-            return@run ownDiscreteMappings.variables() + commonDiscreteVars - ownSimpleVars
-        }
-
-        val combinedDfVars = DataFrameUtil.toMap(commonData) + DataFrameUtil.toMap(ownData)
-
-        return Pair(
-            ownMappings + ownDiscreteMappings.mapValues { (_, varName) ->
-                require(varName is String)
-                toDiscrete(varName)
-            },
-            combinedDfVars
-                .filter { (dfVarName, _) -> dfVarName in combinedDiscreteVars }
-                .mapKeys { (dfVarName, _) -> createVariable(toDiscrete(dfVarName)) }
-                .entries
-                .fold(DataFrame.Builder(ownData)) { acc, (dfVar, values) -> acc.putDiscrete(dfVar, values) }
-                .build()
-        )
-    }
-
-    fun getOrderOptions(options: Map<*, *>?, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
-        return options
-            ?.getMappingAnnotationsSpec(AS_DISCRETE)
-            ?.associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
-            ?.mapNotNull { (aesName, parameters) ->
-                check(aesName in commonMappings)
+    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+        return getMappingAnnotationsSpec(options, AS_DISCRETE)
+            .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
+            .mapNotNull { (aesName, parameters) ->
+                check(aesName in commonMappings) {
+                    "Aes '$aesName' not found in mappings: $commonMappings"
+                }
                 val variableName = commonMappings[aesName] as String
                 OrderOptionUtil.OrderOption.create(
                     variableName,
@@ -157,12 +89,11 @@ object DataMetaUtil {
                     parameters?.read(ORDER)
                 )
             }
-            ?: emptyList()
     }
 
-    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<String, String>): List<OrderOptionUtil.OrderOption> {
         // non-discrete mappings should inherit settings from the as_discrete
-        return this + mappings.variables()
+        return this + mappings.values.toSet()
             .filterNot(::isDiscrete)
             .mapNotNull { varName ->
                 val orderOptionForVar = this
@@ -183,14 +114,63 @@ object DataMetaUtil {
     fun getDateTimeColumns(options: Map<*, *>): Set<String> {
         return options
             .getMaps(SeriesAnnotation.TAG)
-            ?.associate { it.getString(SeriesAnnotation.COLUMN)!! to it.read(SeriesAnnotation.TYPE)!! }
+            ?.associate { it.getString(COLUMN)!! to it.read(SeriesAnnotation.TYPE) }
             ?.filterValues(SeriesAnnotation.DateTime.DATE_TIME::equals)
             ?.keys
             ?: emptySet()
     }
-}
 
+    fun getFactorLevelsByVariable(dataMeta: Map<*, *>): Map<String, List<Any>> {
+        return (dataMeta
+            .getMaps(SeriesAnnotation.TAG)
+            ?.associate { it.getString(COLUMN)!! to it.getList(FACTOR_LEVELS) }
+            ?.filterValues { list -> list?.isNotEmpty() ?: false }
+            ?.mapValues { (_, list) -> list!!.map { v -> v as Any } }
+            ?: emptyMap())
+    }
 
-private fun Map<*, *>.variables(): Set<String> {
-    return values.map { it as String }.toSet()
+    fun updateFactorLevelsByVariable(
+        dataMeta: Map<String, Any>,
+        levelsByVariable: Map<String, List<Any>>
+    ): Map<String, Any> {
+        val seriesAnnotations = dataMeta.getMaps(SeriesAnnotation.TAG) ?: listOf()
+
+        val varsWithAnnotation = seriesAnnotations.map { it.getString(COLUMN)!! }.toSet()
+        val varsToAddAnnotation = levelsByVariable.keys - varsWithAnnotation
+
+        val updatedSeriesAnnotations = ArrayList(
+            // Existing annotationa to keep untouched.
+            seriesAnnotations.filter { !levelsByVariable.containsKey(it.getString(COLUMN)) }
+        )
+
+        // Modify existing annotations
+        val seriesAnnotationsToUpdate = seriesAnnotations.filter { levelsByVariable.containsKey(it.getString(COLUMN)) }
+        val seriesAnnotationsUpdated = seriesAnnotationsToUpdate.map {
+            val variable = it.getString(COLUMN)!!
+            val factorLevels = levelsByVariable.getValue(variable)
+
+            // Just add factor levels to annotation
+            HashMap(it).apply {
+                this[FACTOR_LEVELS] = factorLevels
+            }
+        }
+        updatedSeriesAnnotations.addAll(seriesAnnotationsUpdated)
+
+        // Add new annotations
+        updatedSeriesAnnotations.addAll(
+            levelsByVariable
+                .filter { (variable, _) -> variable in varsToAddAnnotation }
+                .map { (variable, levels) ->
+                    mapOf(
+                        COLUMN to variable,
+                        FACTOR_LEVELS to levels
+                    )
+                }
+
+        )
+
+        return dataMeta + mapOf(
+            SeriesAnnotation.TAG to updatedSeriesAnnotations
+        )
+    }
 }

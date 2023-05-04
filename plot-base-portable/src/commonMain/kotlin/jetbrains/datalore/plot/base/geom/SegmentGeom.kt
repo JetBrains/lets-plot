@@ -38,6 +38,7 @@ class SegmentGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val helper = GeomHelper(pos, coord, ctx)
             .createSvgElementHelper()
+        helper.setStrokeAlphaEnabled(true)
 
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SEGMENT, ctx)
 
@@ -76,12 +77,12 @@ class SegmentGeom : GeomBase() {
                         val arrowAes = arrowSpec!!.toArrowAes(p)
                         if (arrowSpec!!.isOnLastEnd) {
                             val arrow = arrowSpec!!.createElement(polarAngle, clientX2, clientY2)
-                            decorate(arrow, arrowAes)
+                            decorate(arrow, arrowAes, applyAlphaToAll = true)
                             root.add(arrow)
                         }
                         if (arrowSpec!!.isOnFirstEnd) {
                             val arrow = arrowSpec!!.createElement(polarAngle + PI, clientX1, clientY1)
-                            decorate(arrow, arrowAes)
+                            decorate(arrow, arrowAes, applyAlphaToAll = true)
                             root.add(arrow)
                         }
                     }

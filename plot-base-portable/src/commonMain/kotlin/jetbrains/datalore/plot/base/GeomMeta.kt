@@ -37,6 +37,7 @@ object GeomMeta {
     private val POINT = listOf(
         Aes.X, Aes.Y,
         Aes.SIZE,
+        Aes.STROKE,
         Aes.COLOR,
         Aes.FILL,
         Aes.ALPHA,
@@ -120,7 +121,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE
+                Aes.STROKE
             )
 
             GeomKind.TILE,
@@ -136,9 +137,16 @@ object GeomMeta {
             )
 
             GeomKind.ERROR_BAR -> listOf(
+                // vertical representation
                 Aes.X,
                 Aes.YMIN, Aes.YMAX,
                 Aes.WIDTH,
+
+                // horizontal
+                Aes.Y,
+                Aes.XMIN, Aes.XMAX,
+                Aes.HEIGHT,
+
                 Aes.ALPHA,
                 Aes.COLOR,
                 Aes.LINETYPE,
@@ -154,7 +162,6 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.LINETYPE,
-                Aes.SHAPE,
                 Aes.SIZE
             )
 
@@ -175,7 +182,8 @@ object GeomMeta {
                 Aes.FILL,
                 Aes.LINETYPE,
                 Aes.SHAPE,
-                Aes.SIZE
+                Aes.SIZE,
+                Aes.STROKE
             )
 
             GeomKind.CONTOUR -> PATH
@@ -206,6 +214,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.ALPHA
             )
+
             GeomKind.V_LINE -> listOf(
                 Aes.XINTERCEPT,
                 Aes.SIZE, // path width
@@ -269,7 +278,7 @@ object GeomMeta {
                 Aes.COLOR,
                 Aes.FILL,
                 Aes.ALPHA,
-                Aes.SIZE
+                Aes.STROKE
             )
 
             GeomKind.RIBBON -> listOf(
@@ -287,9 +296,27 @@ object GeomMeta {
             GeomKind.DENSITY2D -> PATH
             GeomKind.DENSITY2DF -> POLYGON
             GeomKind.JITTER -> POINT
-            GeomKind.Q_Q -> POINT
+            GeomKind.Q_Q -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SAMPLE,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE
+            )
+
             GeomKind.Q_Q_2 -> POINT
-            GeomKind.Q_Q_LINE -> PATH
+            GeomKind.Q_Q_LINE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SAMPLE,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA
+            )
+
             GeomKind.Q_Q_2_LINE -> PATH
             GeomKind.FREQPOLY -> PATH
             GeomKind.STEP -> PATH
@@ -366,7 +393,8 @@ object GeomMeta {
                 Aes.XMIN,
                 Aes.XMAX,
                 Aes.YMIN,
-                Aes.YMAX
+                Aes.YMAX,
+                Aes.COLOR  // not rendered but necessary for color legend to appear.
             )
 
             GeomKind.PIE -> listOf(
@@ -377,6 +405,18 @@ object GeomMeta {
                 Aes.SIZE,
                 Aes.FILL,
                 Aes.ALPHA
+            )
+
+            GeomKind.LOLLIPOP -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.LINEWIDTH,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE,
+                Aes.LINETYPE
             )
         }
     }

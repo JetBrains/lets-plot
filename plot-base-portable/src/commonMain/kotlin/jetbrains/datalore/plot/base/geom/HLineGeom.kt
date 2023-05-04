@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.HLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendTrueHeight
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendHeight
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
@@ -55,7 +55,7 @@ class HLineGeom : GeomBase() {
                 // tooltip
                 val rect = geomHelper.toClient(DoubleRectangle.span(start, end), p)!!
                 val h = AesScaling.strokeWidth(p) + 4.0
-                val targetRect = extendTrueHeight(rect, h, ctx)
+                val targetRect = extendHeight(rect, h, ctx.flipped)
 
                 ctx.targetCollector.addRectangle(
                     p.index(),
