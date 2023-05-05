@@ -69,6 +69,7 @@ import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
 import jetbrains.datalore.plot.builder.scale.provider.AlphaMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.LinewidthMapperProvider
 import jetbrains.datalore.plot.builder.scale.provider.SizeMapperProvider
+import jetbrains.datalore.plot.builder.scale.provider.StrokeMapperProvider
 
 
 object DefaultMapperProvider {
@@ -111,7 +112,7 @@ object DefaultMapperProvider {
             this.put(LINETYPE, createWithDiscreteOutput(LineTypeMapper.allLineTypes(), LineTypeMapper.NA_VALUE))
 
             this.put(SIZE, SizeMapperProvider.DEFAULT)
-            this.put(STROKE, NUMERIC_IDENTITY)
+            this.put(STROKE, StrokeMapperProvider.DEFAULT)
             this.put(LINEWIDTH, LinewidthMapperProvider.DEFAULT)
             this.put(STACKSIZE, NUMERIC_IDENTITY)
             this.put(WIDTH, NUMERIC_IDENTITY)
