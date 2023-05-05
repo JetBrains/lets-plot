@@ -7,14 +7,15 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
 
 
-- Aesthetic `stroke` [[#320](https://github.com/JetBrains/lets-plot/issues/320)].
+- Aesthetic `stroke` [[#320](https://github.com/JetBrains/lets-plot/issues/320)]
+  and its scales `scale_stroke()`, `scale_stroke_identity()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/aes_stroke.ipynb).
 
 
-- Aesthetic `linewidth` (for `geom_lollipop()`).
+- Aesthetic `linewidth` (for `geom_lollipop()`) and its scales `scale_linewidth()`, `scale_linewidth_identity()`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/aes_linewidth.ipynb).
 
 
 - The 'newline' character (`\n`) now works as `line break` in legend
