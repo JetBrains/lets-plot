@@ -43,6 +43,8 @@
 
 - `geom_text(), geom_label()` use `stat='identity'` by default.
 
+- JVM/Batik: improved "paint manager" which has better performance and fixes issues with artifacts that could appear beyond the plot component. 
+
 ### Fixed
 
 - Batik: `geom_imshow()` fail with an error: "The attribute "xlink:href" of the element <image> is required"
