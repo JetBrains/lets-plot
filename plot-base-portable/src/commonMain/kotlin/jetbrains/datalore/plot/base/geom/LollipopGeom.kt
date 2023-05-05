@@ -10,6 +10,7 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
+import jetbrains.datalore.plot.base.geom.legend.LollipopLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
@@ -29,7 +30,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     var direction: Direction = DEF_DIRECTION
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = PointLegendKeyElementFactory()
+        get() = LollipopLegendKeyElementFactory(fatten)
 
     override fun buildIntern(
         root: SvgRoot,

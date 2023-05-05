@@ -101,6 +101,10 @@ class ScaleConfig<T> constructor(
             mapperProvider = AlphaMapperProvider(getRange(RANGE), (naValue as Double))
         } else if (aes == Aes.SIZE && has(RANGE)) {
             mapperProvider = SizeMapperProvider(getRange(RANGE), (naValue as Double))
+        } else if (aes == Aes.LINEWIDTH && has(RANGE)) {
+            mapperProvider = LinewidthMapperProvider(getRange(RANGE), (naValue as Double))
+        } else if (aes == Aes.STROKE && has(RANGE)) {
+            mapperProvider = StrokeMapperProvider(getRange(RANGE), (naValue as Double))
         }
 
         val scaleMapperKind = getString(SCALE_MAPPER_KIND) ?: if (

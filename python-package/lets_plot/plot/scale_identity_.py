@@ -14,7 +14,9 @@ __all__ = ['scale_identity',
            'scale_shape_identity',
            'scale_linetype_identity',
            'scale_alpha_identity',
-           'scale_size_identity'
+           'scale_size_identity',
+           'scale_linewidth_identity',
+           'scale_stroke_identity'
            ]
 
 
@@ -484,6 +486,132 @@ def scale_size_identity(name=None, breaks=None, labels=None, limits=None, na_val
 
     """
     return scale_identity('size',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
+
+
+def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+    """
+    Use this scale when your data has already been scaled.
+    I.e. it already represents aesthetic values that can be handled directly.
+    This will not produce a legend unless you also supply the breaks and labels.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Input data expected: positive numeric values.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            'w': [1, 3, 2],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(linewidth='w')) + \\
+            scale_linewidth_identity()
+
+    """
+    return scale_identity('linewidth',
+                          name=name,
+                          breaks=breaks,
+                          labels=labels,
+                          limits=limits,
+                          na_value=na_value,
+                          guide=guide,
+                          format=format)
+
+
+def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_value=None, guide='none', format=None):
+    """
+    Use this scale when your data has already been scaled.
+    I.e. it already represents aesthetic values that can be handled directly.
+    This will not produce a legend unless you also supply the breaks and labels.
+
+    Parameters
+    ----------
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+    breaks : list of float
+        A vector specifying values to display as ticks on axis.
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        Continuous scale: a numeric vector of length two providing limits of the scale.
+        Discrete scale: a vector specifying the data range for the scale
+        and the default order of their display in guides.
+    guide, default='none'
+        Guide to use for this scale. Defaults to 'none'.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Notes
+    -----
+    Input data expected: positive numeric values.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            's': [1, 3, 2],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(stroke='s')) + \\
+            scale_stroke_identity()
+
+    """
+    return scale_identity('stroke',
                           name=name,
                           breaks=breaks,
                           labels=labels,

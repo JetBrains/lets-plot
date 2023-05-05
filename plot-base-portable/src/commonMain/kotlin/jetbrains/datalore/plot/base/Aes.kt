@@ -177,7 +177,6 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == FLOW ||
                     aes == LABEL ||
                     aes == SLOPE ||
-                    aes == STROKE ||
                     aes == STACKSIZE ||
                     aes == WIDTH ||
                     aes == HEIGHT ||

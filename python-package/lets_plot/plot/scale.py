@@ -21,7 +21,7 @@ __all__ = ['scale_shape',
            'scale_grey', 'scale_fill_grey', 'scale_color_grey',
            'scale_brewer', 'scale_fill_brewer', 'scale_color_brewer',
            'scale_viridis', 'scale_fill_viridis', 'scale_color_viridis',
-           'scale_alpha', 'scale_size', 'scale_size_area'
+           'scale_alpha', 'scale_size', 'scale_size_area', 'scale_linewidth', 'scale_stroke'
            ]
 
 
@@ -3062,6 +3062,144 @@ def scale_size_area(max_size=None, name=None, breaks=None, labels=None, limits=N
                   #
                   max_size=max_size,
                   scale_mapper_kind='size_area')
+
+
+def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None,
+                    na_value=None, guide=None, trans=None, format=None):
+    """
+    Scale for linewidth.
+
+    Parameters
+    ----------
+    range : list
+        The range of the mapped aesthetics result.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            'w': ['a', 'b', 'c'],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(linewidth='w')) + \\
+            scale_linewidth(range=[.5, 2])
+
+    """
+    return _scale('linewidth',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  range=range)
+
+
+def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
+                 na_value=None, guide=None, trans=None, format=None):
+    """
+    Scale for stroke.
+
+    Parameters
+    ----------
+    range : list
+        The range of the mapped aesthetics result.
+    name : str
+        The name of the scale - used as the axis label or the legend title.
+        If None, the default, the name of the scale
+        is taken from the first mapping used for that aesthetic.
+    breaks : list
+        A numeric vector of positions (of ticks).
+    labels : list of str
+        A vector of labels (on ticks).
+    limits : list
+        A vector specifying the data range for the scale
+        and the default order of their display in guides.
+    na_value
+        Missing values will be replaced with this value.
+    guide
+        A result returned by `guide_legend()` function or 'none' to hide the guide.
+    trans : {'identity', 'log10', 'sqrt', 'reverse'}
+        Name of built-in transformation.
+    format : str
+        Define the format for labels on the scale. The syntax resembles Python's:
+        '.2f' -> '12.45'
+        'Num {}' -> 'Num 12.456789'
+        'TTL: {.2f}$' -> 'TTL: 12.45$'
+        For more info see https://lets-plot.org/pages/formats.html.
+
+    Returns
+    -------
+    `FeatureSpec`
+        Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            's': ['a', 'b', 'c'],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(stroke='s')) + \\
+            scale_stroke(range=[.5, 2])
+
+    """
+    return _scale('stroke',
+                  name=name,
+                  breaks=breaks,
+                  labels=labels,
+                  limits=limits,
+                  expand=None,
+                  na_value=na_value,
+                  guide=guide,
+                  trans=trans,
+                  format=format,
+                  #
+                  range=range)
 
 
 def _scale(aesthetic, *,
