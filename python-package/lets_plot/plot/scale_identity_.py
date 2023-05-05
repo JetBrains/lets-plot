@@ -531,6 +531,22 @@ def scale_linewidth_identity(name=None, breaks=None, labels=None, limits=None, n
     -----
     Input data expected: positive numeric values.
 
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            'w': [1, 3, 2],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(linewidth='w')) + \\
+            scale_linewidth_identity()
+
     """
     return scale_identity('linewidth',
                           name=name,
@@ -577,6 +593,22 @@ def scale_stroke_identity(name=None, breaks=None, labels=None, limits=None, na_v
     Notes
     -----
     Input data expected: positive numeric values.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            's': [1, 3, 2],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(stroke='s')) + \\
+            scale_stroke_identity()
 
     """
     return scale_identity('stroke',

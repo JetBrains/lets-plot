@@ -3102,6 +3102,22 @@ def scale_linewidth(range=None, name=None, breaks=None, labels=None, limits=None
     `FeatureSpec`
         Scale specification.
 
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            'w': ['a', 'b', 'c'],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(linewidth='w')) + \\
+            scale_linewidth(range=[.5, 2])
+
     """
     return _scale('linewidth',
                   name=name,
@@ -3154,6 +3170,22 @@ def scale_stroke(range=None, name=None, breaks=None, labels=None, limits=None,
     -------
     `FeatureSpec`
         Scale specification.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 9
+
+        from lets_plot import *
+        LetsPlot.setup_html()
+        data = {
+            'x': [0, 1, 2],
+            'y': [1, 2, 1],
+            's': ['a', 'b', 'c'],
+        }
+        ggplot(data, aes('x', 'y')) + geom_lollipop(aes(stroke='s')) + \\
+            scale_stroke(range=[.5, 2])
 
     """
     return _scale('stroke',
