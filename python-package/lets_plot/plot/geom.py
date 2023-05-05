@@ -99,8 +99,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -243,9 +243,9 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         If an EPSG code is given, then all the coordinates in `GeoDataFrame` (see the `map` parameter)
         will be projected to this CRS.
         Specify "provided" to disable any further re-projection and to keep the `GeoDataFrame’s` original CRS.
-    flat : Boolean, default=False.
+    flat : bool, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
-    geodesic : Boolean, default=False
+    geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
@@ -270,7 +270,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - size : line width.
 
@@ -431,7 +431,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -577,8 +577,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : filling color for the confidence interval around the line.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color for the confidence interval around the line. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - linetype : type of the line of conditional mean line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width. Define line width for conditional mean and confidence bounds lines.
 
@@ -730,8 +730,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value (this value will be used to multiply the case's or bin's counts).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width. Define bar line width.
     - weight : used by 'count' stat to compute weighted sum instead of simple count.
 
@@ -881,8 +881,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis value (this value will produce cases or bins for bars).
     - y : y-axis value, default: '..count..'. Alternatively: '..density..'.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1032,8 +1032,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
 
     - x : x-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - stroke : width of the dot border.
 
     Examples
@@ -1169,8 +1169,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling, default: '..count..'. Alternatively: '..density..'.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - weight : used by 'bin' stat to compute weighted sum instead of simple count.
 
@@ -1313,8 +1313,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - width : width of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
     - height : height of a tile. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the tiles.
@@ -1445,7 +1445,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates of the center of rectangles.
     - y : y-axis coordinates of the center of rectangles.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : color of geometry filling.
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
 
     Examples
     --------
@@ -1541,7 +1541,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - ymin or xmin: lower bound for vertical or horizontal error bar, respectively.
     - ymax or xmax: upper bound for vertical or horizontal error bar, respectively.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width. Define bar line width.
     - width or height : size of the whiskers of vertical or horizontal bar, respectively. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -1678,8 +1678,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
     - middle : position of median bar.
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - width : width of a bar. Typically range between 0 and 1. Values that are greater than 1 lead to overlapping of the bars.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
@@ -1802,8 +1802,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - ymin : lower bound for error bar.
     - ymax : upper bound for error bar.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width, size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
@@ -1919,7 +1919,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
     - ymin : lower bound for line range.
     - ymax : upper bound for line range.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2035,8 +2035,9 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+    - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2174,8 +2175,9 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     - x : x-axis coordinates of the center of rectangles, forming a tessellation.
     - y : y-axis coordinates of the center of rectangles, forming a tessellation.
+    - z : value at point (x, y).
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : color of the geometry areas. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
 
     Examples
     --------
@@ -2317,8 +2319,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
     - x : x-axis coordinates of the vertices of the polygon.
     - y : y-axis coordinates of the vertices of the polygon.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2497,8 +2499,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     `geom_map()` understands the following aesthetics:
 
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of the geometry internals. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2645,7 +2647,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
     - slope : line slope.
     - intercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2750,7 +2752,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - yintercept : line y-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -2864,7 +2866,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 
     - xintercept : line x-intercept.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -3017,8 +3019,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     - ymin : lower whisker.
     - ymax : upper whisker.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - width : width of boxplot. Typically ranges between 0 and 1. Values that are greater than 1 lead to overlapping of the boxes.
@@ -3217,8 +3219,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'ydensity' stat to compute weighted density.
@@ -3423,8 +3425,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - stroke : width of the dot border.
 
     Examples
@@ -3596,8 +3598,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
     - y : y-axis coordinates.
     - height : height of the ridge. Assumed to be between 0 and 1, though this is not required.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'densityridges' stat to compute weighted density.
@@ -3732,8 +3734,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
     - ymin : y-axis coordinates of the lower bound.
     - ymax : y-axis coordinates of the upper bound.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -3847,8 +3849,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -4000,8 +4002,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - weight : used by 'density' stat to compute weighted density.
@@ -4190,7 +4192,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
     - x : x-axis coordinates.
     - y : y-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -4403,7 +4405,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
 
     - x : x-axis coordinates.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - fill : color of geometry filling.
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
 
     |
 
@@ -4609,8 +4611,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4744,8 +4746,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
 
     - sample : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4859,8 +4861,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
@@ -4969,7 +4971,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     - sample : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -5079,7 +5081,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash.
     - size : line width.
 
@@ -5176,7 +5178,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line of border. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -5282,7 +5284,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -5399,8 +5401,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - ymin : y-axis value.
     - ymax : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color of geometry filling.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : lines width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -5532,7 +5534,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Specify appearance, style and content.
     arrow : `FeatureSpec`
         Specification for arrow head, as created by `arrow()` function.
-    flat : Boolean, default=False.
+    flat : bool, default=False.
         True - keeps a line flat, False - allows projection to curve a line.
     geodesic : bool, default=False
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap()`.
@@ -5560,7 +5562,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
     - xend : x-axis value.
     - yend : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry lines. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : line width.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
 
@@ -5721,7 +5723,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - size : font size.
     - label : text to add to plot.
     - family : font family. Possible values: 'sans', 'serif', 'mono', any other like: "Times New Roman". The default is 'sans'.
@@ -5917,7 +5919,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - fill: background color of the label.
     - size : font size.
     - label : text to add to plot.
@@ -6107,7 +6109,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - slice : values associated to pie sectors.
     - explode : values to explode slices away from their center point, detaching it from the main pie.
     - size : pie diameter.
-    - fill : color of geometry filling.
+    - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
 
@@ -6287,8 +6289,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
     - x : x-axis value.
     - y : y-axis value.
     - alpha : transparency level of the point. Accept values between 0 and 1.
-    - color (colour) : color of the geometry. Can be continuous or discrete. For continuous value this will be a color gradient between two colors.
-    - fill : color to paint shape's inner points. Is applied only to the points of shapes having inner points.
+    - color (colour) : color of the geometry. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
+    - fill : fill color. Is applied only to the points of shapes having inner area. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - shape : shape of the point, an integer from 0 to 25.
     - size : size of the point.
     - stroke : width of the shape border. Applied only to the shapes having border.
