@@ -15,7 +15,7 @@
 
 - Aesthetic `linewidth` (for `geom_lollipop()`) and its scales `scale_linewidth()`, `scale_linewidth_identity()`.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/aes_linewidth.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
 
 
 - The 'newline' character (`\n`) now works as `line break` in legend
