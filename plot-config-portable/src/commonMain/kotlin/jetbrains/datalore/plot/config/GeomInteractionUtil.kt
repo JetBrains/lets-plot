@@ -258,6 +258,17 @@ object GeomInteractionUtil {
             GeomKind.BOX_PLOT -> listOf(Aes.Y)
             GeomKind.RECT -> listOf(Aes.XMIN, Aes.YMIN, Aes.XMAX, Aes.YMAX)
             GeomKind.SEGMENT -> listOf(Aes.X, Aes.Y, Aes.XEND, Aes.YEND)
+            GeomKind.ERROR_BAR -> {
+                // ToDo Need refactoring...
+                // Error bar supports a dual set of aesthetics (vertical and horizontal representation).
+                // Here the `layerConfig.renderedAes` (full aesthetic list) is used.
+                // So add unused axis aes to the hidden list
+                when (axisAes.singleOrNull()) {
+                    Aes.X -> listOf(Aes.Y)
+                    Aes.Y -> listOf(Aes.X)
+                    else -> emptyList()
+                }
+            }
             GeomKind.TEXT, GeomKind.LABEL -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
