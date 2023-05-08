@@ -60,7 +60,7 @@ Also read:
 
 ## What is new in 3.2.0
 
-- ### Aesthetics `stroke` and `linewidth`
+### Aesthetics `stroke` and `linewidth`
   <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/stroke.png" alt="f-23b/images/stroke.png" width="336" height="150">
 
@@ -69,24 +69,24 @@ Also read:
   See also `geom_lollipop()` example below.
 
 
-- ### `geom_lollipop()`
+### Lollipop Plot
   <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/lollipop.png" alt="f-23b/images/lollipop.png" width="600" height="200">
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
 
 
-- ### Horizontal error bars and vertical "dodge"
+### Horizontal error bars and vertical "dodge"
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/horizontal_error_bars.ipynb).
 
 
-- ### Multi-line Labels in Legends
+### Multi-line Labels in Legends
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
 
               
-- ### Colorbar in `geom_imshow()`
+### Colorbar in `geom_imshow()`
   <br>
   <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/imshow_legend.png" alt="f-23b/images/imshow_legend.png" width="514" height="400">
 
