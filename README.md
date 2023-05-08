@@ -24,7 +24,7 @@ We provide ggplot2-like plotting API for Python and Kotlin users.
 
 A bridge between R (ggplot2) and Python data visualization.
 
-Learn more about *Lets-Plot for Python* installation and usage at the documentation website: https://lets-plot.org.          
+To learn more: [lets-plot.org](https://lets-plot.org).          
 
 
 ## Lets-Plot for Kotlin
@@ -58,52 +58,37 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 3.1.0
+## What is new in 3.2.0
 
-- ### `gggrid()`
+- ### Aesthetics `stroke` and `linewidth`
   <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/plot_grid.png" alt="f-23a/images/plot_grid.png" width="400" height="200">
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/stroke.png" alt="f-23b/images/stroke.png" width="336" height="150">
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/plot_grid.ipynb).
-
-
-- ### `joint_plot()`
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/joint_plot.png" alt="f-23a/images/joint_plot.png" width="400" height="267">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/joint_plot.ipynb).
-
-
-- ### Configuring Axis Position
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/axis_position.png" alt="f-23a/images/axis_position.png" width="300" height="200">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_position.ipynb).
-
-              
-- ### Showing Quantiles on Density Plots
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/density_quantiles.png" alt="f-23a/images/density_quantiles.png" width="400" height="150">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/quantile_parameters.ipynb).
-
-              
-- ### Additional "color" aesthetics: `paint_a, paint_b, paint_c`.
-  <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23a/images/additional_color_aes.png" alt="f-23a/images/additional_color_aes.png" width="400" height="300">
-
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/multiple_color_scales.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
   
-  Also added a set of related "color scale" functions with the "aesthetic" parameter for configuring of additional color scales.
-
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/scale_functions.ipynb) demo.
+  See also `geom_lollipop()` example below.
 
 
-- ### Other New Features and Improvements 
+- ### `geom_lollipop()`
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/lollipop.png" alt="f-23b/images/lollipop.png" width="600" height="200">
 
-  - Export to PNG file in `ggsave()` (requires the [CairoSVG](https://pypi.org/project/CairoSVG) library), see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/export_to_png.ipynb).
-  - `angle` parameter in `element_text()` in `theme()`, see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/axis_text_angle.ipynb).  
-  - `geodesic` parameter in `geom_segment()` and `geom_path()`, see [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23a/param_geodesic.ipynb).  
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/geom_lollipop.ipynb).
+
+
+- ### Horizontal error bars and vertical "dodge"
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/horizontal_error_bars.ipynb).
+
+
+- ### Multi-line Labels in Legends
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23b/legend_text_multiline.ipynb).
+
+              
+- ### Colorbar in `geom_imshow()`
+  <br>
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-23b/images/imshow_legend.png" alt="f-23b/images/imshow_legend.png" width="514" height="400">
 
 
 ## Change Log
