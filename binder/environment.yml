@@ -8,7 +8,8 @@ dependencies:
   - python=3.8
   - numpy
   - pandas
-  - matplotlib
+#  - matplotlib
+  - gdal                            # for DEM data
   - pip
   - pip:                            # Packages installed from PyPI
       - lets-plot==3.2.0rc1
