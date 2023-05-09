@@ -1080,6 +1080,10 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, sampling=None, to
                          stackratio=1.2, color='black', fill='gray')
 
     """
+    if 'stat' in other_args:
+        print("WARN: using 'stat' parameter for dotplot was deprecated.")
+        other_args.pop('stat')
+
     return _geom('dotplot',
                  mapping=mapping,
                  data=data,
@@ -3484,6 +3488,10 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, sampling=None, t
                           stackdir='right', stackratio=.8)
 
     """
+    if 'stat' in other_args:
+        print("WARN: using 'stat' parameter for dotplot was deprecated.")
+        other_args.pop('stat')
+
     return _geom('ydotplot',
                  mapping=mapping,
                  data=data,
