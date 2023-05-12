@@ -409,17 +409,19 @@ object DataProcessing {
         data: DataFrame,
         bindings: List<VarBinding>,
         pathIdVarName: String?,
+        dataMetaAsDiscreteAesList: List<Aes<*>>
     ): List<Variable> {
         val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
-        return defaultGroupingVariables(data, bindings) + listOfNotNull(pathIdVar)
+        return defaultGroupingVariables(data, bindings, dataMetaAsDiscreteAesList) + listOfNotNull(pathIdVar)
     }
 
     private fun defaultGroupingVariables(
         data: DataFrame,
         bindings: List<VarBinding>,
+        dataMetaAsDiscreteAesList: List<Aes<*>>
     ): Iterable<Variable> {
         return bindings
-            .filter { isDefaultGroupingVariable(data, it.aes, it.variable) }
+            .filter { isDefaultGroupingVariable(data, it.aes, it.variable, dataMetaAsDiscreteAesList) }
             .map { it.variable }
             .distinct()
     }
@@ -427,10 +429,12 @@ object DataProcessing {
     private fun isDefaultGroupingVariable(
         data: DataFrame,
         aes: Aes<*>,
-        variable: Variable
+        variable: Variable,
+        dataMetaAsDiscreteAesList: List<Aes<*>>
     ): Boolean {
         // 'origin' discrete vars (but not positional)
-        return variable.isOrigin && !(Aes.isPositional(aes) || data.isNumeric(variable))
+        return variable.isOrigin && !Aes.isPositional(aes) &&
+                (aes in dataMetaAsDiscreteAesList || !data.isNumeric(variable))
     }
 
     class DataAndGroupMapper internal constructor(

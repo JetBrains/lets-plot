@@ -20,19 +20,6 @@ import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.FACTOR_LEVELS
 import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
-    private const val prefix = "@as_discrete@"
-
-    internal fun isDiscrete(variable: String) = variable.startsWith(prefix)
-
-    public fun toDiscrete(variable: String): String {
-        require(!isDiscrete(variable)) { "toDiscrete() - variable already encoded: $variable" }
-        return "$prefix$variable"
-    }
-
-    internal fun fromDiscrete(variable: String): String {
-        require(isDiscrete(variable)) { "fromDiscrete() - variable is not encoded: $variable" }
-        return variable.removePrefix(prefix)
-    }
 
     private fun getMappingAnnotationsSpec(options: Map<*, *>, annotation: String): List<Map<*, *>> {
         return options
@@ -90,7 +77,7 @@ object DataMetaUtil {
                 )
             }
     }
-
+/*
     fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<String, String>): List<OrderOptionUtil.OrderOption> {
         // non-discrete mappings should inherit settings from the as_discrete
         return this + mappings.values.toSet()
@@ -108,6 +95,7 @@ object DataMetaUtil {
                 )
             }
     }
+ */
 
     // Series Annotations
 

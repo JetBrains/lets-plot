@@ -287,22 +287,15 @@ open class PlotConfigServerSide(
             val discreteTransformByVariable = discreteAesByMappedVariable
                 .mapValues { (_, aes) -> discreteTransformByAes.getValue(aes) }
 
-            val levelsByVariableRaw: MutableMap<String, List<Any>> = mutableMapOf()
+            val levelsByVariable: MutableMap<String, List<Any>> = mutableMapOf()
             for ((variable, transform) in discreteTransformByVariable) {
                 val distinctValues = layerData.distinctValues(variable)
                 val indices = transform.apply(distinctValues.toList())
                 // null values -> last
                 val orderedDistinctValues = distinctValues.zip(indices).sortedBy { it.second }.map { it.first }
-                levelsByVariableRaw[variable.name] = orderedDistinctValues
+                levelsByVariable[variable.name] = orderedDistinctValues
             }
 
-            val levelsByVariable = levelsByVariableRaw.mapKeys { (varName, _) ->
-                if (DataMetaUtil.isDiscrete(varName)) {
-                    DataMetaUtil.fromDiscrete(varName)
-                } else {
-                    varName
-                }
-            }
             return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)
         }
     }

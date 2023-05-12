@@ -53,6 +53,7 @@ class GeomLayerBuilder(
     private var myGroupingVarName: String? = null
     private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
+    private var myDataMetaAsDiscreteAesList: List<Aes<*>> = emptyList()
 
     private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
@@ -97,6 +98,11 @@ class GeomLayerBuilder(
 
     fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider): GeomLayerBuilder {
         myScaleProviderByAes[aes] = scaleProvider
+        return this
+    }
+
+    fun dataMetaAsDiscreteAesList(dataMetaAsDiscreteAesList: List<Aes<*>>): GeomLayerBuilder {
+        myDataMetaAsDiscreteAesList = dataMetaAsDiscreteAesList
         return this
     }
 
@@ -210,7 +216,8 @@ class GeomLayerBuilder(
         val groupingVariables = DataProcessing.defaultGroupingVariables(
             data,
             myBindings,
-            myPathIdVarName
+            myPathIdVarName,
+            myDataMetaAsDiscreteAesList
         )
 
         val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
@@ -385,7 +392,8 @@ class GeomLayerBuilder(
                         val groupingVariables = DataProcessing.defaultGroupingVariables(
                             data,
                             builder.myBindings,
-                            builder.myPathIdVarName
+                            builder.myPathIdVarName,
+                            dataMetaAsDiscreteAesList = emptyList()
                         )
                         val groupingCtx = GroupingContext(
                             transformedData,

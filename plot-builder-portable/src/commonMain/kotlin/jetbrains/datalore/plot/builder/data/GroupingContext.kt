@@ -5,10 +5,8 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.DataProcessing.findOptionalVariable
 import jetbrains.datalore.plot.builder.data.GroupMapperHelper.SINGLE_GROUP
 
@@ -43,7 +41,7 @@ class GroupingContext(
                 )
         }
     }
-
+/*
     companion object {
         private fun getGroupingVariables(
             data: DataFrame,
@@ -77,4 +75,6 @@ class GroupingContext(
             variable: Variable
         ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
     }
+
+ */
 }

@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
-import jetbrains.datalore.plot.config.DataMetaUtil.toDiscrete
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.Test
@@ -27,7 +26,7 @@ class OrderOptionsConfigTest {
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
+            .assertOrderOption("bar", "bar", 1)
     }
 
     @Test
@@ -37,7 +36,7 @@ class OrderOptionsConfigTest {
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption(toDiscrete("bar"), "foo", -1)
+            .assertOrderOption("bar", "foo", -1)
     }
 
     @Test
@@ -48,8 +47,8 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "fill", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOptions(0, toDiscrete("foo"), "foo", 1)
-            .assertOrderOptions(1, toDiscrete("bar"), "foo", -1)
+            .assertOrderOptions(0, "foo", "foo", 1)
+            .assertOrderOptions(1, "bar", "foo", -1)
     }
 
     @Test
@@ -60,7 +59,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = null, order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption(toDiscrete("bar"), "foo", -1)
+            .assertOrderOption("bar", "foo", -1)
     }
 
     @Test
@@ -71,7 +70,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption(toDiscrete("bar"), "foo", -1)
+            .assertOrderOption("bar", "foo", -1)
     }
 
 
@@ -83,7 +82,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = null, order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption(toDiscrete("bar"), "foo", 1)
+            .assertOrderOption("bar", "foo", 1)
     }
 
     @Test
@@ -94,7 +93,7 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = "foo", order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption(toDiscrete("bar"), "foo", 1)
+            .assertOrderOption("bar", "foo", 1)
     }
 
     @Test
@@ -106,7 +105,7 @@ class OrderOptionsConfigTest {
 
         assertFailed(
             makePlotSpec(orderingSettings),
-            expectedMessage = "Multiple ordering options for the variable '${toDiscrete("bar")}' with different non-empty 'order_by' fields: 'foo' and 'bar'"
+            expectedMessage = "Multiple ordering options for the variable 'bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
         )
 
     }
@@ -121,7 +120,7 @@ class OrderOptionsConfigTest {
         assertFailed(
             makePlotSpec(orderingSettings),
             expectedMessage =
-            "Multiple ordering options for the variable '${toDiscrete("bar")}' with different order direction: '1' and '-1'"
+            "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
         )
     }
 
@@ -137,7 +136,7 @@ class OrderOptionsConfigTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
+            .assertOrderOption("bar", "bar", 1)
     }
 
     @Test
@@ -148,7 +147,7 @@ class OrderOptionsConfigTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
+            .assertOrderOption("bar", "bar", 1)
     }
 
     @Test
@@ -159,7 +158,7 @@ class OrderOptionsConfigTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
+            .assertOrderOption("bar", "bar", 1)
     }
 
     @Test
@@ -170,7 +169,7 @@ class OrderOptionsConfigTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption(toDiscrete("bar"), toDiscrete("bar"), 1)
+            .assertOrderOption("bar", "bar", 1)
     }
 
 

@@ -21,9 +21,7 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpecs
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.config.DataConfigUtil.createDataFrame
 import jetbrains.datalore.plot.config.DataConfigUtil.layerMappingsAndCombinedData
-import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -145,23 +143,13 @@ class LayerConfig constructor(
             return field
         }
 
-    init {
-        val layerMappings = createDataFrame(
-            commonData = plotData,
-            ownData = ConfigUtil.createDataFrame(get(DATA)),
-            commonMappings = plotMappings,
-            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
-            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
-            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
-            isClientSide = clientSide
-        ).let {
-            ownData = it.second
-            it.first
-        }
+    val dataMetaAsDiscreteAesList: List<Aes<*>> =
+        DataMetaUtil.getAsDiscreteAesSet(plotDataMeta + getMap(DATA_META)).map(Option.Mapping::toAes)
 
-        if (!clientSide) {
-            update(MAPPING, layerMappings)
-        }
+    init {
+        ownData = ConfigUtil.createDataFrame(get(DATA))
+
+        val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
@@ -426,7 +414,7 @@ class LayerConfig constructor(
             val orderOptions = plotOrderOptions + ownOrderOptions
 
             return orderOptions
-                .inheritToNonDiscrete(combinedMappingOptions)
+          //      .inheritToNonDiscrete(combinedMappingOptions)
                 .groupingBy(OrderOption::variableName)
                 .reduce { _, combined, element -> combined.mergeWith(element) }
                 .values.toList()

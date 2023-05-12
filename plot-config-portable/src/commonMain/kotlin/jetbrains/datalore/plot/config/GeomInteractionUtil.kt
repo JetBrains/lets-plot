@@ -310,7 +310,11 @@ object GeomInteractionUtil {
         val aesListForTooltip = ArrayList(layerRendersAes - axisAes)
         for (aes in axisAes) {
             val axisVariable = layerConfig.getVariableForAes(aes)
-            aesListForTooltip.removeAll { layerConfig.getVariableForAes(it) == axisVariable }
+            val isAxisDiscrete = aes in layerConfig.dataMetaAsDiscreteAesList
+            aesListForTooltip.removeAll {
+                val isAesDiscrete = it in layerConfig.dataMetaAsDiscreteAesList
+                layerConfig.getVariableForAes(it) == axisVariable && isAxisDiscrete == isAesDiscrete
+            }
         }
 
         aesListForTooltip.retainAll { aes -> scaleMap.containsKey(aes) && layerConfig.getVariableForAes(aes) != null }
