@@ -89,6 +89,13 @@ object StatProto {
                 )
             }
 
+            StatKind.BOXPLOT_OUTLIER -> {
+                return Stats.boxplotOutlier(
+                    whiskerIQRRatio = options.getDoubleDef(Boxplot.COEF, BoxplotStat.DEF_WHISKER_IQR_RATIO),
+                    computeWidth = options.getBoolean(Boxplot.VARWIDTH, BoxplotStat.DEF_COMPUTE_WIDTH)
+                )
+            }
+
             StatKind.DENSITYRIDGES -> return configureDensityRidgesStat(options)
 
             StatKind.YDENSITY -> return configureYDensityStat(options)

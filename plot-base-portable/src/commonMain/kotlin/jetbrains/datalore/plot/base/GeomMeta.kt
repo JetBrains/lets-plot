@@ -224,12 +224,12 @@ object GeomMeta {
             )
 
             GeomKind.BOX_PLOT -> listOf(
-                Aes.LOWER, // NaN for 'outlier' data-point
-                Aes.MIDDLE, // NaN for 'outlier' data-point
-                Aes.UPPER, // NaN for 'outlier' data-point
+                Aes.LOWER,
+                Aes.MIDDLE,
+                Aes.UPPER,
 
                 Aes.X,
-                Aes.Y, // NaN for 'box' data-point (used for outliers)
+                Aes.Y,
                 Aes.YMAX,
                 Aes.YMIN,
 

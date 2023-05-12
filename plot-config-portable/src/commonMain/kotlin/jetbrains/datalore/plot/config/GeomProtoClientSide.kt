@@ -125,15 +125,6 @@ class GeomProtoClientSide(geomKind: GeomKind) : GeomProto(geomKind) {
                 if (opts.hasOwn(Boxplot.WHISKER_WIDTH)) {
                     geom.whiskerWidth = opts.getDouble(Boxplot.WHISKER_WIDTH)!!
                 }
-                if (opts.hasOwn(BoxplotOutlier.COLOR)) {
-                    geom.outlierColor = opts.getColor(BoxplotOutlier.COLOR)!!
-                }
-                if (opts.hasOwn(BoxplotOutlier.FILL)) {
-                    geom.outlierFill = opts.getColor(BoxplotOutlier.FILL)!!
-                }
-                geom.outlierShape = opts.getShape(BoxplotOutlier.SHAPE)
-                geom.outlierSize = opts.getDouble(BoxplotOutlier.SIZE)
-                geom.outlierStroke = opts.getDouble(BoxplotOutlier.STROKE)
                 geom
             }
 
