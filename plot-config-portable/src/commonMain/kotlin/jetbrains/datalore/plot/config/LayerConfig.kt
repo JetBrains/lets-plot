@@ -414,7 +414,6 @@ class LayerConfig constructor(
             val orderOptions = plotOrderOptions + ownOrderOptions
 
             return orderOptions
-          //      .inheritToNonDiscrete(combinedMappingOptions)
                 .groupingBy(OrderOption::variableName)
                 .reduce { _, combined, element -> combined.mergeWith(element) }
                 .values.toList()

@@ -41,40 +41,4 @@ class GroupingContext(
                 )
         }
     }
-/*
-    companion object {
-        private fun getGroupingVariables(
-            data: DataFrame,
-            bindings: List<VarBinding>,
-            explicitGroupingVar: Variable?
-        ): Iterable<Variable> {
-
-            // all 'origin' discrete vars (but not positional) + explicitGroupingVar
-            val result = LinkedHashSet<Variable>()
-            for (binding in bindings) {
-                val variable = binding.variable
-                if (!result.contains(variable)) {
-                    if (variable.isOrigin) {
-                        if (variable == explicitGroupingVar || isDefaultGroupingVariable(
-                                data,
-                                binding.aes,
-                                variable
-                            )
-                        ) {
-                            result.add(variable)
-                        }
-                    }
-                }
-            }
-            return result
-        }
-
-        private fun isDefaultGroupingVariable(
-            data: DataFrame,
-            aes: Aes<*>,
-            variable: Variable
-        ) = !(Aes.isPositional(aes) || data.isNumeric(variable))
-    }
-
- */
 }

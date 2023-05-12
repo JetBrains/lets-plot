@@ -77,25 +77,6 @@ object DataMetaUtil {
                 )
             }
     }
-/*
-    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<String, String>): List<OrderOptionUtil.OrderOption> {
-        // non-discrete mappings should inherit settings from the as_discrete
-        return this + mappings.values.toSet()
-            .filterNot(::isDiscrete)
-            .mapNotNull { varName ->
-                val orderOptionForVar = this
-                    .filter { isDiscrete(it.variableName) }
-                    .find { fromDiscrete(it.variableName) == varName }
-                    ?: return@mapNotNull null
-
-                OrderOptionUtil.OrderOption.create(
-                    varName,
-                    orderBy = orderOptionForVar.byVariable.takeIf { it != orderOptionForVar.variableName },
-                    orderOptionForVar.getOrderDir()
-                )
-            }
-    }
- */
 
     // Series Annotations
 
