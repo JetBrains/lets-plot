@@ -87,7 +87,7 @@ object PlotImageExport {
             }
         }
 
-        val svg = buildSvgImageFromRawSpecs(plotSpec)
+        val svg = buildSvgImageFromRawSpecs(plotSpec, useCssPixelatedImageRendering = false) // Batik transcoder supports SVG style, not CSS
 
         val plotSize = fetchPlotSizeFromSvg(svg)
 

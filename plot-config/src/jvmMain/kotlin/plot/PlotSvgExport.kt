@@ -10,18 +10,19 @@ import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import jetbrains.datalore.vis.svgToString.SvgToString
 
 object PlotSvgExport {
-    private val JVM_SVG_STR_MAPPER =
-        SvgToString(RGBEncoderAwt())   // Supports data-frame --> rgb image transform (geom_raster)
-
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
      * @param plotSize Desired plot size. Has no effect on GGBunch.
+     * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
-        plotSize: DoubleVector? = null
+        plotSize: DoubleVector? = null,
+        useCssPixelatedImageRendering: Boolean = true
     ): String {
-        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, plotSize, JVM_SVG_STR_MAPPER)
+        // Supports data-frame --> rgb image transform (geom_raster)
+        val jvmSvgStrMapper = SvgToString(RGBEncoderAwt(), useCssPixelatedImageRendering)
+        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, plotSize, jvmSvgStrMapper)
     }
 }

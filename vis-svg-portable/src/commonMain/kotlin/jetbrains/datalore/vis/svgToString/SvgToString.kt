@@ -5,17 +5,16 @@
 
 package jetbrains.datalore.vis.svgToString
 
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgImageElementEx
+import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svg.SvgImageElementEx.RGBEncoder
-import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svg.SvgTextNode
 import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
 import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_NAMESPACE_URI
 import jetbrains.datalore.vis.svg.XmlNamespace.XLINK_PREFIX
 
-class SvgToString(private val rgbEncoder: RGBEncoder?) {
-
+class SvgToString(
+    private val rgbEncoder: RGBEncoder?,
+    private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder or Cairo
+) {
     fun render(svg: SvgSvgElement): String {
         val buffer = StringBuilder()
         renderElement(svg, buffer, 0)
@@ -69,6 +68,15 @@ class SvgToString(private val rgbEncoder: RGBEncoder?) {
                             continue
                         }
                     }
+
+                    if (childNode is SvgImageElement) {
+                        val style = when (useCssPixelatedImageRendering) {
+                            true -> "image-rendering: optimizeSpeed; image-rendering: pixelated"
+                            false -> "image-rendering: optimizeSpeed"
+                        }
+                        childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, style)
+                    }
+
                     renderElement(
                         childNode as SvgElement,
                         buffer,

@@ -15,9 +15,9 @@ def _generate_dynamic_display_html(plot_spec: Dict) -> str:
     return lets_plot_kotlin_bridge.generate_html(plot_spec)
 
 
-def _generate_svg(plot_spec: Dict) -> str:
+def _generate_svg(plot_spec: Dict, use_css_pixelated_image_rendering: bool = True) -> str:
     plot_spec = _standardize_plot_spec(plot_spec)
-    return lets_plot_kotlin_bridge.export_svg(plot_spec)
+    return lets_plot_kotlin_bridge.export_svg(plot_spec, use_css_pixelated_image_rendering)
 
 
 def _generate_static_html_page(plot_spec: Dict, iframe: bool) -> str:
