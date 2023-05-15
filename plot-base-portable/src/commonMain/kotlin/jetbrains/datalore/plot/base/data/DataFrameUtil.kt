@@ -74,7 +74,7 @@ object DataFrameUtil {
                 val srcVar = findVariableOrFail(df, destVar.name)
                 when (df.isNumeric(srcVar)) {
                     true -> putNumeric(destVar, df.getNumeric(srcVar))
-                    false -> putDiscrete(destVar, df[srcVar])
+                    false -> put(destVar, df[srcVar])
                 }
             }
         }
@@ -138,17 +138,5 @@ object DataFrameUtil {
             }
         }
         return b.build()
-    }
-
-    fun addDateTimeVariables(data: DataFrame, dateTimeVars: Set<String>): DataFrame {
-        return data.builder().run {
-            data.variables().forEach { variable ->
-                if (variable.name in dateTimeVars) {
-                    remove(variable)
-                    putDateTime(variable, data[variable])
-                }
-            }
-            build()
-        }
     }
 }

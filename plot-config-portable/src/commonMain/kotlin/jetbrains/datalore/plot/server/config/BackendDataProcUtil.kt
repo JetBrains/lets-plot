@@ -25,8 +25,7 @@ internal object BackendDataProcUtil {
         val groupingVariables = DataProcessing.defaultGroupingVariables(
             data,
             layerConfig.varBindings,
-            pathIdVarName = null, // only on client side
-            layerConfig.dataMetaAsDiscreteAesList
+            pathIdVarName = null // only on client side
         )
         return GroupingContext(
             data,

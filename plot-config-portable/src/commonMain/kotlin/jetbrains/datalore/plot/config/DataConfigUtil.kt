@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
@@ -12,6 +13,8 @@ import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
+import jetbrains.datalore.plot.builder.VarBinding
+import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 
 internal object DataConfigUtil {
 
@@ -22,9 +25,6 @@ internal object DataConfigUtil {
 
         sharedData: DataFrame,
         layerData: DataFrame,
-
-        plotDataMeta: Map<*, *>,
-        ownDataMeta: Map<String, Any>,
 
         consumedAesMappings: Map<*, *>,
         explicitConstantAes: List<Aes<*>>,
@@ -52,11 +52,6 @@ internal object DataConfigUtil {
 
             !layerData.isEmpty -> layerData
             else -> sharedData
-        }.run {
-            // Mark 'DateTime' variables
-            val dateTimeVariables = DataMetaUtil.getDateTimeColumns(plotDataMeta) +
-                    DataMetaUtil.getDateTimeColumns(ownDataMeta)
-            DataFrameUtil.addDateTimeVariables(this, dateTimeVariables)
         }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
@@ -94,5 +89,59 @@ internal object DataConfigUtil {
             first = aesMappings,
             second = combinedData
         )
+    }
+
+    fun combinedDataWithDataMeta(
+        rawCombinedData: DataFrame,
+        varBindings: List<VarBinding>,
+        plotDataMeta: Map<*, *>,
+        ownDataMeta: Map<String, Any>,
+        orderOptions: List<OrderOptionUtil.OrderOption>,
+        aggregateOperation: ((List<Double?>) -> Double?),
+        clientSide: Boolean
+    ): DataFrame {
+
+        fun DataFrame.Builder.addVariables(
+            variable: DataFrame.Variable,
+            vars: Set<String>,
+            put: (DataFrame.Builder, DataFrame.Variable, List<*>) -> DataFrame.Builder
+        ) : DataFrame.Builder {
+            if (variable.name in vars) {
+                remove(variable)
+                put(this, variable, rawCombinedData[variable])
+            }
+            return this
+        }
+
+        // 'DateTime' variables
+        val dateTimeVariables = DataMetaUtil.getDateTimeColumns(plotDataMeta) +
+                DataMetaUtil.getDateTimeColumns(ownDataMeta)
+
+        // 'as_discrete' variables
+        val asDiscreteAesSet = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta) +
+                DataMetaUtil.getAsDiscreteAesSet(ownDataMeta)
+        val asDiscreteVariables = varBindings.filter { it.aes.name in asDiscreteAesSet }.map { it.variable.name }.toSet()
+
+        return rawCombinedData.builder().run {
+
+            rawCombinedData.variables().forEach { variable ->
+                addVariables(variable, dateTimeVariables, DataFrame.Builder::putDateTime)
+                addVariables(variable, asDiscreteVariables, DataFrame.Builder::putAsDiscrete)
+            }
+
+            if (clientSide) {
+                val variables = rawCombinedData.variables()
+                val orderSpecs = OrderOptionUtil.createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
+                val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(ownDataMeta)
+                    .mapKeys { (varName, _) -> variables.find { it.name == varName } }
+                    .filterNotNullKeys()
+
+                this
+                    .addOrderSpecs(orderSpecs)
+                    .addFactorLevels(factorLevelsByVar)
+            }
+
+            build()
+        }
     }
 }

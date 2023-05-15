@@ -187,7 +187,7 @@ object DataProcessing {
             val builder = data.variables().fold(Builder()) { b, variable ->
                 when (data.isNumeric(variable)) {
                     true -> b.putNumeric(variable, data.getNumeric(variable).slice(indices))
-                    false -> b.putDiscrete(variable, data[variable].slice(indices))
+                    false -> b.put(variable, data[variable].slice(indices))
                 }
             }
             builder.build()
@@ -408,20 +408,18 @@ object DataProcessing {
     fun defaultGroupingVariables(
         data: DataFrame,
         bindings: List<VarBinding>,
-        pathIdVarName: String?,
-        dataMetaAsDiscreteAesList: List<Aes<*>>
+        pathIdVarName: String?
     ): List<Variable> {
         val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
-        return defaultGroupingVariables(data, bindings, dataMetaAsDiscreteAesList) + listOfNotNull(pathIdVar)
+        return defaultGroupingVariables(data, bindings) + listOfNotNull(pathIdVar)
     }
 
     private fun defaultGroupingVariables(
         data: DataFrame,
-        bindings: List<VarBinding>,
-        dataMetaAsDiscreteAesList: List<Aes<*>>
+        bindings: List<VarBinding>
     ): Iterable<Variable> {
         return bindings
-            .filter { isDefaultGroupingVariable(data, it.aes, it.variable, dataMetaAsDiscreteAesList) }
+            .filter { isDefaultGroupingVariable(data, it.aes, it.variable) }
             .map { it.variable }
             .distinct()
     }
@@ -429,12 +427,10 @@ object DataProcessing {
     private fun isDefaultGroupingVariable(
         data: DataFrame,
         aes: Aes<*>,
-        variable: Variable,
-        dataMetaAsDiscreteAesList: List<Aes<*>>
+        variable: Variable
     ): Boolean {
         // 'origin' discrete vars (but not positional)
-        return variable.isOrigin && !Aes.isPositional(aes) &&
-                (aes in dataMetaAsDiscreteAesList || !data.isNumeric(variable))
+        return variable.isOrigin && !Aes.isPositional(aes) && data.isDiscrete(variable)
     }
 
     class DataAndGroupMapper internal constructor(

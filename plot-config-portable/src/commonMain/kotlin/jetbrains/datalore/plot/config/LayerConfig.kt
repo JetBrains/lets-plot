@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -17,7 +16,6 @@ import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpecs
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
@@ -143,9 +141,6 @@ class LayerConfig constructor(
             return field
         }
 
-    val dataMetaAsDiscreteAesList: List<Aes<*>> =
-        DataMetaUtil.getAsDiscreteAesSet(plotDataMeta + getMap(DATA_META)).map(Option.Mapping::toAes)
-
     init {
         ownData = ConfigUtil.createDataFrame(get(DATA))
 
@@ -177,8 +172,6 @@ class LayerConfig constructor(
             stat = stat,
             sharedData = plotData,
             layerData = ownData,
-            plotDataMeta = plotDataMeta,
-            ownDataMeta = getMap(DATA_META),
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,
@@ -225,20 +218,16 @@ class LayerConfig constructor(
 
         orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
 
-        combinedData = if (clientSide) {
-            val variables = rawCombinedData.variables()
-            val orderSpecs = createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
-            val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(getMap(DATA_META))
-                .mapKeys { (varName, _) -> variables.find { it.name == varName } }
-                .filterNotNullKeys()
-
-            DataFrame.Builder(rawCombinedData)
-                .addOrderSpecs(orderSpecs)
-                .addFactorLevels(factorLevelsByVar)
-                .build()
-        } else {
-            rawCombinedData
-        }
+        // Apply data meta
+        combinedData = DataConfigUtil.combinedDataWithDataMeta(
+            rawCombinedData,
+            varBindings,
+            plotDataMeta,
+            getMap(DATA_META),
+            orderOptions,
+            aggregateOperation,
+            clientSide
+        )
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {

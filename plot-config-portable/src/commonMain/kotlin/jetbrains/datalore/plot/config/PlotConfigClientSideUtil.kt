@@ -238,8 +238,6 @@ object PlotConfigClientSideUtil {
             layerBuilder.addBinding(binding)
         }
 
-        layerBuilder.dataMetaAsDiscreteAesList(layerConfig.dataMetaAsDiscreteAesList)
-
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)
 
         geomInteraction?.let {
