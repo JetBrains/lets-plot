@@ -142,5 +142,18 @@ class ThemeFlavor(
                 else -> throw IllegalArgumentException("Unsupported theme flavor: '$flavor'")
             }
         }
+
+        fun chooseGeomFlavor(flavor: String?): String? {
+            return when (flavor) {
+                ThemeOption.Flavor.DARCULA,
+                ThemeOption.Flavor.SOLARIZED_DARK,
+                ThemeOption.Flavor.HIGH_CONTRAST_DARK -> ThemeOption.GeomFlavor.DARK
+
+                ThemeOption.Flavor.SOLARIZED_LIGHT,
+                ThemeOption.Flavor.HIGH_CONTRAST_LIGHT -> ThemeOption.GeomFlavor.LIGHT
+
+                else -> null
+            }
+        }
     }
 }

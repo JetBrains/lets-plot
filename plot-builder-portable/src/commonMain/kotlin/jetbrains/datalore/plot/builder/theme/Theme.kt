@@ -20,4 +20,6 @@ interface Theme {
     fun panel(): PanelTheme
 
     fun tooltips(): TooltipsTheme
+
+    val geomFlavorName: String?
 }

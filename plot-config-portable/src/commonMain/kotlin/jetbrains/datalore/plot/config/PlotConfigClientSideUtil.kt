@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
+import jetbrains.datalore.plot.builder.defaultTheme.GeomFlavorUtil
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -221,6 +222,16 @@ object PlotConfigClientSideUtil {
         for (aes in constantAesMap.keys) {
             @Suppress("UNCHECKED_CAST", "MapGetWithNotNullAssertionOperator")
             layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
+        }
+
+        // add geom flavors as constants
+        theme.geomFlavorName?.let { name ->
+            GeomFlavorUtil.getFlavors(name)
+                ?.filterKeys { aes -> aes !in constantAesMap }
+                ?.forEach { (aes, value) ->
+                    @Suppress("UNCHECKED_CAST")
+                    layerBuilder.addConstantAes(aes as Aes<Any>, value)
+            }
         }
 
         if (layerConfig.hasExplicitGrouping()) {
