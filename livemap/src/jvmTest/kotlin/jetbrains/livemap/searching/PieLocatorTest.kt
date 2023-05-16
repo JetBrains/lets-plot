@@ -6,19 +6,21 @@
 package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.UNDEFINED_SECTOR
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.getTargetUnderCoord
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
 import jetbrains.livemap.Client
+import jetbrains.livemap.ClientPoint
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.DonutChart
 import jetbrains.livemap.chart.PieSpecComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
+import jetbrains.livemap.mapengine.viewport.ViewportHelper
 import jetbrains.livemap.searching.IndexComponent
 import org.junit.Test
 import java.util.*
@@ -27,8 +29,9 @@ import kotlin.math.abs
 import kotlin.test.assertEquals
 
 class PieLocatorTest {
+    private val viewport = Viewport(ViewportHelper(World.DOMAIN, true, myLoopY = false), ClientPoint(256, 256), 1, 15)
     private val manager = EcsComponentManager()
-    private val locator = DonutChart.Locator
+    private val locator = DonutChart.DonutLocator
     private val r = 10.0
     private val entities = createPie(listOf(2.0, 2.0, 2.0, 2.0))
 
@@ -46,7 +49,6 @@ class PieLocatorTest {
                     sliceValues = transformValues2Angles(vals)
                     colors = vals.indices.map { Color.BLACK }
                 }
-                + ScreenLoopComponent().apply { origins = listOf(explicitVec(0.0, 0.0)) }
             }
             .let(pies::add)
 

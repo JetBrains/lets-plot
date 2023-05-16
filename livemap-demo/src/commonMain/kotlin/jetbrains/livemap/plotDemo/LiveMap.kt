@@ -15,8 +15,8 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            titanic()
-//            airports(),
+//            titanic()
+            airports(),
 //            volcanos(),
 //            georeference(),
 //            blankPoint(),
@@ -34,7 +34,7 @@ class LiveMap {
 //            fourPointsTwoLayers(),
 //            basic(),
 //            bunch(),
-//           facet()
+//            facet()
         )
     }
 

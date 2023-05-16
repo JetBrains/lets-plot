@@ -7,13 +7,12 @@ package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.toDoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.searching.IndexComponent
 import jetbrains.livemap.searching.LocatorUtil
@@ -158,9 +157,9 @@ object DonutChart {
     }
 
 
-    object Locator : jetbrains.livemap.searching.Locator {
-        override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
-            if (!target.contains(LOCATABLE_COMPONENTS)) {
+    object DonutLocator : jetbrains.livemap.searching.Locator {
+        override fun search(coord: Vec<Client>, target: EcsEntity, viewport: Viewport): HoverObject? {
+            if (!target.contains(PieSpecComponent::class)) {
                 return null
             }
 
@@ -168,9 +167,14 @@ object DonutChart {
             val pieSpec = target.get<PieSpecComponent>()
 
             computeSectors(pieSpec, chartElement.scalingSizeFactor).forEach { sector ->
-                target.get<ScreenLoopComponent>().origins.forEach { origin ->
-                    val loc = origin.toDoubleVector().add(sector.sectorCenter)
-                    if (isCoordinateInPieSector(coord, loc.toClientPoint(), sector.holeRadius, sector.radius, sector.startAngle, sector.endAngle)) {
+                    if (isCoordinateInPieSector(
+                            coord,
+                            sector.sectorCenter.toClientPoint(),
+                            sector.holeRadius,
+                            sector.radius,
+                            sector.startAngle,
+                            sector.endAngle
+                        )) {
                         return HoverObject(
                             layerIndex = target.get<IndexComponent>().layerIndex,
                             index = sector.index,
@@ -178,7 +182,6 @@ object DonutChart {
                             this
                         )
                     }
-                }
             }
 
             return null
@@ -207,7 +210,5 @@ object DonutChart {
             }
             return startAngle <= angle && angle < endAngle
         }
-
-        private val LOCATABLE_COMPONENTS = listOf(PieSpecComponent::class, ScreenLoopComponent::class)
     }
 }

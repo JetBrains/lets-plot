@@ -66,6 +66,20 @@ open class Viewport internal constructor(
             .map(::getViewCoord)
     }
 
+    fun getOrigins(origin: WorldPoint): List<ClientPoint> {
+        return Rect.LTRB(origin, origin)
+            .let { helper.getOrigins(it, window) }
+            .map(::getViewCoord)
+    }
+
+    fun toClientDimension(dimension: WorldPoint): ClientPoint {
+        return zoomTransform.apply(dimension)
+    }
+
+    fun toWorldDimension(dimension: ClientPoint): WorldPoint {
+        return zoomTransform.invert(dimension)
+    }
+
     fun calculateBoundingBox(bBoxes: List<Rect<World>>) = helper.calculateBoundingBox(bBoxes)
 
     private fun updateWindow() {
@@ -95,5 +109,11 @@ open class Viewport internal constructor(
                 this.position = position
             }
         }
+
+        fun toClientDimension(dimension: WorldPoint, zoom: Int): ClientPoint {
+            return Transforms.zoom<World, Client> { zoom }.apply(dimension)
+        }
+
+
     }
 }

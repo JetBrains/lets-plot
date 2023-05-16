@@ -8,6 +8,9 @@ package jetbrains.livemap.mapengine
 import jetbrains.datalore.base.typedGeometry.unaryMinus
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
+import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -17,6 +20,7 @@ import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.mapengine.camera.CameraComponent
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 // Common rendering data - used for lines, polygons, pies, bars, points.
@@ -57,7 +61,12 @@ internal class MapEntitiesRenderingSystem(
 
                 run {
                     val worldOrigin = mapEntity.tryGet<WorldOriginComponent>()?.origin ?: return@run
-                    val screenDimension = mapEntity.tryGet<ScreenDimensionComponent>()?.dimension ?: Client.ZERO_VEC
+                    val screenDimension = when {
+                        mapEntity.contains<ScreenDimensionComponent>() -> mapEntity.get<ScreenDimensionComponent>().dimension
+                        mapEntity.contains<WorldDimensionComponent>() -> mapEntity.get<WorldDimensionComponent>().dimension.let(context.mapRenderContext.viewport::toClientDimension)
+                        else -> Client.ZERO_VEC
+                    }
+
                     val screenOrigin = context.mapRenderContext.viewport.getViewCoord(worldOrigin)
                     val calculatedOrigins = context.mapRenderContext.viewport.getOrigins(screenOrigin, screenDimension)
 
@@ -80,4 +89,7 @@ internal class MapEntitiesRenderingSystem(
             layerCtx.restore()
         }
     }
+
+    fun world2Screen(p: WorldPoint, zoom: Int) = Transforms.zoom<World, Client> { zoom }.apply(p)
+
 }

@@ -77,7 +77,7 @@ class PieBuilder(
                 if (layerIndex != null) {
                     +IndexComponent(layerIndex!!, 0)
                 }
-                +LocatorComponent(DonutChart.Locator)
+                +LocatorComponent(DonutChart.DonutLocator)
                 +RenderableComponent().apply {
                     renderer = DonutChart.Renderer()
                 }

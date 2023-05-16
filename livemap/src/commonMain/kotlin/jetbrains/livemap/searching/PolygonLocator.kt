@@ -8,16 +8,15 @@ package jetbrains.livemap.searching
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.contains
-import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.fragment.RegionFragmentsComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
 
 object PolygonLocator : Locator {
 
-    override fun search(coord: Vec<Client>, target: EcsEntity): HoverObject? {
+    override fun search(coord: Vec<Client>, target: EcsEntity, viewport: Viewport): HoverObject? {
         if (target.contains<RegionFragmentsComponent>()) {
             target.get<RegionFragmentsComponent>().fragments.forEach { fragment ->
                 if (isCoordinateOnEntity(coord, fragment)) {
@@ -54,11 +53,11 @@ object PolygonLocator : Locator {
             return false
         }
 
-        target.get<ScreenLoopComponent>().origins.forEach { origin ->
-            if (isCoordinateInPolygon(coord - origin, target.get<ScreenGeometryComponent>().geometry.multiPolygon)) {
-                return true
-            }
-        }
+        //target.get<ScreenLoopComponent>().origins.forEach { origin ->
+        //    if (isCoordinateInPolygon(coord - origin, target.get<ScreenGeometryComponent>().geometry.multiPolygon)) {
+        //        return true
+        //    }
+        //}
 
         return false
     }
@@ -81,5 +80,5 @@ object PolygonLocator : Locator {
         return false
     }
 
-    private val LOCATABLE_COMPONENTS = listOf(ScreenLoopComponent::class, ScreenGeometryComponent::class)
+    private val LOCATABLE_COMPONENTS = listOf(ScreenGeometryComponent::class)
 }

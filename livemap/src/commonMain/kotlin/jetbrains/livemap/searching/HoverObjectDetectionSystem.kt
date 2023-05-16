@@ -64,7 +64,7 @@ class HoverObjectDetectionSystem(
             }
 
             val objects = getEntities2<LocatorComponent, IndexComponent>()
-                .mapNotNull { it.get<LocatorComponent>().locator.search(mouseLocation, it) }
+                .mapNotNull { it.get<LocatorComponent>().locator.search(mouseLocation, it, context.mapRenderContext.viewport) }
                 .groupBy(HoverObject::layerIndex)
                 .values
                 .filter(List<HoverObject>::isNotEmpty)
