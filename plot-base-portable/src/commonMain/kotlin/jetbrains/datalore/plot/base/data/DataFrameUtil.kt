@@ -74,7 +74,7 @@ object DataFrameUtil {
                 val srcVar = findVariableOrFail(df, destVar.name)
                 when (df.isNumeric(srcVar)) {
                     true -> putNumeric(destVar, df.getNumeric(srcVar))
-                    false -> put(destVar, df[srcVar])
+                    false -> putDiscrete(destVar, df[srcVar])
                 }
             }
         }

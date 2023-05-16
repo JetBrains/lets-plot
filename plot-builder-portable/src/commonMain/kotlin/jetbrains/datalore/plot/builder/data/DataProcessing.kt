@@ -187,7 +187,7 @@ object DataProcessing {
             val builder = data.variables().fold(Builder()) { b, variable ->
                 when (data.isNumeric(variable)) {
                     true -> b.putNumeric(variable, data.getNumeric(variable).slice(indices))
-                    false -> b.put(variable, data[variable].slice(indices))
+                    false -> b.putDiscrete(variable, data[variable].slice(indices))
                 }
             }
             builder.build()

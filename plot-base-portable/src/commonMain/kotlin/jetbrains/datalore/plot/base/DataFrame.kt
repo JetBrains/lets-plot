@@ -15,7 +15,6 @@ class DataFrame private constructor(builder: Builder) {
 
     private val myIsNumeric: MutableMap<Variable, Boolean>
     private val myIsDateTime: MutableMap<Variable, Boolean>
-    private val myAsDiscrete: MutableMap<Variable, Boolean>
 
     private val myOrderSpecs: List<OrderSpec>
     private val myFactorLevelsByVar: Map<Variable, List<Any>>
@@ -38,7 +37,6 @@ class DataFrame private constructor(builder: Builder) {
         myVectorByVar = HashMap(builder.myVectorByVar)
         myIsNumeric = HashMap(builder.myIsNumeric)
         myIsDateTime = HashMap(builder.myIsDateTime)
-        myAsDiscrete = HashMap(builder.myAsDiscrete)
         myOrderSpecs = builder.myOrderSpecs
         myFactorLevelsByVar = builder.myFactorLevelsByVar
     }
@@ -135,12 +133,7 @@ class DataFrame private constructor(builder: Builder) {
     }
 
     fun isDiscrete(variable: Variable): Boolean {
-        return asDiscrete(variable) || !isNumeric(variable)
-    }
-
-    private fun asDiscrete(variable: Variable): Boolean {
-        assertDefined(variable)
-        return myAsDiscrete.containsKey(variable)
+        return !isNumeric(variable)
     }
 
     fun isDateTime(variable: Variable): Boolean {
@@ -289,7 +282,6 @@ class DataFrame private constructor(builder: Builder) {
         internal val myVectorByVar = HashMap<Variable, List<*>>()
         internal val myIsNumeric = HashMap<Variable, Boolean>()
         internal val myIsDateTime = HashMap<Variable, Boolean>()
-        internal val myAsDiscrete = HashMap<Variable, Boolean>()
         internal val myOrderSpecs = ArrayList<OrderSpec>()
         internal val myFactorLevelsByVar = HashMap<Variable, List<Any>>()
 
@@ -300,7 +292,6 @@ class DataFrame private constructor(builder: Builder) {
                 data.myVectorByVar,
                 data.myIsNumeric,
                 data.myIsDateTime,
-                data.myAsDiscrete,
                 data.myOrderSpecs,
                 data.myFactorLevelsByVar,
             )
@@ -325,7 +316,6 @@ class DataFrame private constructor(builder: Builder) {
                 newVectors,
                 data.myIsNumeric,
                 data.myIsDateTime,
-                data.myAsDiscrete,
                 data.myOrderSpecs,
                 newFactorLevelsByVar,
             )
@@ -335,14 +325,12 @@ class DataFrame private constructor(builder: Builder) {
             vectorByVar: Map<Variable, List<*>>,
             isNumeric: Map<Variable, Boolean>,
             isDateTime: Map<Variable, Boolean>,
-            asDiscrete: Map<Variable, Boolean>,
             orderSpecs: List<OrderSpec>,
             factorLevelsByVar: Map<Variable, List<Any>>,
         ) {
             myVectorByVar.putAll(vectorByVar)
             myIsNumeric.putAll(isNumeric)
             myIsDateTime.putAll(isDateTime)
-            myAsDiscrete.putAll(asDiscrete)
             myOrderSpecs.addAll(orderSpecs)
             myFactorLevelsByVar.putAll(factorLevelsByVar)
         }
@@ -351,7 +339,6 @@ class DataFrame private constructor(builder: Builder) {
             putIntern(variable, v)
             myIsNumeric.remove(variable)  // unknown state
             myIsDateTime.remove(variable)
-            myAsDiscrete.remove(variable)
             return this
         }
 
@@ -361,19 +348,12 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-      /*
         fun putDiscrete(variable: Variable, v: List<*>): Builder {
             putIntern(variable, v)
             myIsNumeric[variable] = false
             return this
         }
-       */
 
-        fun putAsDiscrete(variable: Variable, v: List<*>): Builder {
-            putIntern(variable, v)
-            myAsDiscrete[variable] = true
-            return this
-        }
 
         fun putDateTime(variable: Variable, v: List<*>): Builder {
             putIntern(variable, v)
@@ -389,7 +369,6 @@ class DataFrame private constructor(builder: Builder) {
             myVectorByVar.remove(variable)
             myIsNumeric.remove(variable)
             myIsDateTime.remove(variable)
-            myAsDiscrete.remove(variable)
             return this
         }
 

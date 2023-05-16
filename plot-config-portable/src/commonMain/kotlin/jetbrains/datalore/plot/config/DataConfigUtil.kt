@@ -126,7 +126,7 @@ internal object DataConfigUtil {
 
             rawCombinedData.variables().forEach { variable ->
                 addVariables(variable, dateTimeVariables, DataFrame.Builder::putDateTime)
-                addVariables(variable, asDiscreteVariables, DataFrame.Builder::putAsDiscrete)
+                addVariables(variable, asDiscreteVariables, DataFrame.Builder::putDiscrete)
             }
 
             if (clientSide) {
