@@ -238,7 +238,7 @@ class GeomLayerBuilder(
     }
 
     private fun handlesGroups(): Boolean {
-        return geomProvider.handlesGroups() || posProvider.handlesGroups()
+        return geomProvider.handlesGroups || posProvider.handlesGroups()
     }
 
 
@@ -266,7 +266,7 @@ class GeomLayerBuilder(
 
         override val geom: Geom = geomProvider.createGeom()
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults()
+        override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults
 
         private val myConstantByAes: TypedKeyHashMap = TypedKeyHashMap()
         private val myRenderedAes: List<Aes<*>>

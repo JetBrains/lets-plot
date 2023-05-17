@@ -200,7 +200,7 @@ object PlotConfigClientSideUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = (layerConfig.geomProto as GeomProtoClientSide).geomProvider(layerConfig)
+        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(

@@ -151,11 +151,12 @@ abstract class PlotConfig(
         val geomName = layerOptions[Option.Layer.GEOM] as String
         val geomKind = Option.GeomName.toGeomKind(geomName)
 
-        val geomProto = if (isClientSide) {
-            GeomProtoClientSide(geomKind)
-        } else {
-            GeomProto(geomKind)
-        }
+//        val geomProto = if (isClientSide) {
+//            GeomProtoClientSide(geomKind)
+//        } else {
+//            GeomProto(geomKind)
+//        }
+        val geomProto = GeomProto(geomKind)
 
         return LayerConfig(
             layerOptions,
