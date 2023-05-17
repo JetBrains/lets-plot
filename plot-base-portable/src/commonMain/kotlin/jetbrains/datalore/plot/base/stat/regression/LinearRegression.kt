@@ -13,6 +13,9 @@ import kotlin.math.sqrt
 class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) :
     RegressionEvaluator(xs, ys, confidenceLevel) {
 
+    override val canBeComputed: Boolean
+        get() = n > 1
+
     private val n: Int
     private val meanX: Double
     private val sumXX: Double
@@ -47,7 +50,7 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
 
     private fun value(x: Double): Double = beta1 * x + beta0
 
-    override fun evalX(x: Double): EvalResult {
+    override fun getEvalX(x: Double): EvalResult {
 
         // confidence interval for the conditional mean
         // https://www.ma.utexas.edu/users/mks/statmistakes/CIvsPI.html

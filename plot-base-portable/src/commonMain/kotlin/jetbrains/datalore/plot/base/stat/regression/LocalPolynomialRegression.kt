@@ -19,7 +19,20 @@ class LocalPolynomialRegression(
     private val bandwidth: Double
 ) : RegressionEvaluator(xs, ys, confidenceLevel) {
 
-    val canCompute: Boolean
+    private var canCompute: Boolean? = null
+
+    override val canBeComputed: Boolean
+        get() {
+            if (canCompute == null) {
+                val degreesOfFreedom = n - 2.0
+                // See: LoessInterpolator.kt:168
+                val bandwidthInPoints = (bandwidth * n).toInt()
+                val bandwidthInPointsOk = bandwidthInPoints >= 2
+                canCompute = (n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk)
+            }
+
+            return canCompute!!
+        }
 
     private val n: Int
     private val meanX: Double
@@ -34,12 +47,6 @@ class LocalPolynomialRegression(
         n = xVals.size
         val degreesOfFreedom = n - 2.0
 
-        // See: LoessInterpolator.kt:168
-        val bandwidthInPoints = (bandwidth * n).toInt()
-        val bandwidthInPointsOk = bandwidthInPoints >= 2
-
-        canCompute = (n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk)
-
         meanX = xVals.average()
         sumXX = xVals.sumOf { (it - meanX).pow(2) }
 
@@ -52,12 +59,11 @@ class LocalPolynomialRegression(
             sqrt(sse / (n - 2))
         }
 
-
-        if (canCompute) {
+        if (canBeComputed) {
             polynomial = getPoly(xVals, yVals)
         }
 
-        tcritical = if (canCompute) {
+        tcritical = if (canBeComputed) {
             val alpha = 1.0 - confidenceLevel
             TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
         } else {
@@ -65,7 +71,7 @@ class LocalPolynomialRegression(
         }
     }
 
-    override fun evalX(x: Double): EvalResult {
+    override fun getEvalX(x: Double): EvalResult {
 
         val se = run {
             // x deviation squared
