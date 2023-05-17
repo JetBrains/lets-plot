@@ -112,7 +112,8 @@ def export_png(plot: Union[PlotSpec, SupPlotsSpec, GGBunch], filename: str, scal
         return None
 
     from .. import _kbridge
-    svg = _kbridge._generate_svg(plot.as_dict())
+    # Use SVG image-rendering style as Cairo doesn't support CSS image-rendering style,
+    svg = _kbridge._generate_svg(plot.as_dict(), use_css_pixelated_image_rendering=False)
 
     cairosvg.svg2png(bytestring=svg, write_to=filename, scale=scale)
 

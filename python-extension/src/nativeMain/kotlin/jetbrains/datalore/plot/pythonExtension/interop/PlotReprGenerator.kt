@@ -24,12 +24,12 @@ object PlotReprGenerator {
         }
     }
 
-    fun generateSvg(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
+    fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
-            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>)
+            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>, useCssPixelatedImageRendering == 1)
             val result = Py_BuildValue("s", svg);
             return result
         } catch (e: Throwable) {

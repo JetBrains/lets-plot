@@ -23,6 +23,33 @@ internal class PlotSvgExportPortableTest {
     }
 
     @Test
+    fun fuzzyImshow() {
+        val spec = """
+            |{
+            |   'kind': 'plot',
+            |   'layers': [
+            |       {
+            |           'geom': 'image',
+            |           'show_legend': true,
+            |           'href': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVR4nGP4z8DwHwwZ/oOZvkDCF8jyBQCLFgnfUCS+/AAAAABJRU5ErkJggg==',
+            |           'xmin': -0.5,
+            |           'ymin': -0.5,
+            |           'xmax': 2.5,
+            |           'ymax': 1.5
+            |       }
+            |   ]
+            |}
+        """.trimMargin()
+
+        val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+            plotSpec = parsePlotSpec(spec),
+            plotSize = DoubleVector(400.0, 300.0)
+        )
+
+        println(svg)
+    }
+
+    @Test
     @Ignore
     fun svgFromSinglePlot() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
