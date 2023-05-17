@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.ForsythePolynomialGenerator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialFunction
-import jetbrains.datalore.plot.base.stat.math3.TDistribution
 import jetbrains.datalore.plot.base.stat.math3.times
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -22,8 +21,6 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
         get() = n - deg - 1.0
 
     private val p: PolynomialFunction
-    private val sy: Double
-    private val tcritical: Double
 
     init {
         require(deg >= 2) { "Degree of polynomial must be at least 2" }
@@ -33,16 +30,10 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
         require(n > deg) { "The number of valid data points must be greater than deg" }
 
         p = calcPolynomial(deg, xVals, yVals)
+    }
 
-        sy = run { // Standard error of estimate
-            val sse = xVals.zip(yVals).sumOf { (x, y) -> (y - p.value(x)).pow(2) }
-            sqrt(sse / degreesOfFreedom)
-        }
-
-        tcritical = run {
-            val alpha = 1.0 - confidenceLevel
-            TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
-        }
+    override fun prepareData(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+        return averageByX(xs, ys)
     }
 
     private fun calcPolynomial(deg: Int, xVals: DoubleArray, yVals: DoubleArray): PolynomialFunction {
@@ -73,23 +64,12 @@ class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel
         return w / ww
     }
 
-    override fun evaluateX(x: Double): EvalResult {
-        val se = run { // standard error of predicted means
-            // x deviation squared
-            val dxSquare = (x - meanX).pow(2)
-            sy * sqrt(1.0 / n + dxSquare / sumXX)
-        }
+    override fun value(x: Double): Double {
+        return p.value(x)
+    }
 
-        // half-width of confidence interval for estimated mean y
-        val halfConfidenceInterval = tcritical * se
-
-        val yHat = p.value(x)
-
-        return EvalResult(
-            yHat,
-            yHat - halfConfidenceInterval,
-            yHat + halfConfidenceInterval,
-            se
-        )
+    override fun standardErrorOfEstimate(xVals: DoubleArray, yVals: DoubleArray): Double {
+        val sse = xVals.zip(yVals).sumOf { (x, y) -> (y - p.value(x)).pow(2) }
+        return sqrt(sse / degreesOfFreedom)
     }
 }

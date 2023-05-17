@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.LoessInterpolator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialSplineFunction
-import jetbrains.datalore.plot.base.stat.math3.TDistribution
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -37,52 +36,30 @@ class LocalPolynomialRegression(
     override val degreesOfFreedom: Double
         get() = n - 2.0
 
-    private val sy: Double
-    private val tcritical: Double
     private lateinit var polynomial: PolynomialSplineFunction
 
     init {
         val (xVals, yVals) = averageByX(xs, ys)
 
-        val meanY = yVals.average()
-        val sumYY = yVals.sumOf { (it - meanY).pow(2) }
-        val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
-
-        sy = run {
-            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
-            sqrt(sse / degreesOfFreedom)
-        }
-
         if (canBeComputed) {
             polynomial = getPoly(xVals, yVals)
         }
-
-        tcritical = if (canBeComputed) {
-            val alpha = 1.0 - confidenceLevel
-            TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
-        } else {
-            Double.NaN
-        }
     }
 
-    override fun evaluateX(x: Double): EvalResult {
-        val se = run {
-            // x deviation squared
-            val dxSquare = (x - meanX).pow(2)
-            sy * sqrt(1.0 / n + dxSquare / sumXX)
-        }
+    override fun prepareData(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+        return averageByX(xs, ys)
+    }
 
-        // half-width of confidence interval for estimated mean y
-        val halfConfidenceInterval = tcritical * se
+    override fun value(x: Double): Double {
+        return polynomial.value(x)!!
+    }
 
-        val yHat = polynomial.value(x)!!
-
-        return EvalResult(
-            yHat,
-            yHat - halfConfidenceInterval,
-            yHat + halfConfidenceInterval,
-            se
-        )
+    override fun standardErrorOfEstimate(xVals: DoubleArray, yVals: DoubleArray): Double {
+        val meanY = yVals.average()
+        val sumYY = yVals.sumOf { (it - meanY).pow(2) }
+        val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
+        val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
+        return sqrt(sse / degreesOfFreedom)
     }
 
     private fun getPoly(xVals: DoubleArray, yVals: DoubleArray): PolynomialSplineFunction {

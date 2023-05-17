@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import jetbrains.datalore.plot.base.stat.math3.TDistribution
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -19,59 +18,30 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
     override val degreesOfFreedom: Double
         get() = n - 2.0
 
-    private val beta1: Double
-    private val beta0: Double
-    private val sy: Double // Standard error of estimate
-    private val tcritical: Double
+    private val slope: Double
+    private val intercept: Double
 
     init {
-        val (xVals, yVals) = allFinite(xs, ys)
+        val (xVals, yVals) = prepareData(xs, ys)
 
         val meanY = yVals.average()
-        val sumYY = yVals.sumOf { (it - meanY).pow(2) }
         val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
 
-        beta1 = sumXY / sumXX
-        beta0 = meanY - beta1 * meanX
-
-        sy = run { // Standard error of estimate
-            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX) // https://en.wikipedia.org/wiki/Residual_sum_of_squares
-            sqrt(sse / degreesOfFreedom) // SE estimate
-        }
-
-        tcritical = run {
-            val alpha = 1.0 - confidenceLevel
-            TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
-        }
+        slope = sumXY / sumXX
+        intercept = meanY - slope * meanX
     }
 
-    private fun value(x: Double): Double = beta1 * x + beta0
+    override fun prepareData(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
+        return allFinite(xs, ys)
+    }
 
-    override fun evaluateX(x: Double): EvalResult {
-        // confidence interval for the conditional mean
-        // https://www.ma.utexas.edu/users/mks/statmistakes/CIvsPI.html
-        // https://onlinecourses.science.psu.edu/stat414/node/297
+    override fun value(x: Double): Double = slope * x + intercept
 
-        // https://www2.stat.duke.edu/~tjl13/s101/slides/unit6lec3H.pdf
-        // Stat symbols:
-        // https://brownmath.com/swt/symbol.htm
-
-        // standard error (of estimate?)
-        val se = run {// standard error of predicted means
-            // x deviation squared
-            val dxSquare = (x - meanX).pow(2)
-            sy * sqrt(1.0 / n + dxSquare / sumXX)
-        }
-
-        // half-width of confidence interval for estimated mean y
-        val halfConfidenceInterval = tcritical * se
-        val yHat = value(x)
-
-        return EvalResult(
-            yHat,
-            yHat - halfConfidenceInterval,
-            yHat + halfConfidenceInterval,
-            se
-        )
+    override fun standardErrorOfEstimate(xVals: DoubleArray, yVals: DoubleArray): Double {
+        val meanY = yVals.average()
+        val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
+        val sumYY = yVals.sumOf { (it - meanY).pow(2) }
+        val sse = max(0.0, sumYY - sumXY * sumXY / sumXX) // https://en.wikipedia.org/wiki/Residual_sum_of_squares
+        return sqrt(sse / degreesOfFreedom) // SE estimate
     }
 }
