@@ -34,9 +34,9 @@ class LocalPolynomialRegression(
             return canCompute!!
         }
 
-    private val n: Int
-    private val meanX: Double
-    private val sumXX: Double
+    override val degreesOfFreedom: Double
+        get() = n - 2.0
+
     private val sy: Double
     private val tcritical: Double
     private lateinit var polynomial: PolynomialSplineFunction
@@ -44,19 +44,13 @@ class LocalPolynomialRegression(
     init {
         val (xVals, yVals) = averageByX(xs, ys)
 
-        n = xVals.size
-        val degreesOfFreedom = n - 2.0
-
-        meanX = xVals.average()
-        sumXX = xVals.sumOf { (it - meanX).pow(2) }
-
         val meanY = yVals.average()
         val sumYY = yVals.sumOf { (it - meanY).pow(2) }
         val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
 
         sy = run {
             val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
-            sqrt(sse / (n - 2))
+            sqrt(sse / degreesOfFreedom)
         }
 
         if (canBeComputed) {
@@ -71,8 +65,7 @@ class LocalPolynomialRegression(
         }
     }
 
-    override fun getEvalX(x: Double): EvalResult {
-
+    override fun evaluateX(x: Double): EvalResult {
         val se = run {
             // x deviation squared
             val dxSquare = (x - meanX).pow(2)

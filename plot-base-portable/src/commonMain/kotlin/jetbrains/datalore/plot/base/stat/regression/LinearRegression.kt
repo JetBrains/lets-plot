@@ -16,9 +16,9 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
     override val canBeComputed: Boolean
         get() = n > 1
 
-    private val n: Int
-    private val meanX: Double
-    private val sumXX: Double
+    override val degreesOfFreedom: Double
+        get() = n - 2.0
+
     private val beta1: Double
     private val beta0: Double
     private val sy: Double // Standard error of estimate
@@ -26,9 +26,6 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
 
     init {
         val (xVals, yVals) = allFinite(xs, ys)
-        n = xVals.size
-        meanX = xVals.average()
-        sumXX = xVals.sumOf { (it - meanX).pow(2) }
 
         val meanY = yVals.average()
         val sumYY = yVals.sumOf { (it - meanY).pow(2) }
@@ -39,19 +36,18 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
 
         sy = run { // Standard error of estimate
             val sse = max(0.0, sumYY - sumXY * sumXY / sumXX) // https://en.wikipedia.org/wiki/Residual_sum_of_squares
-            sqrt(sse / (n - 2)) // SE estimate
+            sqrt(sse / degreesOfFreedom) // SE estimate
         }
 
         tcritical = run {
             val alpha = 1.0 - confidenceLevel
-            TDistribution(n - 2.0).inverseCumulativeProbability(1.0 - alpha / 2.0)
+            TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)
         }
     }
 
     private fun value(x: Double): Double = beta1 * x + beta0
 
-    override fun getEvalX(x: Double): EvalResult {
-
+    override fun evaluateX(x: Double): EvalResult {
         // confidence interval for the conditional mean
         // https://www.ma.utexas.edu/users/mks/statmistakes/CIvsPI.html
         // https://onlinecourses.science.psu.edu/stat414/node/297
@@ -59,7 +55,6 @@ class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Do
         // https://www2.stat.duke.edu/~tjl13/s101/slides/unit6lec3H.pdf
         // Stat symbols:
         // https://brownmath.com/swt/symbol.htm
-
 
         // standard error (of estimate?)
         val se = run {// standard error of predicted means
