@@ -25,7 +25,6 @@ import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.fragment.Utils.RegionsIndex
 import jetbrains.livemap.fragment.Utils.entityName
 import jetbrains.livemap.geometry.MicroTasks
-import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.MapProjection
@@ -150,7 +149,6 @@ class FragmentEmitSystem(
                             + CenterChangedComponent()
                             + ZoomLevelChangedComponent()
                             + ZoomFractionChangedComponent()
-                            + ScaleComponent().apply { zoom = fragmentKey.zoom() }
                             + FragmentComponent(fragmentKey)
                             + ScreenGeometryComponent().apply { geometry = Geometry.of(screenMultiPolygon) }
                             + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()

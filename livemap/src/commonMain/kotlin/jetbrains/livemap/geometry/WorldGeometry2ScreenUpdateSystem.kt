@@ -27,12 +27,6 @@ class WorldGeometry2ScreenUpdateSystem(
 ) : AbstractSystem<LiveMapContext>(componentManager) {
 
     private fun createScalingTask(entity: EcsEntity, zoom: Int): MicroTask<Unit> {
-
-        // Fix ghosting after zoom by removing outdated screen geometry.
-        if (!entity.contains(ScaleComponent::class)) {
-            entity.remove<ScreenGeometryComponent>()
-        }
-
         val worldOrigin = entity.get<WorldOriginComponent>().origin
         val zoomProjection = Transforms.zoom<World, Client> { zoom }
         return MicroTasks
@@ -45,11 +39,6 @@ class WorldGeometry2ScreenUpdateSystem(
                     theEntity.provide(::ScreenGeometryComponent).apply {
                         geometry = screenGeometry
                         this.zoom = zoom
-                    }
-                    
-                    theEntity.tryGet<ScaleComponent>()?.let {
-                        it.zoom = zoom
-                        it.scale = 1.0
                     }
                 }
             }

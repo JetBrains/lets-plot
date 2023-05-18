@@ -32,6 +32,7 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.RenderableComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
 import org.mockito.Mockito
 import kotlin.math.pow
 import kotlin.math.round
@@ -155,7 +156,7 @@ class GrowingPathTest {
 
         val context2d = Mockito.mock(Context2d::class.java)
 
-        render.render(pathEntity, context2d)
+        render.render(pathEntity, context2d, Mockito.mock(Viewport::class.java))
 
         Mockito.verify(context2d).moveTo(0.0, 0.0)
         Mockito.verify(context2d).lineTo(1.0, 1.0)

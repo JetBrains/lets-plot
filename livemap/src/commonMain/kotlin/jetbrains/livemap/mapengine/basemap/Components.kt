@@ -10,6 +10,7 @@ import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.viewport.CellKey
+import jetbrains.livemap.mapengine.viewport.Viewport
 
 
 /**
@@ -36,7 +37,7 @@ class BasemapCellRendererComponent : EcsComponent {
 
     companion object {
         val NULL_RENDERER = object : Renderer {
-            override fun render(entity: EcsEntity, ctx: Context2d) {}
+            override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {}
         }
     }
 }

@@ -16,7 +16,6 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
-import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.camera.CameraInputSystem
@@ -214,7 +213,6 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             FragmentComponent::class,
             WorldDimensionComponent::class,
             WorldOriginComponent::class,
-            ScaleComponent::class,
             ParentLayerComponent::class
         )
     }

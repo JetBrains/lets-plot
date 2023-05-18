@@ -15,6 +15,7 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
+import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.sqrt
 
 
@@ -124,7 +125,7 @@ object GrowingPathEffect {
 
     class GrowingPathRenderer : Renderer {
 
-        override fun render(entity: EcsEntity, ctx: Context2d) {
+        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
             if (!entity.contains(ScreenGeometryComponent::class)) {
                 return
             }

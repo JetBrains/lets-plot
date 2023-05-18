@@ -21,7 +21,6 @@ import jetbrains.livemap.fragment.RegionRenderer
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geocoding.RegionIdComponent
-import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
@@ -111,7 +110,6 @@ class PolygonsBuilder(
                 +WorldOriginComponent(worldBbox.origin)
                 +WorldGeometryComponent().apply { this.geometry = Geometry.of(worldGeometry) }
                 +WorldDimensionComponent(worldBbox.dimension)
-                +ScaleComponent()
                 +NeedLocationComponent
                 +NeedCalculateLocationComponent
                 +LocatorComponent(PolygonLocator)

@@ -14,12 +14,13 @@ import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.basemap.Tile.*
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.viewport.CellKey
+import jetbrains.livemap.mapengine.viewport.Viewport
 
 class BasemapCellRenderer : Renderer {
     private lateinit var myCellRect: Rect<Client>
     private lateinit var myCtx: Context2d
 
-    override fun render(entity: EcsEntity, ctx: Context2d) {
+    override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
         val tile = entity.get<BasemapTileComponent>().tile ?: return
 
         entity.get<ScreenDimensionComponent>()

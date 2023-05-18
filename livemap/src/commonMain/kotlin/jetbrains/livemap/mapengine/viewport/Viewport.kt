@@ -21,10 +21,13 @@ open class Viewport internal constructor(
     val minZoom: Int,
     val maxZoom: Int
 ) {
-
     private val zoomTransform = Transforms.zoom<World, Client> { zoom }
+    private val viewportTransform = object : Transform<WorldPoint, ClientPoint> {
+        override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v - position) + center
+        override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v - center) + position
+    }
+
     val center: ClientPoint = size / 2.0
-    private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
     private var windowSize = World.ZERO_VEC
     private var windowOrigin = World.ZERO_VEC
     var window: WorldRectangle =
@@ -84,17 +87,6 @@ open class Viewport internal constructor(
 
     private fun updateWindow() {
         window = WorldRectangle(windowOrigin, windowSize)
-    }
-
-    private fun viewportTransform(
-        zoomTransform: Transform<WorldPoint, ClientPoint>,
-        position: () -> WorldPoint,
-        center: () -> ClientPoint
-    ): Transform<WorldPoint, ClientPoint> {
-        return object : Transform<WorldPoint, ClientPoint> {
-            override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v - position()) + center()
-            override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v - center()) + position()
-        }
     }
 
     companion object {

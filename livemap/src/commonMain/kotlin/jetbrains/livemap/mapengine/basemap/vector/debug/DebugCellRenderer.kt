@@ -16,11 +16,12 @@ import jetbrains.livemap.mapengine.basemap.BasemapCellComponent
 import jetbrains.livemap.mapengine.basemap.DebugDataComponent
 import jetbrains.livemap.mapengine.basemap.DebugDataComponent.Companion.LINES_ORDER
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
 
 class DebugCellRenderer : Renderer {
     private var myOffset: Double = 0.0
 
-    override fun render(entity: EcsEntity, ctx: Context2d) {
+    override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
         val cellDimension = entity.get<ScreenDimensionComponent>().dimension
 
         myOffset = 0.0

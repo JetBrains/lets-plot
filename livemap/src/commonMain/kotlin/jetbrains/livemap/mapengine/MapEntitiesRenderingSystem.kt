@@ -77,7 +77,7 @@ internal class MapEntitiesRenderingSystem(
                             it,
                             object : RenderObject {
                                 override fun render(ctx: Context2d) {
-                                    renderer.render(mapEntity, ctx)
+                                    renderer.render(mapEntity, ctx, context.mapRenderContext.viewport)
                                 }
                             }
                         )

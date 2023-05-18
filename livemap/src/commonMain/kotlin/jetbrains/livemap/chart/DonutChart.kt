@@ -75,7 +75,7 @@ object DonutChart {
     }
 
     class Renderer : jetbrains.livemap.mapengine.Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d) {
+        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
             val chartElement = entity.get<ChartElementComponent>()
             val pieSpec = entity.get<PieSpecComponent>()
 

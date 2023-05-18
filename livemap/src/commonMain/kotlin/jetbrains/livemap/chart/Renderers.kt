@@ -7,30 +7,32 @@ package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.typedGeometry.MultiLineString
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.LineJoin
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.geometry.ScaleComponent
 import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.lineTo
 import jetbrains.livemap.mapengine.moveTo
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import jetbrains.livemap.mapengine.translate
+import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.atan2
 import kotlin.math.cos
+import kotlin.math.pow
 import kotlin.math.sin
 
 object Renderers {
 
-    fun drawMultiPolygon(geometry: MultiPolygon<Client>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
+    private fun <T> drawMultiPolygon(geometry: MultiPolygon<T>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry) {
             for (ring in polygon) {
                 ring[0].let(ctx::moveTo)
@@ -40,11 +42,30 @@ object Renderers {
         afterPolygon(ctx)
     }
 
+    fun Context2d.drawClientMultiPolygon(geometry: MultiPolygon<Client>, afterPolygon: Consumer<Context2d>) {
+        drawMultiPolygon(geometry, this, afterPolygon)
+    }
+
+    fun Context2d.drawWorldMultiPolygon(
+        geometry: MultiPolygon<World>,
+        origin: Vec<World>,
+        zoom: Number,
+        afterPolygon: Consumer<Context2d>
+    ) {
+        save()
+        scale(2.0.pow(zoom.toDouble()))
+        translate(-origin)
+
+        drawMultiPolygon(geometry, this, afterPolygon)
+
+        restore()
+    }
+
     class PointRenderer(
         private val shape: Int
     ) : Renderer {
 
-        override fun render(entity: EcsEntity, ctx: Context2d) {
+        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
             val chartElement = entity.get<ChartElementComponent>()
             val pointData = entity.get<PointComponent>()
             val radius = pointData.size * chartElement.scalingSizeFactor / 2.0
@@ -68,27 +89,16 @@ object Renderers {
     }
 
     class PolygonRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d) {
-            if (!entity.contains<ScreenGeometryComponent>()) {
-                return
-            }
-
+        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
             ctx.save()
-
-            if (entity.contains<ScaleComponent>()) {
-                val scale = entity.get<ScaleComponent>().scale
-                if (scale != 1.0) {
-                    ctx.scale(scale, scale)
-                }
-            }
+            ctx.setLineJoin(LineJoin.ROUND)
+            ctx.beginPath()
 
             val chartElement = entity.get<ChartElementComponent>()
 
-            ctx.setLineJoin(LineJoin.ROUND)
-
-            ctx.beginPath()
-
-            drawMultiPolygon(entity.get<ScreenGeometryComponent>().geometry.multiPolygon, ctx) { c ->
+            val origin = entity.get<WorldOriginComponent>().origin
+            val geometry = entity.get<WorldGeometryComponent>().geometry!!.multiPolygon
+            ctx.drawWorldMultiPolygon(geometry, origin, viewport.zoom) { c ->
                 c.closePath()
 
                 if (chartElement.fillColor != null) {
@@ -108,7 +118,7 @@ object Renderers {
     }
 
     class PathRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d) {
+        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
             if (!entity.contains<ScreenGeometryComponent>()) {
                 return
             }
@@ -245,7 +255,7 @@ object Renderers {
     }
 
     class TextRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d) {
+        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
             val chartElementComponent = entity.get<ChartElementComponent>()
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
