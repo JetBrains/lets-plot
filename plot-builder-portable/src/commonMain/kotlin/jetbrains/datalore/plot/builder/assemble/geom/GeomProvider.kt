@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
@@ -14,15 +16,23 @@ class GeomProvider internal constructor(
     val geomKind: GeomKind,
     val aestheticsDefaults: AestheticsDefaults,
     val handlesGroups: Boolean,
-    private val geomSupplier: () -> Geom
+    private val geomSupplier: (ctx: Context) -> Geom
 ) {
 
-    fun createGeom(): Geom {
-        return geomSupplier()
+    fun createGeom(ctx: Context): Geom {
+        return geomSupplier(ctx)
+    }
+
+    abstract class Context(
+        val colorByAes: Aes<Color>,
+        val fillByAes: Aes<Color>,
+    ) {
+        abstract fun hasBinding(aes: Aes<*>): Boolean
+        abstract fun hasConstant(aes: Aes<*>): Boolean
     }
 
     companion object {
-        fun point(supplier: () -> Geom): GeomProvider {
+        fun point(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.POINT,
                 AestheticsDefaults.point(),
@@ -31,7 +41,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun path(supplier: () -> Geom): GeomProvider {
+        fun path(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.PATH,
                 AestheticsDefaults.path(),
@@ -72,7 +82,7 @@ class GeomProvider internal constructor(
             ) { HistogramGeom() }
         }
 
-        fun dotplot(supplier: () -> Geom): GeomProvider {
+        fun dotplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.DOT_PLOT,
                 AestheticsDefaults.dotplot(),
@@ -97,15 +107,16 @@ class GeomProvider internal constructor(
             ) { Bin2dGeom() }
         }
 
-        fun errorBar(): GeomProvider {
+        fun errorBar(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.ERROR_BAR,
                 AestheticsDefaults.errorBar(),
-                ErrorBarGeom.HANDLES_GROUPS
-            ) { ErrorBarGeom() }
+                ErrorBarGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
-        fun crossBar(supplier: () -> Geom): GeomProvider {
+        fun crossBar(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.CROSS_BAR,
                 AestheticsDefaults.crossBar(),
@@ -122,7 +133,7 @@ class GeomProvider internal constructor(
             ) { LineRangeGeom() }
         }
 
-        fun pointRange(supplier: () -> Geom): GeomProvider {
+        fun pointRange(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.POINT_RANGE,
                 AestheticsDefaults.pointRange(),
@@ -187,7 +198,7 @@ class GeomProvider internal constructor(
             ) { VLineGeom() }
         }
 
-        fun boxplot(supplier: () -> Geom): GeomProvider {
+        fun boxplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.BOX_PLOT,
                 AestheticsDefaults.boxplot(),
@@ -196,7 +207,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun arearidges(supplier: () -> Geom): GeomProvider {
+        fun arearidges(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.AREA_RIDGES,
                 AestheticsDefaults.areaRidges(),
@@ -205,7 +216,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun violin(supplier: () -> Geom): GeomProvider {
+        fun violin(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.VIOLIN,
                 AestheticsDefaults.violin(),
@@ -214,7 +225,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun ydotplot(supplier: () -> Geom): GeomProvider {
+        fun ydotplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.Y_DOT_PLOT,
                 AestheticsDefaults.ydotplot(),
@@ -247,7 +258,7 @@ class GeomProvider internal constructor(
             ) { AreaGeom() }
         }
 
-        fun density(supplier: () -> Geom): GeomProvider {
+        fun density(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.DENSITY,
                 AestheticsDefaults.density(),
@@ -320,7 +331,7 @@ class GeomProvider internal constructor(
             ) { FreqpolyGeom() }
         }
 
-        fun step(supplier: () -> Geom): GeomProvider {
+        fun step(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.STEP,
                 AestheticsDefaults.step(),
@@ -337,7 +348,7 @@ class GeomProvider internal constructor(
             ) { RectGeom() }
         }
 
-        fun segment(supplier: () -> Geom): GeomProvider {
+        fun segment(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.SEGMENT,
                 AestheticsDefaults.segment(),
@@ -346,7 +357,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun text(supplier: () -> Geom): GeomProvider {
+        fun text(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.TEXT,
                 AestheticsDefaults.text(),
@@ -355,7 +366,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun label(supplier: () -> Geom): GeomProvider {
+        fun label(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.LABEL,
                 AestheticsDefaults.label(),
@@ -372,7 +383,7 @@ class GeomProvider internal constructor(
             ) { RasterGeom() }
         }
 
-        fun image(supplier: () -> Geom): GeomProvider {
+        fun image(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.IMAGE,
                 AestheticsDefaults.image(),
@@ -381,7 +392,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun pie(supplier: () -> Geom): GeomProvider {
+        fun pie(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.PIE,
                 AestheticsDefaults.pie(),
@@ -390,7 +401,7 @@ class GeomProvider internal constructor(
             )
         }
 
-        fun lollipop(supplier: () -> Geom): GeomProvider {
+        fun lollipop(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.LOLLIPOP,
                 AestheticsDefaults.lollipop(),

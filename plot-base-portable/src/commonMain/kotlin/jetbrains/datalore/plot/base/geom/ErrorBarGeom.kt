@@ -23,10 +23,19 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.vis.svg.SvgGElement
 import jetbrains.datalore.vis.svg.SvgLineElement
 
-class ErrorBarGeom : GeomBase() {
+class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = ErrorBarLegendKeyElementFactory()
+
+    override val wontRender: List<Aes<*>>
+        get() {
+            return if (isVertical) {
+                listOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
+            } else {
+                listOf(Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
+            }
+        }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -38,16 +47,12 @@ class ErrorBarGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
 
-        var dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
-        val isVertical = dataPoints.any()
-        if (!isVertical) {
-            dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
-        }
-
         val xAes = if (isVertical) Aes.X else Aes.Y
         val minAes = if (isVertical) Aes.YMIN else Aes.XMIN
         val maxAes = if (isVertical) Aes.YMAX else Aes.XMAX
         val widthAes = if (isVertical) Aes.WIDTH else Aes.HEIGHT
+
+        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), xAes, minAes, maxAes, widthAes)
 
         for (p in dataPoints) {
             val x = p[xAes]!!

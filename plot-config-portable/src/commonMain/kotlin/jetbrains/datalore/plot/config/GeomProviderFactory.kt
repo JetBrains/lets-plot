@@ -8,7 +8,9 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
@@ -24,7 +26,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
         PROVIDER[GeomKind.TILE] = GeomProvider.tile()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
-        PROVIDER[GeomKind.ERROR_BAR] = GeomProvider.errorBar()
         PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
         PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
@@ -91,6 +92,19 @@ internal object GeomProviderFactory {
                     geom.method = DotplotStat.Method.safeValueOf(layerConfig.getString(Option.Geom.Dotplot.METHOD)!!)
                 }
                 geom
+            }
+
+            GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
+                // Horizontal or vertical
+                val allRenderedAes = GeomMeta.renders(geomKind, ctx.colorByAes, ctx.fillByAes)
+                val definedAes = allRenderedAes.filter { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
+                val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> aes in definedAes }
+                val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> aes in definedAes }
+                require(!(isVertical && isHorizontal)) {
+                    "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
+                }
+
+                ErrorBarGeom(isVertical)
             }
 
             GeomKind.CROSS_BAR -> GeomProvider.crossBar {

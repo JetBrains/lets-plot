@@ -10,5 +10,6 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 interface Geom {
     val legendKeyElementFactory: LegendKeyElementFactory
+    val wontRender : List<Aes<*>> get() = emptyList()
     fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
 }

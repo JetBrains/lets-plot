@@ -248,7 +248,7 @@ class GeomLayerBuilder(
         override val posProvider: PosProvider,
         override val group: (Int) -> Int,
         private val varBindings: Map<Aes<*>, VarBinding>,
-        constantByAes: TypedKeyHashMap,
+        private val constantByAes: TypedKeyHashMap,
         override val scaleMap: Map<Aes<*>, Scale>,
         override val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
@@ -264,12 +264,23 @@ class GeomLayerBuilder(
         private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?,
     ) : GeomLayer {
 
-        override val geom: Geom = geomProvider.createGeom()
+        override val geom: Geom = geomProvider.createGeom(
+            ctx = object : GeomProvider.Context(
+                colorByAes = colorByAes,
+                fillByAes = fillByAes
+            ) {
+                override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
+                override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
+            }
+        )
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults
 
-        private val myConstantByAes: TypedKeyHashMap = TypedKeyHashMap()
-        private val myRenderedAes: List<Aes<*>>
+        //        private val constantByAes: TypedKeyHashMap = TypedKeyHashMap()
+        private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
+            geomProvider.geomKind, colorByAes, fillByAes,
+            exclude = geom.wontRender
+        )
 
         override val legendKeyElementFactory: LegendKeyElementFactory
             get() = geom.legendKeyElementFactory
@@ -277,33 +288,6 @@ class GeomLayerBuilder(
         override val isLiveMap: Boolean
             get() = geom is LiveMapGeom
 
-        init {
-            // constant value by aes (default + specified)
-            for (key in constantByAes.keys<Any>()) {
-                myConstantByAes.put(key, constantByAes[key])
-            }
-
-            myRenderedAes = GeomMeta.renders(geomProvider.geomKind, colorByAes, fillByAes).let { allRenderedAes ->
-                if (geomKind == GeomKind.ERROR_BAR) {
-                    // ToDo Need refactoring...
-                    // This geometry supports a dual set of aesthetics (vertical and horizontal representation).
-                    // Check that the settings are consistent
-                    // and set the aesthetics needed for that geometry.
-                    val definedAes = allRenderedAes.filter { aes -> hasBinding(aes) || hasConstant(aes) }
-                    val isVertical = setOf(Aes.YMIN, Aes.YMAX).all { aes -> aes in definedAes }
-                    val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).all { aes -> aes in definedAes }
-                    require(!(isVertical && isHorizontal)) {
-                        "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
-                    }
-                    allRenderedAes - when (isVertical) {
-                        true -> setOf(Aes.Y, Aes.XMIN, Aes.XMAX, Aes.HEIGHT)
-                        false -> setOf(Aes.X, Aes.YMIN, Aes.YMAX, Aes.WIDTH)
-                    }
-                } else {
-                    allRenderedAes
-                }
-            }
-        }
 
         override fun renderedAes(): List<Aes<*>> {
             return myRenderedAes
@@ -318,12 +302,12 @@ class GeomLayerBuilder(
         }
 
         override fun hasConstant(aes: Aes<*>): Boolean {
-            return myConstantByAes.containsKey(aes)
+            return constantByAes.containsKey(aes)
         }
 
         override fun <T> getConstant(aes: Aes<T>): T {
             require(hasConstant(aes)) { "Constant value is not defined for aes $aes" }
-            return myConstantByAes[aes]
+            return constantByAes[aes]
         }
 
         override fun <T> getDefault(aes: Aes<T>): T {
