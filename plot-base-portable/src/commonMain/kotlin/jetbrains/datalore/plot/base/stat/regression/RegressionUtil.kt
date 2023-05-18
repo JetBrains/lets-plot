@@ -45,6 +45,14 @@ internal object RegressionUtil {
     }
 }
 
+fun sumOfSquaredDeviations(xVals: DoubleArray, meanX: Double): Double {
+    return sumOfDeviationProducts(xVals, xVals, meanX, meanX)
+}
+
+fun sumOfDeviationProducts(xVals: DoubleArray, yVals: DoubleArray, meanX: Double, meanY: Double): Double {
+    return (xVals zip yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
+}
+
 fun allFinite(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
     val tx = ArrayList<Double>()
     val ty = ArrayList<Double>()

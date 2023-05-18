@@ -197,27 +197,18 @@ class SmoothStat constructor(
             Method.LM -> {
                 require(polynomialDegree >= 1) { "Degree of polynomial regression must be at least 1" }
                 if (polynomialDegree == 1) {
-                    LinearRegression(valuesX, valuesY, confidenceLevel)
+                    LinearRegression.fit(valuesX, valuesY, confidenceLevel)
                 } else {
-                    if (PolynomialRegression.canBeComputed(valuesX, valuesY, polynomialDegree)) {
-                        PolynomialRegression(valuesX, valuesY, confidenceLevel, polynomialDegree)
-                    } else {
-                        return result   // empty stat data
-                    }
+                    PolynomialRegression.fit(valuesX, valuesY, confidenceLevel, polynomialDegree)
                 }
             }
             Method.LOESS -> {
-                val evaluator = LocalPolynomialRegression(valuesX, valuesY, confidenceLevel, span)
-                if (evaluator.canCompute) {
-                    evaluator
-                } else {
-                    return result   // empty stat data
-                }
+                LocalPolynomialRegression.fit(valuesX, valuesY, confidenceLevel, span)
             }
             else -> throw IllegalArgumentException(
                 "Unsupported smoother method: $smoothingMethod (only 'lm' and 'loess' methods are currently available)"
             )
-        }
+        } ?: return result
 
         val rangeX = SeriesUtil.range(valuesX) ?: return result
 
