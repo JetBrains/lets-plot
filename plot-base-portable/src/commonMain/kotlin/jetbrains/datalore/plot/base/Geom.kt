@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 
 interface Geom {
     val legendKeyElementFactory: LegendKeyElementFactory
-    val wontRender : List<Aes<*>> get() = emptyList()
+    val wontRender: List<Aes<*>> get() = emptyList()
+    fun rangeIncludesZero(aes: Aes<*>): Boolean = false
     fun build(root: SvgRoot, aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext)
 }
