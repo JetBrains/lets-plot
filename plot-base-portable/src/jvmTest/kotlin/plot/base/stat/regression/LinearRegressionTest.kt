@@ -11,6 +11,7 @@ import kotlin.test.assertNotNull
 
 internal class LinearRegressionTest {
 
+    private val epsilon = 1e-12
     private val confidenceLevel = 0.95
 
     // @Test
@@ -397,10 +398,10 @@ internal class LinearRegressionTest {
 
         expectedX.zip(expectedResult).forEach { (x, r) ->
             val evalResult = simpleRegression.evalX(x)
-            assertEquals(r.y, evalResult.y, 1e-12)
-            assertEquals(r.ymin, evalResult.ymin, 1e-12)
-            assertEquals(r.ymax, evalResult.ymax, 1e-12)
-            assertEquals(r.se, evalResult.se, 1e-12)
+            assertEquals(r.y, evalResult.y, epsilon)
+            assertEquals(r.ymin, evalResult.ymin, epsilon)
+            assertEquals(r.ymax, evalResult.ymax, epsilon)
+            assertEquals(r.se, evalResult.se, epsilon)
         }
     }
 
