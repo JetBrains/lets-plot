@@ -54,7 +54,18 @@ abstract class RegressionEvaluator protected constructor(
             require(xs.size == ys.size) { "X/Y must have same size. X:" + xs.size + " Y:" + ys.size }
         }
 
-        fun tCritical(degreesOfFreedom: Double, confidenceLevel: Double): Double {
+        fun calcStandardErrorOfEstimate(
+            xVals: DoubleArray,
+            yVals: DoubleArray,
+            model: (Double) -> Double,
+            degreesOfFreedom: Double
+        ): Double {
+            // https://en.wikipedia.org/wiki/Residual_sum_of_squares
+            val sse = (xVals zip yVals).sumOf { (x, y) -> (y - model(x)).pow(2) }
+            return sqrt(sse / degreesOfFreedom)
+        }
+
+        fun calcTCritical(degreesOfFreedom: Double, confidenceLevel: Double): Double {
             return if (degreesOfFreedom > 0) {
                 val alpha = 1.0 - confidenceLevel
                 TDistribution(degreesOfFreedom).inverseCumulativeProbability(1.0 - alpha / 2.0)

@@ -5,10 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.sqrt
-
 class LinearRegression private constructor (
     n: Int,
     meanX: Double,
@@ -33,28 +29,22 @@ class LinearRegression private constructor (
 
             // Calculate standard stats
             val meanX = xVals.average()
-            val sumXX = xVals.sumOf { (it - meanX).pow(2) }
+            val sumXX = sumOfSquaredDeviations(xVals, meanX)
 
             // Prepare model
             val meanY = yVals.average()
-            val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
+            val sumXY = sumOfDeviationProducts(xVals, yVals, meanX, meanY)
             val slope = sumXY / sumXX
             val intercept = meanY - slope * meanX
             val model: (Double) -> Double = { x -> slope * x + intercept }
-
-            // Calculate standard error of estimate
-            // https://en.wikipedia.org/wiki/Residual_sum_of_squares
-            val sumYY = yVals.sumOf { (it - meanY).pow(2) }
-            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
-            val standardErrorOfEstimate = sqrt(sse / degreesOfFreedom)
 
             return LinearRegression(
                 n,
                 meanX,
                 sumXX,
                 model,
-                standardErrorOfEstimate,
-                tCritical(degreesOfFreedom, confidenceLevel)
+                calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
+                calcTCritical(degreesOfFreedom, confidenceLevel)
             )
         }
     }

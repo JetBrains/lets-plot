@@ -396,7 +396,11 @@ internal class LinearRegressionTest {
         assertNotNull(simpleRegression, "Regression should be computable")
 
         expectedX.zip(expectedResult).forEach { (x, r) ->
-            assertEquals(r, simpleRegression.evalX(x))
+            val evalResult = simpleRegression.evalX(x)
+            assertEquals(r.y, evalResult.y, 1e-12)
+            assertEquals(r.ymin, evalResult.ymin, 1e-12)
+            assertEquals(r.ymax, evalResult.ymax, 1e-12)
+            assertEquals(r.se, evalResult.se, 1e-12)
         }
     }
 

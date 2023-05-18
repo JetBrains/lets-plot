@@ -8,8 +8,6 @@ package jetbrains.datalore.plot.base.stat.regression
 import jetbrains.datalore.plot.base.stat.math3.ForsythePolynomialGenerator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialFunction
 import jetbrains.datalore.plot.base.stat.math3.times
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class PolynomialRegression private constructor (
     n: Int,
@@ -36,24 +34,19 @@ class PolynomialRegression private constructor (
 
             // Calculate standard stats
             val meanX = xVals.average()
-            val sumXX = xVals.sumOf { (it - meanX).pow(2) }
+            val sumXX = sumOfSquaredDeviations(xVals, meanX)
 
             // Prepare model
             val polynomial = calculatePolynomial(deg, xVals, yVals)
             val model: (Double) -> Double = { x -> polynomial.value(x) }
-
-            // Calculate standard error of estimate
-            // https://en.wikipedia.org/wiki/Residual_sum_of_squares
-            val sse = (xVals zip yVals).sumOf { (x, y) -> (y - model(x)).pow(2) }
-            val standardErrorOfEstimate = sqrt(sse / degreesOfFreedom)
 
             return PolynomialRegression(
                 n,
                 meanX,
                 sumXX,
                 model,
-                standardErrorOfEstimate,
-                tCritical(degreesOfFreedom, confidenceLevel)
+                calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
+                calcTCritical(degreesOfFreedom, confidenceLevel)
             )
         }
 

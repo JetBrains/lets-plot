@@ -7,9 +7,6 @@ package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.LoessInterpolator
 import jetbrains.datalore.plot.base.stat.math3.PolynomialSplineFunction
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 class LocalPolynomialRegression private constructor (
     n: Int,
@@ -35,27 +32,19 @@ class LocalPolynomialRegression private constructor (
 
             // Calculate standard stats
             val meanX = xVals.average()
-            val sumXX = xVals.sumOf { (it - meanX).pow(2) }
+            val sumXX = sumOfSquaredDeviations(xVals, meanX)
 
             // Prepare model
             val polynomial = getPolynomial(xVals, yVals, bandwidth)
             val model: (Double) -> Double = { x -> polynomial.value(x)!! }
-
-            // Calculate standard error of estimate
-            // https://en.wikipedia.org/wiki/Residual_sum_of_squares
-            val meanY = yVals.average()
-            val sumYY = yVals.sumOf { (it - meanY).pow(2) }
-            val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
-            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
-            val standardErrorOfEstimate = sqrt(sse / degreesOfFreedom)
 
             return LocalPolynomialRegression(
                 n,
                 meanX,
                 sumXX,
                 model,
-                standardErrorOfEstimate,
-                tCritical(degreesOfFreedom, confidenceLevel)
+                calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
+                calcTCritical(degreesOfFreedom, confidenceLevel)
             )
         }
 
