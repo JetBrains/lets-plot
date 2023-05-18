@@ -10,7 +10,6 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomMeta
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
@@ -96,10 +95,8 @@ internal object GeomProviderFactory {
 
             GeomKind.ERROR_BAR -> GeomProvider.errorBar { ctx ->
                 // Horizontal or vertical
-                val allRenderedAes = GeomMeta.renders(geomKind, ctx.colorByAes, ctx.fillByAes)
-                val definedAes = allRenderedAes.filter { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
-                val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> aes in definedAes }
-                val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> aes in definedAes }
+                val isVertical = setOf(Aes.YMIN, Aes.YMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
+                val isHorizontal = setOf(Aes.XMIN, Aes.XMAX).any { aes -> ctx.hasBinding(aes) || ctx.hasConstant(aes) }
                 require(!(isVertical && isHorizontal)) {
                     "Either ymin, ymax or xmin, xmax must be specified for the errorbar."
                 }
