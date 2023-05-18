@@ -652,41 +652,45 @@ class ScaleOrderingTest {
     }
 
     @Test
-    fun `x=as_discrete('x', order=1), fill='x' - the ordering also applies to the 'fill'`() {
+    // Now 'x' and 'fill' mapped to different variables ("x.x" and "fill.x") => should not inherit options
+    fun `x=as_discrete('x', order=1), fill='x' - the ordering does no apply to the 'fill'`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
         val orderingSettings = makeOrderingSettings("x", null, 1)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
         assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
     }
 
     @Test
-    fun `x=as_discrete('x', order=1), fill=as_discrete('x') - should apply the ordering to the 'fill'`() {
+    // Now 'x' and 'fill' mapped to different variables ("x.x" and "fill.x") => should not combine options
+    fun `x=as_discrete('x', order=1), fill=as_discrete('x') - should not apply the ordering to the 'fill'`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
         val orderingSettings = makeOrderingSettings("x", null, 1) + "," +
                 makeOrderingSettings("fill", null, null)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
         assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-    }
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
+     }
 
     @Test
-    fun `x=as_discrete('x', order_by='count'), fill=as_discrete('x', order=1) - should combine order options`() {
+    // Now 'x' and 'fill' mapped to different variables ("x.x" and "fill.x") => should not combine options
+    fun `x=as_discrete('x', order_by='count'), fill=as_discrete('x', order=1) - should not combine order options`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
         val orderingSettings = makeOrderingSettings("x", "..count..", order = null) + "," +
                 makeOrderingSettings("fill", orderBy = null, order = 1)
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
-        assertScaleBreaks(geomLayer, Aes.X, listOf("C", "A", "B"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("C", "A", "B"))
+        assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
     }
 
 
     // variable in plot and layer
 
     @Test
-    fun `ggplot(aes(as_discrete('x',order=1))) + geom_bar(aes(fill='x')) - should apply the ordering to the 'fill'`() {
+    // Now 'x' and 'fill' mapped to different variables ("x.x" and "fill.x") => should not inherit options
+    fun `ggplot(aes(as_discrete('x',order=1))) + geom_bar(aes(fill='x')) - should not apply the ordering to the 'fill'`() {
         val spec = """{
               "kind": "plot",
               "data" : $myData,              
@@ -701,7 +705,7 @@ class ScaleOrderingTest {
             }""".trimIndent()
         val geomLayer = getSingleGeomLayer(spec)
         assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
     }
 
     @Test

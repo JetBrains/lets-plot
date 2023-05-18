@@ -789,7 +789,7 @@ class DropUnusedDataTest {
         val statSize = 1
         checkSingleLayerData(opts, 3,
             mapOf(
-                "x" to statSize,
+                "x.x" to statSize,
                 "..count.." to statSize,
                 "g" to statSize
             )

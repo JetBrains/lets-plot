@@ -83,7 +83,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -96,7 +96,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -109,7 +109,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -122,7 +122,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -135,7 +135,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -148,7 +148,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -161,7 +161,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -174,7 +174,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -208,7 +208,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Ignore
@@ -330,8 +330,8 @@ class AsDiscreteTest {
                 .let(::transformToClientPlotConfig)
                 .assertScale(Aes.COLOR, isDiscrete = true) { case.toString() }
                 .assertScale(Aes.FILL, isDiscrete = true) { case.toString() }
-                .assertVariable("foo", isDiscrete = true) { case.toString() }
-                .assertVariable("bar", isDiscrete = true) { case.toString() }
+                .assertVariable("color.foo", isDiscrete = true) { case.toString() }
+                .assertVariable("fill.bar", isDiscrete = true) { case.toString() }
 
         }
     }
@@ -388,7 +388,7 @@ class AsDiscreteTest {
             |}""".trimMargin()
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("g", isDiscrete = true)
+            .assertVariable("color.g", isDiscrete = true)
     }
 
     @Test
@@ -422,8 +422,9 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.FILL, isDiscrete = true)
-            .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("cyl", isDiscrete = true)
+            .assertScale(Aes.COLOR, isDiscrete = false)
+            .assertVariable("fill.cyl", isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false)
     }
 
     @Test
@@ -457,7 +458,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("cyl", isDiscrete = true)
+            .assertVariable("color.cyl", isDiscrete = true)
     }
 
     val cyl123 = "\"cyl\": [1, 2, 3]"
@@ -475,7 +476,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
-            .assertVariable("cyl", isDiscrete = true) // no overriding in layer
+            .assertVariable("color.cyl", isDiscrete = true) // no overriding in layer
     }
 
     @Test
@@ -490,7 +491,7 @@ class AsDiscreteTest {
             layerAnnotation = true
         ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
-            .assertVariable("cyl", isDiscrete = true) // as_discrete in layer
+            .assertVariable("color.cyl", isDiscrete = true) // as_discrete in layer
     }
 
     @Test
@@ -505,7 +506,7 @@ class AsDiscreteTest {
             layerAnnotation = true
         ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in layer
-            .assertVariable("cyl", isDiscrete = true) // as_discrete in layer
+            .assertVariable("color.cyl", isDiscrete = true) // as_discrete in layer
     }
 
     @Test
@@ -520,7 +521,7 @@ class AsDiscreteTest {
             layerAnnotation = false
         ).let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true) // as_discrete in plot
-            .assertVariable("cyl",  isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false) // as is (numeric, overrided by layer)
     }
 
     @Test
@@ -553,8 +554,8 @@ class AsDiscreteTest {
         )
             .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("cyl", isDiscrete = true)
-            .assertValue("cyl", listOf(4.0, 5.0, 6.0))
+            .assertVariable("color.cyl", isDiscrete = true)
+            .assertValue("color.cyl", listOf(4.0, 5.0, 6.0))
     }
 
     @Test
@@ -570,8 +571,8 @@ class AsDiscreteTest {
         )
             .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("cyl", isDiscrete = true)
-            .assertValue("cyl", listOf(4.0, 5.0, 6.0))
+            .assertVariable("color.cyl", isDiscrete = true)
+            .assertValue("color.cyl", listOf(4.0, 5.0, 6.0))
     }
 
     @Test
@@ -587,7 +588,7 @@ class AsDiscreteTest {
         )
             .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("cyl", isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(4.0, 5.0, 6.0))
     }
 
@@ -604,7 +605,7 @@ class AsDiscreteTest {
         )
             .let(::transformToClientPlotConfig)
             .assertScale(Aes.COLOR, isDiscrete = true)
-            .assertVariable("cyl", isDiscrete = true)
+            .assertVariable("cyl", isDiscrete = false)
             .assertValue("cyl", listOf(1.0, 2.0, 3.0))
     }
 
@@ -659,7 +660,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
-            .assertVariable("cyl", isDiscrete = true)
+            .assertVariable("color.cyl", isDiscrete = true)
     }
 
     @Test
@@ -707,7 +708,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true, name = "clndr")
-            .assertVariable("cyl", isDiscrete = true)
+            .assertVariable("color.cyl", isDiscrete = true)
     }
 
 
@@ -753,7 +754,7 @@ class AsDiscreteTest {
 
         transformToClientPlotConfig(spec)
             .assertScale(Aes.COLOR, isDiscrete = true, name = "ndr")
-            .assertVariable("cyl", isDiscrete = true)
+            .assertVariable("color.cyl", isDiscrete = true)
     }
 }
 

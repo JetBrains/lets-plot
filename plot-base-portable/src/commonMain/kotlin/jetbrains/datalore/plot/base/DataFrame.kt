@@ -354,7 +354,6 @@ class DataFrame private constructor(builder: Builder) {
             return this
         }
 
-
         fun putDateTime(variable: Variable, v: List<*>): Builder {
             putIntern(variable, v)
             myIsDateTime[variable] = true

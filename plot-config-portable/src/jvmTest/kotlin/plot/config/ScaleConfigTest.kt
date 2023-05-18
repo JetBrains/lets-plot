@@ -207,7 +207,7 @@ class ScaleConfigTest {
 
         // use variable name by default
         transformToClientPlotConfig(makePlotSpec())
-            .assertScale(Aes.COLOR, isDiscrete = true, name = "v")
+            .assertScale(Aes.COLOR, isDiscrete = true, name = "color.v")
 
         // scale(name)
         transformToClientPlotConfig(makePlotSpec(scaleParams = scaleNameParam))

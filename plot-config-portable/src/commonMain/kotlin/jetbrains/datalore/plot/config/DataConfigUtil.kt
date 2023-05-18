@@ -17,6 +17,56 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 
 internal object DataConfigUtil {
+    /**
+     * returns DataFrame extended with auto-generated discrete variables
+     */
+    fun createDataFrame(
+        commonDataFrame: DataFrame,
+        ownDataFrame: DataFrame,
+        combinedDiscreteMappings: Map<String, String>,
+        isClientSide: Boolean
+    ): DataFrame {
+        if (isClientSide) {
+            // no new discrete variables, all job was done on server side
+            return ownDataFrame
+        }
+
+        // server side
+        val ownData = DataFrameUtil.toMap(ownDataFrame)
+        val combinedData = DataFrameUtil.toMap(commonDataFrame) + ownData
+
+        // copy columns
+        val asDiscreteColumns = combinedDiscreteMappings
+            .filter { (_, varName) -> combinedData.containsKey(varName) }
+            .map { (aes, varName) -> DataMetaUtil.asDiscreteName(aes, varName) to combinedData[varName] }
+            .toMap()
+
+        return DataFrameUtil.fromMap(ownData + asDiscreteColumns)
+    }
+
+    /**
+     * returns original (not encoded) discrete var names from both common and own mappings.
+     */
+    fun combinedDiscreteMapping(
+        commonMappings: Map<String, String>,
+        ownMappings: Map<String, String>,
+        commonDiscreteAes: Set<String>,
+        ownDiscreteAes: Set<String>,
+    ): Map<String, String> {
+
+        // own as_discrete variables
+        val ownDiscreteMappings = (commonMappings + ownMappings).filter { (aes, _) -> aes in ownDiscreteAes }
+
+        // common names already encoded by PlotConfig. Restore original name.
+        val commonDiscreteMappings = commonMappings
+            .filterKeys { it in commonDiscreteAes }
+            .mapValues { (aes, varName) -> DataMetaUtil.fromAsDiscrete(aes, varName) }
+
+        val ownSimpleMappings = ownMappings - ownDiscreteMappings.keys
+
+        // minus own non-discrete mappings (simple layer var overrides discrete plot var)
+        return ownDiscreteMappings + commonDiscreteMappings - ownSimpleMappings.keys
+    }
 
     fun layerMappingsAndCombinedData(
         layerOptions: Map<*, *>,
@@ -25,6 +75,8 @@ internal object DataConfigUtil {
 
         sharedData: DataFrame,
         layerData: DataFrame,
+
+        asDiscreteAesSet: Set<String>,
 
         consumedAesMappings: Map<*, *>,
         explicitConstantAes: List<Aes<*>>,
@@ -66,7 +118,7 @@ internal object DataConfigUtil {
             aesMappings = geoConfig.mappings
 
         } else {
-            aesMappings = ConfigUtil.createAesMapping(combinedData, consumedAesMappings)
+            aesMappings = ConfigUtil.createAesMapping(combinedData, consumedAesMappings, asDiscreteAesSet)
         }
 
         if (clientSide) {
@@ -96,38 +148,35 @@ internal object DataConfigUtil {
         varBindings: List<VarBinding>,
         plotDataMeta: Map<*, *>,
         ownDataMeta: Map<String, Any>,
+        asDiscreteAesSet: Set<String>,
         orderOptions: List<OrderOptionUtil.OrderOption>,
-        aggregateOperation: ((List<Double?>) -> Double?),
+        aggregateOperation: (List<Double?>) -> Double?,
         clientSide: Boolean
     ): DataFrame {
-
-        fun DataFrame.Builder.addVariables(
-            variable: DataFrame.Variable,
-            vars: Set<String>,
-            put: (DataFrame.Builder, DataFrame.Variable, List<*>) -> DataFrame.Builder
-        ) : DataFrame.Builder {
-            if (variable.name in vars) {
-                remove(variable)
-                put(this, variable, rawCombinedData[variable])
-            }
-            return this
-        }
 
         // 'DateTime' variables
         val dateTimeVariables = DataMetaUtil.getDateTimeColumns(plotDataMeta) +
                 DataMetaUtil.getDateTimeColumns(ownDataMeta)
+        val variablesToMarkAsDateTime = rawCombinedData.variables().filter { it.name in dateTimeVariables }
 
         // 'as_discrete' variables
-        val asDiscreteAesSet = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta) +
-                DataMetaUtil.getAsDiscreteAesSet(ownDataMeta)
-        val asDiscreteVariables = varBindings.filter { it.aes.name in asDiscreteAesSet }.map { it.variable.name }.toSet()
+        val asDiscreteVariables = varBindings.filter { it.aes.name in asDiscreteAesSet }.map { it.variable.name }
+        val variablesToMarkAsDiscrete = rawCombinedData.variables().filter { it.name in asDiscreteVariables }
 
+        fun DataFrame.Builder.addVariables(
+            variables: List<DataFrame.Variable>,
+            put: (DataFrame.Builder, DataFrame.Variable, List<*>) -> DataFrame.Builder
+        ) : DataFrame.Builder {
+            variables.forEach { variable ->
+                this.remove(variable)
+                put(this, variable, rawCombinedData[variable])
+            }
+            return this
+        }
         return rawCombinedData.builder().run {
 
-            rawCombinedData.variables().forEach { variable ->
-                addVariables(variable, dateTimeVariables, DataFrame.Builder::putDateTime)
-                addVariables(variable, asDiscreteVariables, DataFrame.Builder::putDiscrete)
-            }
+            addVariables(variablesToMarkAsDateTime, DataFrame.Builder::putDateTime)
+            addVariables(variablesToMarkAsDiscrete, DataFrame.Builder::putDiscrete)
 
             if (clientSide) {
                 val variables = rawCombinedData.variables()

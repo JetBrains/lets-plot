@@ -21,6 +21,14 @@ import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
 
+    internal fun asDiscreteName(aes: String, variable: String): String {
+        return "$aes.$variable"
+    }
+
+    internal fun fromAsDiscrete(aes: String, variable: String): String {
+        return variable.removePrefix("$aes.")
+    }
+
     private fun getMappingAnnotationsSpec(options: Map<*, *>, annotation: String): List<Map<*, *>> {
         return options
             .getMap(Option.Meta.DATA_META)
@@ -71,7 +79,7 @@ object DataMetaUtil {
                 }
                 val variableName = commonMappings[aesName] as String
                 OrderOptionUtil.OrderOption.create(
-                    variableName,
+                    asDiscreteName(aesName, variableName),
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )

@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 class OrderOptionsConfigTest {
 
-    private val myData = """{ "foo" : [0], "bar": ["a"] }"""
+    private val myData = """{ "foo" : [0], "bar": [1] }"""
     private val myMapping = """{ "x": "foo", "fill": "bar", "color" : "bar" }"""
 
     @Test
@@ -26,7 +26,8 @@ class OrderOptionsConfigTest {
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption("bar", "bar", 1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "fill.bar", 1)
     }
 
     @Test
@@ -36,11 +37,11 @@ class OrderOptionsConfigTest {
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption("bar", "foo", -1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "foo", -1)
     }
 
-    // Test
-    // ToDo
+    @Test
     // x = as_discrete("foo", order_by="foo", order=1),  fill = as_discrete("bar, order_by="foo")
     fun `two variables with different options`() {
         val orderingSettings =
@@ -48,8 +49,9 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "fill", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOptions(0, "foo", "foo", 1)
-            .assertOrderOptions(1, "bar", "foo", -1)
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "x.foo", "foo", 1)
+            .assertOrderOptions(1, "fill.bar", "foo", -1)
     }
 
     @Test
@@ -60,7 +62,8 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = null, order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption("bar", "foo", -1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "foo", -1)
     }
 
     @Test
@@ -71,57 +74,119 @@ class OrderOptionsConfigTest {
                     makeOrderingSettings(aes = "color", orderBy = "foo", order = null)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption("bar", "foo", -1)
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "foo", -1)
+            .assertOrderOptions(1, "color.bar", "foo", -1)
     }
 
 
     @Test
-    // fill = as_discrete("bar", order_by="foo"), color = as_discrete("bar", order=1)
-    fun `one variable with different options - the second option updates the order direction`() {
+    fun `fill = as_discrete('bar', order_by='foo'), color = as_discrete('bar', order=1)`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null) + "," +
                     makeOrderingSettings(aes = "color", orderBy = null, order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption("bar", "foo", 1)
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "foo", -1)
+            .assertOrderOptions(1, "color.bar", "color.bar", 1)
     }
 
     @Test
-    // fill = as_discrete("bar", order=1), color = as_discrete("bar", order_by="foo", order=1)
-    fun `one variable with different options - the second option updates the 'order_by' variable`() {
+    fun `fill = as_discrete('bar', order=1), color = as_discrete('bar', order_by='foo', order=1)`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1) + "," +
                     makeOrderingSettings(aes = "color", orderBy = "foo", order = 1)
 
         transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOption("bar", "foo", 1)
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "fill.bar", 1)
+            .assertOrderOptions(1, "color.bar", "foo", 1)
     }
 
     @Test
-    // fill = as_discrete("bar", order_by="foo"), color = as_discrete("bar", order_by="bar")
-    fun `conflicting options - different 'order_by' variable`() {
+    fun `fill = as_discrete('bar', order_by='foo'), color = as_discrete('bar', order_by='bar')`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null) + "," +
                     makeOrderingSettings(aes = "color", orderBy = "bar", order = null)
 
-        assertFailed(
-            makePlotSpec(orderingSettings),
-            expectedMessage = "Multiple ordering options for the variable 'bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
-        )
-
+        transformToClientPlotConfig(makePlotSpec(orderingSettings))
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "foo", -1)
+            .assertOrderOptions(1, "color.bar", "bar", -1)
     }
 
     @Test
-    // fill = as_discrete("bar", order=1), color = as_discrete("bar", order=-1)
-    fun `conflicting options - different 'order direction' parameter`() {
+    fun `fill = as_discrete('bar', order=1), color = as_discrete('bar', order=-1)`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1) + "," +
                     makeOrderingSettings(aes = "color", orderBy = null, order = -1)
 
+        transformToClientPlotConfig(makePlotSpec(orderingSettings))
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "fill.bar", 1)
+            .assertOrderOptions(1, "color.bar", "color.bar", -1)
+    }
+
+    // Conflicting options error
+
+    @Test
+    // in plot: color = as_discrete("bar", order_by="foo"),
+    // in layer: color = as_discrete("bar", order_by="bar")
+    fun `conflicting options for color - different 'order_by' variable`() {
+        val plotOrderingSettings =
+            makeOrderingSettings(aes = "color", orderBy = "foo", order = null)
+        val layerOrderingSettings =
+            makeOrderingSettings(aes = "color", orderBy = "bar", order = null)
+
+        val spec = """{
+            "kind": "plot",
+            "data": { "foo" : [0, 1, 2], "bar": [4, 5, 3] },
+            "mapping": { "x": "foo",  "color" : "bar" },
+            "data_meta": { "mapping_annotations": [ $plotOrderingSettings ] },            
+            "layers": [
+                {
+                    "data_meta": { "mapping_annotations": [ $layerOrderingSettings ] },
+                    "mapping": { "x": "foo", "color" : "bar" },
+                    "geom": "point"
+                }
+              ]
+            }
+        """.trimIndent()
+
         assertFailed(
-            makePlotSpec(orderingSettings),
-            expectedMessage =
-            "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
+            spec,
+            expectedMessage = "Multiple ordering options for the variable 'color.bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
+        )
+    }
+
+    @Test
+    // in plot: color = as_discrete("bar", order=1),
+    // in layer: color = as_discrete("bar", order=-1)
+    fun `conflicting options for color -  different 'order direction' parameter`() {
+        val plotOrderingSettings =
+            makeOrderingSettings(aes = "color", orderBy = null, order = 1)
+        val layerOrderingSettings =
+            makeOrderingSettings(aes = "color", orderBy = null, order = -1)
+
+        val spec = """{
+            "kind": "plot",
+            "data": { "foo" : [0, 1, 2], "bar": [4, 5, 3] },
+            "mapping": { "x": "foo",  "color" : "bar" },
+            "data_meta": { "mapping_annotations": [ $plotOrderingSettings ] },            
+            "layers": [
+                {
+                    "data_meta": { "mapping_annotations": [ $layerOrderingSettings ] },
+                    "mapping": { "x": "foo", "color" : "bar" },
+                    "geom": "point"
+                }
+              ]
+            }
+        """.trimIndent()
+
+        assertFailed(
+            spec,
+            expectedMessage =  "Multiple ordering options for the variable 'color.bar' with different order direction: '1' and '-1'"
         )
     }
 
@@ -137,7 +202,8 @@ class OrderOptionsConfigTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption("bar", "bar", 1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "fill.bar", 1)
     }
 
     @Test
@@ -148,7 +214,8 @@ class OrderOptionsConfigTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption("bar", "bar", 1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "fill.bar", 1)
     }
 
     @Test
@@ -159,7 +226,8 @@ class OrderOptionsConfigTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption("bar", "bar", 1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "fill.bar", 1)
     }
 
     @Test
@@ -170,7 +238,8 @@ class OrderOptionsConfigTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertOrderOption("bar", "bar", 1)
+            .assertOrderOptionsSize(1)
+            .assertOrderOption("fill.bar", "fill.bar", 1)
     }
 
 
@@ -215,6 +284,12 @@ class OrderOptionsConfigTest {
     }
 
     companion object {
+        private fun PlotConfigClientSide.assertOrderOptionsSize(expectedSize: Int) : PlotConfigClientSide {
+            val actualOptions = layerConfigs.first().orderOptions
+            assertEquals(expectedSize, actualOptions.size)
+            return this
+        }
+
         private fun PlotConfigClientSide.assertOrderOptions(
             index: Int,
             expectedVariableName: String,

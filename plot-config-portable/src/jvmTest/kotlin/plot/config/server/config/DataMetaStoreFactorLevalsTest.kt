@@ -41,7 +41,7 @@ class DataMetaStoreFactorLevalsTest {
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesAsDiscrete("y")
             .hasDataMetaFacetLevels(
-                "chrom",     // mapped to aes x but no order for x
+                "x.chrom",     // mapped to aes x but no order for x
                 listOf("chr1", "chr2", "chr4", "chr5")
             )
     }
@@ -91,7 +91,7 @@ class DataMetaStoreFactorLevalsTest {
             .hasDataMetaDateTime("y")
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesAsDiscrete("y")
-            .hasDataMetaFacetLevels("chrom", listOf("chr1", "chr2", "chr4", "chr5"))
+            .hasDataMetaFacetLevels("x.chrom", listOf("chr1", "chr2", "chr4", "chr5"))
     }
 
 

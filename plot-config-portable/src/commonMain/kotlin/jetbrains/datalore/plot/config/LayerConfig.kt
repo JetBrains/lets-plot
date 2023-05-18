@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companio
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
+import jetbrains.datalore.plot.config.DataConfigUtil.combinedDiscreteMapping
 import jetbrains.datalore.plot.config.DataConfigUtil.layerMappingsAndCombinedData
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
@@ -142,9 +143,21 @@ class LayerConfig constructor(
         }
 
     init {
-        ownData = ConfigUtil.createDataFrame(get(DATA))
-
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
+
+        val combinedDiscreteMappings = combinedDiscreteMapping(
+            commonMappings = plotMappings,
+            ownMappings = layerMappings,
+            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
+        )
+
+        ownData = DataConfigUtil.createDataFrame(
+            commonDataFrame = plotData,
+            ownDataFrame = ConfigUtil.createDataFrame(get(DATA)),
+            combinedDiscreteMappings = combinedDiscreteMappings,
+            isClientSide = clientSide
+        )
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
@@ -172,6 +185,7 @@ class LayerConfig constructor(
             stat = stat,
             sharedData = plotData,
             layerData = ownData,
+            asDiscreteAesSet = combinedDiscreteMappings.keys,
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,
@@ -220,13 +234,14 @@ class LayerConfig constructor(
 
         // Apply data meta
         combinedData = DataConfigUtil.combinedDataWithDataMeta(
-            rawCombinedData,
-            varBindings,
-            plotDataMeta,
-            getMap(DATA_META),
-            orderOptions,
-            aggregateOperation,
-            clientSide
+            rawCombinedData = rawCombinedData,
+            varBindings = varBindings,
+            plotDataMeta = plotDataMeta,
+            ownDataMeta = getMap(DATA_META),
+            asDiscreteAesSet = combinedDiscreteMappings.keys,
+            orderOptions = orderOptions,
+            aggregateOperation = aggregateOperation,
+            clientSide = clientSide
         )
     }
 

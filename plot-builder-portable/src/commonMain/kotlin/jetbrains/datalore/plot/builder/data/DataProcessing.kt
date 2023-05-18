@@ -408,7 +408,7 @@ object DataProcessing {
     fun defaultGroupingVariables(
         data: DataFrame,
         bindings: List<VarBinding>,
-        pathIdVarName: String?
+        pathIdVarName: String?,
     ): List<Variable> {
         val pathIdVar: Variable? = findOptionalVariable(data, pathIdVarName)
         return defaultGroupingVariables(data, bindings) + listOfNotNull(pathIdVar)
@@ -416,7 +416,7 @@ object DataProcessing {
 
     private fun defaultGroupingVariables(
         data: DataFrame,
-        bindings: List<VarBinding>
+        bindings: List<VarBinding>,
     ): Iterable<Variable> {
         return bindings
             .filter { isDefaultGroupingVariable(data, it.aes, it.variable) }

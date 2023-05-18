@@ -54,8 +54,17 @@ abstract class PlotConfig(
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
     init {
-
-        sharedData = ConfigUtil.createDataFrame(get(DATA))
+        sharedData = DataConfigUtil.createDataFrame(
+            commonDataFrame = DataFrame.Builder.emptyFrame(),
+            ownDataFrame = ConfigUtil.createDataFrame(get(DATA)),
+            combinedDiscreteMappings = DataConfigUtil.combinedDiscreteMapping(
+                commonMappings = emptyMap(),
+                ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
+                commonDiscreteAes = emptySet(),
+                ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
+           ),
+            isClientSide = isClientSide
+        )
 
         layerConfigs = createLayerConfigs(sharedData, isClientSide)
 
