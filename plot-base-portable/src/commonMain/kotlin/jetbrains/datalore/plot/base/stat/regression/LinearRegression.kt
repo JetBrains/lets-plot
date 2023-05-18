@@ -9,39 +9,53 @@ import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class LinearRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double) :
-    RegressionEvaluator(xs, ys, confidenceLevel) {
+class LinearRegression private constructor (
+    n: Int,
+    meanX: Double,
+    sumXX: Double,
+    model: (Double) -> Double,
+    standardErrorOfEstimate: Double,
+    tCritical: Double
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical) {
+    companion object {
+        fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
+            check(xs, ys, confidenceLevel)
 
-    override val canBeComputed: Boolean
-        get() = n > 1
+            // Prepare data
+            val (xVals, yVals) = allFinite(xs, ys)
+            val n = xVals.size
+            val degreesOfFreedom = n - 2.0
 
-    override val degreesOfFreedom: Double
-        get() = n - 2.0
+            // Check computability
+            if (n <= 1) {
+                return null
+            }
 
-    private val slope: Double
-    private val intercept: Double
+            // Calculate standard stats
+            val meanX = xVals.average()
+            val sumXX = xVals.sumOf { (it - meanX).pow(2) }
 
-    init {
-        val (xVals, yVals) = prepareData(xs, ys)
+            // Prepare model
+            val meanY = yVals.average()
+            val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
+            val slope = sumXY / sumXX
+            val intercept = meanY - slope * meanX
+            val model: (Double) -> Double = { x -> slope * x + intercept }
 
-        val meanY = yVals.average()
-        val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
+            // Calculate standard error of estimate
+            // https://en.wikipedia.org/wiki/Residual_sum_of_squares
+            val sumYY = yVals.sumOf { (it - meanY).pow(2) }
+            val sse = max(0.0, sumYY - sumXY * sumXY / sumXX)
+            val standardErrorOfEstimate = sqrt(sse / degreesOfFreedom)
 
-        slope = sumXY / sumXX
-        intercept = meanY - slope * meanX
-    }
-
-    override fun prepareData(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
-        return allFinite(xs, ys)
-    }
-
-    override fun value(x: Double): Double = slope * x + intercept
-
-    override fun standardErrorOfEstimate(xVals: DoubleArray, yVals: DoubleArray): Double {
-        val meanY = yVals.average()
-        val sumXY = xVals.zip(yVals).sumOf { (x, y) -> (x - meanX) * (y - meanY) }
-        val sumYY = yVals.sumOf { (it - meanY).pow(2) }
-        val sse = max(0.0, sumYY - sumXY * sumXY / sumXX) // https://en.wikipedia.org/wiki/Residual_sum_of_squares
-        return sqrt(sse / degreesOfFreedom) // SE estimate
+            return LinearRegression(
+                n,
+                meanX,
+                sumXX,
+                model,
+                standardErrorOfEstimate,
+                tCritical(degreesOfFreedom, confidenceLevel)
+            )
+        }
     }
 }

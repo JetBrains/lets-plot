@@ -5,9 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat.regression
 
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 internal class LoessRegressionTest {
 
@@ -37,14 +35,12 @@ internal class LoessRegressionTest {
     }
 
     @Test
-    fun testException() {
+    fun testComputability() {
         val n = 1_000
         val data = RegressionTestUtil.data(n, yRange = 0.0.rangeTo(1.0))
         val (xs, ys) = data
-        assertFailsWith<java.lang.IllegalArgumentException> {
-            val loessRegression = LocalPolynomialRegression(xs, ys, confidenceLevel, 0.001)
-            loessRegression.evalX(0.5)
-        }
+        val loessRegression = LocalPolynomialRegression.fit(xs, ys, confidenceLevel, 0.001)
+        assertEquals(null, loessRegression, "Regression shouldn't be computable")
     }
 
     @Test
@@ -460,7 +456,9 @@ internal class LoessRegressionTest {
     }
 
     private fun newLocalPolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LocalPolynomialRegression {
-        return LocalPolynomialRegression(xs, ys, confidenceLevel, 0.5)
+        val loessRegression = LocalPolynomialRegression.fit(xs, ys, confidenceLevel, 0.5)
+        assertNotNull(loessRegression, "Regression should be computable")
+        return loessRegression
     }
 
 }

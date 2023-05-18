@@ -11,65 +11,78 @@ import jetbrains.datalore.plot.base.stat.math3.times
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-class PolynomialRegression(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, private val deg: Int) :
-    RegressionEvaluator(xs, ys, confidenceLevel) {
+class PolynomialRegression private constructor (
+    n: Int,
+    meanX: Double,
+    sumXX: Double,
+    model: (Double) -> Double,
+    standardErrorOfEstimate: Double,
+    tCritical: Double
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical) {
+    companion object {
+        fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
+            check(xs, ys, confidenceLevel)
+            require(deg >= 2) { "Degree of polynomial must be at least 2" }
 
-    override val canBeComputed: Boolean
-        get() = n > deg
+            // Prepare data
+            val (xVals, yVals) = averageByX(xs, ys)
+            val n = xVals.size
+            val degreesOfFreedom = n - deg - 1.0
 
-    override val degreesOfFreedom: Double
-        get() = n - deg - 1.0
+            // Check computability
+            if (n <= deg) {
+                return null
+            }
 
-    private val p: PolynomialFunction
+            // Calculate standard stats
+            val meanX = xVals.average()
+            val sumXX = xVals.sumOf { (it - meanX).pow(2) }
 
-    init {
-        require(deg >= 2) { "Degree of polynomial must be at least 2" }
+            // Prepare model
+            val polynomial = calculatePolynomial(deg, xVals, yVals)
+            val model: (Double) -> Double = { x -> polynomial.value(x) }
 
-        val (xVals, yVals) = averageByX(xs, ys)
+            // Calculate standard error of estimate
+            // https://en.wikipedia.org/wiki/Residual_sum_of_squares
+            val sse = (xVals zip yVals).sumOf { (x, y) -> (y - model(x)).pow(2) }
+            val standardErrorOfEstimate = sqrt(sse / degreesOfFreedom)
 
-        require(n > deg) { "The number of valid data points must be greater than deg" }
-
-        p = calcPolynomial(deg, xVals, yVals)
-    }
-
-    override fun prepareData(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleArray> {
-        return averageByX(xs, ys)
-    }
-
-    private fun calcPolynomial(deg: Int, xVals: DoubleArray, yVals: DoubleArray): PolynomialFunction {
-        val fpg = ForsythePolynomialGenerator(xVals)
-        var res = PolynomialFunction(doubleArrayOf(0.0))
-
-        for (i in 0..deg) {
-            val p = fpg.getPolynomial(i)
-            val s = coefficient(p, xVals, yVals)
-            res += s * p
+            return PolynomialRegression(
+                n,
+                meanX,
+                sumXX,
+                model,
+                standardErrorOfEstimate,
+                tCritical(degreesOfFreedom, confidenceLevel)
+            )
         }
 
-        return res
-    }
+        private fun calculatePolynomial(deg: Int, xVals: DoubleArray, yVals: DoubleArray): PolynomialFunction {
+            val fpg = ForsythePolynomialGenerator(xVals)
+            var res = PolynomialFunction(doubleArrayOf(0.0))
 
-    private fun coefficient(p: PolynomialFunction, xVals: DoubleArray, yVals: DoubleArray): Double {
-        var ww = 0.0
-        var w = 0.0
-        for (i in 0 until xVals.size) {
-            val x = xVals[i]
-            val y = yVals[i]
-            val pval = p.value(x)
+            for (i in 0..deg) {
+                val p = fpg.getPolynomial(i)
+                val s = coefficient(p, xVals, yVals)
+                res += s * p
+            }
 
-            ww += pval * pval
-            w += y * pval
+            return res
         }
 
-        return w / ww
-    }
+        private fun coefficient(p: PolynomialFunction, xVals: DoubleArray, yVals: DoubleArray): Double {
+            var ww = 0.0
+            var w = 0.0
+            for (i in xVals.indices) {
+                val x = xVals[i]
+                val y = yVals[i]
+                val pval = p.value(x)
 
-    override fun value(x: Double): Double {
-        return p.value(x)
-    }
+                ww += pval * pval
+                w += y * pval
+            }
 
-    override fun standardErrorOfEstimate(xVals: DoubleArray, yVals: DoubleArray): Double {
-        val sse = xVals.zip(yVals).sumOf { (x, y) -> (y - p.value(x)).pow(2) }
-        return sqrt(sse / degreesOfFreedom)
+            return w / ww
+        }
     }
 }

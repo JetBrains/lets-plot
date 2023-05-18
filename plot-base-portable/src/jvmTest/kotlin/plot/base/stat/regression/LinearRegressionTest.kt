@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.stat.regression
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 internal class LinearRegressionTest {
 
@@ -28,7 +29,8 @@ internal class LinearRegressionTest {
             val xs = data.first
             val ys = data.second
 
-            val simpleRegression = LinearRegression(xs, ys, confidenceLevel)
+            val simpleRegression = LinearRegression.fit(xs, ys, confidenceLevel)
+            assertNotNull(simpleRegression, "Regression should be computable")
 
             RegressionTestUtil.logRegression(xs, ys, simpleRegression)
         }
@@ -390,7 +392,8 @@ internal class LinearRegressionTest {
 
     private fun assertRegression(inX: List<Double>, inY: List<Double>, expectedX: List<Double>, expectedResult: List<EvalResult>) {
 
-        val simpleRegression = LinearRegression(inX, inY, confidenceLevel)
+        val simpleRegression = LinearRegression.fit(inX, inY, confidenceLevel)
+        assertNotNull(simpleRegression, "Regression should be computable")
 
         expectedX.zip(expectedResult).forEach { (x, r) ->
             assertEquals(r, simpleRegression.evalX(x))
@@ -404,47 +407,46 @@ internal class LinearRegressionTest {
     @Test(expected = IllegalArgumentException::class)
     fun testSizeDifference() {
         // Exception "X/Y must have same size" is expected
-        LinearRegression(xss.dropLast(1), yss, confidenceLevel)
+        LinearRegression.fit(xss.dropLast(1), yss, confidenceLevel)
     }
 
 
     @Test
     fun testXNull() {
         val xs = xss.apply { set(lastIndex, null) }
-        LinearRegression(xs, yss, confidenceLevel)
+        LinearRegression.fit(xs, yss, confidenceLevel)
     }
 
     @Test
     fun testYNull() {
         val ys = yss.apply { set(lastIndex, null) }
-        LinearRegression(xss, ys, confidenceLevel)
+        LinearRegression.fit(xss, ys, confidenceLevel)
     }
 
     @Test
     fun testXYNullSame() {
         val xs = xss.apply { set(3, null) }
         val ys = yss.apply { set(3, null) }
-        LinearRegression(xs, ys, confidenceLevel)
+        LinearRegression.fit(xs, ys, confidenceLevel)
     }
 
     @Test
     fun testXYNullDiff() {
         val xs = xss.apply { set(lastIndex, null); set(0, null) }
         val ys = yss.apply { set(3, null) }
-        LinearRegression(xs, ys, confidenceLevel)
+        LinearRegression.fit(xs, ys, confidenceLevel)
     }
 
     @Test
     fun testNaN() {
         val xs = xss.apply { set(0, Double.NaN) }
-        LinearRegression(xs, yss, confidenceLevel)
+        LinearRegression.fit(xs, yss, confidenceLevel)
     }
 
     @Test
     fun testInfinite() {
         val xs = xss.apply { set(0, Double.POSITIVE_INFINITY) }
-        LinearRegression(xs, yss, confidenceLevel)
+        LinearRegression.fit(xs, yss, confidenceLevel)
     }
-
 }
 
