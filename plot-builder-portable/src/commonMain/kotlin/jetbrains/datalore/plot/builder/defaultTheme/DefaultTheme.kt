@@ -39,7 +39,7 @@ class DefaultTheme(
 
     override fun tooltips(): TooltipsTheme = tooltips
 
-    override val geomFlavorName: String? = options[ThemeOption.GEOM_FLAVOR] as String?
+    override fun hasFlavor(): Boolean = options.containsKey("flavor") // todo
 
     companion object {
         // For demo and tests

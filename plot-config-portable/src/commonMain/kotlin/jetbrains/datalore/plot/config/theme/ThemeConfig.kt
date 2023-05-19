@@ -39,10 +39,7 @@ class ThemeConfig constructor(
         // User specific options will be applied to the combination of named theme and flavor options
         val effectiveOptions = baselineValues.values.let {
             val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
-            val geomFlavorOption = ThemeFlavor.chooseGeomFlavor(flavorName)?.let { geomFlavor ->
-                mapOf(ThemeOption.GEOM_FLAVOR to geomFlavor)
-            } ?: emptyMap()
-            geomFlavorOption + if (flavorName != null) {
+            if (flavorName != null) {
                 ThemeFlavor.forName(flavorName).updateColors(it)
             } else {
                 it

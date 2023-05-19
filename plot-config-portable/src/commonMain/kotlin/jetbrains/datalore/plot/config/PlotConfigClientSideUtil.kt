@@ -224,16 +224,6 @@ object PlotConfigClientSideUtil {
             layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
         }
 
-        // add geom flavors as constants
-        theme.geomFlavorName?.let { name ->
-            GeomFlavorUtil.getFlavors(name)
-                ?.filterKeys { aes -> aes !in constantAesMap }
-                ?.forEach { (aes, value) ->
-                    @Suppress("UNCHECKED_CAST")
-                    layerBuilder.addConstantAes(aes as Aes<Any>, value)
-            }
-        }
-
         if (layerConfig.hasExplicitGrouping()) {
             layerBuilder.groupingVarName(layerConfig.explicitGroupingVarName!!)
         }
@@ -248,6 +238,17 @@ object PlotConfigClientSideUtil {
         for (binding in bindings) {
             layerBuilder.addBinding(binding)
         }
+
+        // use geom flavors as constants
+        GeomFlavorUtil.getFlavors(geomKind = layerConfig.geomProto.geomKind, theme)
+            .filterKeys { aes ->
+                layerConfig.getVariableForAes(aes) == null && aes !in constantAesMap
+            }
+            .forEach { (aes, value) ->
+                @Suppress("UNCHECKED_CAST")
+                layerBuilder.addConstantAes(aes as Aes<Any>, value)
+            }
+
 
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)
 

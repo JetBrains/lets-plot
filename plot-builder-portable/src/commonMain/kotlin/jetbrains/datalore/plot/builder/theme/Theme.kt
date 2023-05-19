@@ -21,5 +21,5 @@ interface Theme {
 
     fun tooltips(): TooltipsTheme
 
-    val geomFlavorName: String?
+    fun hasFlavor(): Boolean
 }
