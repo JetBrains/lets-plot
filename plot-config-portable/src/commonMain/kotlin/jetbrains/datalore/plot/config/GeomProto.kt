@@ -5,9 +5,14 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.base.spatial.projections.identity
+import jetbrains.datalore.base.spatial.projections.mercator
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
+import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.sampling.Samplings
 import jetbrains.datalore.plot.config.Option.Geom
@@ -15,11 +20,32 @@ import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Pos
 
-open class GeomProto constructor(val geomKind: GeomKind) {
+class GeomProto constructor(val geomKind: GeomKind) {
+
+    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
+    }
 
     fun defaultOptions(): Map<String, Any> {
         require(DEFAULTS.containsKey(geomKind)) { "Default values doesn't support geom kind: '$geomKind'" }
         return DEFAULTS.getValue(geomKind)
+    }
+
+    fun preferredCoordinateSystem(layerConfig: OptionsAccessor): CoordProvider? {
+        return when (geomKind) {
+            TILE,
+            BIN_2D,
+            CONTOUR,
+            CONTOURF,
+            DENSITY2D,
+            DENSITY2DF,
+            RASTER,
+            IMAGE -> CoordProviders.fixed(1.0)
+
+            MAP -> CoordProviders.map(projection = identity().takeIf { layerConfig.has(Layer.USE_CRS) } ?: mercator())
+
+            else -> null
+        }
     }
 
     fun preferredSampling(): Sampling {
@@ -86,6 +112,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                 Pos.Jitter.WIDTH to layerOptions.getDouble(Geom.Jitter.WIDTH),
                 Pos.Jitter.HEIGHT to layerOptions.getDouble(Geom.Jitter.HEIGHT),
             )
+
             Y_DOT_PLOT -> if (layerOptions.hasOwn(Geom.YDotplot.STACKGROUPS) &&
                 layerOptions.getBoolean(Geom.YDotplot.STACKGROUPS)
             ) {
@@ -96,6 +123,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
                     Pos.Dodge.WIDTH to 0.95
                 )
             }
+
             TEXT, LABEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(Geom.Text.NUDGE_Y)) {
                 mapOf(
                     Meta.NAME to PosProto.NUDGE,
@@ -105,6 +133,7 @@ open class GeomProto constructor(val geomKind: GeomKind) {
             } else {
                 PosProto.IDENTITY
             }
+
             else -> {
                 // Some other geoms has stateless position adjustments defined in `defaults`
                 // Otherwise it's just `identity`

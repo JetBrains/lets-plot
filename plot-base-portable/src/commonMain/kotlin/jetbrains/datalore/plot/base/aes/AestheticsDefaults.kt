@@ -31,11 +31,6 @@ open class AestheticsDefaults {
         return this
     }
 
-
-    open fun rangeIncludesZero(aes: Aes<*>): Boolean {
-        return false
-    }
-
     fun <T> defaultValue(aes: Aes<T>): T {
         return myDefaults[aes]
     }
@@ -82,21 +77,13 @@ open class AestheticsDefaults {
         }
 
         fun bar(): AestheticsDefaults {
-            return object : AestheticsDefaults() {
-                override fun rangeIncludesZero(aes: Aes<*>): Boolean {
-                    return aes == Aes.Y || super.rangeIncludesZero(aes)
-                }
-            }
+            return base()
                 .update(Aes.WIDTH, 0.9)
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun histogram(): AestheticsDefaults {
-            return object : AestheticsDefaults() {
-                override fun rangeIncludesZero(aes: Aes<*>): Boolean {
-                    return aes == Aes.Y || super.rangeIncludesZero(aes)
-                }
-            }
+            return base()
                 .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
@@ -178,11 +165,7 @@ open class AestheticsDefaults {
         }
 
         fun area(): AestheticsDefaults {
-            return object : AestheticsDefaults() {
-                override fun rangeIncludesZero(aes: Aes<*>): Boolean {
-                    return aes == Aes.Y || super.rangeIncludesZero(aes)
-                }
-            }
+            return base()
         }
 
         fun density(): AestheticsDefaults {

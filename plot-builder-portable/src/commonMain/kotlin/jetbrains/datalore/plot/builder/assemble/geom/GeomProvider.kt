@@ -5,432 +5,409 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
+import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.builder.coord.CoordProvider
 
-abstract class GeomProvider private constructor(val geomKind: GeomKind) {
+class GeomProvider internal constructor(
+    val geomKind: GeomKind,
+    val aestheticsDefaults: AestheticsDefaults,
+    val handlesGroups: Boolean,
+    private val geomSupplier: (ctx: Context) -> Geom
+) {
 
-    open val preferredCoordinateSystem: CoordProvider
-        get() = throw IllegalStateException("No preferred coordinate system")
+    fun createGeom(ctx: Context): Geom {
+        return geomSupplier(ctx)
+    }
 
-    abstract fun createGeom(): Geom
-
-    abstract fun aestheticsDefaults(): AestheticsDefaults
-
-    abstract fun handlesGroups(): Boolean
-
-    private class GeomProviderBuilder internal constructor(
-        private val myKind: GeomKind,
-        private val myAestheticsDefaults: AestheticsDefaults,
-        private val myHandlesGroups: Boolean,
-        private val myGeomSupplier: () -> Geom
+    abstract class Context(
+        val colorByAes: Aes<Color>,
+        val fillByAes: Aes<Color>,
     ) {
-        internal fun build(): GeomProvider {
-            return object : GeomProvider(myKind) {
-
-                override fun createGeom(): Geom {
-                    return myGeomSupplier()
-                }
-
-                override fun aestheticsDefaults(): AestheticsDefaults {
-                    return myAestheticsDefaults
-                }
-
-                override fun handlesGroups(): Boolean {
-                    return myHandlesGroups
-                }
-            }
-        }
+        abstract fun hasBinding(aes: Aes<*>): Boolean
+        abstract fun hasConstant(aes: Aes<*>): Boolean
     }
 
     companion object {
-
-        fun point(): GeomProvider {
-            return point { PointGeom() }
-        }
-
-        fun point(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun point(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.POINT,
                 AestheticsDefaults.point(),
                 PointGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun path(): GeomProvider {
-            return path { PathGeom() }
-        }
-
-        fun path(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun path(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.PATH,
                 AestheticsDefaults.path(),
                 PathGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun line(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.LINE,
                 AestheticsDefaults.line(),
                 LineGeom.HANDLES_GROUPS
-            ) { LineGeom() }.build()
+            ) { LineGeom() }
         }
 
         fun smooth(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.SMOOTH,
                 AestheticsDefaults.smooth(),
                 SmoothGeom.HANDLES_GROUPS
-            ) { SmoothGeom() }.build()
+            ) { SmoothGeom() }
         }
 
         fun bar(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.BAR,
                 AestheticsDefaults.bar(),
                 BarGeom.HANDLES_GROUPS
-            ) { BarGeom() }.build()
+            ) { BarGeom() }
         }
 
         fun histogram(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.HISTOGRAM,
                 AestheticsDefaults.histogram(),
                 HistogramGeom.HANDLES_GROUPS
-            ) { HistogramGeom() }.build()
+            ) { HistogramGeom() }
         }
 
-        fun dotplot(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun dotplot(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.DOT_PLOT,
                 AestheticsDefaults.dotplot(),
                 DotplotGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun tile(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.TILE,
                 AestheticsDefaults.tile(),
                 TileGeom.HANDLES_GROUPS
-            ) { TileGeom() }.build()
+            ) { TileGeom() }
         }
 
         fun bin2d(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.BIN_2D,
                 AestheticsDefaults.bin2d(),
                 Bin2dGeom.HANDLES_GROUPS
-            ) { Bin2dGeom() }.build()
+            ) { Bin2dGeom() }
         }
 
-        fun errorBar(): GeomProvider {
-            return GeomProviderBuilder(
+        fun errorBar(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.ERROR_BAR,
                 AestheticsDefaults.errorBar(),
-                ErrorBarGeom.HANDLES_GROUPS
-            ) { ErrorBarGeom() }.build()
+                ErrorBarGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
-        fun crossBar(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun crossBar(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.CROSS_BAR,
                 AestheticsDefaults.crossBar(),
                 CrossBarGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun lineRange(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.LINE_RANGE,
                 AestheticsDefaults.lineRange(),
                 LineRangeGeom.HANDLES_GROUPS
-            ) { LineRangeGeom() }.build()
+            ) { LineRangeGeom() }
         }
 
-        fun pointRange(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun pointRange(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.POINT_RANGE,
                 AestheticsDefaults.pointRange(),
                 PointRangeGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun contour(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.CONTOUR,
                 AestheticsDefaults.contour(),
                 ContourGeom.HANDLES_GROUPS
-            ) { ContourGeom() }.build()
+            ) { ContourGeom() }
         }
 
         fun contourf(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.CONTOURF,
                 AestheticsDefaults.contourf(),
                 ContourfGeom.HANDLES_GROUPS
-            ) { ContourfGeom() }.build()
+            ) { ContourfGeom() }
         }
 
         fun polygon(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.POLYGON,
                 AestheticsDefaults.polygon(),
                 PolygonGeom.HANDLES_GROUPS
-            ) { PolygonGeom() }.build()
+            ) { PolygonGeom() }
         }
 
         fun map(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.MAP,
                 AestheticsDefaults.map(),
                 MapGeom.HANDLES_GROUPS
-            ) { MapGeom() }.build()
+            ) { MapGeom() }
         }
 
         fun abline(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.AB_LINE,
                 AestheticsDefaults.abline(),
                 ABLineGeom.HANDLES_GROUPS
-            ) { ABLineGeom() }.build()
+            ) { ABLineGeom() }
         }
 
         fun hline(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.H_LINE,
                 AestheticsDefaults.hline(),
                 HLineGeom.HANDLES_GROUPS
-            ) { HLineGeom() }.build()
+            ) { HLineGeom() }
         }
 
         fun vline(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.V_LINE,
                 AestheticsDefaults.vline(),
                 VLineGeom.HANDLES_GROUPS
-            ) { VLineGeom() }.build()
+            ) { VLineGeom() }
         }
 
-        fun boxplot(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun boxplot(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.BOX_PLOT,
                 AestheticsDefaults.boxplot(),
                 BoxplotGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun arearidges(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun arearidges(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.AREA_RIDGES,
                 AestheticsDefaults.areaRidges(),
                 AreaRidgesGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun violin(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun violin(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.VIOLIN,
                 AestheticsDefaults.violin(),
                 ViolinGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun ydotplot(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun ydotplot(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.Y_DOT_PLOT,
                 AestheticsDefaults.ydotplot(),
                 YDotplotGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun livemap(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.LIVE_MAP,
                 AestheticsDefaults.livemap(),
                 LiveMapGeom.HANDLES_GROUPS,
-            ) { LiveMapGeom() }.build()
+            ) { LiveMapGeom() }
         }
 
         fun ribbon(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.RIBBON,
                 AestheticsDefaults.ribbon(),
                 RibbonGeom.HANDLES_GROUPS
-            ) { RibbonGeom() }.build()
+            ) { RibbonGeom() }
         }
 
         fun area(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.AREA,
                 AestheticsDefaults.area(),
                 AreaGeom.HANDLES_GROUPS
-            ) { AreaGeom() }.build()
+            ) { AreaGeom() }
         }
 
-        fun density(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun density(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.DENSITY,
                 AestheticsDefaults.density(),
                 DensityGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun density2d(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.DENSITY2D,
                 AestheticsDefaults.density2d(),
                 Density2dGeom.HANDLES_GROUPS
-            ) { Density2dGeom() }.build()
+            ) { Density2dGeom() }
         }
 
         fun density2df(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.DENSITY2DF,
                 AestheticsDefaults.density2df(),
                 Density2dfGeom.HANDLES_GROUPS
-            ) { Density2dfGeom() }.build()
+            ) { Density2dfGeom() }
         }
 
         fun jitter(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.JITTER,
                 AestheticsDefaults.jitter(),
                 JitterGeom.HANDLES_GROUPS
-            ) { JitterGeom() }.build()
+            ) { JitterGeom() }
         }
 
         fun qq(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.Q_Q,
                 AestheticsDefaults.qq(),
                 QQGeom.HANDLES_GROUPS
-            ) { QQGeom() }.build()
+            ) { QQGeom() }
         }
 
         fun qq2(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.Q_Q_2,
                 AestheticsDefaults.qq2(),
                 QQ2Geom.HANDLES_GROUPS
-            ) { QQ2Geom() }.build()
+            ) { QQ2Geom() }
         }
 
         fun qqline(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.Q_Q_LINE,
                 AestheticsDefaults.qq_line(),
                 QQLineGeom.HANDLES_GROUPS
-            ) { QQLineGeom() }.build()
+            ) { QQLineGeom() }
         }
 
         fun qq2line(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.Q_Q_2_LINE,
                 AestheticsDefaults.qq2_line(),
                 QQ2LineGeom.HANDLES_GROUPS
-            ) { QQ2LineGeom() }.build()
+            ) { QQ2LineGeom() }
         }
 
         fun freqpoly(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.FREQPOLY,
                 AestheticsDefaults.freqpoly(),
                 FreqpolyGeom.HANDLES_GROUPS
-            ) { FreqpolyGeom() }.build()
+            ) { FreqpolyGeom() }
         }
 
-        fun step(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun step(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.STEP,
                 AestheticsDefaults.step(),
                 StepGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun rect(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.RECT,
                 AestheticsDefaults.rect(),
                 RectGeom.HANDLES_GROUPS
-            ) { RectGeom() }.build()
+            ) { RectGeom() }
         }
 
-        fun segment(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun segment(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.SEGMENT,
                 AestheticsDefaults.segment(),
                 SegmentGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun text(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun text(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.TEXT,
                 AestheticsDefaults.text(),
                 TextGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun label(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun label(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.LABEL,
                 AestheticsDefaults.label(),
                 TextGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
         fun raster(): GeomProvider {
-            return GeomProviderBuilder(
+            return GeomProvider(
                 GeomKind.RASTER,
                 AestheticsDefaults.raster(),
                 RasterGeom.HANDLES_GROUPS
-            ) { RasterGeom() }.build()
+            ) { RasterGeom() }
         }
 
-        fun image(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun image(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.IMAGE,
                 AestheticsDefaults.image(),
                 ImageGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun pie(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun pie(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.PIE,
                 AestheticsDefaults.pie(),
                 PieGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
 
-        fun lollipop(supplier: () -> Geom): GeomProvider {
-            return GeomProviderBuilder(
+        fun lollipop(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
                 GeomKind.LOLLIPOP,
                 AestheticsDefaults.lollipop(),
                 LollipopGeom.HANDLES_GROUPS,
                 supplier
-            ).build()
+            )
         }
     }
 }

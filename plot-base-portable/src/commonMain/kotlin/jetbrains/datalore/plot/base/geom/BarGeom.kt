@@ -18,6 +18,8 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 open class BarGeom : GeomBase() {
 
+    override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

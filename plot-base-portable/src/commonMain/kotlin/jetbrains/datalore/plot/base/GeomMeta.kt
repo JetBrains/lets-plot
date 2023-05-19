@@ -24,8 +24,13 @@ object GeomMeta {
         return renderedAesByGeom[geomKind]!!
     }
 
-    fun renders(geomKind: GeomKind, actualColorAes: Aes<Color>, actualFillAes: Aes<Color>): List<Aes<*>> {
-        return renders(geomKind).map {
+    fun renders(
+        geomKind: GeomKind,
+        actualColorAes: Aes<Color>,
+        actualFillAes: Aes<Color>,
+        exclude: List<Aes<*>> = emptyList()
+    ): List<Aes<*>> {
+        return (renders(geomKind) - exclude).map {
             when (it) {
                 Aes.COLOR -> actualColorAes
                 Aes.FILL -> actualFillAes

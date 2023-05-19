@@ -11,15 +11,43 @@ import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
 import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
-import kotlin.test.BeforeTest
-import kotlin.test.Ignore
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 internal class PlotSvgExportPortableTest {
     @BeforeTest
     fun setUp() {
         SvgUID.setUpForTest()
+    }
+
+    @Suppress("TestFunctionName")
+    @Test
+    fun LPK188_geomImshow_to_SVG_produces_fuzzy_picture() {
+        val spec = """
+            |{
+            |   'kind': 'plot',
+            |   'layers': [
+            |       {
+            |           'geom': 'image',
+            |           'show_legend': true,
+            |           'href': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAGUlEQVR4nGP4z8DwHwwZ/oOZvkDCF8jyBQCLFgnfUCS+/AAAAABJRU5ErkJggg==',
+            |           'xmin': -0.5,
+            |           'ymin': -0.5,
+            |           'xmax': 2.5,
+            |           'ymax': 1.5
+            |       }
+            |   ]
+            |}
+        """.trimMargin()
+
+        PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+            plotSpec = parsePlotSpec(spec),
+            useCssPixelatedImageRendering = false
+        ).let { assertTrue(it.contains("style=\"image-rendering: optimizeSpeed\"")) }
+
+        PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+            plotSpec = parsePlotSpec(spec),
+            useCssPixelatedImageRendering = true
+        ).let { assertTrue(it.contains("style=\"image-rendering: optimizeSpeed; image-rendering: pixelated\"")) }
     }
 
     @Test

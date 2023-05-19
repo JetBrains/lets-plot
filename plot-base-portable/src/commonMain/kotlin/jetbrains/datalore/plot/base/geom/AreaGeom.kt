@@ -21,6 +21,8 @@ open class AreaGeom : GeomBase() {
     var quantiles: List<Double> = DensityStat.DEF_QUANTILES
     var quantileLines: Boolean = DEF_QUANTILE_LINES
 
+    override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
+
     protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
         return GeomUtil.ordered_X(aesthetics.dataPoints())
     }
@@ -35,25 +37,26 @@ open class AreaGeom : GeomBase() {
         val helper = LinesHelper(pos, coord, ctx)
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
-        dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group).forEach { (_, groupDataPoints) ->
-            quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
-                val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
-                // If you want to retain the side edges of area: comment out the following codes,
-                // and switch decorate method in LinesHelper.createBands
-                appendNodes(paths, root)
+        dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
+            .forEach { (_, groupDataPoints) ->
+                quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
+                    val paths = helper.createBands(points, GeomUtil.TO_LOCATION_X_Y, GeomUtil.TO_LOCATION_X_ZERO)
+                    // If you want to retain the side edges of area: comment out the following codes,
+                    // and switch decorate method in LinesHelper.createBands
+                    appendNodes(paths, root)
 
-                helper.setAlphaEnabled(false)
-                appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y), root)
+                    helper.setAlphaEnabled(false)
+                    appendNodes(helper.createLines(points, GeomUtil.TO_LOCATION_X_Y), root)
 
-                buildHints(points, pos, coord, ctx)
-            }
+                    buildHints(points, pos, coord, ctx)
+                }
 
-            if (quantileLines) {
-                createQuantileLines(groupDataPoints, quantilesHelper).forEach { quantileLine ->
-                    root.add(quantileLine)
+                if (quantileLines) {
+                    createQuantileLines(groupDataPoints, quantilesHelper).forEach { quantileLine ->
+                        root.add(quantileLine)
+                    }
                 }
             }
-        }
     }
 
     private fun createQuantileLines(
@@ -69,7 +72,12 @@ open class AreaGeom : GeomBase() {
         return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
 
-    private fun buildHints(dataPoints: Iterable<DataPointAesthetics>, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
+    private fun buildHints(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pos: PositionAdjustment,
+        coord: CoordinateSystem,
+        ctx: GeomContext
+    ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
             dataPoints,
@@ -108,20 +116,7 @@ open class AreaGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.SIZE,
-//                Aes.LINETYPE,
-//                Aes.COLOR,
-//                Aes.FILL,
-//                Aes.ALPHA
-//        )
-
         const val DEF_QUANTILE_LINES = false
-
         const val HANDLES_GROUPS = true
     }
-
-
 }

@@ -11,7 +11,9 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.LollipopLegendKeyElementFactory
-import jetbrains.datalore.plot.base.geom.util.*
+import jetbrains.datalore.plot.base.geom.util.GeomHelper
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -31,6 +33,14 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LollipopLegendKeyElementFactory(fatten)
+
+    override fun rangeIncludesZero(aes: Aes<*>): Boolean {
+        // Pin the lollipops to an axis when baseline coincides with this axis and sticks are perpendicular to it
+        return aes == Aes.Y
+                && slope == 0.0
+                && intercept == 0.0
+                && direction != Direction.ALONG_AXIS
+    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -121,6 +131,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
                     DoubleVector((head.y - intercept) / slope, head.y)
                 }
             }
+
             Direction.SLOPE -> {
                 val baseX = (head.x + slope * (head.y - intercept)) / (1 + slope.pow(2))
                 val baseY = slope * baseX + intercept

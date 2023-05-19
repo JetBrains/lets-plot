@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 
 
-class LiveMapGeom: Geom {
+class LiveMapGeom : Geom {
     private lateinit var myMapProvider: LiveMapProvider
 
     override val legendKeyElementFactory: LegendKeyElementFactory

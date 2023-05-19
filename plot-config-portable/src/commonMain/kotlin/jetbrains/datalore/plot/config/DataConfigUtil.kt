@@ -104,12 +104,14 @@ internal object DataConfigUtil {
         val isGeoConfigApplicable = GeoConfig.isApplicable(layerOptions, consumedAesMappings, isMapPlot)
         val isDataGeoDF = GeoConfig.isGeoDataframe(layerOptions, Option.PlotBase.DATA)
 
-        // If layer has no mapping then no data is needed.
-        val dropData: Boolean = (consumedAesMappings.isEmpty() &&
-                // Do not touch GeoDataframe - empty mapping is OK in this case.
-                !isDataGeoDF &&
-                !isGeoConfigApplicable
-                )
+        val keepData: Boolean =
+            // Do not drop data on the client: some of stat-vars are mapped by default.
+            clientSide && stat != Stats.IDENTITY
+                    // Do not touch GeoDataframe - empty mapping is OK in this case.
+                    || isDataGeoDF || isGeoConfigApplicable
+
+        // If layer has no mappings then no data is needed.
+        val dropData: Boolean = consumedAesMappings.isEmpty() && !keepData
 
         var combinedData = when {
             dropData -> DataFrame.Builder.emptyFrame()

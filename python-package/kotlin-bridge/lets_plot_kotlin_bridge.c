@@ -24,9 +24,14 @@ static PyObject* generate_html(PyObject* self, PyObject* rawPlotSpecDict) {
     return html;
 }
 
-static PyObject* export_svg(PyObject* self, PyObject* rawPlotSpecDict) {
+static PyObject* export_svg(PyObject* self, PyObject* args) {
     T_(PlotReprGenerator) reprGen = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator._instance();
-    PyObject* svg = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict);
+
+    PyObject *rawPlotSpecDict;
+    int useCssPixelatedImageRendering;          // 0 - false, 1 - true
+    PyArg_ParseTuple(args, "Op", &rawPlotSpecDict, &useCssPixelatedImageRendering);
+
+    PyObject* svg = __ kotlin.root.jetbrains.datalore.plot.pythonExtension.interop.PlotReprGenerator.generateSvg(reprGen, rawPlotSpecDict, useCssPixelatedImageRendering);
     return svg;
 }
 
@@ -45,7 +50,7 @@ static PyObject* export_html(PyObject* self, PyObject* args) {
 
 static PyMethodDef module_methods[] = {
    { "generate_html", (PyCFunction)generate_html, METH_O, "Generates HTML and JS sufficient for buidling of interactive plot." },
-   { "export_svg", (PyCFunction)export_svg, METH_O, "Generates SVG representing plot." },
+   { "export_svg", (PyCFunction)export_svg, METH_VARARGS, "Generates SVG representing plot." },
    { "export_html", (PyCFunction)export_html, METH_VARARGS, "Generates HTML page showing plot." },
    { NULL }
 };
