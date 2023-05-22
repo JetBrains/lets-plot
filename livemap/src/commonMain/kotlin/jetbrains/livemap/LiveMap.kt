@@ -56,7 +56,6 @@ import jetbrains.livemap.geocoding.ApplyPointSystem
 import jetbrains.livemap.geocoding.LocationCalculateSystem
 import jetbrains.livemap.geocoding.LocationCounterSystem
 import jetbrains.livemap.geocoding.MapLocationInitializationSystem
-import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.mapengine.*
 import jetbrains.livemap.mapengine.basemap.*
@@ -248,7 +247,6 @@ class LiveMap(
 
                 // Position update
                 WorldOrigin2ScreenUpdateSystem(componentManager),
-                WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
                 HoverObjectDetectionSystem(myUiService, componentManager),
 
                 // Charts

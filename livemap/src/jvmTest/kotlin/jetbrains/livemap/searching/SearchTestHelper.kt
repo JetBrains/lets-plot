@@ -6,7 +6,6 @@
 package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
@@ -36,9 +35,5 @@ object SearchTestHelper {
             }
         }
         return UNDEFINED_SECTOR
-    }
-
-    fun point(x: Int, y: Int): Vec<Client> {
-        return explicitVec(x.toDouble(), y.toDouble())
     }
 }

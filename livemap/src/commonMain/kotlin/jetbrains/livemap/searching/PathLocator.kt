@@ -8,22 +8,24 @@ package jetbrains.livemap.searching
 import jetbrains.datalore.base.typedGeometry.MultiLineString
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.Client
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 
 object PathLocator : Locator {
     override fun search(coord: Vec<Client>, target: EcsEntity, viewport: Viewport): HoverObject? {
-        if (!target.contains(ScreenGeometryComponent::class)) {
+        if (!target.contains(WorldGeometryComponent::class)) {
             return null
         }
 
+        val cursorMapCoord = viewport.getMapCoord(coord)
         val strokeRadius: Double = target.get<ChartElementComponent>().strokeWidth / 2
         if (isCoordinateInPath(
-                coord,
+                cursorMapCoord,
                 strokeRadius,
-                target.get<ScreenGeometryComponent>().geometry.multiLineString
+                target.get<WorldGeometryComponent>().geometry.multiLineString
             )
         ) {
             return HoverObject(
@@ -42,9 +44,9 @@ object PathLocator : Locator {
     override fun reduce(hoverObjects: Collection<HoverObject>): HoverObject? = hoverObjects.firstOrNull()
 
     private fun isCoordinateInPath(
-        coord: Vec<Client>,
+        coord: Vec<World>,
         strokeRadius: Double,
-        multiLineString: MultiLineString<Client>
+        multiLineString: MultiLineString<World>
     ): Boolean {
         for (lineString in multiLineString) {
             val bbox = lineString.bbox ?: continue

@@ -9,7 +9,6 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.UNDEFINED_SECTOR
 import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.getTargetUnderCoord
-import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
@@ -87,31 +86,31 @@ class PieLocatorTest {
 
     @Test
     fun mouseInFirstPieSector() {
-        checkMouseInPieSector(0, point(-4, -4))
+        checkMouseInPieSector(0, Vec(-4, -4))
     }
 
     @Test
     fun mouseInSecondPieSector() {
-        checkMouseInPieSector(1, point(4, -4))
-        checkMouseInPieSector(1, point(9, -1))
+        checkMouseInPieSector(1, Vec(4, -4))
+        checkMouseInPieSector(1, Vec(9, -1))
     }
 
     @Test
     fun mouseInThirdPieSector() {
-        checkMouseInPieSector(2, point(5, 2))
-        checkMouseInPieSector(2, point(2, 7))
+        checkMouseInPieSector(2, Vec(5, 2))
+        checkMouseInPieSector(2, Vec(2, 7))
     }
 
     @Test
     fun mouseInFourthPieSector() {
-        checkMouseInPieSector(3, point(-4, 4))
-        checkMouseInPieSector(3, point(-9, 1))
+        checkMouseInPieSector(3, Vec(-4, 4))
+        checkMouseInPieSector(3, Vec(-9, 1))
     }
 
     @Test
     fun mouseOutOfPie() {
-        checkMouseInPieSector(UNDEFINED_SECTOR, point(10, 7))
-        checkMouseInPieSector(UNDEFINED_SECTOR, point(9, 14))
+        checkMouseInPieSector(UNDEFINED_SECTOR, Vec(10, 7))
+        checkMouseInPieSector(UNDEFINED_SECTOR, Vec(9, 14))
     }
 
     private fun transformValues2Angles(values: List<Double>): List<Double> {

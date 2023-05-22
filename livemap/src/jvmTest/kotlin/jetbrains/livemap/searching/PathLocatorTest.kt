@@ -7,13 +7,13 @@ package jetbrains.datalore.jetbrains.livemap.searching
 
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.LineString
-import jetbrains.datalore.jetbrains.livemap.searching.SearchTestHelper.point
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportHelper
 import jetbrains.livemap.searching.IndexComponent
@@ -22,7 +22,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class PathLocatorTest {
-    private val viewport = Viewport(ViewportHelper(World.DOMAIN, true, myLoopY = false), ClientPoint(256, 256), 1, 15)
+    private val viewport = Viewport(ViewportHelper(World.DOMAIN, true, myLoopY = false), ClientPoint(256, 256), 1, 15).apply {
+        zoom = 1
+        position = Vec(128, 128)
+    }
     private val manager = EcsComponentManager()
     private val locator = PathLocator
     private val entity = manager.createEntity("")
@@ -31,13 +34,12 @@ class PathLocatorTest {
             +ChartElementComponent().apply {
                 strokeWidth = 5.0
             }
-            +ScreenGeometryComponent().apply {
+            +WorldGeometryComponent().apply {
                 geometry = Geometry.of(
                     LineString.of(
-                        point(10, 10),
-                        point(20, 30),
-                        point(50, 20),
-                        point(10, 10),
+                        Vec(110, 110),
+                        Vec(120, 120),
+                        Vec(130, 130),
                     )
                 )
             }
@@ -45,11 +47,11 @@ class PathLocatorTest {
 
     @Test
     fun coordinateInPath() {
-        assertThat(locator.search(point(40, 20), entity, viewport)).isNotNull
+        assertThat(locator.search(Vec(128, 128), entity, viewport)).isNotNull
     }
 
     @Test
     fun coordinateOutOfPath() {
-        assertThat(locator.search(point(30, 20), entity, viewport)).isNull()
+        assertThat(locator.search(Vec(30, 20), entity, viewport)).isNull()
     }
 }

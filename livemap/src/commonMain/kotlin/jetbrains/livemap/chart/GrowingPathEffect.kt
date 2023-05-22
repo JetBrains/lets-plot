@@ -10,11 +10,14 @@ import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
+import jetbrains.livemap.World
+import jetbrains.livemap.chart.Renderers.setWorldTransform
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.sqrt
 
@@ -32,7 +35,7 @@ object GrowingPathEffect {
 
         override fun updateImpl(context: EcsContext, dt: Double) {
             for (entity in getEntities(COMPONENT_TYPES)) {
-                val path = entity.get<ScreenGeometryComponent>().geometry.multiLineString.single()
+                val path = entity.get<WorldGeometryComponent>().geometry.multiLineString.single()
 
                 val effectComponent = entity.get<GrowingPathEffectComponent>()
                 if (effectComponent.lengthIndex.isEmpty()) {
@@ -109,7 +112,8 @@ object GrowingPathEffect {
 
             private val COMPONENT_TYPES = listOf(
                 GrowingPathEffectComponent::class,
-                ScreenGeometryComponent::class,
+                WorldGeometryComponent::class,
+                WorldOriginComponent::class,
                 ParentLayerComponent::class
             )
         }
@@ -126,19 +130,17 @@ object GrowingPathEffect {
     class GrowingPathRenderer : Renderer {
 
         override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
-            if (!entity.contains(ScreenGeometryComponent::class)) {
-                return
-            }
-
             val chartElement = entity.get<ChartElementComponent>()
-            val lineString = entity.get<ScreenGeometryComponent>().geometry.multiLineString.single()
+            //val lineString = entity.get<ScreenGeometryComponent>().geometry.multiLineString.single()
+            val origin = entity.get<WorldOriginComponent>().origin
+            val lineString = entity.get<WorldGeometryComponent>().geometry.multiLineString.single()
             val growingPath = entity.get<GrowingPathEffectComponent>()
 
-            ctx.setStrokeStyle(chartElement.strokeColor)
-            ctx.setLineWidth(chartElement.strokeWidth)
+            ctx.save()
+            ctx.setWorldTransform(origin, viewport.zoom)
             ctx.beginPath()
 
-            var viewCoord: Vec<Client> = lineString[0]
+            var viewCoord: Vec<World> = lineString[0]
             ctx.moveTo(viewCoord.x, viewCoord.y)
 
             for (i in 1..growingPath.endIndex) {
@@ -147,6 +149,10 @@ object GrowingPathEffect {
             }
 
             growingPath.interpolatedPoint?.let { ctx.lineTo(it.x, it.y) }
+            ctx.restore()
+
+            ctx.setStrokeStyle(chartElement.strokeColor)
+            ctx.setLineWidth(chartElement.strokeWidth)
             ctx.stroke()
         }
     }

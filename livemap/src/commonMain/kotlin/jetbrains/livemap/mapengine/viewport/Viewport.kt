@@ -55,6 +55,11 @@ open class Viewport internal constructor(
     open val visibleCells: Set<CellKey>
         get() = helper.getCells(window, zoom)
 
+    init {
+        zoom = 1
+    }
+
+
     fun getMapCoord(viewCoord: ClientPoint): WorldPoint {
         return helper.normalize(viewportTransform.invert(viewCoord))
     }

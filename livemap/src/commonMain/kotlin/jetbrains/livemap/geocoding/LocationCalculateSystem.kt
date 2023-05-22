@@ -48,7 +48,7 @@ class LocationCalculateSystem(
                         }
                     }
                     entity.contains<WorldGeometryComponent>() -> {
-                        with(entity.get<WorldGeometryComponent>().geometry!!) {
+                        with(entity.get<WorldGeometryComponent>().geometry) {
                             when (type) {
                                 MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
                                 MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))

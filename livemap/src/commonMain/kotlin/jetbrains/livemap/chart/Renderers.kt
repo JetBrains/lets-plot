@@ -12,12 +12,11 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.LineJoin
 import jetbrains.livemap.Client
-import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
+import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.lineTo
@@ -32,7 +31,17 @@ import kotlin.math.sin
 
 object Renderers {
 
-    private fun <T> drawMultiPolygon(geometry: MultiPolygon<T>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
+    fun Context2d.setWorldTransform(origin: Vec<World>, zoom: Number) {
+        scale(2.0.pow(zoom.toDouble()))
+        translate(-origin)
+    }
+
+    fun Context2d.setClientTransform(origin: Vec<World>, zoom: Number) {
+        val factor = 2.0.pow(zoom.toDouble())
+        translate(-origin * factor)
+    }
+
+    fun <T> drawMultiPolygon(geometry: MultiPolygon<T>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry) {
             for (ring in polygon) {
                 ring[0].let(ctx::moveTo)
@@ -97,7 +106,7 @@ object Renderers {
             val chartElement = entity.get<ChartElementComponent>()
 
             val origin = entity.get<WorldOriginComponent>().origin
-            val geometry = entity.get<WorldGeometryComponent>().geometry!!.multiPolygon
+            val geometry = entity.get<WorldGeometryComponent>().geometry.multiPolygon
             ctx.drawWorldMultiPolygon(geometry, origin, viewport.zoom) { c ->
                 c.closePath()
 
@@ -119,25 +128,29 @@ object Renderers {
 
     class PathRenderer : Renderer {
         override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
-            if (!entity.contains<ScreenGeometryComponent>()) {
-                return
-            }
-            val geometry = entity.get<ScreenGeometryComponent>().geometry.multiLineString
+            val origin = entity.get<WorldOriginComponent>().origin
+            val geometry = entity.get<WorldGeometryComponent>().geometry.multiLineString
             val chartElement = entity.get<ChartElementComponent>()
             val color = changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue)
-            ctx.setStrokeStyle(color)
-            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scalingSizeFactor }.toDoubleArray())
-            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
+
+            ctx.save()
+            ctx.setWorldTransform(origin, viewport.zoom)
             ctx.beginPath()
 
             for (lineString in geometry) {
                 lineString[0].let(ctx::moveTo)
                 lineString.drop(1).forEach(ctx::lineTo)
             }
+
+            ctx.restore()
+
+            ctx.setStrokeStyle(color)
+            ctx.setLineDash(chartElement.lineDash!!.map { it * chartElement.scalingSizeFactor }.toDoubleArray())
+            ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
             ctx.stroke()
 
             chartElement.arrowSpec?.let { arrowSpec ->
-                drawArrows(arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx)
+                drawArrows(origin, arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx, viewport)
             }
         }
 
@@ -157,17 +170,18 @@ object Renderers {
                 polarAngle: Double,
                 x: Double,
                 y: Double,
+                l: Double,
                 scalingFactor: Double
             ): Pair<DoubleArray, DoubleArray> {
                 val xs = doubleArrayOf(
-                    x - length * scalingFactor * cos(polarAngle - angle),
+                    x - l * scalingFactor * cos(polarAngle - angle),
                     x,
-                    x - length * scalingFactor * cos(polarAngle + angle)
+                    x - l * scalingFactor * cos(polarAngle + angle)
                 )
                 val ys = doubleArrayOf(
-                    y - length * scalingFactor * sin(polarAngle - angle),
+                    y - l * scalingFactor * sin(polarAngle - angle),
                     y,
-                    y - length * scalingFactor * sin(polarAngle + angle)
+                    y - l * scalingFactor * sin(polarAngle + angle)
                 )
                 return xs to ys
             }
@@ -207,31 +221,33 @@ object Renderers {
         }
 
         private fun drawArrows(
+            origin: WorldPoint,
             arrowSpec: ArrowSpec,
-            geometry: MultiLineString<Client>,
+            geometry: MultiLineString<World>,
             color: Color,
             scalingSizeFactor: Double,
-            ctx: Context2d
+            ctx: Context2d,
+            viewport: Viewport
         ) {
 
-            fun drawArrowAtEnd(points: List<ClientPoint>, arrowSpec: ArrowSpec) {
-                if (points.size < 2) {
-                    return
-                }
-                val start = points[0]
-                val end = points[1]
+            fun drawArrowAtEnd(start: WorldPoint, end: WorldPoint, arrowSpec: ArrowSpec) {
                 val abscissa = end.x - start.x
                 val ordinate = end.y - start.y
                 if (abscissa != 0.0 || ordinate != 0.0) {
-                    ctx.beginPath()
-                    ctx.setLineDash(doubleArrayOf())
-
                     val polarAngle = atan2(ordinate, abscissa)
-                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y, scalingSizeFactor)
+                    val worldLength = viewport.toWorldDimension(Vec(arrowSpec.length, arrowSpec.length))
+                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y, worldLength.x, scalingSizeFactor)
+
+                    ctx.save()
+                    ctx.setWorldTransform(origin, viewport.zoom)
+                    ctx.beginPath()
                     ctx.moveTo(xs[0], ys[0])
                     for (i in 1..2) {
                         ctx.lineTo(xs[i], ys[i])
                     }
+                    ctx.restore()
+
+                    ctx.setLineDash(doubleArrayOf())
                     if (arrowSpec.type == ArrowSpec.Type.CLOSED) {
                         ctx.closePath()
                         ctx.setFillStyle(color)
@@ -243,12 +259,13 @@ object Renderers {
 
             for (lineString in geometry) {
                 if (arrowSpec.isOnFirstEnd) {
-                    val segment = lineString.take(2).reversed()
-                    drawArrowAtEnd(segment, arrowSpec)
+                    val (start, end) = lineString.take(2).reversed()
+
+                    drawArrowAtEnd(start, end, arrowSpec)
                 }
                 if (arrowSpec.isOnLastEnd) {
-                    val segment = lineString.takeLast(2)
-                    drawArrowAtEnd(segment, arrowSpec)
+                    val (start, end) = lineString.takeLast(2)
+                    drawArrowAtEnd(start, end, arrowSpec)
                 }
             }
         }

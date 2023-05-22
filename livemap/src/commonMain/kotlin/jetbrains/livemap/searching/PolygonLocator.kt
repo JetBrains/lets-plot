@@ -9,9 +9,10 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.contains
 import jetbrains.livemap.Client
+import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.fragment.RegionFragmentsComponent
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 
 object PolygonLocator : Locator {
@@ -19,7 +20,7 @@ object PolygonLocator : Locator {
     override fun search(coord: Vec<Client>, target: EcsEntity, viewport: Viewport): HoverObject? {
         if (target.contains<RegionFragmentsComponent>()) {
             target.get<RegionFragmentsComponent>().fragments.forEach { fragment ->
-                if (isCoordinateOnEntity(coord, fragment)) {
+                if (isCoordinateOnEntity(coord, fragment, viewport)) {
                     return HoverObject(
                         layerIndex = target.get<IndexComponent>().layerIndex,
                         index = target.get<IndexComponent>().index,
@@ -31,7 +32,7 @@ object PolygonLocator : Locator {
 
             return null
         } else {
-            return when (isCoordinateOnEntity(coord, target)) {
+            return when (isCoordinateOnEntity(coord, target, viewport)) {
                 true -> HoverObject(
                     layerIndex = target.get<IndexComponent>().layerIndex,
                     index = target.get<IndexComponent>().index,
@@ -48,21 +49,22 @@ object PolygonLocator : Locator {
     // but only highest polygon is visible and actually hovered.
     override fun reduce(hoverObjects: Collection<HoverObject>) = hoverObjects.maxByOrNull(HoverObject::index)
 
-    private fun isCoordinateOnEntity(coord: Vec<Client>, target: EcsEntity): Boolean {
-        if (!target.contains(LOCATABLE_COMPONENTS)) {
+    private fun isCoordinateOnEntity(coord: Vec<Client>, target: EcsEntity, viewport: Viewport): Boolean {
+        if (!target.contains(WorldGeometryComponent::class)) {
             return false
         }
 
         //target.get<ScreenLoopComponent>().origins.forEach { origin ->
-        //    if (isCoordinateInPolygon(coord - origin, target.get<ScreenGeometryComponent>().geometry.multiPolygon)) {
-        //        return true
-        //    }
+        val cursorMapCoord = viewport.getMapCoord(coord)
+        if (isCoordinateInPolygon(cursorMapCoord, target.get<WorldGeometryComponent>().geometry.multiPolygon)) {
+            return true
+        }
         //}
 
         return false
     }
 
-    private fun isCoordinateInPolygon(coord: Vec<Client>, multiPolygon: MultiPolygon<Client>): Boolean {
+    private fun isCoordinateInPolygon(coord: Vec<World>, multiPolygon: MultiPolygon<World>): Boolean {
         for (polygon in multiPolygon) {
             if (polygon.bbox?.contains(coord) == false) {
                 continue
@@ -79,6 +81,4 @@ object PolygonLocator : Locator {
         }
         return false
     }
-
-    private val LOCATABLE_COMPONENTS = listOf(ScreenGeometryComponent::class)
 }

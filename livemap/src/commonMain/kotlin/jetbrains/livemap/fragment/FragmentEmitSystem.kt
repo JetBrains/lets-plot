@@ -9,7 +9,6 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.datalore.base.typedGeometry.reinterpret
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
@@ -20,12 +19,11 @@ import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
-import jetbrains.livemap.core.multitasking.flatMap
 import jetbrains.livemap.core.multitasking.map
 import jetbrains.livemap.fragment.Utils.RegionsIndex
 import jetbrains.livemap.fragment.Utils.entityName
 import jetbrains.livemap.geometry.MicroTasks
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.camera.CameraListenerComponent
@@ -105,7 +103,7 @@ class FragmentEmitSystem(
         val it = myWaitingForScreenGeometry.values.iterator()
         while (it.hasNext()) {
             val fragmentEntity = it.next()
-            if (fragmentEntity.contains(ScreenGeometryComponent::class)) {
+            if (fragmentEntity.contains(WorldGeometryComponent::class)) {
                 transformedFragments[fragmentEntity.get<FragmentComponent>().fragmentKey] = fragmentEntity
                 it.remove()
             }
@@ -126,35 +124,22 @@ class FragmentEmitSystem(
 
         val projector = MicroTasks
             .resample(boundaries, mapProjection::apply)
-            .flatMap { worldMultiPolygon: MultiPolygon<World> ->
+            .map { worldMultiPolygon: MultiPolygon<World> ->
                 val bbox = worldMultiPolygon.bbox ?: error("Fragment bbox can't be null")
-                runLaterBySystem(
-                    fragmentEntity
-                ) { theEntity ->
+                runLaterBySystem(fragmentEntity) { theEntity ->
                     theEntity
                         .addComponents {
                             +WorldDimensionComponent(bbox.dimension)
                             +WorldOriginComponent(bbox.origin)
-                        }
-                }
-                MicroTasks.transform(worldMultiPolygon) { p -> zoomProjection.apply(p - bbox.origin) }
-            }
-            .map { screenMultiPolygon ->
-                runLaterBySystem(
-                    fragmentEntity
-                ) { theEntity ->
-                    theEntity
-                        .addComponents {
+                            + WorldGeometryComponent().apply { geometry = Geometry.of(worldMultiPolygon) }
                             + CameraListenerComponent()
                             + CenterChangedComponent()
                             + ZoomLevelChangedComponent()
                             + ZoomFractionChangedComponent()
                             + FragmentComponent(fragmentKey)
-                            + ScreenGeometryComponent().apply { geometry = Geometry.of(screenMultiPolygon) }
                             + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
                         }
                 }
-                return@map
             }
 
         fragmentEntity.add(MicroThreadComponent(projector, myProjectionQuant))

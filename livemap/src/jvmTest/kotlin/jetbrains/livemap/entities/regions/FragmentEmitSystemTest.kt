@@ -16,7 +16,6 @@ import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
 import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.RegionIdComponent
-import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.camera.CameraInputSystem
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
@@ -38,7 +37,6 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             CameraInputSystem::class,
             FragmentEmitSystem::class,
             WorldOrigin2ScreenUpdateSystem::class,
-            WorldGeometry2ScreenUpdateSystem::class,
             SchedulerSystem::class
         )
 
@@ -70,7 +68,6 @@ class FragmentEmitSystemTest : RegionsTestBase() {
         )
         addSystem(CameraInputSystem(componentManager))
         addSystem(WorldOrigin2ScreenUpdateSystem(componentManager))
-        addSystem(WorldGeometry2ScreenUpdateSystem(Int.MAX_VALUE, componentManager))
         addSystem(FragmentEmitSystem(Int.MAX_VALUE, componentManager))
         `when`(liveMapContext.mapProjection).thenReturn(createMapProjection(Projections.mercator()))
         fragmentFoo0 = FragmentSpec(FOO_REGION_ID, QUAD_0).setGeometries(square(1, 2, 30, 40))
@@ -161,7 +158,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
         // Fragment entity created, but still transforming world geometry to screen
         assertThatFragment(fragmentFoo0)
             .haveEntity()
-            .doesNotHaveScreenGeometry()
+            .doesNotHaveWorldGeometry()
             .isNotEmitted
             .isNotReady
         update(waitGeometries())
@@ -169,7 +166,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
         // Fragment entity created, but still transforming world geometry to screen
         assertThatFragment(fragmentFoo0)
             .haveEntity()
-            .haveScreenGeometry()
+            .haveWorldGeometry()
             .isNotStreaming
             .isEmitted
             .isReady

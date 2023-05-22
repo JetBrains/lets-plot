@@ -7,7 +7,6 @@ import jetbrains.livemap.fragment.CachedFragmentsComponent
 import jetbrains.livemap.fragment.EmittedFragmentsComponent
 import jetbrains.livemap.fragment.EmptyFragmentsComponent
 import jetbrains.livemap.fragment.StreamingFragmentsComponent
-import jetbrains.livemap.geometry.ScreenGeometryComponent
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions.assertThat
@@ -31,13 +30,13 @@ internal class FragmentAssert(fragmentSpec: FragmentSpec?, private val myTestBas
         return this
     }
 
-    fun haveScreenGeometry(): FragmentAssert {
-        assertThat(entity.contains(ScreenGeometryComponent::class)).isTrue()
+    fun haveWorldGeometry(): FragmentAssert {
+        assertThat(entity.contains(WorldGeometryComponent::class)).isTrue()
         return this
     }
 
-    fun doesNotHaveScreenGeometry(): FragmentAssert {
-        assertThat(entity.contains(ScreenGeometryComponent::class)).isFalse()
+    fun doesNotHaveWorldGeometry(): FragmentAssert {
+        assertThat(entity.contains(WorldGeometryComponent::class)).isFalse()
         return this
     }
 

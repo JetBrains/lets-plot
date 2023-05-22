@@ -7,10 +7,12 @@ package jetbrains.livemap.fragment
 
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers.drawClientMultiPolygon
+import jetbrains.livemap.chart.Renderers.drawMultiPolygon
+import jetbrains.livemap.chart.Renderers.setWorldTransform
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.Renderer
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 
 class RegionRenderer : Renderer {
@@ -22,7 +24,7 @@ class RegionRenderer : Renderer {
         }
 
         for (fragment in fragments) {
-            if (fragment.tryGet<ScreenGeometryComponent>() == null) {
+            if (fragment.tryGet<WorldGeometryComponent>() == null) {
                 return
             }
         }
@@ -34,11 +36,12 @@ class RegionRenderer : Renderer {
         }
 
         for (fragment in fragments) {
-            val geometry = fragment.tryGet<ScreenGeometryComponent>()?.geometry ?: error("")
+            val geometry = fragment.tryGet<WorldGeometryComponent>()?.geometry ?: error("")
 
                 ctx.save()
+                ctx.setWorldTransform(fragment.get<WorldOriginComponent>().origin, viewport.zoom)
                 ctx.beginPath()
-                ctx.drawClientMultiPolygon(geometry.multiPolygon) { nop() }
+                drawMultiPolygon(geometry.multiPolygon, ctx) { nop() }
                 ctx.fill()
                 ctx.restore()
         }
