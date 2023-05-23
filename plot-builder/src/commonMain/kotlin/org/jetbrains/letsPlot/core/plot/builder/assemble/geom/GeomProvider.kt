@@ -313,6 +313,15 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun curve(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.CURVE,
+                AestheticsDefaults.segment(),
+                SegmentGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun text(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.TEXT,

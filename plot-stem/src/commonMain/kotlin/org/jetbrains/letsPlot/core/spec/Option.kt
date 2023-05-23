@@ -252,6 +252,13 @@ object Option {
             const val GEODESIC = "geodesic"
         }
 
+        object Curve {
+            const val ARROW = "arrow"
+            const val CURVATURE = "curvature"
+            const val ANGLE = "angle"
+            const val NCP = "ncp"
+        }
+
         object Path {
             const val ANIMATION = "animation"
             const val FLAT = "flat"
@@ -704,6 +711,7 @@ object Option {
         private const val STEP = "step"
         private const val RECT = "rect"
         private const val SEGMENT = "segment"
+        private const val CURVE = "curve"
         const val TEXT = "text"
         const val LABEL = "label"
         private const val RASTER = "raster"
@@ -754,6 +762,7 @@ object Option {
             map[STEP] = GeomKind.STEP
             map[RECT] = GeomKind.RECT
             map[SEGMENT] = GeomKind.SEGMENT
+            map[CURVE] = GeomKind.CURVE
             map[TEXT] = GeomKind.TEXT
             map[LABEL] = GeomKind.LABEL
             map[RASTER] = GeomKind.RASTER

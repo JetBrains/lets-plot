@@ -145,7 +145,7 @@ class LocatedTargetsPicker(
             coord: DoubleVector?,
             flippedAxis: Boolean
         ): LookupResult {
-            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, RIBBON)) {
+            if (coord == null || lookupResult.geomKind !in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, RIBBON, CURVE)) {
                 return lookupResult
             }
 

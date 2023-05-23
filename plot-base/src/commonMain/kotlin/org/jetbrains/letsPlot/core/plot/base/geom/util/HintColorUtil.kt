@@ -100,7 +100,7 @@ object HintColorUtil {
                     strokeColorGetter(p).takeIf { isMappedColor(p) },
                 )
 
-                PATH, CONTOUR, DENSITY2D, FREQPOLY, LINE, STEP, H_LINE, V_LINE, SEGMENT, SMOOTH ->
+                PATH, CONTOUR, DENSITY2D, FREQPOLY, LINE, STEP, H_LINE, V_LINE, SEGMENT, CURVE, SMOOTH ->
                     listOf(strokeColorGetter(p)) // show even without mapping (usecase - layers with const color)
 
                 DENSITY -> when {

@@ -89,6 +89,7 @@ class GeomProto(val geomKind: GeomKind) {
             STEP -> DefaultSampling.STEP
             RECT -> DefaultSampling.RECT
             SEGMENT -> DefaultSampling.SEGMENT
+            CURVE -> DefaultSampling.SEGMENT
             TEXT, LABEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP

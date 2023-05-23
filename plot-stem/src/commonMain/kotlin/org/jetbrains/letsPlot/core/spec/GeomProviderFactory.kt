@@ -226,6 +226,21 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.CURVE -> return GeomProvider.curve {
+                val geom = CurveGeom()
+
+                layerConfig.getDouble(Option.Geom.Curve.CURVATURE)?.let { geom.curvature = it }
+                layerConfig.getDouble(Option.Geom.Curve.ANGLE)?.let { geom.angle = it }
+                layerConfig.getInteger(Option.Geom.Curve.NCP)?.let { geom.ncp = it }
+                // arrow
+                /*if (layerConfig.has(Option.Geom.Segment.ARROW)) {
+                    val cfg1 = ArrowSpecConfig.create(layerConfig[Option.Geom.Segment.ARROW]!!)
+                    geom.arrowSpec = cfg1.createArrowSpec()
+                }*/
+
+                geom
+            }
+
             GeomKind.PATH -> GeomProvider.path {
                 val geom = PathGeom()
                 if (layerConfig.has(Option.Geom.Path.ANIMATION)) {
