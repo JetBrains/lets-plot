@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.TYPE
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 
-class DataMetaStoreFactorLevalsTest {
+class DataMetaStoreFactorLevelsTest {
 
     @Test
     fun `simple facets`() {
@@ -41,7 +41,7 @@ class DataMetaStoreFactorLevalsTest {
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesAsDiscrete("y")
             .hasDataMetaFacetLevels(
-                "x.chrom",     // mapped to aes x but no order for x
+                "chrom",     // mapped to aes x but no order for x
                 listOf("chr1", "chr2", "chr4", "chr5")
             )
     }
@@ -91,7 +91,7 @@ class DataMetaStoreFactorLevalsTest {
             .hasDataMetaDateTime("y")
             .hasDataMetaAesAsDiscrete("x")
             .hasDataMetaAesAsDiscrete("y")
-            .hasDataMetaFacetLevels("x.chrom", listOf("chr1", "chr2", "chr4", "chr5"))
+            .hasDataMetaFacetLevels("chrom", listOf("chr1", "chr2", "chr4", "chr5"))
     }
 
 

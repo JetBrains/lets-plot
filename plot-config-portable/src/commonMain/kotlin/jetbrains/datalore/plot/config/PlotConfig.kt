@@ -62,7 +62,7 @@ abstract class PlotConfig(
                 ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
                 commonDiscreteAes = emptySet(),
                 ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
-           ),
+            ),
             isClientSide = isClientSide
         )
 

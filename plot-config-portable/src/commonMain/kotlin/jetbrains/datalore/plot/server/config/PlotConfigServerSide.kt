@@ -293,7 +293,10 @@ open class PlotConfigServerSide(
                 val indices = transform.apply(distinctValues.toList())
                 // null values -> last
                 val orderedDistinctValues = distinctValues.zip(indices).sortedBy { it.second }.map { it.first }
-                levelsByVariable[variable.name] = orderedDistinctValues
+                // original varName : 'aes.var-name' -> 'var-name'
+                val aes = discreteAesByMappedVariable.getValue(variable)
+                val name = DataMetaUtil.fromAsDiscrete(aes.name, variable.name)
+                levelsByVariable[name] = orderedDistinctValues
             }
 
             return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)
