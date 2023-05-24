@@ -13,9 +13,6 @@ import jetbrains.datalore.plot.builder.theme.Theme
 object GeomFlavorUtil {
 
     fun getFlavors(geomKind: GeomKind, theme: Theme): Map<Aes<*>, Any> {
-        if (!theme.hasFlavor()) {
-            return emptyMap()
-        }
         return when (geomKind) {
             GeomKind.POINT,
             GeomKind.JITTER,

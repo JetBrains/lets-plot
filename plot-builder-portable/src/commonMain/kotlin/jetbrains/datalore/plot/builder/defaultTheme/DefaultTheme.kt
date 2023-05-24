@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
@@ -38,8 +37,6 @@ class DefaultTheme(
     override fun plot(): PlotTheme = plot
 
     override fun tooltips(): TooltipsTheme = tooltips
-
-    override fun hasFlavor(): Boolean = options.containsKey("flavor") // todo
 
     companion object {
         // For demo and tests
