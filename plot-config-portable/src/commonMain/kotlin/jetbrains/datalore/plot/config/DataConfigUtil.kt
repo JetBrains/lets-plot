@@ -17,32 +17,6 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 
 internal object DataConfigUtil {
-    /**
-     * returns DataFrame extended with auto-generated discrete variables
-     */
-    fun createDataFrame(
-        commonDataFrame: DataFrame,
-        ownDataFrame: DataFrame,
-        combinedDiscreteMappings: Map<String, String>,
-        isClientSide: Boolean
-    ): DataFrame {
-        if (isClientSide) {
-            // no new discrete variables, all job was done on server side
-            return ownDataFrame
-        }
-
-        // server side
-        val ownData = DataFrameUtil.toMap(ownDataFrame)
-        val combinedData = DataFrameUtil.toMap(commonDataFrame) + ownData
-
-        // copy columns
-        val asDiscreteColumns = combinedDiscreteMappings
-            .filter { (_, varName) -> combinedData.containsKey(varName) }
-            .map { (aes, varName) -> DataMetaUtil.asDiscreteName(aes, varName) to combinedData[varName] }
-            .toMap()
-
-        return DataFrameUtil.fromMap(ownData + asDiscreteColumns)
-    }
 
     /**
      * returns original (not encoded) discrete var names from both common and own mappings.
@@ -55,7 +29,7 @@ internal object DataConfigUtil {
     ): Map<String, String> {
 
         // own as_discrete variables
-        val ownDiscreteMappings = (commonMappings + ownMappings).filter { (aes, _) -> aes in ownDiscreteAes }
+        val ownDiscreteMappings = ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
 
         // common names already encoded by PlotConfig. Restore original name.
         val commonDiscreteMappings = commonMappings
@@ -68,6 +42,22 @@ internal object DataConfigUtil {
         return ownDiscreteMappings + commonDiscreteMappings - ownSimpleMappings.keys
     }
 
+    private fun appendAsDiscreteData(
+        dataFrame: DataFrame,
+        discreteMappings: Map<String, String>
+    ): DataFrame {
+        val data = DataFrameUtil.toMap(dataFrame)
+        // Copy columns with new name if it doesn't exist
+        val asDiscreteColumns = discreteMappings
+            .filter { (_, varName) -> data.containsKey(varName) }
+            .filterNot { (aes, varName) -> data.containsKey(DataMetaUtil.asDiscreteName(aes, varName)) }
+            .map { (aes, varName) ->
+                DataMetaUtil.asDiscreteName(aes, varName) to data[varName]
+            }
+            .toMap()
+        return DataFrameUtil.fromMap(data + asDiscreteColumns)
+    }
+
     fun layerMappingsAndCombinedData(
         layerOptions: Map<*, *>,
         geomKind: GeomKind,
@@ -76,7 +66,7 @@ internal object DataConfigUtil {
         sharedData: DataFrame,
         layerData: DataFrame,
 
-        asDiscreteAesSet: Set<String>,
+        combinedDiscreteMappings: Map<String, String>,
 
         consumedAesMappings: Map<*, *>,
         explicitConstantAes: List<Aes<*>>,
@@ -106,6 +96,9 @@ internal object DataConfigUtil {
             else -> sharedData
         }
 
+        // Copy variable marked as 'as_discrete' with name "aes.var-name"
+        combinedData = appendAsDiscreteData(combinedData, combinedDiscreteMappings)
+
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
         if (clientSide && isGeoConfigApplicable) {
             val geoConfig = GeoConfig(
@@ -118,7 +111,7 @@ internal object DataConfigUtil {
             aesMappings = geoConfig.mappings
 
         } else {
-            aesMappings = ConfigUtil.createAesMapping(combinedData, consumedAesMappings, asDiscreteAesSet)
+            aesMappings = ConfigUtil.createAesMapping(combinedData, consumedAesMappings)
         }
 
         if (clientSide) {

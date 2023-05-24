@@ -157,7 +157,6 @@ object ConfigUtil {
     internal fun createAesMapping(
         data: DataFrame,
         mapping: Map<*, *>?,
-        asDiscreteAesSet: Set<String> = emptySet()
     ): Map<Aes<*>, DataFrame.Variable> {
         if (mapping == null) {
             return emptyMap()
@@ -170,10 +169,9 @@ object ConfigUtil {
         for (option in options) {
             val value = mapping[option]
             if (value is String) {
-                val isAsDiscreteAes = option in asDiscreteAesSet
                 val asDiscreteVarName = DataMetaUtil.asDiscreteName(aes = option, variable = value)
                 val variable = when {
-                    isAsDiscreteAes && asDiscreteVarName in dfVariables -> dfVariables.getValue(asDiscreteVarName)
+                    asDiscreteVarName in dfVariables -> dfVariables.getValue(asDiscreteVarName)
                     value in dfVariables -> dfVariables.getValue(value)
                     else -> DataFrameUtil.createVariable(value)
                 }

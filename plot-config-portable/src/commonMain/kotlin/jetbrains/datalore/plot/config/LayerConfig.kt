@@ -143,6 +143,8 @@ class LayerConfig constructor(
         }
 
     init {
+        ownData = ConfigUtil.createDataFrame(get(DATA))
+
         val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
 
         val combinedDiscreteMappings = combinedDiscreteMapping(
@@ -150,13 +152,6 @@ class LayerConfig constructor(
             ownMappings = layerMappings,
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
-        )
-
-        ownData = DataConfigUtil.createDataFrame(
-            commonDataFrame = plotData,
-            ownDataFrame = ConfigUtil.createDataFrame(get(DATA)),
-            combinedDiscreteMappings = combinedDiscreteMappings,
-            isClientSide = clientSide
         )
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
@@ -185,7 +180,7 @@ class LayerConfig constructor(
             stat = stat,
             sharedData = plotData,
             layerData = ownData,
-            asDiscreteAesSet = combinedDiscreteMappings.keys,
+            combinedDiscreteMappings = combinedDiscreteMappings,
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,

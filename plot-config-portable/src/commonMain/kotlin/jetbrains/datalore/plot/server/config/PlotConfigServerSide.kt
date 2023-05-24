@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -208,7 +207,6 @@ open class PlotConfigServerSide(
     }
 
     companion object {
-        private val LOG = PortableLogging.logger(PlotConfigServerSide::class)
 
         private fun variablesToKeep(facets: PlotFacets, layerConfig: LayerConfig): Set<String> {
             val stat = layerConfig.stat
@@ -233,10 +231,14 @@ open class PlotConfigServerSide(
             val renderedAes = HashSet(layerConfig.renderedAes)
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
+            val asDiscreteOriginalVarNames = HashSet<String>()
             for (binding in bindings) {
                 val aes = binding.aes
                 if (renderedAes.contains(aes)) {
                     renderedVars.add(binding.variable)
+                    if (DataMetaUtil.isAsDiscrete(aes.name, binding.variable.name)) {
+                        asDiscreteOriginalVarNames.add(DataMetaUtil.fromAsDiscrete(aes.name, binding.variable.name))
+                    }
                 } else {
                     notRenderedVars.add(binding.variable)
                 }
@@ -245,7 +247,7 @@ open class PlotConfigServerSide(
             varsToKeep.addAll(renderedVars)
 
             return HashSet<String>() +
-                    varsToKeep.map(Variable::name) +
+                    varsToKeep.map(Variable::name) + asDiscreteOriginalVarNames +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
