@@ -183,12 +183,12 @@ class ScaleConfigTest {
         fun makePlotSpec(scaleParams: String? = null, asDiscreteParams: String? = null) = """
             {
               "data": { "x": [0, 1], "v": [0, 1] },
-              "mapping": { "x": "x", "color": "v" },
               "kind": "plot",
               "scales": [ ${scaleParams.takeIf { it != null } ?: ""} ],
               "layers": [
                 {
                   "geom": "point",
+                  "mapping": { "x": "x", "color": "v" },                  
                   "data_meta": {
                     "mapping_annotations": [
                       {
