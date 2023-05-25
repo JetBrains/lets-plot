@@ -784,8 +784,7 @@ class DropUnusedDataTest {
         val opts = ServerSideTestUtil.parseOptionsServerSide(spec)
         TestUtil.checkOptionsClientSide(opts, 1)
 
-        val plotData = TestUtil.getPlotData(opts)
-        checkData(plotData, expectedVarCount = 1, expectedVars = mapOf("x" to 2), unexpectedVars = emptyList())
+        assertEmptyPlotData(opts)
 
         val statSize = 1
         checkSingleLayerData(opts, 3,

@@ -231,23 +231,32 @@ open class PlotConfigServerSide(
             val renderedAes = HashSet(layerConfig.renderedAes)
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
-            val asDiscreteOriginalVarNames = HashSet<String>()
+            val asDiscreteVarToAes = HashMap<Variable, String>()
+
             for (binding in bindings) {
                 val aes = binding.aes
                 if (renderedAes.contains(aes)) {
                     renderedVars.add(binding.variable)
-                    if (DataMetaUtil.isAsDiscrete(aes.name, binding.variable.name)) {
-                        asDiscreteOriginalVarNames.add(DataMetaUtil.fromAsDiscrete(aes.name, binding.variable.name))
-                    }
                 } else {
                     notRenderedVars.add(binding.variable)
+                }
+                if (DataMetaUtil.isAsDiscrete(aes.name, binding.variable.name)) {
+                    asDiscreteVarToAes[binding.variable] = aes.name
                 }
             }
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
+            val varNamesToKeep = varsToKeep.map { variable ->
+                if (asDiscreteVarToAes.contains(variable) && !layerConfig.ownData.variables().contains(variable)) {
+                    DataMetaUtil.fromAsDiscrete(asDiscreteVarToAes[variable]!!, variable = variable.name)
+                } else {
+                    variable.name
+                }
+            }
+
             return HashSet<String>() +
-                    varsToKeep.map(Variable::name) + asDiscreteOriginalVarNames +
+                    varNamesToKeep +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
