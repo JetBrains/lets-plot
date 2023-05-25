@@ -17,9 +17,6 @@ object GeomFlavorUtil {
             GeomKind.POINT,
             GeomKind.JITTER,
 
-            GeomKind.DOT_PLOT,
-            GeomKind.Y_DOT_PLOT,
-
             GeomKind.PATH,
             GeomKind.LINE,
             GeomKind.SEGMENT,
@@ -57,15 +54,27 @@ object GeomFlavorUtil {
 
             GeomKind.LOLLIPOP,
 
-            GeomKind.TEXT,
-            GeomKind.LABEL -> {
-                val lineColor = theme.horizontalAxis(false).lineColor()
+            GeomKind.TEXT -> {
+                val axisLineColor = theme.horizontalAxis(false).lineColor()
                 mapOf(
-                    Aes.COLOR to lineColor,
-                    Aes.FILL to Colors.withOpacity(lineColor, 0.5)
+                    Aes.COLOR to axisLineColor,
+                    Aes.FILL to Colors.withOpacity(axisLineColor, 0.1)
                 )
             }
 
+            GeomKind.LABEL -> {
+                mapOf(
+                    Aes.COLOR to theme.horizontalAxis(false).lineColor(),
+                    Aes.FILL to theme.plot().backgroundFill()
+                )
+            }
+
+            GeomKind.DOT_PLOT,
+            GeomKind.Y_DOT_PLOT -> {
+                mapOf(
+                    Aes.FILL to theme.horizontalAxis(false).lineColor(),
+                )
+            }
             GeomKind.BAR,
             GeomKind.TILE,
             GeomKind.BIN_2D,
@@ -77,7 +86,15 @@ object GeomFlavorUtil {
                 )
             }
 
-            GeomKind.SMOOTH,
+            GeomKind.SMOOTH -> {
+                mapOf(
+                    Aes.FILL to theme.horizontalAxis(false).lineColor(),
+                    // Geometry uses (value / 10) for alpha:
+                    // SmoothGeom.kt:91 (PROPORTION)
+                    Aes.ALPHA to 1.5
+                )
+            }
+
             GeomKind.RASTER,
             GeomKind.PIE,
             GeomKind.IMAGE,
