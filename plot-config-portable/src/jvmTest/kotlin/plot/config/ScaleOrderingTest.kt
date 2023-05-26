@@ -689,7 +689,7 @@ class ScaleOrderingTest {
     // variable in plot and layer
 
     @Test
-    // Now 'x' and 'fill' mapped to different variables ("x.x" and "fill.x") => should not inherit options
+    // Now 'x' and 'fill' mapped to different variables ("x.x" and "x") => should not inherit options
     fun `ggplot(aes(as_discrete('x',order=1))) + geom_bar(aes(fill='x')) - should not apply the ordering to the 'fill'`() {
         val spec = """{
               "kind": "plot",
@@ -709,7 +709,8 @@ class ScaleOrderingTest {
     }
 
     @Test
-    fun `ggplot(aes('x')) + geom_bar(aes(fill=as_discrete('x',order=1))) - should apply the ordering to the 'x'`() {
+    // Now 'x' and 'fill' mapped to different variables ("x" and "fill.x") => should not inherit options
+    fun `ggplot(aes('x')) + geom_bar(aes(fill=as_discrete('x',order=1))) - should not apply the ordering to the 'x'`() {
         val spec = """{
               "kind": "plot",
               "data" : $myData,              
@@ -723,7 +724,7 @@ class ScaleOrderingTest {
               ]
             }""".trimIndent()
         val geomLayer = getSingleGeomLayer(spec)
-        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
         assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
     }
 

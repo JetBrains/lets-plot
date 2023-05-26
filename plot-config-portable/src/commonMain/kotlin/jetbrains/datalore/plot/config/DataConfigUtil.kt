@@ -96,8 +96,10 @@ internal object DataConfigUtil {
             else -> sharedData
         }
 
-        // Copy variable marked as 'as_discrete' with name "aes.var-name"
-        combinedData = appendAsDiscreteData(combinedData, combinedDiscreteMappings)
+        // Client side : copy variable marked as 'as_discrete' with name "aes.var-name"
+        if (clientSide) {
+            combinedData = appendAsDiscreteData(combinedData, combinedDiscreteMappings)
+        }
 
         var aesMappings: Map<Aes<*>, DataFrame.Variable>
         if (clientSide && isGeoConfigApplicable) {

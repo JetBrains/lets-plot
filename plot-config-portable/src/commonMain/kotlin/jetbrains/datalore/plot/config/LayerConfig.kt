@@ -225,7 +225,7 @@ class LayerConfig constructor(
             AnnotationSpecification.NONE
         }
 
-        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
+        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings, clientSide)
 
         // Apply data meta
         combinedData = DataConfigUtil.combinedDataWithDataMeta(
@@ -400,7 +400,8 @@ class LayerConfig constructor(
             plotOrderOptions: List<OrderOption>,
             layerOptions: Map<String, Any>,
             varBindings: List<VarBinding>,
-            combinedMappingOptions: Map<String, String>
+            combinedMappingOptions: Map<String, String>,
+            clientSide: Boolean
         ): List<OrderOption> {
             val mappedVariables = varBindings.map { it.variable.name }
 
@@ -409,7 +410,11 @@ class LayerConfig constructor(
                 orderOption.variableName in mappedVariables
             }
 
-            val ownOrderOptions = DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+            val ownOrderOptions = DataMetaUtil.getOrderOptions(
+                layerOptions,
+                combinedMappingOptions,
+                clientSide
+            )
             val orderOptions = plotOrderOptions + ownOrderOptions
 
             return orderOptions

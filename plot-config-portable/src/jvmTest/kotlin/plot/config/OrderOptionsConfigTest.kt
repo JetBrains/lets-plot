@@ -105,27 +105,30 @@ class OrderOptionsConfigTest {
     }
 
     @Test
-    fun `fill = as_discrete('bar', order_by='foo'), color = as_discrete('bar', order_by='bar')`() {
+    // fill = as_discrete("bar", order_by="foo"), color = as_discrete("bar", order_by="bar")
+    fun `conflicting options - different 'order_by' variable`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null) + "," +
                     makeOrderingSettings(aes = "color", orderBy = "bar", order = null)
 
-        transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOptionsSize(2)
-            .assertOrderOptions(0, "fill.bar", "foo", -1)
-            .assertOrderOptions(1, "color.bar", "bar", -1)
+        assertFailed(
+            makePlotSpec(orderingSettings),
+            expectedMessage = "Multiple ordering options for the variable 'bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
+        )
     }
 
     @Test
-    fun `fill = as_discrete('bar', order=1), color = as_discrete('bar', order=-1)`() {
+    // fill = as_discrete("bar", order=1), color = as_discrete("bar", order=-1)
+    fun `conflicting options - different 'order direction' parameter`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1) + "," +
                     makeOrderingSettings(aes = "color", orderBy = null, order = -1)
 
-        transformToClientPlotConfig(makePlotSpec(orderingSettings))
-            .assertOrderOptionsSize(2)
-            .assertOrderOptions(0, "fill.bar", "fill.bar", 1)
-            .assertOrderOptions(1, "color.bar", "color.bar", -1)
+        assertFailed(
+            makePlotSpec(orderingSettings),
+            expectedMessage =
+            "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
+        )
     }
 
     // Conflicting options error
@@ -156,7 +159,7 @@ class OrderOptionsConfigTest {
 
         assertFailed(
             spec,
-            expectedMessage = "Multiple ordering options for the variable 'color.bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
+            expectedMessage = "Multiple ordering options for the variable 'bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
         )
     }
 
@@ -186,7 +189,7 @@ class OrderOptionsConfigTest {
 
         assertFailed(
             spec,
-            expectedMessage =  "Multiple ordering options for the variable 'color.bar' with different order direction: '1' and '-1'"
+            expectedMessage =  "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
         )
     }
 

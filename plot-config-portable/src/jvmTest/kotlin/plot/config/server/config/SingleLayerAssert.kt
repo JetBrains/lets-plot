@@ -122,7 +122,8 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
 
         val orderOptionsList = DataMetaUtil.getOrderOptions(
             myLayer.toMap(),
-            commonMappings
+            commonMappings,
+            isClientSide = false
         )
 
         // Extra checks just to make sure that our assumptions about 'as discrete' annotation didn't change:

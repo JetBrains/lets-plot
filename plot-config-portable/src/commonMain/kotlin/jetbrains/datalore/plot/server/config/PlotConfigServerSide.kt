@@ -231,7 +231,6 @@ open class PlotConfigServerSide(
             val renderedAes = HashSet(layerConfig.renderedAes)
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
-            val asDiscreteVarToAes = HashMap<Variable, String>()
 
             for (binding in bindings) {
                 val aes = binding.aes
@@ -240,23 +239,12 @@ open class PlotConfigServerSide(
                 } else {
                     notRenderedVars.add(binding.variable)
                 }
-                if (DataMetaUtil.isAsDiscrete(aes.name, binding.variable.name)) {
-                    asDiscreteVarToAes[binding.variable] = aes.name
-                }
             }
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
-            val varNamesToKeep = varsToKeep.map { variable ->
-                if (asDiscreteVarToAes.contains(variable) && !layerConfig.ownData.variables().contains(variable)) {
-                    DataMetaUtil.fromAsDiscrete(asDiscreteVarToAes[variable]!!, variable = variable.name)
-                } else {
-                    variable.name
-                }
-            }
-
             return HashSet<String>() +
-                    varNamesToKeep +
+                    varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
@@ -304,10 +292,7 @@ open class PlotConfigServerSide(
                 val indices = transform.apply(distinctValues.toList())
                 // null values -> last
                 val orderedDistinctValues = distinctValues.zip(indices).sortedBy { it.second }.map { it.first }
-                // original varName : 'aes.var-name' -> 'var-name'
-                val aes = discreteAesByMappedVariable.getValue(variable)
-                val name = DataMetaUtil.fromAsDiscrete(aes.name, variable.name)
-                levelsByVariable[name] = orderedDistinctValues
+                levelsByVariable[variable.name] = orderedDistinctValues
             }
 
             return DataMetaUtil.updateFactorLevelsByVariable(layerDataMeta, levelsByVariable)

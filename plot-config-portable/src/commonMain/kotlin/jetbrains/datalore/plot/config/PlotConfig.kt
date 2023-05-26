@@ -115,7 +115,7 @@ abstract class PlotConfig(
                 sharedData,
                 plotMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
                 plotDataMeta = getMap(DATA_META),
-                plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING)),
+                plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING), isClientSide),
                 isClientSide,
                 isMapPlot
             )

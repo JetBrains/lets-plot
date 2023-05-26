@@ -72,16 +72,18 @@ object DataMetaUtil {
             }
     }
 
-    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>, isClientSide: Boolean): List<OrderOptionUtil.OrderOption> {
         return getMappingAnnotationsSpec(options, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             .mapNotNull { (aesName, parameters) ->
                 check(aesName in commonMappings) {
                     "Aes '$aesName' not found in mappings: $commonMappings"
                 }
-                val variableName = commonMappings[aesName] as String
+                val variableName = (commonMappings[aesName] as String).let {
+                    if (isClientSide) asDiscreteName(aesName, it) else it
+                }
                 OrderOptionUtil.OrderOption.create(
-                    asDiscreteName(aesName, variableName),
+                    variableName,
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
                 )
