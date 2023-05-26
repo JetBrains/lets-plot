@@ -21,14 +21,8 @@ import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
 
-    internal fun isAsDiscrete(aes: String, variable: String) = variable.startsWith("$aes.")
-
     internal fun asDiscreteName(aes: String, variable: String): String {
         return "$aes.$variable"
-    }
-
-    internal fun fromAsDiscrete(aes: String, variable: String): String {
-        return variable.removePrefix("$aes.")
     }
 
     private fun getMappingAnnotationsSpec(options: Map<*, *>, annotation: String): List<Map<*, *>> {

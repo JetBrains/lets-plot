@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 internal object DataConfigUtil {
 
     /**
-     * returns original (not encoded) discrete var names from both common and own mappings.
+     * returns discrete var names from both common and own mappings.
      */
     fun combinedDiscreteMapping(
         commonMappings: Map<String, String>,
@@ -30,13 +30,10 @@ internal object DataConfigUtil {
 
         // own as_discrete variables
         val ownDiscreteMappings = ownMappings.filter { (aes, _) -> aes in ownDiscreteAes }
+        val ownSimpleMappings = ownMappings - ownDiscreteMappings.keys
 
         // common names already encoded by PlotConfig. Restore original name.
-        val commonDiscreteMappings = commonMappings
-            .filterKeys { it in commonDiscreteAes }
-            .mapValues { (aes, varName) -> DataMetaUtil.fromAsDiscrete(aes, varName) }
-
-        val ownSimpleMappings = ownMappings - ownDiscreteMappings.keys
+        val commonDiscreteMappings = commonMappings.filterKeys { it in commonDiscreteAes }
 
         // minus own non-discrete mappings (simple layer var overrides discrete plot var)
         return ownDiscreteMappings + commonDiscreteMappings - ownSimpleMappings.keys
@@ -47,13 +44,10 @@ internal object DataConfigUtil {
         discreteMappings: Map<String, String>
     ): DataFrame {
         val data = DataFrameUtil.toMap(dataFrame)
-        // Copy columns with new name if it doesn't exist
+        // Copy columns with new name "aes.var-name"
         val asDiscreteColumns = discreteMappings
             .filter { (_, varName) -> data.containsKey(varName) }
-            .filterNot { (aes, varName) -> data.containsKey(DataMetaUtil.asDiscreteName(aes, varName)) }
-            .map { (aes, varName) ->
-                DataMetaUtil.asDiscreteName(aes, varName) to data[varName]
-            }
+            .map { (aes, varName) -> DataMetaUtil.asDiscreteName(aes, varName) to data[varName] }
             .toMap()
         return DataFrameUtil.fromMap(data + asDiscreteColumns)
     }

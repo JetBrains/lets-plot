@@ -129,7 +129,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         // Extra checks just to make sure that our assumptions about 'as discrete' annotation didn't change:
         //      If aes is 'as discrete' then the ordering is guaranteed (the mapped var is ordered)
         val orderOption = orderOptionsList.find {
-            DataMetaUtil.fromAsDiscrete(aes, it.variableName) == commonMappings.getValue(aes)
+            it.variableName == commonMappings.getValue(aes)
         }
         assertNotNull(orderOption)
         assertTrue(orderOption.getOrderDir() != 0)
