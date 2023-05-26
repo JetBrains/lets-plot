@@ -96,12 +96,7 @@ open class GeomHelper(
 
     internal fun toClientLocation(aesMapper: (DataPointAesthetics) -> DoubleVector?): (DataPointAesthetics) -> DoubleVector? {
         return { aes ->
-            val location = aesMapper(aes)
-            if (location != null) {
-                toClient(location, aes)
-            } else {
-                null
-            }
+            aesMapper(aes)?.let { location -> toClient(location, aes) }
         }
     }
 

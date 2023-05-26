@@ -171,6 +171,7 @@ object GeomInteractionUtil {
             GeomKind.POINT_RANGE,
             GeomKind.LINE_RANGE,
             GeomKind.SEGMENT,
+            GeomKind.STEP,
             GeomKind.V_LINE -> return GeomTooltipSetup.xUnivariateFunction(
                 GeomTargetLocator.LookupStrategy.HOVER,
                 axisTooltipVisibilityFromConfig = true

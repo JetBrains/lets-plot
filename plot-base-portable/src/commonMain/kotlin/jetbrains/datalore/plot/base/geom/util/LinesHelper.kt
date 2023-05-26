@@ -49,7 +49,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
     ): MutableList<LinePath> {
-        return createPaths(dataPoints, toLocation, false)
+        return createPaths(dataPoints, toLocation, closePath = false)
     }
 
     private fun createPaths(
@@ -58,12 +58,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         closePath: Boolean
     ): MutableList<LinePath> {
         val paths = ArrayList<LinePath>()
-        val multiPointDataList =
-            MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints,
-                singlePointAppender(toClientLocation { toLocation(it) }),
-                reducer(0.999, closePath)
-            )
+        val multiPointDataList = createMultiPointDataByGroup(dataPoints, toLocation, closePath)
 
         // draw line for each group
         for (multiPointData in multiPointDataList) {
@@ -88,19 +83,13 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return paths
     }
 
-    internal fun createSteps(dataPoints: Iterable<DataPointAesthetics>, dir: StepGeom.Direction): List<PathInfo> {
+    internal fun createSteps(multiPointDataList: List<MultiPointData>, dir: StepGeom.Direction): List<PathInfo> {
         val pathInfos = ArrayList<PathInfo>()
-        val multiPointDataList =
-            MultiPointDataConstructor.createMultiPointDataByGroup(
-                dataPoints,
-                singlePointAppender(toClientLocation(GeomUtil.TO_LOCATION_X_Y)),
-                reducer(0.999, false)
-            )
 
         // draw step for each group
         for (multiPointData in multiPointDataList) {
             val points = multiPointData.points
-            if (!points.isEmpty()) {
+            if (points.isNotEmpty()) {
                 val newPoints = ArrayList<DoubleVector>()
                 var prev: DoubleVector? = null
                 for (point in points) {
@@ -114,7 +103,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
                 }
 
                 val path = LinePath.line(newPoints)
-                decorate(path, multiPointData.aes, false)
+                decorate(path, multiPointData.aes, filled = false)
                 pathInfos.add(
                     PathInfo(
                         path
@@ -163,8 +152,12 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         return PolylineSimplifier.douglasPeucker(points).setWeightLimit(weightLimit).points
     }
 
-    protected fun decorate(path: LinePath, p: DataPointAesthetics, filled: Boolean, strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth) {
-
+    protected fun decorate(
+        path: LinePath,
+        p: DataPointAesthetics,
+        filled: Boolean,
+        strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+    ) {
         val stroke = p.color()
         val strokeAlpha = myAlphaFilter(AestheticsUtil.alpha(stroke!!, p))!!
         path.color().set(withOpacity(stroke, strokeAlpha))
@@ -201,4 +194,19 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
     // ToDo: get rid of PathInfo class
     class PathInfo internal constructor(val path: LinePath)
+
+
+    internal fun createMultiPointDataByGroup(
+        dataPoints: Iterable<DataPointAesthetics>,
+        toLocation: (DataPointAesthetics) -> DoubleVector?,
+        closePath: Boolean = false
+    ) = MultiPointDataConstructor.createMultiPointDataByGroup(
+        dataPoints,
+        singlePointAppender(toClientLocation(toLocation)),
+        reducer(dropPointDistance = DROP_POINT_DISTANCE, isPolygon = closePath)
+    )
+
+    companion object {
+        private const val DROP_POINT_DISTANCE = 0.999
+    }
 }

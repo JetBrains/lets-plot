@@ -7,8 +7,6 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.svg.LinePath
@@ -57,14 +55,10 @@ class LinePathConstructor(
     }
 
     private fun createMultiPointDataByGroup(): List<MultiPointData> {
-        return MultiPointDataConstructor.createMultiPointDataByGroup(
+        return myLinesHelper.createMultiPointDataByGroup(
             myDataPoints,
-            singlePointAppender { p -> myLinesHelper.toClient(GeomUtil.TO_LOCATION_X_Y(p)!!, p) },
-            reducer(DROP_POINT_DISTANCE, myClosePath)
+            GeomUtil.TO_LOCATION_X_Y,
+            myClosePath
         )
-    }
-
-    companion object {
-        private const val DROP_POINT_DISTANCE = 0.999
     }
 }
