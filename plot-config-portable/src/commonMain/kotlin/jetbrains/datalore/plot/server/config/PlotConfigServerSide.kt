@@ -231,7 +231,6 @@ open class PlotConfigServerSide(
             val renderedAes = HashSet(layerConfig.renderedAes)
             val renderedVars = HashSet<Variable>()
             val notRenderedVars = HashSet<Variable>()
-
             for (binding in bindings) {
                 val aes = binding.aes
                 if (renderedAes.contains(aes)) {

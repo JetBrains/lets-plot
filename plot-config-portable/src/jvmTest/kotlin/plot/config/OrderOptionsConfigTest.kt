@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 class OrderOptionsConfigTest {
 
-    private val myData = """{ "foo" : [0], "bar": [1] }"""
+    private val myData = """{ "foo" : [0], "bar": ["a"] }"""
     private val myMapping = """{ "x": "foo", "fill": "bar", "color" : "bar" }"""
 
     @Test
@@ -104,6 +104,8 @@ class OrderOptionsConfigTest {
             .assertOrderOptions(1, "color.bar", "foo", 1)
     }
 
+    // Conflicting options error
+
     @Test
     // fill = as_discrete("bar", order_by="foo"), color = as_discrete("bar", order_by="bar")
     fun `conflicting options - different 'order_by' variable`() {
@@ -130,8 +132,6 @@ class OrderOptionsConfigTest {
             "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
         )
     }
-
-    // Conflicting options error
 
     @Test
     // in plot: color = as_discrete("bar", order_by="foo"),
