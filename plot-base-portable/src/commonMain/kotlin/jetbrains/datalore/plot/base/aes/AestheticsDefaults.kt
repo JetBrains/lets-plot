@@ -105,6 +105,8 @@ open class AestheticsDefaults {
         fun errorBar(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.COLOR, Color.BLACK)
+                .update(Aes.WIDTH, 0.45)
+                .update(Aes.HEIGHT, 0.45)
         }
 
         fun crossBar(): AestheticsDefaults {
