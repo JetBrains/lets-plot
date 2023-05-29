@@ -132,7 +132,8 @@ class ErrorBarGeom(private val isVertical: Boolean) : GeomBase() {
             clientRect,
             GeomTargetCollector.TooltipParams(
                 tipLayoutHints = hints,
-                markerColors = colorsByDataPoint(p)
+                markerColors = colorsByDataPoint(p),
+                fillColor = HintColorUtil.colorWithAlpha(p)
             ),
             tooltipKind = if (isVerticallyOriented) {
                 TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
