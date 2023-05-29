@@ -26,57 +26,47 @@ class ViewportHelper(
     private val myLoopY: Boolean
 ) : MapRuler<World> {
 
-    fun <T> normalize(v: Vec<T>): Vec<T> = explicitVec<T>(normalizeX(v.x), normalizeY(v.y))
+    fun <T> normalize(v: Vec<T>): Vec<T> {
+        fun normalize(v: Double, min: Double, max: Double, loop: Boolean): Double {
+            if (!loop) {
+                return max(min, min(v, max))
+            }
 
-    private fun normalize(v: Double, min: Double, max: Double, loop: Boolean): Double {
-        if (!loop) {
-            return max(min, min(v, max))
+            val len = max - min
+            var result = v - (v / len).toInt() * len
+
+            if (result > max) {
+                result -= len
+            }
+            if (result < min) {
+                result += len
+            }
+
+            return result
         }
 
-        val len = max - min
-        var result = v - (v / len).toInt() * len
-
-        if (result > max) {
-            result -= len
-        }
-        if (result < min) {
-            result += len
-        }
-
-        return result
-    }
-
-
-    private fun length(mapRange: DoubleSpan): Double {
-        return mapRange.upperEnd - mapRange.lowerEnd
-    }
-
-    override fun deltaX(x1: Double, x2: Double): Double {
-        return if (myLoopX) deltaOnLoop(x1, x2, myMapRect.width) else x2 - x1
-    }
-
-    override fun deltaY(y1: Double, y2: Double): Double {
-        return if (myLoopY) deltaOnLoop(y1, y2, myMapRect.height) else y2 - y1
+        return explicitVec(
+            normalize(v.x, myMapRect.left, myMapRect.right, myLoopX),
+            normalize(v.y, myMapRect.top, myMapRect.bottom, myLoopY)
+        )
     }
 
     override fun distanceX(x1: Double, x2: Double): Double {
-        return abs(deltaX(x1, x2))
+        return when (myLoopX) {
+            true -> deltaOnLoop(x1, x2, myMapRect.width)
+            false -> x2 - x1
+        }.let(::abs)
     }
 
     override fun distanceY(y1: Double, y2: Double): Double {
-        return abs(deltaY(y1, y2))
+        return when (myLoopY) {
+            true -> deltaOnLoop(y1, y2, myMapRect.height)
+            false -> y2 - y1
+        }.let(::abs)
     }
 
     override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
         return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
-    }
-
-    private fun normalizeX(x: Double): Double {
-        return normalize(x, myMapRect.left, myMapRect.right, myLoopX)
-    }
-
-    private fun normalizeY(y: Double): Double {
-        return normalize(y, myMapRect.top, myMapRect.bottom, myLoopY)
     }
 
     internal fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint> {
@@ -90,12 +80,12 @@ class ViewportHelper(
                 return if (objRange.connected(viewRange)) listOf(objRange.lowerEnd) else emptyList()
             }
 
-            val mapRangeLen = length(mapRange)
+            val mapRangeLen = mapRange.length
 
             val n = floor((viewRange.lowerEnd - mapRange.lowerEnd) / mapRangeLen).toInt()
             var origin = mapRange.lowerEnd + n * mapRangeLen + objRange.lowerEnd
 
-            if (origin + length(objRange) < viewRange.lowerEnd) {
+            if (origin + objRange.length < viewRange.lowerEnd) {
                 origin += mapRangeLen
             }
 
@@ -137,7 +127,7 @@ class ViewportHelper(
 
             if (lower < mapRange.lowerEnd) {
                 if (loop && upper < mapRange.upperEnd) {
-                    val newLeft = max(lower + length(mapRange), upper)
+                    val newLeft = max(lower + mapRange.length, upper)
                     xRanges.add(DoubleSpan(newLeft, mapRange.upperEnd))
                 }
                 lower = mapRange.lowerEnd
@@ -145,7 +135,7 @@ class ViewportHelper(
 
             if (mapRange.upperEnd < upper) {
                 if (loop && mapRange.lowerEnd < lower) {
-                    val newRight = min(upper - length(mapRange), lower)
+                    val newRight = min(upper - mapRange.length, lower)
                     xRanges.add(DoubleSpan(mapRange.lowerEnd, newRight))
                 }
                 upper = mapRange.upperEnd
@@ -165,8 +155,8 @@ class ViewportHelper(
                     Rect.XYWH(
                         xRange.lowerEnd,
                         yRange.lowerEnd,
-                        length(xRange),
-                        length(yRange)
+                        xRange.length,
+                        yRange.length
                     )
                 )
             }
@@ -189,6 +179,4 @@ class ViewportHelper(
         }
         return closestX2 - x1
     }
-
-
 }

@@ -107,6 +107,13 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                     }
                 }
 
+                polygons {
+                    polygon {
+                        geometry = createMultiPolygon(listOf(Vec(0, 0), Vec(0, 20), Vec(20, 20), Vec(20, 0), Vec(0, 0)))
+                        fillColor = Color.LIGHT_MAGENTA
+                    }
+                }
+
                 hLines {
                     line {
                         coord(MOSCOW)

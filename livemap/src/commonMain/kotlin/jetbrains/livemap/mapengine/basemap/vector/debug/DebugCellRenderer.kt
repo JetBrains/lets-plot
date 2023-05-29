@@ -11,17 +11,17 @@ import jetbrains.datalore.vis.canvas.Font
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.mapengine.RenderHelper
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.basemap.BasemapCellComponent
 import jetbrains.livemap.mapengine.basemap.DebugDataComponent
 import jetbrains.livemap.mapengine.basemap.DebugDataComponent.Companion.LINES_ORDER
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
-import jetbrains.livemap.mapengine.viewport.Viewport
 
 class DebugCellRenderer : Renderer {
     private var myOffset: Double = 0.0
 
-    override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
+    override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val cellDimension = entity.get<ScreenDimensionComponent>().dimension
 
         myOffset = 0.0

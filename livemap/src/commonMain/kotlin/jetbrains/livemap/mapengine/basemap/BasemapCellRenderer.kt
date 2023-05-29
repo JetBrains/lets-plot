@@ -10,18 +10,21 @@ import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.mapengine.RenderHelper
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.basemap.Tile.*
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import jetbrains.livemap.mapengine.translate
 import jetbrains.livemap.mapengine.viewport.CellKey
-import jetbrains.livemap.mapengine.viewport.Viewport
 
 class BasemapCellRenderer : Renderer {
     private lateinit var myCellRect: Rect<Client>
     private lateinit var myCtx: Context2d
 
-    override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
+    override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val tile = entity.get<BasemapTileComponent>().tile ?: return
+        ctx.translate(renderHelper.toScreen(entity.get<WorldOriginComponent>().origin))
 
         entity.get<ScreenDimensionComponent>()
             .dimension
@@ -32,7 +35,8 @@ class BasemapCellRenderer : Renderer {
     internal fun render(tile: Tile, cellRect: Rect<Client>, ctx: Context2d) {
         myCellRect = cellRect
         myCtx = ctx
-        renderTile(tile,
+        renderTile(
+            tile,
             CellKey(""),
             CellKey("")
         )

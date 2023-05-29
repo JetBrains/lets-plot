@@ -23,8 +23,8 @@ open class Viewport internal constructor(
 ) {
     private val zoomTransform = Transforms.zoom<World, Client> { zoom }
     private val viewportTransform = object : Transform<WorldPoint, ClientPoint> {
-        override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v - position) + center
-        override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v - center) + position
+        override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v) - zoomTransform.apply(position) + center
+        override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v) - zoomTransform.invert(center) + position
     }
 
     val center: ClientPoint = size / 2.0
@@ -60,35 +60,19 @@ open class Viewport internal constructor(
     }
 
 
-    fun getMapCoord(viewCoord: ClientPoint): WorldPoint {
-        return helper.normalize(viewportTransform.invert(viewCoord))
-    }
+    fun getMapCoord(viewCoord: ClientPoint): WorldPoint = helper.normalize(viewportTransform.invert(viewCoord))
+    fun getViewCoord(mapCoord: WorldPoint): ClientPoint = viewportTransform.apply(mapCoord)
+    fun toClientDimension(dimension: WorldPoint): ClientPoint = zoomTransform.apply(dimension)
+    fun toWorldDimension(dimension: ClientPoint): WorldPoint = zoomTransform.invert(dimension)
+    fun calculateBoundingBox(bBoxes: List<Rect<World>>): Rect<World> = helper.calculateBoundingBox(bBoxes)
 
-    fun getViewCoord(mapCoord: WorldPoint): ClientPoint {
-        return viewportTransform.apply(mapCoord)
-    }
-
-    fun getOrigins(origin: ClientPoint, dimension: ClientPoint): List<ClientPoint> {
-        return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dimension))
+    fun getMapOrigins(): List<ClientPoint> {
+        val origin = getViewCoord(World.ZERO_VEC)
+        val dim = toClientDimension(World.DOMAIN.dimension)
+        return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dim))
             .let { helper.getOrigins(it, window) }
             .map(::getViewCoord)
     }
-
-    fun getOrigins(origin: WorldPoint): List<ClientPoint> {
-        return Rect.LTRB(origin, origin)
-            .let { helper.getOrigins(it, window) }
-            .map(::getViewCoord)
-    }
-
-    fun toClientDimension(dimension: WorldPoint): ClientPoint {
-        return zoomTransform.apply(dimension)
-    }
-
-    fun toWorldDimension(dimension: ClientPoint): WorldPoint {
-        return zoomTransform.invert(dimension)
-    }
-
-    fun calculateBoundingBox(bBoxes: List<Rect<World>>) = helper.calculateBoundingBox(bBoxes)
 
     private fun updateWindow() {
         window = WorldRectangle(windowOrigin, windowSize)
@@ -110,7 +94,5 @@ open class Viewport internal constructor(
         fun toClientDimension(dimension: WorldPoint, zoom: Int): ClientPoint {
             return Transforms.zoom<World, Client> { zoom }.apply(dimension)
         }
-
-
     }
 }

@@ -18,28 +18,14 @@ import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.chart.Utils.drawPath
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.WorldGeometryComponent
-import jetbrains.livemap.mapengine.Renderer
-import jetbrains.livemap.mapengine.lineTo
-import jetbrains.livemap.mapengine.moveTo
+import jetbrains.livemap.mapengine.*
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
-import jetbrains.livemap.mapengine.translate
-import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.pow
 import kotlin.math.sin
 
 object Renderers {
 
-    fun Context2d.setWorldTransform(origin: Vec<World>, zoom: Number) {
-        scale(2.0.pow(zoom.toDouble()))
-        translate(-origin)
-    }
-
-    fun Context2d.setClientTransform(origin: Vec<World>, zoom: Number) {
-        val factor = 2.0.pow(zoom.toDouble())
-        translate(-origin * factor)
-    }
 
     fun <T> drawMultiPolygon(geometry: MultiPolygon<T>, ctx: Context2d, afterPolygon: Consumer<Context2d>) {
         for (polygon in geometry) {
@@ -51,30 +37,11 @@ object Renderers {
         afterPolygon(ctx)
     }
 
-    fun Context2d.drawClientMultiPolygon(geometry: MultiPolygon<Client>, afterPolygon: Consumer<Context2d>) {
-        drawMultiPolygon(geometry, this, afterPolygon)
-    }
-
-    fun Context2d.drawWorldMultiPolygon(
-        geometry: MultiPolygon<World>,
-        origin: Vec<World>,
-        zoom: Number,
-        afterPolygon: Consumer<Context2d>
-    ) {
-        save()
-        scale(2.0.pow(zoom.toDouble()))
-        translate(-origin)
-
-        drawMultiPolygon(geometry, this, afterPolygon)
-
-        restore()
-    }
-
     class PointRenderer(
         private val shape: Int
     ) : Renderer {
 
-        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
+        override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
             val chartElement = entity.get<ChartElementComponent>()
             val pointData = entity.get<PointComponent>()
             val radius = pointData.size * chartElement.scalingSizeFactor / 2.0
@@ -82,6 +49,8 @@ object Renderers {
                 chartElement.strokeWidth * chartElement.scalingSizeFactor
             else
                 0.0
+
+            ctx.translate(renderHelper.toScreen(entity.get<WorldOriginComponent>().origin))
 
             ctx.beginPath()
             drawPath(ctx, radius, stroke, shape)
@@ -98,50 +67,45 @@ object Renderers {
     }
 
     class PolygonRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
-            ctx.save()
+        override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
+            val chartElement = entity.get<ChartElementComponent>()
+            val geometry = entity.get<WorldGeometryComponent>().geometry.multiPolygon
+
             ctx.setLineJoin(LineJoin.ROUND)
             ctx.beginPath()
 
-            val chartElement = entity.get<ChartElementComponent>()
+            ctx.save()
+            ctx.scale(renderHelper.zoomFactor)
+            drawMultiPolygon(geometry, ctx, Context2d::closePath)
+            ctx.restore()
 
-            val origin = entity.get<WorldOriginComponent>().origin
-            val geometry = entity.get<WorldGeometryComponent>().geometry.multiPolygon
-            ctx.drawWorldMultiPolygon(geometry, origin, viewport.zoom) { c ->
-                c.closePath()
-
-                if (chartElement.fillColor != null) {
-                    c.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
-                    c.fill()
-                }
-
-                if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
-                    c.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
-                    c.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
-                    c.stroke()
-                }
+            if (chartElement.fillColor != null) {
+                ctx.setFillStyle(changeAlphaWithMin(chartElement.fillColor!!, chartElement.scalingAlphaValue))
+                ctx.fill()
             }
 
-            ctx.restore()
+            if (chartElement.strokeColor != null && chartElement.strokeWidth != 0.0) {
+                ctx.setStrokeStyle(changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue))
+                ctx.setLineWidth(chartElement.strokeWidth * chartElement.scalingSizeFactor)
+                ctx.stroke()
+            }
         }
     }
 
     class PathRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
-            val origin = entity.get<WorldOriginComponent>().origin
+        override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
             val geometry = entity.get<WorldGeometryComponent>().geometry.multiLineString
             val chartElement = entity.get<ChartElementComponent>()
             val color = changeAlphaWithMin(chartElement.strokeColor!!, chartElement.scalingAlphaValue)
 
             ctx.save()
-            ctx.setWorldTransform(origin, viewport.zoom)
+            ctx.scale(renderHelper.zoomFactor)
             ctx.beginPath()
 
             for (lineString in geometry) {
                 lineString[0].let(ctx::moveTo)
                 lineString.drop(1).forEach(ctx::lineTo)
             }
-
             ctx.restore()
 
             ctx.setStrokeStyle(color)
@@ -150,7 +114,7 @@ object Renderers {
             ctx.stroke()
 
             chartElement.arrowSpec?.let { arrowSpec ->
-                drawArrows(origin, arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx, viewport)
+                drawArrows(arrowSpec, geometry, color, chartElement.scalingSizeFactor, ctx, renderHelper)
             }
         }
 
@@ -170,18 +134,18 @@ object Renderers {
                 polarAngle: Double,
                 x: Double,
                 y: Double,
-                l: Double,
+                l: Scalar<World>,
                 scalingFactor: Double
             ): Pair<DoubleArray, DoubleArray> {
                 val xs = doubleArrayOf(
-                    x - l * scalingFactor * cos(polarAngle - angle),
+                    x - l.value * scalingFactor * cos(polarAngle - angle),
                     x,
-                    x - l * scalingFactor * cos(polarAngle + angle)
+                    x - l.value * scalingFactor * cos(polarAngle + angle)
                 )
                 val ys = doubleArrayOf(
-                    y - l * scalingFactor * sin(polarAngle - angle),
+                    y - l.value * scalingFactor * sin(polarAngle - angle),
                     y,
-                    y - l * scalingFactor * sin(polarAngle + angle)
+                    y - l.value * scalingFactor * sin(polarAngle + angle)
                 )
                 return xs to ys
             }
@@ -221,13 +185,12 @@ object Renderers {
         }
 
         private fun drawArrows(
-            origin: WorldPoint,
             arrowSpec: ArrowSpec,
             geometry: MultiLineString<World>,
             color: Color,
             scalingSizeFactor: Double,
             ctx: Context2d,
-            viewport: Viewport
+            renderHelper: RenderHelper
         ) {
 
             fun drawArrowAtEnd(start: WorldPoint, end: WorldPoint, arrowSpec: ArrowSpec) {
@@ -235,11 +198,11 @@ object Renderers {
                 val ordinate = end.y - start.y
                 if (abscissa != 0.0 || ordinate != 0.0) {
                     val polarAngle = atan2(ordinate, abscissa)
-                    val worldLength = viewport.toWorldDimension(Vec(arrowSpec.length, arrowSpec.length))
-                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y, worldLength.x, scalingSizeFactor)
+                    val worldLength = renderHelper.toWorld(Scalar(arrowSpec.length))
+                    val (xs, ys) = arrowSpec.createGeometry(polarAngle, end.x, end.y, worldLength, scalingSizeFactor)
 
                     ctx.save()
-                    ctx.setWorldTransform(origin, viewport.zoom)
+                    ctx.scale(renderHelper.zoomFactor)
                     ctx.beginPath()
                     ctx.moveTo(xs[0], ys[0])
                     for (i in 1..2) {
@@ -272,13 +235,13 @@ object Renderers {
     }
 
     class TextRenderer : Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
+        override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
             val chartElementComponent = entity.get<ChartElementComponent>()
             val textSpec = entity.get<TextSpecComponent>().textSpec
 
             val textPosition: Vec<Client>
 
-            ctx.save()
+            ctx.translate(renderHelper.toScreen(entity.get<WorldOriginComponent>().origin))
             ctx.rotate(textSpec.angle)
 
             if (textSpec.drawBorder) {
@@ -324,8 +287,6 @@ object Renderers {
             textSpec.lines.forEachIndexed { index, line ->
                 ctx.fillText(line, textPosition.x, textPosition.y + textSpec.lineHeight * index)
             }
-
-            ctx.restore()
         }
 
         private fun drawRoundedRectangle(rect: DoubleRectangle, radius: Double, ctx: Context2d) {

@@ -12,6 +12,9 @@ import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.Utils.changeAlphaWithMin
 import jetbrains.livemap.core.ecs.EcsEntity
+import jetbrains.livemap.mapengine.RenderHelper
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import jetbrains.livemap.mapengine.translate
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.searching.IndexComponent
@@ -75,9 +78,11 @@ object DonutChart {
     }
 
     class Renderer : jetbrains.livemap.mapengine.Renderer {
-        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
+        override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
             val chartElement = entity.get<ChartElementComponent>()
             val pieSpec = entity.get<PieSpecComponent>()
+
+            ctx.translate(renderHelper.toScreen(entity.get<WorldOriginComponent>().origin))
 
             fun fillSector(sector: Sector) {
                 ctx.setFillStyle(changeAlphaWithMin(sector.fillColor, chartElement.scalingAlphaValue))

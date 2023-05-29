@@ -7,8 +7,7 @@ package jetbrains.livemap.mapengine
 
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.mapengine.viewport.Viewport
 
 interface Renderer {
-    fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport)
+    fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper)
 }

@@ -11,14 +11,13 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
-import jetbrains.livemap.chart.Renderers.setWorldTransform
 import jetbrains.livemap.core.ecs.*
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.layers.ParentLayerComponent.Companion.tagDirtyParentLayer
 import jetbrains.livemap.geometry.WorldGeometryComponent
+import jetbrains.livemap.mapengine.RenderHelper
 import jetbrains.livemap.mapengine.Renderer
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
-import jetbrains.livemap.mapengine.viewport.Viewport
 import kotlin.math.sqrt
 
 
@@ -129,15 +128,13 @@ object GrowingPathEffect {
 
     class GrowingPathRenderer : Renderer {
 
-        override fun render(entity: EcsEntity, ctx: Context2d, viewport: Viewport) {
+        override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
             val chartElement = entity.get<ChartElementComponent>()
-            //val lineString = entity.get<ScreenGeometryComponent>().geometry.multiLineString.single()
-            val origin = entity.get<WorldOriginComponent>().origin
             val lineString = entity.get<WorldGeometryComponent>().geometry.multiLineString.single()
             val growingPath = entity.get<GrowingPathEffectComponent>()
 
             ctx.save()
-            ctx.setWorldTransform(origin, viewport.zoom)
+            ctx.scale(renderHelper.zoomFactor)
             ctx.beginPath()
 
             var viewCoord: Vec<World> = lineString[0]
