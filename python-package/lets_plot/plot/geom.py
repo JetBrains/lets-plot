@@ -5236,7 +5236,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  **other_args)
 
 
-def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None,
+def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
               direction=None,
               color_by=None,
               **other_args):
@@ -5267,6 +5267,9 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
     sampling : `FeatureSpec`
         Result of the call to the `sampling_xxx()` function.
         To prevent any sampling for this layer pass value "none" (string "none").
+    tooltips : `layer_tooltips`
+        Result of the call to the `layer_tooltips()` function.
+        Specify appearance, style and content.
     direction : {'hv', 'vh'}, default='hv'
         'hv' or 'HV' stands for horizontal then vertical;
         'vh' or 'VH' stands for vertical then horizontal.
@@ -5338,6 +5341,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  position=position,
                  show_legend=show_legend,
                  sampling=sampling,
+                 tooltips=tooltips,
                  direction=direction,
                  color_by=color_by,
                  **other_args)
