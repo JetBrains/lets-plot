@@ -87,6 +87,7 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_color = None
         self._tooltip_variables = variables
         self._tooltip_title = None
+        self._disable_exploded = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -120,6 +121,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_color'] = self._tooltip_color
         d['variables'] = self._tooltip_variables
         d['title'] = self._tooltip_title
+        d['disable_exploded'] = self._disable_exploded
         return _filter_none(d)
 
     def format(self, field=None, format=None):
@@ -420,4 +422,41 @@ class layer_tooltips(FeatureSpec):
 
         """
         self._tooltip_title = value
+        return self
+
+    def disable_exploded(self):
+        """
+        Hide outlier tooltips.
+
+        Returns
+        -------
+        `layer_tooltips`
+            Layer tooltips specification.
+
+        Notes
+        -----
+        By default, the `disable_exploded()` function moves all outlier tooltips to the general tooltip.
+        If the content of the general tooltip is specified using the `line()` functions,
+        then the content in the general tooltip will get the given lines, and the outlier tooltips will be hidden.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 10
+
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 50
+            np.random.seed(42)
+            data = {
+                'v': np.random.normal(size=n),
+                'c': np.random.choice(['a', 'b', 'c'], size=n),
+            }
+            ggplot(data, aes('c', 'v')) + \\
+                geom_boxplot(tooltips=layer_tooltips().disable_exploded())
+
+        """
+        self._disable_exploded = True
         return self
