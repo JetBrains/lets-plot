@@ -14,17 +14,17 @@ internal object GeomInteractionBuilderUtil {
         userTooltipSpec: TooltipSpecification,
         tooltipAes: List<Aes<*>>,
         tooltipAxisAes: List<Aes<*>>,
-        sideTooltipAes: List<Aes<*>>,
+        explodedTooltipAes: List<Aes<*>>,
         tooltipConstantAes: Map<Aes<*>, Any>?,
     ): List<TooltipLine> {
 
         return when {
             userTooltipSpec.useDefaultTooltips() -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
-                // and move content of side tooltips to the general tooltip in 'disable_exploded' mode
+                // and move content of exploded tooltips to the general tooltip in 'disable_exploded' mode
                 defaultValueSourceTooltipLines(
                     aesListForTooltip = if (userTooltipSpec.disableExploded) {
-                        (tooltipAes - sideTooltipAes + sideTooltipAes) // to keep order from side tooltips
+                        (explodedTooltipAes + tooltipAes).distinct()
                     } else {
                         tooltipAes
                     },
@@ -32,7 +32,7 @@ internal object GeomInteractionBuilderUtil {
                     outliers = if (userTooltipSpec.disableExploded) {
                         emptyList()
                     } else {
-                        sideTooltipAes
+                        explodedTooltipAes
                     },
                     userTooltipSpec.valueSources,
                     tooltipConstantAes
@@ -49,7 +49,7 @@ internal object GeomInteractionBuilderUtil {
                     // Hide outliers in 'disable_exploded' mode with specified lines
                     emptyList()
                 } else {
-                    sideTooltipAes
+                    explodedTooltipAes
                 }.toMutableList()
 
                 // Remove outlier tooltip if the mappedAes is used in the general tooltip

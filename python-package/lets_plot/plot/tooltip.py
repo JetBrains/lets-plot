@@ -159,7 +159,7 @@ class layer_tooltips(FeatureSpec):
 
         The string template in `format` will allow to change lines
         for the default tooltip without `line` specifying.
-        Also the template will change the line for outliers.
+        Also the template will change the line for exploded tooltips.
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
 
@@ -253,7 +253,7 @@ class layer_tooltips(FeatureSpec):
         - 'x\^2' -> "x^2"
         - '{{x}}' -> "{x}"
 
-        The specified 'line' for outlier will move it to the general multi-line tooltip.
+        The specified 'line' for the exploded tooltip will move it to the general multi-line tooltip.
         The default tooltip has a label before the value,
         usually containing the name of the mapped variable.
         It has its own behaviour, like blank label for axis aesthetics.
@@ -426,7 +426,7 @@ class layer_tooltips(FeatureSpec):
 
     def disable_exploded(self):
         """
-        Hide outlier tooltips.
+        Hide exploded tooltips.
 
         Returns
         -------
@@ -435,9 +435,9 @@ class layer_tooltips(FeatureSpec):
 
         Notes
         -----
-        By default, the `disable_exploded()` function moves all outlier tooltips to the general tooltip.
-        If the content of the general tooltip is specified using the `line()` functions,
-        then the content in the general tooltip will get the given lines, and the outlier tooltips will be hidden.
+        By default, the `disable_exploded()` function moves all exploded tooltips to the general tooltip.
+        If the content of a general tooltip is specified with the `line()` functions,
+        the general tooltip will get the given lines, and the exploded tooltips will be hidden.
 
         Examples
         --------
