@@ -417,10 +417,16 @@ class LayerConfig constructor(
             )
             val orderOptions = plotOrderOptions + ownOrderOptions
 
-            return orderOptions
-                .groupingBy(OrderOption::variableName)
-                .reduce { _, combined, element -> combined.mergeWith(element) }
-                .values.toList()
+            return orderOptions.let {
+                if (clientSide) {
+                    it.groupingBy(OrderOption::variableName)
+                        .reduce { _, combined, element -> combined.mergeWith(element) }
+                        .values.toList()
+                } else {
+                    // On server side order options are used just to keep variables after
+                    it
+                }
+            }
         }
     }
 }

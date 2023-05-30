@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 class OrderOptionsConfigTest {
 
-    private val myData = """{ "foo" : [0], "bar": ["a"] }"""
+    private val myData = """{ "foo" : [0], "bar": [1] }"""
     private val myMapping = """{ "x": "foo", "fill": "bar", "color" : "bar" }"""
 
     @Test
@@ -104,34 +104,31 @@ class OrderOptionsConfigTest {
             .assertOrderOptions(1, "color.bar", "foo", 1)
     }
 
-    // Conflicting options error
-
     @Test
-    // fill = as_discrete("bar", order_by="foo"), color = as_discrete("bar", order_by="bar")
-    fun `conflicting options - different 'order_by' variable`() {
+    fun `fill = as_discrete('bar', order_by='foo'), color = as_discrete('bar', order_by='bar')`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = "foo", order = null) + "," +
                     makeOrderingSettings(aes = "color", orderBy = "bar", order = null)
 
-        assertFailed(
-            makePlotSpec(orderingSettings),
-            expectedMessage = "Multiple ordering options for the variable 'bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
-        )
+        transformToClientPlotConfig(makePlotSpec(orderingSettings))
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "foo", -1)
+            .assertOrderOptions(1, "color.bar", "bar", -1)
     }
 
     @Test
-    // fill = as_discrete("bar", order=1), color = as_discrete("bar", order=-1)
-    fun `conflicting options - different 'order direction' parameter`() {
+    fun `fill = as_discrete('bar', order=1), color = as_discrete('bar', order=-1)`() {
         val orderingSettings =
             makeOrderingSettings(aes = "fill", orderBy = null, order = 1) + "," +
                     makeOrderingSettings(aes = "color", orderBy = null, order = -1)
 
-        assertFailed(
-            makePlotSpec(orderingSettings),
-            expectedMessage =
-            "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
-        )
+        transformToClientPlotConfig(makePlotSpec(orderingSettings))
+            .assertOrderOptionsSize(2)
+            .assertOrderOptions(0, "fill.bar", "fill.bar", 1)
+            .assertOrderOptions(1, "color.bar", "color.bar", -1)
     }
+
+    // Conflicting options error
 
     @Test
     // in plot: color = as_discrete("bar", order_by="foo"),
@@ -159,7 +156,7 @@ class OrderOptionsConfigTest {
 
         assertFailed(
             spec,
-            expectedMessage = "Multiple ordering options for the variable 'bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
+            expectedMessage = "Multiple ordering options for the variable 'color.bar' with different non-empty 'order_by' fields: 'foo' and 'bar'"
         )
     }
 
@@ -189,7 +186,7 @@ class OrderOptionsConfigTest {
 
         assertFailed(
             spec,
-            expectedMessage =  "Multiple ordering options for the variable 'bar' with different order direction: '1' and '-1'"
+            expectedMessage =  "Multiple ordering options for the variable 'color.bar' with different order direction: '1' and '-1'"
         )
     }
 
@@ -320,12 +317,15 @@ class OrderOptionsConfigTest {
         private fun assertFailed(spec: String, expectedMessage: String) {
             parsePlotSpec(spec)
                 .let(ServerSideTestUtil::backendSpecTransform)
-                .also {
-                    require(PlotConfig.isFailure(it))
-                    assertEquals(
-                        expectedMessage,
-                        PlotConfig.getErrorMessage(it)
-                    )
+                .let {
+                    try {
+                        PlotConfigClientSide.create(it) {}
+                    } catch (e: Throwable) {
+                        assertEquals(
+                            expectedMessage,
+                            e.localizedMessage as String
+                        )
+                    }
                 }
         }
     }
