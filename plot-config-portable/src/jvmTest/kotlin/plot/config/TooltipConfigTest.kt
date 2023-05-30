@@ -10,6 +10,7 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
+import jetbrains.datalore.plot.config.Option.Layer.DISABLE_EXPLODED
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
@@ -318,6 +319,53 @@ class TooltipConfigTest {
 
         val generalLines = getGeneralTooltipStrings(geomLayer)
         assertTooltipStrings(listOf(generalExpectedLine), generalLines)
+    }
+
+    @Test
+    fun `'disable_exploded' moves outliers to general tooltip`() {
+        val geomLayer = buildGeomLayer(
+            geom = "boxplot",
+            data = boxPlotData,
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y"
+            ),
+            tooltips = mapOf(DISABLE_EXPLODED to true)
+        )
+
+        assertEquals(0, getOutlierLines(geomLayer).size, "Wrong number of outlier tooltips")
+
+        val generalExpectedLine = listOf(
+            "y max: 11.5",
+            "upper: 8.7",
+            "middle: 6.9",
+            "lower: 6.1",
+            "y min: 4.2"
+        )
+        val generalLines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(generalExpectedLine, generalLines)
+    }
+
+    @Test
+    fun `'disable_exploded' with specified lines hides outliers`() {
+        val geomLayer = buildGeomLayer(
+            geom = "boxplot",
+            data = boxPlotData,
+            mapping = mapOf(
+                Aes.X.name to "x",
+                Aes.Y.name to "y"
+            ),
+            tooltips = mapOf(
+                LINES to listOf("tooltip line"),
+                DISABLE_EXPLODED to true
+            )
+        )
+
+        assertEquals(0, getOutlierLines(geomLayer).size, "Wrong number of outlier tooltips")
+
+        val generalExpectedLine = listOf("tooltip line")
+        val generalLines = getGeneralTooltipStrings(geomLayer)
+        assertTooltipStrings(generalExpectedLine, generalLines)
     }
 
     @Test

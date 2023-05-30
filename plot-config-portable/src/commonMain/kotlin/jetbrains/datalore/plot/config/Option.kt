@@ -144,6 +144,8 @@ object Option {
         const val TOOLTIPS = "tooltips"
         const val TOOLTIP_ANCHOR = "tooltip_anchor"
         const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
+        const val DISABLE_EXPLODED = "disable_exploded"
+
         const val NONE = "none"
         const val MAP_JOIN = "map_join"
         const val USE_CRS = "use_crs"

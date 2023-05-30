@@ -27,7 +27,8 @@ class TooltipConfig(
                     anchor = readAnchor(),
                     minWidth = readMinWidth()
                 ),
-                titleLine?.let(::TooltipLine)
+                titleLine?.let(::TooltipLine),
+                disableExploded = getBoolean(Option.Layer.DISABLE_EXPLODED, def = false)
             )
         }
 
