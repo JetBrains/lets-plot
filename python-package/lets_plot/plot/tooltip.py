@@ -87,7 +87,7 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_color = None
         self._tooltip_variables = variables
         self._tooltip_title = None
-        self._disable_exploded = None
+        self._disable_splitting = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -121,7 +121,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_color'] = self._tooltip_color
         d['variables'] = self._tooltip_variables
         d['title'] = self._tooltip_title
-        d['disable_exploded'] = self._disable_exploded
+        d['disable_splitting'] = self._disable_splitting
         return _filter_none(d)
 
     def format(self, field=None, format=None):
@@ -159,7 +159,7 @@ class layer_tooltips(FeatureSpec):
 
         The string template in `format` will allow to change lines
         for the default tooltip without `line` specifying.
-        Also the template will change the line for exploded tooltips.
+        Also the template will change the line for outliers.
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
 
@@ -253,7 +253,7 @@ class layer_tooltips(FeatureSpec):
         - 'x\^2' -> "x^2"
         - '{{x}}' -> "{x}"
 
-        The specified 'line' for the exploded tooltip will move it to the general multi-line tooltip.
+        The specified 'line' for outlier will move it to the general multi-line tooltip.
         The default tooltip has a label before the value,
         usually containing the name of the mapped variable.
         It has its own behaviour, like blank label for axis aesthetics.
@@ -424,9 +424,9 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_title = value
         return self
 
-    def disable_exploded(self):
+    def disable_splitting(self):
         """
-        Hide exploded tooltips.
+        Hide side tooltips.
 
         Returns
         -------
@@ -435,9 +435,9 @@ class layer_tooltips(FeatureSpec):
 
         Notes
         -----
-        By default, the `disable_exploded()` function moves all exploded tooltips to the general tooltip.
+        By default, the `disable_splitting()` function moves all side tooltips to the general tooltip.
         If the content of a general tooltip is specified with the `line()` functions,
-        the general tooltip will get the given lines, and the exploded tooltips will be hidden.
+        the general tooltip will get the given lines, and the side tooltips will be hidden.
 
         Examples
         --------
@@ -455,8 +455,8 @@ class layer_tooltips(FeatureSpec):
                 'c': np.random.choice(['a', 'b', 'c'], size=n),
             }
             ggplot(data, aes('c', 'v')) + \\
-                geom_boxplot(tooltips=layer_tooltips().disable_exploded())
+                geom_boxplot(tooltips=layer_tooltips().disable_splitting())
 
         """
-        self._disable_exploded = True
+        self._disable_splitting = True
         return self

@@ -28,7 +28,7 @@ class TooltipConfig(
                     minWidth = readMinWidth()
                 ),
                 titleLine?.let(::TooltipLine),
-                disableExploded = getBoolean(Option.Layer.DISABLE_EXPLODED, def = false)
+                disableSplitting = getBoolean(Option.Layer.DISABLE_SPLITTING, def = false)
             )
         }
 

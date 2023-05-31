@@ -14,25 +14,25 @@ internal object GeomInteractionBuilderUtil {
         userTooltipSpec: TooltipSpecification,
         tooltipAes: List<Aes<*>>,
         tooltipAxisAes: List<Aes<*>>,
-        explodedTooltipAes: List<Aes<*>>,
+        sideTooltipAes: List<Aes<*>>,
         tooltipConstantAes: Map<Aes<*>, Any>?,
     ): List<TooltipLine> {
 
         return when {
             userTooltipSpec.useDefaultTooltips() -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
-                // and move content of exploded tooltips to the general tooltip in 'disable_exploded' mode
+                // and move content of side tooltips to the general tooltip in 'disable_splitting' mode
                 defaultValueSourceTooltipLines(
-                    aesListForTooltip = if (userTooltipSpec.disableExploded) {
-                        (explodedTooltipAes + tooltipAes).distinct()
+                    aesListForTooltip = if (userTooltipSpec.disableSplitting) {
+                        (sideTooltipAes + tooltipAes).distinct()
                     } else {
                         tooltipAes
                     },
                     tooltipAxisAes,
-                    outliers = if (userTooltipSpec.disableExploded) {
+                    outliers = if (userTooltipSpec.disableSplitting) {
                         emptyList()
                     } else {
-                        explodedTooltipAes
+                        sideTooltipAes
                     },
                     userTooltipSpec.valueSources,
                     tooltipConstantAes
@@ -45,11 +45,11 @@ internal object GeomInteractionBuilderUtil {
             else -> {
                 // Form value sources: user list + axis + outliers
 
-                val geomOutliers = if (userTooltipSpec.disableExploded) {
-                    // Hide outliers in 'disable_exploded' mode with specified lines
+                val geomOutliers = if (userTooltipSpec.disableSplitting) {
+                    // Hide outliers in 'disable_splitting' mode with specified lines
                     emptyList()
                 } else {
-                    explodedTooltipAes
+                    sideTooltipAes
                 }.toMutableList()
 
                 // Remove outlier tooltip if the mappedAes is used in the general tooltip

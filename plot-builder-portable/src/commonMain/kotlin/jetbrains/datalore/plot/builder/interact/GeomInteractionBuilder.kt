@@ -36,7 +36,7 @@ class GeomInteractionBuilder constructor(
             myUserTooltipSpec,
             tooltipAes = tooltipAes,
             tooltipAxisAes = tooltipAxisAes,
-            explodedTooltipAes = tooltipOutlierAes,
+            sideTooltipAes = tooltipOutlierAes,
             tooltipConstantAes = tooltipConstants
         )
 

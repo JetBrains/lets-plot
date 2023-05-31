@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
-import jetbrains.datalore.plot.config.Option.Layer.DISABLE_EXPLODED
+import jetbrains.datalore.plot.config.Option.Layer.DISABLE_SPLITTING
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS
 import jetbrains.datalore.plot.config.Option.Plot.LAYERS
@@ -322,7 +322,7 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun `'disable_exploded' moves outliers to general tooltip`() {
+    fun `'disable_splitting' moves outliers to general tooltip`() {
         val geomLayer = buildGeomLayer(
             geom = "boxplot",
             data = boxPlotData,
@@ -330,7 +330,7 @@ class TooltipConfigTest {
                 Aes.X.name to "x",
                 Aes.Y.name to "y"
             ),
-            tooltips = mapOf(DISABLE_EXPLODED to true)
+            tooltips = mapOf(DISABLE_SPLITTING to true)
         )
 
         assertEquals(0, getOutlierLines(geomLayer).size, "Wrong number of outlier tooltips")
@@ -347,7 +347,7 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun `'disable_exploded' with specified lines hides outliers`() {
+    fun `'disable_splitting' with specified lines hides outliers`() {
         val geomLayer = buildGeomLayer(
             geom = "boxplot",
             data = boxPlotData,
@@ -357,7 +357,7 @@ class TooltipConfigTest {
             ),
             tooltips = mapOf(
                 LINES to listOf("tooltip line"),
-                DISABLE_EXPLODED to true
+                DISABLE_SPLITTING to true
             )
         )
 

@@ -12,7 +12,7 @@ class TooltipSpecification(
     val tooltipLinePatterns: List<TooltipLine>?,
     val tooltipProperties: TooltipProperties,
     val tooltipTitle: TooltipLine?,
-    val disableExploded: Boolean
+    val disableSplitting: Boolean
 ) {
     class TooltipProperties(
         val anchor: TooltipAnchor?,
@@ -36,7 +36,7 @@ class TooltipSpecification(
             tooltipLinePatterns = emptyList(),
             tooltipProperties = TooltipProperties.NONE,
             tooltipTitle = null,
-            disableExploded = false
+            disableSplitting = false
         )
 
         fun defaultTooltip() = TooltipSpecification(
@@ -44,7 +44,7 @@ class TooltipSpecification(
             tooltipLinePatterns = null,
             tooltipProperties = TooltipProperties.NONE,
             tooltipTitle = null,
-            disableExploded = false
+            disableSplitting = false
         )
     }
 }
