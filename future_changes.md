@@ -7,6 +7,12 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_step_tooltips.ipynb).
 
 
+- In tooltip customization API:
+  `disable_splitting()` function to hide side tooltips.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
+
+
 ### Changed
 
 ### Fixed
