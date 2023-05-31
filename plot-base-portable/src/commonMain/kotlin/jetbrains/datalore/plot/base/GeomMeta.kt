@@ -247,6 +247,16 @@ object GeomMeta {
                 Aes.WIDTH
             )
 
+            GeomKind.BOX_PLOT_OUTLIER -> listOf(
+                Aes.X, Aes.Y,
+                Aes.SIZE,
+                Aes.STROKE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA,
+                Aes.SHAPE
+            )
+
             GeomKind.AREA_RIDGES -> listOf(
                 Aes.X,
                 Aes.Y,

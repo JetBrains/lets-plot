@@ -215,6 +215,7 @@ object GeomInteractionUtil {
             GeomKind.JITTER,
             GeomKind.Q_Q,
             GeomKind.Q_Q_2,
+            GeomKind.BOX_PLOT_OUTLIER,
             GeomKind.CONTOUR,
             GeomKind.DENSITY2D,
             GeomKind.AREA_RIDGES,

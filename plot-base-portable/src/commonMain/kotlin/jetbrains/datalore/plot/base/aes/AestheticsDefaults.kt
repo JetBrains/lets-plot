@@ -140,6 +140,11 @@ open class AestheticsDefaults {
             return crossBar()
         }
 
+        fun boxplotOutlier(): AestheticsDefaults {
+            return point()
+                .update(Aes.COLOR, Color.BLACK)
+        }
+
         fun areaRidges(): AestheticsDefaults {
             return base()
                 .update(Aes.COLOR, Color.BLACK)

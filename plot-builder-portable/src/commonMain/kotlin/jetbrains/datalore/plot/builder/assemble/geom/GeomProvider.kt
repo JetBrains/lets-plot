@@ -207,6 +207,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun boxplotOutlier(): GeomProvider {
+            return GeomProvider(
+                GeomKind.BOX_PLOT_OUTLIER,
+                AestheticsDefaults.boxplotOutlier(),
+                BoxplotOutlierGeom.HANDLES_GROUPS
+            ) { BoxplotOutlierGeom() }
+        }
+
         fun arearidges(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.AREA_RIDGES,
