@@ -53,7 +53,7 @@ internal object PlotConfigTransforms {
                     if (data.isEmpty(it)) {
                         isDiscreteScaleForEmptyData(scaleProvider, mapperProviderByAes.getValue(aes))
                     } else {
-                        !data.isNumeric(it)
+                        data.isDiscrete(it)
                     }
                 }
                 if (anyNotNumericData) {

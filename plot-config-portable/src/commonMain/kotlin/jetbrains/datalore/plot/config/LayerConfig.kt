@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.collections.filterNotNullKeys
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
@@ -17,13 +16,11 @@ import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
-import jetbrains.datalore.plot.builder.data.OrderOptionUtil.createOrderSpecs
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.config.DataConfigUtil.createDataFrame
+import jetbrains.datalore.plot.config.DataConfigUtil.combinedDiscreteMapping
 import jetbrains.datalore.plot.config.DataConfigUtil.layerMappingsAndCombinedData
-import jetbrains.datalore.plot.config.DataMetaUtil.inheritToNonDiscrete
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
 import jetbrains.datalore.plot.config.Option.Layer.ANNOTATIONS
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
@@ -146,22 +143,16 @@ class LayerConfig constructor(
         }
 
     init {
-        val layerMappings = createDataFrame(
-            commonData = plotData,
-            ownData = ConfigUtil.createDataFrame(get(DATA)),
-            commonMappings = plotMappings,
-            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
-            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
-            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
-            isClientSide = clientSide
-        ).let {
-            ownData = it.second
-            it.first
-        }
+        ownData = ConfigUtil.createDataFrame(get(DATA))
 
-        if (!clientSide) {
-            update(MAPPING, layerMappings)
-        }
+        val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
+
+        val combinedDiscreteMappings = combinedDiscreteMapping(
+            commonMappings = plotMappings,
+            ownMappings = layerMappings,
+            commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
+            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
+        )
 
         val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
@@ -189,8 +180,7 @@ class LayerConfig constructor(
             stat = stat,
             sharedData = plotData,
             layerData = ownData,
-            plotDataMeta = plotDataMeta,
-            ownDataMeta = getMap(DATA_META),
+            combinedDiscreteMappings = combinedDiscreteMappings,
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,
@@ -235,22 +225,19 @@ class LayerConfig constructor(
             AnnotationSpecification.NONE
         }
 
-        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings)
+        orderOptions = initOrderOptions(plotOrderOptions, layerOptions, varBindings, consumedAesMappings, clientSide)
 
-        combinedData = if (clientSide) {
-            val variables = rawCombinedData.variables()
-            val orderSpecs = createOrderSpecs(orderOptions, variables, varBindings, aggregateOperation)
-            val factorLevelsByVar = DataMetaUtil.getFactorLevelsByVariable(getMap(DATA_META))
-                .mapKeys { (varName, _) -> variables.find { it.name == varName } }
-                .filterNotNullKeys()
-
-            DataFrame.Builder(rawCombinedData)
-                .addOrderSpecs(orderSpecs)
-                .addFactorLevels(factorLevelsByVar)
-                .build()
-        } else {
-            rawCombinedData
-        }
+        // Apply data meta
+        combinedData = DataConfigUtil.combinedDataWithDataMeta(
+            rawCombinedData = rawCombinedData,
+            varBindings = varBindings,
+            plotDataMeta = plotDataMeta,
+            ownDataMeta = getMap(DATA_META),
+            asDiscreteAesSet = combinedDiscreteMappings.keys,
+            orderOptions = orderOptions,
+            aggregateOperation = aggregateOperation,
+            clientSide = clientSide
+        )
     }
 
     private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
@@ -413,7 +400,8 @@ class LayerConfig constructor(
             plotOrderOptions: List<OrderOption>,
             layerOptions: Map<String, Any>,
             varBindings: List<VarBinding>,
-            combinedMappingOptions: Map<String, String>
+            combinedMappingOptions: Map<String, String>,
+            clientSide: Boolean
         ): List<OrderOption> {
             val mappedVariables = varBindings.map { it.variable.name }
 
@@ -422,14 +410,23 @@ class LayerConfig constructor(
                 orderOption.variableName in mappedVariables
             }
 
-            val ownOrderOptions = DataMetaUtil.getOrderOptions(layerOptions, combinedMappingOptions)
+            val ownOrderOptions = DataMetaUtil.getOrderOptions(
+                layerOptions,
+                combinedMappingOptions,
+                clientSide
+            )
             val orderOptions = plotOrderOptions + ownOrderOptions
 
-            return orderOptions
-                .inheritToNonDiscrete(combinedMappingOptions)
-                .groupingBy(OrderOption::variableName)
-                .reduce { _, combined, element -> combined.mergeWith(element) }
-                .values.toList()
+            return orderOptions.let {
+                if (clientSide) {
+                    it.groupingBy(OrderOption::variableName)
+                        .reduce { _, combined, element -> combined.mergeWith(element) }
+                        .values.toList()
+                } else {
+                    // On server side order options are used just to keep variables after
+                    it
+                }
+            }
         }
     }
 }

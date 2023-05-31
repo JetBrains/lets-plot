@@ -188,12 +188,12 @@ class YOrientationBackendDataProcTest {
         private fun expected_sortedAlphabeticallyRevesed(yOrientation: Boolean = false): Expected {
             return Expected(
                 data = mapOf<String, List<Any>>(
-                    DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c"),
+                    CATEGORY_VAR to listOf("a", "b", "c"),
                     "..count.." to listOf(30.0, 40.0, 20.0)
                 ),
-                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
+                asDiscreteAesSet = setOf(categoryAes(yOrientation)),
                 orderOption = OrderOptionUtil.OrderOption.create(
-                    variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
+                    variableName = CATEGORY_VAR,
                     orderBy = null,
                     order = -1
                 )
@@ -211,12 +211,12 @@ class YOrientationBackendDataProcTest {
         private fun expected_sortedByCount(yOrientation: Boolean = false): Expected {
             return Expected(
                 data = mapOf<String, List<Any>>(
-                    DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c"),
+                    CATEGORY_VAR to listOf("a", "b", "c"),
                     "..count.." to listOf(30.0, 40.0, 20.0)
                 ),
-                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
+                asDiscreteAesSet = setOf(categoryAes(yOrientation)),
                 orderOption = OrderOptionUtil.OrderOption.create(
-                    variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
+                    variableName = CATEGORY_VAR,
                     orderBy = "..count..",
                     order = null
                 )
@@ -253,13 +253,13 @@ class YOrientationBackendDataProcTest {
         private fun expected_groupedByFillSortedByCount(yOrientation: Boolean = false): Expected {
             return Expected(
                 data = mapOf<String, List<Any>>(
-                    DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c", "a", "b", "c"),
+                    CATEGORY_VAR to listOf("a", "b", "c", "a", "b", "c"),
                     "..count.." to listOf(1.0, 1.0, 1.0, 29.0, 39.0, 19.0),
                     GROUP_VAR to listOf("g0", "g0", "g0", "g1", "g1", "g1"),
                 ),
-                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
+                asDiscreteAesSet = setOf(categoryAes(yOrientation)),
                 orderOption = OrderOptionUtil.OrderOption.create(
-                    variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
+                    CATEGORY_VAR,
                     orderBy = "..count..",
                     order = null
                 )
@@ -317,14 +317,14 @@ class YOrientationBackendDataProcTest {
         private fun expected_fillByNumericGroupedSortedByCount(yOrientation: Boolean = false): Expected {
             return Expected(
                 data = mapOf<String, List<Any>>(
-                    DataMetaUtil.toDiscrete(CATEGORY_VAR) to listOf("a", "b", "c", "a", "b", "c"),
+                    CATEGORY_VAR to listOf("a", "b", "c", "a", "b", "c"),
                     "..count.." to listOf(1.0, 1.0, 1.0, 29.0, 39.0, 19.0),
                     GROUP_VAR to listOf("g0", "g0", "g0", "g1", "g1", "g1"),
                     NUMERIC_VAR to listOf(0.0, 0.0, 0.0, 1.0, 1.0, 1.0),
                 ),
-                asDiscreteAesSet = setOf("${categoryAes(yOrientation)}"),
+                asDiscreteAesSet = setOf(categoryAes(yOrientation)),
                 orderOption = OrderOptionUtil.OrderOption.create(
-                    variableName = DataMetaUtil.toDiscrete(CATEGORY_VAR),
+                    variableName = CATEGORY_VAR,
                     orderBy = "..count..",
                     order = null
                 )

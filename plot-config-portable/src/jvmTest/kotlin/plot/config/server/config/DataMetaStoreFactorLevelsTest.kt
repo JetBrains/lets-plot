@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.TYPE
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 
-class DataMetaStoreFactorLevalsTest {
+class DataMetaStoreFactorLevelsTest {
 
     @Test
     fun `simple facets`() {

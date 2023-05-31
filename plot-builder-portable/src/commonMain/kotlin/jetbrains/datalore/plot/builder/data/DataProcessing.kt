@@ -430,7 +430,7 @@ object DataProcessing {
         variable: Variable
     ): Boolean {
         // 'origin' discrete vars (but not positional)
-        return variable.isOrigin && !(Aes.isPositional(aes) || data.isNumeric(variable))
+        return variable.isOrigin && !Aes.isPositional(aes) && data.isDiscrete(variable)
     }
 
     class DataAndGroupMapper internal constructor(
