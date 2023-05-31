@@ -106,6 +106,13 @@ class BoxplotOutlierStat(
                     statY.add(y)
                     statCount.add(count)
                 }
+
+                // If there are no outliers, add a fake one to correct splitting for additional grouping
+                if (outliers.isEmpty() && count > 0) {
+                    statX.add(x)
+                    statY.add(Double.NaN)
+                    statCount.add(count)
+                }
             }
 
             return mutableMapOf(
