@@ -8,9 +8,9 @@
 
 
 - In tooltip customization API:
-  `disable_exploded()` function to hide exploded tooltips.
+  `disable_splitting()` function to hide side tooltips.
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_exploded.ipynb).
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
 
 
 ### Changed
