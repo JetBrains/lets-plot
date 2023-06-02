@@ -8,47 +8,50 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.stringFormat.StringFormat
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.base.aes.AestheticsDefaults.Companion.updateWith
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
+import jetbrains.datalore.plot.builder.theme.GeomTheme
 
 internal object GeomProviderFactory {
-    private val PROVIDER = HashMap<GeomKind, GeomProvider>()
+    private val PROVIDER = HashMap<GeomKind, () -> GeomProvider>()
 
     // Simple provides
     init {
-        PROVIDER[GeomKind.LINE] = GeomProvider.line()
-        PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
-        PROVIDER[GeomKind.BAR] = GeomProvider.bar()
-        PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
-        PROVIDER[GeomKind.TILE] = GeomProvider.tile()
-        PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
-        PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
-        PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
-        PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
-        PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()
-        PROVIDER[GeomKind.MAP] = GeomProvider.map()
-        PROVIDER[GeomKind.AB_LINE] = GeomProvider.abline()
-        PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
-        PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
-        PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
-        PROVIDER[GeomKind.AREA] = GeomProvider.area()
-        PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
-        PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
-        PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
-        PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
-        PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
-        PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()
-        PROVIDER[GeomKind.Q_Q_2_LINE] = GeomProvider.qq2line()
-        PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
-        PROVIDER[GeomKind.RECT] = GeomProvider.rect()
-        PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
-        PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
+        PROVIDER[GeomKind.LINE] = { GeomProvider.line() }
+        PROVIDER[GeomKind.SMOOTH] = { GeomProvider.smooth() }
+        PROVIDER[GeomKind.BAR] = { GeomProvider.bar() }
+        PROVIDER[GeomKind.HISTOGRAM] = { GeomProvider.histogram() }
+        PROVIDER[GeomKind.TILE] = { GeomProvider.tile() }
+        PROVIDER[GeomKind.BIN_2D] = { GeomProvider.bin2d() }
+        PROVIDER[GeomKind.LINE_RANGE] = { GeomProvider.lineRange() }
+        PROVIDER[GeomKind.CONTOUR] = { GeomProvider.contour() }
+        PROVIDER[GeomKind.CONTOURF] = { GeomProvider.contourf() }
+        PROVIDER[GeomKind.POLYGON] = { GeomProvider.polygon() }
+        PROVIDER[GeomKind.MAP] = { GeomProvider.map() }
+        PROVIDER[GeomKind.AB_LINE] = { GeomProvider.abline() }
+        PROVIDER[GeomKind.H_LINE] = { GeomProvider.hline() }
+        PROVIDER[GeomKind.V_LINE] = { GeomProvider.vline() }
+        PROVIDER[GeomKind.RIBBON] = { GeomProvider.ribbon() }
+        PROVIDER[GeomKind.AREA] = { GeomProvider.area() }
+        PROVIDER[GeomKind.DENSITY2D] = { GeomProvider.density2d() }
+        PROVIDER[GeomKind.DENSITY2DF] = { GeomProvider.density2df() }
+        PROVIDER[GeomKind.JITTER] = { GeomProvider.jitter() }
+        PROVIDER[GeomKind.Q_Q] = { GeomProvider.qq() }
+        PROVIDER[GeomKind.Q_Q_2] = { GeomProvider.qq2() }
+        PROVIDER[GeomKind.Q_Q_LINE] = { GeomProvider.qqline() }
+        PROVIDER[GeomKind.Q_Q_2_LINE] = { GeomProvider.qq2line() }
+        PROVIDER[GeomKind.FREQPOLY] = { GeomProvider.freqpoly() }
+        PROVIDER[GeomKind.RECT] = { GeomProvider.rect() }
+        PROVIDER[GeomKind.RASTER] = { GeomProvider.raster() }
+        PROVIDER[GeomKind.LIVE_MAP] = { GeomProvider.livemap() }
     }
 
-    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor): GeomProvider {
+    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor, geomTheme: GeomTheme): GeomProvider {
         return when (geomKind) {
             GeomKind.DENSITY -> GeomProvider.density {
                 val geom = DensityGeom()
@@ -326,14 +329,107 @@ internal object GeomProviderFactory {
 
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
-                PROVIDER.getValue(geomKind)
+                PROVIDER.getValue(geomKind).invoke()
             }
         }
+            .withThemeColors(geomKind, geomTheme)
     }
 
     private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {
         opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it)::format }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
+    }
+
+    private fun GeomProvider.withThemeColors(geomKind: GeomKind, geomTheme: GeomTheme): GeomProvider {
+        val (color, fill) = when (geomKind) {
+            // geometries with stroke or without fill
+            GeomKind.POINT,
+            GeomKind.JITTER,
+
+            GeomKind.PATH,
+            GeomKind.LINE,
+            GeomKind.SEGMENT,
+            GeomKind.AB_LINE,
+            GeomKind.H_LINE,
+            GeomKind.V_LINE,
+            GeomKind.STEP,
+            GeomKind.CONTOUR,
+            GeomKind.DENSITY2D,
+            GeomKind.FREQPOLY,
+
+            GeomKind.AREA,
+            GeomKind.DENSITY,
+            GeomKind.RIBBON,
+
+            GeomKind.AREA_RIDGES,
+
+            GeomKind.MAP,
+
+            GeomKind.BOX_PLOT,
+            GeomKind.ERROR_BAR,
+            GeomKind.CROSS_BAR,
+            GeomKind.LINE_RANGE,
+            GeomKind.POINT_RANGE,
+
+            GeomKind.VIOLIN,
+            GeomKind.RECT,
+
+            GeomKind.HISTOGRAM,
+
+            GeomKind.Q_Q,
+            GeomKind.Q_Q_2,
+            GeomKind.Q_Q_LINE,
+            GeomKind.Q_Q_2_LINE,
+
+            GeomKind.LOLLIPOP,
+
+            GeomKind.TEXT -> {
+                Pair(
+                    geomTheme.lineColor(),
+                    Colors.withOpacity(geomTheme.lineColor(), 0.1)
+                )
+            }
+
+            // geometries without stroke (with fill)
+            GeomKind.DOT_PLOT,
+            GeomKind.Y_DOT_PLOT,
+            GeomKind.BAR,
+            GeomKind.TILE,
+            GeomKind.BIN_2D,
+            GeomKind.POLYGON,
+            GeomKind.CONTOURF,
+            GeomKind.DENSITY2DF -> {
+                Pair(
+                    geomTheme.strokeColor(),
+                    null
+                )
+            }
+
+            // Smooth geom: set color for confidence interval
+            GeomKind.SMOOTH -> {
+                Pair(
+                    null,
+                    geomTheme.lineColor()
+                )
+            }
+
+            GeomKind.LABEL -> {
+                Pair(
+                    geomTheme.lineColor(),
+                    geomTheme.strokeColor()
+                )
+            }
+
+            GeomKind.RASTER,
+            GeomKind.PIE,
+            GeomKind.IMAGE,
+            GeomKind.LIVE_MAP -> {
+                Pair(null, null)
+            }
+        }
+
+        aestheticsDefaults.updateWith(color, fill)
+        return this
     }
 }

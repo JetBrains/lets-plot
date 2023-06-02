@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.*
 
 class DefaultTheme(
-    private val options: Map<String, Any>,
+    options: Map<String, Any>,
     fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry()
 ) : Theme {
 
@@ -22,7 +22,7 @@ class DefaultTheme(
     private val facets = DefaultFacetsTheme(options, fontFamilyRegistry)
     private val plot = DefaultPlotTheme(options, fontFamilyRegistry)
     private val tooltips = DefaultTooltipsTheme(options, fontFamilyRegistry)
-
+    private val geometries = DefaultGeomTheme(options, fontFamilyRegistry)
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 
@@ -37,6 +37,8 @@ class DefaultTheme(
     override fun plot(): PlotTheme = plot
 
     override fun tooltips(): TooltipsTheme = tooltips
+
+    override fun geometries(): GeomTheme = geometries
 
     companion object {
         // For demo and tests

@@ -15,6 +15,7 @@ import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.sampling.Samplings
+import jetbrains.datalore.plot.builder.theme.GeomTheme
 import jetbrains.datalore.plot.config.Option.Geom
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta
@@ -22,8 +23,8 @@ import jetbrains.datalore.plot.config.Option.Pos
 
 class GeomProto constructor(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
+    fun geomProvider(layerConfig: OptionsAccessor, geomTheme: GeomTheme): GeomProvider {
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, geomTheme)
     }
 
     fun defaultOptions(): Map<String, Any> {

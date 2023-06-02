@@ -17,7 +17,6 @@ import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.builder.defaultTheme.GeomFlavorUtil
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
@@ -201,7 +200,7 @@ object PlotConfigClientSideUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig)
+        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, theme.geometries())
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
@@ -238,17 +237,6 @@ object PlotConfigClientSideUtil {
         for (binding in bindings) {
             layerBuilder.addBinding(binding)
         }
-
-        // use geom flavors as constants
-        GeomFlavorUtil.getFlavors(geomKind = layerConfig.geomProto.geomKind, theme)
-            .filterKeys { aes ->
-                layerConfig.getVariableForAes(aes) == null && aes !in constantAesMap
-            }
-            .forEach { (aes, value) ->
-                @Suppress("UNCHECKED_CAST")
-                layerBuilder.addConstantAes(aes as Aes<Any>, value)
-            }
-
 
         layerBuilder.disableLegend(layerConfig.isLegendDisabled)
 

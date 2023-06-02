@@ -21,12 +21,12 @@ open class AestheticsDefaults {
     }
     private val myDefaultsInLegend = TypedKeyHashMap()
 
-    protected fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+    private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)
         return this
     }
 
-    protected fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+    private fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaultsInLegend.put(aes, defaultValue)
         return this
     }
@@ -74,6 +74,7 @@ open class AestheticsDefaults {
             return path()
                 .update(Aes.COLOR, Color.MAGENTA)
                 .update(Aes.FILL, Color.BLACK)
+                .update(Aes.ALPHA, 1.5) // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
         }
 
         fun bar(): AestheticsDefaults {
@@ -264,6 +265,13 @@ open class AestheticsDefaults {
 
         private fun base(): AestheticsDefaults {
             return AestheticsDefaults()
+        }
+
+        fun AestheticsDefaults.updateWith(color: Color?, fill: Color?): AestheticsDefaults {
+            return this.apply {
+                color?.let { update(Aes.COLOR, color) }
+                fill?.let { update(Aes.FILL, fill) }
+            }
         }
     }
 }
