@@ -234,7 +234,6 @@ object GeomMeta {
                 Aes.UPPER,
 
                 Aes.X,
-                Aes.Y,
                 Aes.YMAX,
                 Aes.YMIN,
 
