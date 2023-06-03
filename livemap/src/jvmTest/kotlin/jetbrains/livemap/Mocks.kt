@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:Suppress("unused")
+
 package jetbrains.datalore.jetbrains.livemap
 
 import jetbrains.datalore.base.async.SimpleAsync
@@ -10,13 +12,13 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
-import jetbrains.datalore.jetbrains.livemap.entities.regions.FragmentSpec
+import jetbrains.datalore.jetbrains.livemap.chart.fragments.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.ViewportGridSpec
 import jetbrains.gis.geoprotocol.Fragment
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.chart.fragment.*
 import jetbrains.livemap.core.ecs.EcsEntity
-import jetbrains.livemap.fragment.*
 import java.util.*
 
 
@@ -106,6 +108,7 @@ object Mocks {
         }
     }
 
+    @Suppress("unused")
     class CachedFragmentsSpec internal constructor(testBase: LiveMapTestBase) : MockSpec(testBase) {
         private val myAddedFragments = HashMap<FragmentKey, EcsEntity>()
         private val myRemovedFragments = HashSet<FragmentKey>()
@@ -196,7 +199,7 @@ object Mocks {
                 myNone = false
             //    component.nothing()
             } else {
-                myZoom.ifPresent { liveMapContext.camera.requestZoom(it) }
+                myZoom.ifPresent(liveMapContext.camera::requestZoom)
                 myIntegerZoom.ifPresent { liveMapContext.camera.requestZoom(it.toDouble()) }
                 //component.setIntegerZoomChanged(myIntegerZoomChanged)
                 //component.setFractionZoomChanged(myFractionZoomChanged)

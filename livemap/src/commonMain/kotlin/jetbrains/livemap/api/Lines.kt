@@ -12,7 +12,7 @@ import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers.PathRenderer
+import jetbrains.livemap.chart.path.PathRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind

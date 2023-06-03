@@ -9,8 +9,11 @@ import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.DonutChart
+import jetbrains.livemap.chart.IndexComponent
+import jetbrains.livemap.chart.LocatorComponent
 import jetbrains.livemap.chart.PieSpecComponent
+import jetbrains.livemap.chart.donut.Locator
+import jetbrains.livemap.chart.donut.Renderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
@@ -19,8 +22,6 @@ import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
 
 @LiveMapDsl
 class Pies(
@@ -77,9 +78,9 @@ class PieBuilder(
                 if (layerIndex != null) {
                     +IndexComponent(layerIndex!!, 0)
                 }
-                +LocatorComponent(DonutChart.DonutLocator)
+                +LocatorComponent(Locator)
                 +RenderableComponent().apply {
-                    renderer = DonutChart.Renderer()
+                    renderer = Renderer()
                 }
                 +ChartElementComponent().apply {
                     sizeScalingRange = this@PieBuilder.sizeScalingRange

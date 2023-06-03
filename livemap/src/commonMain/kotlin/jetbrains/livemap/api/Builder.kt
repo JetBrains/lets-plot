@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:Suppress("unused")
+
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -20,6 +22,7 @@ import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.LiveMap
 import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.chart.fragment.newFragmentProvider
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.MAX_ZOOM
 import jetbrains.livemap.config.MIN_ZOOM
@@ -33,7 +36,6 @@ import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.graphics.TextMeasurer
 import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.core.layers.ParentLayerComponent
-import jetbrains.livemap.fragment.newFragmentProvider
 import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection

@@ -6,6 +6,7 @@
 package jetbrains.livemap.mapengine
 
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.vis.canvas.Context2d
@@ -20,3 +21,13 @@ fun <T> Context2d.lineTo(p: Vec<T>) = lineTo(p.x, p.y)
 fun <T> Context2d.translate(p: Vec<T>) = translate(p.x, p.y)
 fun Context2d.fillRect(r: Rect<Client>) = fillRect(r.origin.x, r.origin.y, r.dimension.x, r.dimension.y)
 fun Context2d.strokeRect(r: Rect<Client>) = strokeRect(r.origin.x, r.origin.y, r.dimension.x, r.dimension.y)
+
+fun <T> Context2d.drawMultiPolygon(geometry: MultiPolygon<T>, afterPolygon: (Context2d) -> Unit) {
+    for (polygon in geometry) {
+        for (ring in polygon) {
+            ring[0].let(::moveTo)
+            ring.drop(1).forEach(::lineTo)
+        }
+    }
+    afterPolygon(this)
+}

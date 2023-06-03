@@ -11,13 +11,16 @@ import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers.PolygonRenderer
+import jetbrains.livemap.chart.IndexComponent
+import jetbrains.livemap.chart.LocatorComponent
+import jetbrains.livemap.chart.fragment.RegionBBoxComponent
+import jetbrains.livemap.chart.fragment.RegionFragmentsComponent
+import jetbrains.livemap.chart.fragment.RegionRenderer
+import jetbrains.livemap.chart.polygon.PolygonLocator
+import jetbrains.livemap.chart.polygon.PolygonRenderer
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.LayerKind
-import jetbrains.livemap.fragment.RegionBBoxComponent
-import jetbrains.livemap.fragment.RegionFragmentsComponent
-import jetbrains.livemap.fragment.RegionRenderer
 import jetbrains.livemap.geocoding.NeedCalculateLocationComponent
 import jetbrains.livemap.geocoding.NeedLocationComponent
 import jetbrains.livemap.geocoding.RegionIdComponent
@@ -27,9 +30,6 @@ import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PolygonLocator
 
 @LiveMapDsl
 class Polygons(

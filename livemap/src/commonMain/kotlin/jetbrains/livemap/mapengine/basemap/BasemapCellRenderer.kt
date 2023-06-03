@@ -24,7 +24,7 @@ class BasemapCellRenderer : Renderer {
 
     override fun render(entity: EcsEntity, ctx: Context2d, renderHelper: RenderHelper) {
         val tile = entity.get<BasemapTileComponent>().tile ?: return
-        ctx.translate(renderHelper.toScreen(entity.get<WorldOriginComponent>().origin))
+        ctx.translate(renderHelper.dimToScreen(entity.get<WorldOriginComponent>().origin))
 
         entity.get<ScreenDimensionComponent>()
             .dimension

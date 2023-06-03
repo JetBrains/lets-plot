@@ -7,23 +7,37 @@ package jetbrains.livemap.mapengine
 
 import jetbrains.datalore.base.typedGeometry.Scalar
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.newVec
-import jetbrains.datalore.base.typedGeometry.scalarX
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
+import jetbrains.livemap.core.Transforms
 import jetbrains.livemap.mapengine.viewport.Viewport
-import kotlin.math.pow
 
 class RenderHelper(
     private val viewport: Viewport
 ) {
-    val zoomFactor get()  = 2.0.pow(viewport.zoom)
+    private val dimWorldToClientTransform = Transforms.scale(::zoomFactor)
+    val zoomFactor get()  = Transforms.zoomFactor(viewport.zoom)
 
-    fun toWorld(v: Scalar<Client>): Scalar<World> {
-        return viewport.toWorldDimension(newVec(v, v)).scalarX
+    fun dimToScreen(p: Vec<World>): Vec<Client> {
+        return Vec(
+            dimWorldToClientTransform.apply(p.x),
+            dimWorldToClientTransform.apply(p.y)
+        )
     }
 
-    fun toScreen(p: Vec<World>): Vec<Client> {
-        return Vec(p.x * zoomFactor, p.y * zoomFactor)
+    fun posToWorld(p: Vec<Client>): Vec<World> {
+        return viewport.getMapCoord(p)
+    }
+
+    fun dimToWorld(v: Double): Scalar<World> {
+        return Scalar(dimWorldToClientTransform.invert(v))
+    }
+
+    fun dimToClient(v: Double): Scalar<Client> {
+        return Scalar(dimWorldToClientTransform.apply(v))
+    }
+
+    fun dimToClient(v: Scalar<World>): Scalar<Client> {
+        return Scalar(dimWorldToClientTransform.apply(v.value))
     }
 }

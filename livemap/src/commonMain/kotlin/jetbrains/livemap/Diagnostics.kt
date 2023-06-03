@@ -8,6 +8,10 @@ package jetbrains.livemap
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.property.Property
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.chart.fragment.CachedFragmentsComponent
+import jetbrains.livemap.chart.fragment.DownloadingFragmentsComponent
+import jetbrains.livemap.chart.fragment.FragmentKey
+import jetbrains.livemap.chart.fragment.StreamingFragmentsComponent
 import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.graphics.GraphicsService
@@ -17,10 +21,6 @@ import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.core.layers.LayerManager
 import jetbrains.livemap.core.multitasking.MicroThreadComponent
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.fragment.CachedFragmentsComponent
-import jetbrains.livemap.fragment.DownloadingFragmentsComponent
-import jetbrains.livemap.fragment.FragmentKey
-import jetbrains.livemap.fragment.StreamingFragmentsComponent
 import jetbrains.livemap.mapengine.basemap.raster.RasterTileLoadingSystem.HttpTileResponseComponent
 import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem.TileResponseComponent
 

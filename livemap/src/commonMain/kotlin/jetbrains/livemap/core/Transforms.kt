@@ -10,11 +10,19 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import kotlin.math.pow
 
 object Transforms {
-    fun <InT, OutT> zoom(factor: () -> Int): Transform<Vec<InT>, Vec<OutT>> {
+    fun <InT, OutT> zoom(level: () -> Int): Transform<Vec<InT>, Vec<OutT>> {
         return tuple(
-            scale { 2.0.pow(factor()) },
-            scale { 2.0.pow(factor()) }
+            scale(zoomFactor(level)),
+            scale(zoomFactor(level)),
         )
+    }
+
+    fun zoomFactor(level: () -> Number): () -> Double {
+        return { zoomFactor(level().toDouble()) }
+    }
+
+    fun zoomFactor(level: Number): Double {
+        return 2.0.pow(level.toDouble())
     }
 
     internal fun <InT, OutT> tuple(

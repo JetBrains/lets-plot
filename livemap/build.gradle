@@ -60,7 +60,6 @@ idea {
     module {
         settings {
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }
 }

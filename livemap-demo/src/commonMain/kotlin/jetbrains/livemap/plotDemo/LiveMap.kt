@@ -15,17 +15,17 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-//            titanic()
+            titanic(),
             airports(),
-//            volcanos(),
+            volcanos(),
 //            georeference(),
 //            blankPoint(),
 //            blankMap(),
 //            barWithNanValuesInData(),
-//            pieWithNanValuesInData(),
+            pieWithNanValuesInData(),
 //            pieWithNullValuesInData(),
 //            barWithNullValuesInData()
-//            multiLayerTooltips()
+            multiLayerTooltips()
 //            mapJoinBar(),
 //            antiMeridian(),
 //            tooltips(),
@@ -2200,22 +2200,15 @@ class LiveMap {
     private fun pieWithNanValuesInData(): MutableMap<String, Any> {
         val spec = """{
   "kind": "plot",
+  "data": {
+    "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+    "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
+    "z": [100, 200, 400, 144, null, 230, 123, 543, -231],
+    "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
+  },
   "layers": [
     {
       "geom": "livemap",
-      "data": {
-        "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
-        "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
-        "z": [100, 200, 400, 144, null, 230, 123, 543, -231],
-        "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
-      },
-      "mapping": {
-        "x": "x",
-        "y": "y",
-        "sym_y": "z",
-        "fill": "c"
-      },
-      "display_mode": "pie",
       "tiles": {
         "kind": "vector_lets_plot",
         "url": "wss://tiles.datalore.jetbrains.com",
@@ -2225,6 +2218,15 @@ class LiveMap {
       },
       "geocoding": {
         "url": "http://localhost:3020"
+      }
+    },
+    {
+        "geom": "pie",
+      "mapping": {
+        "x": "x",
+        "y": "y",
+        "slice": "z",
+        "fill": "c"
       }
     }
   ]

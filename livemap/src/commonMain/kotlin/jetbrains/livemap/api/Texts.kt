@@ -11,9 +11,9 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.FontStyle
 import jetbrains.datalore.vis.canvas.FontWeight
 import jetbrains.livemap.chart.ChartElementComponent
-import jetbrains.livemap.chart.Renderers.TextRenderer
-import jetbrains.livemap.chart.TextSpec
 import jetbrains.livemap.chart.TextSpecComponent
+import jetbrains.livemap.chart.text.TextRenderer
+import jetbrains.livemap.chart.text.TextSpec
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.graphics.TextMeasurer

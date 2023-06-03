@@ -24,8 +24,8 @@ import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.chart.ChartElementScalingSystem
-import jetbrains.livemap.chart.GrowingPathEffect
+import jetbrains.livemap.chart.*
+import jetbrains.livemap.chart.fragment.*
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
@@ -51,7 +51,6 @@ import jetbrains.livemap.core.layers.RenderTarget.OWN_SCREEN_CANVAS
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.ApplyPointSystem
 import jetbrains.livemap.geocoding.LocationCalculateSystem
 import jetbrains.livemap.geocoding.LocationCounterSystem
@@ -66,9 +65,6 @@ import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem
 import jetbrains.livemap.mapengine.viewport.ViewportPositionUpdateSystem
-import jetbrains.livemap.searching.HoverObject
-import jetbrains.livemap.searching.HoverObjectDetectionSystem
-import jetbrains.livemap.searching.SearchResultComponent
 import jetbrains.livemap.ui.*
 
 class LiveMap(

@@ -21,8 +21,11 @@ import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.ChartElementLocationComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathRenderer
-import jetbrains.livemap.chart.Renderers.PathRenderer
-import jetbrains.livemap.chart.Renderers.PathRenderer.ArrowSpec
+import jetbrains.livemap.chart.IndexComponent
+import jetbrains.livemap.chart.LocatorComponent
+import jetbrains.livemap.chart.path.PathLocator
+import jetbrains.livemap.chart.path.PathRenderer
+import jetbrains.livemap.chart.path.PathRenderer.ArrowSpec
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.ecs.AnimationComponent
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -38,9 +41,6 @@ import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
-import jetbrains.livemap.searching.IndexComponent
-import jetbrains.livemap.searching.LocatorComponent
-import jetbrains.livemap.searching.PathLocator
 
 @LiveMapDsl
 class Paths(
