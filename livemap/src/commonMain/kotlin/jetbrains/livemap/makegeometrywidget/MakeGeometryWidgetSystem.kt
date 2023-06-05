@@ -8,8 +8,8 @@ package jetbrains.livemap.makegeometrywidget
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.values.Color.Companion.parseHex
 import jetbrains.livemap.api.MapEntityFactory
-import jetbrains.livemap.api.PathBuilder
-import jetbrains.livemap.api.PointBuilder
+import jetbrains.livemap.api.PathEntityBuilder
+import jetbrains.livemap.api.PointEntityBuilder
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -47,9 +47,9 @@ class MakeGeometryWidgetSystem(
     }
 
     private fun createVisualEntities(lonlat: LonLatPoint, widgetLayer: EcsEntity) {
-        val factory = MapEntityFactory(widgetLayer)
+        val factory = MapEntityFactory(widgetLayer, 1000)
 
-        PointBuilder(factory)
+        PointEntityBuilder(factory)
             .apply {
                 point = lonlat
                 strokeColor = DARK_ORANGE
@@ -58,7 +58,7 @@ class MakeGeometryWidgetSystem(
             .build(nonInteractive = true)
 
         if (widgetLayer.count() > 0) {
-            PathBuilder(factory, myMapProjection)
+            PathEntityBuilder(factory, myMapProjection)
                 .apply {
                     sizeScalingRange = null
                     strokeColor = DARK_ORANGE

@@ -43,12 +43,12 @@ import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
-class Paths(
+class PathLayerBuilder(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.paths(block: Paths.() -> Unit) {
+fun LayersBuilder.paths(block: PathLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
@@ -56,20 +56,20 @@ fun LayersBuilder.paths(block: Paths.() -> Unit) {
             +LayerEntitiesComponent()
         }
 
-    Paths(
-        MapEntityFactory(layerEntity),
+    PathLayerBuilder(
+        MapEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
         mapProjection
     ).apply(block)
 }
 
-fun Paths.path(block: PathBuilder.() -> Unit) {
-    PathBuilder(factory, mapProjection)
+fun PathLayerBuilder.path(block: PathEntityBuilder.() -> Unit) {
+    PathEntityBuilder(factory, mapProjection)
         .apply(block)
         .build(nonInteractive = false)
 }
 
 @LiveMapDsl
-class PathBuilder(
+class PathEntityBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
@@ -117,6 +117,7 @@ class PathBuilder(
         val locGeometry = transformPath(points)
         val visGeometry = transformPath(points.takeUnless { geodesic } ?: Geodesic.createArcPath(points))
 
+        myFactory.updatePanningPolicy(visGeometry.sumOf(LineString<World>::size))
         return visGeometry.bbox?.let { bbox ->
             val entity = myFactory
                 .createMapEntity("map_ent_path")
@@ -128,16 +129,16 @@ class PathBuilder(
                         renderer = PathRenderer()
                     }
                     +ChartElementComponent().apply {
-                        sizeScalingRange = this@PathBuilder.sizeScalingRange
-                        alphaScalingEnabled = this@PathBuilder.alphaScalingEnabled
-                        strokeColor = this@PathBuilder.strokeColor
-                        strokeWidth = this@PathBuilder.strokeWidth
-                        lineDash = this@PathBuilder.lineDash.toDoubleArray()
+                        sizeScalingRange = this@PathEntityBuilder.sizeScalingRange
+                        alphaScalingEnabled = this@PathEntityBuilder.alphaScalingEnabled
+                        strokeColor = this@PathEntityBuilder.strokeColor
+                        strokeWidth = this@PathEntityBuilder.strokeWidth
+                        lineDash = this@PathEntityBuilder.lineDash.toDoubleArray()
                         arrowSpec = ArrowSpec.create(
-                            this@PathBuilder.arrowAngle,
-                            this@PathBuilder.arrowLength,
-                            this@PathBuilder.arrowAtEnds,
-                            this@PathBuilder.arrowType,
+                            this@PathEntityBuilder.arrowAngle,
+                            this@PathEntityBuilder.arrowLength,
+                            this@PathEntityBuilder.arrowAtEnds,
+                            this@PathEntityBuilder.arrowType,
                         )
                     }
                     +ChartElementLocationComponent().apply {
@@ -189,7 +190,7 @@ class PathBuilder(
  * @param ends - {'last', 'first', 'both'}
  * @param type - {'open', 'closed'}
  * */
-fun PathBuilder.arrow(
+fun PathEntityBuilder.arrow(
     angle: Double = 30.0,
     length: Double = 10.0,
     ends: String = "last",

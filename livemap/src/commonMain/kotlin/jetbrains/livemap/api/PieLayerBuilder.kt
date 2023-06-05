@@ -24,12 +24,12 @@ import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
-class Pies(
+class PieLayerBuilder(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.pies(block: Pies.() -> Unit) {
+fun LayersBuilder.pies(block: PieLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
@@ -37,20 +37,20 @@ fun LayersBuilder.pies(block: Pies.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Pies(
-        MapEntityFactory(layerEntity),
+    PieLayerBuilder(
+        MapEntityFactory(layerEntity, panningPointsMaxCount = 100),
         mapProjection
     ).apply(block)
 }
 
-fun Pies.pie(block: PieBuilder.() -> Unit) {
-    PieBuilder(factory)
+fun PieLayerBuilder.pie(block: PieEntityBuilder.() -> Unit) {
+    PieEntityBuilder(factory)
         .apply(block)
         .build()
 }
 
 @LiveMapDsl
-class PieBuilder(
+class PieEntityBuilder(
     private val myFactory: MapEntityFactory
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
@@ -74,6 +74,7 @@ class PieBuilder(
             point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", point!!)
             else -> error("Can't create pieSector entity. Coord is null.")
         }.run {
+            myFactory.updatePanningPolicy(1)
             setInitializer { worldPoint ->
                 if (layerIndex != null) {
                     +IndexComponent(layerIndex!!, 0)
@@ -83,18 +84,18 @@ class PieBuilder(
                     renderer = Renderer()
                 }
                 +ChartElementComponent().apply {
-                    sizeScalingRange = this@PieBuilder.sizeScalingRange
-                    alphaScalingEnabled = this@PieBuilder.alphaScalingEnabled
-                    strokeColor = this@PieBuilder.strokeColor
-                    strokeWidth = this@PieBuilder.strokeWidth
+                    sizeScalingRange = this@PieEntityBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PieEntityBuilder.alphaScalingEnabled
+                    strokeColor = this@PieEntityBuilder.strokeColor
+                    strokeWidth = this@PieEntityBuilder.strokeWidth
                 }
                 + PieSpecComponent().apply {
-                    radius = this@PieBuilder.radius
-                    holeSize = this@PieBuilder.holeSize
-                    sliceValues = this@PieBuilder.values
-                    colors = this@PieBuilder.colors
-                    indices = this@PieBuilder.indices
-                    explodeValues = this@PieBuilder.explodes
+                    radius = this@PieEntityBuilder.radius
+                    holeSize = this@PieEntityBuilder.holeSize
+                    sliceValues = this@PieEntityBuilder.values
+                    colors = this@PieEntityBuilder.colors
+                    indices = this@PieEntityBuilder.indices
+                    explodeValues = this@PieEntityBuilder.explodes
                 }
                 +WorldOriginComponent(worldPoint)
                 +ScreenDimensionComponent()

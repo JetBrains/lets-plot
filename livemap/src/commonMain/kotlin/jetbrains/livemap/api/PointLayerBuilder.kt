@@ -24,12 +24,12 @@ import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
-class Points(
+class PointLayerBuilder(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.points(block: Points.() -> Unit) {
+fun LayersBuilder.points(block: PointLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_point")
         .addComponents {
@@ -37,20 +37,20 @@ fun LayersBuilder.points(block: Points.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Points(
-        MapEntityFactory(layerEntity),
+    PointLayerBuilder(
+        MapEntityFactory(layerEntity, panningPointsMaxCount = 200),
         mapProjection
     ).apply(block)
 }
 
-fun Points.point(block: PointBuilder.() -> Unit) {
-    PointBuilder(factory)
+fun PointLayerBuilder.point(block: PointEntityBuilder.() -> Unit) {
+    PointEntityBuilder(factory)
         .apply(block)
         .build()
 }
 
 @LiveMapDsl
-class PointBuilder(
+class PointEntityBuilder(
     private val myFactory: MapEntityFactory,
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
@@ -69,12 +69,12 @@ class PointBuilder(
     var shape: Int = 1
 
     fun build(nonInteractive: Boolean = false): EcsEntity {
-
         val d = radius * 2.0
         return when {
             point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
             else -> error("Can't create point entity. Coord is null.")
         }.run {
+            myFactory.updatePanningPolicy(1)
             setInitializer { worldPoint ->
                 if (layerIndex != null && index != null) {
                     +IndexComponent(layerIndex!!, index!!)
@@ -83,28 +83,28 @@ class PointBuilder(
                     renderer = PointRenderer(shape)
                 }
                 +ChartElementComponent().apply {
-                    sizeScalingRange = this@PointBuilder.sizeScalingRange
-                    alphaScalingEnabled = this@PointBuilder.alphaScalingEnabled
+                    sizeScalingRange = this@PointEntityBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PointEntityBuilder.alphaScalingEnabled
                     when (shape) {
                         in 0..14 -> {
-                            strokeColor = this@PointBuilder.strokeColor
-                            strokeWidth = this@PointBuilder.strokeWidth
+                            strokeColor = this@PointEntityBuilder.strokeColor
+                            strokeWidth = this@PointEntityBuilder.strokeWidth
                         }
                         in 15..18, 20 -> {
-                            fillColor = this@PointBuilder.strokeColor
+                            fillColor = this@PointEntityBuilder.strokeColor
                             strokeWidth = Double.NaN
                         }
                         19 -> {
-                            fillColor = this@PointBuilder.strokeColor
-                            strokeColor = this@PointBuilder.strokeColor
-                            strokeWidth = this@PointBuilder.strokeWidth
+                            fillColor = this@PointEntityBuilder.strokeColor
+                            strokeColor = this@PointEntityBuilder.strokeColor
+                            strokeWidth = this@PointEntityBuilder.strokeWidth
                         }
                         in 21..25 -> {
-                            fillColor = this@PointBuilder.fillColor
-                            strokeColor = this@PointBuilder.strokeColor
-                            strokeWidth = this@PointBuilder.strokeWidth
+                            fillColor = this@PointEntityBuilder.fillColor
+                            strokeColor = this@PointEntityBuilder.strokeColor
+                            strokeWidth = this@PointEntityBuilder.strokeWidth
                         }
-                        else -> error("Not supported shape: ${this@PointBuilder.shape}")
+                        else -> error("Not supported shape: ${this@PointEntityBuilder.shape}")
                     }
                 }
                 +PointComponent().apply {

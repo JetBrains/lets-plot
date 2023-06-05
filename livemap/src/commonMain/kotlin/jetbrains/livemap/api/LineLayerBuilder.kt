@@ -27,13 +27,13 @@ import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
-class Lines(
+class LineLayerBuilder(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection,
     val horizontal: Boolean,
 )
 
-private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
+private fun LayersBuilder.lines(horizontal: Boolean, block: LineLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_line")
         .addComponents {
@@ -41,24 +41,24 @@ private fun LayersBuilder.lines(horizontal: Boolean, block: Lines.() -> Unit) {
             +LayerEntitiesComponent()
         }
 
-    Lines(
-        MapEntityFactory(layerEntity),
+    LineLayerBuilder(
+        MapEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
         mapProjection,
         horizontal
     ).apply(block)
 }
 
-fun LayersBuilder.hLines(block: Lines.() -> Unit) = lines(true, block)
-fun LayersBuilder.vLines(block: Lines.() -> Unit) = lines(false, block)
+fun LayersBuilder.hLines(block: LineLayerBuilder.() -> Unit) = lines(true, block)
+fun LayersBuilder.vLines(block: LineLayerBuilder.() -> Unit) = lines(false, block)
 
-fun Lines.line(block: LineBuilder.() -> Unit) {
-    LineBuilder(factory, mapProjection)
+fun LineLayerBuilder.line(block: LineEntityBuilder.() -> Unit) {
+    LineEntityBuilder(factory, mapProjection)
         .apply(block)
         .build(horizontal)
 }
 
 @LiveMapDsl
-class LineBuilder(
+class LineEntityBuilder(
     private val factory: MapEntityFactory,
     private val mapProjection: MapProjection,
 ) {
@@ -76,15 +76,17 @@ class LineBuilder(
         val line = createLineGeometry(worldPoint, horizontal, mapProjection.mapRect)
         val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, mapProjection.mapRect)
 
+        factory.updatePanningPolicy(line.size)
+
         +RenderableComponent().apply {
             renderer = PathRenderer()
         }
         +ChartElementComponent().apply {
-            sizeScalingRange = this@LineBuilder.sizeScalingRange
-            alphaScalingEnabled = this@LineBuilder.alphaScalingEnabled
-            strokeColor = this@LineBuilder.strokeColor
-            strokeWidth = this@LineBuilder.strokeWidth
-            lineDash = this@LineBuilder.lineDash.toDoubleArray()
+            sizeScalingRange = this@LineEntityBuilder.sizeScalingRange
+            alphaScalingEnabled = this@LineEntityBuilder.alphaScalingEnabled
+            strokeColor = this@LineEntityBuilder.strokeColor
+            strokeWidth = this@LineEntityBuilder.strokeWidth
+            lineDash = this@LineEntityBuilder.lineDash.toDoubleArray()
         }
         +WorldOriginComponent(bbox.origin)
         +WorldGeometryComponent().apply { geometry = Geometry.of(line) }

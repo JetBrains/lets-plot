@@ -8,19 +8,19 @@ package jetbrains.livemap.model
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.livemap.api.*
 
-fun PointBuilder.coord(geoObj: GeoObject) {
+fun PointEntityBuilder.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
-fun PointBuilder.coord(lon: Double, lat: Double) {
+fun PointEntityBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 
-fun LineBuilder.coord(geoObj: GeoObject) {
+fun LineEntityBuilder.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
-fun LineBuilder.coord(lon: Double, lat: Double) {
+fun LineEntityBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 
@@ -32,10 +32,10 @@ fun TextBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 
-fun PieBuilder.coord(geoObj: GeoObject) {
+fun PieEntityBuilder.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
-fun PieBuilder.coord(lon: Double, lat: Double) {
+fun PieEntityBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }

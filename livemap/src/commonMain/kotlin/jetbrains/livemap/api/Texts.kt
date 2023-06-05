@@ -38,7 +38,7 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
         }
 
     Texts(
-        MapEntityFactory(layerEntity),
+        MapEntityFactory(layerEntity, 500),
         textMeasurer
     ).apply(block)
 }

@@ -33,7 +33,7 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         }
     }
 
-    private fun getPoint(coord: LonLatPoint): Points.() -> Unit = {
+    private fun getPoint(coord: LonLatPoint): PointLayerBuilder.() -> Unit = {
         point {
             point = coord
             radius = 4.0

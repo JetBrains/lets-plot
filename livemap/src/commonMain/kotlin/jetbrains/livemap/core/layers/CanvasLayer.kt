@@ -10,6 +10,7 @@ import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.Context2d
+import jetbrains.livemap.core.layers.PanningPolicy.REPAINT
 
 class CanvasLayer(
     val canvas: Canvas,
@@ -21,6 +22,8 @@ class CanvasLayer(
 
     val size: Vector
         get() = canvas.size
+
+    var panningPolicy = REPAINT
 
     fun addRenderTask(func: (Context2d) -> Unit) {
         myRenderTaskList.add(func)
@@ -62,11 +65,4 @@ enum class LayerKind {
 
 enum class PanningPolicy {
     COPY, REPAINT
-}
-
-val CanvasLayer.panningPolicy: PanningPolicy get() = when (kind) {
-    LayerKind.BASEMAP_TILES -> PanningPolicy.REPAINT
-    LayerKind.FEATURES -> PanningPolicy.COPY
-    LayerKind.BASEMAP_LABELS -> PanningPolicy.REPAINT
-    LayerKind.UI -> PanningPolicy.REPAINT
 }

@@ -34,7 +34,9 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.graphics.TextMeasurer
+import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.core.layers.LayerManager
+import jetbrains.livemap.core.layers.PanningPolicy
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
@@ -186,10 +188,22 @@ fun mapEntity(
         }
 }
 
-class MapEntityFactory(layerEntity: EcsEntity) {
+class MapEntityFactory(
+    layerEntity: EcsEntity,
+    private val panningPointsMaxCount: Int
+) {
+    private var pointsTotalCount = 0
     private val myComponentManager: EcsComponentManager = layerEntity.componentManager
     private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
     private val myLayerEntityComponent: LayerEntitiesComponent = layerEntity.get()
+    private val myCanvasLayerComponent: CanvasLayerComponent = layerEntity.get()
+
+    internal fun updatePanningPolicy(newPointsCount: Int) {
+        pointsTotalCount += newPointsCount
+        if (pointsTotalCount > panningPointsMaxCount) {
+            myCanvasLayerComponent.canvasLayer.panningPolicy = PanningPolicy.COPY
+        }
+    }
 
     fun createMapEntity(name: String): EcsEntity {
         return mapEntity(myComponentManager, myParentLayerComponent, name)

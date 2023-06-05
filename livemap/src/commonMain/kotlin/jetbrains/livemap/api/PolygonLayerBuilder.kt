@@ -8,8 +8,10 @@ package jetbrains.livemap.api
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
+import jetbrains.datalore.base.typedGeometry.Ring
 import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.IndexComponent
 import jetbrains.livemap.chart.LocatorComponent
@@ -32,12 +34,12 @@ import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
-class Polygons(
+class PolygonLayerBuilder(
     val factory: MapEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
+fun LayersBuilder.polygons(block: PolygonLayerBuilder.() -> Unit) {
 
     val layerEntity =  myComponentManager
         .createEntity("map_layer_polygon")
@@ -46,20 +48,20 @@ fun LayersBuilder.polygons(block: Polygons.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Polygons(
-        MapEntityFactory(layerEntity),
+    PolygonLayerBuilder(
+        MapEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
         mapProjection
     ).apply(block)
 }
 
-fun Polygons.polygon(block: PolygonsBuilder.() -> Unit) {
-    PolygonsBuilder(factory, mapProjection)
+fun PolygonLayerBuilder.polygon(block: PolygonEntityBuilder.() -> Unit) {
+    PolygonEntityBuilder(factory, mapProjection)
         .apply(block)
         .build()
 }
 
 @LiveMapDsl
-class PolygonsBuilder(
+class PolygonEntityBuilder(
     private val myFactory: MapEntityFactory,
     private val myMapProjection: MapProjection
 ) {
@@ -88,8 +90,9 @@ class PolygonsBuilder(
 
     private fun createStaticEntity(): EcsEntity {
         val worldGeometry = transform(geometry!!, myMapProjection::apply, resamplingPrecision = null)
-
         val worldBbox = worldGeometry.bbox ?: error("Polygon bbox can't be null")
+
+        myFactory.updatePanningPolicy(worldGeometry.sumOf { poly -> poly.sumOf(Ring<World>::size) })
 
         return myFactory
             .createMapEntity("map_ent_s_polygon")
@@ -101,11 +104,11 @@ class PolygonsBuilder(
                     renderer = PolygonRenderer()
                 }
                 +ChartElementComponent().apply {
-                    sizeScalingRange = this@PolygonsBuilder.sizeScalingRange
-                    alphaScalingEnabled = this@PolygonsBuilder.alphaScalingEnabled
-                    fillColor = this@PolygonsBuilder.fillColor
-                    strokeColor = this@PolygonsBuilder.strokeColor
-                    strokeWidth = this@PolygonsBuilder.strokeWidth
+                    sizeScalingRange = this@PolygonEntityBuilder.sizeScalingRange
+                    alphaScalingEnabled = this@PolygonEntityBuilder.alphaScalingEnabled
+                    fillColor = this@PolygonEntityBuilder.fillColor
+                    strokeColor = this@PolygonEntityBuilder.strokeColor
+                    strokeWidth = this@PolygonEntityBuilder.strokeWidth
                 }
                 +WorldOriginComponent(worldBbox.origin)
                 +WorldGeometryComponent().apply { this.geometry = Geometry.of(worldGeometry) }
@@ -117,7 +120,7 @@ class PolygonsBuilder(
     }
 
     private fun createGeoObjectEntity(): EcsEntity {
-        val geoObject = this@PolygonsBuilder.geoObject!!
+        val geoObject = this@PolygonEntityBuilder.geoObject!!
 
         return myFactory
             .createMapEntity("map_ent_geo_object_polygon_" + geoObject.id)
@@ -126,10 +129,10 @@ class PolygonsBuilder(
                     renderer = RegionRenderer()
                 }
                 + ChartElementComponent().apply {
-                    sizeScalingRange = this@PolygonsBuilder.sizeScalingRange
-                    fillColor = this@PolygonsBuilder.fillColor
-                    strokeColor = this@PolygonsBuilder.strokeColor
-                    strokeWidth = this@PolygonsBuilder.strokeWidth
+                    sizeScalingRange = this@PolygonEntityBuilder.sizeScalingRange
+                    fillColor = this@PolygonEntityBuilder.fillColor
+                    strokeColor = this@PolygonEntityBuilder.strokeColor
+                    strokeWidth = this@PolygonEntityBuilder.strokeWidth
                 }
                 + RegionIdComponent(geoObject.id)
                 + RegionFragmentsComponent()
