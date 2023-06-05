@@ -23,6 +23,7 @@ import jetbrains.datalore.vis.svg.SvgNodeContainer
 import jetbrains.datalore.vis.svg.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.dom.createElement
 import org.w3c.dom.Element
 import org.w3c.dom.HTMLElement
@@ -139,7 +140,7 @@ internal class FigureToHtml(
         }
 
         fun setupRootHTMLElement(element: HTMLElement, size: DoubleVector) {
-            var style = "position: relative; width: ${size.x}px; height: ${size.y}px;"
+            val style = "position: relative; width: ${size.x}px; height: ${size.y}px;"
             element.setAttribute("style", style)
         }
 
@@ -202,11 +203,25 @@ internal class FigureToHtml(
                     destMouseEventPeer = canvasControl.mousePeer::dispatch
                 )
 
-                liveMapFigure.mapToCanvas(canvasControl)
+                val liveMapReg = liveMapFigure.mapToCanvas(canvasControl)
                 parentElement.appendChild(liveMapDiv)
+
+                liveMapDiv.onDisconnect(liveMapReg::dispose)
             }
 
             return svg
         }
+
+        private fun HTMLElement.onDisconnect(onDisconnected: () -> Unit): Int {
+            fun checkConnection() {
+                if (!isConnected) {
+                    onDisconnected()
+                } else {
+                    window.requestAnimationFrame { checkConnection() }
+                }
+            }
+            return window.requestAnimationFrame { checkConnection() }
+        }
     }
+
 }
