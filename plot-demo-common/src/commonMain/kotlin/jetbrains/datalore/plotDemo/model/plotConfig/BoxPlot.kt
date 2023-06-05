@@ -48,7 +48,8 @@ open class BoxPlot {
                       'geom': 'boxplot'
                     },
                     {
-                      'geom': 'boxplot_outlier'
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
                     }
                   ]
                 }
@@ -76,7 +77,8 @@ open class BoxPlot {
                       'varwidth': true
                     },
                     {
-                      'geom': 'boxplot_outlier'
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
                     }
                   ]
                 }
@@ -105,7 +107,8 @@ open class BoxPlot {
                       'whisker_width': 0.5
                     },
                     {
-                      'geom': 'boxplot_outlier'
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
                     }
                   ]
                 }
@@ -132,7 +135,8 @@ open class BoxPlot {
                       'geom': 'boxplot'
                     },
                     {
-                      'geom': 'boxplot_outlier',
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier',
                       'color': 'red',
                       'shape': 1,
                       'size': 15
@@ -163,7 +167,8 @@ open class BoxPlot {
                       'geom': 'boxplot'
                     },
                     {
-                      'geom': 'boxplot_outlier'
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
                     }
                   ]
                 }
@@ -192,7 +197,8 @@ open class BoxPlot {
                       'varwidth': true
                     },
                     {
-                      'geom': 'boxplot_outlier'
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
                     }
                   ]
                 }
@@ -226,7 +232,8 @@ open class BoxPlot {
                       'color': 'red'
                     },
                     {
-                      'geom': 'boxplot_outlier'
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
                     }
                   ]
                 }
@@ -242,9 +249,9 @@ open class BoxPlot {
             // see this issue: https://github.com/JetBrains/lets-plot/issues/325
 
             val layerSpec = if (x == null) {
-                "{'geom': 'boxplot'}, {'geom': 'boxplot_outlier'}"
+                "{'geom': 'boxplot'}, {'geom': 'point', 'stat': 'boxplot_outlier'}"
             } else {
-                "{'geom': 'boxplot', 'x': '$x'}, {'geom': 'boxplot_outlier', 'x': '$x'}"
+                "{'geom': 'boxplot', 'x': '$x'}, {'geom': 'point', 'stat': 'boxplot_outlier', 'x': '$x'}"
             }
 
             val spec = """

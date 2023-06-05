@@ -71,7 +71,6 @@ class GeomProto constructor(val geomKind: GeomKind) {
             H_LINE -> DefaultSampling.H_LINE
             V_LINE -> DefaultSampling.V_LINE
             BOX_PLOT -> Samplings.NONE // DefaultSampling.BOX_PLOT
-            BOX_PLOT_OUTLIER -> DefaultSampling.BOXPLOT_OUTLIER
             AREA_RIDGES -> DefaultSampling.AREA_RIDGES
             VIOLIN -> DefaultSampling.VIOLIN
             Y_DOT_PLOT -> DefaultSampling.Y_DOT_PLOT
@@ -169,7 +168,6 @@ class GeomProto constructor(val geomKind: GeomKind) {
             DEFAULTS[CONTOURF] = contourfDefaults()
             DEFAULTS[CROSS_BAR] = crossBarDefaults()
             DEFAULTS[BOX_PLOT] = boxplotDefaults()
-            DEFAULTS[BOX_PLOT_OUTLIER] = boxplotOutlierDefaults()
             DEFAULTS[AREA_RIDGES] = areaRidgesDefaults()
             DEFAULTS[VIOLIN] = violinDefaults()
             DEFAULTS[Y_DOT_PLOT] = yDotplotDefaults()
@@ -244,16 +242,6 @@ class GeomProto constructor(val geomKind: GeomKind) {
         private fun boxplotDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "boxplot"
-            defaults[Layer.POS] = mapOf(
-                Meta.NAME to PosProto.DODGE,
-                Pos.Dodge.WIDTH to 0.95
-            )
-            return defaults
-        }
-
-        private fun boxplotOutlierDefaults(): Map<String, Any> {
-            val defaults = HashMap<String, Any>()
-            defaults[Layer.STAT] = "boxplot_outlier"
             defaults[Layer.POS] = mapOf(
                 Meta.NAME to PosProto.DODGE,
                 Pos.Dodge.WIDTH to 0.95

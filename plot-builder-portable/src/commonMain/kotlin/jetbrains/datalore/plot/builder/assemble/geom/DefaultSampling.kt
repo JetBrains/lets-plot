@@ -42,7 +42,6 @@ object DefaultSampling {
     val JITTER = POINT
     val Q_Q = POINT
     val PIE = POINT
-    val BOXPLOT_OUTLIER = POINT
 
     // lines
     val Q_Q_LINE = LINE

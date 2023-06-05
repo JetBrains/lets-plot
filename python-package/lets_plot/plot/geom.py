@@ -3122,21 +3122,22 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
-        color = other_args.get('color')
-        fill = other_args.get('fill')
-        size = other_args.get('size')
-        boxplot_layer += _geom('boxplot_outlier',
+        default_position = 'dodge'
+        box_color = other_args.get('color')
+        box_fill = other_args.get('fill')
+        box_size = other_args.get('size')
+        boxplot_layer += _geom('point',
                                mapping=mapping,
                                data=data,
-                               stat=None,
-                               position=None,
+                               stat='boxplot_outlier',
+                               position=position or default_position,
                                show_legend=show_legend,
                                sampling=sampling,
                                orientation=orientation,
-                               color=outlier_color or color,
-                               fill=outlier_fill or fill,
+                               color=outlier_color or box_color,
+                               fill=outlier_fill or box_fill,
                                shape=outlier_shape,
-                               size=outlier_size or size,
+                               size=outlier_size or box_size,
                                stroke=outlier_stroke,
                                color_by=color_by, fill_by=fill_by)
     return boxplot_layer
