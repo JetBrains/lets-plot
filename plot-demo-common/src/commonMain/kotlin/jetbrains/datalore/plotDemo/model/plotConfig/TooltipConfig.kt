@@ -18,7 +18,7 @@ class TooltipConfig {
             redefineDefaults(),
             tooltipAesList(),
             tooltipEmptyList(),
-            outliers()
+            sideTooltips()
         )
     }
 
@@ -181,7 +181,7 @@ class TooltipConfig {
         return plotSpec
     }
 
-    private fun outliers(): MutableMap<String, Any> {
+    private fun sideTooltips(): MutableMap<String, Any> {
         val spec = """{
       'data': {
             'hwy': [4.2, 11.5, 7.3, 5.8, 6.4, 10.0],

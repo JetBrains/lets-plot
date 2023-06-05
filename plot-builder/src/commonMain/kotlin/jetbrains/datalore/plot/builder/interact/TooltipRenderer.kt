@@ -99,28 +99,28 @@ internal class TooltipRenderer constructor(
                 val fillColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
-                    spec.isOutlier -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
+                    spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
                     else -> tooltipsTheme.tooltipFill()
                 }
 
                 val borderColor = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
-                    spec.isOutlier -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
+                    spec.isSide -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
                     else -> tooltipsTheme.tooltipColor()
                 }
 
                 // Text color is set by element class name,
-                // but for outliers the color is not constant - it depends on the fill color
+                // but for side tooltips the color is not constant - it depends on the fill color
                 val textColor = when {
-                    spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isOutlier -> borderColor
+                    spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isSide -> borderColor
                     else -> null
                 }
 
                 val strokeWidth = when {
                     spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
                     spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
-                    spec.isOutlier -> 1.0
+                    spec.isSide -> 1.0
                     else -> tooltipsTheme.tooltipStrokeWidth()
                 }
 

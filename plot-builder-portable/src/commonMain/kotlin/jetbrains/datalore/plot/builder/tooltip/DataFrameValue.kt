@@ -21,7 +21,7 @@ class DataFrameValue(
     private lateinit var myVariable: DataFrame.Variable
     private lateinit var myFormatter: (Any) -> String
 
-    override val isOutlier: Boolean = false
+    override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
@@ -43,7 +43,7 @@ class DataFrameValue(
             value = myFormatter(originalValue),
             aes = null,
             isAxis = false,
-            isOutlier = false
+            isSide = false
         )
     }
 

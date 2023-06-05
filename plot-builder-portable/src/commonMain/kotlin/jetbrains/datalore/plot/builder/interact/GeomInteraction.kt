@@ -51,7 +51,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         fun createTestContextualMapping(
             aesListForTooltip: List<Aes<*>>,
             axisAes: List<Aes<*>>,
-            outliers: List<Aes<*>>,
+            sideTooltipAes: List<Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
             userDefinedValueSources: List<ValueSource>? = null
@@ -59,7 +59,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             val defaultTooltipLines = GeomInteractionBuilderUtil.defaultValueSourceTooltipLines(
                 aesListForTooltip,
                 axisAes,
-                outliers,
+                sideTooltipAes,
                 userDefinedValueSources
             )
             return createContextualMapping(
@@ -89,7 +89,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             mappedTooltipLines.forEach { it.initDataContext(dataFrame, dataAccess) }
 
             val hasGeneralTooltip = mappedTooltipLines.any { line ->
-                line.fields.none(ValueSource::isOutlier)
+                line.fields.none(ValueSource::isSide)
             }
             val hasAxisTooltip = mappedTooltipLines.any { line ->
                 line.fields.any(ValueSource::isAxis)

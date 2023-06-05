@@ -53,7 +53,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
     }
 
     @Test
-    fun checkIfTooltipIsOutlier() {
+    fun checkIfTooltipIsSide() {
         val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
         createTooltipSpecs(
             geomTargetBuilder.withPathHitShape()
@@ -66,7 +66,7 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                 )
                 .build()
         )
-        assertLines(listOf(widthMapping.shortTooltipText()), isOutlier = true)
+        assertLines(listOf(widthMapping.shortTooltipText()), isSide = true)
     }
 
     @Test
@@ -89,6 +89,6 @@ class TooltipSpecFactoryTest : jetbrains.datalore.plot.builder.interact.TooltipS
                 .build(),
             valueSources = listOf(widthAes)
         )
-        assertLines(listOf(widthMapping.shortTooltipText()), isOutlier = true)
+        assertLines(listOf(widthMapping.shortTooltipText()), isSide = true)
     }
 }

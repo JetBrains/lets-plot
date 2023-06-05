@@ -74,9 +74,9 @@ open class TooltipSpecTestHelper {
         assertEquals(expectedLines, tooltipSpec.lines.map(TooltipSpec.Line::toString))
     }
 
-    fun assertLines(expectedLines: List<String>, isOutlier: Boolean) {
+    fun assertLines(expectedLines: List<String>, isSide: Boolean) {
         val actualLines =
-            myTooltipSpecs.filter { it.isOutlier == isOutlier }.flatMap { it.lines.map(TooltipSpec.Line::toString) }
+            myTooltipSpecs.filter { it.isSide == isSide }.flatMap { it.lines.map(TooltipSpec.Line::toString) }
         assertEquals(expectedLines.size, actualLines.size)
         assertEquals(expectedLines, actualLines)
     }
@@ -98,7 +98,7 @@ open class TooltipSpecTestHelper {
             GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                outliers = geomTarget.aesTipLayoutHints.map { it.key },
+                sideTooltipAes = geomTarget.aesTipLayoutHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
             ),

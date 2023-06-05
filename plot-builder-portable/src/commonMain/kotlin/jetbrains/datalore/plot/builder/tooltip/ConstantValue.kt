@@ -23,7 +23,7 @@ class ConstantValue(
     private var isYOrientation: Boolean? = null
     private var myDataLabel: String? = label
 
-    override val isOutlier: Boolean = false
+    override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
@@ -44,7 +44,7 @@ class ConstantValue(
             value = presentation,
             aes = null,
             isAxis = false,
-            isOutlier = false
+            isSide = false
         )
     }
 

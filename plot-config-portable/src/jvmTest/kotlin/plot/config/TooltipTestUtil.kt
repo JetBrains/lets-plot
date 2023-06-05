@@ -75,7 +75,7 @@ object TooltipTestUtil {
     }
 
     private fun assertGeneralTooltip(tooltipSpecs: List<TooltipSpec>, expectedLines: List<String>) {
-        val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isOutlier)
+        val actualGeneralTooltips = tooltipSpecs.filterNot(TooltipSpec::isSide)
         assertEquals(expectedLines.isEmpty(), actualGeneralTooltips.isEmpty())
         if (actualGeneralTooltips.isNotEmpty()) {
             val actualLines = actualGeneralTooltips.single().lines.map(TooltipSpec.Line::toString)

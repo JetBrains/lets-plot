@@ -77,7 +77,7 @@ object GeomInteractionUtil {
                 hiddenAesList -
                 axisWithNoLabels
 
-        val outlierAesList = createOutlierAesList(
+        val sideTooltipAes = createSideTooltipAesList(
             layerConfig.geomProto.geomKind
         ).afterOrientation(yOrientation)
 
@@ -96,7 +96,7 @@ object GeomInteractionUtil {
             locatorLookupStrategy = tooltipSetup.locatorLookupStrategy,
             tooltipAes = tooltipAes,
             tooltipAxisAes = axisAes,
-            tooltipOutlierAes = outlierAesList
+            sideTooltipAes = sideTooltipAes
         )
 
         return builder
@@ -352,7 +352,7 @@ object GeomInteractionUtil {
         return mappingsToShow.values.toList()
     }
 
-    private fun createOutlierAesList(geomKind: GeomKind): List<Aes<*>> {
+    private fun createSideTooltipAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
             GeomKind.CROSS_BAR,
             GeomKind.LINE_RANGE,

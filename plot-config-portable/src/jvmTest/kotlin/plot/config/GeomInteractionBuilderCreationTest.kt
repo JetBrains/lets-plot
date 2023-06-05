@@ -371,7 +371,7 @@ class GeomInteractionBuilderCreationTest {
 
     private fun getAesListInGeneralTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
-            line.fields.filterIsInstance<MappingValue>().filterNot(MappingValue::isOutlier).map(MappingValue::aes)
+            line.fields.filterIsInstance<MappingValue>().filterNot(MappingValue::isSide).map(MappingValue::aes)
         }
     }
 

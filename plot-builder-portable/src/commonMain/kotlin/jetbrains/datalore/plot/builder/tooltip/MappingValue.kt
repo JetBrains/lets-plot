@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 class MappingValue(
     val aes: Aes<*>,
-    override val isOutlier: Boolean = false,
+    override val isSide: Boolean = false,
     override val isAxis: Boolean = false,
     private val format: String? = null,
     label: String? = null
@@ -35,7 +35,7 @@ class MappingValue(
         if (myDataLabel == null) {
             myDataLabel = when {
                 isAxis -> null
-                isOutlier -> null
+                isSide -> null
                 else -> myDataAccess.getMappedDataLabel(aes)
             }
         }
@@ -60,24 +60,24 @@ class MappingValue(
             value = formattedValue,
             aes = aes,
             isAxis = isAxis,
-            isOutlier = isOutlier
+            isSide = isSide
         )
     }
 
     override fun copy(): MappingValue {
         return MappingValue(
             aes = aes,
-            isOutlier = isOutlier,
+            isSide = isSide,
             isAxis = isAxis,
             format = format,
             label = myDataLabel
         )
     }
 
-    fun withFlags(isOutlier: Boolean, isAxis: Boolean, label: String?): MappingValue {
+    fun withFlags(isSide: Boolean, isAxis: Boolean, label: String?): MappingValue {
         return MappingValue(
             aes = aes,
-            isOutlier = isOutlier,
+            isSide = isSide,
             isAxis = isAxis,
             format = format,
             label = label

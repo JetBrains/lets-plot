@@ -60,7 +60,7 @@ internal class MeasuredTooltipBuilder private constructor(private val myLayoutHi
                 lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
                 fill = myFillColor!!,
                 markerColors = emptyList(),
-                isOutlier = true,
+                isSide = true,
                 anchor = myAnchor
             ),
             mySize!!, TooltipBox(), strokeWidth = 0.0

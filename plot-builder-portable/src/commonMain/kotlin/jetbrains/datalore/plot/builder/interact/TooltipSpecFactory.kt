@@ -41,20 +41,20 @@ class TooltipSpecFactory(
         internal fun createTooltipSpecs(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
             tooltipSpecs += axisTooltipSpec()
-            tooltipSpecs += outlierTooltipSpec()
+            tooltipSpecs += sideTooltipSpec()
             tooltipSpecs += generalTooltipSpec()
             return tooltipSpecs
         }
 
         private fun hitIndex() = myGeomTarget.hitIndex
         private fun tipLayoutHint() = myGeomTarget.tipLayoutHint
-        private fun outlierHints() = myGeomTarget.aesTipLayoutHints
+        private fun sideHints() = myGeomTarget.aesTipLayoutHints
 
-        private fun outlierTooltipSpec(): List<TooltipSpec> {
+        private fun sideTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
-            val outlierDataPoints = outlierDataPoints()
-            outlierHints().forEach { (aes, hint) ->
-                val linesForAes = outlierDataPoints
+            val sideDataPoints = sideDataPoints()
+            sideHints().forEach { (aes, hint) ->
+                val linesForAes = sideDataPoints
                     .filter { aes == it.aes }
                     .map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue)
@@ -67,7 +67,7 @@ class TooltipSpecFactory(
                             fill = hint.fillColor ?: tipLayoutHint().fillColor
                             ?: tipLayoutHint().markerColors.firstOrNull() ?: WHITE,
                             markerColors = emptyList(),
-                            isOutlier = true
+                            isSide = true
                         )
                     )
                 }
@@ -94,7 +94,7 @@ class TooltipSpecFactory(
                             lines = lines,
                             fill = layoutHint.fillColor!!,
                             markerColors = emptyList(),
-                            isOutlier = true
+                            isSide = true
                         )
                     )
                 }
@@ -114,7 +114,7 @@ class TooltipSpecFactory(
                         lines = generalLines,
                         fill = null,
                         markerColors = tipLayoutHint().markerColors,
-                        isOutlier = false,
+                        isSide = false,
                         anchor = myTooltipAnchor,
                         minWidth = myTooltipMinWidth,
                         isCrosshairEnabled = myIsCrosshairEnabled
@@ -125,14 +125,14 @@ class TooltipSpecFactory(
             }
         }
 
-        private fun outlierDataPoints() = myDataPoints.filter { it.isOutlier && !it.isAxis }
+        private fun sideDataPoints() = myDataPoints.filter { it.isSide && !it.isAxis }
         private fun axisDataPoints() = myDataPoints.filter(DataPoint::isAxis)
 
         private fun generalDataPoints(): List<DataPoint> {
-            val nonOutlierDataPoints = myDataPoints.filterNot(DataPoint::isOutlier)
-            val outliers = outlierDataPoints().mapNotNull(DataPoint::aes)
-            val generalAesList = nonOutlierDataPoints.mapNotNull(DataPoint::aes) - outliers
-            return nonOutlierDataPoints.filter { dataPoint ->
+            val nonSideDataPoints = myDataPoints.filterNot(DataPoint::isSide)
+            val sideDataPoints = sideDataPoints().mapNotNull(DataPoint::aes)
+            val generalAesList = nonSideDataPoints.mapNotNull(DataPoint::aes) - sideDataPoints
+            return nonSideDataPoints.filter { dataPoint ->
                 when (dataPoint.aes) {
                     null -> true                // get all not aes (variables, text)
                     in generalAesList -> true   // get all existed in prepared aes list (mapped aes)
