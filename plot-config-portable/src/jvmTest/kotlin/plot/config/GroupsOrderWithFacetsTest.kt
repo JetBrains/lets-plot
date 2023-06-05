@@ -79,19 +79,21 @@ class GroupsOrderWithFacetsTest {
             |{
             |  "kind": "plot",
             |  "data": $myData,
-            |  "mapping": {
-            |    "x": "x",
-            |    "fill": "f"
-            |  },
             |  "facet": {
             |    "name": "grid",
             |    "x": "g",
             |    "x_order": 1,
             |    "y_order": 1
             |   },  
+            |   "mapping": {
+            |     "x": "x"
+            |   },   
             |  "layers": [
             |    {
             |      "geom": "bar",
+            |      "mapping": {
+            |          "fill": "f"
+            |       },      
             |      "data_meta": {
             |         "mapping_annotations": [
             |           {

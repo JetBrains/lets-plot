@@ -20,18 +20,9 @@ import jetbrains.datalore.plot.config.Option.Meta.SeriesAnnotation.FACTOR_LEVELS
 import jetbrains.datalore.plot.config.Option.Scale
 
 object DataMetaUtil {
-    private const val prefix = "@as_discrete@"
 
-    internal fun isDiscrete(variable: String) = variable.startsWith(prefix)
-
-    public fun toDiscrete(variable: String): String {
-        require(!isDiscrete(variable)) { "toDiscrete() - variable already encoded: $variable" }
-        return "$prefix$variable"
-    }
-
-    internal fun fromDiscrete(variable: String): String {
-        require(isDiscrete(variable)) { "fromDiscrete() - variable is not encoded: $variable" }
-        return variable.removePrefix(prefix)
+    internal fun asDiscreteName(aes: String, variable: String): String {
+        return "$aes.$variable"
     }
 
     private fun getMappingAnnotationsSpec(options: Map<*, *>, annotation: String): List<Map<*, *>> {
@@ -75,36 +66,20 @@ object DataMetaUtil {
             }
     }
 
-    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>): List<OrderOptionUtil.OrderOption> {
+    fun getOrderOptions(options: Map<*, *>, commonMappings: Map<*, *>, isClientSide: Boolean): List<OrderOptionUtil.OrderOption> {
         return getMappingAnnotationsSpec(options, AS_DISCRETE)
             .associate { it.getString(AES)!! to it.getMap(PARAMETERS) }
             .mapNotNull { (aesName, parameters) ->
                 check(aesName in commonMappings) {
                     "Aes '$aesName' not found in mappings: $commonMappings"
                 }
-                val variableName = commonMappings[aesName] as String
+                val variableName = (commonMappings[aesName] as String).let {
+                    if (isClientSide) asDiscreteName(aesName, it) else it
+                }
                 OrderOptionUtil.OrderOption.create(
                     variableName,
                     parameters?.getString(ORDER_BY),
                     parameters?.read(ORDER)
-                )
-            }
-    }
-
-    fun List<OrderOptionUtil.OrderOption>.inheritToNonDiscrete(mappings: Map<String, String>): List<OrderOptionUtil.OrderOption> {
-        // non-discrete mappings should inherit settings from the as_discrete
-        return this + mappings.values.toSet()
-            .filterNot(::isDiscrete)
-            .mapNotNull { varName ->
-                val orderOptionForVar = this
-                    .filter { isDiscrete(it.variableName) }
-                    .find { fromDiscrete(it.variableName) == varName }
-                    ?: return@mapNotNull null
-
-                OrderOptionUtil.OrderOption.create(
-                    varName,
-                    orderBy = orderOptionForVar.byVariable.takeIf { it != orderOptionForVar.variableName },
-                    orderOptionForVar.getOrderDir()
                 )
             }
     }

@@ -763,10 +763,10 @@ class DropUnusedDataTest {
         val spec = """{
             "kind": "plot",
             "data": { "x": [0, 0],  "g": [0, 1] },
-            "mapping": { "x": "x" },
             "layers": [
               {
                 "geom": "bar",
+                "mapping": { "x": "x" },
                 "data_meta": { 
                     "mapping_annotations": [
                        {

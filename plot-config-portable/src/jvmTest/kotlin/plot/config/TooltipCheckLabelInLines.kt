@@ -199,16 +199,16 @@ class TooltipCheckLabelInLines {
         val spec = """
         {
           "data": { 
-              "x": [ 1, 2, 3, 4, 5 ],
-              "y": [ 10, 20, 30, 40, 50 ]
+              "v": [ 1, 2, 3, 4, 5 ],
+              "f": [ 10, 20, 30, 40, 50 ]
           },
           "kind": "plot",
-          "mapping": { "x" : "x", "y" : "y", "fill" : "y" },
+          "mapping": { "x" : "v", "y" : "v", "fill" : "f" },
           "data_meta": { 
              "mapping_annotations": [ {
                  "aes": "fill",
                  "annotation": "as_discrete",
-                 "parameters": { "label": "y" }
+                 "parameters": { "label": "v" }
              } ] 
           },
           "layers": [
@@ -220,7 +220,7 @@ class TooltipCheckLabelInLines {
         val layer = TestUtil.getSingleGeomLayer(spec)
         assertGeneralTooltip(
             layer,
-            expectedLines = listOf("y: 10.0")
+            expectedLines = listOf("v: 10.0")
         )
     }
 }

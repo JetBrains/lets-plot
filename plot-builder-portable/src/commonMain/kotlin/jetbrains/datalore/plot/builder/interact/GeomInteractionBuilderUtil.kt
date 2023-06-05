@@ -21,10 +21,19 @@ internal object GeomInteractionBuilderUtil {
         return when {
             userTooltipSpec.useDefaultTooltips() -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
+                // and move content of side tooltips to the general tooltip in 'disable_splitting' mode
                 defaultValueSourceTooltipLines(
-                    tooltipAes,
+                    aesListForTooltip = if (userTooltipSpec.disableSplitting) {
+                        (sideTooltipAes + tooltipAes).distinct()
+                    } else {
+                        tooltipAes
+                    },
                     tooltipAxisAes,
-                    sideTooltipAes,
+                    outliers = if (userTooltipSpec.disableSplitting) {
+                        emptyList()
+                    } else {
+                        sideTooltipAes
+                    },
                     userTooltipSpec.valueSources,
                     tooltipConstantAes
                 )
@@ -35,11 +44,17 @@ internal object GeomInteractionBuilderUtil {
             }
             else -> {
                 // Form value sources: user list + axis + outliers
-                val geomOutliers = sideTooltipAes.toMutableList()
+
+                val geomOutliers = if (userTooltipSpec.disableSplitting) {
+                    // Hide outliers in 'disable_splitting' mode with specified lines
+                    emptyList()
+                } else {
+                    sideTooltipAes
+                }.toMutableList()
 
                 // Remove outlier tooltip if the mappedAes is used in the general tooltip
                 userTooltipSpec.tooltipLinePatterns!!.forEach { line ->
-                    val userDataAesList = line.fields.filterIsInstance<MappingValue>().map { it.aes }
+                    val userDataAesList = line.fields.filterIsInstance<MappingValue>().map(MappingValue::aes)
                     geomOutliers.removeAll(userDataAesList)
                 }
                 val axisValueSources = tooltipAxisAes.map { aes ->

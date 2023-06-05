@@ -54,22 +54,7 @@ abstract class PlotConfig(
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
     init {
-
-        val (plotMappings, plotData) = DataConfigUtil.createDataFrame(
-            commonData = DataFrame.Builder.emptyFrame(),
-            ownData = ConfigUtil.createDataFrame(get(DATA)),
-            commonMappings = emptyMap(),
-            ownMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
-            commonDiscreteAes = emptySet(),
-            ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META)),
-            isClientSide = isClientSide
-        )
-
-        sharedData = plotData
-
-        if (!isClientSide) {
-            update(MAPPING, plotMappings)
-        }
+        sharedData = ConfigUtil.createDataFrame(get(DATA))
 
         layerConfigs = createLayerConfigs(sharedData, isClientSide)
 
@@ -130,7 +115,7 @@ abstract class PlotConfig(
                 sharedData,
                 plotMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
                 plotDataMeta = getMap(DATA_META),
-                plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING)),
+                plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING), isClientSide),
                 isClientSide,
                 isMapPlot
             )

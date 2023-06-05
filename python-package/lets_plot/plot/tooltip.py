@@ -87,6 +87,7 @@ class layer_tooltips(FeatureSpec):
         self._tooltip_color = None
         self._tooltip_variables = variables
         self._tooltip_title = None
+        self._disable_splitting = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -120,6 +121,7 @@ class layer_tooltips(FeatureSpec):
         d['tooltip_color'] = self._tooltip_color
         d['variables'] = self._tooltip_variables
         d['title'] = self._tooltip_title
+        d['disable_splitting'] = self._disable_splitting
         return _filter_none(d)
 
     def format(self, field=None, format=None):
@@ -420,4 +422,41 @@ class layer_tooltips(FeatureSpec):
 
         """
         self._tooltip_title = value
+        return self
+
+    def disable_splitting(self):
+        """
+        Hide side tooltips.
+
+        Returns
+        -------
+        `layer_tooltips`
+            Layer tooltips specification.
+
+        Notes
+        -----
+        By default, the `disable_splitting()` function moves all side tooltips to the general tooltip.
+        If the content of a general tooltip is specified with the `line()` functions,
+        the general tooltip will get the given lines, and the side tooltips will be hidden.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 10
+
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+            n = 50
+            np.random.seed(42)
+            data = {
+                'v': np.random.normal(size=n),
+                'c': np.random.choice(['a', 'b', 'c'], size=n),
+            }
+            ggplot(data, aes('c', 'v')) + \\
+                geom_boxplot(tooltips=layer_tooltips().disable_splitting())
+
+        """
+        self._disable_splitting = True
         return self
