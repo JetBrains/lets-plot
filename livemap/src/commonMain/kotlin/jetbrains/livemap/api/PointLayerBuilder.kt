@@ -25,11 +25,11 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class PointLayerBuilder(
-    val factory: MapEntityFactory,
+    val factory: FeatureEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.points(block: PointLayerBuilder.() -> Unit) {
+fun FeatureLayerBuilder.points(block: PointLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_point")
         .addComponents {
@@ -38,7 +38,7 @@ fun LayersBuilder.points(block: PointLayerBuilder.() -> Unit) {
         }
 
     PointLayerBuilder(
-        MapEntityFactory(layerEntity, panningPointsMaxCount = 200),
+        FeatureEntityFactory(layerEntity, panningPointsMaxCount = 200),
         mapProjection
     ).apply(block)
 }
@@ -51,7 +51,7 @@ fun PointLayerBuilder.point(block: PointEntityBuilder.() -> Unit) {
 
 @LiveMapDsl
 class PointEntityBuilder(
-    private val myFactory: MapEntityFactory,
+    private val myFactory: FeatureEntityFactory,
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
@@ -71,10 +71,10 @@ class PointEntityBuilder(
     fun build(nonInteractive: Boolean = false): EcsEntity {
         val d = radius * 2.0
         return when {
-            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_point", point!!)
+            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_point", point!!)
             else -> error("Can't create point entity. Coord is null.")
         }.run {
-            myFactory.updatePanningPolicy(1)
+            myFactory.incrementLayerPointsTotalCount(1)
             setInitializer { worldPoint ->
                 if (layerIndex != null && index != null) {
                     +IndexComponent(layerIndex!!, index!!)

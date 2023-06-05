@@ -28,12 +28,12 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class LineLayerBuilder(
-    val factory: MapEntityFactory,
+    val factory: FeatureEntityFactory,
     val mapProjection: MapProjection,
     val horizontal: Boolean,
 )
 
-private fun LayersBuilder.lines(horizontal: Boolean, block: LineLayerBuilder.() -> Unit) {
+private fun FeatureLayerBuilder.lines(horizontal: Boolean, block: LineLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_line")
         .addComponents {
@@ -42,14 +42,14 @@ private fun LayersBuilder.lines(horizontal: Boolean, block: LineLayerBuilder.() 
         }
 
     LineLayerBuilder(
-        MapEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
+        FeatureEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
         mapProjection,
         horizontal
     ).apply(block)
 }
 
-fun LayersBuilder.hLines(block: LineLayerBuilder.() -> Unit) = lines(true, block)
-fun LayersBuilder.vLines(block: LineLayerBuilder.() -> Unit) = lines(false, block)
+fun FeatureLayerBuilder.hLines(block: LineLayerBuilder.() -> Unit) = lines(true, block)
+fun FeatureLayerBuilder.vLines(block: LineLayerBuilder.() -> Unit) = lines(false, block)
 
 fun LineLayerBuilder.line(block: LineEntityBuilder.() -> Unit) {
     LineEntityBuilder(factory, mapProjection)
@@ -59,7 +59,7 @@ fun LineLayerBuilder.line(block: LineEntityBuilder.() -> Unit) {
 
 @LiveMapDsl
 class LineEntityBuilder(
-    private val factory: MapEntityFactory,
+    private val factory: FeatureEntityFactory,
     private val mapProjection: MapProjection,
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
@@ -70,13 +70,13 @@ class LineEntityBuilder(
     var strokeWidth: Double = 1.0
 
     fun build(horizontal: Boolean): EcsEntity = when {
-        point != null -> factory.createStaticEntity("map_ent_s_line", point!!)
+        point != null -> factory.createStaticFeature("map_ent_s_line", point!!)
         else -> error("Can't create line entity. Coord is null.")
     }.setInitializer { worldPoint ->
         val line = createLineGeometry(worldPoint, horizontal, mapProjection.mapRect)
         val bbox = createLineBBox(worldPoint, strokeWidth, horizontal, mapProjection.mapRect)
 
-        factory.updatePanningPolicy(line.size)
+        factory.incrementLayerPointsTotalCount(line.size)
 
         +RenderableComponent().apply {
             renderer = PathRenderer()

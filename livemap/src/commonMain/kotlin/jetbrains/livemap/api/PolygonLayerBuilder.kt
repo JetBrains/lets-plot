@@ -35,11 +35,11 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class PolygonLayerBuilder(
-    val factory: MapEntityFactory,
+    val factory: FeatureEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.polygons(block: PolygonLayerBuilder.() -> Unit) {
+fun FeatureLayerBuilder.polygons(block: PolygonLayerBuilder.() -> Unit) {
 
     val layerEntity =  myComponentManager
         .createEntity("map_layer_polygon")
@@ -49,7 +49,7 @@ fun LayersBuilder.polygons(block: PolygonLayerBuilder.() -> Unit) {
         }
 
     PolygonLayerBuilder(
-        MapEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
+        FeatureEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
         mapProjection
     ).apply(block)
 }
@@ -62,7 +62,7 @@ fun PolygonLayerBuilder.polygon(block: PolygonEntityBuilder.() -> Unit) {
 
 @LiveMapDsl
 class PolygonEntityBuilder(
-    private val myFactory: MapEntityFactory,
+    private val myFactory: FeatureEntityFactory,
     private val myMapProjection: MapProjection
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
@@ -82,20 +82,20 @@ class PolygonEntityBuilder(
     fun build(): EcsEntity? {
 
         return when {
-            geoObject != null -> createGeoObjectEntity()
-            geometry != null -> createStaticEntity()
+            geoObject != null -> createFragmentFeature()
+            geometry != null -> createPolygonFeature()
             else -> null
         }
     }
 
-    private fun createStaticEntity(): EcsEntity {
+    private fun createPolygonFeature(): EcsEntity {
         val worldGeometry = transform(geometry!!, myMapProjection::apply, resamplingPrecision = null)
         val worldBbox = worldGeometry.bbox ?: error("Polygon bbox can't be null")
 
-        myFactory.updatePanningPolicy(worldGeometry.sumOf { poly -> poly.sumOf(Ring<World>::size) })
+        myFactory.incrementLayerPointsTotalCount(worldGeometry.sumOf { poly -> poly.sumOf(Ring<World>::size) })
 
         return myFactory
-            .createMapEntity("map_ent_s_polygon")
+            .createFeature("map_ent_s_polygon")
             .addComponents {
                 if (layerIndex != null && index != null) {
                     +IndexComponent(layerIndex!!, index!!)
@@ -119,11 +119,11 @@ class PolygonEntityBuilder(
             }
     }
 
-    private fun createGeoObjectEntity(): EcsEntity {
+    private fun createFragmentFeature(): EcsEntity {
         val geoObject = this@PolygonEntityBuilder.geoObject!!
 
         return myFactory
-            .createMapEntity("map_ent_geo_object_polygon_" + geoObject.id)
+            .createFeature("map_ent_geo_object_polygon_" + geoObject.id)
             .addComponents {
                 + RenderableComponent().apply {
                     renderer = RegionRenderer()

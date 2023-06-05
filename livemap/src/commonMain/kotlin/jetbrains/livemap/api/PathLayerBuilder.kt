@@ -44,11 +44,11 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class PathLayerBuilder(
-    val factory: MapEntityFactory,
+    val factory: FeatureEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.paths(block: PathLayerBuilder.() -> Unit) {
+fun FeatureLayerBuilder.paths(block: PathLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_path")
         .addComponents {
@@ -57,7 +57,7 @@ fun LayersBuilder.paths(block: PathLayerBuilder.() -> Unit) {
         }
 
     PathLayerBuilder(
-        MapEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
+        FeatureEntityFactory(layerEntity, panningPointsMaxCount = 15_000),
         mapProjection
     ).apply(block)
 }
@@ -70,7 +70,7 @@ fun PathLayerBuilder.path(block: PathEntityBuilder.() -> Unit) {
 
 @LiveMapDsl
 class PathEntityBuilder(
-    private val myFactory: MapEntityFactory,
+    private val myFactory: FeatureEntityFactory,
     private val myMapProjection: MapProjection
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
@@ -117,10 +117,10 @@ class PathEntityBuilder(
         val locGeometry = transformPath(points)
         val visGeometry = transformPath(points.takeUnless { geodesic } ?: Geodesic.createArcPath(points))
 
-        myFactory.updatePanningPolicy(visGeometry.sumOf(LineString<World>::size))
+        myFactory.incrementLayerPointsTotalCount(visGeometry.sumOf(LineString<World>::size))
         return visGeometry.bbox?.let { bbox ->
             val entity = myFactory
-                .createMapEntity("map_ent_path")
+                .createFeature("map_ent_path")
                 .addComponents {
                     if (layerIndex != null && index != null) {
                         +IndexComponent(layerIndex!!, index!!)

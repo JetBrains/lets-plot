@@ -25,11 +25,11 @@ import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
 class PieLayerBuilder(
-    val factory: MapEntityFactory,
+    val factory: FeatureEntityFactory,
     val mapProjection: MapProjection
 )
 
-fun LayersBuilder.pies(block: PieLayerBuilder.() -> Unit) {
+fun FeatureLayerBuilder.pies(block: PieLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_pie")
         .addComponents {
@@ -38,7 +38,7 @@ fun LayersBuilder.pies(block: PieLayerBuilder.() -> Unit) {
         }
 
     PieLayerBuilder(
-        MapEntityFactory(layerEntity, panningPointsMaxCount = 100),
+        FeatureEntityFactory(layerEntity, panningPointsMaxCount = 100),
         mapProjection
     ).apply(block)
 }
@@ -51,7 +51,7 @@ fun PieLayerBuilder.pie(block: PieEntityBuilder.() -> Unit) {
 
 @LiveMapDsl
 class PieEntityBuilder(
-    private val myFactory: MapEntityFactory
+    private val myFactory: FeatureEntityFactory
 ) {
     var sizeScalingRange: ClosedRange<Int>? = null
     var alphaScalingEnabled: Boolean = false
@@ -71,10 +71,10 @@ class PieEntityBuilder(
 
     fun build(): EcsEntity {
         return when {
-            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_pie_sector", point!!)
+            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_pie_sector", point!!)
             else -> error("Can't create pieSector entity. Coord is null.")
         }.run {
-            myFactory.updatePanningPolicy(1)
+            myFactory.incrementLayerPointsTotalCount(1)
             setInitializer { worldPoint ->
                 if (layerIndex != null) {
                     +IndexComponent(layerIndex!!, 0)

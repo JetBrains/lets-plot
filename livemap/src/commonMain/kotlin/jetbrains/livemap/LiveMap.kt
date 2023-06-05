@@ -23,7 +23,7 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
-import jetbrains.livemap.api.LayersBuilder
+import jetbrains.livemap.api.FeatureLayerBuilder
 import jetbrains.livemap.chart.*
 import jetbrains.livemap.chart.fragment.*
 import jetbrains.livemap.config.DevParams
@@ -71,7 +71,7 @@ class LiveMap(
     private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
-    private val layers: List<LayersBuilder.() -> Unit>,
+    private val layers: List<FeatureLayerBuilder.() -> Unit>,
     private val myBasemapTileSystemProvider: BasemapTileSystemProvider,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
@@ -307,14 +307,14 @@ class LiveMap(
                 }
         }
 
-        val layersBuilder = LayersBuilder(
+        val featureLayerBuilder = FeatureLayerBuilder(
             componentManager,
             myLayerManager,
             myMapProjection,
             myTextMeasurer
         )
 
-        layers.forEach(layersBuilder::apply)
+        layers.forEach(featureLayerBuilder::apply)
 
         if (myBasemapTileSystemProvider.isVector) {
             componentManager

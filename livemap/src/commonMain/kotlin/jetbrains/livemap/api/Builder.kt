@@ -57,7 +57,7 @@ class LiveMapBuilder {
     var size: DoubleVector = DoubleVector.ZERO
     var geocodingService: GeocodingService = Services.bogusGeocodingService()
     var tileSystemProvider: BasemapTileSystemProvider = chessboard()
-    var layers: List<LayersBuilder.() -> Unit> = emptyList()
+    var layers: List<FeatureLayerBuilder.() -> Unit> = emptyList()
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
     var projection: GeoProjection = Projections.mercator()
@@ -118,7 +118,7 @@ class LiveMapBuilder {
 }
 
 @LiveMapDsl
-class LayersBuilder(
+class FeatureLayerBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
@@ -188,42 +188,42 @@ fun mapEntity(
         }
 }
 
-class MapEntityFactory(
+class FeatureEntityFactory(
     layerEntity: EcsEntity,
     private val panningPointsMaxCount: Int
 ) {
     private var pointsTotalCount = 0
     private val myComponentManager: EcsComponentManager = layerEntity.componentManager
     private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
-    private val myLayerEntityComponent: LayerEntitiesComponent = layerEntity.get()
+    private val myLayerEntitiesComponent: LayerEntitiesComponent = layerEntity.get()
     private val myCanvasLayerComponent: CanvasLayerComponent = layerEntity.get()
 
-    internal fun updatePanningPolicy(newPointsCount: Int) {
-        pointsTotalCount += newPointsCount
+    internal fun incrementLayerPointsTotalCount(pointsCount: Int) {
+        pointsTotalCount += pointsCount
         if (pointsTotalCount > panningPointsMaxCount) {
             myCanvasLayerComponent.canvasLayer.panningPolicy = PanningPolicy.COPY
         }
     }
 
-    fun createMapEntity(name: String): EcsEntity {
+    fun createFeature(name: String): EcsEntity {
         return mapEntity(myComponentManager, myParentLayerComponent, name)
-            .also { myLayerEntityComponent.add(it.id) }
+            .also { myLayerEntitiesComponent.add(it.id) }
     }
 
-    fun createStaticEntityWithLocation(name: String, point: LonLatPoint): EcsEntity =
-        createStaticEntity(name, point).addComponents {
+    fun createStaticFeatureWithLocation(name: String, point: LonLatPoint): EcsEntity =
+        createStaticFeature(name, point).addComponents {
             + NeedLocationComponent
             + NeedCalculateLocationComponent
         }
 
-    fun createStaticEntity(name: String, point: LonLatPoint): EcsEntity =
-        createMapEntity(name)
+    fun createStaticFeature(name: String, point: LonLatPoint): EcsEntity =
+        createFeature(name)
             .add(LonLatComponent(point))
 }
 
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
-fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
+fun LiveMapBuilder.layers(block: FeatureLayerBuilder.() -> Unit) {
     layers = listOf(block)
 }
 

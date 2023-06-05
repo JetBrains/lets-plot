@@ -7,7 +7,7 @@ package jetbrains.livemap.makegeometrywidget
 
 import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.values.Color.Companion.parseHex
-import jetbrains.livemap.api.MapEntityFactory
+import jetbrains.livemap.api.FeatureEntityFactory
 import jetbrains.livemap.api.PathEntityBuilder
 import jetbrains.livemap.api.PointEntityBuilder
 import jetbrains.livemap.core.ecs.AbstractSystem
@@ -47,7 +47,7 @@ class MakeGeometryWidgetSystem(
     }
 
     private fun createVisualEntities(lonlat: LonLatPoint, widgetLayer: EcsEntity) {
-        val factory = MapEntityFactory(widgetLayer, 1000)
+        val factory = FeatureEntityFactory(widgetLayer, 1000)
 
         PointEntityBuilder(factory)
             .apply {

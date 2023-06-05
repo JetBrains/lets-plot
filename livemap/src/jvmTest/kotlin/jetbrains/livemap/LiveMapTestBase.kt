@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:Suppress("unused")
+
 package jetbrains.datalore.jetbrains.livemap
 
 import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
@@ -10,7 +12,7 @@ import jetbrains.datalore.jetbrains.livemap.stubs.LayerManagerStub
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.WorldPoint
-import jetbrains.livemap.api.LayersBuilder
+import jetbrains.livemap.api.FeatureLayerBuilder
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.Projections
 import jetbrains.livemap.core.SystemTime
@@ -37,7 +39,7 @@ abstract class LiveMapTestBase {
     private val mySystems = HashMap<KClass<out EcsSystem>, EcsSystem>()
     private var dt: Double = 0.0
     private var updateRepeatTimes: Int = 0
-    private lateinit var layersBuilder: LayersBuilder
+    private lateinit var featureLayerBuilder: FeatureLayerBuilder
 
     protected abstract val systemsOrder: List<KClass<out EcsSystem>>
 
@@ -65,7 +67,7 @@ abstract class LiveMapTestBase {
         `when`(liveMapContext.mapRenderContext).thenReturn(mapRenderContext)
         `when`(liveMapContext.camera).thenReturn(myCamera)
 
-        layersBuilder = LayersBuilder(
+        featureLayerBuilder = FeatureLayerBuilder(
             componentManager,
             LayerManagerStub(),
             mapProjection,
@@ -98,7 +100,7 @@ abstract class LiveMapTestBase {
         schedulerSpec().runAll().apply()
         repeatSpec().times(1).apply()
 
-        specs.forEach { it.apply() }
+        specs.forEach(MockSpec::apply)
 
         while (updateRepeatTimes-- > 0) {
             systemsOrder.forEach { systemClass ->
@@ -106,7 +108,7 @@ abstract class LiveMapTestBase {
             }
         }
 
-        afterUpdateCleanup().forEach { it.apply() }
+        afterUpdateCleanup().forEach(MockSpec::apply)
     }
 
     /**
@@ -126,8 +128,8 @@ abstract class LiveMapTestBase {
         return system
     }
 
-    protected fun layers(block: LayersBuilder.() -> Unit) {
-        layersBuilder.apply(block)
+    protected fun layers(block: FeatureLayerBuilder.() -> Unit) {
+        featureLayerBuilder.apply(block)
     }
 
 

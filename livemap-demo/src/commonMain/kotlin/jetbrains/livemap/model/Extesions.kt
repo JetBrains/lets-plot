@@ -24,11 +24,11 @@ fun LineEntityBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 
-fun TextBuilder.coord(geoObj: GeoObject) {
+fun TextEntityBuilder.coord(geoObj: GeoObject) {
     point = explicitVec(geoObj.centroid.x, geoObj.centroid.y)
 }
 
-fun TextBuilder.coord(lon: Double, lat: Double) {
+fun TextEntityBuilder.coord(lon: Double, lat: Double) {
     point = explicitVec(lon, lat)
 }
 

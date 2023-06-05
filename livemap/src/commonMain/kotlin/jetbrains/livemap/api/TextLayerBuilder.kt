@@ -24,12 +24,12 @@ import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 
 @LiveMapDsl
-class Texts(
-    val factory: MapEntityFactory,
+class TextLayerBuilder(
+    val factory: FeatureEntityFactory,
     val textMeasurer: TextMeasurer
 )
 
-fun LayersBuilder.texts(block: Texts.() -> Unit) {
+fun FeatureLayerBuilder.texts(block: TextLayerBuilder.() -> Unit) {
     val layerEntity = myComponentManager
         .createEntity("map_layer_text")
         .addComponents {
@@ -37,21 +37,21 @@ fun LayersBuilder.texts(block: Texts.() -> Unit) {
             + LayerEntitiesComponent()
         }
 
-    Texts(
-        MapEntityFactory(layerEntity, 500),
+    TextLayerBuilder(
+        FeatureEntityFactory(layerEntity, 500),
         textMeasurer
     ).apply(block)
 }
 
-fun Texts.text(block: TextBuilder.() -> Unit) {
-    TextBuilder(factory)
+fun TextLayerBuilder.text(block: TextEntityBuilder.() -> Unit) {
+    TextEntityBuilder(factory)
         .apply(block)
         .build(textMeasurer)
 }
 
 @LiveMapDsl
-class TextBuilder(
-    private val myFactory: MapEntityFactory
+class TextEntityBuilder(
+    private val myFactory: FeatureEntityFactory
 ) {
     var index: Int = 0
     var point: Vec<LonLat>? = null
@@ -98,7 +98,7 @@ class TextBuilder(
         )
 
         return when {
-            point != null -> myFactory.createStaticEntityWithLocation("map_ent_s_text", point!!)
+            point != null -> myFactory.createStaticFeatureWithLocation("map_ent_s_text", point!!)
             else -> error("Can't create text entity. Coord is null.")
         }
             .setInitializer { worldPoint ->
@@ -106,10 +106,10 @@ class TextBuilder(
                     renderer = TextRenderer()
                 }
                 +ChartElementComponent().apply {
-                    fillColor = this@TextBuilder.fillColor
-                    strokeColor = this@TextBuilder.strokeColor
-                    strokeWidth = this@TextBuilder.strokeWidth
-                    lineheight = this@TextBuilder.lineheight
+                    fillColor = this@TextEntityBuilder.fillColor
+                    strokeColor = this@TextEntityBuilder.strokeColor
+                    strokeWidth = this@TextEntityBuilder.strokeWidth
+                    lineheight = this@TextEntityBuilder.lineheight
                 }
                 +TextSpecComponent().apply { this.textSpec = textSpec }
                 +WorldOriginComponent(worldPoint)
