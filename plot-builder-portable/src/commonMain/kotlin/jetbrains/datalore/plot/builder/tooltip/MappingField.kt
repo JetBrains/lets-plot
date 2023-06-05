@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-class MappingValue(
+class MappingField(
     val aes: Aes<*>,
     override val isSide: Boolean = false,
     override val isAxis: Boolean = false,
@@ -64,8 +64,8 @@ class MappingValue(
         )
     }
 
-    override fun copy(): MappingValue {
-        return MappingValue(
+    override fun copy(): MappingField {
+        return MappingField(
             aes = aes,
             isSide = isSide,
             isAxis = isAxis,
@@ -74,8 +74,8 @@ class MappingValue(
         )
     }
 
-    fun withFlags(isSide: Boolean, isAxis: Boolean, label: String?): MappingValue {
-        return MappingValue(
+    fun withFlags(isSide: Boolean, isAxis: Boolean, label: String?): MappingField {
+        return MappingField(
             aes = aes,
             isSide = isSide,
             isAxis = isAxis,

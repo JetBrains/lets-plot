@@ -54,7 +54,7 @@ internal object GeomInteractionBuilderUtil {
 
                 // Remove side tooltip if the mappedAes is used in the general tooltip
                 userTooltipSpec.tooltipLinePatterns!!.forEach { line ->
-                    val userDataAesList = line.fields.filterIsInstance<MappingValue>().map(MappingValue::aes)
+                    val userDataAesList = line.fields.filterIsInstance<MappingField>().map(MappingField::aes)
                     geomSideTooltips.removeAll(userDataAesList)
                 }
                 val axisValueSources = tooltipAxisAes.map { aes ->
@@ -79,8 +79,8 @@ internal object GeomInteractionBuilderUtil {
         userDefinedValueSources: List<ValueSource>?,
         label: String? = null
     ): ValueSource {
-        val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
-        return userDefined?.withFlags(isSide, isAxis, label) ?: MappingValue(
+        val userDefined = userDefinedValueSources?.filterIsInstance<MappingField>()?.find { it.aes == aes }
+        return userDefined?.withFlags(isSide, isAxis, label) ?: MappingField(
             aes,
             isSide = isSide,
             isAxis = isAxis,
@@ -110,13 +110,13 @@ internal object GeomInteractionBuilderUtil {
             val label = if (isOneLineTooltip && aes in listOf(Aes.X, Aes.Y)) "" else null
             getMappingValueSource(aes, isSide = false, isAxis = false, userDefinedValueSources, label)
         }
-        val constantValues = constantsMap?.map { (aes, value) ->
+        val constantFields = constantsMap?.map { (aes, value) ->
             val label = if (isOneLineTooltip) "" else null
-            val userDefined = userDefinedValueSources?.filterIsInstance<ConstantValue>()?.find { it.aes == aes }
-            userDefined?.withLabel(label) ?: ConstantValue(aes, value, format = null, label = label)
+            val userDefined = userDefinedValueSources?.filterIsInstance<ConstantField>()?.find { it.aes == aes }
+            userDefined?.withLabel(label) ?: ConstantField(aes, value, format = null, label = label)
         } ?: emptyList()
 
-        return (aesValueSources + axisValueSources + sideValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
+        return (aesValueSources + axisValueSources + sideValueSources + constantFields).map(TooltipLine.Companion::defaultLineForValueSource)
     }
 
 }

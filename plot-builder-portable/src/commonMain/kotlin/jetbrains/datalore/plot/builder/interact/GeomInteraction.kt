@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.ContextualMapping
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.builder.tooltip.MappingValue
+import jetbrains.datalore.plot.builder.tooltip.MappingField
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification.TooltipProperties
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
@@ -83,7 +83,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             tooltipTitle: TooltipLine?
         ): ContextualMapping {
             val mappedTooltipLines = tooltipLines.filter { line ->
-                val dataAesList = line.fields.filterIsInstance<MappingValue>()
+                val dataAesList = line.fields.filterIsInstance<MappingField>()
                 dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
             }
             mappedTooltipLines.forEach { it.initDataContext(dataFrame, dataAccess) }

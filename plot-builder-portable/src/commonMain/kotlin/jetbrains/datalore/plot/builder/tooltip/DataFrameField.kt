@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-class DataFrameValue(
+class DataFrameField(
     private val name: String,
     private val format: String? = null
 ) : ValueSource {
@@ -47,8 +47,8 @@ class DataFrameValue(
         )
     }
 
-    override fun copy(): DataFrameValue {
-        return DataFrameValue(name, format)
+    override fun copy(): DataFrameField {
+        return DataFrameField(name, format)
     }
 
     fun getVariableName(): String {
