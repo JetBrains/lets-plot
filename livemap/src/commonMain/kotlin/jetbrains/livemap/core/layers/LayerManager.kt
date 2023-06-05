@@ -30,7 +30,7 @@ abstract class LayerManager {
     protected fun add(kind: LayerKind, layer: CanvasLayer) {
         children.getOrPut(kind, ::ArrayList).add(layer)
         layers.clear()
-        layers.addAll(LayerKind.values().flatMap { children[it] ?: emptyList<CanvasLayer>() })
+        layers.addAll(LayerKind.values().flatMap { children[it] ?: emptyList() })
     }
 
     protected fun remove(layer: CanvasLayer) {
@@ -68,9 +68,7 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
 
         singleCanvasControl.context.clearRect(rect)
         layers.forEach {
-            myBackingStore[it]?.let { snapshot ->
-                singleCanvasControl.context.drawImage(snapshot)
-            }
+            myBackingStore[it]?.let(singleCanvasControl.context::drawImage)
         }
     }
 
@@ -157,7 +155,7 @@ class ScreenLayerManager(
         when (layer.kind) {
             UI -> {}
             else -> {
-                myBackingStore.getOrPut(layer) { layer.snapshot() }
+                myBackingStore.getOrPut(layer, layer::snapshot)
                     .let { snapshot ->
                         layer.clear()
                         layer.canvas.context2d.drawImage(snapshot, offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC))

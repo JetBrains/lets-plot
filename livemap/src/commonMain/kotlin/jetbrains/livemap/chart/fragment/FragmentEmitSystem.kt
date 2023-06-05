@@ -24,10 +24,6 @@ import jetbrains.livemap.geometry.MicroTasks
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LiveMapContext
 import jetbrains.livemap.mapengine.MapProjection
-import jetbrains.livemap.mapengine.camera.CameraListenerComponent
-import jetbrains.livemap.mapengine.camera.CenterChangedComponent
-import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
-import jetbrains.livemap.mapengine.camera.ZoomLevelChangedComponent
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
@@ -129,10 +125,6 @@ class FragmentEmitSystem(
                             +WorldDimensionComponent(bbox.dimension)
                             +WorldOriginComponent(bbox.origin)
                             + WorldGeometryComponent().apply { geometry = Geometry.of(worldMultiPolygon) }
-                            + CameraListenerComponent()
-                            + CenterChangedComponent()
-                            + ZoomLevelChangedComponent()
-                            + ZoomFractionChangedComponent()
                             + FragmentComponent(fragmentKey)
                             + myRegionIndex.find(fragmentKey.regionId).get<ParentLayerComponent>()
                         }

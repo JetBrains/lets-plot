@@ -59,8 +59,11 @@ import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.mapengine.*
 import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugDataSystem
-import jetbrains.livemap.mapengine.camera.*
+import jetbrains.livemap.mapengine.camera.CameraComponent
+import jetbrains.livemap.mapengine.camera.CameraInputSystem
+import jetbrains.livemap.mapengine.camera.CameraScale
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
+import jetbrains.livemap.mapengine.camera.MutableCamera
 import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem
@@ -293,7 +296,6 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.WORLD)
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("ground", LayerKind.BASEMAP_TILES)
                 }
         } else {
@@ -302,7 +304,6 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.RASTER)
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("http_ground", LayerKind.BASEMAP_TILES)
                 }
         }
@@ -322,7 +323,6 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.LABEL)
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("labels", LayerKind.BASEMAP_LABELS)
                 }
         }
@@ -334,7 +334,6 @@ class LiveMap(
                     + BasemapLayerComponent(BasemapLayerKind.DEBUG)
                     + DebugCellLayerComponent()
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("debug", LayerKind.BASEMAP_LABELS)
                 }
         }

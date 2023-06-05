@@ -21,7 +21,6 @@ import jetbrains.livemap.geocoding.RegionIdComponent
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.camera.CameraInputSystem
 import jetbrains.livemap.mapengine.placement.WorldDimensionComponent
-import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
 import org.assertj.core.api.Assertions
@@ -38,7 +37,6 @@ class FragmentEmitSystemTest : RegionsTestBase() {
         get() = listOf(
             CameraInputSystem::class,
             FragmentEmitSystem::class,
-            WorldOrigin2ScreenUpdateSystem::class,
             SchedulerSystem::class
         )
 
@@ -69,7 +67,6 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             ParentLayerComponent(parentLayerEntity.id)
         )
         addSystem(CameraInputSystem(componentManager))
-        addSystem(WorldOrigin2ScreenUpdateSystem(componentManager))
         addSystem(FragmentEmitSystem(Int.MAX_VALUE, componentManager))
         Mockito.`when`(liveMapContext.mapProjection).thenReturn(createMapProjection(Projections.mercator()))
         fragmentFoo0 = FragmentSpec(FOO_REGION_ID, QUAD_0).setGeometries(Utils.square(1, 2, 30, 40))

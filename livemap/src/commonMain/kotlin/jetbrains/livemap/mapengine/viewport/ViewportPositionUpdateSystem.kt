@@ -8,18 +8,15 @@ package jetbrains.livemap.mapengine.viewport
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.mapengine.LiveMapContext
-import jetbrains.livemap.mapengine.camera.CameraComponent
 
 class ViewportPositionUpdateSystem(componentManager: EcsComponentManager) :
     AbstractSystem<LiveMapContext>(componentManager) {
 
     override fun updateImpl(context: LiveMapContext, dt: Double) {
-        val cameraEntity = getSingletonEntity(CameraComponent::class)
-        val camera = cameraEntity.getComponent<CameraComponent>()
         val viewport = context.mapRenderContext.viewport
 
-        if (viewport.position != camera.position) {
-            viewport.position = camera.position
+        if (viewport.position != context.camera.position) {
+            viewport.position = context.camera.position
         }
 
         if (context.camera.isZoomFractionChanged && context.camera.isZoomLevelChanged) {
