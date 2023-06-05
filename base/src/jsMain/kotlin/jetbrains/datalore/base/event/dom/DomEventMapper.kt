@@ -54,6 +54,8 @@ class DomEventMapper(
     }
 
     private fun dispatch(eventSpec: MouseEventSpec, domMouseEvent: DomMouseEvent) {
+        domMouseEvent.preventDefault() // Fix for Safari to prevent selection when user drags outside a canvas
+
         val targetClientOrigin = myEventTarget.getBoundingClientRect().let { DoubleVector(it.x, it.y) }
         val targetAbsoluteOrigin = myTargetBounds?.origin ?: DoubleVector.ZERO
         val eventClientCoord = DoubleVector(domMouseEvent.clientX.toDouble(), domMouseEvent.clientY.toDouble())
