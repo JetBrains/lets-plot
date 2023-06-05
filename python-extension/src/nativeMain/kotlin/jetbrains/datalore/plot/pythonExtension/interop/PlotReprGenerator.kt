@@ -6,9 +6,11 @@ import jetbrains.datalore.plot.PlotHtmlExport
 import jetbrains.datalore.plot.PlotHtmlHelper
 import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
+import jetbrains.datalore.vis.svgToString.SvgToString
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import pngj.RGBEncoderNative
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
@@ -27,9 +29,9 @@ object PlotReprGenerator {
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
         try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
-
+            val nativeEncoder = SvgToString(RGBEncoderNative(), useCssPixelatedImageRendering == 1)
             @Suppress("UNCHECKED_CAST")
-            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>, useCssPixelatedImageRendering == 1)
+            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>, svgToString = nativeEncoder)
             val result = Py_BuildValue("s", svg);
             return result
         } catch (e: Throwable) {

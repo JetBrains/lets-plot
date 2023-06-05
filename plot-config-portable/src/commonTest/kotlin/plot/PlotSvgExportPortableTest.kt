@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
 import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
+import jetbrains.datalore.vis.svgToString.SvgToString
 import kotlin.test.*
 
 internal class PlotSvgExportPortableTest {
@@ -41,12 +42,12 @@ internal class PlotSvgExportPortableTest {
 
         PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = false
+            SvgToString(null, false)
         ).let { assertTrue(it.contains("style=\"image-rendering: optimizeSpeed\"")) }
 
         PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = true
+            SvgToString(null, true)
         ).let { assertTrue(it.contains("style=\"image-rendering: optimizeSpeed; image-rendering: pixelated\"")) }
     }
 

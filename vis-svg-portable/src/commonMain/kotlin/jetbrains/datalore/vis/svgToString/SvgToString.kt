@@ -36,8 +36,8 @@ class SvgToString(
             val name: String = key.name
             val value: String = svgElement.getAttribute(name).get().toString()
             //if (key.hasNamespace()) {
-//  buffer.append(key.getNamespaceUri()).append(':');
-//}
+            //  buffer.append(key.getNamespaceUri()).append(':');
+            //}
             buffer.append(name).append("=\"").append(value).append('"')
         }
         buffer.append('>')
@@ -74,7 +74,7 @@ class SvgToString(
                             true -> "image-rendering: optimizeSpeed; image-rendering: pixelated"
                             false -> "image-rendering: optimizeSpeed"
                         }
-                        childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, style)
+                        childNode.setAttribute(SvgAttributeSpec.createSpec(SvgConstants.SVG_STYLE_ATTRIBUTE), style)
                     }
 
                     renderElement(

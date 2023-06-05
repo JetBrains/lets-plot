@@ -21,18 +21,6 @@ object PlotSvgExportPortable {
 
     /**
      * @param plotSpec Raw specification of a plot or GGBunch.
-     * @param useCssPixelatedImageRendering true for CSS style "pixelated", false for SVG style "optimizeSpeed". Used for compatibility.
-     */
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun buildSvgImageFromRawSpecs(
-        plotSpec: MutableMap<String, Any>,
-        useCssPixelatedImageRendering: Boolean
-    ): String {
-        return buildSvgImageFromRawSpecs(plotSpec, plotSize = null, SvgToString(rgbEncoder = null, useCssPixelatedImageRendering))
-    }
-
-    /**
-     * @param plotSpec Raw specification of a plot or GGBunch.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun buildSvgImageFromRawSpecs(
