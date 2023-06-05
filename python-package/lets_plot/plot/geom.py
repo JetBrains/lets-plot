@@ -2934,7 +2934,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, tooltips=None,
                  orientation=None,
                  fatten=None,
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None, outlier_stroke=None,
@@ -2963,9 +2963,6 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
-        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -3114,6 +3111,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           stat=stat,
                           position=position,
                           show_legend=show_legend,
+                          sampling=None,
                           tooltips=tooltips,
                           orientation=orientation,
                           fatten=fatten,
@@ -3132,7 +3130,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                stat='boxplot_outlier',
                                position=position or default_position,
                                show_legend=show_legend,
-                               sampling=sampling,
+                               sampling=None,
                                orientation=orientation,
                                color=outlier_color or box_color,
                                fill=outlier_fill or box_fill,
