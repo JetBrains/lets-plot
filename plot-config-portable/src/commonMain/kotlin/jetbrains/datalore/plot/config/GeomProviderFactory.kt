@@ -332,7 +332,7 @@ internal object GeomProviderFactory {
                 PROVIDER.getValue(geomKind).invoke()
             }
         }
-            .withThemeColors(geomKind, geomTheme)
+            .withThemeColors(geomTheme)
     }
 
     private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {
@@ -341,95 +341,17 @@ internal object GeomProviderFactory {
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
     }
 
-    private fun GeomProvider.withThemeColors(geomKind: GeomKind, geomTheme: GeomTheme): GeomProvider {
-        val (color, fill) = when (geomKind) {
-            // geometries with stroke or without fill
-            GeomKind.POINT,
-            GeomKind.JITTER,
+    private fun GeomProvider.withThemeColors(geomTheme: GeomTheme): GeomProvider {
+        val aestheticValues: Map<Aes<*>, Any> = listOf(
+            Aes.COLOR to geomTheme.color(),
+            Aes.FILL to geomTheme.fill(),
+            Aes.SIZE to geomTheme.size(),
+            Aes.ALPHA to geomTheme.alpha()
+        )
+            .filter { (_, value) -> value != null }
+            .associate { (aes, value) -> aes to value!! }
 
-            GeomKind.PATH,
-            GeomKind.LINE,
-            GeomKind.SEGMENT,
-            GeomKind.AB_LINE,
-            GeomKind.H_LINE,
-            GeomKind.V_LINE,
-            GeomKind.STEP,
-            GeomKind.CONTOUR,
-            GeomKind.DENSITY2D,
-            GeomKind.FREQPOLY,
-
-            GeomKind.AREA,
-            GeomKind.DENSITY,
-            GeomKind.RIBBON,
-
-            GeomKind.AREA_RIDGES,
-
-            GeomKind.MAP,
-
-            GeomKind.BOX_PLOT,
-            GeomKind.ERROR_BAR,
-            GeomKind.CROSS_BAR,
-            GeomKind.LINE_RANGE,
-            GeomKind.POINT_RANGE,
-
-            GeomKind.VIOLIN,
-            GeomKind.RECT,
-
-            GeomKind.HISTOGRAM,
-
-            GeomKind.Q_Q,
-            GeomKind.Q_Q_2,
-            GeomKind.Q_Q_LINE,
-            GeomKind.Q_Q_2_LINE,
-
-            GeomKind.LOLLIPOP,
-
-            GeomKind.TEXT -> {
-                Pair(
-                    geomTheme.lineColor(),
-                    Colors.withOpacity(geomTheme.lineColor(), 0.1)
-                )
-            }
-
-            // geometries without stroke (with fill)
-            GeomKind.DOT_PLOT,
-            GeomKind.Y_DOT_PLOT,
-            GeomKind.BAR,
-            GeomKind.TILE,
-            GeomKind.BIN_2D,
-            GeomKind.POLYGON,
-            GeomKind.CONTOURF,
-            GeomKind.DENSITY2DF -> {
-                Pair(
-                    geomTheme.strokeColor(),
-                    null
-                )
-            }
-
-            // Smooth geom: set color for confidence interval
-            GeomKind.SMOOTH -> {
-                Pair(
-                    null,
-                    geomTheme.lineColor()
-                )
-            }
-
-            GeomKind.LABEL -> {
-                Pair(
-                    geomTheme.lineColor(),
-                    geomTheme.strokeColor()
-                )
-            }
-
-            GeomKind.RASTER,
-            GeomKind.PIE,
-            GeomKind.IMAGE,
-            GeomKind.LIVE_MAP -> {
-                Pair(null, null)
-            }
-        }
-
-        aestheticsDefaults.updateWith(color, fill)
+        aestheticsDefaults.updateWith(aestheticValues)
         return this
     }
 }

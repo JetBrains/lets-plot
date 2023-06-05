@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.builder.theme
 
+import jetbrains.datalore.plot.base.GeomKind
 
 interface Theme {
     fun horizontalAxis(flipAxis: Boolean): AxisTheme
@@ -21,5 +22,5 @@ interface Theme {
 
     fun tooltips(): TooltipsTheme
 
-    fun geometries(): GeomTheme
+    fun geometries(geomKind: GeomKind): GeomTheme
 }

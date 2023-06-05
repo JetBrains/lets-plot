@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
+import jetbrains.datalore.plot.base.GeomKind
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultGeomTheme.Companion.InheritedColors
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
@@ -22,7 +24,9 @@ class DefaultTheme(
     private val facets = DefaultFacetsTheme(options, fontFamilyRegistry)
     private val plot = DefaultPlotTheme(options, fontFamilyRegistry)
     private val tooltips = DefaultTooltipsTheme(options, fontFamilyRegistry)
-    private val geometries = DefaultGeomTheme(options, fontFamilyRegistry)
+
+    private val geomInheritedColors = InheritedColors(options, fontFamilyRegistry)
+    private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
 
@@ -38,7 +42,9 @@ class DefaultTheme(
 
     override fun tooltips(): TooltipsTheme = tooltips
 
-    override fun geometries(): GeomTheme = geometries
+    override fun geometries(geomKind: GeomKind): GeomTheme = geometries.getOrPut(geomKind) {
+        DefaultGeomTheme.forGeomKind(geomKind, geomInheritedColors)
+    }
 
     companion object {
         // For demo and tests

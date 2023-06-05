@@ -8,6 +8,11 @@ package jetbrains.datalore.plot.builder.theme
 import jetbrains.datalore.base.values.Color
 
 interface GeomTheme {
-    fun lineColor(): Color
-    fun strokeColor(): Color
+    fun color(): Color?
+
+    fun fill(): Color?
+
+    fun size(): Double?
+
+    fun alpha(): Double?
 }

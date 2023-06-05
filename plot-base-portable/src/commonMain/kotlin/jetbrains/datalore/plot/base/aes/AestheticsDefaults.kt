@@ -46,7 +46,7 @@ open class AestheticsDefaults {
     companion object {
         fun point(): AestheticsDefaults {
             return base()
-                .update(Aes.SIZE, 2.0)
+               // .update(Aes.SIZE, 2.0)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
@@ -72,31 +72,30 @@ open class AestheticsDefaults {
 
         fun smooth(): AestheticsDefaults {
             return path()
-                .update(Aes.COLOR, Color.MAGENTA)
-                .update(Aes.FILL, Color.BLACK)
-                .update(Aes.ALPHA, 1.5) // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
+               // .update(Aes.COLOR, Color.MAGENTA)
+               // .update(Aes.FILL, Color.BLACK)
         }
 
         fun bar(): AestheticsDefaults {
             return base()
                 .update(Aes.WIDTH, 0.9)
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+               // .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun histogram(): AestheticsDefaults {
             return base()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+               // .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun dotplot(): AestheticsDefaults {
             return AestheticsDefaults()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+                // .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
         fun tile(): AestheticsDefaults {
             return AestheticsDefaults()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+                //.update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun bin2d(): AestheticsDefaults {
@@ -105,7 +104,7 @@ open class AestheticsDefaults {
 
         fun errorBar(): AestheticsDefaults {
             return AestheticsDefaults()
-                .update(Aes.COLOR, Color.BLACK)
+                // .update(Aes.COLOR, Color.BLACK)
                 .update(Aes.WIDTH, 0.45)
                 .update(Aes.HEIGHT, 0.45)
         }
@@ -113,8 +112,8 @@ open class AestheticsDefaults {
         fun crossBar(): AestheticsDefaults {
             return AestheticsDefaults()
                 .update(Aes.WIDTH, 0.9)
-                .update(Aes.COLOR, Color.BLACK)
-                .update(Aes.FILL, Color.WHITE)
+                // .update(Aes.COLOR, Color.BLACK)
+                // .update(Aes.FILL, Color.WHITE)
         }
 
         fun lineRange(): AestheticsDefaults {
@@ -127,14 +126,14 @@ open class AestheticsDefaults {
 
         fun polygon(): AestheticsDefaults {
             return base()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+                // .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
         fun map(): AestheticsDefaults {
             return base()
-                .update(Aes.SIZE, 0.2)                    // outline thickness
-                .update(Aes.COLOR, Color.GRAY)
-                .update(Aes.FILL, Color.TRANSPARENT)
+                // .update(Aes.SIZE, 0.2)                    // outline thickness
+                // .update(Aes.COLOR, Color.GRAY)
+                // .update(Aes.FILL, Color.TRANSPARENT)
         }
 
         fun boxplot(): AestheticsDefaults {
@@ -143,19 +142,19 @@ open class AestheticsDefaults {
 
         fun areaRidges(): AestheticsDefaults {
             return base()
-                .update(Aes.COLOR, Color.BLACK)
-                .update(Aes.FILL, Color.parseHex("#8CBBE4"))
+                // .update(Aes.COLOR, Color.BLACK)
+                // .update(Aes.FILL, Color.parseHex("#8CBBE4"))
         }
 
         fun violin(): AestheticsDefaults {
             return AestheticsDefaults()
-                .update(Aes.COLOR, Color.BLACK)
-                .update(Aes.FILL, Color.WHITE)
+                // .update(Aes.COLOR, Color.BLACK)
+                // .update(Aes.FILL, Color.WHITE)
         }
 
         fun ydotplot(): AestheticsDefaults {
             return AestheticsDefaults()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+                // .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
@@ -173,7 +172,7 @@ open class AestheticsDefaults {
 
         fun density(): AestheticsDefaults {
             return area()
-                .update(Aes.FILL, Color.TRANSPARENT)
+                // .update(Aes.FILL, Color.TRANSPARENT)
         }
 
         fun contour(): AestheticsDefaults {
@@ -182,7 +181,7 @@ open class AestheticsDefaults {
 
         fun contourf(): AestheticsDefaults {
             return base()
-                .update(Aes.SIZE, 0.0)
+                // .update(Aes.SIZE, 0.0)
         }
 
         fun density2d(): AestheticsDefaults {
@@ -231,14 +230,14 @@ open class AestheticsDefaults {
 
         fun text(): AestheticsDefaults {
             return base()
-                .update(Aes.SIZE, 7.0)
-                .update(Aes.COLOR, Color.parseHex("#3d3d3d")) // dark gray
+                // .update(Aes.SIZE, 7.0)
+                // .update(Aes.COLOR, Color.parseHex("#3d3d3d")) // dark gray
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
         fun label(): AestheticsDefaults {
             return text()
-                .update(Aes.FILL, Color.WHITE)
+                // .update(Aes.FILL, Color.WHITE)
         }
 
         fun raster(): AestheticsDefaults {
@@ -251,7 +250,7 @@ open class AestheticsDefaults {
 
         fun pie(): AestheticsDefaults {
             return base()
-                .update(Aes.SIZE, 10.0)
+                // .update(Aes.SIZE, 10.0)
                 .updateInLegend(Aes.SIZE, 1.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
                 .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
@@ -267,11 +266,12 @@ open class AestheticsDefaults {
             return AestheticsDefaults()
         }
 
-        fun AestheticsDefaults.updateWith(color: Color?, fill: Color?): AestheticsDefaults {
-            return this.apply {
-                color?.let { update(Aes.COLOR, color) }
-                fill?.let { update(Aes.FILL, fill) }
+        fun AestheticsDefaults.updateWith(map: Map<Aes<*>, Any>): AestheticsDefaults {
+            map.forEach { (aes, value) ->
+                @Suppress("UNCHECKED_CAST")
+                this.update(aes as Aes<Any>, value)
             }
+            return this
         }
     }
 }

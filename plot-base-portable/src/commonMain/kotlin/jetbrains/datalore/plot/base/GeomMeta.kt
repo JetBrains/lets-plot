@@ -48,7 +48,6 @@ object GeomMeta {
         Aes.ALPHA,
         Aes.SHAPE,
         Aes.MAP_ID
-        // strokeWidth
     )
 
     private val PATH = listOf(
