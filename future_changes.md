@@ -8,12 +8,15 @@
 
 
 - In tooltip customization API:
-  `disable_splitting()` function to hide side tooltips.
+  `disable_splitting()` function to hide side tooltips [[LPK-189](https://github.com/JetBrains/lets-plot-kotlin/issues/189)].
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
 
 
 ### Changed
+
+- Reduce the default `width`/`height` values for `geom_errorbar()`.
+
 
 ### Fixed
 - ggsave: saving geomImshow() to SVG produces fuzzy picture [[LPK-188](https://github.com/JetBrains/lets-plot-kotlin/issues/188)].
