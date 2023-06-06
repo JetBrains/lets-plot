@@ -76,16 +76,15 @@ class BoxplotOutlierStat(
             ys: List<Double?>,
             whiskerIQRRatio: Double
         ): MutableMap<DataFrame.Variable, List<Double>> {
-            val xyPairs = xs.zip(ys).filter { (x, y) ->
-                SeriesUtil.allFinite(x, y)
-            }
+            val xyPairs = SeriesUtil.filterFinite(xs, ys)
+                .let { (xs, ys) -> xs zip ys }
             if (xyPairs.isEmpty()) {
                 return mutableMapOf()
             }
 
             val binnedData: MutableMap<Double, MutableList<Double>> = HashMap()
             for ((x, y) in xyPairs) {
-                binnedData.getOrPut(x!!) { ArrayList() }.add(y!!)
+                binnedData.getOrPut(x) { ArrayList() }.add(y)
             }
 
             val statX = ArrayList<Double>()

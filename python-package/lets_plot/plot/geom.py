@@ -3129,7 +3129,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                data=data,
                                stat='boxplot_outlier',
                                position=position or default_position,
-                               show_legend=show_legend,
+                               show_legend=False,
                                sampling=None,
                                orientation=orientation,
                                color=outlier_color or box_color,

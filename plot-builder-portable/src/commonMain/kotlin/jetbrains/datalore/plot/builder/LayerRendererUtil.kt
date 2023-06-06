@@ -25,7 +25,7 @@ object LayerRendererUtil {
         )
         val aesthetics = PlotUtil.createLayerAesthetics(
             layer,
-            layer.renderedAes(true),
+            layer.renderedAes(considerOrientation = true),
             aestheticMappers,
         )
 
