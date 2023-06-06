@@ -103,16 +103,10 @@ class BoxplotStat(
             whiskerIQRRatio: Double
         ): MutableMap<DataFrame.Variable, List<Double>> {
 
-            val xyPairs = xs.zip(ys).filter { (x, y) ->
-                SeriesUtil.allFinite(x, y)
-            }
-            if (xyPairs.isEmpty()) {
-                return mutableMapOf()
-            }
-
             val binnedData: MutableMap<Double, MutableList<Double>> = HashMap()
-            for ((x, y) in xyPairs) {
-                binnedData.getOrPut(x!!) { ArrayList() }.add(y!!)
+            val (xValues, yValues) = SeriesUtil.filterFinite(xs, ys)
+            for (i in xValues.indices) {
+                binnedData.getOrPut(xValues[i]) { ArrayList() }.add(yValues[i])
             }
 
             val statX = ArrayList<Double>()
