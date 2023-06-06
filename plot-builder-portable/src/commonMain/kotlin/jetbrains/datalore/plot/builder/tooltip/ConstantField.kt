@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-class ConstantValue(
+class ConstantField(
     val aes: Aes<*>,
     private val value: Any,
     private val format: String? = null,
@@ -23,7 +23,7 @@ class ConstantValue(
     private var isYOrientation: Boolean? = null
     private var myDataLabel: String? = label
 
-    override val isOutlier: Boolean = false
+    override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
@@ -44,7 +44,7 @@ class ConstantValue(
             value = presentation,
             aes = null,
             isAxis = false,
-            isOutlier = false
+            isSide = false
         )
     }
 
@@ -69,8 +69,8 @@ class ConstantValue(
         return formattedValue!!
     }
 
-    override fun copy(): ConstantValue {
-        return ConstantValue(
+    override fun copy(): ConstantField {
+        return ConstantField(
             aes,
             value,
             format,
@@ -78,8 +78,8 @@ class ConstantValue(
         )
     }
 
-    fun withLabel(label: String? = null): ConstantValue {
-        return ConstantValue(
+    fun withLabel(label: String? = null): ConstantField {
+        return ConstantField(
             aes,
             value,
             format,

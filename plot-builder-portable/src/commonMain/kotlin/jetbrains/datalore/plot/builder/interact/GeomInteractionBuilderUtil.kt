@@ -29,7 +29,7 @@ internal object GeomInteractionBuilderUtil {
                         tooltipAes
                     },
                     tooltipAxisAes,
-                    outliers = if (userTooltipSpec.disableSplitting) {
+                    sideTooltipAes = if (userTooltipSpec.disableSplitting) {
                         emptyList()
                     } else {
                         sideTooltipAes
@@ -43,29 +43,29 @@ internal object GeomInteractionBuilderUtil {
                 emptyList()
             }
             else -> {
-                // Form value sources: user list + axis + outliers
+                // Form value sources: user list + axis + side tooltips
 
-                val geomOutliers = if (userTooltipSpec.disableSplitting) {
-                    // Hide outliers in 'disable_splitting' mode with specified lines
+                val geomSideTooltips = if (userTooltipSpec.disableSplitting) {
+                    // Hide side tooltips in 'disable_splitting' mode with specified lines
                     emptyList()
                 } else {
                     sideTooltipAes
                 }.toMutableList()
 
-                // Remove outlier tooltip if the mappedAes is used in the general tooltip
+                // Remove side tooltip if the mappedAes is used in the general tooltip
                 userTooltipSpec.tooltipLinePatterns!!.forEach { line ->
-                    val userDataAesList = line.fields.filterIsInstance<MappingValue>().map(MappingValue::aes)
-                    geomOutliers.removeAll(userDataAesList)
+                    val userDataAesList = line.fields.filterIsInstance<MappingField>().map(MappingField::aes)
+                    geomSideTooltips.removeAll(userDataAesList)
                 }
                 val axisValueSources = tooltipAxisAes.map { aes ->
-                    getMappingValueSource(aes, isOutlier = true, isAxis = true, userTooltipSpec.valueSources)
+                    getMappingValueSource(aes, isSide = true, isAxis = true, userTooltipSpec.valueSources)
                 }
-                val geomOutlierValueSources = geomOutliers.map { aes ->
-                    getMappingValueSource(aes, isOutlier = true, isAxis = false, userTooltipSpec.valueSources)
+                val geomSideValueSources = geomSideTooltips.map { aes ->
+                    getMappingValueSource(aes, isSide = true, isAxis = false, userTooltipSpec.valueSources)
                 }
 
                 userTooltipSpec.tooltipLinePatterns +
-                        (axisValueSources + geomOutlierValueSources)
+                        (axisValueSources + geomSideValueSources)
                             .map(TooltipLine.Companion::defaultLineForValueSource)
             }
         }
@@ -74,15 +74,15 @@ internal object GeomInteractionBuilderUtil {
 
     private fun getMappingValueSource(
         aes: Aes<*>,
-        isOutlier: Boolean,
+        isSide: Boolean,
         isAxis: Boolean,
         userDefinedValueSources: List<ValueSource>?,
         label: String? = null
     ): ValueSource {
-        val userDefined = userDefinedValueSources?.filterIsInstance<MappingValue>()?.find { it.aes == aes }
-        return userDefined?.withFlags(isOutlier, isAxis, label) ?: MappingValue(
+        val userDefined = userDefinedValueSources?.filterIsInstance<MappingField>()?.find { it.aes == aes }
+        return userDefined?.withFlags(isSide, isAxis, label) ?: MappingField(
             aes,
-            isOutlier = isOutlier,
+            isSide = isSide,
             isAxis = isAxis,
             label = label
         )
@@ -91,32 +91,32 @@ internal object GeomInteractionBuilderUtil {
     internal fun defaultValueSourceTooltipLines(
         aesListForTooltip: List<Aes<*>>,
         axisAes: List<Aes<*>>,
-        outliers: List<Aes<*>>,
+        sideTooltipAes: List<Aes<*>>,
         userDefinedValueSources: List<ValueSource>? = null,
         constantsMap: Map<Aes<*>, Any>? = null
     ): List<TooltipLine> {
         val axisValueSources = axisAes.map { aes ->
-            getMappingValueSource(aes, isOutlier = true, isAxis = true, userDefinedValueSources)
+            getMappingValueSource(aes, isSide = true, isAxis = true, userDefinedValueSources)
         }
-        val outlierValueSources = outliers.map { aes ->
-            getMappingValueSource(aes, isOutlier = true, isAxis = false, userDefinedValueSources)
+        val sideValueSources = sideTooltipAes.map { aes ->
+            getMappingValueSource(aes, isSide = true, isAxis = false, userDefinedValueSources)
         }
 
         // will use empty label in one-line tooltip for positional aes and constants
-        val aesForGeneralTooltip = aesListForTooltip - outliers + (constantsMap?.keys ?: emptyList())
+        val aesForGeneralTooltip = aesListForTooltip - sideTooltipAes + (constantsMap?.keys ?: emptyList())
         val isOneLineTooltip = aesForGeneralTooltip.size  == 1
 
         val aesValueSources = aesListForTooltip.map { aes ->
             val label = if (isOneLineTooltip && aes in listOf(Aes.X, Aes.Y)) "" else null
-            getMappingValueSource(aes, isOutlier = false, isAxis = false, userDefinedValueSources, label)
+            getMappingValueSource(aes, isSide = false, isAxis = false, userDefinedValueSources, label)
         }
-        val constantValues = constantsMap?.map { (aes, value) ->
+        val constantFields = constantsMap?.map { (aes, value) ->
             val label = if (isOneLineTooltip) "" else null
-            val userDefined = userDefinedValueSources?.filterIsInstance<ConstantValue>()?.find { it.aes == aes }
-            userDefined?.withLabel(label) ?: ConstantValue(aes, value, format = null, label = label)
+            val userDefined = userDefinedValueSources?.filterIsInstance<ConstantField>()?.find { it.aes == aes }
+            userDefined?.withLabel(label) ?: ConstantField(aes, value, format = null, label = label)
         } ?: emptyList()
 
-        return (aesValueSources + axisValueSources + outlierValueSources + constantValues).map(TooltipLine.Companion::defaultLineForValueSource)
+        return (aesValueSources + axisValueSources + sideValueSources + constantFields).map(TooltipLine.Companion::defaultLineForValueSource)
     }
 
 }

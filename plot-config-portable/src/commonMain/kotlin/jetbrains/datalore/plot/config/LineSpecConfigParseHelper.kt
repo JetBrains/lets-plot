@@ -10,9 +10,9 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.tooltip.ConstantValue
-import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
-import jetbrains.datalore.plot.builder.tooltip.MappingValue
+import jetbrains.datalore.plot.builder.tooltip.ConstantField
+import jetbrains.datalore.plot.builder.tooltip.DataFrameField
+import jetbrains.datalore.plot.builder.tooltip.MappingField
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 
 open class LineSpecConfigParser(
@@ -100,19 +100,19 @@ open class LineSpecConfigParser(
             return when {
                 isAes && fieldName == Option.Mapping.GROUP -> {
                     requireNotNull(groupingVarName) { "Variable name for 'group' is not specified" }
-                    DataFrameValue(groupingVarName, format)
+                    DataFrameField(groupingVarName, format)
                 }
 
                 isAes -> {
                     val aes = Option.Mapping.toAes(fieldName)
                     when (val constant = constantsMap[aes]) {
-                        null -> MappingValue(aes, format = format)
-                        else -> ConstantValue(aes, constant, format)
+                        null -> MappingField(aes, format = format)
+                        else -> ConstantField(aes, constant, format)
                     }
                 }
 
                 else -> {
-                    DataFrameValue(fieldName, format)
+                    DataFrameField(fieldName, format)
                 }
             }
         }

@@ -17,7 +17,7 @@ class GeomInteractionBuilder constructor(
     val locatorLookupStrategy: LookupStrategy,
     private val tooltipAes: List<Aes<*>>,
     private val tooltipAxisAes: List<Aes<*>>,
-    private val tooltipOutlierAes: List<Aes<*>>,
+    private val sideTooltipAes: List<Aes<*>>,
 ) {
 
     private var myUserTooltipSpec: TooltipSpecification = TooltipSpecification.defaultTooltip()
@@ -36,7 +36,7 @@ class GeomInteractionBuilder constructor(
             myUserTooltipSpec,
             tooltipAes = tooltipAes,
             tooltipAxisAes = tooltipAxisAes,
-            sideTooltipAes = tooltipOutlierAes,
+            sideTooltipAes = sideTooltipAes,
             tooltipConstantAes = tooltipConstants
         )
 
@@ -92,7 +92,7 @@ class GeomInteractionBuilder constructor(
                 tooltipAxisAes = axisAes
                     ?: if (!geomTooltipSetup.axisTooltipEnabled) emptyList()
                     else geomTooltipSetup.axisAesFromFunctionKind,
-                tooltipOutlierAes = emptyList()
+                sideTooltipAes = emptyList()
             )
         }
     }

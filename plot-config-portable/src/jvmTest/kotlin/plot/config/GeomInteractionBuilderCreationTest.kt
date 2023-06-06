@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_B
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.builder.tooltip.MappingValue
+import jetbrains.datalore.plot.builder.tooltip.MappingField
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.config.GeomInteractionUtil
 import jetbrains.datalore.plot.config.Option
@@ -359,19 +359,19 @@ class GeomInteractionBuilderCreationTest {
 
     private fun getAesListInTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
-            line.fields.filterIsInstance<MappingValue>().map(MappingValue::aes)
+            line.fields.filterIsInstance<MappingField>().map(MappingField::aes)
         }
     }
 
     private fun getAesListInAxisTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
-            line.fields.filterIsInstance<MappingValue>().filter(MappingValue::isAxis).map(MappingValue::aes)
+            line.fields.filterIsInstance<MappingField>().filter(MappingField::isAxis).map(MappingField::aes)
         }
     }
 
     private fun getAesListInGeneralTooltip(tooltipLines: List<TooltipLine>): List<Aes<*>> {
         return tooltipLines.flatMap { line ->
-            line.fields.filterIsInstance<MappingValue>().filterNot(MappingValue::isOutlier).map(MappingValue::aes)
+            line.fields.filterIsInstance<MappingField>().filterNot(MappingField::isSide).map(MappingField::aes)
         }
     }
 

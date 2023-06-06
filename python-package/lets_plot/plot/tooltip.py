@@ -159,7 +159,7 @@ class layer_tooltips(FeatureSpec):
 
         The string template in `format` will allow to change lines
         for the default tooltip without `line` specifying.
-        Also the template will change the line for outliers.
+        Also the template will change the line for side tooltips.
         Aes and var formats are not interchangeable, i.e. var format
         will not be applied to aes, mapped to this variable.
 
@@ -253,7 +253,7 @@ class layer_tooltips(FeatureSpec):
         - 'x\^2' -> "x^2"
         - '{{x}}' -> "{x}"
 
-        The specified 'line' for outlier will move it to the general multi-line tooltip.
+        The specified 'line' for side tooltip will move it to the general multi-line tooltip.
         The default tooltip has a label before the value,
         usually containing the name of the mapped variable.
         It has its own behaviour, like blank label for axis aesthetics.
@@ -419,6 +419,30 @@ class layer_tooltips(FeatureSpec):
         variables and aesthetics can be used in the template.
         The resulting string will be at the beginning of the general tooltip, centered and highlighted in bold.
         A long title can be split into multiple lines using `\\\\n` as a text separator.
+
+    Examples
+    --------
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 15
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 100
+        np.random.seed(42)
+        data = {
+            'id': np.arange(n),
+            'x': np.random.normal(size=n),
+            'y': np.random.normal(size=n),
+            'c': np.random.choice(['a', 'b'], size=n),
+            'w': np.random.randint(1, 11, size=n)
+        }
+        ggplot(data, aes('x', 'y')) + \\
+            geom_point(aes(color='c', size='w'), show_legend=False, \\
+                       tooltips=layer_tooltips().title('@id')
+                                                .line('color|@c')
+                                                .line('size|@w'))
 
         """
         self._tooltip_title = value

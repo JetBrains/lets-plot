@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.YOrientationUtil
-import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
+import jetbrains.datalore.plot.builder.tooltip.DataFrameField
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
@@ -250,8 +250,8 @@ open class PlotConfigServerSide(
                     facets.variables +
                     listOfNotNull(layerConfig.explicitGroupingVarName) +
                     (layerConfig.tooltips.valueSources + layerConfig.annotations.valueSources)
-                        .filterIsInstance<DataFrameValue>()
-                        .map(DataFrameValue::getVariableName) +
+                        .filterIsInstance<DataFrameField>()
+                        .map(DataFrameField::getVariableName) +
                     layerConfig.orderOptions.mapNotNull(OrderOption::byVariable)
         }
 

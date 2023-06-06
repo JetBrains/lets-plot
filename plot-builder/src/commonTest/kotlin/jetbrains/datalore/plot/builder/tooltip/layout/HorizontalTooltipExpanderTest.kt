@@ -197,7 +197,7 @@ class HorizontalTooltipExpanderTest {
             lines = listOf(TooltipSpec.Line.withValue(text)),
             fill = Color.BLACK,
             markerColors = emptyList(),
-            isOutlier = true
+            isSide = true
         )
         return PositionedTooltip(
             MeasuredTooltip(spec, size, TooltipBox(), strokeWidth = 0.0),

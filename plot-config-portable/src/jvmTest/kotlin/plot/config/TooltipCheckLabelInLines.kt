@@ -169,7 +169,7 @@ class TooltipCheckLabelInLines {
     }
 
     @Test
-    fun `default tooltips with outliers - general will be one-line without label`() {
+    fun `default with side tooltips - general will be one-line without label`() {
         val spec = """
         {
           "data": { 

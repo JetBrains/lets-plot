@@ -244,14 +244,14 @@ class TooltipConfigTest {
         assertTooltipStrings(expectedLines, lines)
     }
 
-    // Outliers
+    // Side tooltips
     private val boxPlotData = mapOf(
         "x" to List(6) { 'A' },
         "y" to listOf(4.2, 11.5, 7.3, 5.8, 6.4, 10.0)
     )
 
     @Test
-    fun defaultOutlierTooltips() {
+    fun defaultSideTooltips() {
         val geomLayer = buildGeomLayer(
             geom = "boxplot",
             data = boxPlotData,
@@ -268,16 +268,16 @@ class TooltipConfigTest {
             Aes.LOWER to "6.1",
             Aes.YMIN to "4.2"
         )
-        val lines = getOutlierLines(geomLayer)
+        val lines = getSideTooltips(geomLayer)
 
-        assertEquals(expectedLines.size, lines.size, "Wrong number of outlier tooltips")
+        assertEquals(expectedLines.size, lines.size, "Wrong number of side tooltips")
         for (aes in lines.keys) {
-            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the outliers")
+            assertEquals(expectedLines[aes], lines[aes], "Wrong line for ${aes.name} in the side tooltips")
         }
     }
 
     @Test
-    fun configOutlierTooltips() {
+    fun configSideTooltips() {
         val tooltipConfig = mapOf(
             LINES to listOf(
                 "lower/upper|^lower, ^upper"
@@ -302,8 +302,8 @@ class TooltipConfigTest {
             tooltips = tooltipConfig
         )
 
-        // upper, lower will be in the general tooltip and will be removed from outliers
-        // outliers - without label
+        // upper, lower will be in the general tooltip and will be removed from side tooltips;
+        // side tooltips - without label
         val expectedLines = mapOf(
             Aes.YMAX to "11.5",
             Aes.MIDDLE to "6.850",
@@ -311,10 +311,10 @@ class TooltipConfigTest {
         )
         val generalExpectedLine = "lower/upper: 6.1, 8.7"
 
-        val outlierLines = getOutlierLines(geomLayer)
-        assertEquals(expectedLines.size, outlierLines.size, "Wrong number of outlier tooltips")
-        for (aes in outlierLines.keys) {
-            assertEquals(expectedLines[aes], outlierLines[aes], "Wrong line for ${aes.name} in the outliers")
+        val sideTooltips = getSideTooltips(geomLayer)
+        assertEquals(expectedLines.size, sideTooltips.size, "Wrong number of side tooltips")
+        for (aes in sideTooltips.keys) {
+            assertEquals(expectedLines[aes], sideTooltips[aes], "Wrong line for ${aes.name} in the side tooltip")
         }
 
         val generalLines = getGeneralTooltipStrings(geomLayer)
@@ -322,7 +322,7 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun `'disable_splitting' moves outliers to general tooltip`() {
+    fun `'disable_splitting' moves side tooltips to general tooltip`() {
         val geomLayer = buildGeomLayer(
             geom = "boxplot",
             data = boxPlotData,
@@ -333,7 +333,7 @@ class TooltipConfigTest {
             tooltips = mapOf(DISABLE_SPLITTING to true)
         )
 
-        assertEquals(0, getOutlierLines(geomLayer).size, "Wrong number of outlier tooltips")
+        assertEquals(0, getSideTooltips(geomLayer).size, "Wrong number of side tooltips")
 
         val generalExpectedLine = listOf(
             "y max: 11.5",
@@ -347,7 +347,7 @@ class TooltipConfigTest {
     }
 
     @Test
-    fun `'disable_splitting' with specified lines hides outliers`() {
+    fun `'disable_splitting' with specified lines hides side tooltips`() {
         val geomLayer = buildGeomLayer(
             geom = "boxplot",
             data = boxPlotData,
@@ -361,7 +361,7 @@ class TooltipConfigTest {
             )
         )
 
-        assertEquals(0, getOutlierLines(geomLayer).size, "Wrong number of outlier tooltips")
+        assertEquals(0, getSideTooltips(geomLayer).size, "Wrong number of side tooltips")
 
         val generalExpectedLine = listOf("tooltip line")
         val generalLines = getGeneralTooltipStrings(geomLayer)
@@ -1029,7 +1029,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1060,7 +1060,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1090,7 +1090,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isOutlier && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1108,7 +1108,7 @@ class TooltipConfigTest {
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
-            return dataPoints.filterNot(DataPoint::isOutlier).map { Line.withLabelAndValue(it.label, it.value) }
+            return dataPoints.filterNot(DataPoint::isSide).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
@@ -1117,10 +1117,10 @@ class TooltipConfigTest {
             return dataPoints.filter(DataPoint::isAxis)
         }
 
-        private fun getOutlierLines(geomLayer: GeomLayer): Map<Aes<*>, String> {
+        private fun getSideTooltips(geomLayer: GeomLayer): Map<Aes<*>, String> {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
-            return dataPoints.filter { it.isOutlier && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
+            return dataPoints.filter { it.isSide && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 
         private fun assertTooltipStrings(expected: List<String>, actual: List<String>) {

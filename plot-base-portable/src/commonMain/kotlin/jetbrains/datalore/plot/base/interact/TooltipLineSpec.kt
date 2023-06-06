@@ -16,6 +16,6 @@ interface TooltipLineSpec {
         val value: String,
         val aes: Aes<*>?,
         val isAxis: Boolean,
-        val isOutlier: Boolean
+        val isSide: Boolean
     )
 }

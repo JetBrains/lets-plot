@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
-class DataFrameValue(
+class DataFrameField(
     private val name: String,
     private val format: String? = null
 ) : ValueSource {
@@ -21,7 +21,7 @@ class DataFrameValue(
     private lateinit var myVariable: DataFrame.Variable
     private lateinit var myFormatter: (Any) -> String
 
-    override val isOutlier: Boolean = false
+    override val isSide: Boolean = false
     override val isAxis: Boolean = false
 
     override fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
@@ -43,12 +43,12 @@ class DataFrameValue(
             value = myFormatter(originalValue),
             aes = null,
             isAxis = false,
-            isOutlier = false
+            isSide = false
         )
     }
 
-    override fun copy(): DataFrameValue {
-        return DataFrameValue(name, format)
+    override fun copy(): DataFrameField {
+        return DataFrameField(name, format)
     }
 
     fun getVariableName(): String {

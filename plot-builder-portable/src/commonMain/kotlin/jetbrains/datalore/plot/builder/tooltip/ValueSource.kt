@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
 
 interface ValueSource {
 
-    val isOutlier: Boolean
+    val isSide: Boolean
 
     val isAxis: Boolean
 

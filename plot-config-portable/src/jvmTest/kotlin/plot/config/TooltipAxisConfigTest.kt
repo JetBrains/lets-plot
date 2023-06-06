@@ -302,7 +302,7 @@ class TooltipAxisConfigTest {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val generalTooltip = dataPoints
-                .filterNot(TooltipLineSpec.DataPoint::isOutlier)
+                .filterNot(TooltipLineSpec.DataPoint::isSide)
                 .map(TooltipLineSpec.DataPoint::value)
                 .firstOrNull()
             areEqual(expected, generalTooltip, "general tooltip", method)

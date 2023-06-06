@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.builder.data.StatInput
-import jetbrains.datalore.plot.builder.tooltip.DataFrameValue
+import jetbrains.datalore.plot.builder.tooltip.DataFrameField
 import jetbrains.datalore.plot.config.LayerConfig
 
 internal object BackendDataProcUtil {
@@ -51,8 +51,8 @@ internal object BackendDataProcUtil {
         // Need to keep variables without bindings (used in tooltips and for ordering)
         val varsWithoutBinding = layerConfig.run {
             (tooltips.valueSources + annotations.valueSources)
-                .filterIsInstance<DataFrameValue>()
-                .map(DataFrameValue::getVariableName) +
+                .filterIsInstance<DataFrameField>()
+                .map(DataFrameField::getVariableName) +
                     orderOptions.mapNotNull(OrderOptionUtil.OrderOption::byVariable) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList())
         }

@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
-import jetbrains.datalore.plot.builder.tooltip.MappingValue
+import jetbrains.datalore.plot.builder.tooltip.MappingField
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
 import jetbrains.datalore.vis.TextStyle
 
@@ -57,7 +57,7 @@ class AnnotationLine(
                 return null
             }
             val mappedLines = spec.linePatterns.filter { line ->
-                val dataAesList = line.fields.filterIsInstance<MappingValue>()
+                val dataAesList = line.fields.filterIsInstance<MappingField>()
                 dataAesList.all { mappedAes -> dataAccess.isMapped(mappedAes.aes) }
             }
             mappedLines.forEach { it.initDataContext(dataFrame, dataAccess) }
