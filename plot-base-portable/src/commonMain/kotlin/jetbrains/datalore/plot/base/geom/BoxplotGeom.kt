@@ -18,8 +18,8 @@ import jetbrains.datalore.vis.svg.SvgLineElement
 
 class BoxplotGeom : GeomBase() {
 
-    var fattenMidline: Double = 1.0
-    var whiskerWidth: Double = 0.5
+    var fattenMidline: Double = DEF_FATTEN_MIDLINE
+    var whiskerWidth: Double = DEF_WHISKER_WIDTH
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = LEGEND_FACTORY
@@ -111,6 +111,8 @@ class BoxplotGeom : GeomBase() {
     }
 
     companion object {
+        const val DEF_FATTEN_MIDLINE = 2.5
+        const val DEF_WHISKER_WIDTH = 0.5
         const val HANDLES_GROUPS = false
 
         private val LEGEND_FACTORY = CrossBarHelper.legendFactory(true)
