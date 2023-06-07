@@ -216,14 +216,6 @@ object Option {
             const val WHISKER_WIDTH = "whisker_width"
         }
 
-        object BoxplotOutlier {
-            const val COLOR = "outlier_color"
-            const val FILL = "outlier_fill"
-            const val SHAPE = "outlier_shape"
-            const val SIZE = "outlier_size"
-            const val STROKE = "outlier_stroke"
-        }
-
         object AreaRidges {
             const val SCALE = "scale"
             const val MIN_HEIGHT = "min_height"
