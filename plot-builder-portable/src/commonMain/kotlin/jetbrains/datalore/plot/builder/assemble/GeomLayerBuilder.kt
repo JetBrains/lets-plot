@@ -10,6 +10,7 @@ import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -69,6 +70,8 @@ class GeomLayerBuilder(
     private var fillByAes: Aes<Color> = Aes.FILL
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
+
+    private var myGeomTheme: GeomTheme? = null
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)
@@ -149,6 +152,11 @@ class GeomLayerBuilder(
 
     fun fillByAes(aes: Aes<Color>): GeomLayerBuilder {
         fillByAes = aes
+        return this
+    }
+
+    fun geomTheme(geomTheme: GeomTheme): GeomLayerBuilder {
+        myGeomTheme = geomTheme
         return this
     }
 
@@ -233,7 +241,8 @@ class GeomLayerBuilder(
             fontFamilyRegistry = fontFamilyRegistry,
             colorByAes = colorByAes,
             fillByAes = fillByAes,
-            annotationsProvider = myAnnotationsProvider
+            annotationsProvider = myAnnotationsProvider,
+            geomTheme = myGeomTheme
         )
     }
 
@@ -262,6 +271,7 @@ class GeomLayerBuilder(
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
         private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?,
+        geomTheme: GeomTheme?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
@@ -274,7 +284,7 @@ class GeomLayerBuilder(
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults
+        override val aestheticsDefaults: AestheticsDefaults = geomProvider.getAestheticsDefaults(geomTheme)
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind, colorByAes, fillByAes,

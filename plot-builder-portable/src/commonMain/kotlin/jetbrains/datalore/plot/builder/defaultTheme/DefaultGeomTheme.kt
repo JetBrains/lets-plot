@@ -15,22 +15,27 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.GeomTheme
+import jetbrains.datalore.plot.base.aes.GeomTheme
 
 internal class DefaultGeomTheme(
     private val color: Color?,
     private val fill: Color?,
+    private val alpha: Double?,
     private val size: Double?,
-    private val alpha: Double?
+    private val stroke: Double? = null,
+    private val lineWidth: Double? = null
 ) : GeomTheme {
     override fun color() = color
 
     override fun fill() = fill
 
-    override fun size() = size
-
     override fun alpha() = alpha
 
+    override fun size() = size
+
+    override fun lineWidth() = lineWidth
+
+    override fun stroke() = stroke
 
     companion object {
 
@@ -70,8 +75,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = null,
-                        size = 0.5,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.5   // line width
                     )
                 }
 
@@ -79,8 +84,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = Color.MAGENTA,
                         fill = inheritedColors.lineColor(),
-                        size = 0.5,
-                        alpha = 1.5 // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
+                        alpha = 1.5, // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
+                        size = 0.5   // line width
                     )
                 }
 
@@ -88,8 +93,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.backgroundFill(),
                         fill = Color.PACIFIC_BLUE,
-                        size = 0.5,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.5
                     )
                 }
 
@@ -107,8 +112,9 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.backgroundFill(),
                         fill = Color.PACIFIC_BLUE,
+                        alpha = 1.0,
                         size = null,
-                        alpha = 1.0
+                        stroke = 0.5
                     )
                 }
 
@@ -117,8 +123,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.backgroundFill(),
                         fill = Color.PACIFIC_BLUE,
-                        size = 0.5,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.5
                     )
                 }
 
@@ -126,19 +132,27 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        size = 0.2,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.2
                     )
                 }
 
                 GeomKind.ERROR_BAR,
-                GeomKind.LINE_RANGE,
-                GeomKind.POINT_RANGE -> {
+                GeomKind.LINE_RANGE -> {
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = null,
-                        size = 0.5,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.5
+                    )
+                }
+                GeomKind.POINT_RANGE -> {
+                    DefaultGeomTheme(
+                        color = inheritedColors.lineColor(),
+                        fill = inheritedColors.lineColor(),
+                        alpha = 1.0,
+                        size = 0.5,     // line width, size of mid-point
+                        stroke = 0.5
                     )
                 }
 
@@ -149,8 +163,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = inheritedColors.lineColor(),
-                        size = 0.5,
-                        alpha = 0.1
+                        alpha = 0.1,
+                        size = 0.5
                     )
                 }
 
@@ -158,8 +172,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.backgroundFill(),
                         fill = Color.PACIFIC_BLUE,
-                        size = 0.5,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.5
                     )
                 }
 
@@ -168,8 +182,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.backgroundFill(),
                         fill = Color.PACIFIC_BLUE,
-                        size = 0.0,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 0.0
                     )
                 }
 
@@ -180,20 +194,21 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
+                        alpha = 1.0,
                         size = 2.0,
-                        alpha = 1.0
+                        stroke = 0.5
                     )
                 }
 
                 GeomKind.AREA,
+                GeomKind.DENSITY,
                 GeomKind.RECT,
-                GeomKind.RIBBON,
-                GeomKind.DENSITY -> {
+                GeomKind.RIBBON -> {
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = inheritedColors.lineColor(),
-                        size = 0.5,
-                        alpha = 0.1
+                        alpha = 0.1,
+                        size = 0.5
                     )
                 }
 
@@ -201,8 +216,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = null,
-                        size = 7.0,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 7.0
                     )
                 }
 
@@ -210,8 +225,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = inheritedColors.backgroundFill(),
-                        size = 7.0,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 7.0
                     )
                 }
 
@@ -219,8 +234,10 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        size = 0.5,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 2.0,         // point size
+                        lineWidth = 0.5,    // stick width
+                        stroke = 1.0        // width of the shape border
                     )
                 }
 
@@ -228,8 +245,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = null,
                         fill = Color.PACIFIC_BLUE,
-                        size = 10.0,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = 10.0
                     )
                 }
 
@@ -237,8 +254,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = null,
                         fill = Color.PACIFIC_BLUE,
-                        size = null,
-                        alpha = 1.0
+                        alpha = 1.0,
+                        size = null
                     )
                 }
 
@@ -247,8 +264,8 @@ internal class DefaultGeomTheme(
                     DefaultGeomTheme(
                         color = null,
                         fill = null,
-                        size = null,
-                        alpha = null
+                        alpha = null,
+                        size = null
                     )
                 }
             }

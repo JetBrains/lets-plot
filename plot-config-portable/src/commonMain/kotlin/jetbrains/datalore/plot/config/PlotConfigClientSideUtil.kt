@@ -200,7 +200,7 @@ object PlotConfigClientSideUtil {
         geomInteraction: GeomInteraction?,
         theme: Theme
     ): GeomLayerBuilder {
-        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig, theme.geometries(layerConfig.geomProto.geomKind))
+        val geomProvider = layerConfig.geomProto.geomProvider(layerConfig)
 
         val stat = layerConfig.stat
         val layerBuilder = GeomLayerBuilder(
@@ -216,6 +216,9 @@ object PlotConfigClientSideUtil {
         layerBuilder
             .colorByAes(layerConfig.colorByAes)
             .fillByAes(layerConfig.fillByAes)
+
+        // geomTheme
+        layerBuilder.geomTheme(theme.geometries(layerConfig.geomProto.geomKind))
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {

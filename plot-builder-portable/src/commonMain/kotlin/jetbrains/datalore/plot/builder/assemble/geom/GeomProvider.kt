@@ -10,17 +10,22 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.base.geom.*
 
 class GeomProvider internal constructor(
     val geomKind: GeomKind,
-    val aestheticsDefaults: AestheticsDefaults,
+    private val aestheticsDefaults: AestheticsDefaults,
     val handlesGroups: Boolean,
     private val geomSupplier: (ctx: Context) -> Geom
 ) {
 
     fun createGeom(ctx: Context): Geom {
         return geomSupplier(ctx)
+    }
+
+    fun getAestheticsDefaults(geomTheme: GeomTheme?): AestheticsDefaults {
+        return aestheticsDefaults.apply { geomTheme?.let(this::updateWith) }
     }
 
     abstract class Context(

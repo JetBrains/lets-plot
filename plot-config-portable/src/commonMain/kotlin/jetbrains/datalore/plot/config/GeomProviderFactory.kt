@@ -8,14 +8,11 @@ package jetbrains.datalore.plot.config
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults.Companion.updateWith
 import jetbrains.datalore.plot.base.geom.*
 import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
-import jetbrains.datalore.plot.builder.theme.GeomTheme
 
 internal object GeomProviderFactory {
     private val PROVIDER = HashMap<GeomKind, () -> GeomProvider>()
@@ -51,7 +48,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.LIVE_MAP] = { GeomProvider.livemap() }
     }
 
-    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor, geomTheme: GeomTheme): GeomProvider {
+    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor): GeomProvider {
         return when (geomKind) {
             GeomKind.DENSITY -> GeomProvider.density {
                 val geom = DensityGeom()
@@ -332,26 +329,11 @@ internal object GeomProviderFactory {
                 PROVIDER.getValue(geomKind).invoke()
             }
         }
-            .withThemeColors(geomTheme)
     }
 
     private fun applyTextOptions(opts: OptionsAccessor, geom: TextGeom) {
         opts.getString(Option.Geom.Text.LABEL_FORMAT)?.let { geom.formatter = StringFormat.forOneArg(it)::format }
         opts.getString(Option.Geom.Text.NA_TEXT)?.let { geom.naValue = it }
         geom.sizeUnit = opts.getString(Option.Geom.Text.SIZE_UNIT)?.lowercase()
-    }
-
-    private fun GeomProvider.withThemeColors(geomTheme: GeomTheme): GeomProvider {
-        val aestheticValues: Map<Aes<*>, Any> = listOf(
-            Aes.COLOR to geomTheme.color(),
-            Aes.FILL to geomTheme.fill(),
-            Aes.SIZE to geomTheme.size(),
-            Aes.ALPHA to geomTheme.alpha()
-        )
-            .filter { (_, value) -> value != null }
-            .associate { (aes, value) -> aes to value!! }
-
-        aestheticsDefaults.updateWith(aestheticValues)
-        return this
     }
 }
