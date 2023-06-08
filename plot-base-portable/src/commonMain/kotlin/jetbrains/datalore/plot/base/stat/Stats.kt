@@ -236,6 +236,13 @@ object Stats {
         return BoxplotStat(whiskerIQRRatio, computeWidth)
     }
 
+    fun boxplotOutlier(
+        whiskerIQRRatio: Double = BoxplotStat.DEF_WHISKER_IQR_RATIO,
+        computeWidth: Boolean = BoxplotStat.DEF_COMPUTE_WIDTH
+    ): BoxplotOutlierStat {
+        return BoxplotOutlierStat(whiskerIQRRatio, computeWidth)
+    }
+
     fun density(
         trim: Boolean = DensityStat.DEF_TRIM,
         bandWidth: Double? = null,

@@ -253,7 +253,7 @@ object PlotUtil {
                 xAesMapper = Mappers.IDENTITY,
                 yAesMapper = Mappers.IDENTITY
             )
-            return createLayerAesthetics(layer, layer.renderedAes(), mappers)
+            return createLayerAesthetics(layer, layer.renderedAes(considerOrientation = true), mappers)
         }
     }
 }

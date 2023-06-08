@@ -5,6 +5,7 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
+from .pos import position_dodge
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
 #
@@ -2934,7 +2935,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,
+def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, tooltips=None,
                  orientation=None,
                  fatten=None,
                  outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None, outlier_stroke=None,
@@ -2963,9 +2964,6 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
         False - do not show legend for this layer.
-    sampling : `FeatureSpec`
-        Result of the call to the `sampling_xxx()` function.
-        To prevent any sampling for this layer pass value "none" (string "none").
     tooltips : `layer_tooltips`
         Result of the call to the `layer_tooltips()` function.
         Specify appearance, style and content.
@@ -3017,6 +3015,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     `geom_boxplot()` understands the following aesthetics mappings:
 
+    - x : x-axis coordinates.
     - lower : lower hinge.
     - middle : median.
     - upper : upper hinge.
@@ -3107,25 +3106,40 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                          alpha=.5, width=.5, show_legend=False)
 
     """
-    return _geom('boxplot',
-                 mapping=mapping,
-                 data=data,
-                 stat=stat,
-                 position=position,
-                 show_legend=show_legend,
-                 sampling=sampling,
-                 tooltips=tooltips,
-                 orientation=orientation,
-                 fatten=fatten,
-                 outlier_color=outlier_color,
-                 outlier_fill=outlier_fill,
-                 outlier_shape=outlier_shape,
-                 outlier_size=outlier_size,
-                 outlier_stroke=outlier_stroke,
-                 varwidth=varwidth,
-                 whisker_width=whisker_width,
-                 color_by=color_by, fill_by=fill_by,
-                 **other_args)
+    boxplot_layer = _geom('boxplot',
+                          mapping=mapping,
+                          data=data,
+                          stat=stat,
+                          position=position,
+                          show_legend=show_legend,
+                          sampling=None,
+                          tooltips=tooltips,
+                          orientation=orientation,
+                          fatten=fatten,
+                          varwidth=varwidth,
+                          whisker_width=whisker_width,
+                          color_by=color_by, fill_by=fill_by,
+                          **other_args)
+    if stat is None or stat == 'boxplot':
+        default_position = position_dodge(width=.95)
+        box_color = other_args.get('color')
+        box_fill = other_args.get('fill')
+        box_size = other_args.get('size')
+        boxplot_layer += _geom('point',
+                               mapping=mapping,
+                               data=data,
+                               stat='boxplot_outlier',
+                               position=position or default_position,
+                               show_legend=False,
+                               sampling=None,
+                               orientation=orientation,
+                               color=outlier_color or box_color,
+                               fill=outlier_fill or box_fill,
+                               shape=outlier_shape,
+                               size=outlier_size or box_size,
+                               stroke=outlier_stroke,
+                               color_by=color_by, fill_by=fill_by)
+    return boxplot_layer
 
 
 def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None,

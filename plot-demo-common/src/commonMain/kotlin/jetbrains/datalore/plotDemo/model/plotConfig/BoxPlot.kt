@@ -29,47 +29,31 @@ open class BoxPlot {
         )
     }
 
-
     companion object {
-        private val DATA =
-            data()  // make it stable between calls
-
-        private fun data(): Map<String, List<*>> {
-            val count1 = 50
-            val count2 = 100
-
-            val ratingA = gauss(count1, 12, 0.0, 1.0)
-            val ratingB = gauss(count2, 24, 0.0, 1.0)
-            val rating = zip(ratingA, ratingB)
-            val cond = zip(fill("a", count1), fill("b", count2))
-//            val group = ArrayList(fill("G1", count1))
-//            group.addAll(fill("G2", count2))
-
-            val map = HashMap<String, List<*>>()
-            map["cond"] = cond
-            map["rating"] = rating
-//            map["group"] = group
-            return map
-        }
-
-
-        //===========================
-
+        private val DATA = data()
 
         fun basic(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating'
+                  },
+                  'ggtitle': {
+                    'text': 'Basic demo'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'boxplot'
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -77,20 +61,28 @@ open class BoxPlot {
         }
 
         fun withVarWidth(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'," +
-                    "                  'varwidth': true" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating'
+                  },
+                  'ggtitle': {
+                    'text': 'With varwidth'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'boxplot',
+                      'varwidth': true
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -98,21 +90,29 @@ open class BoxPlot {
         }
 
         fun withCondColored(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'," +
-                    "             'fill': 'cond'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'," +
-                    "                  'whisker_width': 0.5" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating',
+                    'fill': 'cond'
+                  },
+                  'ggtitle': {
+                    'text': 'With fill aes'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'boxplot',
+                      'whisker_width': 0.5
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -120,22 +120,30 @@ open class BoxPlot {
         }
 
         fun withOutlierOverride(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'," +
-                    "                  'outlier_color': 'red'," +
-                    "                  'outlier_shape': 1," +
-                    "                  'outlier_size': 15" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating'
+                  },
+                  'ggtitle': {
+                    'text': 'With specified outlier options'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'boxplot'
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier',
+                      'color': 'red',
+                      'shape': 1,
+                      'size': 15
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -143,20 +151,28 @@ open class BoxPlot {
         }
 
         fun withGrouping(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'," +
-                    "             'color': 'cond'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating',
+                    'color': 'cond'
+                  },
+                  'ggtitle': {
+                    'text': 'With grouping'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'boxplot'
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -164,21 +180,29 @@ open class BoxPlot {
         }
 
         fun withGroupingAndVarWidth(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'cond'," +
-                    "             'y': 'rating'," +
-                    "             'color': 'cond'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'boxplot'," +
-                    "                  'varwidth': true" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating',
+                    'color': 'cond'
+                  },
+                  'ggtitle': {
+                    'text': 'With grouping and varwidth'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'boxplot',
+                      'varwidth': true
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -188,27 +212,32 @@ open class BoxPlot {
         fun withMiddlePoint(): MutableMap<String, Any> {
             // This one is not working.
             val spec = """
-                |   {
-                |      'kind': 'plot',
-                |      'mapping': {
-                |                'x': 'cond',
-                |                'y': 'rating'
-                |              },
-                |      'layers': [
-                |                  {
-                |                     'geom': 'point',
-                |                     'stat': 'boxplot',
-                |                     'mapping': {'y': '..middle..'},
-                |                     'size': 7,
-                |                     'color': 'red'
-                |                  }
-                |              ]
-                |   }
-                    """.trimMargin()
-
-//                |                  {
-//                |                     'geom': 'boxplot'
-//                |                  },
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'cond',
+                    'y': 'rating'
+                  },
+                  'ggtitle': {
+                    'text': 'Point geometry'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot',
+                      'mapping': {
+                        'y': '..middle..'
+                      },
+                      'size': 7,
+                      'color': 'red'
+                    },
+                    {
+                      'geom': 'point',
+                      'stat': 'boxplot_outlier'
+                    }
+                  ]
+                }
+            """.trimMargin()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -220,23 +249,43 @@ open class BoxPlot {
             // see this issue: https://github.com/JetBrains/lets-plot/issues/325
 
             val layerSpec = if (x == null) {
-                "{'geom': 'boxplot'}"
+                "{'geom': 'boxplot'}, {'geom': 'point', 'stat': 'boxplot_outlier'}"
             } else {
-                "{'geom': 'boxplot', 'x':'$x'}"
+                "{'geom': 'boxplot', 'x': '$x'}, {'geom': 'point', 'stat': 'boxplot_outlier', 'x': '$x'}"
             }
-
 
             val spec = """
-            {
-               'kind': 'plot',
-               'mapping': {'y': 'rating'},
-               'layers': [$layerSpec]
-            }
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'y': 'rating'
+                  },
+                  'ggtitle': {
+                    'text': 'One box, x = $x'
+                  },
+                  'layers': [$layerSpec]
+                }
             """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
             return plotSpec
+        }
+
+        private fun data(): Map<String, List<*>> {
+            val count1 = 50
+            val count2 = 100
+
+            val ratingA = gauss(count1, 12, 0.0, 1.0)
+            val ratingB = gauss(count2, 24, 0.0, 1.0)
+            val rating = zip(ratingA, ratingB)
+            val cond = zip(fill("a", count1), fill("b", count2))
+
+            val map = HashMap<String, List<*>>()
+            map["cond"] = cond
+            map["rating"] = rating
+
+            return map
         }
     }
 }

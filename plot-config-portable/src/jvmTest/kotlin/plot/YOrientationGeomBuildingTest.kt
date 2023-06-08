@@ -19,7 +19,6 @@ import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.coord.CoordProviders
 import jetbrains.datalore.plot.config.TestUtil
 import org.junit.Test
-import kotlin.Double.Companion.NaN
 import kotlin.math.round
 import kotlin.random.Random
 import kotlin.test.assertEquals
@@ -115,13 +114,12 @@ class YOrientationGeomBuildingTest {
     }
 
     private object ExpectedAes {
-        val X: List<Double> = listOf(0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0)
-        val Y: List<Double> = listOf(-1.9958, 2.912, -2.4416, NaN, -2.5263, 2.8484, 2.6058, NaN)
-        val LOWER: List<Double> = listOf(NaN, NaN, NaN, -0.2541, NaN, NaN, NaN, -0.6743)
-        val MIDDLE: List<Double> = listOf(NaN, NaN, NaN, 0.3333, NaN, NaN, NaN, -0.1441)
-        val UPPER: List<Double> = listOf(NaN, NaN, NaN, 0.767, NaN, NaN, NaN, 0.5131)
-        val YMIN: List<Double> = listOf(NaN, NaN, NaN, -1.7853, NaN, NaN, NaN, -2.3092)
-        val YMAX: List<Double> = listOf(NaN, NaN, NaN, 2.083, NaN, NaN, NaN, 2.0206)
+        val X: List<Double> = listOf(0.0, 1.0)
+        val LOWER: List<Double> = listOf(-0.2541, -0.6743)
+        val MIDDLE: List<Double> = listOf(0.3333, -0.1441)
+        val UPPER: List<Double> = listOf(0.767, 0.5131)
+        val YMIN: List<Double> = listOf(-1.7853, -2.3092)
+        val YMAX: List<Double> = listOf(2.083, 2.0206)
     }
 
     private class GeomLayerStub(
@@ -160,7 +158,6 @@ class YOrientationGeomBuildingTest {
             }
 
             assertEquals(ExpectedAes.X, toList(aesthetics, Aes.X), message = "X")
-            assertEquals(ExpectedAes.Y, toList(aesthetics, Aes.Y), message = "Y")
             assertEquals(ExpectedAes.LOWER, toList(aesthetics, Aes.LOWER), message = "LOWER")
             assertEquals(ExpectedAes.MIDDLE, toList(aesthetics, Aes.MIDDLE), message = "MIDDLE")
             assertEquals(ExpectedAes.UPPER, toList(aesthetics, Aes.UPPER), message = "UPPER")

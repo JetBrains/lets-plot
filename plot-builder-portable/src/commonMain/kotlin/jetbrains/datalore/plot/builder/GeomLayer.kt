@@ -56,7 +56,7 @@ interface GeomLayer {
 
     val fillByAes: Aes<Color>
 
-    fun renderedAes(): List<Aes<*>>
+    fun renderedAes(considerOrientation: Boolean = false): List<Aes<*>>
 
     fun hasBinding(aes: Aes<*>): Boolean
 

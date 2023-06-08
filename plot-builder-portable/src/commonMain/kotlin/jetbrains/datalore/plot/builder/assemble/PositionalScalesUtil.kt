@@ -135,7 +135,7 @@ internal object PositionalScalesUtil {
     }
 
     private fun positionalDryRunAesthetics(layer: GeomLayer): Aesthetics {
-        val aesList = layer.renderedAes().filter {
+        val aesList = layer.renderedAes(considerOrientation = true).filter {
             Aes.affectingScaleX(it) ||
                     Aes.affectingScaleY(it) ||
                     it == Aes.HEIGHT ||

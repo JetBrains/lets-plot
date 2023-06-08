@@ -1,46 +1,30 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.sqrt
 
-/**
- * Calculate components of box and whisker plot.
- *
- * Creates a "stat" dataframe with:
- *   x
- *   width    - width of box
- *   ymin     - lower whisker = smallest observation greater than or equal to lower hinge - 1.5 * IQR
- *   lower    - lower hinge, 25% quantile
- *   middle   - median, 50% quantile
- *   upper    - upper hinge, 75% quantile
- *   ymax     - upper whisker = largest observation less than or equal to upper hinge + 1.5 * IQR
- *
- * Not implemented:
- * notchlower   - lower edge of notch = median - 1.58 * IQR / sqrt(n)
- * notchupper   - upper edge of notch = median + 1.58 * IQR / sqrt(n)
- */
-class BoxplotStat(
+class BoxplotOutlierStat(
     private val whiskerIQRRatio: Double,    // ggplot: 'coef'
     private val computeWidth: Boolean       // ggplot: 'varWidth'
 ) : BaseStat(DEF_MAPPING) {
+    // Note: outliers will need 'width' value, for the 'dodge' positioning to work correctly for all data-points.
 
     override fun hasDefaultMapping(aes: Aes<*>): Boolean {
         return super.hasDefaultMapping(aes) ||
-                aes == WIDTH && computeWidth
+                aes == Aes.WIDTH && computeWidth
     }
 
     override fun getDefaultMapping(aes: Aes<*>): DataFrame.Variable {
-        return if (aes == WIDTH) {
+        return if (aes == Aes.WIDTH) {
             Stats.WIDTH
         } else {
             super.getDefaultMapping(aes)
@@ -64,14 +48,11 @@ class BoxplotStat(
         }
 
         val statData = buildStat(xs, ys, whiskerIQRRatio)
-
         val statCount = statData.remove(Stats.COUNT)
-        val maxCountPerBin = statCount?.maxOrNull()?.toInt() ?: 0
-        if (maxCountPerBin == 0) {
-            return withEmptyStatValues()
-        }
+
         if (computeWidth) {
             // 'width' is in range 0..1
+            val maxCountPerBin = statCount?.maxOrNull()?.toInt() ?: 0
             val norm = sqrt(maxCountPerBin.toDouble())
             val statWidth = statCount!!.map { count -> sqrt(count) / norm }
             statData[Stats.WIDTH] = statWidth
@@ -85,16 +66,9 @@ class BoxplotStat(
     }
 
     companion object {
-        const val DEF_WHISKER_IQR_RATIO = 1.5
-        const val DEF_COMPUTE_WIDTH = false
-
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
-            Aes.YMIN to Stats.Y_MIN,
-            Aes.YMAX to Stats.Y_MAX,
-            Aes.LOWER to Stats.LOWER,
-            Aes.MIDDLE to Stats.MIDDLE,
-            Aes.UPPER to Stats.UPPER
+            Aes.Y to Stats.Y
         )
 
         private fun buildStat(
@@ -102,7 +76,6 @@ class BoxplotStat(
             ys: List<Double?>,
             whiskerIQRRatio: Double
         ): MutableMap<DataFrame.Variable, List<Double>> {
-
             val xyPairs = SeriesUtil.filterFinite(xs, ys)
                 .let { (xs, ys) -> xs zip ys }
             if (xyPairs.isEmpty()) {
@@ -115,54 +88,36 @@ class BoxplotStat(
             }
 
             val statX = ArrayList<Double>()
-            val statMiddle = ArrayList<Double>()
-            val statLower = ArrayList<Double>()
-            val statUpper = ArrayList<Double>()
-            val statMin = ArrayList<Double>()
-            val statMax = ArrayList<Double>()
-
+            val statY = ArrayList<Double>()
             val statCount = ArrayList<Double>()
 
             for ((x, bin) in binnedData) {
                 val count = bin.size.toDouble()
-
                 val summary = FiveNumberSummary(bin)
-                val middle = summary.median
                 val lowerHinge = summary.firstQuartile
                 val upperHinge = summary.thirdQuartile
                 val IQR = upperHinge - lowerHinge
                 val lowerFence = lowerHinge - IQR * whiskerIQRRatio
                 val upperFence = upperHinge + IQR * whiskerIQRRatio
-
-                var lowerWhisker = lowerFence
-                var upperWhisker = upperFence
-                if (SeriesUtil.allFinite(lowerFence, upperFence)) {
-                    val boxed = bin.filter { y -> y in lowerFence..upperFence }
-                    val range = SeriesUtil.range(boxed)
-                    if (range != null) {
-                        lowerWhisker = range.lowerEnd
-                        upperWhisker = range.upperEnd
-                    }
+                val outliers = bin.filter { y -> y < lowerFence || y > upperFence }
+                for (y in outliers) {
+                    statX.add(x)
+                    statY.add(y)
+                    statCount.add(count)
                 }
 
-                statX.add(x)
-                statMiddle.add(middle)
-                statLower.add(lowerHinge)
-                statUpper.add(upperHinge)
-                statMin.add(lowerWhisker)
-                statMax.add(upperWhisker)
-
-                statCount.add(count)
+                // If there are no outliers, add a fake one to correct splitting for additional grouping
+                if (outliers.isEmpty() && count > 0) {
+                    statX.add(x)
+                    statY.add(Double.NaN)
+                    statCount.add(count)
+                }
             }
 
             return mutableMapOf(
                 Stats.X to statX,
-                Stats.MIDDLE to statMiddle,
-                Stats.LOWER to statLower,
-                Stats.UPPER to statUpper,
-                Stats.Y_MIN to statMin,
-                Stats.Y_MAX to statMax,
-                Stats.COUNT to statCount,
+                Stats.Y to statY,
+                Stats.COUNT to statCount
             )
         }
     }

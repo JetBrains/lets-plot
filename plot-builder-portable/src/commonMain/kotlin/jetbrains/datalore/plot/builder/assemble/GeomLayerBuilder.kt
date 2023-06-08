@@ -23,6 +23,7 @@ import jetbrains.datalore.plot.base.pos.PositionAdjustments
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.stat.SimpleStatContext
 import jetbrains.datalore.plot.base.stat.Stats
+import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.MarginSide
@@ -287,8 +288,12 @@ class GeomLayerBuilder(
             get() = geom is LiveMapGeom
 
 
-        override fun renderedAes(): List<Aes<*>> {
-            return myRenderedAes
+        override fun renderedAes(considerOrientation: Boolean): List<Aes<*>> {
+            return if (considerOrientation && isYOrientation) {
+                myRenderedAes.map { YOrientationBaseUtil.flipAes(it) }
+            } else {
+                myRenderedAes
+            }
         }
 
         override fun hasBinding(aes: Aes<*>): Boolean {

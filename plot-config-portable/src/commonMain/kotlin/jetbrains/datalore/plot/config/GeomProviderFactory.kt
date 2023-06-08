@@ -128,15 +128,6 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.Boxplot.WHISKER_WIDTH)) {
                     geom.whiskerWidth = layerConfig.getDouble(Option.Geom.Boxplot.WHISKER_WIDTH)!!
                 }
-                if (layerConfig.hasOwn(Option.Geom.BoxplotOutlier.COLOR)) {
-                    geom.outlierColor = layerConfig.getColor(Option.Geom.BoxplotOutlier.COLOR)!!
-                }
-                if (layerConfig.hasOwn(Option.Geom.BoxplotOutlier.FILL)) {
-                    geom.outlierFill = layerConfig.getColor(Option.Geom.BoxplotOutlier.FILL)!!
-                }
-                geom.outlierShape = layerConfig.getShape(Option.Geom.BoxplotOutlier.SHAPE)
-                geom.outlierSize = layerConfig.getDouble(Option.Geom.BoxplotOutlier.SIZE)
-                geom.outlierStroke = layerConfig.getDouble(Option.Geom.BoxplotOutlier.STROKE)
                 geom
             }
 
