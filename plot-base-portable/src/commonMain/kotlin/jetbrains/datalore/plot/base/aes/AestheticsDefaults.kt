@@ -38,8 +38,7 @@ open class AestheticsDefaults {
                 Aes.FILL to fill(),
                 Aes.ALPHA to alpha(),
                 Aes.SIZE to size(),
-                Aes.LINEWIDTH to lineWidth(),
-                Aes.STROKE to stroke()
+                Aes.LINEWIDTH to lineWidth()
             )
         }
             .filter { (_, value) -> value != null }

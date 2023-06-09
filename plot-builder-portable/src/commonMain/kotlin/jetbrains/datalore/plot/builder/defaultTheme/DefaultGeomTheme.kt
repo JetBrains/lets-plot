@@ -22,7 +22,6 @@ internal class DefaultGeomTheme(
     private val fill: Color?,
     private val alpha: Double?,
     private val size: Double?,
-    private val stroke: Double? = null,
     private val lineWidth: Double? = null
 ) : GeomTheme {
     override fun color() = color
@@ -34,8 +33,6 @@ internal class DefaultGeomTheme(
     override fun size() = size
 
     override fun lineWidth() = lineWidth
-
-    override fun stroke() = stroke
 
     companion object {
 
@@ -114,7 +111,6 @@ internal class DefaultGeomTheme(
                         fill = Color.PACIFIC_BLUE,
                         alpha = 1.0,
                         size = null,
-                        stroke = 0.5
                     )
                 }
 
@@ -152,7 +148,6 @@ internal class DefaultGeomTheme(
                         fill = inheritedColors.lineColor(),
                         alpha = 1.0,
                         size = 0.5,     // line width, size of mid-point
-                        stroke = 0.5
                     )
                 }
 
@@ -196,7 +191,6 @@ internal class DefaultGeomTheme(
                         fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
                         alpha = 1.0,
                         size = 2.0,
-                        stroke = 0.5
                     )
                 }
 
@@ -237,7 +231,6 @@ internal class DefaultGeomTheme(
                         alpha = 1.0,
                         size = 2.0,         // point size
                         lineWidth = 0.5,    // stick width
-                        stroke = 1.0        // width of the shape border
                     )
                 }
 
