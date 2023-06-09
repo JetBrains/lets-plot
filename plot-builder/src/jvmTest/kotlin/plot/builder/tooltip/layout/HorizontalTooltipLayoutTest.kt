@@ -199,6 +199,48 @@ internal class HorizontalTooltipLayoutTest : TooltipLayoutTestBase() {
     }
 
     @Test
+    fun whenThereIsNotEnoughVerticalSpaceForAllTooltips_And_AllAboveCursor_ShouldSelectNearestTooltip() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(size(80.0, 200.0))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .cursor(coord(90.0, 400.0))
+            .addTooltip(tooltipBuilder.horizontal(FIRST_TOOLTIP_KEY,  coord(20.0, 150.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(SECOND_TOOLTIP_KEY, coord(20.0, 350.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(THIRD_TOOLTIP_KEY,  coord(20.0, 250.0)).buildTooltip())
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect().text(SECOND_TOOLTIP_KEY)
+                .tooltipY(expectedSideTipY(SECOND_TOOLTIP_KEY))
+        )
+    }
+
+    @Test
+    fun whenThereIsNotEnoughVerticalSpaceForAllTooltips_And_AllUnderCursor_ShouldSelectNearestTooltip() {
+        val tooltipBuilder = MeasuredTooltipBuilderFactory()
+            .defaultObjectRadius(DEFAULT_OBJECT_RADIUS)
+            .defaultTipSize(size(80.0, 200.0))
+
+        val layoutManagerController = createTipLayoutManagerBuilder(VIEWPORT)
+            .cursor(coord(90.0, 50.0))
+            .addTooltip(tooltipBuilder.horizontal(FIRST_TOOLTIP_KEY,  coord(20.0, 250.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(SECOND_TOOLTIP_KEY, coord(20.0, 150.0)).buildTooltip())
+            .addTooltip(tooltipBuilder.horizontal(THIRD_TOOLTIP_KEY,  coord(20.0, 350.0)).buildTooltip())
+            .build()
+
+        arrange(layoutManagerController)
+
+        assertAllTooltips(
+            expect().text(SECOND_TOOLTIP_KEY)
+                .tooltipY(expectedSideTipY(SECOND_TOOLTIP_KEY))
+        )
+    }
+
+    @Test
     fun whenThereIsNotEnoughHorizontalSpaceFromBothSides_AndHorizontalAlignmentIsLeft_ShouldAlignTooltipToRightOfTheLeftBorder() {
         val objectRadius = 200.0
         val tooltipBuilder = MeasuredTooltipBuilderFactory()

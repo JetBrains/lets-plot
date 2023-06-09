@@ -260,9 +260,14 @@ class LayoutManager(
                         .forEach(::fixate)
                 } else {
                     horizontalTooltips
-                        .filter { it.stemCoord.y < myCursorCoord.y }
-                        .maxByOrNull { it.stemCoord.y }
-                        ?.let(::fixate)
+                        .sortedBy { it.stemCoord.y }
+                        .let { tooltips ->
+                            tooltips
+                                .filter { it.stemCoord.y < myCursorCoord.y }
+                                .maxByOrNull { it.stemCoord.y }
+                                ?: tooltips.first()
+                        }
+                        .let(::fixate)
                 }
             }
 
