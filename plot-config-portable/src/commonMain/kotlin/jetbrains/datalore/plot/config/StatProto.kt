@@ -91,8 +91,7 @@ object StatProto {
 
             StatKind.BOXPLOT_OUTLIER -> {
                 return Stats.boxplotOutlier(
-                    whiskerIQRRatio = options.getDouble(Boxplot.COEF) ?: BoxplotStat.DEF_WHISKER_IQR_RATIO,
-                    computeWidth = options.getBoolean(Boxplot.VARWIDTH, BoxplotStat.DEF_COMPUTE_WIDTH)
+                    whiskerIQRRatio = options.getDouble(Boxplot.COEF) ?: BoxplotStat.DEF_WHISKER_IQR_RATIO
                 )
             }
 
