@@ -252,6 +252,7 @@ open class AestheticsDefaults {
         fun lollipop(): AestheticsDefaults {
             return point()
                 .update(Aes.SHAPE, NamedShape.STICK_CIRCLE)
+                .update(Aes.STROKE, 1.0)
         }
 
         private fun base(): AestheticsDefaults {
