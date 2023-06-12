@@ -1809,10 +1809,11 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry lines. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
-    - size : line width, size of mid-point.
+    - size : size of mid-point.
     - linetype : type of the line. Codes and names: 0 = 'blank', 1 = 'solid', 2 = 'dashed', 3 = 'dotted', 4 = 'dotdash', 5 = 'longdash', 6 = 'twodash'.
     - shape : shape of the mid-point, an integer from 0 to 25.
     - stroke : width of the shape border. Applied only to the shapes having border.
+    - linewidth : line width.
 
     Examples
     --------

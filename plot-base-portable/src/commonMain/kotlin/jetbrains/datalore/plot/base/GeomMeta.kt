@@ -188,7 +188,8 @@ object GeomMeta {
                 Aes.LINETYPE,
                 Aes.SHAPE,
                 Aes.SIZE,
-                Aes.STROKE
+                Aes.STROKE,
+                Aes.LINEWIDTH
             )
 
             GeomKind.CONTOUR -> PATH

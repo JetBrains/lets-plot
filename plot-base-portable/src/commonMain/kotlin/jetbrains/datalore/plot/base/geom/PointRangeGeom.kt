@@ -8,6 +8,7 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.geom.legend.CompositeLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.legend.VLineLegendKeyElementFactory
 import jetbrains.datalore.plot.base.geom.util.BarTooltipHelper
@@ -51,7 +52,7 @@ class PointRangeGeom : GeomBase() {
             // vertical line
             val start = DoubleVector(x, ymin)
             val end = DoubleVector(x, ymax)
-            val line = helper.createLine(start, end, p)
+            val line = helper.createLine(start, end, p, strokeScaler = AesScaling::lineWidth)
             if (line == null) continue
             root.add(line)
 

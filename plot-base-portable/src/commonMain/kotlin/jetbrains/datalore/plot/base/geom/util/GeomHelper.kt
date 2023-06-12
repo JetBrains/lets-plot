@@ -111,7 +111,11 @@ open class GeomHelper(
             myStrokeAlphaEnabled = b
         }
 
-        fun createLine(start: DoubleVector, end: DoubleVector, p: DataPointAesthetics): SvgLineElement? {
+        fun createLine(
+            start: DoubleVector, end: DoubleVector,
+            p: DataPointAesthetics,
+            strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
+        ): SvgLineElement? {
             @Suppress("NAME_SHADOWING")
             val start = toClient(start, p)
             if (start == null) return null
@@ -123,7 +127,7 @@ open class GeomHelper(
                 start.x, start.y,
                 end.x, end.y
             )
-            decorate(line, p, myStrokeAlphaEnabled)
+            decorate(line, p, myStrokeAlphaEnabled, strokeScaler)
             return line
         }
     }

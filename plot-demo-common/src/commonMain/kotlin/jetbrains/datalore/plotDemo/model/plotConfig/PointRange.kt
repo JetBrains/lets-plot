@@ -95,6 +95,7 @@ class PointRange {
             |                            },
             |                 'position': {'name': 'dodge', 'width': 0.33},
             |                 'size': 5,
+            |                 'linewidth': 5,
             |                 'color': 'rgb(240,240,240)',
             |                 'shape': 21,
             |                 'fatten': 0.8
