@@ -145,7 +145,7 @@ internal class DefaultGeomTheme(
                 GeomKind.POINT_RANGE -> {
                     DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
-                        fill = inheritedColors.lineColor(),
+                        fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
                         alpha = 1.0,
                         size = 0.5,     // size of mid-point
                         lineWidth = 0.5
