@@ -110,7 +110,7 @@ internal class DefaultGeomTheme(
                         color = inheritedColors.backgroundFill(),
                         fill = Color.PACIFIC_BLUE,
                         alpha = 1.0,
-                        size = null,
+                        size = null
                     )
                 }
 
@@ -147,7 +147,8 @@ internal class DefaultGeomTheme(
                         color = inheritedColors.lineColor(),
                         fill = inheritedColors.lineColor(),
                         alpha = 1.0,
-                        size = 0.5,     // line width, size of mid-point
+                        size = 0.5,     // size of mid-point
+                        lineWidth = 0.5
                     )
                 }
 
