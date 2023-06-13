@@ -84,13 +84,15 @@ class CurveGeom : GeomBase() {
         }
 
         val degreeAngle = angle % 180
-        // Treat any angle less than 1 or greater than 179 degrees as a straight line
-        // Takes care of some nasty limit effects as well as simplifying things
-        if (degreeAngle < 1 || degreeAngle > 179) {
-            return listOf(start, end)
-        }
 
-        val controlPoints = calcControlPoints(start.x, start.y, end.x, end.y, curvature, degreeAngle, ncp)
+        // ToDo curvature and angle ?
+        val controlPoints = calcControlPoints(
+            start.x, start.y,
+            end.x, end.y,
+            if (degreeAngle < 0) -curvature else curvature,
+            -degreeAngle,
+            ncp
+        )
         //println(controlPoints)
         return listOf(start) + controlPoints + listOf(end)
 
@@ -184,33 +186,16 @@ class CurveGeom : GeomBase() {
         // Calculate control points
 
         // Direction of rotation depends on 'hand'
-        // dir <- switch(hand, left=-1, right=1)
         val dir = sign(curvature)
 
         // Angle of rotation depends on location of origin
         val maxTheta = PI + sign(origin * dir) * 2 * atan(abs(origin))
 
-        fun seq(from: Double, to: Double, step: Double): List<Double> {
-            require(sign(to) == sign(step))
-            val result = ArrayList<Double>()
-            var v = from
-            fun dir(v: Double) = if (from > to) (v >= to) else (v <= to)
-            while (dir(v)) {
-                result.add(v)
-                v += step
-            }
-            return result
-        }
-
         // theta <- seq(0, dir*maxtheta, dir*maxtheta/(ncp + 1))[c(-1, -(ncp + 2))]
-        val theta = seq(
-            from = 0.0,
-            to = dir * maxTheta,
-            step = dir * maxTheta / (ncp + 1)
-        ).toMutableList().apply {
-            this.removeAt(0)
-            this.removeAt(ncp)
-        }
+        val theta = (0 until (ncp + 2))
+            .map { it * dir * maxTheta / (ncp + 1) }
+            .drop(1)
+            .dropLast(1)
 
         val cosTheta = theta.map(::cos)
         val sinTheta = theta.map(::sin)
