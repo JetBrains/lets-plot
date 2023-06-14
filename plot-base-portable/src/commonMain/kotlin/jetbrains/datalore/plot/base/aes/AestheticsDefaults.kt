@@ -6,11 +6,9 @@
 package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
-import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.render.point.NamedShape
 
-open class AestheticsDefaults {
+open class AestheticsDefaults(geomTheme: GeomTheme) {
 
     private val myDefaults = TypedKeyHashMap().apply {
         for (aes in Aes.values()) {
@@ -18,20 +16,6 @@ open class AestheticsDefaults {
             @Suppress("UNCHECKED_CAST")
             put(aes as Aes<Any>, AesInitValue[aes])
         }
-    }
-    private val myDefaultsInLegend = TypedKeyHashMap()
-
-    private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
-        myDefaults.put(aes, defaultValue)
-        return this
-    }
-
-    private fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
-        myDefaultsInLegend.put(aes, defaultValue)
-        return this
-    }
-
-    fun updateWith(geomTheme: GeomTheme): AestheticsDefaults {
         with(geomTheme) {
             listOf(
                 Aes.COLOR to color(),
@@ -41,14 +25,24 @@ open class AestheticsDefaults {
                 Aes.LINEWIDTH to lineWidth()
             )
         }
-            .filter { (_, value) -> value != null }
             .forEach { (aes, value) ->
                 @Suppress("UNCHECKED_CAST")
-                update(aes as Aes<Any>, value!!)
+                put(aes as Aes<Any>, value)
             }
+    }
+    private val myDefaultsInLegend = TypedKeyHashMap()
+
+/*
+    private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+        myDefaults.put(aes, defaultValue)
         return this
     }
 
+    private fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+        myDefaultsInLegend.put(aes, defaultValue)
+        return this
+    }
+*/
     fun <T> defaultValue(aes: Aes<T>): T {
         return myDefaults[aes]
     }
@@ -60,7 +54,7 @@ open class AestheticsDefaults {
             defaultValue(aes)
         }
     }
-
+/*
     companion object {
         fun point(): AestheticsDefaults {
             return base()
@@ -120,7 +114,7 @@ open class AestheticsDefaults {
         }
 
         fun crossBar(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .update(Aes.WIDTH, 0.9)
         }
 
@@ -153,7 +147,7 @@ open class AestheticsDefaults {
         }
 
         fun ydotplot(): AestheticsDefaults {
-            return AestheticsDefaults()
+            return base()
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
@@ -259,4 +253,6 @@ open class AestheticsDefaults {
             return AestheticsDefaults()
         }
     }
+
+ */
 }

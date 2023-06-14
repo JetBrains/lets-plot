@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.geom.*
 
 class GeomProvider internal constructor(
     val geomKind: GeomKind,
-    private val aestheticsDefaults: AestheticsDefaults,
+    val aestheticsDefaults: AestheticsDefaults,
     val handlesGroups: Boolean,
     private val geomSupplier: (ctx: Context) -> Geom
 ) {
@@ -24,395 +24,482 @@ class GeomProvider internal constructor(
         return geomSupplier(ctx)
     }
 
-    fun getAestheticsDefaults(geomTheme: GeomTheme?): AestheticsDefaults {
-        return aestheticsDefaults.apply { geomTheme?.let(this::updateWith) }
-    }
-
     abstract class Context(
-        val colorByAes: Aes<Color>,
-        val fillByAes: Aes<Color>,
+        // private val colorByAes: Aes<Color>,
+        // private val fillByAes: Aes<Color>,
     ) {
         abstract fun hasBinding(aes: Aes<*>): Boolean
         abstract fun hasConstant(aes: Aes<*>): Boolean
+        abstract fun geomTheme(geomKind: GeomKind): GeomTheme
     }
 
     companion object {
-        fun point(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.POINT,
-                AestheticsDefaults.point(),
-                PointGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun point(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.POINT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.POINT)),
+                    PointGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun path(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.PATH,
-                AestheticsDefaults.path(),
-                PathGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun path(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.PATH,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.PATH)),
+                    PathGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun line(): GeomProvider {
-            return GeomProvider(
-                GeomKind.LINE,
-                AestheticsDefaults.line(),
-                LineGeom.HANDLES_GROUPS
-            ) { LineGeom() }
+        fun line(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.LINE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.LINE)),
+                    LineGeom.HANDLES_GROUPS
+                ) { LineGeom() }
+            }
         }
 
-        fun smooth(): GeomProvider {
-            return GeomProvider(
-                GeomKind.SMOOTH,
-                AestheticsDefaults.smooth(),
-                SmoothGeom.HANDLES_GROUPS
-            ) { SmoothGeom() }
+        fun smooth(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.SMOOTH,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.SMOOTH)),
+                    SmoothGeom.HANDLES_GROUPS
+                ) { SmoothGeom() }
+            }
         }
 
-        fun bar(): GeomProvider {
-            return GeomProvider(
-                GeomKind.BAR,
-                AestheticsDefaults.bar(),
-                BarGeom.HANDLES_GROUPS
-            ) { BarGeom() }
+        fun bar(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.BAR,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.BAR)),
+                    BarGeom.HANDLES_GROUPS
+                ) { BarGeom() }
+            }
         }
 
-        fun histogram(): GeomProvider {
-            return GeomProvider(
-                GeomKind.HISTOGRAM,
-                AestheticsDefaults.histogram(),
-                HistogramGeom.HANDLES_GROUPS
-            ) { HistogramGeom() }
+        fun histogram(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.HISTOGRAM,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.HISTOGRAM)),
+                    HistogramGeom.HANDLES_GROUPS
+                ) { HistogramGeom() }
+            }
         }
 
-        fun dotplot(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.DOT_PLOT,
-                AestheticsDefaults.dotplot(),
-                DotplotGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun dotplot(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.DOT_PLOT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.DOT_PLOT)),
+                    DotplotGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun tile(): GeomProvider {
-            return GeomProvider(
-                GeomKind.TILE,
-                AestheticsDefaults.tile(),
-                TileGeom.HANDLES_GROUPS
-            ) { TileGeom() }
+        fun tile(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.TILE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.TILE)),
+                    TileGeom.HANDLES_GROUPS
+                ) { TileGeom() }
+            }
         }
 
-        fun bin2d(): GeomProvider {
-            return GeomProvider(
-                GeomKind.BIN_2D,
-                AestheticsDefaults.bin2d(),
-                Bin2dGeom.HANDLES_GROUPS
-            ) { Bin2dGeom() }
+        fun bin2d(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.BIN_2D,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.BIN_2D)),
+                    Bin2dGeom.HANDLES_GROUPS
+                ) { Bin2dGeom() }
+            }
         }
 
-        fun errorBar(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.ERROR_BAR,
-                AestheticsDefaults.errorBar(),
-                ErrorBarGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun errorBar(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.ERROR_BAR,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.ERROR_BAR)),
+                    ErrorBarGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun crossBar(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.CROSS_BAR,
-                AestheticsDefaults.crossBar(),
-                CrossBarGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun crossBar(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.CROSS_BAR,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.CROSS_BAR)),
+                    CrossBarGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun lineRange(): GeomProvider {
-            return GeomProvider(
-                GeomKind.LINE_RANGE,
-                AestheticsDefaults.lineRange(),
-                LineRangeGeom.HANDLES_GROUPS
-            ) { LineRangeGeom() }
+        fun lineRange(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.LINE_RANGE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.LINE_RANGE)),
+                    LineRangeGeom.HANDLES_GROUPS
+                ) { LineRangeGeom() }
+            }
         }
 
-        fun pointRange(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.POINT_RANGE,
-                AestheticsDefaults.pointRange(),
-                PointRangeGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun pointRange(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.POINT_RANGE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.POINT_RANGE)),
+                    PointRangeGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun contour(): GeomProvider {
-            return GeomProvider(
-                GeomKind.CONTOUR,
-                AestheticsDefaults.contour(),
-                ContourGeom.HANDLES_GROUPS
-            ) { ContourGeom() }
+        fun contour(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.CONTOUR,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.CONTOUR)),
+                    ContourGeom.HANDLES_GROUPS
+                ) { ContourGeom() }
+            }
         }
 
-        fun contourf(): GeomProvider {
-            return GeomProvider(
-                GeomKind.CONTOURF,
-                AestheticsDefaults.contourf(),
-                ContourfGeom.HANDLES_GROUPS
-            ) { ContourfGeom() }
+        fun contourf(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.CONTOURF,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.CONTOURF)),
+                    ContourfGeom.HANDLES_GROUPS
+                ) { ContourfGeom() }
+            }
         }
 
-        fun polygon(): GeomProvider {
-            return GeomProvider(
-                GeomKind.POLYGON,
-                AestheticsDefaults.polygon(),
-                PolygonGeom.HANDLES_GROUPS
-            ) { PolygonGeom() }
+        fun polygon(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.POLYGON,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.POLYGON)),
+                    PolygonGeom.HANDLES_GROUPS
+                ) { PolygonGeom() }
+            }
         }
 
-        fun map(): GeomProvider {
-            return GeomProvider(
-                GeomKind.MAP,
-                AestheticsDefaults.map(),
-                MapGeom.HANDLES_GROUPS
-            ) { MapGeom() }
+        fun map(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.MAP,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.MAP)),
+                    MapGeom.HANDLES_GROUPS
+                ) { MapGeom() }
+            }
         }
 
-        fun abline(): GeomProvider {
-            return GeomProvider(
-                GeomKind.AB_LINE,
-                AestheticsDefaults.abline(),
-                ABLineGeom.HANDLES_GROUPS
-            ) { ABLineGeom() }
+        fun abline(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.AB_LINE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.AB_LINE)),
+                    ABLineGeom.HANDLES_GROUPS
+                ) { ABLineGeom() }
+            }
         }
 
-        fun hline(): GeomProvider {
-            return GeomProvider(
-                GeomKind.H_LINE,
-                AestheticsDefaults.hline(),
-                HLineGeom.HANDLES_GROUPS
-            ) { HLineGeom() }
+        fun hline(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.H_LINE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.H_LINE)),
+                    HLineGeom.HANDLES_GROUPS
+                ) { HLineGeom() }
+            }
         }
 
-        fun vline(): GeomProvider {
-            return GeomProvider(
-                GeomKind.V_LINE,
-                AestheticsDefaults.vline(),
-                VLineGeom.HANDLES_GROUPS
-            ) { VLineGeom() }
+        fun vline(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.V_LINE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.V_LINE)),
+                    VLineGeom.HANDLES_GROUPS
+                ) { VLineGeom() }
+            }
         }
 
-        fun boxplot(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.BOX_PLOT,
-                AestheticsDefaults.boxplot(),
-                BoxplotGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun boxplot(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.BOX_PLOT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.BOX_PLOT)),
+                    BoxplotGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun arearidges(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.AREA_RIDGES,
-                AestheticsDefaults.areaRidges(),
-                AreaRidgesGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun arearidges(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.AREA_RIDGES,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.AREA_RIDGES)),
+                    AreaRidgesGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun violin(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.VIOLIN,
-                AestheticsDefaults.violin(),
-                ViolinGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun violin(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.VIOLIN,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.VIOLIN)),
+                    ViolinGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun ydotplot(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.Y_DOT_PLOT,
-                AestheticsDefaults.ydotplot(),
-                YDotplotGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun ydotplot(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.Y_DOT_PLOT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.Y_DOT_PLOT)),
+                    YDotplotGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun livemap(): GeomProvider {
-            return GeomProvider(
-                GeomKind.LIVE_MAP,
-                AestheticsDefaults.livemap(),
-                LiveMapGeom.HANDLES_GROUPS,
-            ) { LiveMapGeom() }
+        fun livemap(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.LIVE_MAP,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.LIVE_MAP)),
+                    LiveMapGeom.HANDLES_GROUPS,
+                ) { LiveMapGeom() }
+            }
         }
 
-        fun ribbon(): GeomProvider {
-            return GeomProvider(
-                GeomKind.RIBBON,
-                AestheticsDefaults.ribbon(),
-                RibbonGeom.HANDLES_GROUPS
-            ) { RibbonGeom() }
+        fun ribbon(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.RIBBON,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.RIBBON)),
+                    RibbonGeom.HANDLES_GROUPS
+                ) { RibbonGeom() }
+            }
         }
 
-        fun area(): GeomProvider {
-            return GeomProvider(
-                GeomKind.AREA,
-                AestheticsDefaults.area(),
-                AreaGeom.HANDLES_GROUPS
-            ) { AreaGeom() }
+        fun area(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.AREA,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.AREA)),
+                    AreaGeom.HANDLES_GROUPS
+                ) { AreaGeom() }
+            }
         }
 
-        fun density(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.DENSITY,
-                AestheticsDefaults.density(),
-                DensityGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun density(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.DENSITY,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.DENSITY)),
+                    DensityGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun density2d(): GeomProvider {
-            return GeomProvider(
-                GeomKind.DENSITY2D,
-                AestheticsDefaults.density2d(),
-                Density2dGeom.HANDLES_GROUPS
-            ) { Density2dGeom() }
+        fun density2d(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.DENSITY2D,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.DENSITY2D)),
+                    Density2dGeom.HANDLES_GROUPS
+                ) { Density2dGeom() }
+            }
         }
 
-        fun density2df(): GeomProvider {
-            return GeomProvider(
-                GeomKind.DENSITY2DF,
-                AestheticsDefaults.density2df(),
-                Density2dfGeom.HANDLES_GROUPS
-            ) { Density2dfGeom() }
+        fun density2df(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.DENSITY2DF,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.DENSITY2DF)),
+                    Density2dfGeom.HANDLES_GROUPS
+                ) { Density2dfGeom() }
+            }
         }
 
-        fun jitter(): GeomProvider {
-            return GeomProvider(
-                GeomKind.JITTER,
-                AestheticsDefaults.jitter(),
-                JitterGeom.HANDLES_GROUPS
-            ) { JitterGeom() }
+        fun jitter(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.JITTER,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.JITTER)),
+                    JitterGeom.HANDLES_GROUPS
+                ) { JitterGeom() }
+            }
         }
 
-        fun qq(): GeomProvider {
-            return GeomProvider(
-                GeomKind.Q_Q,
-                AestheticsDefaults.qq(),
-                QQGeom.HANDLES_GROUPS
-            ) { QQGeom() }
+        fun qq(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.Q_Q,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q)),
+                    QQGeom.HANDLES_GROUPS
+                ) { QQGeom() }
+            }
         }
 
-        fun qq2(): GeomProvider {
-            return GeomProvider(
-                GeomKind.Q_Q_2,
-                AestheticsDefaults.qq2(),
-                QQ2Geom.HANDLES_GROUPS
-            ) { QQ2Geom() }
+        fun qq2(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.Q_Q_2,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q_2)),
+                    QQ2Geom.HANDLES_GROUPS
+                ) { QQ2Geom() }
+            }
         }
 
-        fun qqline(): GeomProvider {
-            return GeomProvider(
-                GeomKind.Q_Q_LINE,
-                AestheticsDefaults.qq_line(),
-                QQLineGeom.HANDLES_GROUPS
-            ) { QQLineGeom() }
+        fun qqline(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.Q_Q_LINE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q_LINE)),
+                    QQLineGeom.HANDLES_GROUPS
+                ) { QQLineGeom() }
+            }
         }
 
-        fun qq2line(): GeomProvider {
-            return GeomProvider(
-                GeomKind.Q_Q_2_LINE,
-                AestheticsDefaults.qq2_line(),
-                QQ2LineGeom.HANDLES_GROUPS
-            ) { QQ2LineGeom() }
+        fun qq2line(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.Q_Q_2_LINE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q_2_LINE)),
+                    QQ2LineGeom.HANDLES_GROUPS
+                ) { QQ2LineGeom() }
+            }
         }
 
-        fun freqpoly(): GeomProvider {
-            return GeomProvider(
-                GeomKind.FREQPOLY,
-                AestheticsDefaults.freqpoly(),
-                FreqpolyGeom.HANDLES_GROUPS
-            ) { FreqpolyGeom() }
+        fun freqpoly(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.FREQPOLY,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.FREQPOLY)),
+                    FreqpolyGeom.HANDLES_GROUPS
+                ) { FreqpolyGeom() }
+            }
         }
 
-        fun step(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.STEP,
-                AestheticsDefaults.step(),
-                StepGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun step(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.STEP,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.STEP)),
+                    StepGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun rect(): GeomProvider {
-            return GeomProvider(
-                GeomKind.RECT,
-                AestheticsDefaults.rect(),
-                RectGeom.HANDLES_GROUPS
-            ) { RectGeom() }
+        fun rect(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.RECT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.RECT)),
+                    RectGeom.HANDLES_GROUPS
+                ) { RectGeom() }
+            }
         }
 
-        fun segment(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.SEGMENT,
-                AestheticsDefaults.segment(),
-                SegmentGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun segment(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.SEGMENT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.SEGMENT)),
+                    SegmentGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun text(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.TEXT,
-                AestheticsDefaults.text(),
-                TextGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun text(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.TEXT,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.TEXT)),
+                    TextGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun label(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.LABEL,
-                AestheticsDefaults.label(),
-                TextGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun label(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.LABEL,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.LABEL)),
+                    TextGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun raster(): GeomProvider {
-            return GeomProvider(
-                GeomKind.RASTER,
-                AestheticsDefaults.raster(),
-                RasterGeom.HANDLES_GROUPS
-            ) { RasterGeom() }
+        fun raster(): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.RASTER,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.RASTER)),
+                    RasterGeom.HANDLES_GROUPS
+                ) { RasterGeom() }
+            }
         }
 
-        fun image(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.IMAGE,
-                AestheticsDefaults.image(),
-                ImageGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun image(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.IMAGE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.IMAGE)),
+                    ImageGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun pie(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.PIE,
-                AestheticsDefaults.pie(),
-                PieGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun pie(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.PIE,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.PIE)),
+                    PieGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
 
-        fun lollipop(supplier: (Context) -> Geom): GeomProvider {
-            return GeomProvider(
-                GeomKind.LOLLIPOP,
-                AestheticsDefaults.lollipop(),
-                LollipopGeom.HANDLES_GROUPS,
-                supplier
-            )
+        fun lollipop(supplier: (Context) -> Geom): (Context) -> GeomProvider {
+            return { ctx ->
+                GeomProvider(
+                    GeomKind.LOLLIPOP,
+                    AestheticsDefaults(ctx.geomTheme(GeomKind.LOLLIPOP)),
+                    LollipopGeom.HANDLES_GROUPS,
+                    supplier
+                )
+            }
         }
     }
 }

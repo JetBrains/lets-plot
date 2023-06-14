@@ -20,9 +20,9 @@ import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Pos
 
-class GeomProto constructor(val geomKind: GeomKind) {
+class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
+    fun geomProvider(layerConfig: OptionsAccessor): (GeomProvider.Context) -> GeomProvider {
         return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
     }
 
