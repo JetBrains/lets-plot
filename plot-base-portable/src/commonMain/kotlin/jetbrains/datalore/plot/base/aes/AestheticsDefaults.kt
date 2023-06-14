@@ -16,19 +16,12 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
             @Suppress("UNCHECKED_CAST")
             put(aes as Aes<Any>, AesInitValue[aes])
         }
-        with(geomTheme) {
-            listOf(
-                Aes.COLOR to color(),
-                Aes.FILL to fill(),
-                Aes.ALPHA to alpha(),
-                Aes.SIZE to size(),
-                Aes.LINEWIDTH to lineWidth()
-            )
-        }
-            .forEach { (aes, value) ->
-                @Suppress("UNCHECKED_CAST")
-                put(aes as Aes<Any>, value)
-            }
+        // defaults from geom theme:
+        put(Aes.COLOR, geomTheme.color())
+        put(Aes.FILL, geomTheme.fill())
+        put(Aes.ALPHA, geomTheme.alpha())
+        put(Aes.SIZE, geomTheme.size())
+        put(Aes.LINEWIDTH, geomTheme.lineWidth())
     }
     private val myDefaultsInLegend = TypedKeyHashMap()
 

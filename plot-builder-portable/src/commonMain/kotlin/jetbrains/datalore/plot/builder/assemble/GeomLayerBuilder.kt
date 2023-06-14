@@ -271,17 +271,18 @@ class GeomLayerBuilder(
         groupingVarName: String?
     ) : GeomLayer {
 
-        private val ctx = object : GeomProvider.Context(
-            // colorByAes = colorByAes,
-            // fillByAes = fillByAes
-        ) {
-            override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
-            override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
-            override fun geomTheme(geomKind: GeomKind): GeomTheme = geomThemeProvider(geomKind)
-        }
-        private val myGeomProvider = geomProvider(ctx)
+        private val myGeomProvider = geomProvider(
+            object : GeomProvider.Context(
+                // colorByAes = colorByAes,
+                // fillByAes = fillByAes
+            ) {
+                override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
+                override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
+                override fun geomTheme(geomKind: GeomKind): GeomTheme = geomThemeProvider(geomKind)
+            }
+        )
 
-        override val geom: Geom = myGeomProvider.createGeom(ctx)
+        override val geom: Geom = myGeomProvider.createGeom()
 
         override val group: (Int) -> Int = GroupingContext(
             dataFrame,
