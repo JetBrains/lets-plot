@@ -17,12 +17,12 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.base.aes.GeomTheme
 
-internal class DefaultGeomTheme(
-    private val color: Color?,
-    private val fill: Color?,
-    private val alpha: Double?,
-    private val size: Double?,
-    private val lineWidth: Double? = null
+internal class DefaultGeomTheme private constructor(
+    private val color: Color,
+    private val fill: Color,
+    private val alpha: Double,
+    private val size: Double,
+    private val lineWidth: Double
 ) : GeomTheme {
     override fun color() = color
 
@@ -35,6 +35,13 @@ internal class DefaultGeomTheme(
     override fun lineWidth() = lineWidth
 
     companion object {
+        val BASE = DefaultGeomTheme(
+            color = Color.PACIFIC_BLUE,
+            fill = Color.PACIFIC_BLUE,
+            alpha = 1.0,
+            size = 0.5,
+            lineWidth = 0.5
+        )
 
         class InheritedColors(
             options: Map<String, Any>,
@@ -56,7 +63,13 @@ internal class DefaultGeomTheme(
 
         // defaults for geomKind
         fun forGeomKind(geomKind: GeomKind, inheritedColors: InheritedColors): GeomTheme {
-            return when (geomKind) {
+            var color = BASE.color
+            var fill = BASE.fill
+            var alpha = BASE.alpha
+            var size = BASE.size
+            var lineWidth = BASE.lineWidth
+
+            when (geomKind) {
                 GeomKind.PATH,
                 GeomKind.LINE,
                 GeomKind.AB_LINE,
@@ -68,201 +81,87 @@ internal class DefaultGeomTheme(
                 GeomKind.CONTOUR,
                 GeomKind.DENSITY2D,
                 GeomKind.Q_Q_LINE,
-                GeomKind.Q_Q_2_LINE -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = null,
-                        alpha = 1.0,
-                        size = 0.5   // line width
-                    )
-                }
-
-                GeomKind.SMOOTH -> {
-                    DefaultGeomTheme(
-                        color = Color.MAGENTA,
-                        fill = inheritedColors.lineColor(),
-                        alpha = 1.5, // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
-                        size = 0.5   // line width
-                    )
-                }
-
-                GeomKind.BAR -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.backgroundFill(),
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = 0.5
-                    )
-                }
-
-                GeomKind.HISTOGRAM -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        size = 0.5,
-                        alpha = 1.0
-                    )
-                }
-
-                GeomKind.DOT_PLOT,
-                GeomKind.Y_DOT_PLOT -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.backgroundFill(),
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = null
-                    )
-                }
-
-                GeomKind.TILE,
-                GeomKind.BIN_2D -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.backgroundFill(),
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = 0.5
-                    )
-                }
-
-                GeomKind.MAP -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        alpha = 1.0,
-                        size = 0.2
-                    )
-                }
-
+                GeomKind.Q_Q_2_LINE,
                 GeomKind.ERROR_BAR,
                 GeomKind.LINE_RANGE -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = null,
-                        alpha = 1.0,
-                        size = 0.5
-                    )
-                }
-                GeomKind.POINT_RANGE -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        alpha = 1.0,
-                        size = 0.5,     // size of mid-point
-                        lineWidth = 0.5
-                    )
+                    color = inheritedColors.lineColor()
                 }
 
+                GeomKind.HISTOGRAM,
                 GeomKind.CROSS_BAR,
                 GeomKind.BOX_PLOT,
                 GeomKind.AREA_RIDGES,
-                GeomKind.VIOLIN -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = inheritedColors.lineColor(),
-                        alpha = 0.1,
-                        size = 0.5
-                    )
+                GeomKind.VIOLIN,
+                GeomKind.AREA,
+                GeomKind.DENSITY,
+                GeomKind.RECT,
+                GeomKind.RIBBON -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.lineColor()
+                    alpha = 0.1
                 }
 
-                GeomKind.POLYGON -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.backgroundFill(),
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = 0.5
-                    )
+                GeomKind.MAP -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.lineColor()
+                    alpha = 0.1
+                    size = 0.2
                 }
 
-                GeomKind.CONTOURF,
-                GeomKind.DENSITY2DF -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.backgroundFill(),
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = 0.0
-                    )
+                GeomKind.POINT_RANGE-> {
+                    color = inheritedColors.lineColor()
+                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
                 }
 
                 GeomKind.POINT,
                 GeomKind.JITTER,
                 GeomKind.Q_Q,
-                GeomKind.Q_Q_2 -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        alpha = 1.0,
-                        size = 2.0,
-                    )
-                }
-
-                GeomKind.AREA,
-                GeomKind.DENSITY,
-                GeomKind.RECT,
-                GeomKind.RIBBON -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = inheritedColors.lineColor(),
-                        alpha = 0.1,
-                        size = 0.5
-                    )
-                }
-
-                GeomKind.TEXT -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = null,
-                        alpha = 1.0,
-                        size = 7.0
-                    )
-                }
-
-                GeomKind.LABEL -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = inheritedColors.backgroundFill(),
-                        alpha = 1.0,
-                        size = 7.0
-                    )
-                }
-
+                GeomKind.Q_Q_2,
                 GeomKind.LOLLIPOP -> {
-                    DefaultGeomTheme(
-                        color = inheritedColors.lineColor(),
-                        fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1),
-                        alpha = 1.0,
-                        size = 2.0,         // point size
-                        lineWidth = 0.5,    // stick width
-                    )
+                    color = inheritedColors.lineColor()
+                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    size = 2.0
+                }
+
+                GeomKind.SMOOTH -> {
+                    color = Color.MAGENTA
+                    fill = inheritedColors.lineColor()
+                    alpha = 1.5 // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
+                }
+
+                GeomKind.DOT_PLOT,
+                GeomKind.Y_DOT_PLOT,
+                GeomKind.BAR,
+                GeomKind.TILE,
+                GeomKind.BIN_2D,
+                GeomKind.POLYGON -> {
+                    color = inheritedColors.backgroundFill()
+                }
+
+                GeomKind.CONTOURF,
+                GeomKind.DENSITY2DF -> {
+                    color = inheritedColors.backgroundFill()
+                    size = 0.0
+                }
+
+
+                GeomKind.TEXT, GeomKind.LABEL -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.backgroundFill() // background for label
+                    size = 7.0
                 }
 
                 GeomKind.PIE -> {
-                    DefaultGeomTheme(
-                        color = null,
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = 10.0
-                    )
+                    size = 10.0
                 }
 
-                GeomKind.RASTER -> {
-                    DefaultGeomTheme(
-                        color = null,
-                        fill = Color.PACIFIC_BLUE,
-                        alpha = 1.0,
-                        size = null
-                    )
-                }
-
+                GeomKind.RASTER,
                 GeomKind.IMAGE,
                 GeomKind.LIVE_MAP -> {
-                    DefaultGeomTheme(
-                        color = null,
-                        fill = null,
-                        alpha = null,
-                        size = null
-                    )
                 }
             }
+
+            return DefaultGeomTheme(color, fill, alpha, size, lineWidth)
         }
     }
 }

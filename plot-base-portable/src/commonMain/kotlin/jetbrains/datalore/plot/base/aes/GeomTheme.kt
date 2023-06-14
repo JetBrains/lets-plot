@@ -8,13 +8,13 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.base.values.Color
 
 interface GeomTheme {
-    fun color(): Color?
+    fun color(): Color
 
-    fun fill(): Color?
+    fun fill(): Color
 
-    fun alpha(): Double?
+    fun alpha(): Double
 
-    fun size(): Double?
+    fun size(): Double
 
-    fun lineWidth(): Double?
+    fun lineWidth(): Double
 }
