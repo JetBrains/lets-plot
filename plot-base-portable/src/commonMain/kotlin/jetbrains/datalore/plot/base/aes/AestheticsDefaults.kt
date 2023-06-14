@@ -6,7 +6,9 @@
 package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.render.point.NamedShape
 
 open class AestheticsDefaults(geomTheme: GeomTheme) {
 
@@ -25,7 +27,6 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
     }
     private val myDefaultsInLegend = TypedKeyHashMap()
 
-/*
     private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)
         return this
@@ -35,7 +36,7 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
         myDefaultsInLegend.put(aes, defaultValue)
         return this
     }
-*/
+
     fun <T> defaultValue(aes: Aes<T>): T {
         return myDefaults[aes]
     }
@@ -47,205 +48,203 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
             defaultValue(aes)
         }
     }
-/*
+
     companion object {
-        fun point(): AestheticsDefaults {
-            return base()
+        fun point(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun path(): AestheticsDefaults {
-            return base()
+        fun path(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun line(): AestheticsDefaults {
-            return path()
+        fun line(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun abline(): AestheticsDefaults {
-            return path()
+        fun abline(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun hline(): AestheticsDefaults {
-            return path()
+        fun hline(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun vline(): AestheticsDefaults {
-            return path()
+        fun vline(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun smooth(): AestheticsDefaults {
-            return path()
+        fun smooth(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun bar(): AestheticsDefaults {
-            return base()
+        fun bar(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .update(Aes.WIDTH, 0.9)
         }
 
-        fun histogram(): AestheticsDefaults {
-            return base()
+        fun histogram(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun dotplot(): AestheticsDefaults {
-            return base()
+        fun dotplot(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun tile(): AestheticsDefaults {
-            return base()
+        fun tile(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun bin2d(): AestheticsDefaults {
-            return tile()
+        fun bin2d(geomTheme: GeomTheme): AestheticsDefaults {
+            return tile(geomTheme)
         }
 
-        fun errorBar(): AestheticsDefaults {
-            return base()
+        fun errorBar(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .update(Aes.WIDTH, 0.45)
                 .update(Aes.HEIGHT, 0.45)
         }
 
-        fun crossBar(): AestheticsDefaults {
-            return base()
+        fun crossBar(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .update(Aes.WIDTH, 0.9)
         }
 
-        fun lineRange(): AestheticsDefaults {
-            return path()
+        fun lineRange(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun pointRange(): AestheticsDefaults {
-            return path()
+        fun pointRange(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun polygon(): AestheticsDefaults {
-            return base()
+        fun polygon(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun map(): AestheticsDefaults {
-            return base()
+        fun map(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun boxplot(): AestheticsDefaults {
-            return crossBar()
+        fun boxplot(geomTheme: GeomTheme): AestheticsDefaults {
+            return crossBar(geomTheme)
         }
 
-        fun areaRidges(): AestheticsDefaults {
-            return base()
+        fun areaRidges(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun violin(): AestheticsDefaults {
-            return base()
+        fun violin(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun ydotplot(): AestheticsDefaults {
-            return base()
+        fun ydotplot(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun livemap(): AestheticsDefaults {
-            return base()
+        fun livemap(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun ribbon(): AestheticsDefaults {
-            return base()
+        fun ribbon(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun area(): AestheticsDefaults {
-            return base()
+        fun area(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun density(): AestheticsDefaults {
-            return area()
+        fun density(geomTheme: GeomTheme): AestheticsDefaults {
+            return area(geomTheme)
         }
 
-        fun contour(): AestheticsDefaults {
-            return path()
+        fun contour(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun contourf(): AestheticsDefaults {
-            return base()
+        fun contourf(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun density2d(): AestheticsDefaults {
-            return contour()
+        fun density2d(geomTheme: GeomTheme): AestheticsDefaults {
+            return contour(geomTheme)
         }
 
-        fun density2df(): AestheticsDefaults {
-            return contourf()
+        fun density2df(geomTheme: GeomTheme): AestheticsDefaults {
+            return contourf(geomTheme)
         }
 
-        fun jitter(): AestheticsDefaults {
-            return point()
+        fun jitter(geomTheme: GeomTheme): AestheticsDefaults {
+            return point(geomTheme)
         }
 
-        fun qq(): AestheticsDefaults {
-            return point()
+        fun qq(geomTheme: GeomTheme): AestheticsDefaults {
+            return point(geomTheme)
         }
 
-        fun qq2(): AestheticsDefaults {
-            return point()
+        fun qq2(geomTheme: GeomTheme): AestheticsDefaults {
+            return point(geomTheme)
         }
 
-        fun qq_line(): AestheticsDefaults {
-            return path()
+        fun qq_line(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun qq2_line(): AestheticsDefaults {
-            return path()
+        fun qq2_line(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun freqpoly(): AestheticsDefaults {
-            return area()
+        fun freqpoly(geomTheme: GeomTheme): AestheticsDefaults {
+            return area(geomTheme)
         }
 
-        fun step(): AestheticsDefaults {
-            return path()
+        fun step(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun rect(): AestheticsDefaults {
-            return polygon()
+        fun rect(geomTheme: GeomTheme): AestheticsDefaults {
+            return polygon(geomTheme)
         }
 
-        fun segment(): AestheticsDefaults {
-            return path()
+        fun segment(geomTheme: GeomTheme): AestheticsDefaults {
+            return path(geomTheme)
         }
 
-        fun text(): AestheticsDefaults {
-            return base()
+        fun text(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
-        fun label(): AestheticsDefaults {
-            return text()
+        fun label(geomTheme: GeomTheme): AestheticsDefaults {
+            return text(geomTheme)
         }
 
-        fun raster(): AestheticsDefaults {
-            return base()
+        fun raster(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun image(): AestheticsDefaults {
-            return base()
+        fun image(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
         }
 
-        fun pie(): AestheticsDefaults {
-            return base()
+        fun pie(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 1.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
                 .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }
 
-        fun lollipop(): AestheticsDefaults {
-            return point()
+        fun lollipop(geomTheme: GeomTheme): AestheticsDefaults {
+            return point(geomTheme)
                 .update(Aes.SHAPE, NamedShape.STICK_CIRCLE)
                 .update(Aes.STROKE, 1.0)
         }
 
-        private fun base(): AestheticsDefaults {
-            return AestheticsDefaults()
+        private fun base(geomTheme: GeomTheme): AestheticsDefaults {
+            return AestheticsDefaults(geomTheme)
         }
     }
-
- */
 }

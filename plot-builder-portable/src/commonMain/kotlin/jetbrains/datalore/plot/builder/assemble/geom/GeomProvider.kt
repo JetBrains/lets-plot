@@ -39,7 +39,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.POINT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.POINT)),
+                    AestheticsDefaults.point(ctx.geomTheme(GeomKind.POINT)),
                     PointGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -51,7 +51,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.PATH,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.PATH)),
+                    AestheticsDefaults.path(ctx.geomTheme(GeomKind.PATH)),
                     PathGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -63,7 +63,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.LINE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.LINE)),
+                    AestheticsDefaults.line(ctx.geomTheme(GeomKind.LINE)),
                     LineGeom.HANDLES_GROUPS
                 ) { LineGeom() }
             }
@@ -74,7 +74,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.SMOOTH,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.SMOOTH)),
+                    AestheticsDefaults.smooth(ctx.geomTheme(GeomKind.SMOOTH)),
                     SmoothGeom.HANDLES_GROUPS
                 ) { SmoothGeom() }
             }
@@ -85,7 +85,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.BAR,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.BAR)),
+                    AestheticsDefaults.bar(ctx.geomTheme(GeomKind.BAR)),
                     BarGeom.HANDLES_GROUPS
                 ) { BarGeom() }
             }
@@ -96,7 +96,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.HISTOGRAM,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.HISTOGRAM)),
+                    AestheticsDefaults.histogram(ctx.geomTheme(GeomKind.HISTOGRAM)),
                     HistogramGeom.HANDLES_GROUPS
                 ) { HistogramGeom() }
             }
@@ -107,7 +107,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.DOT_PLOT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.DOT_PLOT)),
+                    AestheticsDefaults.dotplot(ctx.geomTheme(GeomKind.DOT_PLOT)),
                     DotplotGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -119,7 +119,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.TILE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.TILE)),
+                    AestheticsDefaults.tile(ctx.geomTheme(GeomKind.TILE)),
                     TileGeom.HANDLES_GROUPS
                 ) { TileGeom() }
             }
@@ -130,7 +130,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.BIN_2D,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.BIN_2D)),
+                    AestheticsDefaults.bin2d(ctx.geomTheme(GeomKind.BIN_2D)),
                     Bin2dGeom.HANDLES_GROUPS
                 ) { Bin2dGeom() }
             }
@@ -141,7 +141,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.ERROR_BAR,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.ERROR_BAR)),
+                    AestheticsDefaults.errorBar(ctx.geomTheme(GeomKind.ERROR_BAR)),
                     ErrorBarGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -153,7 +153,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.CROSS_BAR,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.CROSS_BAR)),
+                    AestheticsDefaults.crossBar(ctx.geomTheme(GeomKind.CROSS_BAR)),
                     CrossBarGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -165,7 +165,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.LINE_RANGE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.LINE_RANGE)),
+                    AestheticsDefaults.lineRange(ctx.geomTheme(GeomKind.LINE_RANGE)),
                     LineRangeGeom.HANDLES_GROUPS
                 ) { LineRangeGeom() }
             }
@@ -176,7 +176,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.POINT_RANGE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.POINT_RANGE)),
+                    AestheticsDefaults.pointRange(ctx.geomTheme(GeomKind.POINT_RANGE)),
                     PointRangeGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -188,7 +188,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.CONTOUR,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.CONTOUR)),
+                    AestheticsDefaults.contour(ctx.geomTheme(GeomKind.CONTOUR)),
                     ContourGeom.HANDLES_GROUPS
                 ) { ContourGeom() }
             }
@@ -199,7 +199,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.CONTOURF,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.CONTOURF)),
+                    AestheticsDefaults.contourf(ctx.geomTheme(GeomKind.CONTOURF)),
                     ContourfGeom.HANDLES_GROUPS
                 ) { ContourfGeom() }
             }
@@ -210,7 +210,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.POLYGON,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.POLYGON)),
+                    AestheticsDefaults.polygon(ctx.geomTheme(GeomKind.POLYGON)),
                     PolygonGeom.HANDLES_GROUPS
                 ) { PolygonGeom() }
             }
@@ -221,7 +221,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.MAP,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.MAP)),
+                    AestheticsDefaults.map(ctx.geomTheme(GeomKind.MAP)),
                     MapGeom.HANDLES_GROUPS
                 ) { MapGeom() }
             }
@@ -232,7 +232,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.AB_LINE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.AB_LINE)),
+                    AestheticsDefaults.abline(ctx.geomTheme(GeomKind.AB_LINE)),
                     ABLineGeom.HANDLES_GROUPS
                 ) { ABLineGeom() }
             }
@@ -243,7 +243,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.H_LINE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.H_LINE)),
+                    AestheticsDefaults.hline(ctx.geomTheme(GeomKind.H_LINE)),
                     HLineGeom.HANDLES_GROUPS
                 ) { HLineGeom() }
             }
@@ -254,7 +254,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.V_LINE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.V_LINE)),
+                    AestheticsDefaults.vline(ctx.geomTheme(GeomKind.V_LINE)),
                     VLineGeom.HANDLES_GROUPS
                 ) { VLineGeom() }
             }
@@ -265,7 +265,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.BOX_PLOT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.BOX_PLOT)),
+                    AestheticsDefaults.boxplot(ctx.geomTheme(GeomKind.BOX_PLOT)),
                     BoxplotGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -277,7 +277,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.AREA_RIDGES,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.AREA_RIDGES)),
+                    AestheticsDefaults.areaRidges(ctx.geomTheme(GeomKind.AREA_RIDGES)),
                     AreaRidgesGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -289,7 +289,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.VIOLIN,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.VIOLIN)),
+                    AestheticsDefaults.violin(ctx.geomTheme(GeomKind.VIOLIN)),
                     ViolinGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -301,7 +301,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.Y_DOT_PLOT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.Y_DOT_PLOT)),
+                    AestheticsDefaults.ydotplot(ctx.geomTheme(GeomKind.Y_DOT_PLOT)),
                     YDotplotGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -313,7 +313,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.LIVE_MAP,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.LIVE_MAP)),
+                    AestheticsDefaults.livemap(ctx.geomTheme(GeomKind.LIVE_MAP)),
                     LiveMapGeom.HANDLES_GROUPS
                 ) { LiveMapGeom() }
             }
@@ -324,7 +324,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.RIBBON,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.RIBBON)),
+                    AestheticsDefaults.ribbon(ctx.geomTheme(GeomKind.RIBBON)),
                     RibbonGeom.HANDLES_GROUPS
                 ) { RibbonGeom() }
             }
@@ -335,7 +335,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.AREA,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.AREA)),
+                    AestheticsDefaults.area(ctx.geomTheme(GeomKind.AREA)),
                     AreaGeom.HANDLES_GROUPS
                 ) { AreaGeom() }
             }
@@ -346,7 +346,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.DENSITY,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.DENSITY)),
+                    AestheticsDefaults.density(ctx.geomTheme(GeomKind.DENSITY)),
                     DensityGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -358,7 +358,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.DENSITY2D,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.DENSITY2D)),
+                    AestheticsDefaults.density2d(ctx.geomTheme(GeomKind.DENSITY2D)),
                     Density2dGeom.HANDLES_GROUPS
                 ) { Density2dGeom() }
             }
@@ -369,7 +369,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.DENSITY2DF,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.DENSITY2DF)),
+                    AestheticsDefaults.density2df(ctx.geomTheme(GeomKind.DENSITY2DF)),
                     Density2dfGeom.HANDLES_GROUPS
                 ) { Density2dfGeom() }
             }
@@ -380,7 +380,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.JITTER,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.JITTER)),
+                    AestheticsDefaults.jitter(ctx.geomTheme(GeomKind.JITTER)),
                     JitterGeom.HANDLES_GROUPS
                 ) { JitterGeom() }
             }
@@ -391,7 +391,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.Q_Q,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q)),
+                    AestheticsDefaults.qq(ctx.geomTheme(GeomKind.Q_Q)),
                     QQGeom.HANDLES_GROUPS
                 ) { QQGeom() }
             }
@@ -402,7 +402,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.Q_Q_2,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q_2)),
+                    AestheticsDefaults.qq2(ctx.geomTheme(GeomKind.Q_Q_2)),
                     QQ2Geom.HANDLES_GROUPS
                 ) { QQ2Geom() }
             }
@@ -413,7 +413,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.Q_Q_LINE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q_LINE)),
+                    AestheticsDefaults.qq_line(ctx.geomTheme(GeomKind.Q_Q_LINE)),
                     QQLineGeom.HANDLES_GROUPS
                 ) { QQLineGeom() }
             }
@@ -424,7 +424,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.Q_Q_2_LINE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.Q_Q_2_LINE)),
+                    AestheticsDefaults.qq2_line(ctx.geomTheme(GeomKind.Q_Q_2_LINE)),
                     QQ2LineGeom.HANDLES_GROUPS
                 ) { QQ2LineGeom() }
             }
@@ -435,7 +435,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.FREQPOLY,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.FREQPOLY)),
+                    AestheticsDefaults.freqpoly(ctx.geomTheme(GeomKind.FREQPOLY)),
                     FreqpolyGeom.HANDLES_GROUPS
                 ) { FreqpolyGeom() }
             }
@@ -446,7 +446,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.STEP,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.STEP)),
+                    AestheticsDefaults.step(ctx.geomTheme(GeomKind.STEP)),
                     StepGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -458,7 +458,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.RECT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.RECT)),
+                    AestheticsDefaults.rect(ctx.geomTheme(GeomKind.RECT)),
                     RectGeom.HANDLES_GROUPS
                 ) { RectGeom() }
             }
@@ -469,7 +469,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.SEGMENT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.SEGMENT)),
+                    AestheticsDefaults.segment(ctx.geomTheme(GeomKind.SEGMENT)),
                     SegmentGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -481,7 +481,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.TEXT,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.TEXT)),
+                    AestheticsDefaults.text(ctx.geomTheme(GeomKind.TEXT)),
                     TextGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -493,7 +493,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.LABEL,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.LABEL)),
+                    AestheticsDefaults.label(ctx.geomTheme(GeomKind.LABEL)),
                     TextGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -505,7 +505,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.RASTER,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.RASTER)),
+                    AestheticsDefaults.raster(ctx.geomTheme(GeomKind.RASTER)),
                     RasterGeom.HANDLES_GROUPS
                 ) { RasterGeom() }
             }
@@ -516,7 +516,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.IMAGE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.IMAGE)),
+                    AestheticsDefaults.image(ctx.geomTheme(GeomKind.IMAGE)),
                     ImageGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -528,7 +528,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.PIE,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.PIE)),
+                    AestheticsDefaults.pie(ctx.geomTheme(GeomKind.PIE)),
                     PieGeom.HANDLES_GROUPS,
                     supplier
                 )
@@ -540,7 +540,7 @@ class GeomProvider internal constructor(
                 GeomProvider(
                     GeomKind.LOLLIPOP,
                     ctx,
-                    AestheticsDefaults(ctx.geomTheme(GeomKind.LOLLIPOP)),
+                    AestheticsDefaults.lollipop(ctx.geomTheme(GeomKind.LOLLIPOP)),
                     LollipopGeom.HANDLES_GROUPS,
                     supplier
                 )
