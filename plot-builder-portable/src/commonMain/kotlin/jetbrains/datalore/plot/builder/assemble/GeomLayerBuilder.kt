@@ -279,9 +279,7 @@ class GeomLayerBuilder(
             override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
             override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
         }
-
         override val geom: Geom = geomProvider.createGeom(ctx)
-
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults = geomProvider.createAestheticsDefaults(ctx)
 

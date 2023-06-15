@@ -37,7 +37,6 @@ class GeomProvider internal constructor(
         fun point(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.POINT,
-                // AestheticsDefaults.point(),
                 PointGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -46,7 +45,6 @@ class GeomProvider internal constructor(
         fun path(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.PATH,
-                // AestheticsDefaults.path(),
                 PathGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -55,7 +53,6 @@ class GeomProvider internal constructor(
         fun line(): GeomProvider {
             return GeomProvider(
                 GeomKind.LINE,
-                // AestheticsDefaults.line(),
                 LineGeom.HANDLES_GROUPS
             ) { LineGeom() }
         }
@@ -63,7 +60,6 @@ class GeomProvider internal constructor(
         fun smooth(): GeomProvider {
             return GeomProvider(
                 GeomKind.SMOOTH,
-                // AestheticsDefaults.smooth(),
                 SmoothGeom.HANDLES_GROUPS
             ) { SmoothGeom() }
         }
@@ -71,7 +67,6 @@ class GeomProvider internal constructor(
         fun bar(): GeomProvider {
             return GeomProvider(
                 GeomKind.BAR,
-                // AestheticsDefaults.bar(),
                 BarGeom.HANDLES_GROUPS
             ) { BarGeom() }
         }
@@ -79,7 +74,6 @@ class GeomProvider internal constructor(
         fun histogram(): GeomProvider {
             return GeomProvider(
                 GeomKind.HISTOGRAM,
-                // AestheticsDefaults.histogram(),
                 HistogramGeom.HANDLES_GROUPS
             ) { HistogramGeom() }
         }
@@ -87,7 +81,6 @@ class GeomProvider internal constructor(
         fun dotplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.DOT_PLOT,
-                // AestheticsDefaults.dotplot(),
                 DotplotGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -96,7 +89,6 @@ class GeomProvider internal constructor(
         fun tile(): GeomProvider {
             return GeomProvider(
                 GeomKind.TILE,
-                // AestheticsDefaults.tile(),
                 TileGeom.HANDLES_GROUPS
             ) { TileGeom() }
         }
@@ -104,7 +96,6 @@ class GeomProvider internal constructor(
         fun bin2d(): GeomProvider {
             return GeomProvider(
                 GeomKind.BIN_2D,
-                // AestheticsDefaults.bin2d(),
                 Bin2dGeom.HANDLES_GROUPS
             ) { Bin2dGeom() }
         }
@@ -112,7 +103,6 @@ class GeomProvider internal constructor(
         fun errorBar(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.ERROR_BAR,
-                // AestheticsDefaults.errorBar(),
                 ErrorBarGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -121,7 +111,6 @@ class GeomProvider internal constructor(
         fun crossBar(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.CROSS_BAR,
-                // AestheticsDefaults.crossBar(),
                 CrossBarGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -130,7 +119,6 @@ class GeomProvider internal constructor(
         fun lineRange(): GeomProvider {
             return GeomProvider(
                 GeomKind.LINE_RANGE,
-                // AestheticsDefaults.lineRange(),
                 LineRangeGeom.HANDLES_GROUPS
             ) { LineRangeGeom() }
         }
@@ -138,7 +126,6 @@ class GeomProvider internal constructor(
         fun pointRange(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.POINT_RANGE,
-                // AestheticsDefaults.pointRange(),
                 PointRangeGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -147,7 +134,6 @@ class GeomProvider internal constructor(
         fun contour(): GeomProvider {
             return GeomProvider(
                 GeomKind.CONTOUR,
-                // AestheticsDefaults.contour(),
                 ContourGeom.HANDLES_GROUPS
             ) { ContourGeom() }
         }
@@ -155,7 +141,6 @@ class GeomProvider internal constructor(
         fun contourf(): GeomProvider {
             return GeomProvider(
                 GeomKind.CONTOURF,
-                // AestheticsDefaults.contourf(),
                 ContourfGeom.HANDLES_GROUPS
             ) { ContourfGeom() }
         }
@@ -163,7 +148,6 @@ class GeomProvider internal constructor(
         fun polygon(): GeomProvider {
             return GeomProvider(
                 GeomKind.POLYGON,
-                // AestheticsDefaults.polygon(),
                 PolygonGeom.HANDLES_GROUPS
             ) { PolygonGeom() }
         }
@@ -171,7 +155,6 @@ class GeomProvider internal constructor(
         fun map(): GeomProvider {
             return GeomProvider(
                 GeomKind.MAP,
-                // AestheticsDefaults.map(),
                 MapGeom.HANDLES_GROUPS
             ) { MapGeom() }
         }
@@ -179,7 +162,6 @@ class GeomProvider internal constructor(
         fun abline(): GeomProvider {
             return GeomProvider(
                 GeomKind.AB_LINE,
-                // AestheticsDefaults.abline(),
                 ABLineGeom.HANDLES_GROUPS
             ) { ABLineGeom() }
         }
@@ -187,7 +169,6 @@ class GeomProvider internal constructor(
         fun hline(): GeomProvider {
             return GeomProvider(
                 GeomKind.H_LINE,
-                // AestheticsDefaults.hline(),
                 HLineGeom.HANDLES_GROUPS
             ) { HLineGeom() }
         }
@@ -195,7 +176,6 @@ class GeomProvider internal constructor(
         fun vline(): GeomProvider {
             return GeomProvider(
                 GeomKind.V_LINE,
-                // AestheticsDefaults.vline(),
                 VLineGeom.HANDLES_GROUPS
             ) { VLineGeom() }
         }
@@ -203,7 +183,6 @@ class GeomProvider internal constructor(
         fun boxplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.BOX_PLOT,
-                // AestheticsDefaults.boxplot(),
                 BoxplotGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -212,7 +191,6 @@ class GeomProvider internal constructor(
         fun arearidges(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.AREA_RIDGES,
-                // AestheticsDefaults.areaRidges(),
                 AreaRidgesGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -221,7 +199,6 @@ class GeomProvider internal constructor(
         fun violin(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.VIOLIN,
-                // AestheticsDefaults.violin(),
                 ViolinGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -230,7 +207,6 @@ class GeomProvider internal constructor(
         fun ydotplot(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.Y_DOT_PLOT,
-                // AestheticsDefaults.ydotplot(),
                 YDotplotGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -239,7 +215,6 @@ class GeomProvider internal constructor(
         fun livemap(): GeomProvider {
             return GeomProvider(
                 GeomKind.LIVE_MAP,
-                // AestheticsDefaults.livemap(),
                 LiveMapGeom.HANDLES_GROUPS,
             ) { LiveMapGeom() }
         }
@@ -247,7 +222,6 @@ class GeomProvider internal constructor(
         fun ribbon(): GeomProvider {
             return GeomProvider(
                 GeomKind.RIBBON,
-                // AestheticsDefaults.ribbon(),
                 RibbonGeom.HANDLES_GROUPS
             ) { RibbonGeom() }
         }
@@ -255,7 +229,7 @@ class GeomProvider internal constructor(
         fun area(): GeomProvider {
             return GeomProvider(
                 GeomKind.AREA,
-                // AestheticsDefaults.area(),
+
                 AreaGeom.HANDLES_GROUPS
             ) { AreaGeom() }
         }
@@ -263,7 +237,6 @@ class GeomProvider internal constructor(
         fun density(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.DENSITY,
-                // AestheticsDefaults.density(),
                 DensityGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -272,7 +245,6 @@ class GeomProvider internal constructor(
         fun density2d(): GeomProvider {
             return GeomProvider(
                 GeomKind.DENSITY2D,
-                // AestheticsDefaults.density2d(),
                 Density2dGeom.HANDLES_GROUPS
             ) { Density2dGeom() }
         }
@@ -280,7 +252,6 @@ class GeomProvider internal constructor(
         fun density2df(): GeomProvider {
             return GeomProvider(
                 GeomKind.DENSITY2DF,
-                // AestheticsDefaults.density2df(),
                 Density2dfGeom.HANDLES_GROUPS
             ) { Density2dfGeom() }
         }
@@ -288,7 +259,6 @@ class GeomProvider internal constructor(
         fun jitter(): GeomProvider {
             return GeomProvider(
                 GeomKind.JITTER,
-                // AestheticsDefaults.jitter(),
                 JitterGeom.HANDLES_GROUPS
             ) { JitterGeom() }
         }
@@ -296,7 +266,6 @@ class GeomProvider internal constructor(
         fun qq(): GeomProvider {
             return GeomProvider(
                 GeomKind.Q_Q,
-                // AestheticsDefaults.qq(),
                 QQGeom.HANDLES_GROUPS
             ) { QQGeom() }
         }
@@ -304,7 +273,6 @@ class GeomProvider internal constructor(
         fun qq2(): GeomProvider {
             return GeomProvider(
                 GeomKind.Q_Q_2,
-                // AestheticsDefaults.qq2(),
                 QQ2Geom.HANDLES_GROUPS
             ) { QQ2Geom() }
         }
@@ -312,7 +280,6 @@ class GeomProvider internal constructor(
         fun qqline(): GeomProvider {
             return GeomProvider(
                 GeomKind.Q_Q_LINE,
-                // AestheticsDefaults.qq_line(),
                 QQLineGeom.HANDLES_GROUPS
             ) { QQLineGeom() }
         }
@@ -320,7 +287,6 @@ class GeomProvider internal constructor(
         fun qq2line(): GeomProvider {
             return GeomProvider(
                 GeomKind.Q_Q_2_LINE,
-                // AestheticsDefaults.qq2_line(),
                 QQ2LineGeom.HANDLES_GROUPS
             ) { QQ2LineGeom() }
         }
@@ -328,7 +294,6 @@ class GeomProvider internal constructor(
         fun freqpoly(): GeomProvider {
             return GeomProvider(
                 GeomKind.FREQPOLY,
-                // AestheticsDefaults.freqpoly(),
                 FreqpolyGeom.HANDLES_GROUPS
             ) { FreqpolyGeom() }
         }
@@ -336,7 +301,6 @@ class GeomProvider internal constructor(
         fun step(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.STEP,
-                // AestheticsDefaults.step(),
                 StepGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -345,7 +309,6 @@ class GeomProvider internal constructor(
         fun rect(): GeomProvider {
             return GeomProvider(
                 GeomKind.RECT,
-                // AestheticsDefaults.rect(),
                 RectGeom.HANDLES_GROUPS
             ) { RectGeom() }
         }
@@ -353,7 +316,6 @@ class GeomProvider internal constructor(
         fun segment(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.SEGMENT,
-                // AestheticsDefaults.segment(),
                 SegmentGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -362,7 +324,6 @@ class GeomProvider internal constructor(
         fun text(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.TEXT,
-                // AestheticsDefaults.text(),
                 TextGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -371,7 +332,6 @@ class GeomProvider internal constructor(
         fun label(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.LABEL,
-                // AestheticsDefaults.label(),
                 TextGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -380,7 +340,6 @@ class GeomProvider internal constructor(
         fun raster(): GeomProvider {
             return GeomProvider(
                 GeomKind.RASTER,
-                // AestheticsDefaults.raster(),
                 RasterGeom.HANDLES_GROUPS
             ) { RasterGeom() }
         }
@@ -388,7 +347,6 @@ class GeomProvider internal constructor(
         fun image(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.IMAGE,
-                // AestheticsDefaults.image(),
                 ImageGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -397,7 +355,6 @@ class GeomProvider internal constructor(
         fun pie(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.PIE,
-                // AestheticsDefaults.pie(),
                 PieGeom.HANDLES_GROUPS,
                 supplier
             )
@@ -406,7 +363,6 @@ class GeomProvider internal constructor(
         fun lollipop(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.LOLLIPOP,
-                // AestheticsDefaults.lollipop(),
                 LollipopGeom.HANDLES_GROUPS,
                 supplier
             )
