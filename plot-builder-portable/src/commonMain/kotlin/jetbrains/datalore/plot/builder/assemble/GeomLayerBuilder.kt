@@ -275,13 +275,14 @@ class GeomLayerBuilder(
         private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
     ) : GeomLayer {
 
-        private val ctx = object : GeomProvider.Context(geomTheme) {
-            override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
-            override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
-        }
-        override val geom: Geom = geomProvider.createGeom(ctx)
+        override val geom: Geom = geomProvider.createGeom(
+            object : GeomProvider.Context() {
+                override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
+                override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
+            }
+        )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = geomProvider.createAestheticsDefaults(ctx)
+        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme)
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,

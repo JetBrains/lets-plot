@@ -22,13 +22,7 @@ class GeomProvider internal constructor(
         return geomSupplier(ctx)
     }
 
-    fun createAestheticsDefaults(ctx: Context): AestheticsDefaults {
-        return AestheticsDefaults.create(geomKind, ctx.geomTheme)
-    }
-
-    abstract class Context(
-        val geomTheme: GeomTheme,
-    ) {
+    abstract class Context {
         abstract fun hasBinding(aes: Aes<*>): Boolean
         abstract fun hasConstant(aes: Aes<*>): Boolean
     }
