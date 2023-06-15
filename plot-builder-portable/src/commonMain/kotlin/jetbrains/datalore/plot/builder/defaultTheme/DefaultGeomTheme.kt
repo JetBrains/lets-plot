@@ -108,7 +108,7 @@ internal class DefaultGeomTheme private constructor(
                     size = 0.2
                 }
 
-                GeomKind.POINT_RANGE-> {
+                GeomKind.POINT_RANGE -> {
                     color = inheritedColors.lineColor()
                     fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
                 }

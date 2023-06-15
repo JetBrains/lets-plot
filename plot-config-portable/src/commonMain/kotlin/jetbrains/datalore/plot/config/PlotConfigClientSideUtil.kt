@@ -218,7 +218,7 @@ object PlotConfigClientSideUtil {
             .fillByAes(layerConfig.fillByAes)
 
         // geomTheme
-        layerBuilder.geomThemeProvider(theme::geometries)
+        layerBuilder.geomTheme(theme.geometries(layerConfig.geomProto.geomKind))
 
         val constantAesMap = layerConfig.constantsMap
         for (aes in constantAesMap.keys) {

@@ -22,7 +22,7 @@ import jetbrains.datalore.plot.config.Option.Pos
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor): (GeomProvider.Context) -> GeomProvider {
+    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
         return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
     }
 
