@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.config.Option.Stat.DensityRidges
 import jetbrains.datalore.plot.config.Option.Stat.YDensity
 import jetbrains.datalore.plot.config.Option.Stat.QQ
 import jetbrains.datalore.plot.config.Option.Stat.QQLine
+import jetbrains.datalore.plot.config.Option.Stat.Summary
 
 object StatProto {
 
@@ -114,6 +115,8 @@ object StatProto {
             StatKind.QQ_LINE -> return configureQQLineStat(options)
 
             StatKind.QQ2_LINE -> return configureQQ2LineStat(options)
+
+            StatKind.SUMMARY -> return configureSummaryStat(options)
 
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
@@ -400,5 +403,41 @@ object StatProto {
         }
 
         return Stats.qq2line(lineQuantiles ?: QQLineStat.DEF_LINE_QUANTILES)
+    }
+
+    private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
+        val getAggFun: (String, String) -> (SummaryStatUtil.SummaryCalculator) -> Double = { option, default ->
+            if (options.isNumber(option)) {
+                SummaryStatUtil.getQuantileAggFun(options.getDouble(option)!!)
+            } else {
+                val aggFunName = options.getStringDef(option, default).let {
+                    when (it.lowercase()) {
+                        "nan" -> SummaryStatUtil.AggFun.NAN
+                        "count" -> SummaryStatUtil.AggFun.COUNT
+                        "sum" -> SummaryStatUtil.AggFun.SUM
+                        "mean" -> SummaryStatUtil.AggFun.MEAN
+                        "median" -> SummaryStatUtil.AggFun.MEDIAN
+                        "min" -> SummaryStatUtil.AggFun.MIN
+                        "max" -> SummaryStatUtil.AggFun.MAX
+                        "q1" -> SummaryStatUtil.AggFun.Q1
+                        "q3" -> SummaryStatUtil.AggFun.Q3
+                        else -> throw IllegalArgumentException(
+                            "Unsupported function name: '$it'\n" +
+                            "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
+                        )
+                    }
+                }
+                SummaryStatUtil.getStandardAggFun(aggFunName)
+            }
+        }
+
+        val yAgg = getAggFun(Summary.FUN, SummaryStat.DEF_Y_AGG_FUN)
+        val minAgg = getAggFun(Summary.FUN_MIN, SummaryStat.DEF_MIN_AGG_FUN)
+        val maxAgg = getAggFun(Summary.FUN_MAX, SummaryStat.DEF_MAX_AGG_FUN)
+        val middleAgg = getAggFun(Summary.FUN_MIDDLE, SummaryStat.DEF_MIDDLE_AGG_FUN)
+        val lowerAgg = getAggFun(Summary.FUN_LOWER, SummaryStat.DEF_LOWER_AGG_FUN)
+        val upperAgg = getAggFun(Summary.FUN_UPPER, SummaryStat.DEF_UPPER_AGG_FUN)
+
+        return SummaryStat(yAgg, minAgg, maxAgg, middleAgg, lowerAgg, upperAgg)
     }
 }
