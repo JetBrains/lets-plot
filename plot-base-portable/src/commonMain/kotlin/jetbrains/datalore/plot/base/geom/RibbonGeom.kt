@@ -31,13 +31,12 @@ class RibbonGeom : GeomBase() {
         val dataPoints = dataPoints(aesthetics)
         val helper = LinesHelper(pos, coord, ctx)
         val paths = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
-        appendNodes(paths, root)
+        root.appendNodes(paths)
 
         //if you want to retain the side edges of ribbon: comment out the following codes, and switch decorate method in LinesHelper.createbands
         helper.setAlphaEnabled(false)
-        val lines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_YMAX)
-        lines.addAll(helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_YMIN))
-        appendNodes(lines, root)
+        root.appendNodes(helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_YMAX))
+        root.appendNodes(helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
     }

@@ -37,7 +37,7 @@ interface GeomTargetCollector {
 
     fun addPolygon(
         points: List<DoubleVector>,
-        localToGlobalIndex: (Int) -> Int,
+        index: Int,
         tooltipParams: TooltipParams,
         tooltipKind: Kind = Kind.CURSOR_TOOLTIP
     )

@@ -28,7 +28,7 @@ class LayerTargetCollectorWithLocator(
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
             if (radius == 0.0 || tooltipParams.markerColors.all { it.alpha == 0 }) {
-                return;
+                return
             }
         }
         addTarget(
@@ -80,14 +80,14 @@ class LayerTargetCollectorWithLocator(
 
     override fun addPolygon(
         points: List<DoubleVector>,
-        localToGlobalIndex: (Int) -> Int,
+        index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),
-                localToGlobalIndex,
+                { index },
                 tooltipParams,
                 tooltipKind
             )

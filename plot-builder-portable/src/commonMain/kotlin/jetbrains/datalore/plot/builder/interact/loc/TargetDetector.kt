@@ -176,7 +176,7 @@ internal class TargetDetector(
     }
 
     companion object {
-        private const val POINT_AREA_EPSILON = 0.1
+        private const val POINT_AREA_EPSILON = 5.1
         private const val RECT_X_NEAREST_EPSILON = 2.0
 
         private fun <T> searchNearest(value: Double, items: List<T>, mapper: (T) -> Double): T {

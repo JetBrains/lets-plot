@@ -58,6 +58,14 @@ open class GeomHelper(
         return pos.translate(location, p, ctx)
     }
 
+    fun toClientPoint(
+        p: DataPointAesthetics,
+        aesMapper: (DataPointAesthetics) -> DoubleVector?
+    ): DoubleVector? {
+        val location = aesMapper(p) ?: return null
+        return toClient(location, p)
+    }
+
     internal fun toClientRect(
         p: DataPointAesthetics,
         aesMapper: (DataPointAesthetics) -> DoubleRectangle?

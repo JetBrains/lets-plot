@@ -34,13 +34,13 @@ class SmoothGeom : GeomBase() {
         // Regression line
         helper.setAlphaEnabled(false)
         val regressionLines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        appendNodes(regressionLines, root)
+        root.appendNodes(regressionLines)
 
         // Confidence interval
         helper.setAlphaFilter(PROPORTION)
         helper.setWidthFilter(ZERO)
         val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
-        appendNodes(bands, root)
+        root.appendNodes(bands)
 
         buildHints(dataPoints, pos, coord, ctx)
     }
