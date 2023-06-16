@@ -63,6 +63,10 @@ object Defaults {
             const val LINES_MAX_COUNT= 5
         }
 
+        object Axis {
+            const val LABEL_MAX_LENGTH = 20
+        }
+
         object Tooltip {
             const val MAX_POINTER_FOOTING_LENGTH = 12.0
             const val POINTER_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
@@ -87,8 +91,8 @@ object Defaults {
             val DARK_TEXT_COLOR = Color.BLACK
             val LIGHT_TEXT_COLOR = Color.WHITE
 
-            const val AXIS_TOOLTIP_FONT_SIZE = Axis.TICK_FONT_SIZE
-            val AXIS_TOOLTIP_COLOR = Axis.LINE_COLOR
+            const val AXIS_TOOLTIP_FONT_SIZE = Plot.Axis.TICK_FONT_SIZE
+            val AXIS_TOOLTIP_COLOR = Plot.Axis.LINE_COLOR
             const val AXIS_RADIUS = 1.5 // fix a tooltip border overlapping an axis
 
             const val ROTATION_ANGLE = 15.0
