@@ -15,37 +15,37 @@ import jetbrains.datalore.plot.base.stat.DotplotStat
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 
 internal object GeomProviderFactory {
-    private val PROVIDER = HashMap<GeomKind, () -> GeomProvider>()
+    private val PROVIDER = HashMap<GeomKind, GeomProvider>()
 
     // Simple provides
     init {
-        PROVIDER[GeomKind.LINE] = { GeomProvider.line() }
-        PROVIDER[GeomKind.SMOOTH] = { GeomProvider.smooth() }
-        PROVIDER[GeomKind.BAR] = { GeomProvider.bar() }
-        PROVIDER[GeomKind.HISTOGRAM] = { GeomProvider.histogram() }
-        PROVIDER[GeomKind.TILE] = { GeomProvider.tile() }
-        PROVIDER[GeomKind.BIN_2D] = { GeomProvider.bin2d() }
-        PROVIDER[GeomKind.LINE_RANGE] = { GeomProvider.lineRange() }
-        PROVIDER[GeomKind.CONTOUR] = { GeomProvider.contour() }
-        PROVIDER[GeomKind.CONTOURF] = { GeomProvider.contourf() }
-        PROVIDER[GeomKind.POLYGON] = { GeomProvider.polygon() }
-        PROVIDER[GeomKind.MAP] = { GeomProvider.map() }
-        PROVIDER[GeomKind.AB_LINE] = { GeomProvider.abline() }
-        PROVIDER[GeomKind.H_LINE] = { GeomProvider.hline() }
-        PROVIDER[GeomKind.V_LINE] = { GeomProvider.vline() }
-        PROVIDER[GeomKind.RIBBON] = { GeomProvider.ribbon() }
-        PROVIDER[GeomKind.AREA] = { GeomProvider.area() }
-        PROVIDER[GeomKind.DENSITY2D] = { GeomProvider.density2d() }
-        PROVIDER[GeomKind.DENSITY2DF] = { GeomProvider.density2df() }
-        PROVIDER[GeomKind.JITTER] = { GeomProvider.jitter() }
-        PROVIDER[GeomKind.Q_Q] = { GeomProvider.qq() }
-        PROVIDER[GeomKind.Q_Q_2] = { GeomProvider.qq2() }
-        PROVIDER[GeomKind.Q_Q_LINE] = { GeomProvider.qqline() }
-        PROVIDER[GeomKind.Q_Q_2_LINE] = { GeomProvider.qq2line() }
-        PROVIDER[GeomKind.FREQPOLY] = { GeomProvider.freqpoly() }
-        PROVIDER[GeomKind.RECT] = { GeomProvider.rect() }
-        PROVIDER[GeomKind.RASTER] = { GeomProvider.raster() }
-        PROVIDER[GeomKind.LIVE_MAP] = { GeomProvider.livemap() }
+        PROVIDER[GeomKind.LINE] = GeomProvider.line()
+        PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
+        PROVIDER[GeomKind.BAR] = GeomProvider.bar()
+        PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
+        PROVIDER[GeomKind.TILE] = GeomProvider.tile()
+        PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
+        PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
+        PROVIDER[GeomKind.CONTOUR] = GeomProvider.contour()
+        PROVIDER[GeomKind.CONTOURF] = GeomProvider.contourf()
+        PROVIDER[GeomKind.POLYGON] = GeomProvider.polygon()
+        PROVIDER[GeomKind.MAP] = GeomProvider.map()
+        PROVIDER[GeomKind.AB_LINE] = GeomProvider.abline()
+        PROVIDER[GeomKind.H_LINE] = GeomProvider.hline()
+        PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
+        PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
+        PROVIDER[GeomKind.AREA] = GeomProvider.area()
+        PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
+        PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
+        PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
+        PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
+        PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
+        PROVIDER[GeomKind.Q_Q_LINE] = GeomProvider.qqline()
+        PROVIDER[GeomKind.Q_Q_2_LINE] = GeomProvider.qq2line()
+        PROVIDER[GeomKind.FREQPOLY] = GeomProvider.freqpoly()
+        PROVIDER[GeomKind.RECT] = GeomProvider.rect()
+        PROVIDER[GeomKind.RASTER] = GeomProvider.raster()
+        PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }
 
     fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor): GeomProvider {
@@ -326,7 +326,7 @@ internal object GeomProviderFactory {
 
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
-                PROVIDER.getValue(geomKind).invoke()
+                PROVIDER.getValue(geomKind)
             }
         }
     }
