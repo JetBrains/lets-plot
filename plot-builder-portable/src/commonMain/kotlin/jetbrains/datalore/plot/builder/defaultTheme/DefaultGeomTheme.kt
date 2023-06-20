@@ -43,7 +43,7 @@ internal class DefaultGeomTheme private constructor(
             lineWidth = 0.5
         )
 
-        class InheritedColors(
+        internal class InheritedColors(
             options: Map<String, Any>,
             fontFamilyRegistry: FontFamilyRegistry
         ) : ThemeValuesAccess(options, fontFamilyRegistry) {
@@ -67,7 +67,7 @@ internal class DefaultGeomTheme private constructor(
             var fill = BASE.fill
             var alpha = BASE.alpha
             var size = BASE.size
-            var lineWidth = BASE.lineWidth
+            val lineWidth = BASE.lineWidth
 
             when (geomKind) {
                 GeomKind.PATH,

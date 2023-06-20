@@ -223,7 +223,6 @@ class GeomProvider internal constructor(
         fun area(): GeomProvider {
             return GeomProvider(
                 GeomKind.AREA,
-
                 AreaGeom.HANDLES_GROUPS
             ) { AreaGeom() }
         }
