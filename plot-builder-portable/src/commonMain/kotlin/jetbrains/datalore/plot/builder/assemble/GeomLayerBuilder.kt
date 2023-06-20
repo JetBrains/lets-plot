@@ -10,6 +10,7 @@ import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import jetbrains.datalore.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -35,6 +36,7 @@ import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
+import jetbrains.datalore.plot.builder.defaultTheme.DefaultGeomTheme
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
@@ -69,6 +71,8 @@ class GeomLayerBuilder(
     private var fillByAes: Aes<Color> = Aes.FILL
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
+
+    private var myGeomTheme: GeomTheme = DefaultGeomTheme.BASE
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)
@@ -152,6 +156,11 @@ class GeomLayerBuilder(
         return this
     }
 
+    fun geomTheme(geomTheme: GeomTheme): GeomLayerBuilder {
+        myGeomTheme = geomTheme
+        return this
+    }
+
     fun build(
         data: DataFrame,
         scaleMap: Map<Aes<*>, Scale>,
@@ -217,6 +226,7 @@ class GeomLayerBuilder(
         return MyGeomLayer(
             data,
             geomProvider,
+            myGeomTheme,
             posProvider,
             groupingContext.groupMapper,
             replacementBindings,
@@ -245,12 +255,13 @@ class GeomLayerBuilder(
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
+        geomTheme: GeomTheme,
         override val posProvider: PosProvider,
         override val group: (Int) -> Int,
         private val varBindings: Map<Aes<*>, VarBinding>,
         private val constantByAes: TypedKeyHashMap,
         override val scaleMap: Map<Aes<*>, Scale>,
-        override val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
+        override val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider,
         override val isLegendDisabled: Boolean,
@@ -261,23 +272,21 @@ class GeomLayerBuilder(
         override val fontFamilyRegistry: FontFamilyRegistry,
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
-        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?,
+        private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
-            ctx = object : GeomProvider.Context(
-                colorByAes = colorByAes,
-                fillByAes = fillByAes
-            ) {
+            object : GeomProvider.Context() {
                 override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
                 override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = geomProvider.aestheticsDefaults
+        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme)
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
-            geomProvider.geomKind, colorByAes, fillByAes,
+            geomProvider.geomKind,
+            colorByAes, fillByAes,
             exclude = geom.wontRender
         )
 

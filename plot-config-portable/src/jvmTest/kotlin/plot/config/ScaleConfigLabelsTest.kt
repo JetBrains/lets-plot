@@ -343,7 +343,7 @@ class ScaleConfigLabelsTest {
         val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, emptyList())
 
         val labelTransform = geomLayer.scaleMap.getValue(Aes.LABEL).transform
-        val labelMapper = geomLayer.scaleMapppersNP.getValue(Aes.LABEL)
+        val labelMapper = geomLayer.scaleMappersNP.getValue(Aes.LABEL)
 
         val inputs = listOf(null, 1.5, -1.5)
         val outputs = labelTransform.apply(inputs).map {
@@ -371,7 +371,7 @@ class ScaleConfigLabelsTest {
         val geomLayer = buildGeomLayer(Option.GeomName.TEXT, data, mapping, null, scales)
 
         val labelTransform = geomLayer.scaleMap.getValue(Aes.LABEL).transform
-        val labelMapper = geomLayer.scaleMapppersNP.getValue(Aes.LABEL)
+        val labelMapper = geomLayer.scaleMappersNP.getValue(Aes.LABEL)
 
         val inputs = listOf(null, 1.5, -1.5)
         val outputs = labelTransform.apply(inputs).map {
