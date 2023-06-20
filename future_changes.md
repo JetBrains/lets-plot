@@ -28,3 +28,4 @@
 - ggsave: saving geomImshow() to raster format produces fuzzy picture.
 - geom_livemap: memory leak when re-run cells without reloading a page.
 - Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
+- Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
