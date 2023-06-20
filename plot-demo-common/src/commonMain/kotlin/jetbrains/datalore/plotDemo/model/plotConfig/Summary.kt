@@ -13,6 +13,7 @@ class Summary {
         return listOf(
             basic(),
             vsBoxplot(),
+            crossbarGeom(),
         )
     }
 
@@ -64,6 +65,33 @@ class Summary {
                   'fun_min': 'q1',
                   'fun_max': 0.75,
                   'color': 'red'
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun crossbarGeom(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'target',
+                'y': 'sepal length (cm)'
+              },
+              'ggtitle': {
+                'text': 'Basic demo'
+              },
+              'layers': [
+                {
+                  'geom': 'crossbar',
+                  'stat': 'summary',
+                  'fun_map': {'middle': 'median'}
                 }
               ]
             }

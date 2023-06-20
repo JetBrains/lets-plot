@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
+import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
@@ -406,11 +407,11 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        val getAggFun: (String, String) -> (SummaryStatUtil.SummaryCalculator) -> Double = { option, default ->
-            if (options.isNumber(option)) {
-                SummaryStatUtil.getQuantileAggFun(options.getDouble(option)!!)
+        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (SummaryStatUtil.SummaryCalculator) -> Double {
+            return if (opts.isNumber(option)) {
+                SummaryStatUtil.getQuantileAggFun(opts.getDouble(option)!!)
             } else {
-                val aggFunName = options.getStringDef(option, default).let {
+                val aggFunName = opts.getStringDef(option, default).let {
                     when (it.lowercase()) {
                         "nan" -> SummaryStatUtil.AggFun.NAN
                         "count" -> SummaryStatUtil.AggFun.COUNT
@@ -431,13 +432,25 @@ object StatProto {
             }
         }
 
-        val yAgg = getAggFun(Summary.FUN, SummaryStat.DEF_Y_AGG_FUN)
-        val minAgg = getAggFun(Summary.FUN_MIN, SummaryStat.DEF_MIN_AGG_FUN)
-        val maxAgg = getAggFun(Summary.FUN_MAX, SummaryStat.DEF_MAX_AGG_FUN)
-        val middleAgg = getAggFun(Summary.FUN_MIDDLE, SummaryStat.DEF_MIDDLE_AGG_FUN)
-        val lowerAgg = getAggFun(Summary.FUN_LOWER, SummaryStat.DEF_LOWER_AGG_FUN)
-        val upperAgg = getAggFun(Summary.FUN_UPPER, SummaryStat.DEF_UPPER_AGG_FUN)
+        val standardAggFunctions = mapOf(
+            Aes.Y to getAggFunction(options, Summary.FUN, SummaryStat.DEF_Y_AGG_FUN),
+            Aes.YMIN to getAggFunction(options, Summary.FUN_MIN, SummaryStat.DEF_MIN_AGG_FUN),
+            Aes.YMAX to getAggFunction(options, Summary.FUN_MAX, SummaryStat.DEF_MAX_AGG_FUN)
+        )
 
-        return SummaryStat(yAgg, minAgg, maxAgg, middleAgg, lowerAgg, upperAgg)
+        val additionalAggFunctions: MutableMap<Aes<*>, (SummaryStatUtil.SummaryCalculator) -> Double> = mutableMapOf()
+        val funMap: Map<String, Any> = if (options.hasOwn(Summary.FUN_MAP)) {
+            options.getMap(Summary.FUN_MAP)
+        } else {
+            emptyMap()
+        }
+        val funOptions = OptionsAccessor(funMap)
+        for (aesName in funMap.keys) {
+            Aes.byName(aesName.lowercase())?.let { aes ->
+                additionalAggFunctions[aes] = getAggFunction(funOptions, aesName, SummaryStat.DEF_AGG_FUN)
+            }
+        }
+
+        return SummaryStat(standardAggFunctions + additionalAggFunctions)
     }
 }

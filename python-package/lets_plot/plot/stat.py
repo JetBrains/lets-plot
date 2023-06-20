@@ -13,7 +13,7 @@ __all__ = ['stat_summary']
 def stat_summary(mapping=None, *, data=None, geom='pointrange',
                  position=None, show_legend=None, sampling=None, tooltips=None,
                  orientation=None,
-                 fun=None, fun_min=None, fun_max=None, fun_middle=None, fun_lower=None, fun_upper=None,
+                 fun=None, fun_min=None, fun_max=None, fun_map=None,
                  color_by=None, fill_by=None,
                  **other_args):
     return _geom(geom,
@@ -25,7 +25,6 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
                  sampling=sampling,
                  tooltips=tooltips,
                  orientation=orientation,
-                 fun=fun, fun_min=fun_min, fun_max=fun_max,
-                 fun_middle=fun_middle, fun_lower=fun_lower, fun_upper=fun_upper,
+                 fun=fun, fun_min=fun_min, fun_max=fun_max, fun_map=fun_map,
                  color_by=color_by, fill_by=fill_by,
                  **other_args)

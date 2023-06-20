@@ -434,9 +434,7 @@ object Option {
             const val FUN = "fun"
             const val FUN_MIN = "fun_min"
             const val FUN_MAX = "fun_max"
-            const val FUN_MIDDLE = "fun_middle"
-            const val FUN_LOWER = "fun_lower"
-            const val FUN_UPPER = "fun_upper"
+            const val FUN_MAP = "fun_map"
         }
     }
 
