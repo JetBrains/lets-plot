@@ -408,9 +408,10 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (SummaryStatUtil.Calculator) -> Double {
+        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (SummaryCalculator) -> Double {
             return if (opts.isNumber(option)) {
-                SummaryStatUtil.getQuantileAggFun(opts.getDouble(option)!!)
+                val p = opts.getDouble(option)!!
+                { calc -> calc.quantile(p) }
             } else {
                 opts.getStringDef(option, default).let {
                     when (it.lowercase()) {
@@ -438,7 +439,7 @@ object StatProto {
             Aes.YMAX to getAggFunction(options, Summary.FUN_MAX, SummaryStat.DEF_MAX_AGG_FUN)
         )
 
-        val additionalAggFunctions: MutableMap<Aes<*>, (SummaryStatUtil.Calculator) -> Double> = mutableMapOf()
+        val additionalAggFunctions: MutableMap<Aes<*>, (SummaryCalculator) -> Double> = mutableMapOf()
         val funMap: Map<String, Any> = if (options.hasOwn(Summary.FUN_MAP)) {
             options.getMap(Summary.FUN_MAP)
         } else {

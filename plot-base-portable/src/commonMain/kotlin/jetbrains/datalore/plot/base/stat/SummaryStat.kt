@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class SummaryStat(
-    private val aggFunctionsMap: Map<Aes<*>, (SummaryStatUtil.Calculator) -> Double>
+    private val aggFunctionsMap: Map<Aes<*>, (SummaryCalculator) -> Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -52,9 +52,9 @@ class SummaryStat(
         }
 
         val statValues: Map<Aes<*>, MutableList<Double>> = DEF_MAPPING.keys.associateWith { mutableListOf() }
-        val defaultAggFun: (SummaryStatUtil.Calculator) -> Double = { calc -> calc.nan }
+        val defaultAggFun: (SummaryCalculator) -> Double = { calc -> calc.nan }
         for ((x, bin) in binnedData) {
-            val calc = SummaryStatUtil.Calculator(bin)
+            val calc = SummaryCalculator(bin)
             for (aes in statValues.keys) {
                 if (aes == Aes.X) {
                     statValues[aes]!!.add(x)
