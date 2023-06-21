@@ -18,88 +18,35 @@ object SummaryStatUtil {
     class Calculator(values: List<Double>) {
         private val sortedValues: List<Double> = Ordering.natural<Double>().sortedCopy(values)
 
-        private var count: Double? = null
-        private var sum: Double? = null
-        private var mean: Double? = null
-        private var median: Double? = null
-        private var min: Double? = null
-        private var max: Double? = null
-        private var q1: Double? = null
-        private var q3: Double? = null
-
-        fun nan(): Double {
-            return Double.NaN
-        }
-
-        fun count(): Double {
-            if (count == null) {
-                count = sortedValues.size.toDouble()
+        val nan = Double.NaN
+        val count by lazy { sortedValues.size.toDouble() }
+        val sum by lazy { sortedValues.sum() }
+        val mean by lazy {
+            if (sortedValues.isEmpty()) {
+                Double.NaN
+            } else if (sortedValues.size == 1) {
+                sortedValues.first()
+            } else {
+                sum / sortedValues.size
             }
-            return count!!
         }
-
-        fun sum(): Double {
-            if (sum == null) {
-                sum = sortedValues.sum()
+        val median by lazy { quantile(0.5) }
+        val min by lazy {
+            if (sortedValues.isEmpty()) {
+                Double.NaN
+            } else {
+                sortedValues.first()
             }
-            return sum!!
         }
-
-        fun mean(): Double {
-            if (mean == null) {
-                mean = if (sortedValues.isEmpty()) {
-                    Double.NaN
-                } else if (sortedValues.size == 1) {
-                    sortedValues.first()
-                } else {
-                    sum() / sortedValues.size
-                }
+        val max by lazy {
+            if (sortedValues.isEmpty()) {
+                Double.NaN
+            } else {
+                sortedValues.last()
             }
-            return mean!!
         }
-
-        fun median(): Double {
-            if (median == null) {
-                median = quantile(0.5)
-            }
-            return median!!
-        }
-
-        fun min(): Double {
-            if (min == null) {
-                min = if (sortedValues.isEmpty()) {
-                    Double.NaN
-                } else {
-                    sortedValues.first()
-                }
-            }
-            return min!!
-        }
-
-        fun max(): Double {
-            if (max == null) {
-                max = if (sortedValues.isEmpty()) {
-                    Double.NaN
-                } else {
-                    sortedValues.last()
-                }
-            }
-            return max!!
-        }
-
-        fun q1(): Double {
-            if (q1 == null) {
-                q1 = quantile(0.25)
-            }
-            return q1!!
-        }
-
-        fun q3(): Double {
-            if (q3 == null) {
-                q3 = quantile(0.75)
-            }
-            return q3!!
-        }
+        val q1 by lazy { quantile(0.25) }
+        val q3 by lazy { quantile(0.75) }
 
         fun quantile(p: Double): Double {
             if (sortedValues.isEmpty()) {
@@ -116,17 +63,5 @@ object SummaryStatUtil {
                 (sortedValues[ceil(place).toInt()] + sortedValues[floor(place).toInt()]) / 2.0
             }
         }
-    }
-
-    enum class AggFun(val aggFun: (Calculator) -> Double) {
-        NAN({ calc -> calc.nan() }),
-        COUNT({ calc -> calc.count() }),
-        SUM({ calc -> calc.sum() }),
-        MEAN({ calc -> calc.mean() }),
-        MEDIAN({ calc -> calc.median() }),
-        MIN({ calc -> calc.min() }),
-        MAX({ calc -> calc.max() }),
-        Q1({ calc -> calc.q1() }),
-        Q3({ calc -> calc.q3() }),
     }
 }
