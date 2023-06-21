@@ -52,14 +52,13 @@ class SummaryStat(
         }
 
         val statValues: Map<Aes<*>, MutableList<Double>> = DEF_MAPPING.keys.associateWith { mutableListOf() }
-        val defaultAggFun: (SummaryCalculator) -> Double = { calc -> calc.nan }
         for ((x, bin) in binnedData) {
             val calc = SummaryCalculator(bin)
             for (aes in statValues.keys) {
                 if (aes == Aes.X) {
                     statValues[aes]!!.add(x)
                 } else {
-                    statValues[aes]!!.add(aggFunctionsMap.getOrElse(aes) { defaultAggFun }(calc))
+                    statValues[aes]!!.add(aggFunctionsMap.getOrElse(aes) { SummaryCalculator::nan }(calc))
                 }
             }
         }

@@ -415,15 +415,15 @@ object StatProto {
             } else {
                 opts.getStringDef(option, default).let {
                     when (it.lowercase()) {
-                        "nan" -> { calc -> calc.nan }
-                        "count" -> { calc -> calc.count }
-                        "sum" -> { calc -> calc.sum }
-                        "mean" -> { calc -> calc.mean }
-                        "median" -> { calc -> calc.median }
-                        "min" -> { calc -> calc.min }
-                        "max" -> { calc -> calc.max }
-                        "q1" -> { calc -> calc.q1 }
-                        "q3" -> { calc -> calc.q3 }
+                        "nan" -> SummaryCalculator::nan
+                        "count" -> SummaryCalculator::count
+                        "sum" -> SummaryCalculator::sum
+                        "mean" -> SummaryCalculator::mean
+                        "median" -> SummaryCalculator::median
+                        "min" -> SummaryCalculator::min
+                        "max" -> SummaryCalculator::max
+                        "q1" -> SummaryCalculator::q1
+                        "q3" -> SummaryCalculator::q3
                         else -> throw IllegalArgumentException(
                             "Unsupported function name: '$it'\n" +
                             "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
