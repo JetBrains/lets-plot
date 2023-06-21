@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class SummaryStat(
-    private val aggFunctionsMap: Map<Aes<*>, (SummaryStatUtil.SummaryCalculator) -> Double>
+    private val aggFunctionsMap: Map<Aes<*>, (SummaryStatUtil.Calculator) -> Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -44,21 +44,17 @@ class SummaryStat(
         xs: List<Double?>,
         ys: List<Double?>
     ): Map<DataFrame.Variable, List<Double>> {
-        val xyPairs = SeriesUtil.filterFinite(xs, ys)
+        val binnedData = SeriesUtil.filterFinite(xs, ys)
             .let { (xs, ys) -> xs zip ys }
-        if (xyPairs.isEmpty()) {
-            return mutableMapOf()
-        }
-
-        val binnedData: MutableMap<Double, MutableList<Double>> = HashMap()
-        for ((x, y) in xyPairs) {
-            binnedData.getOrPut(x) { ArrayList() }.add(y)
+            .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+        if (binnedData.isEmpty()) {
+            return emptyMap()
         }
 
         val statValues: Map<Aes<*>, MutableList<Double>> = DEF_MAPPING.keys.associateWith { mutableListOf() }
-        val defaultAggFun = SummaryStatUtil.getStandardAggFun(SummaryStatUtil.AggFun.NAN)
+        val defaultAggFun = SummaryStatUtil.AggFun.NAN.aggFun
         for ((x, bin) in binnedData) {
-            val calc = SummaryStatUtil.SummaryCalculator(bin)
+            val calc = SummaryStatUtil.Calculator(bin)
             for (aes in statValues.keys) {
                 if (aes == Aes.X) {
                     statValues[aes]!!.add(x)

@@ -202,9 +202,5 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
             @Suppress("UNCHECKED_CAST")
             return values.filter { isPositional(it) } as List<Aes<Double>>
         }
-
-        fun byName(aesName: String): Aes<*>? {
-            return values.firstOrNull { it.name == aesName }
-        }
     }
 }

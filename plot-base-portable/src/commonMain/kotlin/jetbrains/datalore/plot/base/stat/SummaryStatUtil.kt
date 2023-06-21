@@ -11,25 +11,11 @@ import kotlin.math.floor
 import kotlin.math.round
 
 object SummaryStatUtil {
-    fun getStandardAggFun(aggFunName: AggFun): (SummaryCalculator) -> Double {
-        return when (aggFunName) {
-            AggFun.NAN -> { calc -> calc.nan() }
-            AggFun.COUNT -> { calc -> calc.count() }
-            AggFun.SUM -> { calc -> calc.sum() }
-            AggFun.MEAN -> { calc -> calc.mean() }
-            AggFun.MEDIAN -> { calc -> calc.median() }
-            AggFun.MIN -> { calc -> calc.min() }
-            AggFun.MAX -> { calc -> calc.max() }
-            AggFun.Q1 -> { calc -> calc.q1() }
-            AggFun.Q3 -> { calc -> calc.q3() }
-        }
-    }
-
-    fun getQuantileAggFun(p: Double): (SummaryCalculator) -> Double {
+    fun getQuantileAggFun(p: Double): (Calculator) -> Double {
         return { calc -> calc.quantile(p) }
     }
 
-    class SummaryCalculator(values: List<Double>) {
+    class Calculator(values: List<Double>) {
         private val sortedValues: List<Double> = Ordering.natural<Double>().sortedCopy(values)
 
         private var count: Double? = null
@@ -132,15 +118,15 @@ object SummaryStatUtil {
         }
     }
 
-    enum class AggFun {
-        NAN,
-        COUNT,
-        SUM,
-        MEAN,
-        MEDIAN,
-        MIN,
-        MAX,
-        Q1,
-        Q3,
+    enum class AggFun(val aggFun: (Calculator) -> Double) {
+        NAN({ calc -> calc.nan() }),
+        COUNT({ calc -> calc.count() }),
+        SUM({ calc -> calc.sum() }),
+        MEAN({ calc -> calc.mean() }),
+        MEDIAN({ calc -> calc.median() }),
+        MIN({ calc -> calc.min() }),
+        MAX({ calc -> calc.max() }),
+        Q1({ calc -> calc.q1() }),
+        Q3({ calc -> calc.q3() }),
     }
 }

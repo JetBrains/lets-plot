@@ -9,6 +9,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
+import jetbrains.datalore.plot.config.Option.Mapping
 import jetbrains.datalore.plot.config.Option.Stat.Bin
 import jetbrains.datalore.plot.config.Option.Stat.Bin2d
 import jetbrains.datalore.plot.config.Option.Stat.Boxplot
@@ -407,28 +408,27 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (SummaryStatUtil.SummaryCalculator) -> Double {
+        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (SummaryStatUtil.Calculator) -> Double {
             return if (opts.isNumber(option)) {
                 SummaryStatUtil.getQuantileAggFun(opts.getDouble(option)!!)
             } else {
-                val aggFunName = opts.getStringDef(option, default).let {
+                opts.getStringDef(option, default).let {
                     when (it.lowercase()) {
-                        "nan" -> SummaryStatUtil.AggFun.NAN
-                        "count" -> SummaryStatUtil.AggFun.COUNT
-                        "sum" -> SummaryStatUtil.AggFun.SUM
-                        "mean" -> SummaryStatUtil.AggFun.MEAN
-                        "median" -> SummaryStatUtil.AggFun.MEDIAN
-                        "min" -> SummaryStatUtil.AggFun.MIN
-                        "max" -> SummaryStatUtil.AggFun.MAX
-                        "q1" -> SummaryStatUtil.AggFun.Q1
-                        "q3" -> SummaryStatUtil.AggFun.Q3
+                        "nan" -> SummaryStatUtil.AggFun.NAN.aggFun
+                        "count" -> SummaryStatUtil.AggFun.COUNT.aggFun
+                        "sum" -> SummaryStatUtil.AggFun.SUM.aggFun
+                        "mean" -> SummaryStatUtil.AggFun.MEAN.aggFun
+                        "median" -> SummaryStatUtil.AggFun.MEDIAN.aggFun
+                        "min" -> SummaryStatUtil.AggFun.MIN.aggFun
+                        "max" -> SummaryStatUtil.AggFun.MAX.aggFun
+                        "q1" -> SummaryStatUtil.AggFun.Q1.aggFun
+                        "q3" -> SummaryStatUtil.AggFun.Q3.aggFun
                         else -> throw IllegalArgumentException(
                             "Unsupported function name: '$it'\n" +
                             "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
                         )
                     }
                 }
-                SummaryStatUtil.getStandardAggFun(aggFunName)
             }
         }
 
@@ -438,7 +438,7 @@ object StatProto {
             Aes.YMAX to getAggFunction(options, Summary.FUN_MAX, SummaryStat.DEF_MAX_AGG_FUN)
         )
 
-        val additionalAggFunctions: MutableMap<Aes<*>, (SummaryStatUtil.SummaryCalculator) -> Double> = mutableMapOf()
+        val additionalAggFunctions: MutableMap<Aes<*>, (SummaryStatUtil.Calculator) -> Double> = mutableMapOf()
         val funMap: Map<String, Any> = if (options.hasOwn(Summary.FUN_MAP)) {
             options.getMap(Summary.FUN_MAP)
         } else {
@@ -446,7 +446,7 @@ object StatProto {
         }
         val funOptions = OptionsAccessor(funMap)
         for (aesName in funMap.keys) {
-            Aes.byName(aesName.lowercase())?.let { aes ->
+            Mapping.toAes(aesName.lowercase()).let { aes ->
                 additionalAggFunctions[aes] = getAggFunction(funOptions, aesName, SummaryStat.DEF_AGG_FUN)
             }
         }
