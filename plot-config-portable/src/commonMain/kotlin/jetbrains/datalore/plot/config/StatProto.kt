@@ -408,22 +408,22 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (SummaryCalculator) -> Double {
+        fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (List<Double>) -> Double {
             return if (opts.isNumber(option)) {
                 val p = opts.getDouble(option)!!
-                { calc -> calc.quantile(p) }
+                SummaryStatUtil.quantile(p)
             } else {
                 opts.getStringDef(option, default).let {
                     when (it.lowercase()) {
-                        "nan" -> SummaryCalculator::nan
-                        "count" -> SummaryCalculator::count
-                        "sum" -> SummaryCalculator::sum
-                        "mean" -> SummaryCalculator::mean
-                        "median" -> SummaryCalculator::median
-                        "min" -> SummaryCalculator::min
-                        "max" -> SummaryCalculator::max
-                        "q1" -> SummaryCalculator::q1
-                        "q3" -> SummaryCalculator::q3
+                        "nan" -> SummaryStatUtil.nan
+                        "count" -> SummaryStatUtil::count
+                        "sum" -> SummaryStatUtil::sum
+                        "mean" -> SummaryStatUtil::mean
+                        "median" -> SummaryStatUtil::median
+                        "min" -> SummaryStatUtil::min
+                        "max" -> SummaryStatUtil::max
+                        "q1" -> SummaryStatUtil::q1
+                        "q3" -> SummaryStatUtil::q3
                         else -> throw IllegalArgumentException(
                             "Unsupported function name: '$it'\n" +
                             "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
@@ -439,7 +439,7 @@ object StatProto {
             Aes.YMAX to getAggFunction(options, Summary.FUN_MAX, SummaryStat.DEF_MAX_AGG_FUN)
         )
 
-        val additionalAggFunctions: MutableMap<Aes<*>, (SummaryCalculator) -> Double> = mutableMapOf()
+        val additionalAggFunctions: MutableMap<Aes<*>, (List<Double>) -> Double> = mutableMapOf()
         val funMap: Map<String, Any> = if (options.hasOwn(Summary.FUN_MAP)) {
             options.getMap(Summary.FUN_MAP)
         } else {

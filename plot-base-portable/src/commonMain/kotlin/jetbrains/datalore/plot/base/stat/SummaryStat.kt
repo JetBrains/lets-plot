@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -12,7 +13,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class SummaryStat(
-    private val aggFunctionsMap: Map<Aes<*>, (SummaryCalculator) -> Double>
+    private val aggFunctionsMap: Map<Aes<*>, (List<Double>) -> Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -53,12 +54,13 @@ class SummaryStat(
 
         val statValues: Map<Aes<*>, MutableList<Double>> = DEF_MAPPING.keys.associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
-            val calc = SummaryCalculator(bin)
+            val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
             for (aes in statValues.keys) {
                 if (aes == Aes.X) {
                     statValues[aes]!!.add(x)
                 } else {
-                    statValues[aes]!!.add(aggFunctionsMap.getOrElse(aes) { SummaryCalculator::nan }(calc))
+                    val aggFunction = aggFunctionsMap.getOrElse(aes) { SummaryStatUtil.nan }
+                    statValues[aes]!!.add(aggFunction(sortedBin))
                 }
             }
         }
