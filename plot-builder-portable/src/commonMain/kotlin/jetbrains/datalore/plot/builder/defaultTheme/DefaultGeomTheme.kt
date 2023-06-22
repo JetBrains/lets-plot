@@ -67,7 +67,7 @@ internal class DefaultGeomTheme private constructor(
             var fill = BASE.fill
             var alpha = BASE.alpha
             var size = BASE.size
-            val lineWidth = BASE.lineWidth
+            var lineWidth = BASE.lineWidth
 
             when (geomKind) {
                 GeomKind.PATH,
@@ -108,19 +108,26 @@ internal class DefaultGeomTheme private constructor(
                     size = 0.2
                 }
 
-                GeomKind.POINT_RANGE -> {
-                    color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
-                }
-
                 GeomKind.POINT,
                 GeomKind.JITTER,
                 GeomKind.Q_Q,
-                GeomKind.Q_Q_2,
+                GeomKind.Q_Q_2 -> {
+                    color = inheritedColors.lineColor()
+                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    size = 2.0
+                }
+
+                GeomKind.POINT_RANGE -> {
+                    color = inheritedColors.lineColor()
+                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    lineWidth = 1.0 // line width and stroke for point
+                }
+
                 GeomKind.LOLLIPOP -> {
                     color = inheritedColors.lineColor()
                     fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
                     size = 2.0
+                    lineWidth = 1.0 // line width and stroke for point
                 }
 
                 GeomKind.SMOOTH -> {
