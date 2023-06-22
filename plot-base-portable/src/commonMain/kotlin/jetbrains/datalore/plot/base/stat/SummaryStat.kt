@@ -57,17 +57,17 @@ class SummaryStat(
         }
 
         val statX = ArrayList<Double>()
-        val statValues: Map<Aes<*>, MutableList<Double>> = AGG_MAPPING.keys.associateWith { mutableListOf() }
+        val statAggValues: Map<Aes<*>, MutableList<Double>> = AGG_MAPPING.keys.associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             statX.add(x)
             val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
-            for ((aes, values) in statValues) {
+            for ((aes, aggValues) in statAggValues) {
                 val aggFunction = aggFunctionsMap[aes] ?: SummaryUtil::nan
-                values.add(aggFunction(sortedBin))
+                aggValues.add(aggFunction(sortedBin))
             }
         }
 
-        return mapOf(Stats.X to statX) + statValues.map { (aes, values) -> Pair(AGG_MAPPING[aes]!!, values) }.toMap()
+        return mapOf(Stats.X to statX) + statAggValues.map { (aes, aggValues) -> Pair(AGG_MAPPING[aes]!!, aggValues) }.toMap()
     }
 
     companion object {

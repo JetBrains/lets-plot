@@ -19,8 +19,7 @@ object SummaryUtil {
     fun mean(sortedValues: List<Double>): Double {
         return when (sortedValues.size) {
             0 -> Double.NaN
-            1 -> sortedValues.first()
-            else -> sum(sortedValues) / sortedValues.size
+            else -> sum(sortedValues) / count(sortedValues)
         }
     }
 
@@ -30,23 +29,18 @@ object SummaryUtil {
 
     fun max(sortedValues: List<Double>): Double = sortedValues.lastOrNull() ?: Double.NaN
 
-    fun q1(sortedValues: List<Double>): Double = quantile(sortedValues, 0.25)
+    fun firstQuartile(sortedValues: List<Double>): Double = quantile(sortedValues, 0.25)
 
-    fun q3(sortedValues: List<Double>): Double = quantile(sortedValues, 0.75)
+    fun thirdQuartile(sortedValues: List<Double>): Double = quantile(sortedValues, 0.75)
 
     fun quantile(sortedValues: List<Double>, p: Double): Double {
-        return when (sortedValues.size) {
-            0 -> Double.NaN
-            1 -> sortedValues.first()
-            else -> {
-                val place = p * (sortedValues.size - 1)
-                val i = round(place)
-                if (place == i) {
-                    sortedValues[place.toInt()]
-                } else {
-                    (sortedValues[ceil(place).toInt()] + sortedValues[floor(place).toInt()]) / 2.0
-                }
-            }
+        if (sortedValues.isEmpty()) {
+            return Double.NaN
+        }
+        val place = p * (sortedValues.size - 1)
+        return when (round(place)) {
+            place -> sortedValues[place.toInt()]
+            else -> (sortedValues[ceil(place).toInt()] + sortedValues[floor(place).toInt()]) / 2.0
         }
     }
 }

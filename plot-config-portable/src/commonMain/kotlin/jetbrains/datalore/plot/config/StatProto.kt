@@ -447,11 +447,12 @@ object StatProto {
                 "median" -> SummaryUtil::median
                 "min" -> SummaryUtil::min
                 "max" -> SummaryUtil::max
-                "q1" -> SummaryUtil::q1
-                "q3" -> SummaryUtil::q3
+                "q1" -> SummaryUtil::firstQuartile
+                "q2" -> SummaryUtil::median
+                "q3" -> SummaryUtil::thirdQuartile
                 else -> throw IllegalArgumentException(
                     "Unsupported function name: '$it'\n" +
-                    "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
+                    "Use one of: nan, count, sum, mean, median, min, max, q1, q2, q3."
                 )
             }
         }
