@@ -59,7 +59,7 @@ class SummaryStat(
                 if (aes == Aes.X) {
                     statValues[aes]!!.add(x)
                 } else {
-                    val aggFunction = aggFunctionsMap.getOrElse(aes) { SummaryStatUtil.nan }
+                    val aggFunction = aggFunctionsMap.getOrElse(aes) { SummaryStatUtil::nan }
                     statValues[aes]!!.add(aggFunction(sortedBin))
                 }
             }

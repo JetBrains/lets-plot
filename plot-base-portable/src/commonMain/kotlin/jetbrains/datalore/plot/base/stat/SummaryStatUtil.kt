@@ -10,29 +10,21 @@ import kotlin.math.floor
 import kotlin.math.round
 
 object SummaryStatUtil {
-    val nan: (List<Double>) -> Double = { Double.NaN }
+    fun nan(sortedValues: List<Double>): Double = Double.NaN
 
-    fun count(sortedValues: List<Double>): Double {
-        return sortedValues.size.toDouble()
-    }
+    fun count(sortedValues: List<Double>): Double = sortedValues.size.toDouble()
 
-    fun sum(sortedValues: List<Double>): Double {
-        return sortedValues.sum()
-    }
+    fun sum(sortedValues: List<Double>): Double = sortedValues.sum()
 
     fun mean(sortedValues: List<Double>): Double {
-        return if (sortedValues.isEmpty()) {
-            Double.NaN
-        } else if (sortedValues.size == 1) {
-            sortedValues.first()
-        } else {
-            sum(sortedValues) / sortedValues.size
+        return when (sortedValues.size) {
+            0 -> Double.NaN
+            1 -> sortedValues.first()
+            else -> sum(sortedValues) / sortedValues.size
         }
     }
 
-    fun median(sortedValues: List<Double>): Double {
-        return quantile(0.5)(sortedValues)
-    }
+    fun median(sortedValues: List<Double>): Double = quantile(sortedValues, 0.5)
 
     fun min(sortedValues: List<Double>): Double {
         return if (sortedValues.isEmpty()) {
@@ -50,21 +42,15 @@ object SummaryStatUtil {
         }
     }
 
-    fun q1(sortedValues: List<Double>): Double {
-        return quantile(0.25)(sortedValues)
-    }
+    fun q1(sortedValues: List<Double>): Double = quantile(sortedValues, 0.25)
 
-    fun q3(sortedValues: List<Double>): Double {
-        return quantile(0.75)(sortedValues)
-    }
+    fun q3(sortedValues: List<Double>): Double = quantile(sortedValues, 0.75)
 
-    fun quantile(p: Double): (List<Double>) -> Double {
-        return { sortedValues ->
-            if (sortedValues.isEmpty()) {
-                Double.NaN
-            } else if (sortedValues.size == 1) {
-                sortedValues.first()
-            } else {
+    fun quantile(sortedValues: List<Double>, p: Double): Double {
+        return when (sortedValues.size) {
+            0 -> Double.NaN
+            1 -> sortedValues.first()
+            else -> {
                 val place = p * (sortedValues.size - 1)
                 val i = round(place)
                 if (place == i) {

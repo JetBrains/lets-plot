@@ -411,11 +411,11 @@ object StatProto {
         fun getAggFunction(opts: OptionsAccessor, option: String, default: String): (List<Double>) -> Double {
             return if (opts.isNumber(option)) {
                 val p = opts.getDouble(option)!!
-                SummaryStatUtil.quantile(p)
+                { values -> SummaryStatUtil.quantile(values, p) }
             } else {
                 opts.getStringDef(option, default).let {
                     when (it.lowercase()) {
-                        "nan" -> SummaryStatUtil.nan
+                        "nan" -> SummaryStatUtil::nan
                         "count" -> SummaryStatUtil::count
                         "sum" -> SummaryStatUtil::sum
                         "mean" -> SummaryStatUtil::mean
