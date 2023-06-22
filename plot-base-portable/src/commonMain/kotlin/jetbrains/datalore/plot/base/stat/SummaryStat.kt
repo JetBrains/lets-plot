@@ -51,29 +51,27 @@ class SummaryStat(
         val binnedData = SeriesUtil.filterFinite(xs, ys)
             .let { (xs, ys) -> xs zip ys }
             .groupBy(keySelector = { it.first }, valueTransform = { it.second })
+
         if (binnedData.isEmpty()) {
             return emptyMap()
         }
 
-        val statValues: Map<Aes<*>, MutableList<Double>> = DEF_MAPPING.keys.associateWith { mutableListOf() }
+        val statX = ArrayList<Double>()
+        val statValues: Map<Aes<*>, MutableList<Double>> = AGG_MAPPING.keys.associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
+            statX.add(x)
             val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
-            for (aes in statValues.keys) {
-                if (aes == Aes.X) {
-                    statValues[aes]!!.add(x)
-                } else {
-                    val aggFunction = aggFunctionsMap.getOrElse(aes) { SummaryUtil::nan }
-                    statValues[aes]!!.add(aggFunction(sortedBin))
-                }
+            for ((aes, values) in statValues) {
+                val aggFunction = aggFunctionsMap[aes] ?: SummaryUtil::nan
+                values.add(aggFunction(sortedBin))
             }
         }
 
-        return statValues.map { (aes, values) -> Pair(DEF_MAPPING[aes]!!, values) }.toMap()
+        return mapOf(Stats.X to statX) + statValues.map { (aes, values) -> Pair(AGG_MAPPING[aes]!!, values) }.toMap()
     }
 
     companion object {
-        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
-            Aes.X to Stats.X,
+        private val AGG_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.Y to Stats.Y,
             Aes.YMIN to Stats.Y_MIN,
             Aes.YMAX to Stats.Y_MAX,
@@ -81,5 +79,6 @@ class SummaryStat(
             Aes.LOWER to Stats.LOWER,
             Aes.UPPER to Stats.UPPER,
         )
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(Aes.X to Stats.X) + AGG_MAPPING
     }
 }

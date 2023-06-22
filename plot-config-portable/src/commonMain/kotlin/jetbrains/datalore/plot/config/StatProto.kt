@@ -408,59 +408,52 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        val standardAggFunctions = mapOf(
-            Aes.Y to getAggFunction(options, Summary.FUN, SummaryUtil::mean),
-            Aes.YMIN to getAggFunction(options, Summary.FUN_MIN, SummaryUtil::min),
-            Aes.YMAX to getAggFunction(options, Summary.FUN_MAX, SummaryUtil::max)
+        val defaultAggFunctions = mapOf(
+            Aes.Y to (getAggFunction(options, Summary.FUN) ?: SummaryUtil::mean),
+            Aes.YMIN to (getAggFunction(options, Summary.FUN_MIN) ?: SummaryUtil::min),
+            Aes.YMAX to (getAggFunction(options, Summary.FUN_MAX) ?: SummaryUtil::max)
         )
 
-        val additionalAggFunctions = if (options.hasOwn(Summary.FUN_MAP)) {
-            options.getMap(Summary.FUN_MAP)
-        } else {
-            emptyMap()
-        }.let { funMap ->
-            configureFunMap(OptionsAccessor(funMap))
-        }
+        val additionalAggFunctions = configureAggFunMap(options.getMap(Summary.FUN_MAP))
 
-        return SummaryStat(standardAggFunctions + additionalAggFunctions)
+        return SummaryStat(defaultAggFunctions + additionalAggFunctions)
     }
 
-    private fun configureFunMap(options: OptionsAccessor): Map<Aes<*>, (List<Double>) -> Double> {
-        val additionalAggFunctions: MutableMap<Aes<*>, (List<Double>) -> Double> = mutableMapOf()
-        for (aesName in options.toMap().keys) {
-            Mapping.toAes(aesName.lowercase()).let { aes ->
-                additionalAggFunctions[aes] = getAggFunction(options, aesName, SummaryUtil::nan)
-            }
+    private fun configureAggFunMap(aggFunMap: Map<String, Any>): Map<Aes<*>, (List<Double>) -> Double> {
+        val aggFunOptions = OptionsAccessor(aggFunMap)
+        return aggFunMap.keys.associate { aesName ->
+            Pair(
+                Mapping.toAes(aesName),
+                getAggFunction(aggFunOptions, aesName) ?: SummaryUtil::nan
+            )
         }
-        return additionalAggFunctions
     }
 
     private fun getAggFunction(
         options: OptionsAccessor,
-        option: String,
-        defaultAggFunction: (List<Double>) -> Double
-    ): (List<Double>) -> Double {
-        return if (options.isNumber(option)) {
-            val p = options.getDouble(option)!!
-            { values -> SummaryUtil.quantile(values, p) }
-        } else {
-            options.getString(option)?.let {
-                when (it.lowercase()) {
-                    "nan" -> SummaryUtil::nan
-                    "count" -> SummaryUtil::count
-                    "sum" -> SummaryUtil::sum
-                    "mean" -> SummaryUtil::mean
-                    "median" -> SummaryUtil::median
-                    "min" -> SummaryUtil::min
-                    "max" -> SummaryUtil::max
-                    "q1" -> SummaryUtil::q1
-                    "q3" -> SummaryUtil::q3
-                    else -> throw IllegalArgumentException(
-                        "Unsupported function name: '$it'\n" +
-                        "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
-                    )
-                }
-            } ?: defaultAggFunction
+        option: String
+    ): ((List<Double>) -> Double)? {
+        if (options.isNumber(option)) {
+            return options.getDouble(option)?.let { p: Double ->
+                { values: List<Double> -> SummaryUtil.quantile(values, p) }
+            }
+        }
+        return options.getString(option)?.let {
+            when (it.lowercase()) {
+                "nan" -> SummaryUtil::nan
+                "count" -> SummaryUtil::count
+                "sum" -> SummaryUtil::sum
+                "mean" -> SummaryUtil::mean
+                "median" -> SummaryUtil::median
+                "min" -> SummaryUtil::min
+                "max" -> SummaryUtil::max
+                "q1" -> SummaryUtil::q1
+                "q3" -> SummaryUtil::q3
+                else -> throw IllegalArgumentException(
+                    "Unsupported function name: '$it'\n" +
+                    "Use one of: nan, count, sum, mean, median, min, max, q1, q3."
+                )
+            }
         }
     }
 }

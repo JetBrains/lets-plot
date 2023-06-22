@@ -26,21 +26,9 @@ object SummaryUtil {
 
     fun median(sortedValues: List<Double>): Double = quantile(sortedValues, 0.5)
 
-    fun min(sortedValues: List<Double>): Double {
-        return if (sortedValues.isEmpty()) {
-            Double.NaN
-        } else {
-            sortedValues.first()
-        }
-    }
+    fun min(sortedValues: List<Double>): Double = sortedValues.firstOrNull() ?: Double.NaN
 
-    fun max(sortedValues: List<Double>): Double {
-        return if (sortedValues.isEmpty()) {
-            Double.NaN
-        } else {
-            sortedValues.last()
-        }
-    }
+    fun max(sortedValues: List<Double>): Double = sortedValues.lastOrNull() ?: Double.NaN
 
     fun q1(sortedValues: List<Double>): Double = quantile(sortedValues, 0.25)
 
