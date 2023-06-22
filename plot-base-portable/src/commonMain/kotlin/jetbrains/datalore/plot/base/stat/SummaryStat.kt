@@ -33,6 +33,9 @@ class SummaryStat(
         }
 
         val statData = buildStat(xs, ys)
+        if (statData.isEmpty()) {
+            return withEmptyStatValues()
+        }
 
         val builder = DataFrame.Builder()
         for ((variable, series) in statData) {
