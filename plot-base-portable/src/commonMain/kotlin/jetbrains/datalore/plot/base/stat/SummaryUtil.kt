@@ -9,7 +9,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.round
 
-object SummaryStatUtil {
+object SummaryUtil {
     fun nan(sortedValues: List<Double>): Double = Double.NaN
 
     fun count(sortedValues: List<Double>): Double = sortedValues.size.toDouble()

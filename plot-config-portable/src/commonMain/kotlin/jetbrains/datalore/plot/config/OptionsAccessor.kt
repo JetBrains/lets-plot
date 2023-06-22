@@ -56,10 +56,6 @@ open class OptionsAccessor(
         return get(option)?.toString()
     }
 
-    fun getStringDef(option: String, def: String): String {
-        return getString(option) ?: def
-    }
-
     fun getStringSafe(option: String): String {
         return getString(option)
             ?: throw IllegalArgumentException("Can't get string value: option '$option' is not present.")

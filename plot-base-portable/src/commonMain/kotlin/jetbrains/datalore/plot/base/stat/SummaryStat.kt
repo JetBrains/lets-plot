@@ -59,7 +59,7 @@ class SummaryStat(
                 if (aes == Aes.X) {
                     statValues[aes]!!.add(x)
                 } else {
-                    val aggFunction = aggFunctionsMap.getOrElse(aes) { SummaryStatUtil::nan }
+                    val aggFunction = aggFunctionsMap.getOrElse(aes) { SummaryUtil::nan }
                     statValues[aes]!!.add(aggFunction(sortedBin))
                 }
             }
@@ -69,11 +69,6 @@ class SummaryStat(
     }
 
     companion object {
-        const val DEF_Y_AGG_FUN = "mean"
-        const val DEF_MIN_AGG_FUN = "min"
-        const val DEF_MAX_AGG_FUN = "max"
-        const val DEF_AGG_FUN = "nan"
-
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,
