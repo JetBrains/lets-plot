@@ -17,7 +17,9 @@
 
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
 
-- [BREAKING] `geom_pointrange()`: `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
+- [BREAKING] `geom_pointrange()`: `size` aesthetic shouldn't affect line width [[#751](https://github.com/JetBrains/lets-plot/issues/751)]:
+
+  `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 
