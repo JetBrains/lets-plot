@@ -21,7 +21,8 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
 
     def get_stat_name(agg_fun):
         if isinstance(agg_fun, str) and agg_fun not in ["q1", "q2", "q3"]:
-            return agg_fun
+            prefix = "" if agg_fun not in ["min", "max"] else "y"
+            return prefix + agg_fun
         else:
             name = next((q for (q, f) in quantile_agg_functions.items() if f is None or f == agg_fun), None)
             if name is None:
