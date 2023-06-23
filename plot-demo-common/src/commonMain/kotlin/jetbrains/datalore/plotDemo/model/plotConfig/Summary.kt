@@ -90,8 +90,9 @@ class Summary {
               'layers': [
                 {
                   'geom': 'crossbar',
+                  'mapping': {'middle': '..median..'},
                   'stat': 'summary',
-                  'fun_map': {'middle': 'median'}
+                  'fun_map': {'median': 'median'}
                 }
               ]
             }

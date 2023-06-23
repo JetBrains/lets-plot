@@ -5,11 +5,10 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
-import jetbrains.datalore.plot.config.Option.Mapping
 import jetbrains.datalore.plot.config.Option.Stat.Bin
 import jetbrains.datalore.plot.config.Option.Stat.Bin2d
 import jetbrains.datalore.plot.config.Option.Stat.Boxplot
@@ -409,9 +408,9 @@ object StatProto {
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
         val defaultAggFunctions = mapOf(
-            Aes.Y to (getAggFunction(options, Summary.FUN) ?: SummaryUtil::mean),
-            Aes.YMIN to (getAggFunction(options, Summary.FUN_MIN) ?: SummaryUtil::min),
-            Aes.YMAX to (getAggFunction(options, Summary.FUN_MAX) ?: SummaryUtil::max)
+            Stats.Y to (getAggFunction(options, Summary.FUN) ?: SummaryUtil::mean),
+            Stats.Y_MIN to (getAggFunction(options, Summary.FUN_MIN) ?: SummaryUtil::min),
+            Stats.Y_MAX to (getAggFunction(options, Summary.FUN_MAX) ?: SummaryUtil::max)
         )
 
         val additionalAggFunctions = configureAggFunMap(options.getMap(Summary.FUN_MAP))
@@ -419,12 +418,12 @@ object StatProto {
         return SummaryStat(defaultAggFunctions + additionalAggFunctions)
     }
 
-    private fun configureAggFunMap(aggFunMap: Map<String, Any>): Map<Aes<*>, (List<Double>) -> Double> {
+    private fun configureAggFunMap(aggFunMap: Map<String, Any>): Map<DataFrame.Variable, (List<Double>) -> Double> {
         val aggFunOptions = OptionsAccessor(aggFunMap)
-        return aggFunMap.keys.associate { aesName ->
+        return aggFunMap.keys.associate { statVarName ->
             Pair(
-                Mapping.toAes(aesName),
-                getAggFunction(aggFunOptions, aesName) ?: SummaryUtil::nan
+                Stats.statVar("..$statVarName.."),
+                getAggFunction(aggFunOptions, statVarName) ?: SummaryUtil::nan
             )
         }
     }

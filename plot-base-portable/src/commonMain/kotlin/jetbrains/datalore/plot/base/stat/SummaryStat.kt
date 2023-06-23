@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class SummaryStat(
-    private val aggFunctionsMap: Map<Aes<*>, (List<Double>) -> Double>
+    private val aggFunctionsMap: Map<DataFrame.Variable, (List<Double>) -> Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -57,28 +57,25 @@ class SummaryStat(
         }
 
         val statX = ArrayList<Double>()
-        val statAggValues: Map<Aes<*>, MutableList<Double>> = AGG_MAPPING.keys.associateWith { mutableListOf() }
+        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = aggFunctionsMap.keys.associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             statX.add(x)
             val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
-            for ((aes, aggValues) in statAggValues) {
-                val aggFunction = aggFunctionsMap[aes] ?: SummaryUtil::nan
+            for ((statVar, aggValues) in statAggValues) {
+                val aggFunction = aggFunctionsMap[statVar] ?: SummaryUtil::nan
                 aggValues.add(aggFunction(sortedBin))
             }
         }
 
-        return mapOf(Stats.X to statX) + statAggValues.map { (aes, aggValues) -> Pair(AGG_MAPPING[aes]!!, aggValues) }.toMap()
+        return mapOf(Stats.X to statX) + statAggValues
     }
 
     companion object {
-        private val AGG_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
             Aes.Y to Stats.Y,
             Aes.YMIN to Stats.Y_MIN,
-            Aes.YMAX to Stats.Y_MAX,
-            Aes.MIDDLE to Stats.MIDDLE,
-            Aes.LOWER to Stats.LOWER,
-            Aes.UPPER to Stats.UPPER,
+            Aes.YMAX to Stats.Y_MAX
         )
-        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(Aes.X to Stats.X) + AGG_MAPPING
     }
 }
