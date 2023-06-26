@@ -113,19 +113,19 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.Q_Q,
                 GeomKind.Q_Q_2 -> {
                     color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    fill = inheritedColors.backgroundFill()
                     size = 2.0
                 }
 
                 GeomKind.POINT_RANGE -> {
                     color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    fill = inheritedColors.backgroundFill()
                     lineWidth = 1.0 // line width and stroke for point
                 }
 
                 GeomKind.LOLLIPOP -> {
                     color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    fill = inheritedColors.backgroundFill()
                     size = 2.0
                     lineWidth = 1.0 // line width and stroke for point
                 }
