@@ -125,7 +125,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.SMOOTH -> {
                     color = Color.MAGENTA
                     fill = inheritedColors.lineColor()
-                    alpha = 1.5 // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
+                    alpha = 0.15
                 }
 
                 GeomKind.DOT_PLOT,
