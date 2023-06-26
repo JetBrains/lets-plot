@@ -53,10 +53,21 @@ internal class DefaultGeomTheme private constructor(
             }
         }
 
+        private class FixedColors(geomKind: GeomKind) {
+            val color = if (geomKind == GeomKind.SMOOTH) {
+                Color.MAGENTA
+            } else {
+                Color.PACIFIC_BLUE
+            }
+            val fill = Color.PACIFIC_BLUE
+        }
+
         // defaults for geomKind
         fun forGeomKind(geomKind: GeomKind, inheritedColors: InheritedColors): GeomTheme {
-            var color = Color.PACIFIC_BLUE
-            var fill = Color.PACIFIC_BLUE
+            val fixedColors = FixedColors(geomKind)
+
+            var color = fixedColors.color
+            var fill = fixedColors.fill
             var alpha = 1.0
             var size = 0.5
             var lineWidth = 0.5
@@ -123,7 +134,6 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.SMOOTH -> {
-                    color = Color.MAGENTA
                     fill = inheritedColors.lineColor()
                     alpha = 0.15
                 }
