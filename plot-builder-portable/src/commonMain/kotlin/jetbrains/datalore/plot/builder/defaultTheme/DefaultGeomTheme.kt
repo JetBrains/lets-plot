@@ -69,8 +69,8 @@ internal class DefaultGeomTheme private constructor(
             var color = fixedColors.color
             var fill = fixedColors.fill
             var alpha = 1.0
-            var size = 0.5
-            var lineWidth = 0.5
+            var size = 0.6
+            var lineWidth = 0.6
 
             when (geomKind) {
                 GeomKind.PATH,
@@ -106,7 +106,7 @@ internal class DefaultGeomTheme private constructor(
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.lineColor()
                     alpha = 0.1
-                    size = 0.2
+                    size = 0.24
                 }
 
                 GeomKind.CROSS_BAR,
@@ -121,20 +121,20 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.Q_Q_2 -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    size = 2.0
+                    size = 2.4
                 }
 
                 GeomKind.POINT_RANGE -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    lineWidth = 1.0 // line width and stroke for point
+                    lineWidth = 1.2 // line width and stroke for point
                 }
 
                 GeomKind.LOLLIPOP -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
                     size = 2.0
-                    lineWidth = 1.0 // line width and stroke for point
+                    lineWidth = 1.2 // line width and stroke for point
                 }
 
                 GeomKind.SMOOTH -> {
