@@ -91,8 +91,6 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.HISTOGRAM,
-                GeomKind.CROSS_BAR,
-                GeomKind.BOX_PLOT,
                 GeomKind.AREA_RIDGES,
                 GeomKind.VIOLIN,
                 GeomKind.AREA,
@@ -109,6 +107,12 @@ internal class DefaultGeomTheme private constructor(
                     fill = inheritedColors.lineColor()
                     alpha = 0.1
                     size = 0.2
+                }
+
+                GeomKind.CROSS_BAR,
+                GeomKind.BOX_PLOT -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.backgroundFill()
                 }
 
                 GeomKind.POINT,
