@@ -137,6 +137,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
+                // to retain the side edges of area:
+                // decorate(path, groupDataPoints.get(0), true);
                 decorateFillingPart(path, groupDataPoints[0])
                 lines.add(path)
             }
