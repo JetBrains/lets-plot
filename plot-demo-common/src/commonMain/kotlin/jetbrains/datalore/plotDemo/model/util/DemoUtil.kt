@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import kotlin.random.Random
 
 object DemoUtil {
+    // ToDo: move to published artifact
     fun gauss(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
         val r = RandomGaussian(Random(seed))
         return List(count) { r.nextGaussian() * stdDeviance + mean }
@@ -25,6 +26,7 @@ object DemoUtil {
         return l
     }
 
+    // ToDo: remove. replace with l1 + l2
     fun <T> zip(l1: List<T>, l2: List<T>): List<T> {
         val l = ArrayList<T>()
         val i1 = l1.iterator()
@@ -40,6 +42,7 @@ object DemoUtil {
         return l
     }
 
+    // ToDo: remove.
     fun <T> fill(v: T, count: Int): List<T> {
         val l = ArrayList<T>()
         for (i in 0 until count) {
