@@ -36,7 +36,6 @@ import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
-import jetbrains.datalore.plot.builder.defaultTheme.DefaultGeomTheme
 import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
@@ -72,7 +71,7 @@ class GeomLayerBuilder(
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
-    private var myGeomTheme: GeomTheme = DefaultGeomTheme.BASE
+    private lateinit var myGeomTheme: GeomTheme
 
     fun addBinding(v: VarBinding): GeomLayerBuilder {
         myBindings.add(v)

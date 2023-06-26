@@ -35,14 +35,6 @@ internal class DefaultGeomTheme private constructor(
     override fun lineWidth() = lineWidth
 
     companion object {
-        val BASE = DefaultGeomTheme(
-            color = Color.PACIFIC_BLUE,
-            fill = Color.PACIFIC_BLUE,
-            alpha = 1.0,
-            size = 0.5,
-            lineWidth = 0.5
-        )
-
         internal class InheritedColors(
             options: Map<String, Any>,
             fontFamilyRegistry: FontFamilyRegistry
@@ -63,11 +55,11 @@ internal class DefaultGeomTheme private constructor(
 
         // defaults for geomKind
         fun forGeomKind(geomKind: GeomKind, inheritedColors: InheritedColors): GeomTheme {
-            var color = BASE.color
-            var fill = BASE.fill
-            var alpha = BASE.alpha
-            var size = BASE.size
-            var lineWidth = BASE.lineWidth
+            var color = Color.PACIFIC_BLUE
+            var fill = Color.PACIFIC_BLUE
+            var alpha = 1.0
+            var size = 0.5
+            var lineWidth = 0.5
 
             when (geomKind) {
                 GeomKind.PATH,
