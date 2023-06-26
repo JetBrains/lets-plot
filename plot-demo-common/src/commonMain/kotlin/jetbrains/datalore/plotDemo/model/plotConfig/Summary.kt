@@ -62,8 +62,8 @@ class Summary {
                   'geom': 'pointrange',
                   'stat': 'summary',
                   'fun': 'median',
-                  'fun_min': 'q1',
-                  'fun_max': 0.75,
+                  'fun_min': 'lq',
+                  'fun_max': 'uq',
                   'color': 'red'
                 }
               ]
@@ -92,7 +92,9 @@ class Summary {
                   'geom': 'crossbar',
                   'mapping': {'middle': '..median..'},
                   'stat': 'summary',
-                  'fun_map': {'median': 'median'}
+                  'fun_min': 'lq',
+                  'fun_map': {'middle': 'median'},
+                  'quantiles': [0.45, 0.5, 0.55]
                 }
               ]
             }

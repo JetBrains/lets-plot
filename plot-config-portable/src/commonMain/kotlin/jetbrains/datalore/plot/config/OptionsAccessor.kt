@@ -35,11 +35,6 @@ open class OptionsAccessor(
         return options[option] != null
     }
 
-    fun isNumber(option: String): Boolean {
-        val v = get(option) ?: return false
-        return v is Number
-    }
-
     operator fun get(option: String): Any? {
         return if (hasOwn(option)) {
             options[option]

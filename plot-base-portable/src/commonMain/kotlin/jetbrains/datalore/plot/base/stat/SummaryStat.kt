@@ -71,6 +71,8 @@ class SummaryStat(
     }
 
     companion object {
+        val DEF_QUANTILES = Triple(0.25, 0.5, 0.75)
+
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
             Aes.Y to Stats.Y,

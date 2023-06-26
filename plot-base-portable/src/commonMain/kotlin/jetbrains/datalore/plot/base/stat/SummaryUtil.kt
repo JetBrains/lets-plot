@@ -29,10 +29,6 @@ object SummaryUtil {
 
     fun max(sortedValues: List<Double>): Double = sortedValues.lastOrNull() ?: Double.NaN
 
-    fun firstQuartile(sortedValues: List<Double>): Double = quantile(sortedValues, 0.25)
-
-    fun thirdQuartile(sortedValues: List<Double>): Double = quantile(sortedValues, 0.75)
-
     fun quantile(sortedValues: List<Double>, p: Double): Double {
         if (sortedValues.isEmpty()) {
             return Double.NaN

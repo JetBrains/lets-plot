@@ -407,53 +407,63 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
+        val sortedQuantiles: Triple<Double, Double, Double> = if (options.hasOwn(Summary.QUANTILES)) {
+            options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0).let { quantiles ->
+                if (quantiles.size != 3) error("Parameter 'quantiles' should contains 3 values")
+                quantiles.sorted().let { Triple(it[0], it[1], it[2]) }
+            }
+        } else {
+            SummaryStat.DEF_QUANTILES
+        }
+
         val defaultAggFunctions = mapOf(
-            Stats.Y to (getAggFunction(options, Summary.FUN) ?: SummaryUtil::mean),
-            Stats.Y_MIN to (getAggFunction(options, Summary.FUN_MIN) ?: SummaryUtil::min),
-            Stats.Y_MAX to (getAggFunction(options, Summary.FUN_MAX) ?: SummaryUtil::max)
+            Stats.Y to (options.getString(Summary.FUN)?.lowercase()?.let { getAggFunction(it, sortedQuantiles) } ?: SummaryUtil::mean),
+            Stats.Y_MIN to (options.getString(Summary.FUN_MIN)?.lowercase()?.let { getAggFunction(it, sortedQuantiles) } ?: SummaryUtil::min),
+            Stats.Y_MAX to (options.getString(Summary.FUN_MAX)?.lowercase()?.let { getAggFunction(it, sortedQuantiles) } ?: SummaryUtil::max)
         )
 
-        val additionalAggFunctions = configureAggFunMap(options.getMap(Summary.FUN_MAP))
+        val additionalAggFunctions = configureAggFunMap(options.getMap(Summary.FUN_MAP), sortedQuantiles)
 
         return SummaryStat(defaultAggFunctions + additionalAggFunctions)
     }
 
-    private fun configureAggFunMap(aggFunMap: Map<String, Any>): Map<DataFrame.Variable, (List<Double>) -> Double> {
+    private fun configureAggFunMap(
+        aggFunMap: Map<String, Any>,
+        sortedQuantiles: Triple<Double, Double, Double>
+    ): Map<DataFrame.Variable, (List<Double>) -> Double> {
         val aggFunOptions = OptionsAccessor(aggFunMap)
-        return aggFunMap.keys.associate { statVarName ->
-            Pair(
-                Stats.statVar("..$statVarName.."),
-                getAggFunction(aggFunOptions, statVarName) ?: SummaryUtil::nan
-            )
-        }
+        return aggFunMap.keys.mapNotNull { option ->
+            aggFunOptions.getString(option)?.lowercase()?.let { aggFunName ->
+                val statVar = when (aggFunName) {
+                    "min", "max" -> "..y$aggFunName.."
+                    else -> "..$aggFunName.."
+                }.let { Stats.statVar(it) }
+                Pair(statVar, getAggFunction(aggFunName, sortedQuantiles))
+            }
+        }.toMap()
     }
 
     private fun getAggFunction(
-        options: OptionsAccessor,
-        option: String
-    ): ((List<Double>) -> Double)? {
-        if (options.isNumber(option)) {
-            return options.getDouble(option)?.let { p: Double ->
-                { values: List<Double> -> SummaryUtil.quantile(values, p) }
-            }
+        aggFunName: String,
+        sortedQuantiles: Triple<Double, Double, Double>
+    ): ((List<Double>) -> Double) {
+        val quantileAggFunction: (Double) -> (List<Double>) -> Double = { p ->
+            { values: List<Double> -> SummaryUtil.quantile(values, p) }
         }
-        return options.getString(option)?.let {
-            when (it.lowercase()) {
-                "nan" -> SummaryUtil::nan
-                "count" -> SummaryUtil::count
-                "sum" -> SummaryUtil::sum
-                "mean" -> SummaryUtil::mean
-                "median" -> SummaryUtil::median
-                "min" -> SummaryUtil::min
-                "max" -> SummaryUtil::max
-                "q1" -> SummaryUtil::firstQuartile
-                "q2" -> SummaryUtil::median
-                "q3" -> SummaryUtil::thirdQuartile
-                else -> throw IllegalArgumentException(
-                    "Unsupported function name: '$it'\n" +
-                    "Use one of: nan, count, sum, mean, median, min, max, q1, q2, q3."
-                )
-            }
+        return when (aggFunName) {
+            "count" -> SummaryUtil::count
+            "sum" -> SummaryUtil::sum
+            "mean" -> SummaryUtil::mean
+            "median" -> SummaryUtil::median
+            "min" -> SummaryUtil::min
+            "max" -> SummaryUtil::max
+            "lq" -> quantileAggFunction(sortedQuantiles.first)
+            "mq" -> quantileAggFunction(sortedQuantiles.second)
+            "uq" -> quantileAggFunction(sortedQuantiles.third)
+            else -> throw IllegalArgumentException(
+                "Unsupported function name: '$aggFunName'\n" +
+                "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
+            )
         }
     }
 }

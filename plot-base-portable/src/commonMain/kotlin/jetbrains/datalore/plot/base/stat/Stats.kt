@@ -26,9 +26,9 @@ object Stats {
     val MEAN = DataFrame.Variable("..mean..", STAT, "mean")
     val MEDIAN = DataFrame.Variable("..median..", STAT, "median")
     val QUANTILE = DataFrame.Variable("..quantile..", STAT, "quantile")
-    val QUANTILE_A = DataFrame.Variable("..qa..", STAT, "quantile a")
-    val QUANTILE_B = DataFrame.Variable("..qb..", STAT, "quantile b")
-    val QUANTILE_C = DataFrame.Variable("..qc..", STAT, "quantile c")
+    val LOWER_QUANTILE = DataFrame.Variable("..lq..", STAT, "lower quantile")
+    val MIDDLE_QUANTILE = DataFrame.Variable("..mq..", STAT, "middle quantile")
+    val UPPER_QUANTILE = DataFrame.Variable("..uq..", STAT, "upper quantile")
     val LOWER = DataFrame.Variable("..lower..", STAT, "lower")
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
@@ -61,9 +61,9 @@ object Stats {
             MEAN,
             MEDIAN,
             QUANTILE,
-            QUANTILE_A,
-            QUANTILE_B,
-            QUANTILE_C,
+            LOWER_QUANTILE,
+            MIDDLE_QUANTILE,
+            UPPER_QUANTILE,
             LOWER,
             MIDDLE,
             UPPER,
