@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.browser
 
-import jetbrains.datalore.vis.svg.SvgNodeContainer
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.dom.SvgRootDocumentMapper
 import org.w3c.dom.Node
 import kotlinx.browser.document

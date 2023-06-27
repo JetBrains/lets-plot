@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.vis.svg.SvgImageElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
 
 /**
  * Creates SvgImageElement and assign 'imageUrl' value to 'href' attribute.

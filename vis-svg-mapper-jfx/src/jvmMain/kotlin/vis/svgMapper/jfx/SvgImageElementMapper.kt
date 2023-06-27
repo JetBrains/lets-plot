@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.svgMapper.jfx
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.image.ImageView
-import jetbrains.datalore.vis.svg.SvgImageElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgImageAttrMapping
 
 internal class SvgImageElementMapper(

@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.shape.Circle
-import jetbrains.datalore.vis.svg.SvgCircleElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 
 internal object SvgCircleAttrMapping : SvgShapeMapping<Circle>() {
     override fun setAttribute(target: Circle, name: String, value: Any?) {

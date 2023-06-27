@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.PlotSvgHelper.fetchPlotSizeFromSvg
 import jetbrains.datalore.plot.config.BunchConfig
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
-import jetbrains.datalore.vis.svgToString.SvgToString
+import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object PlotSvgExportPortable {
     private val LOG = PortableLogging.logger(PlotSvgExportPortable::class)

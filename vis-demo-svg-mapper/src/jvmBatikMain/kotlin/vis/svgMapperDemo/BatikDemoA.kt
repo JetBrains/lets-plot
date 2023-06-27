@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapperDemo
 
 import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowBatik
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.svgDemoModel.a.DemoModelA
 
 fun main() {

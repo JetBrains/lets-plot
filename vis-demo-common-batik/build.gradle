@@ -22,7 +22,7 @@ kotlin {
                 implementation project(':plot-builder-portable')
                 implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
-                implementation project(':vis-svg-portable')
+                implementation project(':datamodel')
             }
         }
         jvmMain {

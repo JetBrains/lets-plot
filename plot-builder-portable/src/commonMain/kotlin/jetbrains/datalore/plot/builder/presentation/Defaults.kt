@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis
-import jetbrains.datalore.vis.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object Defaults {
     // Plot size

@@ -10,10 +10,10 @@ import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.DisposableRegistration
 import jetbrains.datalore.base.registration.DisposingHub
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
 import org.apache.batik.gvt.event.GraphicsNodeChangeListener
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import java.awt.Cursor
 import java.awt.Dimension
 import java.awt.Graphics

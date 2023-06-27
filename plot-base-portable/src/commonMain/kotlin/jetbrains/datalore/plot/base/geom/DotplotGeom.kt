@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
@@ -22,7 +21,7 @@ import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
 import jetbrains.datalore.plot.base.stat.DotplotStat.Method
-import jetbrains.datalore.vis.svg.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min

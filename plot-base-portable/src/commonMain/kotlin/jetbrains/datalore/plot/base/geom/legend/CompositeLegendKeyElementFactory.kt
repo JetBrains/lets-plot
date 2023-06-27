@@ -8,8 +8,7 @@ package jetbrains.datalore.plot.base.geom.legend
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.vis.svg.SvgGElement
-import kotlin.math.max
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 class CompositeLegendKeyElementFactory(vararg factories: LegendKeyElementFactory) :
     LegendKeyElementFactory {

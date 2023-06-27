@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.svgMapper.dom
 
-import jetbrains.datalore.vis.svg.SvgImageElementEx
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 import jetbrains.datalore.vis.svgMapper.dom.domExtensions.setAlphaAt
 import jetbrains.datalore.vis.svgMapper.dom.domExtensions.setBlueAt
 import jetbrains.datalore.vis.svgMapper.dom.domExtensions.setGreenAt

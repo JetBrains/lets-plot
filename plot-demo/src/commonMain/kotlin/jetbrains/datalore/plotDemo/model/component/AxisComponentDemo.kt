@@ -23,8 +23,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.vis.svg.SvgRectElement
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 open class AxisComponentDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

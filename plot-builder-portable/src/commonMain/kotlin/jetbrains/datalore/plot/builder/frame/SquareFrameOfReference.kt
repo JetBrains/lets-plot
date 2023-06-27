@@ -23,7 +23,7 @@ import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.theme.PanelTheme
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class SquareFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,

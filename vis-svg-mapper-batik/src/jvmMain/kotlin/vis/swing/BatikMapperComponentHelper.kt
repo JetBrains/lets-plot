@@ -7,9 +7,9 @@ package jetbrains.datalore.vis.swing
 
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.svg.SvgNodeContainer
-import jetbrains.datalore.vis.svg.SvgNodeContainerListener
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainerListener
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.svgMapper.batik.SvgRootDocumentMapper
 import jetbrains.datalore.vis.swing.BatikMapperComponent.Companion.DEBUG_REPAINT_MAPPER_COMPONENT
 import jetbrains.datalore.vis.swing.BatikMapperComponent.Companion.USE_WEIRD_PERFORMANCE_TUNEUP

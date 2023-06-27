@@ -6,8 +6,8 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.shape.SVGPath
-import jetbrains.datalore.vis.svg.SvgPathData
-import jetbrains.datalore.vis.svg.SvgPathElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 
 internal object SvgPathAttrMapping : SvgShapeMapping<SVGPath>() {
     override fun setAttribute(target: SVGPath, name: String, value: Any?) {

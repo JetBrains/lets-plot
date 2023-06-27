@@ -14,7 +14,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation project(':base-portable')
                 implementation project(':base')
-                implementation project(':vis-svg-portable')
+                implementation project(':datamodel')
                 implementation project(':plot-builder-portable')
             }
         }

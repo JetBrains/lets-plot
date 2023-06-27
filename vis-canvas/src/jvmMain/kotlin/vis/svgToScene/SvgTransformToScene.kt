@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.svgToScene
 
 import javafx.scene.transform.*
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.vis.svg.SvgTransform
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 import kotlin.math.sin
 
 private const val SCALE_X = 0

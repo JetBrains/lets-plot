@@ -9,8 +9,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.linetype.NamedLineType
-import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import jetbrains.datalore.vis.svg.SvgPathElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import kotlin.math.cos
 import kotlin.math.sin
 

@@ -7,7 +7,7 @@ import jetbrains.datalore.plot.config.CompositeFigureConfig
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JScrollPane

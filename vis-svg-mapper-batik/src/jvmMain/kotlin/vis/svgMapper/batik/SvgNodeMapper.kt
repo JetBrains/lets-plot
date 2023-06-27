@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.svgMapper.batik
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MappingContext
 import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.svg.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import jetbrains.datalore.vis.svgMapper.SvgNodeSubtreeGeneratingSynchronizer
 import org.apache.batik.dom.AbstractDocument
 import org.w3c.dom.Node

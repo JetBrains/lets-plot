@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.builder.interact.ui
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.vis.svg.SvgConstants
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 class ToggleButtonControl(
     private val uncheckedContent: SvgElement,

@@ -13,10 +13,9 @@ import jetbrains.datalore.base.observable.event.ListenerCaller
 import jetbrains.datalore.base.observable.event.Listeners
 import jetbrains.datalore.base.observable.property.*
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
-import jetbrains.datalore.vis.svg.slim.SvgSlimNode
-import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import jetbrains.datalore.vis.svgMapper.dom.css.CssDisplay
 import jetbrains.datalore.vis.svgMapper.dom.domExtensions.*
 import org.w3c.dom.*
@@ -25,6 +24,7 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.dom.addClass
 import kotlinx.dom.removeClass
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 object DomUtil {
     fun elementChildren(e: Element): MutableList<Node?> {

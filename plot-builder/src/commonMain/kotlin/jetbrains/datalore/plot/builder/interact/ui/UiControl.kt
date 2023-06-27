@@ -11,7 +11,7 @@ import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.vis.svg.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 abstract class UiControl {
 

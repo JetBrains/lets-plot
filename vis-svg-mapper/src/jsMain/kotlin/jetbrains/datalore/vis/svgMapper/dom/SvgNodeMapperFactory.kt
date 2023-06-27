@@ -7,9 +7,9 @@ package jetbrains.datalore.vis.svgMapper.dom
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.slim.SvgSlimNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
 import jetbrains.datalore.vis.svgMapper.dom.domUtil.DomUtil
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.w3c.dom.Node
 
 class SvgNodeMapperFactory(private val myPeer: SvgDomPeer): MapperFactory<SvgNode, Node> {

@@ -16,9 +16,9 @@ import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 abstract class LegendBox : SvgComponent() {
 

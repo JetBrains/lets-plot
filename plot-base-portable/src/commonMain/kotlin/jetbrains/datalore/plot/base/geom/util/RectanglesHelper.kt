@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgRectElement
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
-import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
 
 class RectanglesHelper(
     private val myAesthetics: Aesthetics,

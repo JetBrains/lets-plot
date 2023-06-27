@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
-import jetbrains.datalore.vis.svgToString.SvgToString
+import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 import kotlin.math.max
 
 object MonolithicCommon {

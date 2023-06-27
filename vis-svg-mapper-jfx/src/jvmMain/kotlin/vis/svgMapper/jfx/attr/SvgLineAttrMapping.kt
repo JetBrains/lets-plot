@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.shape.Line
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import jetbrains.datalore.vis.svgMapper.jfx.unScale
 
 internal object SvgLineAttrMapping : SvgShapeMapping<Line>() {

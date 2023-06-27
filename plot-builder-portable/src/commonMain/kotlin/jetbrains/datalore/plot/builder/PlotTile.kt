@@ -26,7 +26,7 @@ import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.FacetsTheme
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class PlotTile(
     private val coreLayers: List<GeomLayer>,

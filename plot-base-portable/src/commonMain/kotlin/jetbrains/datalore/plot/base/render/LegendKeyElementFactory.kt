@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.render
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesScaling
-import jetbrains.datalore.vis.svg.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 interface LegendKeyElementFactory {
     fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement

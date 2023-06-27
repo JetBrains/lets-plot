@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.layout.Pane
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 internal object SvgSvgAttrMapping : SvgAttrMapping<Pane>() {
 

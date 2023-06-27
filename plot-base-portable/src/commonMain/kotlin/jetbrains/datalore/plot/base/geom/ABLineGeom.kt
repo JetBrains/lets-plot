@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ABLineGeom : GeomBase() {
 
