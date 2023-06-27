@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
 /**
  * See 'Plotting distributions'
@@ -32,7 +32,7 @@ open class Histogram {
             val count = 100
 //            val count = 500000
 
-            val xs = DemoUtil.gauss(count, 12, 0.0, 5.0)
+            val xs = normal(count, 12, 0.0, 5.0)
             val weights = ArrayList<Double>()
             for (x in xs) {
                 weights.add(if (x < 0.0) 2.0 else 0.5);

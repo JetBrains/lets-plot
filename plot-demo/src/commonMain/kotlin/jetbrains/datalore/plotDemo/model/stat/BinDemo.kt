@@ -6,6 +6,7 @@
 package jetbrains.datalore.plotDemo.model.stat
 
 import jetbrains.datalore.base.interval.DoubleSpan
+import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -49,8 +50,8 @@ open class BinDemo : SimpleDemoBase() {
 
         val count = 200
 
-        val x = DemoUtil.gauss(count, 32, 0.0, 100.0)
-        val y = DemoUtil.gauss(count, 64, 0.0, 50.0)
+        val x = normal(count, 32, 0.0, 100.0)
+        val y = normal(count, 64, 0.0, 50.0)
 
         val mapperX = Mappers.mul(1.0)
         var scaleX = Scales.DemoAndTest.continuousDomainNumericRange("A scale")

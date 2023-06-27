@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
@@ -29,10 +30,10 @@ open class TooltipAnchor {
         private fun data(): Map<String, List<*>> {
             val count1 = 20
             val count2 = 50
-            val ratingA = DemoUtil.gauss(count1, 12, 0.0, 1.0)
-            val ratingB = DemoUtil.gauss(count2, 24, 0.0, 1.0)
-            val rating = DemoUtil.zip(ratingA, ratingB)
-            val cond = DemoUtil.zip(DemoUtil.fill("a", count1), DemoUtil.fill("b", count2))
+            val ratingA = normal(count1, 12, 0.0, 1.0)
+            val ratingB = normal(count2, 24, 0.0, 1.0)
+            val rating = DemoUtil.interlace(ratingA, ratingB)
+            val cond = DemoUtil.interlace(List(count1) { "a" }, List(count2) { "b" })
             val map = HashMap<String, List<*>>()
             map["cond"] = cond
             map["rating"] = rating

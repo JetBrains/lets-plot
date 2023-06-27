@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
 open class Bin2d {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -28,8 +28,8 @@ open class Bin2d {
         private fun data(): Map<String, List<*>> {
             val count = 200
 
-            val xs = DemoUtil.gauss(count, 12, 0.0, 5.0)
-            val ys = DemoUtil.gauss(count, 21, 0.0, 1.0)
+            val xs = normal(count, 12, 0.0, 5.0)
+            val ys = normal(count, 21, 0.0, 1.0)
             val weights = ArrayList<Double>()
             for (x in xs) {
                 weights.add(if (x < 0.0) 2.0 else 0.5);
