@@ -12,7 +12,12 @@ import kotlin.math.round
 object AggregateFunctions {
     fun count(sortedValues: List<Double>): Double = sortedValues.size.toDouble()
 
-    fun sum(sortedValues: List<Double>): Double = sortedValues.sum()
+    fun sum(sortedValues: List<Double>): Double {
+        return when (sortedValues.size) {
+            0 -> Double.NaN
+            else -> sortedValues.sum()
+        }
+    }
 
     fun mean(sortedValues: List<Double>): Double {
         return when (sortedValues.size) {
