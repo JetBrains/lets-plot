@@ -62,7 +62,7 @@ class SummaryStat(
             statX.add(x)
             val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
             for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = aggFunctionsMap[statVar] ?: SummaryUtil::nan
+                val aggFunction = aggFunctionsMap[statVar] ?: { Double.NaN }
                 aggValues.add(aggFunction(sortedBin))
             }
         }
@@ -71,7 +71,7 @@ class SummaryStat(
     }
 
     companion object {
-        val DEF_QUANTILES = Triple(0.25, 0.5, 0.75)
+        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,
