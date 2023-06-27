@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
@@ -69,8 +68,8 @@ internal class DefaultGeomTheme private constructor(
             var color = fixedColors.color
             var fill = fixedColors.fill
             var alpha = 1.0
-            var size = 0.6
-            var lineWidth = 0.6
+            var size = 0.5
+            var lineWidth = 0.5
 
             when (geomKind) {
                 GeomKind.PATH,
@@ -92,9 +91,7 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.HISTOGRAM,
                 GeomKind.AREA_RIDGES,
-                GeomKind.VIOLIN,
                 GeomKind.AREA,
-                GeomKind.DENSITY,
                 GeomKind.RECT,
                 GeomKind.RIBBON -> {
                     color = inheritedColors.lineColor()
@@ -106,13 +103,16 @@ internal class DefaultGeomTheme private constructor(
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.lineColor()
                     alpha = 0.1
-                    size = 0.24
+                    size = 0.2
                 }
 
+                GeomKind.DENSITY,
+                GeomKind.VIOLIN,
                 GeomKind.CROSS_BAR,
                 GeomKind.BOX_PLOT -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
+                    alpha = 0.1
                 }
 
                 GeomKind.POINT,
@@ -121,20 +121,20 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.Q_Q_2 -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    size = 2.4
+                    size = 2.0
                 }
 
                 GeomKind.POINT_RANGE -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    lineWidth = 1.2 // line width and stroke for point
+                    lineWidth = 1.0 // line width and stroke for point
                 }
 
                 GeomKind.LOLLIPOP -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
                     size = 2.0
-                    lineWidth = 1.2 // line width and stroke for point
+                    lineWidth = 1.0 // line width and stroke for point
                 }
 
                 GeomKind.SMOOTH -> {
@@ -174,7 +174,9 @@ internal class DefaultGeomTheme private constructor(
                 }
             }
 
-            return DefaultGeomTheme(color, fill, alpha, size, lineWidth)
+            val sizeMultiplier = 1.5
+
+            return DefaultGeomTheme(color, fill, alpha, size * sizeMultiplier, lineWidth * sizeMultiplier)
         }
     }
 }
