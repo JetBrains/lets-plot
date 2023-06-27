@@ -26,7 +26,6 @@ object DemoUtil {
         return l
     }
 
-    // ToDo: remove. replace with l1 + l2
     fun <T> zip(l1: List<T>, l2: List<T>): List<T> {
         val l = ArrayList<T>()
         val i1 = l1.iterator()
