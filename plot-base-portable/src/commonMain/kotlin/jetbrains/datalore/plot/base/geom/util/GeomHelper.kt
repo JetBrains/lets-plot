@@ -15,11 +15,11 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.aes.AestheticsUtil.ALPHA_CONTROLS_BOTH
 import jetbrains.datalore.plot.base.render.svg.StrokeDashArraySupport
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgLineElement
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgShape
-import jetbrains.datalore.vis.svg.slim.SvgSlimShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimShape
 
 open class GeomHelper(
     protected val pos: PositionAdjustment,

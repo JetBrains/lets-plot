@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.builder.interact.tool.DrawRectFeedback
 import jetbrains.datalore.plot.builder.interact.tool.PanGeomFeedback
 import jetbrains.datalore.plot.builder.interact.ui.ToggleButtonControl
 import jetbrains.datalore.plot.builder.interact.ui.ToolboxControl
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class PlotToolbox(
     private val interactor: Interactor

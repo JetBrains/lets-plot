@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.render.svg
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.vis.svg.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 
 object Text {
 

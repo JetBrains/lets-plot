@@ -8,9 +8,9 @@ package jetbrains.datalore.vis.svgMapper.jfx.attr
 import javafx.scene.paint.Color
 import javafx.scene.paint.Paint
 import javafx.scene.shape.Shape
-import jetbrains.datalore.vis.svg.SvgColors
-import jetbrains.datalore.vis.svg.SvgConstants
-import jetbrains.datalore.vis.svg.SvgShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 
 internal abstract class SvgShapeMapping<TargetT : Shape> : SvgAttrMapping<TargetT>() {
     init {

@@ -31,7 +31,7 @@ import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.PointerDirection.*
-import jetbrains.datalore.vis.svg.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.max
 import kotlin.math.min
 

@@ -13,11 +13,11 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.DisposableRegistration
 import jetbrains.datalore.base.registration.DisposingHub
 import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.vis.svg.SvgConstants
-import jetbrains.datalore.vis.svg.SvgElementListener
-import jetbrains.datalore.vis.svg.SvgNodeContainer
-import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import jetbrains.datalore.vis.svgMapper.jfx.SvgJfxPeer
 import jetbrains.datalore.vis.svgMapper.jfx.SvgSvgElementMapper
 import java.awt.Dimension

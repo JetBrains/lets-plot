@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.presentation
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
-import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object Style {
     // classes

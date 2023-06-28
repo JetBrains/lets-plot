@@ -9,7 +9,7 @@ import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePlot
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import jetbrains.datalore.vis.swing.runOnFxThread
 import javax.swing.JComponent

@@ -11,9 +11,9 @@ import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgLineElement
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 object CrossBarHelper {
     fun buildBoxes(

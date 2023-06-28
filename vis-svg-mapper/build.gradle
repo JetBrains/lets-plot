@@ -20,7 +20,7 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':mapper-core')
-                implementation project(':vis-svg-portable')
+                implementation project(':datamodel')
             }
         }
         jvmMain {
@@ -37,7 +37,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation project(':vis-svg-portable')
+                implementation project(':datamodel')
             }
         }
     }

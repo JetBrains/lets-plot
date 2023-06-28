@@ -7,10 +7,10 @@ package jetbrains.datalore.vis.svgMapper.batik
 
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
-import jetbrains.datalore.vis.svg.*
 import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.Text

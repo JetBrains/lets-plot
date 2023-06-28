@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.geom.util.QuantilesHelper
 import jetbrains.datalore.plot.base.geom.util.TargetCollectorHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.YDensityStat
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ViolinGeom : GeomBase() {
     var quantiles: List<Double> = YDensityStat.DEF_QUANTILES

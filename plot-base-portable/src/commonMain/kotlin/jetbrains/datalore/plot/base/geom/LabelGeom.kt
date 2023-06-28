@@ -13,10 +13,10 @@ import jetbrains.datalore.plot.base.geom.util.GeomHelper
 import jetbrains.datalore.plot.base.geom.util.TextUtil
 import jetbrains.datalore.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgPathDataBuilder
-import jetbrains.datalore.vis.svg.SvgPathElement
-import jetbrains.datalore.vis.svg.SvgUtils
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 
 class LabelGeom : TextGeom() {

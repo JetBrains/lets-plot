@@ -7,10 +7,10 @@ package jetbrains.datalore.vis.svgMapper.batik
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MapperFactory
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgImageElementEx
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.dom.AbstractDocument

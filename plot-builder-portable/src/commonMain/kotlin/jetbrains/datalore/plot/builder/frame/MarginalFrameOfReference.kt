@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.FrameOfReference
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class MarginalFrameOfReference(
     private val geomBounds: DoubleRectangle,

@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 abstract class FigureSvgRoot(
     val bounds: DoubleRectangle

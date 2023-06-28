@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.svgMapper.batik
 
-import jetbrains.datalore.vis.svg.SvgNodeContainer
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

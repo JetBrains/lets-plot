@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 open class QuantilesHelper(
     pos: PositionAdjustment,

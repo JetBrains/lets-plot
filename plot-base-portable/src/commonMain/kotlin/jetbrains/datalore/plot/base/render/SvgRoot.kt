@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.render
 
-import jetbrains.datalore.vis.svg.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 interface SvgRoot {
     fun add(node: SvgNode)

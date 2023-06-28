@@ -17,11 +17,11 @@ import jetbrains.datalore.base.observable.property.ReadableProperty
 import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.TextStyle
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_STYLE_ATTRIBUTE
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STYLE_ATTRIBUTE
 import jetbrains.datalore.vis.svgMapper.jfx.attr.SvgTextElementAttrMapping
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 internal class SvgTextElementMapper(
     source: SvgTextElement,

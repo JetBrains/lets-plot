@@ -9,7 +9,7 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.point.PointShapeSvg
-import jetbrains.datalore.vis.svg.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 internal class PointLegendKeyElementFactory(private val fatten: Double = 1.0) :
     LegendKeyElementFactory {

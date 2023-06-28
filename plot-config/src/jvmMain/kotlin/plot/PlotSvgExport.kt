@@ -7,7 +7,7 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
-import jetbrains.datalore.vis.svgToString.SvgToString
+import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 
 object PlotSvgExport {
     /**

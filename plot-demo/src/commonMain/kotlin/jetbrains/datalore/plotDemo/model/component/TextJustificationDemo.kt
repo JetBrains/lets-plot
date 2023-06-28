@@ -18,10 +18,10 @@ import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJ
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgRectElement
-import jetbrains.datalore.vis.svg.SvgUtils
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

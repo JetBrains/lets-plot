@@ -12,7 +12,7 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.DensityStat
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 open class AreaGeom : GeomBase() {
     var quantiles: List<Double> = DensityStat.DEF_QUANTILES

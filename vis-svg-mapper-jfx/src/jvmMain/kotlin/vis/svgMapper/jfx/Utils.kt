@@ -18,8 +18,8 @@ import javafx.scene.shape.*
 import javafx.scene.text.Text
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
-import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svgMapper.jfx.attr.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.reflect.KClass
 
 

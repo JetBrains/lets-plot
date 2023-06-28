@@ -7,8 +7,8 @@ package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Group
 import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.svg.SvgStyleElement
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgStyleElement
 
 internal class SvgStyleElementMapper(
     source: SvgStyleElement,

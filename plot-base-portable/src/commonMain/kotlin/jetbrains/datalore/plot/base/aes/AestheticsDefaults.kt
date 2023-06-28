@@ -25,6 +25,7 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
         put(Aes.ALPHA, geomTheme.alpha())
         put(Aes.SIZE, geomTheme.size())
         put(Aes.LINEWIDTH, geomTheme.lineWidth())
+        put(Aes.STROKE, geomTheme.lineWidth())
     }
     private val myDefaultsInLegend = TypedKeyHashMap()
 
@@ -96,7 +97,6 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
         private fun lollipop(geomTheme: GeomTheme): AestheticsDefaults {
             return point(geomTheme)
                 .update(Aes.SHAPE, NamedShape.STICK_CIRCLE)
-                .update(Aes.STROKE, 1.0)
         }
 
         private fun base(geomTheme: GeomTheme): AestheticsDefaults {

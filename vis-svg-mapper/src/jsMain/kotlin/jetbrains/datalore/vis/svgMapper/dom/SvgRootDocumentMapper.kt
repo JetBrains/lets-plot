@@ -7,8 +7,8 @@ package jetbrains.datalore.vis.svgMapper.dom
 
 import jetbrains.datalore.mapper.core.Mapper
 import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.vis.svg.SvgSvgElement
-import jetbrains.datalore.vis.svg.XmlNamespace.SVG_NAMESPACE_URI
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.w3c.dom.svg.SVGSVGElement
 import kotlinx.browser.document
 

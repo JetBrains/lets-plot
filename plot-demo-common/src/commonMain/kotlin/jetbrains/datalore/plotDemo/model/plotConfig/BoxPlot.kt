@@ -5,10 +5,9 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
+import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.plotDemo.model.util.DemoUtil.fill
-import jetbrains.datalore.plotDemo.model.util.DemoUtil.gauss
-import jetbrains.datalore.plotDemo.model.util.DemoUtil.zip
+import jetbrains.datalore.plotDemo.model.util.DemoUtil.interlace
 
 /**
  * See 'Plotting distributions'
@@ -276,10 +275,10 @@ open class BoxPlot {
             val count1 = 50
             val count2 = 100
 
-            val ratingA = gauss(count1, 12, 0.0, 1.0)
-            val ratingB = gauss(count2, 24, 0.0, 1.0)
-            val rating = zip(ratingA, ratingB)
-            val cond = zip(fill("a", count1), fill("b", count2))
+            val ratingA = normal(count1, 12, 0.0, 1.0)
+            val ratingB = normal(count2, 24, 0.0, 1.0)
+            val rating = interlace(ratingA, ratingB)
+            val cond = interlace(List(count1) { "a" }, List(count2) { "b" })
 
             val map = HashMap<String, List<*>>()
             map["cond"] = cond

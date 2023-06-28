@@ -31,16 +31,15 @@ class SmoothGeom : GeomBase() {
         val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints()))
         val helper = LinesHelper(pos, coord, ctx)
 
-        // Regression line
         helper.setAlphaEnabled(false)
-        val regressionLines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
-        root.appendNodes(regressionLines)
 
         // Confidence interval
-        helper.setAlphaFilter(PROPORTION)
-        helper.setWidthFilter(ZERO)
         val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
         root.appendNodes(bands)
+
+        // Regression line
+        val regressionLines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+        root.appendNodes(regressionLines)
 
         buildHints(dataPoints, pos, coord, ctx)
     }
@@ -66,7 +65,7 @@ class SmoothGeom : GeomBase() {
                 )
                 .defaultColor(
                     p.fill()!!,
-                    PROPORTION(p.alpha())
+                    p.alpha()
                 )
 
             val hintsCollection = HintsCollection(p, helper)
@@ -87,8 +86,5 @@ class SmoothGeom : GeomBase() {
 
     companion object {
         const val HANDLES_GROUPS = true
-
-        private val PROPORTION = { v: Double? -> if (v == null) null else v / 10 }
-        private val ZERO = { _: Double? -> 0.0 }
     }
 }

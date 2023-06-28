@@ -10,8 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 
 abstract class SvgComponent {
     protected var isBuilt: Boolean = false

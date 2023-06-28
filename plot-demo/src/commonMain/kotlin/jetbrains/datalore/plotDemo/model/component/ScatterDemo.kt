@@ -7,6 +7,7 @@ package jetbrains.datalore.plotDemo.model.component
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
@@ -34,7 +35,6 @@ import jetbrains.datalore.plot.common.color.ColorPalette
 import jetbrains.datalore.plot.common.color.ColorScheme
 import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.plotDemo.model.util.DemoUtil
 
 open class ScatterDemo : SimpleDemoBase() {
 
@@ -48,8 +48,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
     private fun gauss(): GroupComponent {
         val count = 200
-        val a = DemoUtil.gauss(count, 32, 0.0, 100.0)  // X
-        val b = DemoUtil.gauss(count, 64, 0.0, 50.0)     // Y
+        val a = normal(count, 32, 0.0, 100.0)  // X
+        val b = normal(count, 64, 0.0, 50.0)     // Y
         val varA = DataFrame.Variable("A")
         val varB = DataFrame.Variable("B")
         var data = DataFrame.Builder()
@@ -167,8 +167,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
     private fun gaussWithContinuousColor(): GroupComponent {
         val count = 200
-        val a = DemoUtil.gauss(count, 32, 0.0, 100.0)  // X
-        val b = DemoUtil.gauss(count, 64, 0.0, 50.0)   // Y
+        val a = normal(count, 32, 0.0, 100.0)  // X
+        val b = normal(count, 64, 0.0, 50.0)   // Y
         val c = ArrayList<Double>()
         for (i in 0 until count) {
             c.add(a[i] * b[i])
@@ -352,8 +352,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
     private fun gaussWithLimitsX(): GroupComponent {
         val count = 200
-        val a = DemoUtil.gauss(count, 32, 0.0, 100.0)  // X
-        val b = DemoUtil.gauss(count, 64, 0.0, 50.0)   // Y
+        val a = normal(count, 32, 0.0, 100.0)  // X
+        val b = normal(count, 64, 0.0, 50.0)   // Y
 
         val varA = DataFrame.Variable("A")
         val varB = DataFrame.Variable("B")

@@ -24,8 +24,6 @@ import kotlin.math.abs
 open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :
     GeomHelper(pos, coord, ctx) {
 
-    private var myAlphaFilter = { v: Double? -> v }
-    private var myWidthFilter = { v: Double? -> v }
     private var myAlphaEnabled = true
 
     fun setAlphaEnabled(b: Boolean) {
@@ -118,7 +116,8 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
             if (!points.isEmpty()) {
                 val path = LinePath.polygon(points)
-                //decorate(path, groupDataPoints.get(0), true);
+                // to retain the side edges of area:
+                // decorate(path, groupDataPoints.get(0), true);
                 decorateFillingPart(path, groupDataPoints[0])
                 lines.add(path)
             }
@@ -138,7 +137,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
     ) {
         val stroke = p.color()
-        val strokeAlpha = myAlphaFilter(AestheticsUtil.alpha(stroke!!, p))!!
+        val strokeAlpha = AestheticsUtil.alpha(stroke!!, p)
         path.color().set(withOpacity(stroke, strokeAlpha))
         if (!AestheticsUtil.ALPHA_CONTROLS_BOTH && (filled || !myAlphaEnabled)) {
             path.color().set(stroke)
@@ -148,7 +147,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             decorateFillingPart(path, p)
         }
 
-        val size = myWidthFilter(strokeScaler(p))!!
+        val size = strokeScaler(p)
         path.width().set(size)
 
         val lineType = p.lineType()
@@ -159,7 +158,7 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
 
     private fun decorateFillingPart(path: LinePath, p: DataPointAesthetics) {
         val fill = p.fill()
-        val fillAlpha = myAlphaFilter(AestheticsUtil.alpha(fill!!, p))!!
+        val fillAlpha = AestheticsUtil.alpha(fill!!, p)
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 

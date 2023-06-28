@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import jetbrains.datalore.plot.builder.tooltip.MappingField
 import jetbrains.datalore.plot.builder.tooltip.ValueSource
-import jetbrains.datalore.vis.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 class AnnotationLine(
     pattern: String,

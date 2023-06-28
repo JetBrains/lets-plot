@@ -10,8 +10,8 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.vis.svg.SvgCssResource
-import jetbrains.datalore.vis.svg.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCssResource
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 /**
  *  This class only handles static SVG. (no interactions)
