@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
@@ -35,14 +34,6 @@ internal class DefaultGeomTheme private constructor(
     override fun lineWidth() = lineWidth
 
     companion object {
-        val BASE = DefaultGeomTheme(
-            color = Color.PACIFIC_BLUE,
-            fill = Color.PACIFIC_BLUE,
-            alpha = 1.0,
-            size = 0.5,
-            lineWidth = 0.5
-        )
-
         internal class InheritedColors(
             options: Map<String, Any>,
             fontFamilyRegistry: FontFamilyRegistry
@@ -61,13 +52,24 @@ internal class DefaultGeomTheme private constructor(
             }
         }
 
+        private class FixedColors(geomKind: GeomKind) {
+            val color = if (geomKind == GeomKind.SMOOTH) {
+                Color.MAGENTA
+            } else {
+                Color.PACIFIC_BLUE
+            }
+            val fill = Color.PACIFIC_BLUE
+        }
+
         // defaults for geomKind
         fun forGeomKind(geomKind: GeomKind, inheritedColors: InheritedColors): GeomTheme {
-            var color = BASE.color
-            var fill = BASE.fill
-            var alpha = BASE.alpha
-            var size = BASE.size
-            val lineWidth = BASE.lineWidth
+            val fixedColors = FixedColors(geomKind)
+
+            var color = fixedColors.color
+            var fill = fixedColors.fill
+            var alpha = 1.0
+            var size = 0.5
+            var lineWidth = 0.5
 
             when (geomKind) {
                 GeomKind.PATH,
@@ -88,12 +90,8 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.HISTOGRAM,
-                GeomKind.CROSS_BAR,
-                GeomKind.BOX_PLOT,
                 GeomKind.AREA_RIDGES,
-                GeomKind.VIOLIN,
                 GeomKind.AREA,
-                GeomKind.DENSITY,
                 GeomKind.RECT,
                 GeomKind.RIBBON -> {
                     color = inheritedColors.lineColor()
@@ -108,25 +106,40 @@ internal class DefaultGeomTheme private constructor(
                     size = 0.2
                 }
 
-                GeomKind.POINT_RANGE -> {
+                GeomKind.DENSITY,
+                GeomKind.VIOLIN,
+                GeomKind.CROSS_BAR,
+                GeomKind.BOX_PLOT -> {
                     color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    fill = inheritedColors.backgroundFill()
+                    alpha = 0.1
                 }
 
                 GeomKind.POINT,
                 GeomKind.JITTER,
                 GeomKind.Q_Q,
-                GeomKind.Q_Q_2,
-                GeomKind.LOLLIPOP -> {
+                GeomKind.Q_Q_2 -> {
                     color = inheritedColors.lineColor()
-                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
+                    fill = inheritedColors.backgroundFill()
                     size = 2.0
                 }
 
+                GeomKind.POINT_RANGE -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.backgroundFill()
+                    lineWidth = 1.0 // line width and stroke for point
+                }
+
+                GeomKind.LOLLIPOP -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.backgroundFill()
+                    size = 2.0
+                    lineWidth = 1.0 // line width and stroke for point
+                }
+
                 GeomKind.SMOOTH -> {
-                    color = Color.MAGENTA
                     fill = inheritedColors.lineColor()
-                    alpha = 1.5 // Geometry uses (value / 10) for alpha: SmoothGeom.kt:91 (PROPORTION)
+                    alpha = 0.15
                 }
 
                 GeomKind.DOT_PLOT,
@@ -161,7 +174,9 @@ internal class DefaultGeomTheme private constructor(
                 }
             }
 
-            return DefaultGeomTheme(color, fill, alpha, size, lineWidth)
+            val sizeMultiplier = 1.5
+
+            return DefaultGeomTheme(color, fill, alpha, size * sizeMultiplier, lineWidth * sizeMultiplier)
         }
     }
 }
