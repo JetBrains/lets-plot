@@ -1,7 +1,7 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from .core import FeatureSpec, LayerSpec, DummySpec
+from .core import FeatureSpec, LayerSpec, DummySpec, FeatureSpecArray
 
 __all__ = ["ggmarginal"]
 
@@ -73,7 +73,7 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
     if not 0 < len(sides) <= 4:
         raise ValueError("'sides' must be a string containing 1 to 4 chars: 'l','r','t','b'.")
     if not isinstance(layer, LayerSpec):
-        if not isinstance(layer, FeatureSpec):
+        if not isinstance(layer, FeatureSpecArray):
             raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
         result = DummySpec()
         for sublayer in layer.elements():
