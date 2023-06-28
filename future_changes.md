@@ -13,6 +13,10 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
 
 
+- Variadic line sizes in `geom_line()` and `geom_path()` with `size` mapping.  
+See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_variadic_with_mapping.ipynb).
+
+
 ### Changed
 
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
