@@ -27,7 +27,7 @@ class LayerTargetCollectorWithLocator(
         tooltipKind: TipLayoutHint.Kind
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
-            if (radius == 0.0 || tooltipParams.markerColors.all { it.alpha == 0 }) {
+            if (radius == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
                 return
             }
         }
@@ -48,7 +48,7 @@ class LayerTargetCollectorWithLocator(
         tooltipKind: TipLayoutHint.Kind
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
-            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColors.all { it.alpha == 0 }) {
+            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
                 return
             }
         }

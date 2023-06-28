@@ -44,7 +44,7 @@ open class PathGeom : GeomBase() {
         val variadicPathData = createVariadicPathData(dataPoints, linesHelper)
 
         // To not add interpolated points and to not show incorrect tooltips on them
-        targetCollectorHelper.addPaths(variadicPathData.flatten())
+        targetCollectorHelper.addVariadicPaths(variadicPathData)
 
         val visualPathData = createVisualPath(variadicPathData)
 

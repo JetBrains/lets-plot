@@ -33,8 +33,8 @@ class TargetPrototype(
                 hitShapeKind = hitShape.kind,
                 tooltipKind = tooltipKind,
                 stemLength = tooltipParams.stemLength,
-                fillColor = tooltipParams.fillColor,
-                markerColors = tooltipParams.markerColors,
+                fillColor = tooltipParams.fillColorFactory(hitIndex),
+                markerColors = tooltipParams.markerColorsFactory(hitIndex),
                 objectRadius = objectRadius
             ),
             tooltipParams.tipLayoutHints

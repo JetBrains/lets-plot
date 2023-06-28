@@ -66,6 +66,12 @@ object TestUtil {
 
     private const val VARIABLE_NAME = "A"
     private const val VARIABLE_VALUE = "value"
+    private val defaultTooltipParams = TooltipParams(
+        emptyMap(),
+        TipLayoutHint.StemLength.NORMAL,
+        null,
+        emptyList()
+    )
 
     internal fun <T> continuous(aes: Aes<T>): Mapping<T> {
         return mappedData(aes, true)
@@ -308,7 +314,7 @@ object TestUtil {
         val rectShape = HitShape.rect(rect)
         return TargetPrototype(
             rectShape, { key as Int },
-            TooltipParams(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
         )
     }
 
@@ -316,7 +322,7 @@ object TestUtil {
         val pointShape = HitShape.point(p, 0.0)
         return TargetPrototype(
             pointShape, { key as Int },
-            TooltipParams(), TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            defaultTooltipParams, TipLayoutHint.Kind.VERTICAL_TOOLTIP
         )
     }
 
@@ -327,12 +333,12 @@ object TestUtil {
                 key,
                 hitIndex
             )
-        }, TooltipParams(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        }, defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     internal fun pathTarget(points: List<DoubleVector>): TargetPrototype {
         val pathShape = HitShape.path(points)
-        return TargetPrototype(pathShape, identity(), TooltipParams(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(pathShape, identity(), defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     private fun encodeIndex(key: Int, integer: Int?): Int {
@@ -349,12 +355,12 @@ object TestUtil {
 
     internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): TargetPrototype {
         val pathShape = HitShape.path(points)
-        return TargetPrototype(pathShape, indexMapper, TooltipParams(), TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(pathShape, indexMapper, defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
     }
 
     internal fun polygonTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
         val polygonShape = HitShape.polygon(points)
-        return TargetPrototype(polygonShape, { key }, TooltipParams(), TipLayoutHint.Kind.CURSOR_TOOLTIP)
+        return TargetPrototype(polygonShape, { key }, defaultTooltipParams, TipLayoutHint.Kind.CURSOR_TOOLTIP)
     }
 
     fun point(x: Double, y: Double): DoubleVector {

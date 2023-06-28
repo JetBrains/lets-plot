@@ -87,8 +87,8 @@ internal class YOrientationTargetCollector(
             return GeomTargetCollector.TooltipParams(
                 tipLayoutHints = flipAesKeys(tooltipParams.tipLayoutHints),
                 stemLength = tooltipParams.stemLength,
-                fillColor = tooltipParams.fillColor,
-                markerColors = tooltipParams.markerColors,
+                fillColorFactory = tooltipParams.fillColorFactory,
+                markerColorsFactory = tooltipParams.markerColorsFactory
             )
         }
     }
