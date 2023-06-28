@@ -162,15 +162,6 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         path.fill().set(withOpacity(fill, fillAlpha))
     }
 
-    fun setAlphaFilter(alphaFilter: (Double?) -> Double?) {
-        myAlphaFilter = alphaFilter
-    }
-
-    fun setWidthFilter(widthFilter: (Double?) -> Double?) {
-        myWidthFilter = widthFilter
-    }
-
-
     companion object {
         private fun reduce(points: List<DoubleVector>): List<DoubleVector> {
             return reduce(points, 0.999) { e1, e2 -> maxOf(abs(e1.x - e2.x), abs(e1.y - e2.y)) }
