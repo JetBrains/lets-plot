@@ -73,7 +73,12 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
     if not 0 < len(sides) <= 4:
         raise ValueError("'sides' must be a string containing 1 to 4 chars: 'l','r','t','b'.")
     if not isinstance(layer, LayerSpec):
-        raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
+        if not isinstance(layer, FeatureSpec):
+            raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
+        result = DummySpec()
+        for sublayer in layer.elements():
+            result += ggmarginal(sides, size=size, layer=sublayer)
+        return result
 
     result = DummySpec()
 
@@ -127,7 +132,7 @@ def _to_marginal(side: str, size, layer: LayerSpec) -> LayerSpec:
             layer_kind = 'histogram'
         elif stat == 'ydensity':
             layer_kind = 'violin'
-        elif stat in ('density', 'boxplot'):
+        elif stat in ('density', 'boxplot', 'boxplot_outlier'):
             layer_kind = stat
     else:
         geom = layer_props.get('geom')
@@ -140,7 +145,7 @@ def _to_marginal(side: str, size, layer: LayerSpec) -> LayerSpec:
     if (side in ('l', 'r') and layer_kind in ('histogram', 'density', 'freqpoly')):
         auto_settings['orientation'] = 'y'
 
-    if layer_kind in ('boxplot', 'violin'):
+    if layer_kind in ('boxplot', 'boxplot_outlier', 'violin'):
         if side in ('l', 'r'):
             auto_settings['x'] = 0
         elif side in ('t', 'b'):
