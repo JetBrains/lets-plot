@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.annotations
 
-import jetbrains.datalore.vis.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 class Annotations(
     private val lines: List<AnnotationLineSpec>,

@@ -9,8 +9,8 @@ import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
-import jetbrains.datalore.vis.svg.SvgConstants
-import jetbrains.datalore.vis.svg.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 
 
 class MultilineLabel(val text: String) : SvgComponent() {

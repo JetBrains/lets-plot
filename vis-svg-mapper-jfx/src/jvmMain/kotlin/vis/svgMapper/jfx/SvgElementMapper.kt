@@ -15,10 +15,10 @@ import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.mapper.core.Synchronizer
 import jetbrains.datalore.mapper.core.SynchronizerContext
 import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgElementListener
-import jetbrains.datalore.vis.svg.event.SvgAttributeEvent
-import jetbrains.datalore.vis.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import java.util.*
 import javafx.scene.input.MouseEvent as MouseEventFx
 

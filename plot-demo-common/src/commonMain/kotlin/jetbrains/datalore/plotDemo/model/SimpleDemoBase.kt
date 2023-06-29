@@ -14,10 +14,10 @@ import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.svg.SvgColors
-import jetbrains.datalore.vis.svg.SvgCssResource
-import jetbrains.datalore.vis.svg.SvgRectElement
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCssResource
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 abstract class SimpleDemoBase(protected val demoInnerSize: DoubleVector = DEFAULT_INNER_SIZE) {
 

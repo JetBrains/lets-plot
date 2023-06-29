@@ -9,9 +9,9 @@ import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.HIDDEN
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility.VISIBLE
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.HIDDEN
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.VISIBLE
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class CrosshairComponent : SvgComponent() {
     private val hLine = SvgLineElement()

@@ -9,8 +9,8 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors.solid
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.point.UpdatableShape
-import jetbrains.datalore.vis.svg.SvgShape
-import jetbrains.datalore.vis.svg.SvgUtils
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 object AestheticsUtil {
     //affects bar, smooth, area and ribbon
@@ -50,35 +50,11 @@ object AestheticsUtil {
         // else, override with color's alpha
     }
 
-    fun strokeWidth(p: DataPointAesthetics): Double {
-        // aes Units -> px
-        return p.size()!! * 2.0
-    }
+    fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
 
-    fun pointStrokeWidth(p: DataPointAesthetics): Double {
-        // aes Units -> px
-        return p.stroke()!! * AesScaling.UNIT_SHAPE_SIZE / 2.0
-    }
-//
-//    fun circleDiameter(p: DataPointAesthetics): Double {
-//        // aes Units -> px
-//        return p.size()!! * 2.2
-//    }
-//
-//    fun circleDiameterSmaller(p: DataPointAesthetics): Double {
-//        // aes Units -> px
-//        return p.size()!! * 1.5
-//    }
-//
-//    fun sizeFromCircleDiameter(diameter: Double): Double {
-//        // px -> aes Units
-//        return diameter / 2.2
-//    }
-//
-    fun textSize(p: DataPointAesthetics): Double {
-        // aes Units -> px
-        return p.size()!! * 2
-    }
+    fun pointStrokeWidth(p: DataPointAesthetics) = AesScaling.pointStrokeWidth(p)
+
+    fun textSize(p: DataPointAesthetics) = AesScaling.textSize(p)
 
     fun updateStroke(shape: SvgShape, p: DataPointAesthetics, applyAlpha: Boolean) {
         shape.strokeColor().set(p.color())

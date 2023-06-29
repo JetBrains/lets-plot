@@ -9,11 +9,11 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
-import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.TextStyle
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 object DemoModelA {
 

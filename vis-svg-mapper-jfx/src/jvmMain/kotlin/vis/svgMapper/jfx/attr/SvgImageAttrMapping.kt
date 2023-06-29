@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import jetbrains.datalore.vis.svg.SvgImageElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
 import java.io.ByteArrayInputStream
 import java.util.*
 

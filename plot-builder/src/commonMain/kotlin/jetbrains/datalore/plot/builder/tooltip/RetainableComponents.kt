@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.vis.svg.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import kotlin.math.abs
 
 class RetainableComponents<T: SvgComponent>(

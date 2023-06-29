@@ -8,11 +8,11 @@ package jetbrains.datalore.vis.svgMapper.batik
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgTextNode
-import jetbrains.datalore.vis.svg.event.SvgEventSpec
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
-import jetbrains.datalore.vis.svg.slim.SvgSlimNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
 import jetbrains.datalore.vis.svgMapper.TargetPeer
 import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument

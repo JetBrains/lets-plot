@@ -27,7 +27,7 @@ object AesScaling {
 
     fun lineWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.linewidth()!! * 2.0
+        return p.linewidth()!! * UNIT_SHAPE_SIZE / 2.0
     }
 
     fun circleDiameter(p: DataPointAesthetics): Double {

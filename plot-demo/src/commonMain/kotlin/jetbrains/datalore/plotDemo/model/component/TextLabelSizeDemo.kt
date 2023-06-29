@@ -10,7 +10,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.vis.svg.SvgUtils
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 open class TextLabelSizeDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

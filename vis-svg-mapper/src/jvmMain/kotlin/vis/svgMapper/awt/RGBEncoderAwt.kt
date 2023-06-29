@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.awt
 
 import jetbrains.datalore.base.awt.toPngDataUri
-import jetbrains.datalore.vis.svg.SvgImageElementEx.RGBEncoder
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.RGBEncoder
 
 import java.awt.image.BufferedImage
 import java.io.IOException

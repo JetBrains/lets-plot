@@ -34,12 +34,12 @@ import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
-import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgRectElement
-import jetbrains.datalore.vis.svg.event.SvgEventHandler
-import jetbrains.datalore.vis.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 
 class PlotSvgComponent constructor(
     private val title: String?,

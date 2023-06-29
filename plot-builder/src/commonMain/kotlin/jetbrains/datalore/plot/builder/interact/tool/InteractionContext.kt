@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.interact.tool
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
-import jetbrains.datalore.vis.svg.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 interface InteractionContext {
     val decorationsLayer: SvgNode

@@ -9,7 +9,9 @@ import jetbrains.datalore.base.event.KeyModifiers.Companion.emptyModifiers
 import jetbrains.datalore.base.geometry.Vector
 
 
-class MouseEvent(x: Int, y: Int, val button: Button?, val modifiers: KeyModifiers) : PointEvent(x, y) {
+class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModifiers) : PointEvent(x, y) {
+
+    constructor(v: Vector, button: Button, modifiers: KeyModifiers) : this(v.x, v.y, button, modifiers)
 
     companion object {
 
@@ -29,10 +31,4 @@ class MouseEvent(x: Int, y: Int, val button: Button?, val modifiers: KeyModifier
             return MouseEvent(v, Button.RIGHT, emptyModifiers())
         }
     }
-
-    init {
-        requireNotNull(button) { "Null button" }
-    }
-
-    constructor(v: Vector, button: Button, modifiers: KeyModifiers) : this(v.x, v.y, button, modifiers)
 }

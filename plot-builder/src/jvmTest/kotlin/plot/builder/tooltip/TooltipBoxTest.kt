@@ -13,7 +13,7 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL
-import jetbrains.datalore.vis.svg.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

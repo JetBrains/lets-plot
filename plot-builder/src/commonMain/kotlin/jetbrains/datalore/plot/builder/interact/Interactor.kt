@@ -21,7 +21,7 @@ import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
-import jetbrains.datalore.vis.svg.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 internal class Interactor constructor(
     val decorationLayer: SvgNode,

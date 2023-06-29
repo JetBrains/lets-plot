@@ -6,9 +6,9 @@
 package jetbrains.datalore.vis.svgToScene
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.vis.svg.SvgPathData.Action
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData.Action
 
-import jetbrains.datalore.vis.svg.SvgTransform
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 
 internal object ParsingUtil {
     private const val OPTIONAL_PARAM = "(-?\\d+\\.?\\d*)?,? ?"

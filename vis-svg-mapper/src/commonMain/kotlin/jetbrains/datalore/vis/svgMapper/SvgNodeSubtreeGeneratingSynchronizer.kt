@@ -8,11 +8,11 @@ package jetbrains.datalore.vis.svgMapper
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.mapper.core.Synchronizer
 import jetbrains.datalore.mapper.core.SynchronizerContext
-import jetbrains.datalore.vis.svg.SvgElement
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgTextNode
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
-import jetbrains.datalore.vis.svg.slim.SvgSlimNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
 
 class SvgNodeSubtreeGeneratingSynchronizer<T>(
     private val source: SvgNode,

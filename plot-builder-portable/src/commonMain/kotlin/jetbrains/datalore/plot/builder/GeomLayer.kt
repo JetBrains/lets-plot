@@ -30,7 +30,7 @@ interface GeomLayer {
 
     val scaleMap: Map<Aes<*>, Scale>
 
-    val scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>
+    val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>
 
     val legendKeyElementFactory: LegendKeyElementFactory
 

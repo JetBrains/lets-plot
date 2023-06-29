@@ -9,7 +9,7 @@ dependencies {
     implementation project(':base-portable')
     implementation project(':base')
     implementation project(':mapper-core')
-    implementation project(':vis-svg-portable')
+    implementation project(':datamodel')
     implementation project(':vis-canvas')
     implementation project(':vis-svg-mapper')
     implementation project(':plot-base-portable')

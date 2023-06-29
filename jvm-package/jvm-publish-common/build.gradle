@@ -15,7 +15,7 @@ kotlin {
 
                 api project(':base-portable')
                 api project(':base')
-                api project(':vis-svg-portable')
+                api project(':datamodel')
                 api project(':plot-base-portable')
                 api project(':plot-common-portable')
                 api project(':plot-builder-portable')
