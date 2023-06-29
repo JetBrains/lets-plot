@@ -27,8 +27,8 @@ class LayerTargetCollectorWithLocator(
         tooltipKind: TipLayoutHint.Kind
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
-            if (radius == 0.0 || tooltipParams.markerColors.all { it.alpha == 0 }) {
-                return;
+            if (radius == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
+                return
             }
         }
         addTarget(
@@ -48,7 +48,7 @@ class LayerTargetCollectorWithLocator(
         tooltipKind: TipLayoutHint.Kind
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
-            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColors.all { it.alpha == 0 }) {
+            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
                 return
             }
         }
@@ -80,14 +80,14 @@ class LayerTargetCollectorWithLocator(
 
     override fun addPolygon(
         points: List<DoubleVector>,
-        localToGlobalIndex: (Int) -> Int,
+        index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),
-                localToGlobalIndex,
+                { index },
                 tooltipParams,
                 tooltipKind
             )

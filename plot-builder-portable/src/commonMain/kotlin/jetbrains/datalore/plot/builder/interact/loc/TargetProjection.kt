@@ -72,20 +72,20 @@ internal class PolygonTargetProjection private constructor(val data: Any) : Targ
             val rings = splitRings(points)
 
             return when (lookupSpace) {
-                X -> PolygonTargetProjection(mapToCoord(rings, DoubleVector::x))
-                Y -> PolygonTargetProjection(mapToCoord(rings, DoubleVector::y))
+                X -> PolygonTargetProjection(mapToAxis(DoubleVector::x, rings))
+                Y -> PolygonTargetProjection(mapToAxis(DoubleVector::y, rings))
                 XY -> PolygonTargetProjection(mapToXY(rings))
                 NONE -> undefinedLookupSpaceError()
             }
         }
 
-        private fun mapToCoord(rings: List<List<DoubleVector>>, coord: (DoubleVector) -> Double): DoubleSpan {
-            var min = coord(rings[0][0])
+        private fun mapToAxis(coordSelector: (DoubleVector) -> Double, rings: List<List<DoubleVector>>): DoubleSpan {
+            var min = coordSelector(rings[0][0])
             var max = min
             for (ring in rings) {
                 for (point in ring) {
-                    min = min(min, coord(point))
-                    max = max(max, coord(point))
+                    min = min(min, coordSelector(point))
+                    max = max(max, coordSelector(point))
                 }
             }
             return DoubleSpan(min, max)

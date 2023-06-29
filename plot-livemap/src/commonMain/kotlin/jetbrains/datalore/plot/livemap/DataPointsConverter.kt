@@ -19,11 +19,9 @@ import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_RECTANGLE
-import jetbrains.datalore.plot.base.geom.util.MultiPointData
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.createMultiPointDataByGroup
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.multiPointAppender
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
+import jetbrains.datalore.plot.base.geom.util.GeomUtil.createPathGroups
+import jetbrains.datalore.plot.base.geom.util.PathData
+import jetbrains.datalore.plot.base.geom.util.PathPoint
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.abs
 import kotlin.math.min
@@ -32,6 +30,11 @@ internal class DataPointsConverter(
     private val layerIndex: Int,
     private val aesthetics: Aesthetics
 ) {
+
+    companion object {
+        private fun <T> List<DoubleVector>.toVecs(): List<Vec<T>> = map { explicitVec(it.x, it.y) }
+    }
+
     private val pointFeatureConverter get() = PointFeatureConverter(aesthetics)
     private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics)
     private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics)
@@ -129,32 +132,38 @@ internal class DataPointsConverter(
                 setGeodesic(geom.geodesic)
             }
 
-            return process(multiPointDataByGroup(singlePointAppender(TO_LOCATION_X_Y)), false)
-        }
-
-        fun polygon(): List<DataPointLiveMapAesthetics> {
-            return process(multiPointDataByGroup(singlePointAppender(TO_LOCATION_X_Y)), true)
-        }
-
-        fun rect(): List<DataPointLiveMapAesthetics> {
-            return process(multiPointDataByGroup(multiPointAppender(TO_RECTANGLE)), true)
-        }
-
-        private fun multiPointDataByGroup(coordinateAppender: (DataPointAesthetics, (DoubleVector?) -> Unit) -> Unit): List<MultiPointData> {
-            return createMultiPointDataByGroup(
-                aesthetics.dataPoints(),
-                coordinateAppender,
-                MultiPointDataConstructor.collector()
+            return process(
+                paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y),
+                isClosed = false
             )
         }
 
-        private fun process(multiPointDataList: List<MultiPointData>, isClosed: Boolean): List<DataPointLiveMapAesthetics> {
-            val mapObjects = ArrayList<DataPointLiveMapAesthetics>()
+        fun polygon(): List<DataPointLiveMapAesthetics> {
+            return process(
+                paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y),
+                isClosed = true
+            )
+        }
 
-            for (multiPointData in multiPointDataList) {
+        fun rect(): List<DataPointLiveMapAesthetics> {
+            val groupedData = GeomUtil.createGroups(aesthetics.dataPoints(), sorted = true)
+
+            return process(
+                groupedData.map { (_, dataPoints) ->
+                    val points = mutableListOf<PathPoint>()
+                    dataPoints.map { aes -> TO_RECTANGLE(aes).forEach { p -> points.add(PathPoint(aes, p)) } }
+                    PathData(points)
+                },
+                isClosed = true
+            )
+        }
+
+        private fun process(paths: List<PathData>, isClosed: Boolean): List<DataPointLiveMapAesthetics> {
+            val mapObjects = ArrayList<DataPointLiveMapAesthetics>()
+            for (pathData in paths) {
                 pathToBuilder(
-                    multiPointData.aes,
-                    multiPointData.points.toVecs(),
+                    pathData.aes,
+                    pathData.coordinates.toVecs(),
                     isClosed
                 ).let(mapObjects::add)
             }
@@ -341,10 +350,6 @@ internal class DataPointsConverter(
 
             return mapObjects
         }
-    }
-
-    private fun <T> List<DoubleVector>.toVecs(): List<Vec<T>> {
-        return map { explicitVec<T>(it.x, it.y) }
     }
 
     internal class MultiDataPointHelper private constructor(

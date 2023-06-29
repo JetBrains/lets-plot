@@ -37,7 +37,7 @@ class NullGeomTargetCollector : GeomTargetCollector {
 
     override fun addPolygon(
         points: List<DoubleVector>,
-        localToGlobalIndex: (Int) -> Int,
+        index: Int,
         tooltipParams: TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {

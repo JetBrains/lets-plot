@@ -82,17 +82,17 @@ object GeomUtil {
 
     @Suppress("FunctionName")
     fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
-        return dataPoints.filter { p -> WITH_X_Y.invoke(p) }
+        return dataPoints.filter(WITH_X_Y::invoke)
     }
 
     @Suppress("FunctionName")
     fun with_X(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
-        return dataPoints.filter { p -> WITH_X.invoke(p) }
+        return dataPoints.filter(WITH_X::invoke)
     }
 
     @Suppress("FunctionName")
     fun with_Y(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
-        return dataPoints.filter { p -> WITH_Y.invoke(p) }
+        return dataPoints.filter(WITH_Y::invoke)
     }
 
     @Suppress("FunctionName")
@@ -143,17 +143,28 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
-    fun createGroups(dataPoints: Iterable<DataPointAesthetics>): Map<Int, List<DataPointAesthetics>> {
-        val pointsByGroup = HashMap<Int, MutableList<DataPointAesthetics>>()
-        for (p in dataPoints) {
-            val group = p.group()!!
-            if (!pointsByGroup.containsKey(group)) {
-                pointsByGroup[group] = ArrayList()
-            }
-            pointsByGroup[group]!!.add(p)
+    fun createGroups(
+        dataPoints: Iterable<DataPointAesthetics>,
+        sorted: Boolean = false
+    ): Map<Int, List<DataPointAesthetics>> {
+        val map = dataPoints.groupBy { it.group()!! }
+        return when {
+            sorted -> map.toList().sortedBy { (g, _) -> g }.toMap()
+            else -> map
         }
+    }
 
-        return pointsByGroup
+    fun createPathGroups(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointTransform: ((DataPointAesthetics) -> DoubleVector?)
+    ): List<PathData> {
+        val groups = createGroups(dataPoints, sorted = true).values
+
+        return groups.map { group ->
+            PathData(
+                points = group.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
+            )
+        }
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {

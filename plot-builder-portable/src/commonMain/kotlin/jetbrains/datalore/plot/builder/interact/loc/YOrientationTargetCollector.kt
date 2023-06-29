@@ -11,7 +11,9 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.util.YOrientationBaseUtil.flipAesKeys
 
-internal class YOrientationTargetCollector(private val targetCollector: GeomTargetCollector) : GeomTargetCollector {
+internal class YOrientationTargetCollector(
+    private val targetCollector: GeomTargetCollector
+) : GeomTargetCollector {
 
     override fun addPoint(
         index: Int,
@@ -59,20 +61,20 @@ internal class YOrientationTargetCollector(private val targetCollector: GeomTarg
 
     override fun addPolygon(
         points: List<DoubleVector>,
-        localToGlobalIndex: (Int) -> Int,
+        index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
         targetCollector.addPolygon(
             points,
-            localToGlobalIndex,
+            index,
             afterYOrientation(tooltipParams),
             tooltipKind
         )
     }
 
     override fun withFlippedAxis(): GeomTargetCollector {
-        check(!(targetCollector is FlippedTargetCollector)) { "'withFlippedAxis()' is not applicable to FlippedTargetCollector" }
+        check(targetCollector !is FlippedTargetCollector) { "'withFlippedAxis()' is not applicable to FlippedTargetCollector" }
         return FlippedTargetCollector(this)
     }
 
@@ -85,8 +87,8 @@ internal class YOrientationTargetCollector(private val targetCollector: GeomTarg
             return GeomTargetCollector.TooltipParams(
                 tipLayoutHints = flipAesKeys(tooltipParams.tipLayoutHints),
                 stemLength = tooltipParams.stemLength,
-                fillColor = tooltipParams.fillColor,
-                markerColors = tooltipParams.markerColors,
+                fillColorFactory = tooltipParams.fillColorFactory,
+                markerColorsFactory = tooltipParams.markerColorsFactory
             )
         }
     }

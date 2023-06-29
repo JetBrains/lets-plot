@@ -17,11 +17,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.geom.util.DataPointAestheticsDelegate
-import jetbrains.datalore.plot.base.geom.util.GeomHelper
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.HintColorUtil
-import jetbrains.datalore.plot.base.geom.util.TextUtil
+import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
@@ -32,12 +28,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.max
-import kotlin.math.sin
+import kotlin.math.*
 
 class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
@@ -60,7 +51,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             .filterNotNullKeys()
             .forEach { (pieCenter, dataPoints) ->
                 val pieSectors = computeSectors(pieCenter, dataPoints)
-                appendNodes(pieSectors.map(::buildSvgSector), root)
+                root.appendNodes(pieSectors.map(::buildSvgSector))
                 pieSectors.forEach { buildHint(it, ctx.targetCollector) }
 
                 ctx.annotations?.let { buildAnnotations(root, pieCenter, pieSectors, ctx) }
@@ -132,7 +123,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
         targetCollector.addPolygon(
             points = resampleArc(outerArc = true) + resampleArc(outerArc = false).reversed(),
-            localToGlobalIndex = { sector.p.index() },
+            index = sector.p.index(),
             GeomTargetCollector.TooltipParams(
                 markerColors = listOf(
                     HintColorUtil.applyAlpha(sector.p.fill()!!, sector.p.alpha()!!)
@@ -269,7 +260,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             textStyle = ctx.annotations!!.textStyle,
             xRange = DoubleSpan(leftBorder, rightBorder),
             ctx
-        ).forEach { root.add(it) }
+        ).forEach(root::add)
     }
 
     private fun getAnnotationLabel(
@@ -439,7 +430,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 }
             }
 
-            return Side.values().flatMap { side -> createForSide(side) }
+            return Side.values().flatMap(::createForSide)
         }
 
         private fun createAnnotationElement(

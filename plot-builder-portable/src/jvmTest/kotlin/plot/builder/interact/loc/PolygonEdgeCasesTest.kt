@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.algorithms.splitRings
-import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
@@ -15,12 +14,6 @@ import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.base.geom.util.GeomUtil
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.rectToGeometry
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.collector
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.multiPointAppender
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.reducer
-import jetbrains.datalore.plot.base.geom.util.MultiPointDataConstructor.singlePointAppender
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
@@ -151,7 +144,7 @@ class PolygonEdgeCasesTest {
     }
 
     @Test
-    fun multiPointDataConstructor_ShouldNotReduceRingControlPoints() {
+    fun pathDataConstructor_ShouldNotReduceRingControlPoints() {
         val startRing1 = point(0.0, 0.0)
         val startRing2 = point(0.0, 10.0)
         val startRing3 = point(0.5, 10.0)
@@ -173,54 +166,20 @@ class PolygonEdgeCasesTest {
         )
 
         val aes = AestheticsBuilder(polygon.size)
-            .x(list(polygon.map { point -> point.x }))
-            .y(list(polygon.map { point -> point.y }))
+            .x(list(polygon.map(DoubleVector::x)))
+            .y(list(polygon.map(DoubleVector::y)))
             .build()
 
-        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
+        val pathData = GeomUtil.createPathGroups(
             aes.dataPoints(),
-            singlePointAppender(GeomUtil.TO_LOCATION_X_Y),
-            reducer(1.0, true)
+            GeomUtil.TO_LOCATION_X_Y,
         )
-        val rings = splitRings(multiPointDataList[0].points)
+        val rings = splitRings(pathData[0].coordinates)
 
         assertEquals(3, rings.size)
         assertRing(rings[0], startRing1)
         assertRing(rings[1], startRing2)
         assertRing(rings[2], startRing3)
-    }
-
-    @Test
-    fun multiPointDataConstructor_ShouldGroupRectangles() {
-        val leftFromAntiMeridian = DoubleRectangle.span(point(120.0, 50.0), point(180.0, 20.0))
-        val rightFromAntiMeridian = DoubleRectangle.span(point(-180.0, 50.0), point(-90.0, 20.0))
-
-        val rects = listOf(
-            Pair(1, leftFromAntiMeridian),
-            Pair(2, DoubleRectangle.span(point(30.0, 40.0), point(20.0, 10.0))),
-            Pair(1, rightFromAntiMeridian)
-        )
-
-        val aes = AestheticsBuilder(rects.size)
-            .xmin { i -> rects[i].second.left }
-            .xmax { i -> rects[i].second.right }
-            .ymin { i -> rects[i].second.bottom }
-            .ymax { i -> rects[i].second.top }
-            .group { i -> rects[i].first }
-            .build()
-
-        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-            aes.dataPoints(),
-            multiPointAppender(GeomUtil.TO_RECTANGLE),
-            collector()
-        )
-
-        assertEquals(2, multiPointDataList.size)
-
-        val rings = splitRings(multiPointDataList[0].points)
-        assertEquals(2, rings.size)
-        assertEquals(polygonFromRect(leftFromAntiMeridian), rings[0])
-        assertEquals(polygonFromRect(rightFromAntiMeridian), rings[1])
     }
 
     @Test
@@ -303,9 +262,6 @@ class PolygonEdgeCasesTest {
         private const val POLYGON_KEY = 1
         private val TARGET = polygonTarget(POLYGON_KEY, POLYGON)
 
-        private fun polygonFromRect(rect: DoubleRectangle): List<DoubleVector> {
-            return rectToGeometry(rect.left, rect.bottom, rect.right, rect.top)
-        }
     }
 }
 

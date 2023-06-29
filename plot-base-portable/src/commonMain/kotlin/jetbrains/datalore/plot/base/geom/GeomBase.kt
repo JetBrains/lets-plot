@@ -78,9 +78,9 @@ abstract class GeomBase : Geom {
             )
         }
 
-        fun appendNodes(paths: List<LinePath>, root: SvgRoot) {
+        fun SvgRoot.appendNodes(paths: List<LinePath>) {
             for (path in paths) {
-                root.add(path.rootGroup)
+                add(path.rootGroup)
             }
         }
     }
