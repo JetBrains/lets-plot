@@ -27,6 +27,16 @@ interface StatContext {
             return orig.overallXRange()
         }
 
+        override fun getMapping(): Map<Aes<*>, DataFrame.Variable> {
+            return orig.getMapping().map { (aes, variable) ->
+                when (aes) {
+                    Aes.X -> Aes.Y to variable
+                    Aes.Y -> Aes.X to variable
+                    else -> aes to variable
+                }
+            }.toMap()
+        }
+
         override fun getFlipped(): StatContext {
             return orig
         }
