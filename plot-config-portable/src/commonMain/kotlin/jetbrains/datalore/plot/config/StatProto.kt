@@ -408,10 +408,9 @@ object StatProto {
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
         val sortedQuantiles: List<Double> = if (options.hasOwn(Summary.QUANTILES)) {
-            options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0).let { quantiles ->
-                if (quantiles.size != 3) error("Parameter 'quantiles' should contains 3 values")
-                quantiles.sorted()
-            }
+            val quantiles = options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0)
+            require(quantiles.size == 3) { "Parameter 'quantiles' should contains 3 values" }
+            quantiles.sorted()
         } else {
             SummaryStat.DEF_QUANTILES
         }

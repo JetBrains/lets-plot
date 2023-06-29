@@ -10,19 +10,19 @@ import kotlin.math.floor
 import kotlin.math.round
 
 object AggregateFunctions {
-    fun count(sortedValues: List<Double>): Double = sortedValues.size.toDouble()
+    fun count(values: List<Double>): Double = values.size.toDouble()
 
-    fun sum(sortedValues: List<Double>): Double {
-        return when (sortedValues.size) {
+    fun sum(values: List<Double>): Double {
+        return when (values.size) {
             0 -> Double.NaN
-            else -> sortedValues.sum()
+            else -> values.sum()
         }
     }
 
-    fun mean(sortedValues: List<Double>): Double {
-        return when (sortedValues.size) {
+    fun mean(values: List<Double>): Double {
+        return when (values.size) {
             0 -> Double.NaN
-            else -> sum(sortedValues) / count(sortedValues)
+            else -> sum(values) / count(values)
         }
     }
 

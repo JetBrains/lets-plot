@@ -21,8 +21,4 @@ class SimpleStatContext(private val myDataFrame: DataFrame) :
     override fun overallYRange(): DoubleSpan? {
         return myDataFrame.range(TransformVar.Y)
     }
-
-    override fun getMapping(): Map<Aes<*>, DataFrame.Variable> {
-        return emptyMap()
-    }
 }

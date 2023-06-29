@@ -64,7 +64,8 @@ class SummaryStat(
         val statY = ArrayList<Double>()
         val statYMin = ArrayList<Double>()
         val statYMax = ArrayList<Double>()
-        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.getMapping().values.filter { it.isStat }.associateWith { mutableListOf() }
+        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.getMapping().values
+            .filter(DataFrame.Variable::isStat).associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
             val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
             statX.add(x)
