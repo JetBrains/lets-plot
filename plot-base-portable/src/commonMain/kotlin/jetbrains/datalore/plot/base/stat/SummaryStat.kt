@@ -13,7 +13,10 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 class SummaryStat(
-    private val aggFunctionsMap: Map<DataFrame.Variable, (List<Double>) -> Double>
+    private val yAggFunction: (List<Double>) -> Double,
+    private val yMinAggFunction: (List<Double>) -> Double,
+    private val yMaxAggFunction: (List<Double>) -> Double,
+    private val sortedQuantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -32,7 +35,7 @@ class SummaryStat(
             List(ys.size) { 0.0 }
         }
 
-        val statData = buildStat(xs, ys)
+        val statData = buildStat(xs, ys, statCtx)
         if (statData.isEmpty()) {
             return withEmptyStatValues()
         }
@@ -46,7 +49,8 @@ class SummaryStat(
 
     private fun buildStat(
         xs: List<Double?>,
-        ys: List<Double?>
+        ys: List<Double?>,
+        statCtx: StatContext
     ): Map<DataFrame.Variable, List<Double>> {
         val binnedData = SeriesUtil.filterFinite(xs, ys)
             .let { (xs, ys) -> xs zip ys }
@@ -57,17 +61,46 @@ class SummaryStat(
         }
 
         val statX = ArrayList<Double>()
-        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = aggFunctionsMap.keys.associateWith { mutableListOf() }
+        val statY = ArrayList<Double>()
+        val statYMin = ArrayList<Double>()
+        val statYMax = ArrayList<Double>()
+        val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.getMapping().values.filter { it.isStat }.associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
-            statX.add(x)
             val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
+            statX.add(x)
+            statY.add(yAggFunction(sortedBin))
+            statYMin.add(yMinAggFunction(sortedBin))
+            statYMax.add(yMaxAggFunction(sortedBin))
             for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = aggFunctionsMap[statVar] ?: { Double.NaN }
+                val aggFunction = aggFunctionByStat(statVar)
                 aggValues.add(aggFunction(sortedBin))
             }
         }
 
-        return mapOf(Stats.X to statX) + statAggValues
+        return mapOf(
+            Stats.X to statX,
+            Stats.Y to statY,
+            Stats.Y_MIN to statYMin,
+            Stats.Y_MAX to statYMax,
+        ) + statAggValues
+    }
+
+    private fun aggFunctionByStat(statVar: DataFrame.Variable): (List<Double>) -> Double {
+        return when (statVar) {
+            Stats.COUNT -> AggregateFunctions::count
+            Stats.SUM -> AggregateFunctions::sum
+            Stats.MEAN -> AggregateFunctions::mean
+            Stats.MEDIAN -> AggregateFunctions::median
+            Stats.Y_MIN -> AggregateFunctions::min
+            Stats.Y_MAX -> AggregateFunctions::max
+            Stats.LOWER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
+            Stats.MIDDLE_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
+            Stats.UPPER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
+            else -> throw IllegalStateException(
+                "Unsupported stat variable: '${statVar.name}'\n" +
+                "Use one of: ..count.., ..sum.., ..mean.., ..median.., ..ymin.., ..ymax.., ..lq.., ..mq.., ..uq.."
+            )
+        }
     }
 
     companion object {

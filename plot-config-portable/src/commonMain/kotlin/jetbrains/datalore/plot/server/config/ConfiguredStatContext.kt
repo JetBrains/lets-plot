@@ -9,11 +9,13 @@ import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.base.scale.ScaleUtil
+import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ConfiguredStatContext(
     private val dataFrames: List<DataFrame>,
-    private val transformByAes: Map<Aes<*>, Transform>
+    private val transformByAes: Map<Aes<*>, Transform>,
+    private val varBindings: List<VarBinding>
 ) : StatContext {
 
     private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): DoubleSpan? {
@@ -32,6 +34,10 @@ internal class ConfiguredStatContext(
 
     override fun overallYRange(): DoubleSpan? {
         return overallRange(Aes.Y)
+    }
+
+    override fun getMapping(): Map<Aes<*>, DataFrame.Variable> {
+        return varBindings.associate { it.aes to it.variable }
     }
 
     private fun overallRange(aes: Aes<*>): DoubleSpan? {

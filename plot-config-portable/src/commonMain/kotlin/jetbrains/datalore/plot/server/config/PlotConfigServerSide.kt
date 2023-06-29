@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.config.*
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GDF
 import jetbrains.datalore.plot.config.Option.Meta.GeoDataFrame.GEOMETRY
+import jetbrains.datalore.plot.server.config.transform.bistro.util.layer
 
 open class PlotConfigServerSide(
     opts: Map<String, Any>
@@ -118,13 +119,12 @@ open class PlotConfigServerSide(
         val dataByLayer: List<DataFrame> = layerConfigs.map { layer ->
             DataProcessing.transformOriginals(layer.combinedData, layer.varBindings, transformByAes)
         }
-        val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
 
         return layerConfigs.mapIndexed { layerIndex, layerConfig ->
             applyLayerStatistic(
                 layerConfig,
                 layerData = dataByLayer[layerIndex],
-                statCtx,
+                ConfiguredStatContext(dataByLayer, transformByAes, layerConfig.varBindings),
             ) { message ->
                 layerMessageHandler(layerIndex, message)
             }

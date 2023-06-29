@@ -416,51 +416,30 @@ object StatProto {
             SummaryStat.DEF_QUANTILES
         }
 
-        val defaultAggFunctions = mapOf(
-            Stats.Y to (options.getString(Summary.FUN)?.lowercase()?.let { getAggFunction(it, sortedQuantiles) } ?: AggregateFunctions::mean),
-            Stats.Y_MIN to (options.getString(Summary.FUN_MIN)?.lowercase()?.let { getAggFunction(it, sortedQuantiles) } ?: AggregateFunctions::min),
-            Stats.Y_MAX to (options.getString(Summary.FUN_MAX)?.lowercase()?.let { getAggFunction(it, sortedQuantiles) } ?: AggregateFunctions::max)
-        )
-
-        val additionalAggFunctions = configureAggFunMap(options.getMap(Summary.FUN_MAP), sortedQuantiles)
-
-        return SummaryStat(defaultAggFunctions + additionalAggFunctions)
-    }
-
-    private fun configureAggFunMap(
-        aggFunMap: Map<String, Any>,
-        sortedQuantiles: List<Double>
-    ): Map<DataFrame.Variable, (List<Double>) -> Double> {
-        val aggFunOptions = OptionsAccessor(aggFunMap)
-        return aggFunMap.keys.mapNotNull { option ->
-            aggFunOptions.getString(option)?.lowercase()?.let { aggFunName ->
-                val statVar = when (aggFunName) {
-                    "min", "max" -> "..y$aggFunName.."
-                    else -> "..$aggFunName.."
-                }.let { Stats.statVar(it) }
-                Pair(statVar, getAggFunction(aggFunName, sortedQuantiles))
+        fun getAggFunction(option: String): ((List<Double>) -> Double)? {
+            return options.getString(option)?.let {
+                when (it.lowercase()) {
+                    "count" -> AggregateFunctions::count
+                    "sum" -> AggregateFunctions::sum
+                    "mean" -> AggregateFunctions::mean
+                    "median" -> AggregateFunctions::median
+                    "min" -> AggregateFunctions::min
+                    "max" -> AggregateFunctions::max
+                    "lq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
+                    "mq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
+                    "uq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
+                    else -> throw IllegalArgumentException(
+                        "Unsupported function name: '$it'\n" +
+                        "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
+                    )
+                }
             }
-        }.toMap()
-    }
-
-    private fun getAggFunction(
-        aggFunName: String,
-        sortedQuantiles: List<Double>
-    ): ((List<Double>) -> Double) {
-        return when (aggFunName) {
-            "count" -> AggregateFunctions::count
-            "sum" -> AggregateFunctions::sum
-            "mean" -> AggregateFunctions::mean
-            "median" -> AggregateFunctions::median
-            "min" -> AggregateFunctions::min
-            "max" -> AggregateFunctions::max
-            "lq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
-            "mq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
-            "uq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
-            else -> throw IllegalArgumentException(
-                "Unsupported function name: '$aggFunName'\n" +
-                "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
-            )
         }
+
+        val yAggFunction = getAggFunction(Summary.FUN) ?: AggregateFunctions::mean
+        val yMinAggFunction = getAggFunction(Summary.FUN_MIN) ?: AggregateFunctions::min
+        val yMaxAggFunction = getAggFunction(Summary.FUN_MAX) ?: AggregateFunctions::max
+
+        return SummaryStat(yAggFunction, yMinAggFunction, yMaxAggFunction, sortedQuantiles)
     }
 }

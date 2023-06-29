@@ -93,7 +93,6 @@ class Summary {
                   'mapping': {'middle': '..median..'},
                   'stat': 'summary',
                   'fun_min': 'lq',
-                  'fun_map': {'middle': 'median'},
                   'quantiles': [0.45, 0.5, 0.55]
                 }
               ]
