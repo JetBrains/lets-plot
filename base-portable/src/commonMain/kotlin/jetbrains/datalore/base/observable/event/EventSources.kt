@@ -6,9 +6,6 @@
 package jetbrains.datalore.base.observable.event
 
 import jetbrains.datalore.base.function.Predicate
-import jetbrains.datalore.base.observable.collections.CollectionAdapter
-import jetbrains.datalore.base.observable.collections.CollectionItemEvent
-import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.registration.Registration
 
 object EventSources {
@@ -54,40 +51,43 @@ object EventSources {
         }
     }
 
-    fun <SourceEventT, TargetEventT> map(src: EventSource<SourceEventT>, f: (SourceEventT) -> TargetEventT): EventSource<TargetEventT> {
+    fun <SourceEventT, TargetEventT> map(
+        src: EventSource<SourceEventT>,
+        f: (SourceEventT) -> TargetEventT
+    ): EventSource<TargetEventT> {
         return MappingEventSource<SourceEventT, TargetEventT>(src, f)
     }
 
-    fun <EventT, ItemT> selectList(
-            list: ObservableList<ItemT>, selector: (ItemT?) -> EventSource<EventT>): EventSource<EventT> {
-        return object : EventSource<EventT> {
-            override fun addHandler(handler: EventHandler<EventT>): Registration {
-                val itemRegs = ArrayList<Registration>()
-                for (item in list) {
-                    itemRegs.add(selector(item).addHandler(handler))
-                }
-
-
-                val listReg = list.addListener(object : CollectionAdapter<ItemT>() {
-                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
-                        itemRegs.add(event.index, selector(event.newItem).addHandler(handler))
-                    }
-
-                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
-                        itemRegs.removeAt(event.index).remove()
-                    }
-                })
-
-                return object : Registration() {
-                    override fun doRemove() {
-                        for (r in itemRegs) {
-                            r.remove()
-                        }
-
-                        listReg.remove()
-                    }
-                }
-            }
-        }
-    }
+//    fun <EventT, ItemT> selectList(
+//            list: ObservableList<ItemT>, selector: (ItemT?) -> EventSource<EventT>): EventSource<EventT> {
+//        return object : EventSource<EventT> {
+//            override fun addHandler(handler: EventHandler<EventT>): Registration {
+//                val itemRegs = ArrayList<Registration>()
+//                for (item in list) {
+//                    itemRegs.add(selector(item).addHandler(handler))
+//                }
+//
+//
+//                val listReg = list.addListener(object : CollectionAdapter<ItemT>() {
+//                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
+//                        itemRegs.add(event.index, selector(event.newItem).addHandler(handler))
+//                    }
+//
+//                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
+//                        itemRegs.removeAt(event.index).remove()
+//                    }
+//                })
+//
+//                return object : Registration() {
+//                    override fun doRemove() {
+//                        for (r in itemRegs) {
+//                            r.remove()
+//                        }
+//
+//                        listReg.remove()
+//                    }
+//                }
+//            }
+//        }
+//    }
 }

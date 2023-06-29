@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.svgMapper.dom
 
-import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.mapper.core.MappingContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.w3c.dom.svg.SVGSVGElement

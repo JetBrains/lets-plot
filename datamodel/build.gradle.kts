@@ -8,12 +8,15 @@ plugins {
 //    id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
+
+val mockkVersion = extra["mockk_version"] as String
+val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+val hamcrestVersion = extra["hamcrest_version"] as String
+val mockitoVersion = extra["mockito_version"] as String
+val assertjVersion = extra["assertj_version"] as String
+
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "11"
-        }
-    }
+    jvm()
     js {
         browser()
     }
@@ -22,12 +25,49 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":base-portable"))
+                implementation(project(":base"))
             }
         }
 
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(kotlin("test-annotations-common"))
+//                implementation(kotlin("test-annotations"))
+
+                implementation("io.mockk:mockk-common:$mockkVersion")
+            }
+        }
+
+        jvmMain {
+            dependencies {
+                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+//                compileOnly("org.hamcrest:hamcrest-core:$hamcrestVersion")
+//                compileOnly("org.hamcrest:hamcrest-library:$hamcrestVersion")
+            }
+        }
+
+        jvmTest {
+            dependencies {
+//                implementation kotlin('test')
+                implementation(kotlin("test-junit"))
+                implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
+                implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
+                implementation("org.mockito:mockito-core:$mockitoVersion")
+                implementation("org.assertj:assertj-core:$assertjVersion")
+                implementation("io.mockk:mockk:$mockkVersion")
+            }
+        }
+
+        named("jsMain") {
+            dependencies {
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+            }
+        }
+
+        named("jsTest") {
+            dependencies {
+                implementation(kotlin("test-js"))
             }
         }
     }

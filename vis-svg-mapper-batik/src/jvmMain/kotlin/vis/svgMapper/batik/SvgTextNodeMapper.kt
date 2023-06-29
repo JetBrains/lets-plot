@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.batik
 
 import jetbrains.datalore.base.observable.property.WritableProperty
-import jetbrains.datalore.mapper.core.Synchronizers
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.apache.batik.dom.AbstractDocument
 import org.w3c.dom.Text

@@ -20,7 +20,6 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
-        'mapper-core',
         'vis-canvas',
         'vis-svg-mapper',
         'datamodel',

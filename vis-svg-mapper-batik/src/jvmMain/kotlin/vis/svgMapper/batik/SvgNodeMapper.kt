@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.vis.svgMapper.batik
 
-import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.mapper.core.Synchronizers
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import jetbrains.datalore.vis.svgMapper.SvgNodeSubtreeGeneratingSynchronizer
 import org.apache.batik.dom.AbstractDocument

@@ -12,9 +12,9 @@ import javafx.scene.Node
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.mapper.core.Synchronizer
-import jetbrains.datalore.mapper.core.SynchronizerContext
-import jetbrains.datalore.mapper.core.Synchronizers
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
+import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent

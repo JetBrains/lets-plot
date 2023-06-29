@@ -6,8 +6,8 @@
 package jetbrains.datalore.vis.svgMapper
 
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.mapper.core.Synchronizer
-import jetbrains.datalore.mapper.core.SynchronizerContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
+import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode

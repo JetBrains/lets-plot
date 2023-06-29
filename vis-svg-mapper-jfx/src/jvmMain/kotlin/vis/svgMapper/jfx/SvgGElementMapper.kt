@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Group
-import jetbrains.datalore.mapper.core.Synchronizers
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import jetbrains.datalore.vis.svgMapper.SvgNodeSubtreeGeneratingSynchronizer
 

@@ -6,8 +6,8 @@
 package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Node
-import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.mapper.core.MappingContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(

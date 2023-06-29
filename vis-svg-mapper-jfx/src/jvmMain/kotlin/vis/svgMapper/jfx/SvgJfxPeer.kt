@@ -9,7 +9,7 @@ import javafx.scene.Node
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.mapper.core.Mapper
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLocatable
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode

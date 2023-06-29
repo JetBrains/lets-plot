@@ -63,7 +63,6 @@ kotlin {
                 implementation kotlin('stdlib-js')
                 implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
 
-                implementation project(':mapper-core')
                 implementation project(':vis-svg-mapper')
             }
         }

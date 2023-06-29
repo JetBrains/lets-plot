@@ -9,8 +9,8 @@ import javafx.scene.Group
 import javafx.scene.Node
 import javafx.scene.image.ImageView
 import javafx.scene.text.Text
-import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.mapper.core.MapperFactory
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
