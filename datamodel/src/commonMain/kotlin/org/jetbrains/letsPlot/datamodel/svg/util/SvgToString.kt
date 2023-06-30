@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.XLINK_PREFIX
 
 class SvgToString(
-    private val rgbEncoder: RGBEncoder?,
+    private val rgbEncoder: RGBEncoder,
     private val useCssPixelatedImageRendering: Boolean = true // true for browser, false for Batik.Transcoder or Cairo
 ) {
     fun render(svg: SvgSvgElement): String {
@@ -26,7 +26,7 @@ class SvgToString(
             crlf(buffer, level)
         }
         buffer.append('<').append(svgElement.elementName)
-        if (svgElement.elementName.equals("svg")) {
+        if (svgElement.elementName == "svg") {
             buffer.append(" xmlns").append("=\"").append(SVG_NAMESPACE_URI).append('"')
             buffer.append(" xmlns:").append(XLINK_PREFIX).append("=\"").append(XLINK_NAMESPACE_URI).append('"')
         }
@@ -53,37 +53,38 @@ class SvgToString(
             for (childNode in svgElement.children()) {
                 @Suppress("NAME_SHADOWING")
                 var childNode = childNode
-                if (childNode is SvgTextNode) {
-                    renderTextNode(
-                        childNode,
-                        buffer,
-                        level
-                    )
-                } else if (childNode is SvgElement) {
-                    if (childNode is SvgImageElementEx) {
-                        if (rgbEncoder != null) {
+                when (childNode) {
+                    is SvgTextNode -> {
+                        renderTextNode(
+                            childNode,
+                            buffer,
+                            level
+                        )
+                    }
+
+                    is SvgElement -> {
+                        if (childNode is SvgImageElementEx) {
                             childNode = childNode.asImageElement(rgbEncoder)
-                        } else {
-                            // ToDo: error?
-                            continue
                         }
+
+                        if (childNode is SvgImageElement) {
+                            val style = when (useCssPixelatedImageRendering) {
+                                true -> "image-rendering: optimizeSpeed; image-rendering: pixelated"
+                                false -> "image-rendering: optimizeSpeed"
+                            }
+                            childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, style)
+                        }
+
+                        renderElement(
+                            childNode as SvgElement,
+                            buffer,
+                            level + 1
+                        )
                     }
 
-                    if (childNode is SvgImageElement) {
-                        val style = when (useCssPixelatedImageRendering) {
-                            true -> "image-rendering: optimizeSpeed; image-rendering: pixelated"
-                            false -> "image-rendering: optimizeSpeed"
-                        }
-                        childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, style)
+                    else -> {
+                        throw IllegalStateException("Can't render unsupported svg node: $childNode")
                     }
-
-                    renderElement(
-                        childNode as SvgElement,
-                        buffer,
-                        level + 1
-                    )
-                } else {
-                    throw IllegalStateException("Can't render unsupported svg node: $childNode")
                 }
             }
         }

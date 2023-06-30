@@ -9,7 +9,6 @@ plugins {
 }
 
 kotlin {
-    jvm()
     js {
         browser()
     }
@@ -20,17 +19,6 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':datamodel')
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-            }
-        }
-        jvmTest {
-            dependencies {
-                implementation kotlin('test')
-                implementation kotlin('test-junit')
             }
         }
         jsMain {

@@ -11,6 +11,7 @@ import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
 import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch
 import jetbrains.datalore.plot.testing.rawSpec_SinglePlot
+import org.jetbrains.letsPlot.datamodel.mapping.svg.util.UnsupportedRGBEncoder
 import kotlin.test.*
 
 internal class PlotSvgExportPortableTest {
@@ -41,11 +42,13 @@ internal class PlotSvgExportPortableTest {
 
         PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
+            rgbEncoder = UnsupportedRGBEncoder(),
             useCssPixelatedImageRendering = false
         ).let { assertTrue(it.contains("style=\"image-rendering: optimizeSpeed\"")) }
 
         PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = parsePlotSpec(spec),
+            rgbEncoder = UnsupportedRGBEncoder(),
             useCssPixelatedImageRendering = true
         ).let { assertTrue(it.contains("style=\"image-rendering: optimizeSpeed; image-rendering: pixelated\"")) }
     }
@@ -55,7 +58,9 @@ internal class PlotSvgExportPortableTest {
     fun svgFromSinglePlot() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_SinglePlot(),
-            plotSize = DoubleVector(400.0, 300.0)
+            plotSize = DoubleVector(400.0, 300.0),
+            rgbEncoder = UnsupportedRGBEncoder(),
+            useCssPixelatedImageRendering = false
         )
 
 //        println(svg)
@@ -68,7 +73,9 @@ internal class PlotSvgExportPortableTest {
     fun svgFromGGBunch() {
         val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
             plotSpec = rawSpec_GGBunch(),
-            plotSize = DoubleVector(400.0, 300.0)  // Ignored
+            plotSize = DoubleVector(400.0, 300.0),  // Ignored
+            rgbEncoder = UnsupportedRGBEncoder(),
+            useCssPixelatedImageRendering = false
         )
 
         assertEquals(EXPECTED_BUNCH_SVG, svg)

@@ -37,7 +37,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-//                implementation project(':vis-svg-mapper')
+                implementation project(':awt')
 
                 batikArtifacts.forEach {
                     api "$batikGroupId:$it:$batik_version"
@@ -58,10 +58,6 @@ kotlin {
 idea {
     module {
         settings {
-//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
             packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }

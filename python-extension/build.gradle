@@ -52,6 +52,7 @@ kotlin {
 
                 // (!) only `portable` sources
                 implementation project(':base-portable')
+                implementation project(':datamodel')
                 implementation project(':plot-config-portable')
             }
         }

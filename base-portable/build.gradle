@@ -33,9 +33,6 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-
-//                compileOnly "org.hamcrest:hamcrest-core:$hamcrest_version"
-//                compileOnly "org.hamcrest:hamcrest-library:$hamcrest_version"
             }
         }
         jvmTest {

@@ -5,7 +5,6 @@
 
 plugins {
     kotlin("multiplatform")
-//    id("org.jetbrains.gradle.plugin.idea-ext")
 }
 
 
@@ -33,7 +32,6 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(kotlin("test-annotations-common"))
-//                implementation(kotlin("test-annotations"))
 
                 implementation("io.mockk:mockk-common:$mockkVersion")
             }
@@ -42,8 +40,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-//                compileOnly("org.hamcrest:hamcrest-core:$hamcrestVersion")
-//                compileOnly("org.hamcrest:hamcrest-library:$hamcrestVersion")
             }
         }
 

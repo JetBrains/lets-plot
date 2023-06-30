@@ -38,6 +38,7 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
 
+                implementation project(':awt')
                 implementation project(':base')
                 implementation project(':vis-svg-mapper')
                 compileOnly project(':vis-canvas')

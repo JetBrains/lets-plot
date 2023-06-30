@@ -11,7 +11,6 @@ import javafx.scene.image.ImageView
 import javafx.scene.text.Text
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
-import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 internal class SvgNodeMapperFactory(private val peer: SvgJfxPeer) : MapperFactory<SvgNode, Node> {

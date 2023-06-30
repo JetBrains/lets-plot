@@ -30,6 +30,7 @@ kotlin {
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
                 compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
+                implementation project(':awt')
                 implementation project(':vis-canvas')
             }
         }
