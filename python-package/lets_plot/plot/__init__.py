@@ -22,6 +22,7 @@ from .scale import *
 from .scale_convenience import *
 from .scale_identity_ import *
 from .scale_position import *
+from .stat import *
 from .theme_ import *
 from .theme_set import *
 from .tooltip import *
@@ -42,6 +43,7 @@ __all__ = (coord.__all__ +
            scale_convenience.__all__ +
            scale_identity_.__all__ +
            scale_position.__all__ +
+           stat.__all__ +
            theme_.__all__ +
            theme_set.__all__ +
            tooltip.__all__ +

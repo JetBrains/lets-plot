@@ -92,7 +92,7 @@ open class BinDemo : SimpleDemoBase() {
             val stat = Stats.bin(
                 binCount = binCount,
             )
-            data = stat.apply(data, SimpleStatContext(data))
+            data = stat.apply(data, SimpleStatContext(data, emptyList()))
 
             val statX = data.getNumeric(Stats.X)
             val statY = data.getNumeric(Stats.COUNT)

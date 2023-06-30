@@ -12,6 +12,8 @@ interface StatContext {
 
     fun overallYRange(): DoubleSpan?
 
+    fun mappedStatVariables(): List<DataFrame.Variable>
+
     fun getFlipped(): StatContext {
         return Flipped(this)
     }
@@ -23,6 +25,10 @@ interface StatContext {
 
         override fun overallYRange(): DoubleSpan? {
             return orig.overallXRange()
+        }
+
+        override fun mappedStatVariables(): List<DataFrame.Variable> {
+            return orig.mappedStatVariables()
         }
 
         override fun getFlipped(): StatContext {

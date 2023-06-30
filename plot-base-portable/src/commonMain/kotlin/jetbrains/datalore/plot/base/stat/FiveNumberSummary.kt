@@ -6,9 +6,6 @@
 package jetbrains.datalore.plot.base.stat
 
 import jetbrains.datalore.base.gcommon.collect.Ordering
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.round
 
 /**
  * For a set of data, the minimum, first quartile, median, third quartile, and maximum.
@@ -23,36 +20,13 @@ internal class FiveNumberSummary {
     // 25 %
     val thirdQuartile: Double    // 75 %
 
-    private fun medianAtPointer(l: List<Double>, pointer: Double): Double {
-        val rint = round(pointer)
-        return if (pointer == rint) {
-            l[pointer.toInt()]
-        } else (l[ceil(pointer).toInt()] + l[floor(pointer).toInt()]) / 2.0
-    }
-
     constructor(data: List<Double>) {
         val sorted = Ordering.natural<Double>().sortedCopy(data)
-        if (sorted.isEmpty()) {
-            thirdQuartile = Double.NaN
-            firstQuartile = thirdQuartile
-            median = firstQuartile
-            max = median
-            min = max
-        } else if (sorted.size == 1) {
-            thirdQuartile = sorted.get(0)
-            firstQuartile = thirdQuartile
-            median = firstQuartile
-            max = median
-            min = max
-        } else {
-            val maxIndex = sorted.size - 1
-
-            min = sorted.get(0)
-            max = sorted.get(maxIndex)
-            median = medianAtPointer(sorted, maxIndex * .5)
-            firstQuartile = medianAtPointer(sorted, maxIndex * .25)
-            thirdQuartile = medianAtPointer(sorted, maxIndex * .75)
-        }
+        min = AggregateFunctions.min(sorted)
+        max = AggregateFunctions.max(sorted)
+        median = AggregateFunctions.median(sorted)
+        firstQuartile = AggregateFunctions.quantile(sorted, 0.25)
+        thirdQuartile = AggregateFunctions.quantile(sorted, 0.75)
     }
 
     constructor(min: Double, max: Double, median: Double, firstQuartile: Double, thirdQuartile: Double) {

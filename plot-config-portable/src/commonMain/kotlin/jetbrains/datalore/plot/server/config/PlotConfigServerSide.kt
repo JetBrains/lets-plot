@@ -118,13 +118,13 @@ open class PlotConfigServerSide(
         val dataByLayer: List<DataFrame> = layerConfigs.map { layer ->
             DataProcessing.transformOriginals(layer.combinedData, layer.varBindings, transformByAes)
         }
-        val statCtx = ConfiguredStatContext(dataByLayer, transformByAes)
 
         return layerConfigs.mapIndexed { layerIndex, layerConfig ->
+            val mappedStatVariables = layerConfig.varBindings.map(VarBinding::variable).filter(DataFrame.Variable::isStat)
             applyLayerStatistic(
                 layerConfig,
                 layerData = dataByLayer[layerIndex],
-                statCtx,
+                ConfiguredStatContext(dataByLayer, transformByAes, mappedStatVariables),
             ) { message ->
                 layerMessageHandler(layerIndex, message)
             }

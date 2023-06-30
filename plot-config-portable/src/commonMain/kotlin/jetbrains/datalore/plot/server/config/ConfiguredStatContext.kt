@@ -13,7 +13,8 @@ import jetbrains.datalore.plot.common.data.SeriesUtil
 
 internal class ConfiguredStatContext(
     private val dataFrames: List<DataFrame>,
-    private val transformByAes: Map<Aes<*>, Transform>
+    private val transformByAes: Map<Aes<*>, Transform>,
+    private val mappedStatVariables: List<DataFrame.Variable>
 ) : StatContext {
 
     private fun overallRange(variable: DataFrame.Variable, dataFrames: List<DataFrame>): DoubleSpan? {
@@ -32,6 +33,10 @@ internal class ConfiguredStatContext(
 
     override fun overallYRange(): DoubleSpan? {
         return overallRange(Aes.Y)
+    }
+
+    override fun mappedStatVariables(): List<DataFrame.Variable> {
+        return mappedStatVariables
     }
 
     private fun overallRange(aes: Aes<*>): DoubleSpan? {
