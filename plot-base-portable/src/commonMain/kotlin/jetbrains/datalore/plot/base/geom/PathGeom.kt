@@ -61,7 +61,15 @@ open class PathGeom : GeomBase() {
                 .createPathDataByGroup(dataPoints, TO_LOCATION_X_Y)
                 .map { pathData ->
                     pathData.points
-                        .splitBy(compareBy { it.aes.size() })
+                        .splitBy(
+                            compareBy(
+                                { it.aes.size() },
+                                { it.aes.color()?.red },
+                                { it.aes.color()?.green },
+                                { it.aes.color()?.blue },
+                                { it.aes.color()?.alpha }
+                            )
+                        )
                         .map(::PathData)
                 }
         }

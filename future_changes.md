@@ -13,8 +13,8 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
 
 
-- Variadic line sizes in `geom_line()` and `geom_path()` with `size` mapping.  
-See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_variadic_with_mapping.ipynb).
+- Variadic lines with `size` and `color` mapping in `geom_line()` and `geom_path()`.  
+See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb).
 
 
 ### Changed
@@ -35,3 +35,4 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 - geom_livemap: memory leak when re-run cells without reloading a page.
 - Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
 - Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
+- `geom_path` doesn't support different colors for segments [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
