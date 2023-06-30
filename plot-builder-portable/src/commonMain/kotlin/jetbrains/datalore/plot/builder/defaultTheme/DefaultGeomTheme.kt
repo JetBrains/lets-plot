@@ -127,9 +127,8 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.DOT_PLOT,
                 GeomKind.Y_DOT_PLOT -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.backgroundFill()
-                    lineWidth = 1.1 * sizeMultiplier
+                    color = inheritedColors.backgroundFill()
+                    fill = inheritedColors.lineColor()
                 }
 
                 GeomKind.POINT_RANGE -> {
