@@ -11,7 +11,7 @@ private val LOG = KotlinLogging.logger("JsObjectSupportJs")
 
 
 /**
- * Copies all object's properties to hash map recursively with exception of
+ * Copies all object's properties to hash map recursively with the exception of
  * arrays containing only simple values (str,number,boolean,null).
  * 'simple' arrays are wrapped in immutable lists (not copied)
  */
@@ -26,7 +26,6 @@ fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
         val entries = js("Object.entries(o)")
         for (entry in entries) {
             val key = entry[0] as String
-            @Suppress("MoveVariableDeclarationIntoWhen")
             val value = entry[1] ?: continue            // drop nulls
             try {
                 map[key] = handleAnyNotNull(value)
