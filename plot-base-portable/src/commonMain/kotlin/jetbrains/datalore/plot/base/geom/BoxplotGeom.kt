@@ -111,7 +111,7 @@ class BoxplotGeom : GeomBase() {
     }
 
     companion object {
-        const val DEF_FATTEN_MIDLINE = 2.5
+        const val DEF_FATTEN_MIDLINE = 2.0
         const val DEF_WHISKER_WIDTH = 0.5
         const val HANDLES_GROUPS = false
 

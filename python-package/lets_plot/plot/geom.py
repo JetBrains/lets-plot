@@ -2971,7 +2971,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
     orientation : str, default='x'
         Specify the axis that the layer's stat and geom should run along.
         Possible values: 'x', 'y'.
-    fatten : float, default=1.0
+    fatten : float, default=2.0
         A multiplicative factor applied to size of the middle bar.
     outlier_color : str
         Default color aesthetic for outliers.

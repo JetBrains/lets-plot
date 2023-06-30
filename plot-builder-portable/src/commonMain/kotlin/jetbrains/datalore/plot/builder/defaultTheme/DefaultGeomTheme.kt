@@ -71,6 +71,8 @@ internal class DefaultGeomTheme private constructor(
             var size = 0.5
             var lineWidth = 0.5
 
+            val sizeMultiplier = 1.5
+
             when (geomKind) {
                 GeomKind.PATH,
                 GeomKind.LINE,
@@ -80,39 +82,37 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.SEGMENT,
                 GeomKind.STEP,
                 GeomKind.FREQPOLY,
-                GeomKind.CONTOUR,
-                GeomKind.DENSITY2D,
                 GeomKind.Q_Q_LINE,
                 GeomKind.Q_Q_2_LINE,
                 GeomKind.ERROR_BAR,
                 GeomKind.LINE_RANGE -> {
                     color = inheritedColors.lineColor()
+                    size *= sizeMultiplier
                 }
 
-                GeomKind.HISTOGRAM,
+                GeomKind.CONTOUR,
+                GeomKind.DENSITY2D -> {
+                    color = inheritedColors.lineColor()
+                }
+
                 GeomKind.AREA_RIDGES,
                 GeomKind.AREA,
+                GeomKind.DENSITY,
                 GeomKind.RECT,
-                GeomKind.RIBBON -> {
-                    color = inheritedColors.lineColor()
-                    fill = inheritedColors.lineColor()
-                    alpha = 0.1
-                }
-
+                GeomKind.RIBBON,
                 GeomKind.MAP -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.lineColor()
                     alpha = 0.1
-                    size = 0.2
+                    size *= sizeMultiplier
                 }
 
-                GeomKind.DENSITY,
                 GeomKind.VIOLIN,
                 GeomKind.CROSS_BAR,
                 GeomKind.BOX_PLOT -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    alpha = 0.1
+                    size *= sizeMultiplier
                 }
 
                 GeomKind.POINT,
@@ -121,34 +121,49 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.Q_Q_2 -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    size = 2.0
+                    size = 2.0 * sizeMultiplier
+                    lineWidth *= sizeMultiplier
+                }
+
+                GeomKind.DOT_PLOT,
+                GeomKind.Y_DOT_PLOT -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.backgroundFill()
+                    lineWidth = 1.1 * sizeMultiplier
                 }
 
                 GeomKind.POINT_RANGE -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    lineWidth = 1.0 // line width and stroke for point
+                    size *= sizeMultiplier              // mid-point size
+                    lineWidth = 1.0 * sizeMultiplier    // line width and stroke for point
                 }
 
                 GeomKind.LOLLIPOP -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill()
-                    size = 2.0
-                    lineWidth = 1.0 // line width and stroke for point
+                    size = 2.0                          // point size
+                    lineWidth = 1.0 * sizeMultiplier    // line width and stroke for point
                 }
 
                 GeomKind.SMOOTH -> {
                     fill = inheritedColors.lineColor()
                     alpha = 0.15
+                    size *= sizeMultiplier
                 }
 
-                GeomKind.DOT_PLOT,
-                GeomKind.Y_DOT_PLOT,
                 GeomKind.BAR,
-                GeomKind.TILE,
-                GeomKind.BIN_2D,
                 GeomKind.POLYGON -> {
                     color = inheritedColors.backgroundFill()
+                    size *= sizeMultiplier
+                }
+
+                GeomKind.HISTOGRAM,
+                GeomKind.TILE,
+                GeomKind.BIN_2D -> {
+                    color = inheritedColors.backgroundFill()
+                    fill = inheritedColors.lineColor()
+                    size = 0.0
                 }
 
                 GeomKind.CONTOURF,
@@ -156,7 +171,6 @@ internal class DefaultGeomTheme private constructor(
                     color = inheritedColors.backgroundFill()
                     size = 0.0
                 }
-
 
                 GeomKind.TEXT, GeomKind.LABEL -> {
                     color = inheritedColors.lineColor()
@@ -174,9 +188,7 @@ internal class DefaultGeomTheme private constructor(
                 }
             }
 
-            val sizeMultiplier = 1.5
-
-            return DefaultGeomTheme(color, fill, alpha, size * sizeMultiplier, lineWidth * sizeMultiplier)
+           return DefaultGeomTheme(color, fill, alpha, size, lineWidth)
         }
     }
 }
