@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 class BoxplotStatTest {
 
     private fun statContext(d: DataFrame): StatContext {
-        return SimpleStatContext(d)
+        return SimpleStatContext(d, emptyList())
     }
 
     private fun df(m: Map<DataFrame.Variable, List<Double>>): DataFrame {

@@ -12,7 +12,7 @@ interface StatContext {
 
     fun overallYRange(): DoubleSpan?
 
-    fun getMapping(): Map<Aes<*>, DataFrame.Variable> = throw IllegalStateException("Not implemented")
+    fun mappedStatVariables(): List<DataFrame.Variable>
 
     fun getFlipped(): StatContext {
         return Flipped(this)
@@ -27,14 +27,8 @@ interface StatContext {
             return orig.overallXRange()
         }
 
-        override fun getMapping(): Map<Aes<*>, DataFrame.Variable> {
-            return orig.getMapping().map { (aes, variable) ->
-                when (aes) {
-                    Aes.X -> Aes.Y to variable
-                    Aes.Y -> Aes.X to variable
-                    else -> aes to variable
-                }
-            }.toMap()
+        override fun mappedStatVariables(): List<DataFrame.Variable> {
+            return orig.mappedStatVariables()
         }
 
         override fun getFlipped(): StatContext {

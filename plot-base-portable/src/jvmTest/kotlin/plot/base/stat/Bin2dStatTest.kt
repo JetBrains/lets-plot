@@ -158,7 +158,7 @@ class Bin2dStatTest {
                 null,
                 drop = drop
             )
-            val statCtx = SimpleStatContext(df)
+            val statCtx = SimpleStatContext(df, emptyList())
             val statDf = stat.apply(df, statCtx)
 
             val expectedSize = if (drop) {
