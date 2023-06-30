@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
-import jetbrains.datalore.vis.svgMapper.TargetPeer
+import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.TargetPeer
 import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent

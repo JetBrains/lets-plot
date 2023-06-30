@@ -26,7 +26,6 @@ kotlin {
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':datamodel')
-                implementation project(':vis-svg-mapper')
                 implementation project(':vis-demo-common')
             }
         }

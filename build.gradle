@@ -21,7 +21,6 @@ def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
         'vis-canvas',
-        'vis-svg-mapper',
         'datamodel',
         'plot-base-portable',
         'plot-common-portable',

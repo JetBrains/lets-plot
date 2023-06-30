@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.vis.svgMapperDemo
 
-import jetbrains.datalore.vis.browser.DomMapperDemoUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.svgDemoModel.a.DemoModelA
+import org.jetbrains.letsPlot.datamodel.mapping.svg.util.SvgToW3c.generateDom
 
 fun svgElementsDemoA() {
     val svgGroup = DemoModelA.createModel()
     val svgRoot = SvgSvgElement(500.0, 500.0)
     svgRoot.children().add(svgGroup)
 
-    DomMapperDemoUtil.mapToDom(listOf(svgRoot), "root")
+    generateDom(listOf(svgRoot), "root")
 }

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import org.jetbrains.letsPlot.awt.util.RGBtoDataUrl
+import org.jetbrains.letsPlot.awt.util.RgbToDataUrl
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 
 object PlotSvgExport {
@@ -33,6 +33,6 @@ object PlotSvgExport {
 // ToDo: This is AWT-based and will fail on Android.
 private class RGBEncoderAwt : SvgImageElementEx.RGBEncoder {
     override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
-        return RGBtoDataUrl.png(width, height, argbValues)
+        return RgbToDataUrl.png(width, height, argbValues)
     }
 }
