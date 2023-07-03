@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.vis.svgMapper.awt.RGBEncoderAwt
-import jetbrains.datalore.vis.svgToString.SvgToString
+import org.jetbrains.letsPlot.awt.util.RgbToDataUrl
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 
 object PlotSvgExport {
     /**
@@ -21,8 +21,18 @@ object PlotSvgExport {
         plotSize: DoubleVector? = null,
         useCssPixelatedImageRendering: Boolean = true
     ): String {
-        // Supports data-frame --> rgb image transform (geom_raster)
-        val jvmSvgStrMapper = SvgToString(RGBEncoderAwt(), useCssPixelatedImageRendering)
-        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpec, plotSize, jvmSvgStrMapper)
+        return PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+            plotSpec = plotSpec,
+            plotSize = plotSize,
+            rgbEncoder = RGBEncoderAwt(),
+            useCssPixelatedImageRendering
+        )
+    }
+}
+
+// ToDo: This is AWT-based and will fail on Android.
+private class RGBEncoderAwt : SvgImageElementEx.RGBEncoder {
+    override fun toDataUrl(width: Int, height: Int, argbValues: IntArray): String {
+        return RgbToDataUrl.png(width, height, argbValues)
     }
 }

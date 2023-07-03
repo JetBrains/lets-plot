@@ -34,4 +34,11 @@ class RandomGaussian(val random: Random) {
             return v1 * multiplier
         }
     }
+
+    companion object {
+        fun normal(count: Int, seed: Long, mean: Double, stdDeviance: Double): List<Double> {
+            val r = RandomGaussian(Random(seed))
+            return List(count) { r.nextGaussian() * stdDeviance + mean }
+        }
+    }
 }

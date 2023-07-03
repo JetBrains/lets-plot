@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.shape.Ellipse
-import jetbrains.datalore.vis.svg.SvgEllipseElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgEllipseElement
 
 internal object SvgEllipseAttrMapping : SvgShapeMapping<Ellipse>() {
     override fun setAttribute(target: Ellipse, name: String, value: Any?) {

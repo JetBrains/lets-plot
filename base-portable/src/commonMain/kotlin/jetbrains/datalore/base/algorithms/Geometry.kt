@@ -5,16 +5,28 @@
 
 package jetbrains.datalore.base.algorithms
 
-import jetbrains.datalore.base.interval.IntSpan
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.interval.IntSpan
 import kotlin.math.abs
 
-fun <T> splitRings(points: List<T>): List<List<T>> {
-    val rings = findRingIntervals(points).map { points.sublist(it) }.toMutableList()
+fun <T> reduce(points: List<T>, dropDistance: Double, distance: (T, T) -> Double): List<T> {
+    return points.foldIndexed(mutableListOf()) { i, acc, el ->
+        if (i == 0) acc.add(el)
+        else if (i == points.lastIndex) acc.add(el)
+        else if (distance(acc.last(), el) >= dropDistance) acc.add(el)
+
+        acc
+    }
+}
+
+inline fun <reified T> splitRings(points: List<T>): List<List<T>> = splitRings(points) { o1, o2 -> o1 == o2 }
+
+fun <T> splitRings(points: List<T>, eq: (T, T) -> Boolean): List<List<T>> {
+    val rings = findRingIntervals(points, eq).map(points::sublist).toMutableList()
 
     if (rings.isNotEmpty()) {
         if (!rings.last().isClosed()) {
-            rings.set(rings.lastIndex, makeClosed(rings.last()))
+            rings[rings.lastIndex] = makeClosed(rings.last())
         }
     }
 
@@ -25,14 +37,14 @@ private fun <T> makeClosed(path: List<T>) = path.toMutableList() + path.first()
 
 fun <T> List<T>.isClosed() = first() == last()
 
-private fun <T> findRingIntervals(path: List<T>): List<IntSpan> {
+private fun <T> findRingIntervals(path: List<T>, eq: (T, T) -> Boolean): List<IntSpan> {
     val intervals = ArrayList<IntSpan>()
     var startIndex = 0
 
     var i = 0
     val n = path.size
     while (i < n) {
-        if (startIndex != i && path[startIndex] == path[i]) {
+        if (startIndex != i && eq(path[startIndex], path[i])) {
             intervals.add(IntSpan(startIndex, i + 1))
             startIndex = i + 1
         }

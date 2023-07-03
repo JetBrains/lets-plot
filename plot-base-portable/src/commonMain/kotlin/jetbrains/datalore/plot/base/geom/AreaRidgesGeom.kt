@@ -8,13 +8,14 @@ package jetbrains.datalore.plot.base.geom
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.LinesHelper
+import jetbrains.datalore.plot.base.geom.util.QuantilesHelper
+import jetbrains.datalore.plot.base.geom.util.TargetCollectorHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.DensityRidgesStat
 import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class AreaRidgesGeom : GeomBase(), WithHeight {
     var scale: Double = DEF_SCALE
@@ -75,25 +76,26 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val boundTransform = toLocationBound(ctx)
 
+        val targetCollectorHelper = TargetCollectorHelper(GeomKind.AREA_RIDGES, ctx)
+
         quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
             val paths = helper.createBands(
                 points,
                 boundTransform,
-                { p -> DoubleVector(p.x()!!, p.y()!!) },
+                GeomUtil.TO_LOCATION_X_Y,
                 simplifyBorders = true
             )
-            appendNodes(paths, root)
+            root.appendNodes(paths)
 
             helper.setAlphaEnabled(false)
-            appendNodes(helper.createLines(points, boundTransform), root)
+            root.appendNodes(helper.createLines(points, boundTransform))
 
-            buildHints(points, ctx, helper, boundTransform)
+            val pathData = helper.createPathDataByGroup(points, boundTransform)
+            targetCollectorHelper.addPaths(pathData)
         }
 
         if (quantileLines) {
-            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach { quantileLine ->
-                root.add(quantileLine)
-            }
+            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach(root::add)
         }
     }
 
@@ -112,38 +114,6 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             val x = p.x()!!
             val y = p.y()!! + ctx.getResolution(Aes.Y) * scale * p.height()!!
             return DoubleVector(x, y)
-        }
-    }
-
-    private fun buildHints(
-        dataPoints: Iterable<DataPointAesthetics>,
-        ctx: GeomContext,
-        helper: GeomHelper,
-        boundTransform: (p: DataPointAesthetics) -> DoubleVector
-    ) {
-        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-            dataPoints,
-            MultiPointDataConstructor.singlePointAppender { p ->
-                boundTransform(p).let { helper.toClient(it, p) }
-            },
-            MultiPointDataConstructor.reducer(0.999, false)
-        )
-        val targetCollector = getGeomTargetCollector(ctx)
-        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.AREA_RIDGES, ctx)
-
-        for (multiPointData in multiPointDataList) {
-            targetCollector.addPath(
-                multiPointData.points,
-                multiPointData.localToGlobalIndex,
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorMarkerMapper(multiPointData.aes)
-                ),
-                if (ctx.flipped) {
-                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
-                } else {
-                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                }
-            )
         }
     }
 

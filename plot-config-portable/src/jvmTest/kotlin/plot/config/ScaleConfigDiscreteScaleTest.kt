@@ -56,7 +56,7 @@ internal class ScaleConfigDiscreteScaleTest(
         val geomLayer = TestUtil.buildPointLayer(data, mapping, scales = scales)
         val scale = geomLayer.scaleMap.getValue(Aes.COLOR)
         val scaleBreaks = scale.getScaleBreaks()
-        val scaleMapper = geomLayer.scaleMapppersNP.getValue(Aes.COLOR)
+        val scaleMapper = geomLayer.scaleMappersNP.getValue(Aes.COLOR)
         val mappedBreaks = scaleBreaks.transformedValues.map { scaleMapper(it) }
 
         assertEquals(expectedLabels, scaleBreaks.labels)

@@ -10,7 +10,9 @@ import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 
-internal class FlippedTargetCollector(private val targetCollector: GeomTargetCollector) : GeomTargetCollector {
+internal class FlippedTargetCollector(
+    private val targetCollector: GeomTargetCollector
+) : GeomTargetCollector {
 
     override fun addPoint(
         index: Int,
@@ -62,13 +64,13 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
 
     override fun addPolygon(
         points: List<DoubleVector>,
-        localToGlobalIndex: (Int) -> Int,
+        index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipKind: TipLayoutHint.Kind
     ) {
         targetCollector.addPolygon(
             points.map(DoubleVector::flip),
-            localToGlobalIndex,
+            index,
             tooltipParams,
             tooltipKind
         )
@@ -79,7 +81,7 @@ internal class FlippedTargetCollector(private val targetCollector: GeomTargetCol
     }
 
     override fun withYOrientation(): GeomTargetCollector {
-        check(!(targetCollector is YOrientationTargetCollector)) { "'withYOrientation()' is not applicable to YOrientationTargetCollector" }
+        check(targetCollector !is YOrientationTargetCollector) { "'withYOrientation()' is not applicable to YOrientationTargetCollector" }
         return YOrientationTargetCollector(this)
     }
 }

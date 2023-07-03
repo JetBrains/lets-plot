@@ -20,10 +20,8 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 def include_sources_letsPlotJvmCommon = [
         'base-portable',
         'base',
-        'mapper-core',
         'vis-canvas',
-        'vis-svg-mapper',
-        'vis-svg-portable',
+        'datamodel',
         'plot-base-portable',
         'plot-common-portable',
         'plot-builder-portable',
@@ -244,7 +242,7 @@ subprojects {
             'plot-common-portable',
             'plot-config-portable',
             'test-common',
-            'vis-svg-portable',
+            'datamodel',
     ]) {
         apply plugin: "org.jetbrains.kotlin.multiplatform"
 
@@ -281,7 +279,7 @@ subprojects {
     if (name in [
             'plot-base-portable',
             'base-portable',
-            'vis-svg-portable',
+            'datamodel',
             'plot-common-portable',
             'plot-config-portable',
             'plot-builder-portable',

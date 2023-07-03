@@ -8,9 +8,10 @@ package jetbrains.datalore.plot.base.aes
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.Aes
+import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.render.point.NamedShape
 
-open class AestheticsDefaults {
+open class AestheticsDefaults(geomTheme: GeomTheme) {
 
     private val myDefaults = TypedKeyHashMap().apply {
         for (aes in Aes.values()) {
@@ -18,15 +19,22 @@ open class AestheticsDefaults {
             @Suppress("UNCHECKED_CAST")
             put(aes as Aes<Any>, AesInitValue[aes])
         }
+        // defaults from geom theme:
+        put(Aes.COLOR, geomTheme.color())
+        put(Aes.FILL, geomTheme.fill())
+        put(Aes.ALPHA, geomTheme.alpha())
+        put(Aes.SIZE, geomTheme.size())
+        put(Aes.LINEWIDTH, geomTheme.lineWidth())
+        put(Aes.STROKE, geomTheme.lineWidth())
     }
     private val myDefaultsInLegend = TypedKeyHashMap()
 
-    protected fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+    private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)
         return this
     }
 
-    protected fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
+    private fun <T> updateInLegend(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaultsInLegend.put(aes, defaultValue)
         return this
     }
@@ -44,226 +52,114 @@ open class AestheticsDefaults {
     }
 
     companion object {
-        fun point(): AestheticsDefaults {
-            return base()
-                .update(Aes.SIZE, 2.0)
+        private fun point(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun path(): AestheticsDefaults {
-            return base()
-        }
-
-        fun line(): AestheticsDefaults {
-            return path()
-        }
-
-        fun abline(): AestheticsDefaults {
-            return path()
-        }
-
-        fun hline(): AestheticsDefaults {
-            return path()
-        }
-
-        fun vline(): AestheticsDefaults {
-            return path()
-        }
-
-        fun smooth(): AestheticsDefaults {
-            return path()
-                .update(Aes.COLOR, Color.MAGENTA)
-                .update(Aes.FILL, Color.BLACK)
-        }
-
-        fun bar(): AestheticsDefaults {
-            return base()
+        private fun bar(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .update(Aes.WIDTH, 0.9)
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
         }
 
-        fun histogram(): AestheticsDefaults {
-            return base()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
-        }
-
-        fun dotplot(): AestheticsDefaults {
-            return AestheticsDefaults()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
+        private fun dotplot(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 5.0)
         }
 
-        fun tile(): AestheticsDefaults {
-            return AestheticsDefaults()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
-        }
-
-        fun bin2d(): AestheticsDefaults {
-            return tile()
-        }
-
-        fun errorBar(): AestheticsDefaults {
-            return AestheticsDefaults()
-                .update(Aes.COLOR, Color.BLACK)
+        private fun errorBar(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .update(Aes.WIDTH, 0.45)
                 .update(Aes.HEIGHT, 0.45)
         }
 
-        fun crossBar(): AestheticsDefaults {
-            return AestheticsDefaults()
+        private fun crossBar(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .update(Aes.WIDTH, 0.9)
-                .update(Aes.COLOR, Color.BLACK)
-                .update(Aes.FILL, Color.WHITE)
         }
 
-        fun lineRange(): AestheticsDefaults {
-            return path()
+        private fun boxplot(geomTheme: GeomTheme): AestheticsDefaults {
+            return crossBar(geomTheme)
         }
 
-        fun pointRange(): AestheticsDefaults {
-            return path()
-        }
-
-        fun polygon(): AestheticsDefaults {
-            return base()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
-        }
-
-        fun map(): AestheticsDefaults {
-            return base()
-                .update(Aes.SIZE, 0.2)                    // outline thickness
-                .update(Aes.COLOR, Color.GRAY)
-                .update(Aes.FILL, Color.TRANSPARENT)
-        }
-
-        fun boxplot(): AestheticsDefaults {
-            return crossBar()
-        }
-
-        fun areaRidges(): AestheticsDefaults {
-            return base()
-                .update(Aes.COLOR, Color.BLACK)
-                .update(Aes.FILL, Color.parseHex("#8CBBE4"))
-        }
-
-        fun violin(): AestheticsDefaults {
-            return AestheticsDefaults()
-                .update(Aes.COLOR, Color.BLACK)
-                .update(Aes.FILL, Color.WHITE)
-        }
-
-        fun ydotplot(): AestheticsDefaults {
-            return AestheticsDefaults()
-                .update(Aes.COLOR, Color.TRANSPARENT)    // no outline (transparent)
-                .updateInLegend(Aes.SIZE, 5.0)
-        }
-
-        fun livemap(): AestheticsDefaults {
-            return base()
-        }
-
-        fun ribbon(): AestheticsDefaults {
-            return base()
-        }
-
-        fun area(): AestheticsDefaults {
-            return base()
-        }
-
-        fun density(): AestheticsDefaults {
-            return area()
-                .update(Aes.FILL, Color.TRANSPARENT)
-        }
-
-        fun contour(): AestheticsDefaults {
-            return path()
-        }
-
-        fun contourf(): AestheticsDefaults {
-            return base()
-                .update(Aes.SIZE, 0.0)
-        }
-
-        fun density2d(): AestheticsDefaults {
-            return contour()
-        }
-
-        fun density2df(): AestheticsDefaults {
-            return contourf()
-        }
-
-        fun jitter(): AestheticsDefaults {
-            return point()
-        }
-
-        fun qq(): AestheticsDefaults {
-            return point()
-        }
-
-        fun qq2(): AestheticsDefaults {
-            return point()
-        }
-
-        fun qq_line(): AestheticsDefaults {
-            return path()
-        }
-
-        fun qq2_line(): AestheticsDefaults {
-            return path()
-        }
-
-        fun freqpoly(): AestheticsDefaults {
-            return area()
-        }
-
-        fun step(): AestheticsDefaults {
-            return path()
-        }
-
-        fun rect(): AestheticsDefaults {
-            return polygon()
-        }
-
-        fun segment(): AestheticsDefaults {
-            return path()
-        }
-
-        fun text(): AestheticsDefaults {
-            return base()
-                .update(Aes.SIZE, 7.0)
-                .update(Aes.COLOR, Color.parseHex("#3d3d3d")) // dark gray
+        private fun text(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
-        fun label(): AestheticsDefaults {
-            return text()
-                .update(Aes.FILL, Color.WHITE)
-        }
-
-        fun raster(): AestheticsDefaults {
-            return base()
-        }
-
-        fun image(): AestheticsDefaults {
-            return base()
-        }
-
-        fun pie(): AestheticsDefaults {
-            return base()
-                .update(Aes.SIZE, 10.0)
+        private fun pie(geomTheme: GeomTheme): AestheticsDefaults {
+            return base(geomTheme)
                 .updateInLegend(Aes.SIZE, 1.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
                 .updateInLegend(Aes.COLOR, Color.TRANSPARENT)
         }
 
-        fun lollipop(): AestheticsDefaults {
-            return point()
+        private fun lollipop(geomTheme: GeomTheme): AestheticsDefaults {
+            return point(geomTheme)
                 .update(Aes.SHAPE, NamedShape.STICK_CIRCLE)
-                .update(Aes.STROKE, 1.0)
         }
 
-        private fun base(): AestheticsDefaults {
-            return AestheticsDefaults()
+        private fun base(geomTheme: GeomTheme): AestheticsDefaults {
+            return AestheticsDefaults(geomTheme)
+        }
+
+        fun create(geomKind: GeomKind, geomTheme: GeomTheme): AestheticsDefaults {
+            return when (geomKind) {
+                GeomKind.POINT,
+                GeomKind.JITTER,
+                GeomKind.Q_Q,
+                GeomKind.Q_Q_2 -> point(geomTheme)
+
+                GeomKind.BAR -> bar(geomTheme)
+
+                GeomKind.DOT_PLOT,
+                GeomKind.Y_DOT_PLOT -> dotplot(geomTheme)
+
+                GeomKind.ERROR_BAR -> errorBar(geomTheme)
+
+                GeomKind.CROSS_BAR -> crossBar(geomTheme)
+
+                GeomKind.BOX_PLOT -> boxplot(geomTheme)
+
+                GeomKind.TEXT,
+                GeomKind.LABEL -> text(geomTheme)
+
+                GeomKind.PIE -> pie(geomTheme)
+
+                GeomKind.LOLLIPOP -> lollipop(geomTheme)
+
+                GeomKind.PATH,
+                GeomKind.LINE,
+                GeomKind.SMOOTH,
+                GeomKind.HISTOGRAM,
+                GeomKind.TILE,
+                GeomKind.BIN_2D,
+                GeomKind.MAP,
+                GeomKind.LINE_RANGE,
+                GeomKind.POINT_RANGE,
+                GeomKind.POLYGON,
+                GeomKind.AB_LINE,
+                GeomKind.H_LINE,
+                GeomKind.V_LINE,
+                GeomKind.AREA_RIDGES,
+                GeomKind.VIOLIN,
+                GeomKind.RIBBON,
+                GeomKind.AREA,
+                GeomKind.DENSITY,
+                GeomKind.CONTOUR,
+                GeomKind.CONTOURF,
+                GeomKind.DENSITY2D,
+                GeomKind.DENSITY2DF,
+                GeomKind.Q_Q_LINE,
+                GeomKind.Q_Q_2_LINE,
+                GeomKind.FREQPOLY,
+                GeomKind.RECT,
+                GeomKind.SEGMENT,
+                GeomKind.STEP,
+                GeomKind.RASTER,
+                GeomKind.IMAGE,
+                GeomKind.LIVE_MAP -> base(geomTheme)
+            }
         }
     }
 }

@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.vis.svgMapperDemo
 
-import jetbrains.datalore.vis.browser.DomMapperDemoUtil
 import jetbrains.datalore.vis.svgDemoModel.b.DemoModelB
+import org.jetbrains.letsPlot.datamodel.mapping.svg.util.SvgToW3c.generateDom
 
 fun svgElementsDemo() {
     val svgRoot = DemoModelB.createModel()
-    DomMapperDemoUtil.mapToDom(listOf(svgRoot), "root")
+    generateDom(listOf(svgRoot), "root")
 }

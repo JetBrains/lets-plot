@@ -13,10 +13,10 @@ import jetbrains.datalore.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.LinePath
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.slim.SvgSlimElements
-import jetbrains.datalore.vis.svg.slim.SvgSlimGroup
-import jetbrains.datalore.vis.svg.slim.SvgSlimObject
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimObject
 
 abstract class GeomBase : Geom {
 
@@ -78,9 +78,9 @@ abstract class GeomBase : Geom {
             )
         }
 
-        fun appendNodes(paths: List<LinePath>, root: SvgRoot) {
+        fun SvgRoot.appendNodes(paths: List<LinePath>) {
             for (path in paths) {
-                root.add(path.rootGroup)
+                add(path.rootGroup)
             }
         }
     }

@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.vis.svg.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 open class TextLabelDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

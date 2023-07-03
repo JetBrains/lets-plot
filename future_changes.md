@@ -2,6 +2,11 @@
 
 ### Added
 
+- New layer `stat_summary()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
+
+
 - Tooltips for `geom_step()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_step_tooltips.ipynb).
@@ -13,11 +18,17 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/tooltips_disable_splitting.ipynb).
 
 
+- Variadic lines with `size` and `color` mapping in `geom_line()` and `geom_path()`.  
+See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/aes_size_color_variadic_lines.ipynb).
+
+
 ### Changed
 
 - [BREAKING] `geom_boxplot()` no longer support parameter `sampling`.
 
-- [BREAKING] `geom_pointrange()`: `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
+- [BREAKING] `geom_pointrange()`: `size` aesthetic shouldn't affect line width [[#751](https://github.com/JetBrains/lets-plot/issues/751)]:
+
+  `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 
@@ -28,3 +39,5 @@
 - ggsave: saving geomImshow() to raster format produces fuzzy picture.
 - geom_livemap: memory leak when re-run cells without reloading a page.
 - Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
+- Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
+- `geom_path` doesn't support different colors for segments [[#313](https://github.com/JetBrains/lets-plot/issues/313)].

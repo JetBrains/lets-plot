@@ -6,12 +6,12 @@
 package jetbrains.datalore.base.event.dom
 
 import jetbrains.datalore.base.event.*
-import jetbrains.datalore.base.js.dom.DomKeyEvent
 import jetbrains.datalore.base.js.dom.DomMouseButtons
-import jetbrains.datalore.base.js.dom.DomMouseEvent
+import org.w3c.dom.events.KeyboardEvent
+import org.w3c.dom.events.MouseEvent
 
 object DomEventUtil {
-    private fun toKeyEvent(e: DomKeyEvent): KeyEvent {
+    private fun toKeyEvent(e: KeyboardEvent): KeyEvent {
         val key = DomKeyCodeMapper.getKey(e.keyCode)
 
         val modifiers = HashSet<ModifierKey>()
@@ -30,11 +30,11 @@ object DomEventUtil {
         return KeyEvent(key, e.charCode.toChar(), modifiers)
     }
 
-    fun matches(e: DomKeyEvent, keyStrokeSpec: KeyStrokeSpec): Boolean {
+    fun matches(e: KeyboardEvent, keyStrokeSpec: KeyStrokeSpec): Boolean {
         return keyStrokeSpec.matches(toKeyEvent(e).keyStroke)
     }
 
-    fun dispatchKeyPress(e: DomKeyEvent, handler: (KeyEvent) -> Unit): Boolean {
+    fun dispatchKeyPress(e: KeyboardEvent, handler: (KeyEvent) -> Unit): Boolean {
         val event = toKeyEvent(e)
         handler(event)
 
@@ -62,13 +62,13 @@ object DomEventUtil {
 
     }
 
-    internal fun dispatchKeyRelease(e: DomKeyEvent, handler: (KeyEvent) -> Unit): Boolean {
+    internal fun dispatchKeyRelease(e: KeyboardEvent, handler: (KeyEvent) -> Unit): Boolean {
         val event = toKeyEvent(e)
         handler(event)
         return !event.isConsumed
     }
 
-    internal fun dispatchKeyType(e: DomKeyEvent, handler: (KeyEvent) -> Unit): Boolean {
+    internal fun dispatchKeyType(e: KeyboardEvent, handler: (KeyEvent) -> Unit): Boolean {
         val event = toKeyEvent(e)
         if (e.charCode < 0x20 || e.charCode == 0x7F) return true
         if (e.charCode.toChar() == '\n') return true
@@ -80,7 +80,7 @@ object DomEventUtil {
         return !event.isConsumed
     }
 
-    fun getButton(e: DomMouseEvent): Button {
+    fun getButton(e: MouseEvent): Button {
         return when (e.button.toInt()) {
             DomMouseButtons.BUTTON_LEFT -> Button.LEFT
             DomMouseButtons.BUTTON_MIDDLE -> Button.MIDDLE
@@ -89,7 +89,7 @@ object DomEventUtil {
         }
     }
 
-    fun getModifiers(e: DomMouseEvent): KeyModifiers {
+    fun getModifiers(e: MouseEvent): KeyModifiers {
         val ctrlKey = e.ctrlKey
         val altKey = e.altKey
         val shiftKey = e.shiftKey

@@ -25,7 +25,7 @@ import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayouter
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.scale.AxisPosition
 import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.vis.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotAssembler constructor(
     private val layersByTile: List<List<GeomLayer>>,

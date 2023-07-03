@@ -17,6 +17,7 @@ import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
+import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Legend
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -65,8 +66,9 @@ class LegendAssembler(
             val keyElementFactory = legendLayer.keyElementFactory
             val dataPoints = legendLayer.keyAesthetics.dataPoints().iterator()
             for (label in legendLayer.keyLabels) {
-                legendBreaksByLabel.getOrPut(label) { LegendBreak(label) }
-                    .addLayer(dataPoints.next(), keyElementFactory)
+                legendBreaksByLabel.getOrPut(label) {
+                    LegendBreak(wrap(label, Legend.LINES_MAX_LENGTH, Legend.LINES_MAX_COUNT))
+                }.addLayer(dataPoints.next(), keyElementFactory)
             }
         }
 
@@ -113,8 +115,8 @@ class LegendAssembler(
 
 
     private class LegendLayer(
-        internal val keyElementFactory: LegendKeyElementFactory,
-        internal val aesList: List<Aes<*>>,
+        val keyElementFactory: LegendKeyElementFactory,
+        val aesList: List<Aes<*>>,
         constantByAes: Map<Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
 //        scaleMap: Map<Aes<*>, Scale>,
@@ -125,8 +127,8 @@ class LegendAssembler(
         fillByAes: Aes<Color>
     ) {
 
-        internal val keyAesthetics: Aesthetics
-        internal val keyLabels: List<String>
+        val keyAesthetics: Aesthetics
+        val keyLabels: List<String>
 
         init {
             val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
@@ -163,6 +165,38 @@ class LegendAssembler(
 
     companion object {
         private const val DEBUG_DRAWING = jetbrains.datalore.plot.FeatureSwitch.LEGEND_DEBUG_DRAWING
+
+        fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
+            if (text.length <= lengthLimit || text.contains("\n")) {
+                return text
+            }
+
+            return text.split(" ")
+                .let { words ->
+                    val lines = mutableListOf(mutableListOf<String>())
+                    words.forEach { word ->
+                        val freeSpace =
+                            lengthLimit - lines.last().let { line -> line.sumOf(String::length) + line.size }
+                                .coerceAtMost(lengthLimit)
+                        when {
+                            freeSpace >= word.length -> lines.last().add(word)
+                            word.length <= lengthLimit -> lines.add(mutableListOf(word))
+                            else -> {
+                                lines.last().takeIf { freeSpace > 0 }?.add(word.take(freeSpace))
+                                word.drop(freeSpace)
+                                    .chunked(lengthLimit)
+                                    .forEach {
+                                        lines.add(mutableListOf<String>(it))
+                                    }
+                            }
+                        }
+                    }
+                    lines
+                }
+                .joinToString(separator = "\n", limit = countLimit) {
+                    it.joinToString(separator = " ")
+                }
+        }
 
         fun createLegendSpec(
             title: String,

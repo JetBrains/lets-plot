@@ -7,12 +7,13 @@ package jetbrains.datalore.plot.base.geom
 
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.LinesHelper
+import jetbrains.datalore.plot.base.geom.util.QuantilesHelper
+import jetbrains.datalore.plot.base.geom.util.TargetCollectorHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.YDensityStat
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class ViolinGeom : GeomBase() {
     var quantiles: List<Double> = YDensityStat.DEF_QUANTILES
@@ -60,20 +61,18 @@ class ViolinGeom : GeomBase() {
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform)
-            appendNodes(paths, root)
+            root.appendNodes(paths)
 
             helper.setAlphaEnabled(false)
-            appendNodes(helper.createLines(points, leftBoundTransform), root)
-            appendNodes(helper.createLines(points, rightBoundTransform), root)
+            root.appendNodes(helper.createLines(points, leftBoundTransform))
+            root.appendNodes(helper.createLines(points, rightBoundTransform))
 
             buildHints(points, ctx, helper, leftBoundTransform)
             buildHints(points, ctx, helper, rightBoundTransform)
         }
 
         if (quantileLines) {
-            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach { quantileLine ->
-                root.add(quantileLine)
-            }
+            createQuantileLines(dataPoints, quantilesHelper, ctx).forEach(root::add)
         }
     }
 
@@ -105,33 +104,12 @@ class ViolinGeom : GeomBase() {
     private fun buildHints(
         dataPoints: Iterable<DataPointAesthetics>,
         ctx: GeomContext,
-        helper: GeomHelper,
+        helper: LinesHelper,
         boundTransform: (p: DataPointAesthetics) -> DoubleVector
     ) {
-        val multiPointDataList = MultiPointDataConstructor.createMultiPointDataByGroup(
-            dataPoints,
-            MultiPointDataConstructor.singlePointAppender { p ->
-                boundTransform(p).let { helper.toClient(it, p) }
-            },
-            MultiPointDataConstructor.reducer(0.999, false)
-        )
-        val targetCollector = getGeomTargetCollector(ctx)
-        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.VIOLIN, ctx)
-
-        for (multiPointData in multiPointDataList) {
-            targetCollector.addPath(
-                multiPointData.points,
-                multiPointData.localToGlobalIndex,
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorMarkerMapper(multiPointData.aes)
-                ),
-                if (ctx.flipped) {
-                    TipLayoutHint.Kind.VERTICAL_TOOLTIP
-                } else {
-                    TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                }
-            )
-        }
+        val pathData = helper.createPathDataByGroup(dataPoints, boundTransform)
+        val targetCollectorHelper = TargetCollectorHelper(GeomKind.VIOLIN, ctx)
+        targetCollectorHelper.addPaths(pathData)
     }
 
     companion object {

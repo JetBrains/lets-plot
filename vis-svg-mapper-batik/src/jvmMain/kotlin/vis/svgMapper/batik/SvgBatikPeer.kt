@@ -7,11 +7,11 @@ package jetbrains.datalore.vis.svgMapper.batik
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.vis.svg.*
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.apache.batik.anim.dom.SVGOMElement
 import org.apache.batik.anim.dom.SVGOMTextContentElement
 import org.apache.batik.dom.svg.SVGOMPoint
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.w3c.dom.Node
 import org.w3c.dom.svg.SVGLocatable
 import org.w3c.dom.svg.SVGTransformable

@@ -45,7 +45,7 @@ object PlotUtil {
                 aes == Aes.Y -> yAesMapper
                 Aes.isPositionalX(aes) -> if (yOrientation) yAesMapper else xAesMapper
                 Aes.isPositionalY(aes) -> if (yOrientation) xAesMapper else yAesMapper
-                layer.hasBinding(aes) -> layer.scaleMapppersNP.getValue(aes)
+                layer.hasBinding(aes) -> layer.scaleMappersNP.getValue(aes)
                 else -> null  // rendered but has no binding - just ignore.
             }
 

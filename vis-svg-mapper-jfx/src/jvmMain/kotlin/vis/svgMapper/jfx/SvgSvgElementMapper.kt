@@ -7,9 +7,9 @@ package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Parent
 import javafx.scene.layout.Pane
-import jetbrains.datalore.mapper.core.MappingContext
-import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 class SvgSvgElementMapper(
     source: SvgSvgElement,

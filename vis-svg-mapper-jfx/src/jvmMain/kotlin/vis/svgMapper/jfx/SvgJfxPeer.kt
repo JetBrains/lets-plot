@@ -9,12 +9,12 @@ import javafx.scene.Node
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.mapper.core.Mapper
-import jetbrains.datalore.vis.StyleSheet
-import jetbrains.datalore.vis.svg.SvgLocatable
-import jetbrains.datalore.vis.svg.SvgNode
-import jetbrains.datalore.vis.svg.SvgPlatformPeer
-import jetbrains.datalore.vis.svg.SvgTextContent
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLocatable
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPlatformPeer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 
 class SvgJfxPeer : SvgPlatformPeer {
     private val myMappingMap = HashMap<SvgNode, Mapper<out SvgNode, out Node>>()

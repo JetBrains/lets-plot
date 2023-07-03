@@ -5,7 +5,9 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
+import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.*
+import jetbrains.datalore.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.base.scale.Scales
 import jetbrains.datalore.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
@@ -73,6 +75,13 @@ class GeomLayerBuilderTest {
 //            .geom(geomProvider)
 //            .pos(posProvider)
 //                .addConstantAes(Aes.ALPHA, 0.5)
+            .geomTheme(object : GeomTheme {
+                override fun color(): Color = Color.PACIFIC_BLUE
+                override fun fill(): Color = Color.PACIFIC_BLUE
+                override fun alpha() = 1.0
+                override fun size() = 0.5
+                override fun lineWidth() = 0.5
+            })
             .addBinding(bindings[0])
             .addBinding(bindings[1])
             .build(data, scaleByAes, scaleMappersNP)
@@ -94,4 +103,5 @@ class GeomLayerBuilderTest {
 //        checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.Y))
         checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.FILL))
     }
+
 }

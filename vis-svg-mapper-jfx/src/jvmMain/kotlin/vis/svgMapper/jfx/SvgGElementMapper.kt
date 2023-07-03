@@ -6,9 +6,9 @@
 package jetbrains.datalore.vis.svgMapper.jfx
 
 import javafx.scene.Group
-import jetbrains.datalore.mapper.core.Synchronizers
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svgMapper.SvgNodeSubtreeGeneratingSynchronizer
+import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.SvgNodeSubtreeGeneratingSynchronizer
 
 internal class SvgGElementMapper(
     source: SvgGElement,
@@ -35,7 +35,7 @@ internal class SvgGElementMapper(
                 SvgNodeSubtreeGeneratingSynchronizer(
                     source,
                     target,
-                    jetbrains.datalore.vis.svgMapper.jfx.JfxSceneTargetPeer()
+                    JfxSceneTargetPeer()
                 )
             )
         }

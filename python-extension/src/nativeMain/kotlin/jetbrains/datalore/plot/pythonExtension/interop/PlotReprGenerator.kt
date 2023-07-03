@@ -9,31 +9,40 @@ import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
+import org.jetbrains.letsPlot.datamodel.mapping.svg.util.UnsupportedRGBEncoder
 
 object PlotReprGenerator {
     fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
-        try {
+        return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
             val html = PlotHtmlHelper.getDynamicDisplayHtmlForRawSpec(plotSpecMap as MutableMap<String, Any>)
-            val result = Py_BuildValue("s", html);
-            return result
+            Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            return Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}");
+            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}");
         }
     }
 
     fun generateSvg(plotSpecDict: CPointer<PyObject>?, useCssPixelatedImageRendering: Int): CPointer<PyObject>? {
-        try {
+        return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
-            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(plotSpecMap as MutableMap<String, Any>, useCssPixelatedImageRendering == 1)
-            val result = Py_BuildValue("s", svg);
-            return result
+            val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
+                plotSpec = plotSpecMap as MutableMap<String, Any>,
+                plotSize = null,
+                UnsupportedRGBEncoder(),  // ToDo: SVG export is not working for 'geom_raster()'
+                useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
+            )
+            Py_BuildValue("s", svg)
         } catch (e: Throwable) {
-            return Py_BuildValue("s", "generateSvg() - Exception: ${e.message}");
+            val svgStr = """
+                <svg style="width:100%;height:100%;" xmlns="http://www.w3.org/2000/svg">
+                    <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
+                </svg>
+            """.trimIndent()
+            Py_BuildValue("s", svgStr);
         }
     }
 
@@ -42,17 +51,19 @@ object PlotReprGenerator {
         scriptUrlCStr: CPointer<ByteVar>,
         iFrame: Int
     ): CPointer<PyObject>? {
-        try {
+        return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
             val scriptUrl = scriptUrlCStr.toKString()
 
             @Suppress("UNCHECKED_CAST")
-            val html =
-                PlotHtmlExport.buildHtmlFromRawSpecs(plotSpecMap as MutableMap<String, Any>, scriptUrl, iFrame == 1)
-            val result = Py_BuildValue("s", html);
-            return result
+            val html = PlotHtmlExport.buildHtmlFromRawSpecs(
+                plotSpec = plotSpecMap as MutableMap<String, Any>,
+                scriptUrl = scriptUrl,
+                iFrame = iFrame == 1
+            )
+            Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            return Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}");
+            Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}");
         }
     }
 }

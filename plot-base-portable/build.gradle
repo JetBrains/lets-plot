@@ -19,7 +19,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':base-portable')
-                implementation project(':vis-svg-portable')
+                implementation project(':datamodel')
                 implementation project(':plot-common-portable')
             }
         }

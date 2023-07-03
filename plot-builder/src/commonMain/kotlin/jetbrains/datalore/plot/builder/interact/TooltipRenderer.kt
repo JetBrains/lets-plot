@@ -32,9 +32,9 @@ import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.HorizontalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgGraphicsElement.Visibility
-import jetbrains.datalore.vis.svg.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 
 internal class TooltipRenderer constructor(

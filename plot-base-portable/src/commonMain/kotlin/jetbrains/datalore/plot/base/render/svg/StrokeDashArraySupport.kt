@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.vis.svg.SvgConstants
-import jetbrains.datalore.vis.svg.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 
 /**
  * The counterpart of SVG 'stroke-dasharray' attribute but

@@ -18,9 +18,9 @@ import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 import jetbrains.datalore.plot.builder.theme.PanelGridTheme
-import jetbrains.datalore.vis.svg.SvgGElement
-import jetbrains.datalore.vis.svg.SvgLineElement
-import jetbrains.datalore.vis.svg.SvgUtils.transformTranslate
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
 import kotlin.math.abs
 
 class AxisComponent(

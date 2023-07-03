@@ -23,7 +23,12 @@ object Stats {
     val THEORETICAL = DataFrame.Variable("..theoretical..", STAT, "theoretical")
     val SE = DataFrame.Variable("..se..", STAT, "standard error")
     val LEVEL = DataFrame.Variable("..level..", STAT, "level")
+    val MEAN = DataFrame.Variable("..mean..", STAT, "mean")
+    val MEDIAN = DataFrame.Variable("..median..", STAT, "median")
     val QUANTILE = DataFrame.Variable("..quantile..", STAT, "quantile")
+    val LOWER_QUANTILE = DataFrame.Variable("..lq..", STAT, "lower quantile")
+    val MIDDLE_QUANTILE = DataFrame.Variable("..mq..", STAT, "middle quantile")
+    val UPPER_QUANTILE = DataFrame.Variable("..uq..", STAT, "upper quantile")
     val LOWER = DataFrame.Variable("..lower..", STAT, "lower")
     val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
     val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
@@ -53,7 +58,12 @@ object Stats {
             THEORETICAL,
             SE,
             LEVEL,
+            MEAN,
+            MEDIAN,
             QUANTILE,
+            LOWER_QUANTILE,
+            MIDDLE_QUANTILE,
+            UPPER_QUANTILE,
             LOWER,
             MIDDLE,
             UPPER,

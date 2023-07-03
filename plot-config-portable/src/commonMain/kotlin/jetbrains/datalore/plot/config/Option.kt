@@ -429,6 +429,14 @@ object Option {
             const val DISTRIBUTION_PARAMETERS = "dparams"
             const val LINE_QUANTILES = "quantiles"
         }
+
+        object Summary {
+            const val QUANTILES = "quantiles"
+            const val FUN = "fun"
+            const val FUN_MIN = "fun_min"
+            const val FUN_MAX = "fun_max"
+            const val FUN_MAP = "fun_map"
+        }
     }
 
     object Pos {

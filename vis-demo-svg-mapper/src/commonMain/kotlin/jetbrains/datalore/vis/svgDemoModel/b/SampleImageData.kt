@@ -9,7 +9,7 @@ import jetbrains.datalore.base.values.Color.Companion.BLACK
 import jetbrains.datalore.base.values.Color.Companion.BLUE
 import jetbrains.datalore.base.values.Color.Companion.GREEN
 import jetbrains.datalore.base.values.Color.Companion.RED
-import jetbrains.datalore.vis.svg.SvgUtils.toARGB
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.toARGB
 
 internal object SampleImageData {
     const val MINDUKA_PRESENT_BLUE_PACK =

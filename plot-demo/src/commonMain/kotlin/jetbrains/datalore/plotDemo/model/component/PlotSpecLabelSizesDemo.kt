@@ -17,8 +17,8 @@ import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
-import jetbrains.datalore.vis.svg.SvgRectElement
-import jetbrains.datalore.vis.svg.SvgUtils
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

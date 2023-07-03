@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgMapper.jfx.attr
 
 import javafx.scene.shape.Rectangle
-import jetbrains.datalore.vis.svg.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
     override fun setAttribute(target: Rectangle, name: String, value: Any?) {

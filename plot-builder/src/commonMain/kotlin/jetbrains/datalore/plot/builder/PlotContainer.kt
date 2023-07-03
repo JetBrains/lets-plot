@@ -12,7 +12,7 @@ import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.builder.interact.Interactor
 import jetbrains.datalore.plot.builder.interact.PlotToolbox
-import jetbrains.datalore.vis.svg.SvgSvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
 class PlotContainer constructor(
     private val svgRoot: PlotSvgRoot,

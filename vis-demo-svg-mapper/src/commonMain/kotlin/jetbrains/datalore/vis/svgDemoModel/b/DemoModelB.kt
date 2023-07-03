@@ -7,10 +7,10 @@ package jetbrains.datalore.vis.svgDemoModel.b
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.vis.svg.*
-import jetbrains.datalore.vis.svg.SvgImageElementEx.Bitmap
-import jetbrains.datalore.vis.svg.event.SvgEventHandler
-import jetbrains.datalore.vis.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 object DemoModelB {
     fun createModel(): SvgSvgElement {

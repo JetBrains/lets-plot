@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.plotDemo.model.component.AxisComponentDemo
-import jetbrains.datalore.vis.browser.DomMapperDemoUtil.mapToDom
+import org.jetbrains.letsPlot.datamodel.mapping.svg.util.SvgToW3c.generateDom
 
 /**
  * Called from generated HTML
@@ -15,7 +15,7 @@ import jetbrains.datalore.vis.browser.DomMapperDemoUtil.mapToDom
 fun axisComponentDemo() {
     with(AxisComponentDemo()) {
         val svgRoots = createSvgRoots()
-        mapToDom(svgRoots, "root")
+        generateDom(svgRoots, "root")
     }
 }
 

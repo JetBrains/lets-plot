@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 open class BaseStatTest {
     protected fun statContext(d: DataFrame): StatContext {
-        return SimpleStatContext(d)
+        return SimpleStatContext(d, emptyList())
     }
 
     protected fun dataFrame(dataMap: Map<DataFrame.Variable, List<Double?>>): DataFrame {

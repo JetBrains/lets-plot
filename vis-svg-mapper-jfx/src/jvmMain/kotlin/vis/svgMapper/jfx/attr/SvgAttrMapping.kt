@@ -8,9 +8,9 @@ package jetbrains.datalore.vis.svgMapper.jfx.attr
 import javafx.scene.Node
 import javafx.scene.shape.Rectangle
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.vis.svg.*
 import jetbrains.datalore.vis.svgMapper.jfx.unScaleTransforms
 import jetbrains.datalore.vis.svgToScene.parseSvgTransform
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 internal abstract class SvgAttrMapping<in TargetT : Node> {
     open fun setAttribute(target: TargetT, name: String, value: Any?) {

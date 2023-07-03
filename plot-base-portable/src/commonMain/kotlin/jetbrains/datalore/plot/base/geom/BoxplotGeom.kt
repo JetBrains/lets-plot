@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.geom.util.HintColorUtil.colorWithAlpha
 import jetbrains.datalore.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.vis.svg.SvgLineElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class BoxplotGeom : GeomBase() {
 
@@ -111,7 +111,7 @@ class BoxplotGeom : GeomBase() {
     }
 
     companion object {
-        const val DEF_FATTEN_MIDLINE = 2.5
+        const val DEF_FATTEN_MIDLINE = 2.0
         const val DEF_WHISKER_WIDTH = 0.5
         const val HANDLES_GROUPS = false
 
