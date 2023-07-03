@@ -27,7 +27,9 @@ open class AestheticsDefaults(geomTheme: GeomTheme) {
         put(Aes.LINEWIDTH, geomTheme.lineWidth())
         put(Aes.STROKE, geomTheme.lineWidth())
     }
-    private val myDefaultsInLegend = TypedKeyHashMap()
+    private val myDefaultsInLegend = TypedKeyHashMap().apply {
+        put(Aes.ALPHA, 1.0)
+    }
 
     private fun <T> update(aes: Aes<T>, defaultValue: T): AestheticsDefaults {
         myDefaults.put(aes, defaultValue)
