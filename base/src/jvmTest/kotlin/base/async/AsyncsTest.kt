@@ -7,6 +7,9 @@ package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.async.asyncAssert.AsyncAssert.Companion.assertThat
 import jetbrains.datalore.base.function.Supplier
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import kotlin.test.Test
 import kotlin.test.fail
 

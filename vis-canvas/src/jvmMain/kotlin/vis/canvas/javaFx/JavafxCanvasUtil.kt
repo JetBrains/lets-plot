@@ -12,8 +12,8 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.SimpleAsync
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import jetbrains.datalore.base.geometry.Vector
 import java.io.ByteArrayInputStream
 import java.io.IOException

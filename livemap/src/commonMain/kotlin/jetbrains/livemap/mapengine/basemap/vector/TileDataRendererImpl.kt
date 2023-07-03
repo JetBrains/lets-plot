@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.vector
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color

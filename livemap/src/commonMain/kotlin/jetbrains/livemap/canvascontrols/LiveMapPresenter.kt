@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.canvascontrols
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.observable.property.Properties
 import jetbrains.datalore.base.observable.property.PropertyBinding
 import jetbrains.datalore.base.observable.property.ValueProperty

@@ -8,7 +8,7 @@ package jetbrains.livemap.canvasDemo
 import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.stage.Stage
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas

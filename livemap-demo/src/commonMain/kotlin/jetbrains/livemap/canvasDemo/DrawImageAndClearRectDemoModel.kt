@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.canvasDemo
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas

@@ -9,7 +9,7 @@ import javafx.scene.SnapshotParameters
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.ScaledCanvas

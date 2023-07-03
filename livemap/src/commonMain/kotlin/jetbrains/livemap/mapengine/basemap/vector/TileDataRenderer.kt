@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.vector
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.mapengine.basemap.BasemapLayerKind

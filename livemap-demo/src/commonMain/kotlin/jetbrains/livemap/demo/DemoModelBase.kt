@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.base.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl

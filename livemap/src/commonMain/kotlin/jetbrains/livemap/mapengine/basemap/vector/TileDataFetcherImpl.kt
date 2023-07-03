@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapengine.basemap.vector
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import jetbrains.datalore.base.spatial.*
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.TileLayer

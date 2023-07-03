@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.async
+package org.jetbrains.letsPlot.base.intern.async
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Runnable
@@ -101,9 +101,10 @@ object Asyncs {
     }
 
     internal fun <SourceT, TargetT, AsyncResultT : SourceT> map(
-            async: Async<AsyncResultT>,
-            f: (SourceT) -> TargetT,
-            resultAsync: ResolvableAsync<TargetT>):
+        async: Async<AsyncResultT>,
+        f: (SourceT) -> TargetT,
+        resultAsync: ResolvableAsync<TargetT>
+    ):
             Async<TargetT> {
 
         async.onResult(
@@ -123,9 +124,10 @@ object Asyncs {
     }
 
     internal fun <SourceT, TargetT> select(
-            async: Async<SourceT>,
-            f: (SourceT) -> Async<TargetT>?,
-            resultAsync: ResolvableAsync<TargetT?>):
+        async: Async<SourceT>,
+        f: (SourceT) -> Async<TargetT>?,
+        resultAsync: ResolvableAsync<TargetT?>
+    ):
             Async<TargetT?> {
 
         async.onResult(

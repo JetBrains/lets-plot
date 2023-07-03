@@ -6,6 +6,10 @@
 package jetbrains.datalore.base.async
 
 import jetbrains.datalore.base.async.asyncAssert.AsyncAssert.Companion.assertThat
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.PlatformAsyncs
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
+import org.jetbrains.letsPlot.base.intern.async.ThrowableCollectionException
 import kotlin.test.Test
 
 
@@ -19,7 +23,8 @@ class PlatformAsyncsTest {
     @Test
     fun parallelFailure() {
         val exception = RuntimeException()
-        assertThat(PlatformAsyncs.parallel(
+        assertThat(
+            PlatformAsyncs.parallel(
                 Asyncs.constant(1),
                 Asyncs.failure<Int>(exception)))
                 .failure().isSameAs(exception)

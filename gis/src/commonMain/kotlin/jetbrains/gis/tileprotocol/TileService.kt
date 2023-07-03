@@ -5,8 +5,8 @@
 
 package jetbrains.gis.tileprotocol
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.ThreadSafeAsync
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.ThreadSafeAsync
 import jetbrains.datalore.base.concurrent.Lock
 import jetbrains.datalore.base.concurrent.execute
 import jetbrains.datalore.base.json.JsonSupport

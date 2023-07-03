@@ -13,6 +13,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.sameInstance
+import org.jetbrains.letsPlot.base.intern.async.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -33,13 +34,15 @@ class CompositeAsyncTest {
 
     @Test
     fun alreadySucceeded() {
-        assertThat(PlatformAsyncs.composite(listOf(Asyncs.constant(0))),
+        assertThat(
+            PlatformAsyncs.composite(listOf(Asyncs.constant(0))),
                 AsyncMatchers.succeeded())
     }
 
     @Test
     fun emptyRequest() {
-        assertThat(PlatformAsyncs.composite(emptyList<Async<Int>>()),
+        assertThat(
+            PlatformAsyncs.composite(emptyList<Async<Int>>()),
                 AsyncMatchers.result(Matchers.hasSize(0)))
     }
 

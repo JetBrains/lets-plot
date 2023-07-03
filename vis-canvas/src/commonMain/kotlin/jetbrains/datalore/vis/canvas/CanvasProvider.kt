@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.canvas
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.canvas.dom
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.SimpleAsync
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector

@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.async.SimpleAsync
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature
 import jetbrains.gis.geoprotocol.GeoResponseBuilder.GeocodingAnswerBuilder
 import jetbrains.gis.geoprotocol.GeoResponseBuilder.NamesakeBuilder

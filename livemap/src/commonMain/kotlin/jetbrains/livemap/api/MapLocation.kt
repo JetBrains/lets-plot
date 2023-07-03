@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.geoprotocol.MapRegion

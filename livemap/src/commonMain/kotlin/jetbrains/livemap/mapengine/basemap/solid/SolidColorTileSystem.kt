@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.solid
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas

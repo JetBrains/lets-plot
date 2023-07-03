@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.async.asyncAssert
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.async.asyncAssert.AsyncResult.AsyncState
 import jetbrains.datalore.base.async.asyncAssert.AsyncResult.Companion.getResult
 import org.assertj.core.api.AbstractAssert

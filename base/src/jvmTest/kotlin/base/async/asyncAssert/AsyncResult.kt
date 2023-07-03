@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.async.asyncAssert
 
-import jetbrains.datalore.base.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Async
 import jetbrains.datalore.base.function.Value
 
 internal class AsyncResult<T> private constructor(val state: AsyncState, val value: T?, val error: Throwable?) {

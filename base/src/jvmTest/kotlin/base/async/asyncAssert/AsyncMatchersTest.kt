@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.base.async.asyncAssert
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
-import jetbrains.datalore.base.async.PlatformAsyncs
-import jetbrains.datalore.base.async.SimpleAsync
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.PlatformAsyncs
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failed
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failureIs
 import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.result
@@ -22,7 +22,8 @@ class AsyncMatchersTest {
 
     @Test
     fun resultSucceeded() {
-        assertionFailure(Asyncs.constant(239), result(`is`(238)),
+        assertionFailure(
+            Asyncs.constant(239), result(`is`(238)),
                 "\n" +
                         "Expected: a successful async which result is <238>\n" +
                         "     but: result was <239>"
@@ -31,7 +32,8 @@ class AsyncMatchersTest {
 
     @Test
     fun resultFailed() {
-        assertionFailure(Asyncs.failure<Int>(Throwable()), result(`is`(0)),
+        assertionFailure(
+            Asyncs.failure<Int>(Throwable()), result(`is`(0)),
                 "\n" +
                         "Expected: a successful async which result is <0>\n" +
                         "     but: failed with exception: <java.lang.Throwable>"
@@ -53,7 +55,8 @@ class AsyncMatchersTest {
 
     @Test
     fun failureSucceeded() {
-        assertionFailure(Asyncs.constant(239), failed(),
+        assertionFailure(
+            Asyncs.constant(239), failed(),
                 "\n" +
                         "Expected: a failed async which failure ANYTHING\n" +
                         "     but: was a successful async with value: <239>"
@@ -67,7 +70,8 @@ class AsyncMatchersTest {
 
     @Test
     fun failureMessage() {
-        assertionFailure(Asyncs.failure<Any>(IllegalStateException("1")), failureIs(IllegalStateException::class.java, "2"),
+        assertionFailure(
+            Asyncs.failure<Any>(IllegalStateException("1")), failureIs(IllegalStateException::class.java, "2"),
                 "\n" +
                         "Expected: a failed async which failure <java.lang.IllegalStateException: 2>\n" +
                         "     but: failure was <java.lang.IllegalStateException: 1>"
@@ -76,7 +80,8 @@ class AsyncMatchersTest {
 
     @Test
     fun failureClassMismatch() {
-        assertionFailure(Asyncs.failure<Any>(IllegalStateException("1")), failureIs(RuntimeException::class.java, "1"),
+        assertionFailure(
+            Asyncs.failure<Any>(IllegalStateException("1")), failureIs(RuntimeException::class.java, "1"),
                 "\n" +
                         "Expected: a failed async which failure <java.lang.RuntimeException: 1>\n" +
                         "     but: failure was <java.lang.IllegalStateException: 1>"

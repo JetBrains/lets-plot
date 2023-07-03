@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.canvas.dom
 
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.Asyncs
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.js.css.setHeight
 import jetbrains.datalore.base.js.css.setWidth

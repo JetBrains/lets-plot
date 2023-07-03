@@ -7,7 +7,7 @@
 
 package jetbrains.datalore.jetbrains.livemap
 
-import jetbrains.datalore.base.async.SimpleAsync
+import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec

@@ -9,8 +9,8 @@ import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import jetbrains.datalore.base.async.Async
-import jetbrains.datalore.base.async.ThreadSafeAsync
+import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.base.intern.async.ThreadSafeAsync
 import kotlinx.coroutines.launch
 
 class HttpTileTransport {
