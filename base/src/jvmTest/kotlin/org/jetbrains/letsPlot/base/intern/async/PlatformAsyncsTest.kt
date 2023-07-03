@@ -3,9 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.async
+package jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async
 
-import jetbrains.datalore.base.async.asyncAssert.AsyncAssert.Companion.assertThat
+import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncAssert.Companion.assertThat
 import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import org.jetbrains.letsPlot.base.intern.async.PlatformAsyncs
 import org.jetbrains.letsPlot.base.intern.async.SimpleAsync

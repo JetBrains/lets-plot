@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.async
+package jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async
 
-import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers
-import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.failure
-import jetbrains.datalore.base.async.asyncAssert.AsyncMatchers.unfinished
+import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers
+import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failure
+import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.unfinished
 import org.hamcrest.CustomTypeSafeMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
