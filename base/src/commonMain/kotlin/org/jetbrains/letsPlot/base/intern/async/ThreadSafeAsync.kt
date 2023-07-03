@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.base.intern.async
 
-import jetbrains.datalore.base.concurrent.Lock
-import jetbrains.datalore.base.concurrent.execute
+import org.jetbrains.letsPlot.base.intern.concurrent.Lock
+import org.jetbrains.letsPlot.base.intern.concurrent.execute
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.registration.Registration
 

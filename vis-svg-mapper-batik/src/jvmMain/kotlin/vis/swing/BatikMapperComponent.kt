@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.swing
 
-import jetbrains.datalore.base.awt.AwtContainerDisposer
+import org.jetbrains.letsPlot.base.platf.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.DisposableRegistration

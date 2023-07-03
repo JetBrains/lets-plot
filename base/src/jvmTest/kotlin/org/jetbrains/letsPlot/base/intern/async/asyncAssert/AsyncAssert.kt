@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert
+package org.jetbrains.letsPlot.base.intern.async.asyncAssert
 
 import org.jetbrains.letsPlot.base.intern.async.Async
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncResult.AsyncState
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncResult.Companion.getResult
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncResult.AsyncState
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncResult.Companion.getResult
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.AbstractObjectAssert
 import org.assertj.core.api.AbstractThrowableAssert

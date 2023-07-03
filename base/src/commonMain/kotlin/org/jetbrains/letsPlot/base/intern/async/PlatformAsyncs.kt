@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.base.intern.async
 
-import jetbrains.datalore.base.concurrent.AtomicInteger
-import jetbrains.datalore.base.concurrent.Lock
-import jetbrains.datalore.base.concurrent.execute
+import org.jetbrains.letsPlot.base.intern.concurrent.AtomicInteger
+import org.jetbrains.letsPlot.base.intern.concurrent.Lock
+import org.jetbrains.letsPlot.base.intern.concurrent.execute
 import jetbrains.datalore.base.gcommon.collect.TreeMap
 
 object PlatformAsyncs {

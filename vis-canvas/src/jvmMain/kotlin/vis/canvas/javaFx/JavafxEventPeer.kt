@@ -8,7 +8,7 @@ package jetbrains.datalore.vis.canvas.javaFx
 import javafx.scene.Node
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.jfx.JfxEventUtil
+import org.jetbrains.letsPlot.base.platf.jfx.JfxEventUtil
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.EventPeer

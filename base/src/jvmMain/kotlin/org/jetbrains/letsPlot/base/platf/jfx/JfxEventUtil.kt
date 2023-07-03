@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.event.jfx
+package org.jetbrains.letsPlot.base.platf.jfx
 
 import javafx.scene.input.MouseButton
 import jetbrains.datalore.base.event.Button
@@ -19,7 +19,8 @@ object JfxEventUtil {
             e.x.roundToInt() - offset.x,
             e.y.roundToInt() - offset.y,
             getButton(e),
-            getModifiers(e))
+            getModifiers(e)
+        )
     }
 
     private fun getModifiers(e: JfxMouseEvent): KeyModifiers {

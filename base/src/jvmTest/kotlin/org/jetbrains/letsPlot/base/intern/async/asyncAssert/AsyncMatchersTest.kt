@@ -3,15 +3,15 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert
+package org.jetbrains.letsPlot.base.intern.async.asyncAssert
 
 import org.jetbrains.letsPlot.base.intern.async.Async
 import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import org.jetbrains.letsPlot.base.intern.async.PlatformAsyncs
 import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failed
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failureIs
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.result
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failed
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failureIs
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.result
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`

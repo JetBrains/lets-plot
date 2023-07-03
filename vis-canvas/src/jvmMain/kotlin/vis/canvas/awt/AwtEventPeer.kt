@@ -9,7 +9,7 @@ package jetbrains.datalore.vis.canvas.awt
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
-import jetbrains.datalore.base.event.awt.AwtEventUtil
+import org.jetbrains.letsPlot.base.platf.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.EventPeer

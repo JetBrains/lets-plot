@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async
+package org.jetbrains.letsPlot.base.intern.async
 
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failure
-import jetbrains.datalore.org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.unfinished
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.failure
+import org.jetbrains.letsPlot.base.intern.async.asyncAssert.AsyncMatchers.unfinished
 import org.hamcrest.CustomTypeSafeMatcher
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat

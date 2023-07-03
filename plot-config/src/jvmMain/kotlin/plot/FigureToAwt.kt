@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.awt.AwtEventUtil
+import org.jetbrains.letsPlot.base.platf.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
