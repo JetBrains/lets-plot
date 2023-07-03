@@ -237,7 +237,7 @@ object Stats {
     }
 
     fun boxplotOutlier(
-        whiskerIQRRatio: Double = BoxplotStat.DEF_WHISKER_IQR_RATIO,
+        whiskerIQRRatio: Double = BoxplotStat.DEF_WHISKER_IQR_RATIO
     ): BoxplotOutlierStat {
         return BoxplotOutlierStat(whiskerIQRRatio)
     }
