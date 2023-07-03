@@ -5,32 +5,37 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.svg.w3c
 
-import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.base.intern.js.dom.DomEventType
+import org.jetbrains.letsPlot.base.intern.js.dom.on
+import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
 import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
+import org.jetbrains.letsPlot.datamodel.mapping.svg.w3c.domExtensions.on
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
-import org.jetbrains.letsPlot.datamodel.mapping.svg.w3c.domExtensions.on
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import org.w3c.dom.svg.SVGElement
 
-internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(source: SourceT, target: TargetT, private val myPeer: SvgDomPeer) :
-        SvgNodeMapper<SourceT, TargetT>(source, target, myPeer) {
+internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(
+    source: SourceT,
+    target: TargetT,
+    private val myPeer: SvgDomPeer
+) :
+    SvgNodeMapper<SourceT, TargetT>(source, target, myPeer) {
     private var myHandlersRegs: MutableMap<SvgEventSpec, Registration>? = null
 
     override fun registerSynchronizers(conf: SynchronizersConfiguration) {
         super.registerSynchronizers(conf)
 
-        conf.add(object: Synchronizer {
+        conf.add(object : Synchronizer {
             private var myReg: Registration? = null
 
             override fun attach(ctx: SynchronizerContext) {
@@ -71,7 +76,7 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(sour
                     }
                     if (!value.contains(spec) || myHandlersRegs!!.containsKey(spec)) continue
 
-                    val event: DomEventType<MouseEvent> = when(spec) {
+                    val event: DomEventType<MouseEvent> = when (spec) {
                         SvgEventSpec.MOUSE_CLICKED -> DomEventType.CLICK
                         SvgEventSpec.MOUSE_PRESSED -> DomEventType.MOUSE_DOWN
                         SvgEventSpec.MOUSE_RELEASED -> DomEventType.MOUSE_UP
@@ -99,7 +104,7 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(sour
     override fun onDetach() {
         super.onDetach()
         if (myHandlersRegs != null) {
-            for  (registration in myHandlersRegs!!.values) {
+            for (registration in myHandlersRegs!!.values) {
                 registration.dispose()
             }
             myHandlersRegs!!.clear()
@@ -110,10 +115,10 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(sour
         evt.stopPropagation()
         val coords = myPeer.inverseScreenTransform(source, DoubleVector(evt.clientX.toDouble(), evt.clientY.toDouble()))
         return jetbrains.datalore.base.event.MouseEvent(
-                coords.x.toInt(),
-                coords.y.toInt(),
-                DomEventUtil.getButton(evt),
-                DomEventUtil.getModifiers(evt)
+            coords.x.toInt(),
+            coords.y.toInt(),
+            DomEventUtil.getButton(evt),
+            DomEventUtil.getModifiers(evt)
         )
     }
 }

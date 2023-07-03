@@ -7,7 +7,7 @@
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.jsObject.dynamicObjectToMap
+import org.jetbrains.letsPlot.base.intern.jsObject.dynamicObjectToMap
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success

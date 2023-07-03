@@ -6,14 +6,14 @@
 package jetbrains.datalore.vis.canvas.dom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.js.css.enumerables.CssLineCap
-import jetbrains.datalore.base.js.css.enumerables.CssLineJoin
-import jetbrains.datalore.base.js.css.enumerables.CssTextAlign
-import jetbrains.datalore.base.js.css.enumerables.CssTextBaseLine
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.DomSnapshot
+import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssLineCap
+import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssLineJoin
+import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssTextAlign
+import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssTextBaseLine
 import org.w3c.dom.*
 
 internal class DomContext2d(
@@ -91,7 +91,14 @@ internal class DomContext2d(
     override fun moveTo(x: Double, y: Double) = ctx.moveTo(x, y)
     override fun lineTo(x: Double, y: Double) = ctx.lineTo(x, y)
 
-    override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
+    override fun arc(
+        x: Double,
+        y: Double,
+        radius: Double,
+        startAngle: Double,
+        endAngle: Double,
+        anticlockwise: Boolean
+    ) {
         ctx.arc(x, y, radius, startAngle, endAngle, anticlockwise)
     }
 

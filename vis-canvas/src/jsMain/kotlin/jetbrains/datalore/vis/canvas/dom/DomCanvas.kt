@@ -8,13 +8,13 @@ package jetbrains.datalore.vis.canvas.dom
 import org.jetbrains.letsPlot.base.intern.async.Async
 import org.jetbrains.letsPlot.base.intern.async.Asyncs
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.js.css.setHeight
-import jetbrains.datalore.base.js.css.setWidth
-import jetbrains.datalore.base.js.dom.context2d
+import org.jetbrains.letsPlot.base.intern.js.css.setHeight
+import org.jetbrains.letsPlot.base.intern.js.css.setWidth
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.ScaledCanvas
 import kotlinx.browser.document
 import kotlinx.browser.window
+import org.jetbrains.letsPlot.base.intern.js.dom.context2d
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import kotlin.math.ceil

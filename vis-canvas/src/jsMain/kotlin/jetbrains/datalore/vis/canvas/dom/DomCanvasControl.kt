@@ -10,8 +10,7 @@ import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.js.css.enumerables.CssPosition
-import jetbrains.datalore.base.js.css.setPosition
+import org.jetbrains.letsPlot.base.intern.js.css.setPosition
 import jetbrains.datalore.base.observable.event.EventHandler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
@@ -20,6 +19,7 @@ import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
+import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssPosition
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Image

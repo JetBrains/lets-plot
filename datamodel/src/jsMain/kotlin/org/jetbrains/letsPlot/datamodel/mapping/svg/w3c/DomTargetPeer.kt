@@ -5,23 +5,23 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.svg.w3c
 
-import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
-import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
-import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
+import kotlinx.browser.document
+import org.jetbrains.letsPlot.base.intern.js.dom.DomEventType
+import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
 import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.TargetPeer
 import org.jetbrains.letsPlot.datamodel.mapping.svg.w3c.domUtil.DomUtil
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.events.MouseEvent
-import kotlinx.browser.document
 
 internal class DomTargetPeer : TargetPeer<Node> {
     override fun appendChild(target: Node, child: Node) {

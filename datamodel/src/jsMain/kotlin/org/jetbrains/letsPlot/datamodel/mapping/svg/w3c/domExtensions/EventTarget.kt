@@ -7,13 +7,13 @@ package org.jetbrains.letsPlot.datamodel.mapping.svg.w3c.domExtensions
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.base.intern.js.dom.DomEventType
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 
-fun <EventT: Event> EventTarget.on(event: DomEventType<EventT>, handler: Consumer<Event>): Registration {
+fun <EventT : Event> EventTarget.on(event: DomEventType<EventT>, handler: Consumer<Event>): Registration {
     return on(event, object : Function<Event, Boolean> {
         override fun apply(value: Event): Boolean {
             handler.invoke(value)
@@ -22,7 +22,7 @@ fun <EventT: Event> EventTarget.on(event: DomEventType<EventT>, handler: Consume
     })
 }
 
-fun <EventT: Event> EventTarget.on(event: DomEventType<EventT>, handler: Function<Event, Boolean>): Registration {
+fun <EventT : Event> EventTarget.on(event: DomEventType<EventT>, handler: Function<Event, Boolean>): Registration {
     return onEvent(event, object : EventListener {
         override fun handleEvent(event: Event) {
             val result = handler.apply(event)
@@ -34,10 +34,10 @@ fun <EventT: Event> EventTarget.on(event: DomEventType<EventT>, handler: Functio
     }, false)
 }
 
-fun <EventT: Event> EventTarget.onEvent(
-        type: DomEventType<EventT>,
-        listener: EventListener,
-        capture: Boolean
+fun <EventT : Event> EventTarget.onEvent(
+    type: DomEventType<EventT>,
+    listener: EventListener,
+    capture: Boolean
 ): Registration {
     addEventListener(type.name, listener, capture)
     return object : Registration() {

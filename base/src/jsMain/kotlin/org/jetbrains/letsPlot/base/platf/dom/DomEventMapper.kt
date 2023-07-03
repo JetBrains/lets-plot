@@ -9,10 +9,10 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.js.dom.DomEventType
-import jetbrains.datalore.base.js.dom.on
 import jetbrains.datalore.base.registration.Registration
 import kotlinx.browser.document
+import org.jetbrains.letsPlot.base.intern.js.dom.DomEventType
+import org.jetbrains.letsPlot.base.intern.js.dom.on
 import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil.getButton
 import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil.getModifiers
 import org.w3c.dom.Element
