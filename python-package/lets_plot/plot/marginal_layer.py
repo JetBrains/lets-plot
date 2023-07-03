@@ -1,7 +1,7 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from .core import FeatureSpec, LayerSpec, DummySpec
+from .core import FeatureSpec, LayerSpec, DummySpec, FeatureSpecArray
 
 __all__ = ["ggmarginal"]
 
@@ -72,6 +72,14 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
         raise TypeError("'sides' must be a string.")
     if not 0 < len(sides) <= 4:
         raise ValueError("'sides' must be a string containing 1 to 4 chars: 'l','r','t','b'.")
+
+    # Recursive call when layer is sum of geoms
+    if isinstance(layer, FeatureSpecArray):
+        result = DummySpec()
+        for sublayer in layer.elements():
+            result += ggmarginal(sides, size=size, layer=sublayer)
+        return result
+
     if not isinstance(layer, LayerSpec):
         raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
 
@@ -127,7 +135,7 @@ def _to_marginal(side: str, size, layer: LayerSpec) -> LayerSpec:
             layer_kind = 'histogram'
         elif stat == 'ydensity':
             layer_kind = 'violin'
-        elif stat in ('density', 'boxplot'):
+        elif stat in ('density', 'boxplot', 'boxplot_outlier'):
             layer_kind = stat
     else:
         geom = layer_props.get('geom')
@@ -140,7 +148,7 @@ def _to_marginal(side: str, size, layer: LayerSpec) -> LayerSpec:
     if (side in ('l', 'r') and layer_kind in ('histogram', 'density', 'freqpoly')):
         auto_settings['orientation'] = 'y'
 
-    if layer_kind in ('boxplot', 'violin'):
+    if layer_kind in ('boxplot', 'boxplot_outlier', 'violin'):
         if side in ('l', 'r'):
             auto_settings['x'] = 0
         elif side in ('t', 'b'):
