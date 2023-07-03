@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.svg.w3c
 
-import jetbrains.datalore.base.event.dom.DomEventUtil
+import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.dom.DomEventType

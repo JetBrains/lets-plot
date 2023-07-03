@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.base.event.dom.DomEventMapper
+import org.jetbrains.letsPlot.base.platf.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl

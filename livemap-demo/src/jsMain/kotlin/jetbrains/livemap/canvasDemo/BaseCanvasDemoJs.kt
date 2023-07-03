@@ -6,7 +6,7 @@
 package jetbrains.livemap.canvasDemo
 
 import org.jetbrains.letsPlot.base.intern.async.Async
-import jetbrains.datalore.base.event.dom.DomEventMapper
+import org.jetbrains.letsPlot.base.platf.dom.DomEventMapper
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl

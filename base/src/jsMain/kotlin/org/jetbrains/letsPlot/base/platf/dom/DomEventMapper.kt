@@ -1,20 +1,20 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.event.dom
+package org.jetbrains.letsPlot.base.platf.dom
 
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.dom.DomEventUtil.getButton
-import jetbrains.datalore.base.event.dom.DomEventUtil.getModifiers
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.js.dom.DomEventType
 import jetbrains.datalore.base.js.dom.on
 import jetbrains.datalore.base.registration.Registration
 import kotlinx.browser.document
+import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil.getButton
+import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil.getModifiers
 import org.w3c.dom.Element
 
 typealias DomMouseEvent = org.w3c.dom.events.MouseEvent
@@ -105,7 +105,10 @@ class DomEventMapper(
                 DomEventType.MOUSE_LEAVE -> dispatch(MouseEventSpec.MOUSE_LEFT, e)
                 DomEventType.MOUSE_ENTER -> dispatch(MouseEventSpec.MOUSE_ENTERED, e)
 
-                DomEventType.DOUBLE_CLICK -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e) // wish can handle in ButtonDownState
+                DomEventType.DOUBLE_CLICK -> dispatch(
+                    MouseEventSpec.MOUSE_DOUBLE_CLICKED,
+                    e
+                ) // wish can handle in ButtonDownState
                 DomEventType.MOUSE_UP, DomEventType.CLICK -> {} // ignore to prevent ghost clicks on UI
             }
         }
@@ -118,7 +121,9 @@ class DomEventMapper(
 
         override fun handleEvent(type: DomEventType<DomMouseEvent>, e: DomMouseEvent) {
             when (type) {
-                DomEventType.MOUSE_UP -> { dispatch(MouseEventSpec.MOUSE_RELEASED, e) }
+                DomEventType.MOUSE_UP -> {
+                    dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+                }
 
                 // It's safe to set HoverState on CLICK as DOM raises CLICK event exactly after MOUSE_UP,
                 DomEventType.CLICK -> {
