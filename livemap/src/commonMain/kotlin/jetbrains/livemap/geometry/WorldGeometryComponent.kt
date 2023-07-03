@@ -10,5 +10,5 @@ import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.EcsComponent
 
 class WorldGeometryComponent : EcsComponent {
-    var geometry: Geometry<World>? = null
+    lateinit var geometry: Geometry<World>
 }

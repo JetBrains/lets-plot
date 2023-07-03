@@ -1,9 +1,12 @@
 package jetbrains.livemap.chart
 
 import jetbrains.datalore.base.typedGeometry.Geometry
+import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.values.Color
+import jetbrains.livemap.Client
 import jetbrains.livemap.World
-import jetbrains.livemap.chart.Renderers.PathRenderer.ArrowSpec
+import jetbrains.livemap.chart.path.PathRenderer.ArrowSpec
+import jetbrains.livemap.chart.text.TextSpec
 import jetbrains.livemap.core.ecs.EcsComponent
 
 // Predefined location of a chart element, used by map to initialize its viewport initial state
@@ -42,3 +45,12 @@ class PieSpecComponent : EcsComponent {
     var colors: List<Color> = emptyList()
     var explodeValues: List<Double>? = null
 }
+
+class SearchResultComponent : EcsComponent {
+    var hoverObjects: List<HoverObject> = emptyList()
+    var zoom : Int? = null
+    var cursorPosition : Vec<Client>? = null
+}
+
+class IndexComponent(val layerIndex: Int, val index: Int): EcsComponent
+class LocatorComponent(val locator: Locator): EcsComponent

@@ -98,7 +98,7 @@ class PathWrappingTest : LiveMapTestBase() {
                 .isEqualTo(3)
         }
 
-        with(getSingletonComponent<WorldGeometryComponent>().geometry!!) {
+        with(getSingletonComponent<WorldGeometryComponent>().geometry) {
             // Wrapped across the antimeridian
             assertThat(multiLineString.size)
                 .isEqualTo(2)
@@ -148,7 +148,7 @@ class PathWrappingTest : LiveMapTestBase() {
                 .isEqualTo(3)
         }
 
-        with(getSingletonComponent<WorldGeometryComponent>().geometry!!) {
+        with(getSingletonComponent<WorldGeometryComponent>().geometry) {
             assertThat(multiLineString.map(LineString<World>::bbox))
                 .containsExactly(
                     Rect.XYWH(0.0, 5.4495652533470364E-11, 75.52021333333334, 55.93957818233137),

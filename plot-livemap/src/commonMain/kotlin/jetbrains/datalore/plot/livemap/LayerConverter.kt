@@ -26,7 +26,7 @@ object LayerConverter {
         letsPlotLayers: List<LayerRendererData>,
         aesScalingLimit: Int,
         constScalingLimit: Int
-    ): List<LayersBuilder.() -> Unit> {
+    ): List<FeatureLayerBuilder.() -> Unit> {
         return letsPlotLayers
             .mapIndexed { index, layer ->
             val dataPointsConverter = DataPointsConverter(
@@ -76,7 +76,7 @@ object LayerConverter {
         liveMapDataPoints: List<DataPointLiveMapAesthetics>,
         sizeScalingRange: IntRange?,
         alphaScalingEnabled: Boolean,
-    ): LayersBuilder.() -> Unit = {
+    ): FeatureLayerBuilder.() -> Unit = {
         when (layerKind) {
             MapLayerKind.POINT -> points {
                 liveMapDataPoints.forEach {

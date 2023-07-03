@@ -21,10 +21,13 @@ open class Viewport internal constructor(
     val minZoom: Int,
     val maxZoom: Int
 ) {
-
     private val zoomTransform = Transforms.zoom<World, Client> { zoom }
+    private val viewportTransform = object : Transform<WorldPoint, ClientPoint> {
+        override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v) - zoomTransform.apply(position) + center
+        override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v) - zoomTransform.invert(center) + position
+    }
+
     val center: ClientPoint = size / 2.0
-    private val viewportTransform = viewportTransform(zoomTransform, { position }, { center })
     private var windowSize = World.ZERO_VEC
     private var windowOrigin = World.ZERO_VEC
     var window: WorldRectangle =
@@ -52,35 +55,27 @@ open class Viewport internal constructor(
     open val visibleCells: Set<CellKey>
         get() = helper.getCells(window, zoom)
 
-    fun getMapCoord(viewCoord: ClientPoint): WorldPoint {
-        return helper.normalize(viewportTransform.invert(viewCoord))
+    init {
+        zoom = 1
     }
 
-    fun getViewCoord(mapCoord: WorldPoint): ClientPoint {
-        return viewportTransform.apply(mapCoord)
-    }
 
-    fun getOrigins(origin: ClientPoint, dimension: ClientPoint): List<ClientPoint> {
-        return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dimension))
+    fun getMapCoord(viewCoord: ClientPoint): WorldPoint = helper.normalize(viewportTransform.invert(viewCoord))
+    fun getViewCoord(mapCoord: WorldPoint): ClientPoint = viewportTransform.apply(mapCoord)
+    fun toClientDimension(dimension: WorldPoint): ClientPoint = zoomTransform.apply(dimension)
+    fun toWorldDimension(dimension: ClientPoint): WorldPoint = zoomTransform.invert(dimension)
+    fun calculateBoundingBox(bBoxes: List<Rect<World>>): Rect<World> = helper.calculateBoundingBox(bBoxes)
+
+    fun getMapOrigins(): List<ClientPoint> {
+        val origin = getViewCoord(World.ZERO_VEC)
+        val dim = toClientDimension(World.DOMAIN.dimension)
+        return Rect.LTRB(viewportTransform.invert(origin), viewportTransform.invert(origin + dim))
             .let { helper.getOrigins(it, window) }
             .map(::getViewCoord)
     }
 
-    fun calculateBoundingBox(bBoxes: List<Rect<World>>) = helper.calculateBoundingBox(bBoxes)
-
     private fun updateWindow() {
         window = WorldRectangle(windowOrigin, windowSize)
-    }
-
-    private fun viewportTransform(
-        zoomTransform: Transform<WorldPoint, ClientPoint>,
-        position: () -> WorldPoint,
-        center: () -> ClientPoint
-    ): Transform<WorldPoint, ClientPoint> {
-        return object : Transform<WorldPoint, ClientPoint> {
-            override fun apply(v: WorldPoint): ClientPoint = zoomTransform.apply(v - position()) + center()
-            override fun invert(v: ClientPoint): WorldPoint = zoomTransform.invert(v - center()) + position()
-        }
     }
 
     companion object {
@@ -94,6 +89,10 @@ open class Viewport internal constructor(
             return Viewport(helper, size, minZoom, maxZoom).apply {
                 this.position = position
             }
+        }
+
+        fun toClientDimension(dimension: WorldPoint, zoom: Int): ClientPoint {
+            return Transforms.zoom<World, Client> { zoom }.apply(dimension)
         }
     }
 }

@@ -11,10 +11,10 @@ import jetbrains.datalore.base.typedGeometry.Polygon
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementLocationComponent
+import jetbrains.livemap.chart.fragment.RegionBBoxComponent
 import jetbrains.livemap.core.MapRuler
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
-import jetbrains.livemap.fragment.RegionBBoxComponent
 import jetbrains.livemap.geocoding.MapLocationGeocoder.Companion.convertToWorldRects
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.LiveMapContext
@@ -48,7 +48,7 @@ class LocationCalculateSystem(
                         }
                     }
                     entity.contains<WorldGeometryComponent>() -> {
-                        with(entity.get<WorldGeometryComponent>().geometry!!) {
+                        with(entity.get<WorldGeometryComponent>().geometry) {
                             when (type) {
                                 MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
                                 MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))

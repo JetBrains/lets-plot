@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:Suppress("unused")
+
 package jetbrains.livemap.api
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
@@ -20,6 +22,7 @@ import jetbrains.gis.tileprotocol.TileService
 import jetbrains.gis.tileprotocol.socket.TileWebSocketBuilder
 import jetbrains.livemap.LiveMap
 import jetbrains.livemap.WorldPoint
+import jetbrains.livemap.chart.fragment.newFragmentProvider
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.MAX_ZOOM
 import jetbrains.livemap.config.MIN_ZOOM
@@ -31,17 +34,15 @@ import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.graphics.TextMeasurer
+import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.core.layers.LayerManager
+import jetbrains.livemap.core.layers.PanningPolicy
 import jetbrains.livemap.core.layers.ParentLayerComponent
-import jetbrains.livemap.fragment.newFragmentProvider
 import jetbrains.livemap.geocoding.*
 import jetbrains.livemap.mapengine.LayerEntitiesComponent
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.mapengine.basemap.Tilesets.chessboard
-import jetbrains.livemap.mapengine.camera.CameraListenerComponent
-import jetbrains.livemap.mapengine.camera.CenterChangedComponent
-import jetbrains.livemap.mapengine.camera.ZoomFractionChangedComponent
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportHelper
 import jetbrains.livemap.toClientPoint
@@ -56,7 +57,7 @@ class LiveMapBuilder {
     var size: DoubleVector = DoubleVector.ZERO
     var geocodingService: GeocodingService = Services.bogusGeocodingService()
     var tileSystemProvider: BasemapTileSystemProvider = chessboard()
-    var layers: List<LayersBuilder.() -> Unit> = emptyList()
+    var layers: List<FeatureLayerBuilder.() -> Unit> = emptyList()
     var interactive: Boolean = true
     var mapLocation: MapLocation? = null
     var projection: GeoProjection = Projections.mercator()
@@ -117,7 +118,7 @@ class LiveMapBuilder {
 }
 
 @LiveMapDsl
-class LayersBuilder(
+class FeatureLayerBuilder(
     val myComponentManager: EcsComponentManager,
     val layerManager: LayerManager,
     val mapProjection: MapProjection,
@@ -184,36 +185,45 @@ fun mapEntity(
         .createEntity(name)
         .addComponents {
             + parentLayerComponent
-            + CameraListenerComponent()
-            + CenterChangedComponent()
-            + ZoomFractionChangedComponent()
         }
 }
 
-class MapEntityFactory(layerEntity: EcsEntity) {
+class FeatureEntityFactory(
+    layerEntity: EcsEntity,
+    private val panningPointsMaxCount: Int
+) {
+    private var pointsTotalCount = 0
     private val myComponentManager: EcsComponentManager = layerEntity.componentManager
     private val myParentLayerComponent: ParentLayerComponent = ParentLayerComponent(layerEntity.id)
-    private val myLayerEntityComponent: LayerEntitiesComponent = layerEntity.get()
+    private val myLayerEntitiesComponent: LayerEntitiesComponent = layerEntity.get()
+    private val myCanvasLayerComponent: CanvasLayerComponent = layerEntity.get()
 
-    fun createMapEntity(name: String): EcsEntity {
-        return mapEntity(myComponentManager, myParentLayerComponent, name)
-            .also { myLayerEntityComponent.add(it.id) }
+    internal fun incrementLayerPointsTotalCount(pointsCount: Int) {
+        pointsTotalCount += pointsCount
+        if (pointsTotalCount > panningPointsMaxCount) {
+            myCanvasLayerComponent.canvasLayer.panningPolicy = PanningPolicy.COPY
+        }
     }
 
-    fun createStaticEntityWithLocation(name: String, point: LonLatPoint): EcsEntity =
-        createStaticEntity(name, point).addComponents {
+    fun createFeature(name: String): EcsEntity {
+        return mapEntity(myComponentManager, myParentLayerComponent, name)
+            .also { myLayerEntitiesComponent.add(it.id) }
+    }
+
+    fun createStaticFeatureWithLocation(name: String, point: LonLatPoint): EcsEntity =
+        createStaticFeature(name, point).addComponents {
             + NeedLocationComponent
             + NeedCalculateLocationComponent
         }
 
-    fun createStaticEntity(name: String, point: LonLatPoint): EcsEntity =
-        createMapEntity(name)
+    fun createStaticFeature(name: String, point: LonLatPoint): EcsEntity =
+        createFeature(name)
             .add(LonLatComponent(point))
 }
 
 fun liveMapConfig(block: LiveMapBuilder.() -> Unit) = LiveMapBuilder().apply(block)
 
-fun LiveMapBuilder.layers(block: LayersBuilder.() -> Unit) {
+fun LiveMapBuilder.layers(block: FeatureLayerBuilder.() -> Unit) {
     layers = listOf(block)
 }
 

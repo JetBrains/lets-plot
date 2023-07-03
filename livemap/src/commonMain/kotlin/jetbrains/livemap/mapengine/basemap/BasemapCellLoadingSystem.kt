@@ -18,12 +18,14 @@ import jetbrains.livemap.mapengine.RenderableComponent
 import jetbrains.livemap.mapengine.basemap.BasemapCellRendererComponent.Companion.NULL_RENDERER
 import jetbrains.livemap.mapengine.basemap.vector.TileLoadingSystem
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugCellRenderer
-import jetbrains.livemap.mapengine.placement.*
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent.Rounding.FLOOR
+import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.viewport.CellKey
+import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportGridStateComponent
 
-class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : AbstractSystem<LiveMapContext>(componentManager) {
+class BasemapCellLoadingSystem(componentManager: EcsComponentManager) :
+    AbstractSystem<LiveMapContext>(componentManager) {
     private lateinit var myMapRect: WorldRectangle
     private lateinit var myDonorTileCalculators: Map<BasemapLayerKind, DonorTileCalculator>
 
@@ -31,7 +33,7 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
         myMapRect = context.mapProjection.mapRect
 
         createEntity("tile_for_request").addComponents {
-            + RequestTilesComponent()
+            +RequestTilesComponent()
         }
     }
 
@@ -57,7 +59,9 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
         val layerTileMap = HashMap<BasemapLayerKind, MutableMap<CellKey, Tile>>()
 
         for (entity in getEntities(TileLoadingSystem.TILE_COMPONENT_LIST)) {
-            if (entity.get<BasemapTileComponent>().nonCacheable) { continue } // don't use error tiles as donors
+            if (entity.get<BasemapTileComponent>().nonCacheable) {
+                continue
+            } // don't use error tiles as donors
             val tile = entity.get<BasemapTileComponent>().tile ?: continue
 
             val layerKind = entity.get<KindComponent>().layerKind
@@ -65,7 +69,7 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
             layerTileMap.getOrPut(layerKind, ::HashMap)[entity.get<BasemapCellComponent>().cellKey] = tile
         }
 
-        return layerTileMap.mapValues {(_, tilesMap) -> DonorTileCalculator(tilesMap) }
+        return layerTileMap.mapValues { (_, tilesMap) -> DonorTileCalculator(tilesMap) }
     }
 
     private fun createTileLayerEntities(cellKey: CellKey) {
@@ -82,22 +86,20 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) : Abstract
                     "tile_${layerKind}_$cellKey"
                 )
                     .addComponents {
-                        + WorldOriginComponent(tileRect.origin)
-                        + RenderableComponent().apply { NULL_RENDERER }
-                        + ScreenLoopComponent().apply { rounding = FLOOR }
-                        + ScreenOriginComponent()
-                        + ScreenDimensionComponent().apply {
-                            dimension = WorldDimension2ScreenUpdateSystem.world2Screen(tileRect.dimension, zoom)
+                        +WorldOriginComponent(tileRect.origin)
+                        +RenderableComponent().apply { NULL_RENDERER }
+                        +ScreenDimensionComponent().apply {
+                            dimension = Viewport.toClientDimension(tileRect.dimension, zoom)
                         }
-                        + BasemapCellComponent(cellKey)
-                        + KindComponent(layerKind)
-                        + BasemapCellRendererComponent().apply {
+                        +BasemapCellComponent(cellKey)
+                        +KindComponent(layerKind)
+                        +BasemapCellRendererComponent().apply {
                             renderer = when (layer.contains<DebugCellLayerComponent>()) {
                                 true -> DebugCellRenderer()
                                 false -> BasemapCellRenderer()
                             }
                         }
-                        + when (layer.contains<DebugCellLayerComponent>()) {
+                        +when (layer.contains<DebugCellLayerComponent>()) {
                             true -> DebugDataComponent()
                             false -> BasemapTileComponent().apply {
                                 tile = calculateDonorTile(layerKind, cellKey)

@@ -33,7 +33,7 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         }
     }
 
-    private fun getPoint(coord: LonLatPoint): Points.() -> Unit = {
+    private fun getPoint(coord: LonLatPoint): PointLayerBuilder.() -> Unit = {
         point {
             point = coord
             radius = 4.0
@@ -42,7 +42,7 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         }
     }
 
-    private fun getTexts(coord: LonLatPoint, withBorder: Boolean): Texts.() -> Unit = {
+    private fun getTexts(coord: LonLatPoint, withBorder: Boolean): TextLayerBuilder.() -> Unit = {
         text {
             label = "--------0-->"
             point = coord
@@ -111,7 +111,7 @@ class TextDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {
         }
     }
 
-    private fun multiline(coord: LonLatPoint, withBorder: Boolean): Texts.() -> Unit = {
+    private fun multiline(coord: LonLatPoint, withBorder: Boolean): TextLayerBuilder.() -> Unit = {
         text {
             label = "first line\nthe second\n3"
             point = coord

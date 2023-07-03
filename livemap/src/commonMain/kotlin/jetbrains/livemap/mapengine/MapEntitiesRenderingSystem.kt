@@ -15,7 +15,6 @@ import jetbrains.livemap.core.graphics.RenderObject
 import jetbrains.livemap.core.layers.CanvasLayerComponent
 import jetbrains.livemap.mapengine.camera.CameraComponent
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopComponent
 
 // Common rendering data - used for lines, polygons, pies, bars, points.
 class RenderableComponent : EcsComponent {
@@ -49,18 +48,28 @@ internal class MapEntitiesRenderingSystem(
                 layerCtx.translate(-scaleOrigin)
             }
 
-            for (mapEntity in getEntitiesById(children.entities).filter { it.tryGet<ScreenLoopComponent>() != null }) {
+            val renderHelper = RenderHelper(context.mapRenderContext.viewport)
+
+            for (mapEntity in getEntitiesById(children.entities)) {
                 val renderer = mapEntity.get<RenderableComponent>().renderer
-                mapEntity.get<ScreenLoopComponent>().origins.forEach { origin ->
-                    context.mapRenderContext.draw(
-                        layerCtx,
-                        origin,
-                        object : RenderObject {
-                            override fun render(ctx: Context2d) {
-                                renderer.render(mapEntity, ctx)
+
+                run {
+                    val calculatedOrigins = context.mapRenderContext.viewport.getMapOrigins()
+                    calculatedOrigins.forEach {
+
+                        context.mapRenderContext.draw(
+                            layerCtx,
+                            it,
+                            object : RenderObject {
+                                override fun render(ctx: Context2d) {
+                                    ctx.save()
+                                    renderer.render(mapEntity, ctx, renderHelper)
+                                    ctx.restore()
+                                }
                             }
-                        }
-                    )
+                        )
+
+                    }
                 }
             }
 

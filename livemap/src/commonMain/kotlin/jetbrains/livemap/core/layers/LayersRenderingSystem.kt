@@ -10,6 +10,7 @@ import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.LiveMapContext
+import jetbrains.livemap.mapengine.basemap.BasemapLayerComponent
 
 class LayersRenderingSystem internal constructor(
     componentManager: EcsComponentManager,
@@ -26,16 +27,21 @@ class LayersRenderingSystem internal constructor(
     override fun updateImpl(context: LiveMapContext, dt: Double) {
         updated = false
         if (context.camera.panFrameDistance != null) {
-            if (context.camera.panFrameDistance == Client.ZERO_VEC && dirtyLayers.isEmpty()) {
+
+            val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>()
+                .toList()
+
+            if (context.camera.panFrameDistance == Client.ZERO_VEC && dirtyLayerEntities.isEmpty()) {
                 return
             }
 
-            val dirtyLayerEntities = getEntities<DirtyCanvasLayerComponent>().toList()
-            myDirtyLayers = dirtyLayerEntities.map(EcsEntity::id)
-            updated = dirtyLayerEntities.isNotEmpty()
-            val dirtyLayers = dirtyLayerEntities.map { it.get<CanvasLayerComponent>().canvasLayer }
-            myDirtyLayers = dirtyLayerEntities.map(EcsEntity::id)
-            dirtyLayerEntities.forEach {
+            // always update basemap - it prevents glitch with frozen tiles at wrong pos
+            val basemapLayers = getEntities<BasemapLayerComponent>()
+            val layersToPan = (basemapLayers + dirtyLayerEntities).toSet()
+
+            val dirtyLayers = layersToPan.map { it.get<CanvasLayerComponent>().canvasLayer }
+            myDirtyLayers = layersToPan.map(EcsEntity::id)
+            layersToPan.forEach {
                 if (it.get<CanvasLayerComponent>().canvasLayer.panningPolicy == PanningPolicy.REPAINT) {
                     it.untag<DirtyCanvasLayerComponent>()
                 }

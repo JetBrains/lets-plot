@@ -41,6 +41,7 @@ import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.Services
 import jetbrains.livemap.api.liveMapGeocoding
 import jetbrains.livemap.api.liveMapVectorTiles
+import jetbrains.livemap.chart.HoverObject
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.LiveMapCanvasFigure
 import jetbrains.livemap.core.Clipboard
@@ -50,7 +51,6 @@ import jetbrains.livemap.core.Projections.geographic
 import jetbrains.livemap.core.Projections.mercator
 import jetbrains.livemap.mapengine.basemap.BasemapTileSystemProvider
 import jetbrains.livemap.mapengine.basemap.Tilesets
-import jetbrains.livemap.searching.HoverObject
 import jetbrains.livemap.ui.CursorService
 
 object LiveMapProviderUtil {

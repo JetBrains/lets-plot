@@ -8,7 +8,6 @@ package jetbrains.livemap.mapengine.camera
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.minus
-import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
@@ -60,8 +59,6 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
             myCamera.panFrameDistance = null
         }
 
-        removeChangedComponents()
-
         myCamera.isZoomLevelChanged = false
         myCamera.isZoomFractionChanged = false
 
@@ -99,31 +96,6 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
         myCamera.requestedPosition = null
         myCamera.requestedAnimation = null
         myCamera.requestedReset = null
-
-
-
-        if (myCamera.isZoomFractionChanged || myCamera.isMoved || myCamera.panDistance != null) {
-            for (entity in getEntities<CameraListenerComponent>()) {
-                if (myCamera.isZoomLevelChanged ||
-                    myCamera.isZoomFractionChanged ||
-                    myCamera.isMoved
-                ) {
-                    entity.tag(::CenterChangedComponent)
-                }
-
-                if (myCamera.isZoomLevelChanged) {
-                    entity.tag(::ZoomLevelChangedComponent)
-                }
-
-                if (myCamera.isZoomFractionChanged) {
-                    entity.tag(::ZoomFractionChangedComponent)
-                }
-
-                if (myCamera.panFrameDistance?.let { it != Client.ZERO_VEC } == true) {
-                    entity.tag(::CenterChangedComponent)
-                }
-            }
-        }
     }
 
     private fun updateCamera(requestedZoom: Double?, requestedPosition: Vec<World>?) {
@@ -132,19 +104,5 @@ class CameraInputSystem(componentManager: EcsComponentManager) : AbstractSystem<
 
         myCamera.isZoomLevelChanged = requestedZoom?.let { it % 1.0 == 0.0 } ?: false
         myCamera.isZoomFractionChanged = requestedZoom != null
-    }
-
-    private fun removeChangedComponents() {
-        for (entity in getEntities<ZoomLevelChangedComponent>().toList()) {
-            entity.removeComponent(ZoomLevelChangedComponent::class)
-        }
-
-        for (entity in getEntities<ZoomFractionChangedComponent>().toList()) {
-            entity.removeComponent(ZoomFractionChangedComponent::class)
-        }
-
-        for (entity in getEntities<CenterChangedComponent>().toList()) {
-            entity.untag<CenterChangedComponent>()
-        }
     }
 }

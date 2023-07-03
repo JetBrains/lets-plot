@@ -23,9 +23,9 @@ import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
 import jetbrains.datalore.vis.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
-import jetbrains.livemap.api.LayersBuilder
-import jetbrains.livemap.chart.ChartElementScalingSystem
-import jetbrains.livemap.chart.GrowingPathEffect
+import jetbrains.livemap.api.FeatureLayerBuilder
+import jetbrains.livemap.chart.*
+import jetbrains.livemap.chart.fragment.*
 import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_FRAME_TIME
 import jetbrains.livemap.config.DevParams.Companion.COMPUTATION_PROJECTION_QUANT
@@ -51,35 +51,30 @@ import jetbrains.livemap.core.layers.RenderTarget.OWN_SCREEN_CANVAS
 import jetbrains.livemap.core.multitasking.MicroTaskCooperativeExecutor
 import jetbrains.livemap.core.multitasking.MicroTaskMultiThreadedExecutorFactory
 import jetbrains.livemap.core.multitasking.SchedulerSystem
-import jetbrains.livemap.fragment.*
 import jetbrains.livemap.geocoding.ApplyPointSystem
 import jetbrains.livemap.geocoding.LocationCalculateSystem
 import jetbrains.livemap.geocoding.LocationCounterSystem
 import jetbrains.livemap.geocoding.MapLocationInitializationSystem
-import jetbrains.livemap.geometry.ScaleUpdateSystem
-import jetbrains.livemap.geometry.WorldGeometry2ScreenUpdateSystem
 import jetbrains.livemap.makegeometrywidget.MakeGeometryWidgetSystem
 import jetbrains.livemap.mapengine.*
 import jetbrains.livemap.mapengine.basemap.*
 import jetbrains.livemap.mapengine.basemap.vector.debug.DebugDataSystem
-import jetbrains.livemap.mapengine.camera.*
+import jetbrains.livemap.mapengine.camera.CameraComponent
+import jetbrains.livemap.mapengine.camera.CameraInputSystem
+import jetbrains.livemap.mapengine.camera.CameraScale
 import jetbrains.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
-import jetbrains.livemap.mapengine.placement.ScreenLoopsUpdateSystem
-import jetbrains.livemap.mapengine.placement.WorldDimension2ScreenUpdateSystem
+import jetbrains.livemap.mapengine.camera.MutableCamera
 import jetbrains.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import jetbrains.livemap.mapengine.viewport.Viewport
 import jetbrains.livemap.mapengine.viewport.ViewportGridUpdateSystem
 import jetbrains.livemap.mapengine.viewport.ViewportPositionUpdateSystem
-import jetbrains.livemap.searching.HoverObject
-import jetbrains.livemap.searching.HoverObjectDetectionSystem
-import jetbrains.livemap.searching.SearchResultComponent
 import jetbrains.livemap.ui.*
 
 class LiveMap(
     private val myMapRuler: MapRuler<World>,
     private val myMapProjection: MapProjection,
     private val viewport: Viewport,
-    private val layers: List<LayersBuilder.() -> Unit>,
+    private val layers: List<FeatureLayerBuilder.() -> Unit>,
     private val myBasemapTileSystemProvider: BasemapTileSystemProvider,
     private val myFragmentProvider: FragmentProvider,
     private val myDevParams: DevParams,
@@ -216,8 +211,6 @@ class LiveMap(
 
                 ApplyPointSystem(componentManager),
 
-                ScaleUpdateSystem(componentManager),
-
                 // Service systems
                 AnimationObjectSystem(componentManager),
                 AnimationSystem(componentManager),
@@ -252,10 +245,7 @@ class LiveMap(
                 FragmentsRemovingSystem(myDevParams.read(FRAGMENT_CACHE_LIMIT), componentManager),
 
                 // Position update
-                WorldDimension2ScreenUpdateSystem(componentManager),
                 WorldOrigin2ScreenUpdateSystem(componentManager),
-                WorldGeometry2ScreenUpdateSystem(myDevParams.read(COMPUTATION_PROJECTION_QUANT), componentManager),
-                ScreenLoopsUpdateSystem(componentManager),
                 HoverObjectDetectionSystem(myUiService, componentManager),
 
                 // Charts
@@ -306,7 +296,6 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.WORLD)
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("ground", LayerKind.BASEMAP_TILES)
                 }
         } else {
@@ -315,19 +304,18 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.RASTER)
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("http_ground", LayerKind.BASEMAP_TILES)
                 }
         }
 
-        val layersBuilder = LayersBuilder(
+        val featureLayerBuilder = FeatureLayerBuilder(
             componentManager,
             myLayerManager,
             myMapProjection,
             myTextMeasurer
         )
 
-        layers.forEach(layersBuilder::apply)
+        layers.forEach(featureLayerBuilder::apply)
 
         if (myBasemapTileSystemProvider.isVector) {
             componentManager
@@ -335,7 +323,6 @@ class LiveMap(
                 .addComponents {
                     + BasemapLayerComponent(BasemapLayerKind.LABEL)
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("labels", LayerKind.BASEMAP_LABELS)
                 }
         }
@@ -347,7 +334,6 @@ class LiveMap(
                     + BasemapLayerComponent(BasemapLayerKind.DEBUG)
                     + DebugCellLayerComponent()
                     + LayerEntitiesComponent()
-                    + CameraListenerComponent()
                     + myLayerManager.addLayer("debug", LayerKind.BASEMAP_LABELS)
                 }
         }

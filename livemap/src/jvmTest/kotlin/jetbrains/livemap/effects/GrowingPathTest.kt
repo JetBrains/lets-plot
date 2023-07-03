@@ -18,6 +18,7 @@ import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
+import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectComponent
 import jetbrains.livemap.chart.GrowingPathEffect.GrowingPathEffectSystem
@@ -30,8 +31,11 @@ import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.ecs.addComponents
 import jetbrains.livemap.core.layers.ParentLayerComponent
 import jetbrains.livemap.core.util.EasingFunctions.LINEAR
-import jetbrains.livemap.geometry.ScreenGeometryComponent
+import jetbrains.livemap.geometry.WorldGeometryComponent
+import jetbrains.livemap.mapengine.RenderHelper
 import jetbrains.livemap.mapengine.RenderableComponent
+import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import jetbrains.livemap.mapengine.viewport.Viewport
 import org.mockito.Mockito
 import kotlin.math.pow
 import kotlin.math.round
@@ -48,7 +52,7 @@ class GrowingPathTest {
     private lateinit var myAnimationComponent: AnimationComponent
     private lateinit var myGrowingPathEffectComponent: GrowingPathEffectComponent
 
-    private fun p(x: Double, y: Double): Vec<Client> {
+    private fun p(x: Double, y: Double): Vec<World> {
         return explicitVec(x, y)
     }
 
@@ -57,7 +61,7 @@ class GrowingPathTest {
     }
 
     private fun indices(vararg v: Int): List<EffectState> {
-        return v.map { index(it) }
+        return v.map(::index)
     }
 
     private fun interpolated(i: Int, p: Vec<Client>): EffectState {
@@ -118,11 +122,12 @@ class GrowingPathTest {
         return progress
     }
 
-    private fun createEffect(vararg points: Vec<Client>) {
+    private fun createEffect(vararg points: Vec<World>) {
         myComponentManager.createEntity("effect")
             .addComponents {
                 + myGrowingPathEffectComponent
-                + ScreenGeometryComponent().apply {
+                + WorldOriginComponent(p(0.0, 0.0))
+                + WorldGeometryComponent().apply {
                     geometry = Geometry.of(LineString.of(*points))
                 }
                 + ParentLayerComponent(
@@ -136,11 +141,13 @@ class GrowingPathTest {
         val render = GrowingPathRenderer()
         val pathEntity = myComponentManager.createEntity("path_entity")
             .addComponents {
+                + ParentLayerComponent(0)
                 + GrowingPathEffectComponent().apply {
                     endIndex = 3
                     interpolatedPoint = explicitVec(3.5, 3.5)
                 }
-                + ScreenGeometryComponent().apply {
+                + WorldOriginComponent(p(0.0, 0.0))
+                + WorldGeometryComponent().apply {
                     geometry = Geometry.of(LineString.of(p(0.0, 0.0), p(1.0, 1.0), p(2.0, 2.0), p(3.0, 3.0), p(4.0, 4.0)))
                 }
                 + RenderableComponent().apply {
@@ -155,7 +162,7 @@ class GrowingPathTest {
 
         val context2d = Mockito.mock(Context2d::class.java)
 
-        render.render(pathEntity, context2d)
+        render.render(pathEntity, context2d, RenderHelper(Mockito.mock(Viewport::class.java)))
 
         Mockito.verify(context2d).moveTo(0.0, 0.0)
         Mockito.verify(context2d).lineTo(1.0, 1.0)

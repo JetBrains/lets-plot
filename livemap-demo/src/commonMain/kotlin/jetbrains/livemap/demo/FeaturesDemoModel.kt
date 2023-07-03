@@ -12,7 +12,6 @@ import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.api.*
-import jetbrains.livemap.config.DevParams
 import jetbrains.livemap.model.Cities.BOSTON
 import jetbrains.livemap.model.Cities.FRISCO
 import jetbrains.livemap.model.Cities.MOSCOW
@@ -24,7 +23,6 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
     override fun createLiveMapSpec(): LiveMapBuilder {
         return basicLiveMap {
             zoom = 5
-            devParams = DevParams(mapOf(DevParams.ENABLE_SCALING.key to true))
             geocodingService = Services.devGeocodingService()
             location { coordinate = explicitVec(96.37587535342406, 61.8742484121002) }
             layers {
@@ -106,6 +104,13 @@ class FeaturesDemoModel(dimension: DoubleVector) : DemoModelBase(dimension) {
                         geometry = createMultiPolygon(listOf(BOSTON, SPB, MOSCOW).map(GeoObject::centroid))
 
                         fillColor = Color.LIGHT_CYAN
+                    }
+                }
+
+                polygons {
+                    polygon {
+                        geometry = createMultiPolygon(listOf(Vec(0, 0), Vec(0, 20), Vec(20, 20), Vec(20, 0), Vec(0, 0)))
+                        fillColor = Color.LIGHT_MAGENTA
                     }
                 }
 
