@@ -72,13 +72,16 @@ def ggmarginal(sides: str, *, size=None, layer: LayerSpec) -> FeatureSpec:
         raise TypeError("'sides' must be a string.")
     if not 0 < len(sides) <= 4:
         raise ValueError("'sides' must be a string containing 1 to 4 chars: 'l','r','t','b'.")
-    if not isinstance(layer, LayerSpec):
-        if not isinstance(layer, FeatureSpecArray):
-            raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
+
+    # Recursive call when layer is sum of geoms
+    if isinstance(layer, FeatureSpecArray):
         result = DummySpec()
         for sublayer in layer.elements():
             result += ggmarginal(sides, size=size, layer=sublayer)
         return result
+
+    if not isinstance(layer, LayerSpec):
+        raise TypeError("Invalid 'layer' type: {}".format(type(layer)))
 
     result = DummySpec()
 
