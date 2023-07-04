@@ -3,11 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.jsObject
+package org.jetbrains.letsPlot.base.intern.jsObject
 
 import jetbrains.datalore.base.json.escape
 
-object JsObjectSupport {
+object JsObjectSupportCommon {
     fun mapToJsObjectInitializer(map: Map<String, *>): String {
         val buffer = StringBuilder()
 

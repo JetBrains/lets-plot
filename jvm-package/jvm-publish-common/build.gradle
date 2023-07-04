@@ -13,6 +13,7 @@ kotlin {
             dependencies {
                 api kotlin('stdlib-common')
 
+                api project(':commons')
                 api project(':base-portable')
                 api project(':base')
                 api project(':datamodel')

@@ -18,6 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation project(':commons')
                 implementation project(':base-portable')
             }
         }

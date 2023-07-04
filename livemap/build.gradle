@@ -18,7 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-//                implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+                implementation project(':commons')
                 implementation project(':base-portable')
                 implementation project(':base')
                 implementation project(':vis-canvas')

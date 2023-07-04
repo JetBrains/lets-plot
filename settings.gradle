@@ -16,7 +16,8 @@ pluginManagement {
 
 rootProject.name = "lets-plot"
 
-include 'base-portable',
+include 'commons',
+        'base-portable',
         'base',
         'awt',
         'gis',

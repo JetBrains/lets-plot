@@ -15,7 +15,6 @@ class JsObjectSupportJsTest {
     fun runTestCases() {
         for ((index, datum) in testData.withIndex()) {
             val actual = dynamicObjectToMap(datum.input)
-            @Suppress("UNCHECKED_CAST")
             assertEquals(datum.expectedOutput, actual, "test case [$index]")
         }
     }

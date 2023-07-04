@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.jsObject.JsObjectSupport
+import org.jetbrains.letsPlot.base.intern.jsObject.JsObjectSupportCommon
 import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.base.random.RandomString.randomString
 import jetbrains.datalore.plot.config.PlotConfigUtil
@@ -95,7 +95,7 @@ object PlotHtmlHelper {
         // server-side transforms: statistics, sampling, etc.
         @Suppress("NAME_SHADOWING")
         val plotSpec = BackendSpecTransformUtil.processTransform(plotSpec)
-        val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
+        val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
         return getDynamicDisplayHtml(plotSpecJs, size)
     }
 
@@ -134,7 +134,7 @@ object PlotHtmlHelper {
             PlotConfigUtil.removeComputationMessages(plotSpec)
         }
 
-        val plotSpecJs = JsObjectSupport.mapToJsObjectInitializer(plotSpec)
+        val plotSpecJs = JsObjectSupportCommon.mapToJsObjectInitializer(plotSpec)
         return getStaticDisplayHtml(plotSpecJs, size)
     }
 

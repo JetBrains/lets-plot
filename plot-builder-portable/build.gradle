@@ -18,7 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
-//                implementation "io.github.microutils:kotlin-logging:$kotlinLogging_version"
+                implementation project(':commons')
                 implementation project(':base-portable')
                 implementation project(':datamodel')
                 implementation project(':plot-base-portable')

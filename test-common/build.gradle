@@ -20,6 +20,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation kotlin('test-common')
 
+                api project(':commons')
                 api project(':base-portable')
                 api project(':plot-base-portable')
                 api project(':plot-config-portable')

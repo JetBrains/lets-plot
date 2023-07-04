@@ -5,7 +5,6 @@
 
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
     id "groovy"   // add 'test' task
 }
 
@@ -19,6 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation kotlin('stdlib-common')
+                implementation project(':commons')
             }
         }
         commonTest {
@@ -55,15 +55,6 @@ kotlin {
             dependencies {
                 implementation kotlin('test-js')
             }
-        }
-    }
-}
-
-idea {
-    module {
-        settings {
-            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
         }
     }
 }

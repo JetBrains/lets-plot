@@ -23,6 +23,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(project(":commons"))
                 implementation(project(":base-portable"))
                 implementation(project(":base"))
             }

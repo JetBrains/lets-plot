@@ -18,6 +18,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation "io.ktor:ktor-client-websockets:$ktor_version"
+                implementation project(':commons')
                 implementation project(':base-portable')
                 implementation project(':base')
             }

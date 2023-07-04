@@ -6,6 +6,7 @@ plugins {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 
+    implementation project(':commons')
     implementation project(':base-portable')
     implementation project(':base')
     implementation project(':datamodel')

@@ -3,9 +3,9 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.jsObject
+package jetbrains.datalore.org.jetbrains.letsPlot.base.intern.jsObject
 
-import jetbrains.datalore.base.jsObject.JsObjectSupport.mapToJsObjectInitializer
+import org.jetbrains.letsPlot.base.intern.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.Test
@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 
 
 @RunWith(Parameterized::class)
-class JsObjectSupportTest(private val input: Map<String, Any?>, private val expected: String) {
+class JsObjectSupportCommonTest(private val input: Map<String, Any?>, private val expected: String) {
 
     @Test
     fun `map to JSObject initializer`() {
