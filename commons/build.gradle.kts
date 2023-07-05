@@ -8,13 +8,16 @@ plugins {
 }
 
 
-//val mockkVersion = extra["mockk_version"] as String
+val mockkVersion = extra["mockk_version"] as String
 //val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
-//val hamcrestVersion = extra["hamcrest_version"] as String
-//val mockitoVersion = extra["mockito_version"] as String
-//val assertjVersion = extra["assertj_version"] as String
+val hamcrestVersion = extra["hamcrest_version"] as String
+val mockitoVersion = extra["mockito_version"] as String
+val assertjVersion = extra["assertj_version"] as String
 
 kotlin {
+    // Enable the default target hierarchy:
+    targetHierarchy.default()
+
     jvm()
     js {
         browser()
@@ -37,21 +40,21 @@ kotlin {
             }
         }
 
-        named("jvmMain") {
+        jvmMain {
             dependencies {
 //                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
-        named("jvmTest") {
+        jvmTest {
             dependencies {
 ////                implementation kotlin('test')
 //                implementation(kotlin("test-junit"))
-//                implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
-//                implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
-//                implementation("org.mockito:mockito-core:$mockitoVersion")
-//                implementation("org.assertj:assertj-core:$assertjVersion")
-//                implementation("io.mockk:mockk:$mockkVersion")
+                implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
+                implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
+                implementation("org.mockito:mockito-core:$mockitoVersion")
+                implementation("org.assertj:assertj-core:$assertjVersion")
+                implementation("io.mockk:mockk:$mockkVersion")
             }
         }
 
