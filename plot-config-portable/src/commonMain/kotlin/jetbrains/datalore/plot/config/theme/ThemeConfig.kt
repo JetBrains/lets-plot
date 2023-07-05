@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.ThemeFlavor
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option
