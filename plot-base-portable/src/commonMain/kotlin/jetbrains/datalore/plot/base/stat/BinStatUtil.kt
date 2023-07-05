@@ -48,52 +48,6 @@ object BinStatUtil {
         return CountAndWidth(binCount, binWidth)
     }
 
-    private fun getBinningParameters(
-        rangeX: DoubleSpan,
-        xPosKind: BinStat.XPosKind,
-        xPos: Double,
-        binOptions: BinOptions
-    ): Triple<Int, Double, Double> {
-        var startX = rangeX.lowerEnd
-        var spanX = rangeX.upperEnd - startX
-
-        // initial bin count/width
-        val b: CountAndWidth = binCountAndWidth(spanX, binOptions)
-
-        // adjusted bin count/width
-        // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
-        startX -= b.width * 0.7
-        spanX += b.width * 1.4
-        val (binCount, binWidth) = binCountAndWidth(spanX, binOptions)
-
-        if (xPosKind == BinStat.XPosKind.NONE) {
-            return Triple(binCount, binWidth, startX)
-        }
-
-        // optional horizontal adjustment (+/-0.5 bin width max)
-        var minDelta = when (xPosKind) {
-            BinStat.XPosKind.CENTER -> Double.MAX_VALUE
-            else -> xPos - startX
-        }
-
-        for (i in 0 until binCount) {
-            val binLeft = startX + i * binWidth
-            val delta = when (xPosKind) {
-                BinStat.XPosKind.CENTER -> xPos - (binLeft + binWidth / 2)
-                else -> xPos - (binLeft + binWidth)
-            }
-            if (abs(delta) < abs(minDelta)) {
-                minDelta = delta
-            }
-        }
-
-        // max offset: +/-0.5 bin width
-        val offset = minDelta % (binWidth / 2)
-        startX += offset
-
-        return Triple(binCount, binWidth, startX)
-    }
-
     fun computeSummaryStatSeries(
         xs: List<Double?>,
         ys: List<Double?>,
@@ -160,6 +114,52 @@ object BinStatUtil {
         return computeDotdensityBins(valuesX, binWidth)
     }
 
+    internal fun getBinningParameters(
+        rangeX: DoubleSpan,
+        xPosKind: BinStat.XPosKind,
+        xPos: Double,
+        binOptions: BinOptions
+    ): Triple<Int, Double, Double> {
+        var startX = rangeX.lowerEnd
+        var spanX = rangeX.upperEnd - startX
+
+        // initial bin count/width
+        val b: CountAndWidth = binCountAndWidth(spanX, binOptions)
+
+        // adjusted bin count/width
+        // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
+        startX -= b.width * 0.7
+        spanX += b.width * 1.4
+        val (binCount, binWidth) = binCountAndWidth(spanX, binOptions)
+
+        if (xPosKind == BinStat.XPosKind.NONE) {
+            return Triple(binCount, binWidth, startX)
+        }
+
+        // optional horizontal adjustment (+/-0.5 bin width max)
+        var minDelta = when (xPosKind) {
+            BinStat.XPosKind.CENTER -> Double.MAX_VALUE
+            else -> xPos - startX
+        }
+
+        for (i in 0 until binCount) {
+            val binLeft = startX + i * binWidth
+            val delta = when (xPosKind) {
+                BinStat.XPosKind.CENTER -> xPos - (binLeft + binWidth / 2)
+                else -> xPos - (binLeft + binWidth)
+            }
+            if (abs(delta) < abs(minDelta)) {
+                minDelta = delta
+            }
+        }
+
+        // max offset: +/-0.5 bin width
+        val offset = minDelta % (binWidth / 2)
+        startX += offset
+
+        return Triple(binCount, binWidth, startX)
+    }
+
     private fun computeSummaryBins(
         xValues: List<Double>,
         yValues: List<Double>,
@@ -168,17 +168,18 @@ object BinStatUtil {
         binCount: Int,
         binWidth: Double
     ): Map<DataFrame.Variable, List<Double>> {
-        val valuesByBinIndex = HashMap<Int, MutableList<Double>>()
+        val yValuesByBinIndex = HashMap<Int, MutableList<Double>>()
         for ((x, y) in xValues zip yValues) {
             val binIndex = floor((x - startX) / binWidth).toInt()
-            valuesByBinIndex.getOrPut(binIndex, { mutableListOf() }).add(y)
+            yValuesByBinIndex.getOrPut(binIndex, { mutableListOf() }).add(y)
         }
+
         val statX = ArrayList<Double>()
         val summaryBins: Map<DataFrame.Variable, MutableList<Double>> = aggFunctions.keys.associateWith { mutableListOf() }
         val lowerX = startX + binWidth / 2
         for (i in 0 until binCount) {
             statX.add(lowerX + i * binWidth)
-            val sortedBin = (valuesByBinIndex[i] ?: emptyList()).let { bin ->
+            val sortedBin = (yValuesByBinIndex[i] ?: emptyList()).let { bin ->
                 Ordering.natural<Double>().sortedCopy(bin)
             }
             for ((statVar, aggValues) in summaryBins) {
@@ -186,6 +187,7 @@ object BinStatUtil {
                 aggValues.add(aggFunction(sortedBin))
             }
         }
+
         return mapOf(Stats.X to statX) + summaryBins
     }
 
