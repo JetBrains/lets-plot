@@ -6,8 +6,8 @@
 package jetbrains.datalore.vis.canvas.javaFx
 
 import javafx.scene.Group
-import org.jetbrains.letsPlot.base.intern.async.Async
-import org.jetbrains.letsPlot.base.intern.async.Asyncs
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector

@@ -125,7 +125,10 @@ object EventMatchers {
 
     fun <ValueT> newValue(valueMatcher: Matcher<in ValueT>): Matcher<PropertyChangeEvent<out ValueT>> {
         return object : TypeSafeDiagnosingMatcher<PropertyChangeEvent<out ValueT>>() {
-            override fun matchesSafely(item: PropertyChangeEvent<out ValueT>, mismatchDescription: Description): Boolean {
+            override fun matchesSafely(
+                item: PropertyChangeEvent<out ValueT>,
+                mismatchDescription: Description
+            ): Boolean {
                 if (valueMatcher.matches(item.newValue)) {
                     return true
                 } else {
@@ -147,7 +150,10 @@ object EventMatchers {
 
     fun <ValueT> oldValue(valueMatcher: Matcher<in ValueT>): Matcher<PropertyChangeEvent<out ValueT>> {
         return object : TypeSafeDiagnosingMatcher<PropertyChangeEvent<out ValueT>>() {
-            override fun matchesSafely(item: PropertyChangeEvent<out ValueT>, mismatchDescription: Description): Boolean {
+            override fun matchesSafely(
+                item: PropertyChangeEvent<out ValueT>,
+                mismatchDescription: Description
+            ): Boolean {
                 if (valueMatcher.matches(item.oldValue)) {
                     return true
                 } else {

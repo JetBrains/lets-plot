@@ -10,7 +10,7 @@ import jetbrains.datalore.base.observable.collections.CollectionItemEvent
 import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
 
 open class ChildList<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(private val myParent: ParentT) :
-        ObservableArrayList<ChildT>() {
+    ObservableArrayList<ChildT>() {
 
     init {
         addListener(object : CollectionAdapter<ChildT>() {

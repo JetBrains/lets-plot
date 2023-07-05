@@ -33,7 +33,10 @@ object Properties {
         return map(prop) { value -> value == null }
     }
 
-    fun startsWith(string: ReadableProperty<String?>, prefix: ReadableProperty<String?>): ReadableProperty<out Boolean> {
+    fun startsWith(
+        string: ReadableProperty<String?>,
+        prefix: ReadableProperty<String?>
+    ): ReadableProperty<out Boolean> {
 
         return object : DerivedProperty<Boolean>(false, string, prefix) {
             override val propExpr: String
@@ -127,13 +130,14 @@ object Properties {
     }
 
     fun <SourceT, TargetT> select(
-            source: ReadableProperty<SourceT?>, `fun`: (SourceT?) -> ReadableProperty<TargetT?>): ReadableProperty<TargetT?> {
+        source: ReadableProperty<SourceT?>, `fun`: (SourceT?) -> ReadableProperty<TargetT?>
+    ): ReadableProperty<TargetT?> {
         return select(source, `fun`, null)
     }
 
     fun <SourceT, TargetT> select(
-            source: ReadableProperty<SourceT?>, `fun`: (SourceT?) -> ReadableProperty<TargetT?>,
-            nullValue: TargetT?
+        source: ReadableProperty<SourceT?>, `fun`: (SourceT?) -> ReadableProperty<TargetT?>,
+        nullValue: TargetT?
     ): ReadableProperty<TargetT?> {
 
         val calc = object : Supplier<TargetT?> {
@@ -199,7 +203,8 @@ object Properties {
     }
 
     fun <SourceT, TargetT> selectRw(
-            source: ReadableProperty<SourceT>, `fun`: (SourceT) -> Property<TargetT?>): Property<TargetT?> {
+        source: ReadableProperty<SourceT>, `fun`: (SourceT) -> Property<TargetT?>
+    ): Property<TargetT?> {
         val calc = object : Supplier<TargetT?> {
             override fun get(): TargetT? {
                 val value = source.get() ?: return null
@@ -270,7 +275,8 @@ object Properties {
     }
 
     fun <EventT, ValueT> selectEvent(
-            prop: ReadableProperty<out ValueT>, selector: (ValueT) -> EventSource<EventT>): EventSource<EventT> {
+        prop: ReadableProperty<out ValueT>, selector: (ValueT) -> EventSource<EventT>
+    ): EventSource<EventT> {
         return object : EventSource<EventT> {
             override fun addHandler(handler: EventHandler<EventT>): Registration {
                 val esReg = Value(Registration.EMPTY)
@@ -312,7 +318,10 @@ object Properties {
         return map(prop) { value -> value == v }
     }
 
-    fun <ValueT> equals(p1: ReadableProperty<out ValueT?>, p2: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean> {
+    fun <ValueT> equals(
+        p1: ReadableProperty<out ValueT?>,
+        p2: ReadableProperty<out ValueT?>
+    ): ReadableProperty<out Boolean> {
         return object : DerivedProperty<Boolean>(false, p1, p2) {
 
             override val propExpr: String
@@ -328,12 +337,16 @@ object Properties {
         return not(equals(prop, value))
     }
 
-    fun <ValueT> notEquals(p1: ReadableProperty<out ValueT?>, p2: ReadableProperty<out ValueT?>): ReadableProperty<out Boolean?> {
+    fun <ValueT> notEquals(
+        p1: ReadableProperty<out ValueT?>,
+        p2: ReadableProperty<out ValueT?>
+    ): ReadableProperty<out Boolean?> {
         return not(equals(p1, p2))
     }
 
     fun <SourceT, TargetT> map(
-            prop: ReadableProperty<out SourceT>, f: (SourceT) -> TargetT): ReadableProperty<out TargetT> {
+        prop: ReadableProperty<out SourceT>, f: (SourceT) -> TargetT
+    ): ReadableProperty<out TargetT> {
         return object : DerivedProperty<TargetT>(f(prop.get()), prop) {
 
             override val propExpr: String
@@ -346,8 +359,8 @@ object Properties {
     }
 
     fun <SourceT, TargetT> map(
-            prop: Property<SourceT>, sToT: (SourceT?) -> TargetT,
-            tToS: (TargetT) -> SourceT
+        prop: Property<SourceT>, sToT: (SourceT?) -> TargetT,
+        tToS: (TargetT) -> SourceT
     ): Property<TargetT> {
         class TransformedProperty : Property<TargetT> {
 
@@ -419,66 +432,66 @@ object Properties {
         }
     }
 
-/*
-    fun <ItemT> indexOf(
-            collection: ObservableList<ItemT>,
-            item: ReadableProperty<ItemT>): ReadableProperty<Int> {
-        return simplePropertyWithCollection(collection, item, object : Supplier<Int> {
-            override fun get(): Int {
-                return collection.indexOf(item.get())
-            }
-        })
-    }
+    /*
+        fun <ItemT> indexOf(
+                collection: ObservableList<ItemT>,
+                item: ReadableProperty<ItemT>): ReadableProperty<Int> {
+            return simplePropertyWithCollection(collection, item, object : Supplier<Int> {
+                override fun get(): Int {
+                    return collection.indexOf(item.get())
+                }
+            })
+        }
 
-    fun <ItemT> contains(
-            collection: ObservableCollection<ItemT>,
-            item: ReadableProperty<out ItemT>): ReadableProperty<out Boolean> {
-        return simplePropertyWithCollection(collection, item, object : Supplier<Boolean> {
-            override fun get(): Boolean {
-                return collection.contains(item.get())
-            }
-        })
-    }
-*/
+        fun <ItemT> contains(
+                collection: ObservableCollection<ItemT>,
+                item: ReadableProperty<out ItemT>): ReadableProperty<out Boolean> {
+            return simplePropertyWithCollection(collection, item, object : Supplier<Boolean> {
+                override fun get(): Boolean {
+                    return collection.contains(item.get())
+                }
+            })
+        }
+    */
 
-/*
-    fun <T> simplePropertyWithCollection(
-            collection: ObservableCollection<*>,
-            item: ReadableProperty<*>,
-            supplier: Supplier<T>): ReadableProperty<T> {
+    /*
+        fun <T> simplePropertyWithCollection(
+                collection: ObservableCollection<*>,
+                item: ReadableProperty<*>,
+                supplier: Supplier<T>): ReadableProperty<T> {
 
-//        return object : BaseDerivedProperty<T>(supplier.get()) {
-        return object : BaseDerivedProperty<T>() {
-            private var myRegistration: Registration? = null
-            private var myCollectionRegistration: Registration? = null
+    //        return object : BaseDerivedProperty<T>(supplier.get()) {
+            return object : BaseDerivedProperty<T>() {
+                private var myRegistration: Registration? = null
+                private var myCollectionRegistration: Registration? = null
 
-            override val propExpr: String
-                get() = "fromCollection($collection, $item, $supplier)"
+                override val propExpr: String
+                    get() = "fromCollection($collection, $item, $supplier)"
 
-            override fun doGet(): T {
-                return supplier.get()
-            }
+                override fun doGet(): T {
+                    return supplier.get()
+                }
 
-            override fun doAddListeners() {
-                myRegistration = item.addHandler(object : EventHandler<PropertyChangeEvent<*>> {
-                    override fun onEvent(event: PropertyChangeEvent<*>) {
-                        somethingChanged()
-                    }
-                })
-                myCollectionRegistration = collection.addListener(Properties.simpleAdapter(object : Runnable {
-                    override fun run() {
-                        somethingChanged()
-                    }
-                }))
-            }
+                override fun doAddListeners() {
+                    myRegistration = item.addHandler(object : EventHandler<PropertyChangeEvent<*>> {
+                        override fun onEvent(event: PropertyChangeEvent<*>) {
+                            somethingChanged()
+                        }
+                    })
+                    myCollectionRegistration = collection.addListener(Properties.simpleAdapter(object : Runnable {
+                        override fun run() {
+                            somethingChanged()
+                        }
+                    }))
+                }
 
-            protected override fun doRemoveListeners() {
-                myRegistration!!.remove()
-                myCollectionRegistration!!.remove()
+                protected override fun doRemoveListeners() {
+                    myRegistration!!.remove()
+                    myCollectionRegistration!!.remove()
+                }
             }
         }
-    }
-*/
+    */
 
     fun <ItemT> notEmpty(collection: ObservableCollection<ItemT>): ReadableProperty<out Boolean?> {
         return not(empty(collection) as ReadableProperty<out Boolean?>)
@@ -523,7 +536,8 @@ object Properties {
     }
 
     fun <ValueT> ifProp(
-            cond: ReadableProperty<out Boolean>, ifTrue: ReadableProperty<out ValueT>, ifFalse: ReadableProperty<out ValueT>): ReadableProperty<out ValueT?> {
+        cond: ReadableProperty<out Boolean>, ifTrue: ReadableProperty<out ValueT>, ifFalse: ReadableProperty<out ValueT>
+    ): ReadableProperty<out ValueT?> {
         return object : DerivedProperty<ValueT?>(null, cond, ifTrue, ifFalse) {
 
             override val propExpr: String
@@ -535,7 +549,11 @@ object Properties {
         }
     }
 
-    fun <ValueT> ifProp(cond: ReadableProperty<out Boolean>, ifTrue: ValueT, ifFalse: ValueT): ReadableProperty<out ValueT?> {
+    fun <ValueT> ifProp(
+        cond: ReadableProperty<out Boolean>,
+        ifTrue: ValueT,
+        ifFalse: ValueT
+    ): ReadableProperty<out ValueT?> {
         return ifProp(cond, constant(ifTrue), constant(ifFalse))
     }
 
@@ -595,7 +613,10 @@ object Properties {
         }
     }
 
-    fun <ValueT> isPropertyValid(source: ReadableProperty<out ValueT>, validator: Predicate<ValueT>): ReadableProperty<out Boolean> {
+    fun <ValueT> isPropertyValid(
+        source: ReadableProperty<out ValueT>,
+        validator: Predicate<ValueT>
+    ): ReadableProperty<out Boolean> {
         return object : DerivedProperty<Boolean>(false, source) {
 
             override val propExpr: String
@@ -778,18 +799,18 @@ object Properties {
         }
     }
 
-/*
-    fun <EnumT : Enum<EnumT>> enumAsInteger(source: Property<EnumT>, enumClass: KClass<out EnumT>): Property<Int> {
-        return property(map(source) { value -> value.ordinal },
-                object : WritableProperty<Int> {
-                    override fun set(value: Int?) {
-                        if (value == null) {
-                            source.set(null)
-                            return
+    /*
+        fun <EnumT : Enum<EnumT>> enumAsInteger(source: Property<EnumT>, enumClass: KClass<out EnumT>): Property<Int> {
+            return property(map(source) { value -> value.ordinal },
+                    object : WritableProperty<Int> {
+                        override fun set(value: Int?) {
+                            if (value == null) {
+                                source.set(null)
+                                return
+                            }
+                            source.set(enumClass.getEnumConstants()[value])
                         }
-                        source.set(enumClass.getEnumConstants()[value])
-                    }
-                })
-    }
-*/
+                    })
+        }
+    */
 }

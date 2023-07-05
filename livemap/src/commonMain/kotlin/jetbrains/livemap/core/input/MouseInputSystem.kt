@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.core.input
 
-import org.jetbrains.letsPlot.base.intern.concurrent.Lock
-import org.jetbrains.letsPlot.base.intern.concurrent.execute
+import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
+import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec

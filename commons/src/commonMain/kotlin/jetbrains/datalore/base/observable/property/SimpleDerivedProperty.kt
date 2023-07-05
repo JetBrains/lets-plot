@@ -13,9 +13,10 @@ import jetbrains.datalore.base.registration.Registration
  * Derived property based on a Supplier<Value> and a set of dependencies </Value>
  */
 class SimpleDerivedProperty<ValueT>(
-        private val mySupplier: Supplier<ValueT>,
-        vararg deps: ReadableProperty<*>) :
-        BaseDerivedProperty<ValueT>(mySupplier.get()) {
+    private val mySupplier: Supplier<ValueT>,
+    vararg deps: ReadableProperty<*>
+) :
+    BaseDerivedProperty<ValueT>(mySupplier.get()) {
 
     private val myDependencies: Array<ReadableProperty<*>>
     private var myRegistrations: Array<Registration>? = null

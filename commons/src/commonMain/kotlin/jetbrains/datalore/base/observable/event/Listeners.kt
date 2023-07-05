@@ -128,7 +128,7 @@ open class Listeners<ListenerT> {
     }
 
     private class ListenerOp<ListenerT> internal constructor(
-            val listener: ListenerT,
-            val add: Boolean
+        val listener: ListenerT,
+        val add: Boolean
     )
 }

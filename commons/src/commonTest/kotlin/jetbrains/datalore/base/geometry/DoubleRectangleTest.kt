@@ -12,8 +12,10 @@ import kotlin.test.assertEquals
 class DoubleRectangleTest {
     @Test
     fun hashCodeWorks() {
-        assertEquals(DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode(),
-                DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode())
+        assertEquals(
+            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode(),
+            DoubleRectangle(DoubleVector.ZERO, DoubleVector.ZERO).hashCode()
+        )
     }
 
 }

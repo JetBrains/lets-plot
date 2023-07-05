@@ -13,10 +13,10 @@ class TreeMapTest {
     @Test
     fun floorAndCeilingKeys() {
         val map = treeMapOf(
-                6 to "ddd",
-                2 to "aaa",
-                5 to "ccc",
-                4 to "bbb"
+            6 to "ddd",
+            2 to "aaa",
+            5 to "ccc",
+            4 to "bbb"
         )
 
         assertEquals(5, map.floorKey(5))

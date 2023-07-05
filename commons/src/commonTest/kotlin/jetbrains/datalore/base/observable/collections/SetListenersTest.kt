@@ -31,9 +31,11 @@ class SetListenersTest : ListenersTestCase() {
 
     private open class TestObservableHashSet : ObservableHashSet<Int>(), MyCollection {
         override var beforeItemAddedCallsNumber: Int = 0
+
         //            private set
         private var afterItemAddedCalled: Int = 0
         override var beforeItemRemovedCallsNumber: Int = 0
+
         //            private set
         private var afterItemRemovedCalled: Int = 0
         private var successful: Boolean = false

@@ -8,12 +8,12 @@ package jetbrains.datalore.base.observable.collections
 import jetbrains.datalore.base.observable.event.ListenerEvent
 
 class CollectionItemEvent<ItemT>(
-        val oldItem: ItemT?,
-        val newItem: ItemT?,
-        val index: Int,
-        val type: EventType
+    val oldItem: ItemT?,
+    val newItem: ItemT?,
+    val index: Int,
+    val type: EventType
 ) :
-        ListenerEvent<CollectionListener<ItemT>> {
+    ListenerEvent<CollectionListener<ItemT>> {
 
     init {
         if (EventType.ADD == type && oldItem != null || EventType.REMOVE == type && newItem != null) {

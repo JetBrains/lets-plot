@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
-import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import jetbrains.gis.geoprotocol.GeoResponse.*
 import jetbrains.gis.geoprotocol.GeoResponse.AmbiguousGeoResponse.AmbiguousFeature
 import jetbrains.gis.geoprotocol.GeoResponse.SuccessGeoResponse.GeocodedFeature

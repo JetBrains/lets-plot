@@ -13,6 +13,7 @@ import kotlin.test.*
 
 class ObservableHashSetTest {
     private var set: ObservableSet<String?> = ObservableHashSet()
+
     @Suppress("UNCHECKED_CAST")
     private val listener = Mockito.mock(CollectionAdapter::class.java) as CollectionListener<in String?>
 
@@ -33,7 +34,8 @@ class ObservableHashSetTest {
         Mockito.reset(listener)
         set.remove("x")
         Mockito.verify(listener).onItemRemoved(
-                CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE))
+            CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE)
+        )
     }
 
     @Test
@@ -42,19 +44,22 @@ class ObservableHashSetTest {
         Mockito.reset(listener)
         set.clear()
         Mockito.verify(listener).onItemRemoved(
-                CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE))
+            CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE)
+        )
     }
 
     @Test
     fun nullValue() {
         set.add(null)
         Mockito.verify(listener).onItemAdded(
-                CollectionItemEvent<String>(null, null, -1, CollectionItemEvent.EventType.ADD))
+            CollectionItemEvent<String>(null, null, -1, CollectionItemEvent.EventType.ADD)
+        )
         assertEquals(1, set.size)
         Mockito.reset(listener)
         set.remove(null)
         Mockito.verify(listener).onItemRemoved(
-                CollectionItemEvent<String>(null, null, -1, CollectionItemEvent.EventType.REMOVE))
+            CollectionItemEvent<String>(null, null, -1, CollectionItemEvent.EventType.REMOVE)
+        )
         assertTrue(set.isEmpty())
     }
 
@@ -67,7 +72,8 @@ class ObservableHashSetTest {
         val toRemove = i.next()
         i.remove()
         Mockito.verify(listener).onItemRemoved(
-                CollectionItemEvent(toRemove, null, -1, CollectionItemEvent.EventType.REMOVE))
+            CollectionItemEvent(toRemove, null, -1, CollectionItemEvent.EventType.REMOVE)
+        )
         assertEquals(1, set.size)
     }
 
@@ -134,8 +140,9 @@ class ObservableHashSetTest {
         set.add("x")
         assertTrue(afterCalled.get())
         Mockito.verify(
-                listener,
-                Mockito.never()).onItemAdded(CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE))
+            listener,
+            Mockito.never()
+        ).onItemAdded(CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE))
     }
 
     @Test
@@ -157,7 +164,8 @@ class ObservableHashSetTest {
         set.remove("x")
         assertTrue(afterCalled.get())
         Mockito.verify(
-                listener,
-                Mockito.never()).onItemRemoved(CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE))
+            listener,
+            Mockito.never()
+        ).onItemRemoved(CollectionItemEvent("x", null, -1, CollectionItemEvent.EventType.REMOVE))
     }
 }

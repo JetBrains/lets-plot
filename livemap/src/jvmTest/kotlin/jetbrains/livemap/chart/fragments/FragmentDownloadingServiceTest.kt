@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart.fragments
 
-import org.jetbrains.letsPlot.base.intern.async.SimpleAsync
+import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase

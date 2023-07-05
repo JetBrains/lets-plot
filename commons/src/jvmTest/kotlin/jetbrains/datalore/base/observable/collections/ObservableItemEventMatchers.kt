@@ -13,8 +13,10 @@ import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeDiagnosingMatcher
 
 object ObservableItemEventMatchers {
-    fun <T> event(oldItem: Matcher<in T>, newItem: Matcher<in T>,
-                  index: Matcher<Int>, type: Matcher<CollectionItemEvent.EventType>): Matcher<CollectionItemEvent<out T>> {
+    fun <T> event(
+        oldItem: Matcher<in T>, newItem: Matcher<in T>,
+        index: Matcher<Int>, type: Matcher<CollectionItemEvent.EventType>
+    ): Matcher<CollectionItemEvent<out T>> {
         return object : TypeSafeDiagnosingMatcher<CollectionItemEvent<out T>>() {
             override fun matchesSafely(event: CollectionItemEvent<out T>, description: Description): Boolean {
                 if (!type.matches(event.type)) {
@@ -38,9 +40,9 @@ object ObservableItemEventMatchers {
 
             override fun describeTo(description: Description) {
                 description.appendText("an ").appendDescriptionOf(type).appendText(" event with ")
-                        .appendText("old item ").appendDescriptionOf(oldItem).appendText(", ")
-                        .appendText("new item ").appendDescriptionOf(newItem).appendText(", ")
-                        .appendText("index ").appendDescriptionOf(index)
+                    .appendText("old item ").appendDescriptionOf(oldItem).appendText(", ")
+                    .appendText("new item ").appendDescriptionOf(newItem).appendText(", ")
+                    .appendText("index ").appendDescriptionOf(index)
             }
         }
     }
@@ -50,7 +52,8 @@ object ObservableItemEventMatchers {
     }
 
     fun <T> setEvent(
-            oldItem: Matcher<in T>, newItem: Matcher<in T>, index: Matcher<Int>): Matcher<CollectionItemEvent<out T>> {
+        oldItem: Matcher<in T>, newItem: Matcher<in T>, index: Matcher<Int>
+    ): Matcher<CollectionItemEvent<out T>> {
         return event(oldItem, newItem, index, equalTo(SET))
     }
 

@@ -92,12 +92,15 @@ open class ListListenersTest : ListenersTestCase() {
 
     private open class TestObservableArrayList : ObservableArrayList<Int>(), MyList {
         override var beforeItemAddedCallsNumber: Int = 0
+
         //            private set
         private var afterItemAddedCalled: Int = 0
         override var beforeItemSetCallsNumber: Int = 0
+
         //            private set
         private var afterItemSetCalled: Int = 0
         override var beforeItemRemovedCallsNumber: Int = 0
+
         //            private set
         private var afterItemRemovedCalled: Int = 0
         private var successful: Boolean = false

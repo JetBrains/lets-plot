@@ -17,14 +17,18 @@ class RectangleTest {
 
     @Test
     fun add() {
-        assertEquals(Rectangle(Vector(1, 2), Vector(2, 2)),
-                Rectangle(Vector(0, 0), Vector(2, 2)).add(Vector(1, 2)))
+        assertEquals(
+            Rectangle(Vector(1, 2), Vector(2, 2)),
+            Rectangle(Vector(0, 0), Vector(2, 2)).add(Vector(1, 2))
+        )
     }
 
     @Test
     fun sub() {
-        assertEquals(Rectangle(Vector(0, 0), Vector(2, 2)),
-                Rectangle(Vector(1, 2), Vector(2, 2)).sub(Vector(1, 2)))
+        assertEquals(
+            Rectangle(Vector(0, 0), Vector(2, 2)),
+            Rectangle(Vector(1, 2), Vector(2, 2)).sub(Vector(1, 2))
+        )
     }
 
     @Test

@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.base.observable.property
 
+import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
+import jetbrains.datalore.base.observable.collections.list.ObservableList
 import jetbrains.datalore.base.observable.property.EventMatchers.allEvents
 import jetbrains.datalore.base.observable.property.EventMatchers.newValue
 import jetbrains.datalore.base.observable.property.EventMatchers.newValueIs
@@ -12,8 +14,6 @@ import jetbrains.datalore.base.observable.property.EventMatchers.noEvents
 import jetbrains.datalore.base.observable.property.EventMatchers.oldValueIs
 import jetbrains.datalore.base.observable.property.EventMatchers.setTestHandler
 import jetbrains.datalore.base.observable.property.EventMatchers.singleEvent
-import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
-import jetbrains.datalore.base.observable.collections.list.ObservableList
 import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*

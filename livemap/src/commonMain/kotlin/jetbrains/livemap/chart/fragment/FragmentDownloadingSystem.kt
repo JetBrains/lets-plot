@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.chart.fragment
 
-import org.jetbrains.letsPlot.base.intern.concurrent.Lock
-import org.jetbrains.letsPlot.base.intern.concurrent.execute
+import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
+import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon

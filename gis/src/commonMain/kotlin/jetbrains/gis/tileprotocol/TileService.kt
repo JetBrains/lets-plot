@@ -5,10 +5,10 @@
 
 package jetbrains.gis.tileprotocol
 
-import org.jetbrains.letsPlot.base.intern.async.Async
-import org.jetbrains.letsPlot.base.intern.async.ThreadSafeAsync
-import org.jetbrains.letsPlot.base.intern.concurrent.Lock
-import org.jetbrains.letsPlot.base.intern.concurrent.execute
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
+import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
+import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.json.JsonSupport.formatJson
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers

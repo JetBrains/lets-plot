@@ -8,7 +8,7 @@ package jetbrains.datalore.base.observable.children
 import jetbrains.datalore.base.observable.property.ValueProperty
 
 class ChildProperty<ParentT, ChildT : SimpleComposite<in ParentT?, in ChildT>>(private val myParent: ParentT) :
-        ValueProperty<ChildT?>(null) {
+    ValueProperty<ChildT?>(null) {
 
     override fun set(value: ChildT?) {
         if (get() === value) return

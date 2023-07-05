@@ -14,8 +14,9 @@ import kotlin.jvm.JvmOverloads
 class DelayedValueProperty<ValueT>
 @JvmOverloads
 constructor(
-        private var myValue: ValueT? = null) :
-        BaseReadableProperty<ValueT?>(),
+    private var myValue: ValueT? = null
+) :
+    BaseReadableProperty<ValueT?>(),
     Property<ValueT?> {
 
     private var myHandlers: Listeners<EventHandler<PropertyChangeEvent<out ValueT?>>>? = null

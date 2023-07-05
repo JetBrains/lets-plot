@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.vector.debug
 
-import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.livemap.core.SystemTime
 import jetbrains.livemap.core.multitasking.DebugMicroTask

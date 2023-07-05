@@ -11,7 +11,7 @@ package jetbrains.datalore.base.observable.property
  * In such cases the update() method is called by timer.
  */
 abstract class UpdatableProperty<ValueT> protected constructor() :
-        BaseDerivedProperty<ValueT?>(null) {
+    BaseDerivedProperty<ValueT?>(null) {
 //        BaseDerivedProperty<ValueT>() {
 
     override val propExpr: String

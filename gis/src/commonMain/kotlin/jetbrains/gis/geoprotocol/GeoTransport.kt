@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
-import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Async
 
 interface GeoTransport {
     fun send(request: GeoRequest): Async<GeoResponse>

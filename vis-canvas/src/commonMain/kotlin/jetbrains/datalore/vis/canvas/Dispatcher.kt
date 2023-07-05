@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.canvas
 
-import org.jetbrains.letsPlot.base.intern.async.Async
-import org.jetbrains.letsPlot.base.intern.async.ThreadSafeAsync
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
 
 interface Dispatcher {
     fun <T> schedule(f: () -> T)

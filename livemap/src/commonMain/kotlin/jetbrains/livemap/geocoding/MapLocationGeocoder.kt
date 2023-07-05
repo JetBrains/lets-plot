@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.geocoding
 
-import org.jetbrains.letsPlot.base.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.Async
 import jetbrains.datalore.base.spatial.GeoRectangle
 import jetbrains.datalore.base.typedGeometry.*
 import jetbrains.datalore.base.typedGeometry.Transforms.transform

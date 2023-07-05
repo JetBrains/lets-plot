@@ -8,8 +8,9 @@ package jetbrains.datalore.base.observable.event
 import jetbrains.datalore.base.registration.Registration
 
 internal class MappingEventSource<SourceEventT, TargetEventT>(
-        private val mySourceEventSource: EventSource<SourceEventT>,
-        private val myFunction: (SourceEventT) -> TargetEventT) : EventSource<TargetEventT> {
+    private val mySourceEventSource: EventSource<SourceEventT>,
+    private val myFunction: (SourceEventT) -> TargetEventT
+) : EventSource<TargetEventT> {
 
     override fun addHandler(handler: EventHandler<TargetEventT>): Registration {
         return mySourceEventSource.addHandler(object : EventHandler<SourceEventT> {
