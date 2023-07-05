@@ -119,6 +119,8 @@ object StatProto {
 
             StatKind.SUMMARY -> return configureSummaryStat(options)
 
+            StatKind.SUMMARYBIN -> return configureSummaryBinStat(options)
+
             else -> throw IllegalArgumentException("Unknown stat: '$statKind'")
         }
     }
@@ -440,5 +442,62 @@ object StatProto {
         val yMaxAggFunction = getAggFunction(Summary.FUN_MAX) ?: AggregateFunctions::max
 
         return SummaryStat(yAggFunction, yMinAggFunction, yMaxAggFunction, sortedQuantiles)
+    }
+
+    private fun configureSummaryBinStat(options: OptionsAccessor): SummaryBinStat {
+        val sortedQuantiles: List<Double> = if (options.hasOwn(Summary.QUANTILES)) {
+            val quantiles = options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0)
+            require(quantiles.size == 3) { "Parameter 'quantiles' should contains 3 values" }
+            quantiles.sorted()
+        } else {
+            SummaryStat.DEF_QUANTILES
+        }
+
+        fun getAggFunction(option: String): ((List<Double>) -> Double)? {
+            return options.getString(option)?.let {
+                when (it.lowercase()) {
+                    "count" -> AggregateFunctions::count
+                    "sum" -> AggregateFunctions::sum
+                    "mean" -> AggregateFunctions::mean
+                    "median" -> AggregateFunctions::median
+                    "min" -> AggregateFunctions::min
+                    "max" -> AggregateFunctions::max
+                    "lq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
+                    "mq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
+                    "uq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
+                    else -> throw IllegalArgumentException(
+                        "Unsupported function name: '$it'\n" +
+                        "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
+                    )
+                }
+            }
+        }
+
+        val yAggFunction = getAggFunction(Summary.FUN) ?: AggregateFunctions::mean
+        val yMinAggFunction = getAggFunction(Summary.FUN_MIN) ?: AggregateFunctions::min
+        val yMaxAggFunction = getAggFunction(Summary.FUN_MAX) ?: AggregateFunctions::max
+
+        val center = options.getDouble(Bin.CENTER)
+        val boundary = options.getDouble(Bin.BOUNDARY)
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (boundary != null) {
+            xPosKind = BinStat.XPosKind.BOUNDARY
+            xPosValue = boundary
+        } else if (center != null) {
+            xPosKind = BinStat.XPosKind.CENTER
+            xPosValue = center
+        }
+
+        return SummaryBinStat(
+            yAggFunction,
+            yMinAggFunction,
+            yMaxAggFunction,
+            sortedQuantiles,
+            options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
+            options.getDouble(Bin.BINWIDTH),
+            xPosKind,
+            xPosValue
+        )
     }
 }
