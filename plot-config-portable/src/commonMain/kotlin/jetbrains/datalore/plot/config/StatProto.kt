@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.Stat
 import jetbrains.datalore.plot.base.stat.*
@@ -21,6 +20,7 @@ import jetbrains.datalore.plot.config.Option.Stat.YDensity
 import jetbrains.datalore.plot.config.Option.Stat.QQ
 import jetbrains.datalore.plot.config.Option.Stat.QQLine
 import jetbrains.datalore.plot.config.Option.Stat.Summary
+import jetbrains.datalore.plot.config.Option.Stat.SummaryBin
 
 object StatProto {
 
@@ -417,87 +417,63 @@ object StatProto {
             SummaryStat.DEF_QUANTILES
         }
 
-        fun getAggFunction(option: String): ((List<Double>) -> Double)? {
-            return options.getString(option)?.let {
-                when (it.lowercase()) {
-                    "count" -> AggregateFunctions::count
-                    "sum" -> AggregateFunctions::sum
-                    "mean" -> AggregateFunctions::mean
-                    "median" -> AggregateFunctions::median
-                    "min" -> AggregateFunctions::min
-                    "max" -> AggregateFunctions::max
-                    "lq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
-                    "mq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
-                    "uq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
-                    else -> throw IllegalArgumentException(
-                        "Unsupported function name: '$it'\n" +
-                        "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
-                    )
-                }
-            }
-        }
-
-        val yAggFunction = getAggFunction(Summary.FUN) ?: AggregateFunctions::mean
-        val yMinAggFunction = getAggFunction(Summary.FUN_MIN) ?: AggregateFunctions::min
-        val yMaxAggFunction = getAggFunction(Summary.FUN_MAX) ?: AggregateFunctions::max
+        val yAggFunction = getAggFunction(options, Summary.FUN, sortedQuantiles) ?: AggregateFunctions::mean
+        val yMinAggFunction = getAggFunction(options, Summary.FUN_MIN, sortedQuantiles) ?: AggregateFunctions::min
+        val yMaxAggFunction = getAggFunction(options, Summary.FUN_MAX, sortedQuantiles) ?: AggregateFunctions::max
 
         return SummaryStat(yAggFunction, yMinAggFunction, yMaxAggFunction, sortedQuantiles)
     }
 
     private fun configureSummaryBinStat(options: OptionsAccessor): SummaryBinStat {
-        val sortedQuantiles: List<Double> = if (options.hasOwn(Summary.QUANTILES)) {
-            val quantiles = options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0)
+        val sortedQuantiles: List<Double> = if (options.hasOwn(SummaryBin.QUANTILES)) {
+            val quantiles = options.getBoundedDoubleList(SummaryBin.QUANTILES, 0.0, 1.0)
             require(quantiles.size == 3) { "Parameter 'quantiles' should contains 3 values" }
             quantiles.sorted()
         } else {
             SummaryStat.DEF_QUANTILES
         }
 
-        fun getAggFunction(option: String): ((List<Double>) -> Double)? {
-            return options.getString(option)?.let {
-                when (it.lowercase()) {
-                    "count" -> AggregateFunctions::count
-                    "sum" -> AggregateFunctions::sum
-                    "mean" -> AggregateFunctions::mean
-                    "median" -> AggregateFunctions::median
-                    "min" -> AggregateFunctions::min
-                    "max" -> AggregateFunctions::max
-                    "lq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
-                    "mq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
-                    "uq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
-                    else -> throw IllegalArgumentException(
-                        "Unsupported function name: '$it'\n" +
-                        "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
-                    )
-                }
-            }
-        }
+        val yAggFunction = getAggFunction(options, SummaryBin.FUN, sortedQuantiles) ?: AggregateFunctions::mean
+        val yMinAggFunction = getAggFunction(options, SummaryBin.FUN_MIN, sortedQuantiles) ?: AggregateFunctions::min
+        val yMaxAggFunction = getAggFunction(options, SummaryBin.FUN_MAX, sortedQuantiles) ?: AggregateFunctions::max
 
-        val yAggFunction = getAggFunction(Summary.FUN) ?: AggregateFunctions::mean
-        val yMinAggFunction = getAggFunction(Summary.FUN_MIN) ?: AggregateFunctions::min
-        val yMaxAggFunction = getAggFunction(Summary.FUN_MAX) ?: AggregateFunctions::max
-
-        val center = options.getDouble(Bin.CENTER)
         val boundary = options.getDouble(Bin.BOUNDARY)
-        var xPosKind = BinStat.XPosKind.NONE
-        var xPosValue = 0.0
-        if (boundary != null) {
-            xPosKind = BinStat.XPosKind.BOUNDARY
-            xPosValue = boundary
-        } else if (center != null) {
-            xPosKind = BinStat.XPosKind.CENTER
-            xPosValue = center
+        val center = options.getDouble(Bin.CENTER)
+        val (xPos, xPosKind) = when {
+            boundary != null -> Pair(boundary, BinStat.XPosKind.BOUNDARY)
+            center != null -> Pair(center, BinStat.XPosKind.CENTER)
+            else -> Pair(0.0, BinStat.XPosKind.NONE)
         }
 
         return SummaryBinStat(
-            yAggFunction,
-            yMinAggFunction,
-            yMaxAggFunction,
-            sortedQuantiles,
             options.getIntegerDef(Bin.BINS, BinStat.DEF_BIN_COUNT),
             options.getDouble(Bin.BINWIDTH),
             xPosKind,
-            xPosValue
+            xPos,
+            yAggFunction,
+            yMinAggFunction,
+            yMaxAggFunction,
+            sortedQuantiles
         )
+    }
+
+    private fun getAggFunction(options: OptionsAccessor, option: String, sortedQuantiles: List<Double>): ((List<Double>) -> Double)? {
+        return options.getString(option)?.let {
+            when (it.lowercase()) {
+                "count" -> AggregateFunctions::count
+                "sum" -> AggregateFunctions::sum
+                "mean" -> AggregateFunctions::mean
+                "median" -> AggregateFunctions::median
+                "min" -> AggregateFunctions::min
+                "max" -> AggregateFunctions::max
+                "lq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
+                "mq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
+                "uq" -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
+                else -> throw IllegalArgumentException(
+                    "Unsupported function name: '$it'\n" +
+                    "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
+                )
+            }
+        }
     }
 }

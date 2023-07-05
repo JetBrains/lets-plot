@@ -11,14 +11,14 @@ import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 
 class SummaryBinStat(
-    private val yAggFunction: (List<Double>) -> Double,
-    private val yMinAggFunction: (List<Double>) -> Double,
-    private val yMaxAggFunction: (List<Double>) -> Double,
-    private val sortedQuantiles: List<Double>,
     binCount: Int,
     binWidth: Double?,
     private val xPosKind: BinStat.XPosKind,
-    private val xPos: Double
+    private val xPos: Double,
+    private val yAggFunction: (List<Double>) -> Double,
+    private val yMinAggFunction: (List<Double>) -> Double,
+    private val yMaxAggFunction: (List<Double>) -> Double,
+    private val sortedQuantiles: List<Double>
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
 
@@ -43,7 +43,7 @@ class SummaryBinStat(
             Stats.Y_MIN to yMinAggFunction,
             Stats.Y_MAX to yMaxAggFunction,
         )
-        val aesAggFunctions = statCtx.mappedStatVariables().associateWith { aggFunctionByStat(it) }
+        val aesAggFunctions = statCtx.mappedStatVariables().associateWith { AggregateFunctions.byStat(it, sortedQuantiles) }
         val rangeX = statCtx.overallXRange() ?: return withEmptyStatValues()
 
         val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, paramAggFunctions + aesAggFunctions, rangeX, xPosKind, xPos, binOptions)
@@ -56,24 +56,6 @@ class SummaryBinStat(
             builder.putNumeric(variable, series)
         }
         return builder.build()
-    }
-
-    private fun aggFunctionByStat(statVar: DataFrame.Variable): (List<Double>) -> Double {
-        return when (statVar) {
-            Stats.COUNT -> AggregateFunctions::count
-            Stats.SUM -> AggregateFunctions::sum
-            Stats.MEAN -> AggregateFunctions::mean
-            Stats.MEDIAN -> AggregateFunctions::median
-            Stats.Y_MIN -> AggregateFunctions::min
-            Stats.Y_MAX -> AggregateFunctions::max
-            Stats.LOWER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
-            Stats.MIDDLE_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
-            Stats.UPPER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
-            else -> throw IllegalStateException(
-                "Unsupported stat variable: '${statVar.name}'\n" +
-                "Use one of: ..count.., ..sum.., ..mean.., ..median.., ..ymin.., ..ymax.., ..lq.., ..mq.., ..uq.."
-            )
-        }
     }
 
     companion object {

@@ -5,6 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
+import jetbrains.datalore.plot.base.DataFrame
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.round
@@ -40,6 +41,24 @@ object AggregateFunctions {
         return when (round(place)) {
             place -> sortedValues[place.toInt()]
             else -> (sortedValues[ceil(place).toInt()] + sortedValues[floor(place).toInt()]) / 2.0
+        }
+    }
+
+    fun byStat(statVar: DataFrame.Variable, sortedQuantiles: List<Double>): (List<Double>) -> Double {
+        return when (statVar) {
+            Stats.COUNT -> this::count
+            Stats.SUM -> this::sum
+            Stats.MEAN -> this::mean
+            Stats.MEDIAN -> this::median
+            Stats.Y_MIN -> this::min
+            Stats.Y_MAX -> this::max
+            Stats.LOWER_QUANTILE -> { values -> quantile(values, sortedQuantiles[0]) }
+            Stats.MIDDLE_QUANTILE -> { values -> quantile(values, sortedQuantiles[1]) }
+            Stats.UPPER_QUANTILE -> { values -> quantile(values, sortedQuantiles[2]) }
+            else -> throw IllegalStateException(
+                "Unsupported stat variable: '${statVar.name}'\n" +
+                "Use one of: ..count.., ..sum.., ..mean.., ..median.., ..ymin.., ..ymax.., ..lq.., ..mq.., ..uq.."
+            )
         }
     }
 }

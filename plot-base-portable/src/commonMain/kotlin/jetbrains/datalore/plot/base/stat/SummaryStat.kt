@@ -73,7 +73,7 @@ class SummaryStat(
             statYMin.add(yMinAggFunction(sortedBin))
             statYMax.add(yMaxAggFunction(sortedBin))
             for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = aggFunctionByStat(statVar)
+                val aggFunction = AggregateFunctions.byStat(statVar, sortedQuantiles)
                 aggValues.add(aggFunction(sortedBin))
             }
         }
@@ -84,24 +84,6 @@ class SummaryStat(
             Stats.Y_MIN to statYMin,
             Stats.Y_MAX to statYMax,
         ) + statAggValues
-    }
-
-    private fun aggFunctionByStat(statVar: DataFrame.Variable): (List<Double>) -> Double {
-        return when (statVar) {
-            Stats.COUNT -> AggregateFunctions::count
-            Stats.SUM -> AggregateFunctions::sum
-            Stats.MEAN -> AggregateFunctions::mean
-            Stats.MEDIAN -> AggregateFunctions::median
-            Stats.Y_MIN -> AggregateFunctions::min
-            Stats.Y_MAX -> AggregateFunctions::max
-            Stats.LOWER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
-            Stats.MIDDLE_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
-            Stats.UPPER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
-            else -> throw IllegalStateException(
-                "Unsupported stat variable: '${statVar.name}'\n" +
-                "Use one of: ..count.., ..sum.., ..mean.., ..median.., ..ymin.., ..ymax.., ..lq.., ..mq.., ..uq.."
-            )
-        }
     }
 
     companion object {
