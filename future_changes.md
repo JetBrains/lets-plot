@@ -7,6 +7,11 @@
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary.ipynb).
 
 
+- New layer `stat_summary_bin()`.
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/stat_summary_bin.ipynb).
+
+
 - Tooltips for `geom_step()`.
 
   See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-23c/geom_step_tooltips.ipynb).
@@ -39,5 +44,6 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 - ggsave: saving geomImshow() to raster format produces fuzzy picture.
 - geom_livemap: memory leak when re-run cells without reloading a page.
 - Fix placement of horizontal tooltips: when there is not enough height for all tooltips, the nearest one should be used.
-- Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
 - `geom_path` doesn't support different colors for segments [[#313](https://github.com/JetBrains/lets-plot/issues/313)].
+- Weird tooltip/legend in case of extremely long value [[#315](https://github.com/JetBrains/lets-plot/issues/315)].
+- Add `stat_summary`, `stat_summary_bin` to ggplot [[#316](https://github.com/JetBrains/lets-plot/issues/316)].
