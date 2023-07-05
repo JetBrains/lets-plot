@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
-import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.base.aes.GeomTheme
+import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 
 internal class DefaultGeomTheme private constructor(
     private val color: Color,
@@ -34,22 +34,16 @@ internal class DefaultGeomTheme private constructor(
     override fun lineWidth() = lineWidth
 
     companion object {
-        internal class InheritedColors(
-            options: Map<String, Any>,
-            fontFamilyRegistry: FontFamilyRegistry
-        ) : ThemeValuesAccess(options, fontFamilyRegistry) {
-
-            private val lineKey = listOf(AXIS_LINE + "_x", AXIS_LINE + "_y", AXIS_LINE, AXIS, LINE)
+        private class InheritedColors(
+            options: Map<String, Any>
+        ) : ThemeValuesAccess(options, DefaultFontFamilyRegistry()) {
+            private val lineKey = listOf(AXIS_LINE, AXIS, LINE)
 
             private val backgroundKey = listOf(PLOT_BKGR_RECT, RECT)
 
-            fun lineColor(): Color {
-                return getColor(getElemValue(lineKey), ThemeOption.Elem.COLOR)
-            }
+            fun lineColor() = getColor(getElemValue(lineKey), ThemeOption.Elem.COLOR)
 
-            fun backgroundFill(): Color {
-                return getColor(getElemValue(backgroundKey), ThemeOption.Elem.FILL)
-            }
+            fun backgroundFill() = getColor(getElemValue(backgroundKey), ThemeOption.Elem.FILL)
         }
 
         private class FixedColors(geomKind: GeomKind) {
@@ -62,7 +56,8 @@ internal class DefaultGeomTheme private constructor(
         }
 
         // defaults for geomKind
-        fun forGeomKind(geomKind: GeomKind, inheritedColors: InheritedColors): GeomTheme {
+        fun forGeomKind(geomKind: GeomKind, themeSettings: Map<String, Any>): GeomTheme {
+            val inheritedColors = InheritedColors(themeSettings)
             val fixedColors = FixedColors(geomKind)
 
             var color = fixedColors.color

@@ -36,17 +36,16 @@ class ThemeConfig constructor(
             LegendThemeConfig.convertValue(key, value)
         }
 
-        // User specific options will be applied to the combination of named theme and flavor options
-        val effectiveOptions = baselineValues.values.let {
+        val themeFlavorOptions = baselineValues.values.let {
             val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
             if (flavorName != null) {
                 ThemeFlavor.forName(flavorName).updateColors(it)
             } else {
                 it
             }
-        }.mergeWith(userOptions)
+        }
 
-        theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
+        theme = DefaultTheme(themeFlavorOptions, fontFamilyRegistry, userOptions)
     }
 
     companion object {
