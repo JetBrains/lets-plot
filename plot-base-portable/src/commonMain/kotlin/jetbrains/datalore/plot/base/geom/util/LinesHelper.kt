@@ -7,6 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import jetbrains.datalore.base.algorithms.reduce
 import jetbrains.datalore.base.algorithms.splitRings
+import jetbrains.datalore.base.collections.splitBy
 import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors.withOpacity
@@ -54,6 +55,10 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
         }
         decorate(element, aes, closePath)
         return element
+    }
+
+    internal fun createVariadicPathData(dataPoints: Iterable<DataPointAesthetics>): List<List<PathData>> {
+        return createVariadicPathData(createPathDataByGroup(dataPoints, GeomUtil.TO_LOCATION_X_Y))
     }
 
     internal fun createPathDataByGroup(
@@ -178,6 +183,66 @@ open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: Ge
             }
 
             return result
+        }
+
+        fun createVariadicPathData(paths: List<PathData>): List<List<PathData>> {
+            return paths.map { pathData ->
+                pathData.points
+                    .splitBy(
+                        compareBy(
+                            { it.aes.size() },
+                            { it.aes.color()?.red },
+                            { it.aes.color()?.green },
+                            { it.aes.color()?.blue },
+                            { it.aes.color()?.alpha }
+                        )
+                    )
+                    .map(::PathData)
+            }
+        }
+
+        private fun midPointsPathInterpolator(path: List<PathData>): List<PathData> {
+            if (path.size == 1) {
+                return path
+            }
+
+            val jointPoints = path
+                .windowed(size = 2, step = 1)
+                .map { (prevSubPath, nextSubPath) ->
+                    val prevSubPathEnd = prevSubPath.coordinates.last()
+                    val nextSubPathStart = nextSubPath.coordinates.first()
+                    val midPoint = lerp(prevSubPathEnd, nextSubPathStart, 0.5)
+
+                    midPoint
+                }
+
+            return path.mapIndexed { i, subPath ->
+                when (i) {
+                    0 -> {
+                        val rightJointPoint = subPath.points.last().copy(coord = jointPoints[i])
+                        PathData(subPath.points + rightJointPoint)
+                    }
+
+                    path.lastIndex -> {
+                        val leftJointPoint = subPath.points.first().copy(coord = jointPoints[i - 1])
+                        PathData(listOf(leftJointPoint) + subPath.points)
+                    }
+
+                    else -> {
+                        val leftJointPoint = subPath.points.first().copy(coord = jointPoints[i - 1])
+                        val rightJointPoint = subPath.points.last().copy(coord = jointPoints[i])
+                        PathData(listOf(leftJointPoint) + subPath.points + rightJointPoint)
+                    }
+                }
+            }
+        }
+
+        private fun lerp(p1: DoubleVector, p2: DoubleVector, progress: Double): DoubleVector {
+            return p1.add(p2.subtract(p1).mul(progress))
+        }
+
+        fun createVisualPath(variadicPath: List<List<PathData>>): List<PathData> {
+            return variadicPath.flatMap(::midPointsPathInterpolator)
         }
     }
 }

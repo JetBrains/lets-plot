@@ -15,26 +15,21 @@ import kotlin.random.Random
 class LiveMap {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
+            variadicPath(),
             titanic(),
             airports(),
             volcanos(),
+            minard(),
 //            georeference(),
-//            blankPoint(),
-//            blankMap(),
-//            barWithNanValuesInData(),
-            pieWithNanValuesInData(),
-//            pieWithNullValuesInData(),
-//            barWithNullValuesInData()
-            multiLayerTooltips()
-//            mapJoinBar(),
-//            antiMeridian(),
-//            tooltips(),
-//            symbol_point(),
-//            geom_point()
-//            fourPointsTwoLayers(),
-//            basic(),
-//            bunch(),
-//            facet()
+            blankMap(),
+            pie(),
+            multiLayerTooltips(),
+            antiMeridian(),
+            tooltips(),
+            fourPointsTwoLayers(),
+            osmTiles(),
+            bunch(),
+            facet()
         )
     }
 
@@ -76,6 +71,13 @@ class LiveMap {
 
     private fun MutableMap<String, Any>.updateTiles(tilesSpec: Map<String, Any>) = apply {
         getList("layers")!!.asMaps().first().asMutable().putAll(tilesSpec)
+    }
+
+    private fun variadicPath(): MutableMap<String, Any> {
+        val spec = """
+            {   "data": {     "x": [       1.0,       2.0,       3.0,       4.0,       5.0,       6.0,       7.0,       8.0,       9.0     ],     "y": [       0.0,       5.0,       0.0,       10.0,       0.0,       5.0,       0.0,       5.0,       0.0     ],     "g": [       0.0,       0.0,       0.0,       1.0,       1.0,       1.0,       2.0,       2.0,       2.0     ],     "c": [       1.0,       17.0,       4.0,       8.0,       3.0,       15.0,       15.0,       2.0,       9.0     ],     "s": [       10.0,       10.0,       10.0,       8.0,       3.0,       9.0,       15.0,       12.0,       9.0     ]   },   "mapping": {},   "data_meta": {},   "ggtitle": {     "text": "geom_path(aes(x=x, y=y, size=s, color=c))"   },   "kind": "plot",   "scales": [],   "layers": [     {       "geom": "livemap",       "mapping": {},       "data_meta": {},       "tiles": {         "kind": "vector_lets_plot",         "url": "ws://localhost:3112",         "theme": "color",         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."       },       "geocoding": {         "url": "http://localhost:3012/map_data/geocoding"       }     },     {       "geom": "path",       "mapping": {         "x": "x",         "y": "y",         "size": "s",         "color": "c"       },       "tooltips": {         "formats": [],         "lines": [           "x"         ]       },       "data_meta": {}     }   ],   "metainfo_list": [] }
+        """.trimIndent()
+        return parsePlotSpec(spec)
     }
 
     private fun airflight(): MutableMap<String, Any> {
@@ -1801,23 +1803,15 @@ class LiveMap {
     {
       "aesthetic": "size",
       "trans": "sqrt",
-      "range": [
-        10,
-        40
-      ]
+      "range": [10, 40]
     }
   ],
   "layers": [
     {
       "geom": "livemap",
-      "mapping": {},
-      "data_meta": {},
       "location": {
         "type": "coordinates",
-        "data": [
-          26.65,
-          38.61
-        ]
+        "data": [26.65, 38.61]
       },
       "zoom": 6,
       "data_size_zoomin": -1,
@@ -1834,10 +1828,7 @@ class LiveMap {
     {
       "geom": "polygon",
       "data": {
-        "country": [
-          "GR",
-          "TR"
-        ],
+        "country": ["GR", "TR"],
         "found name": [
           "\u0395\u03bb\u03bb\u03ac\u03c2",
           "T\u00fcrkiye"
@@ -1860,108 +1851,12 @@ class LiveMap {
     {
       "geom": "point",
       "data": {
-        "IATA": [
-          "ATH",
-          "HER",
-          "SKG",
-          "RHO",
-          "CFU",
-          "CHQ",
-          "KGS",
-          "JTR",
-          "ZTH",
-          "JMK",
-          "ISL",
-          "SAW",
-          "AYT",
-          "ADB",
-          "ESB"
-        ],
-        "city": [
-          "Athens",
-          "Heraklion",
-          "Thessaloniki",
-          "Rhodes",
-          "Corfu",
-          "Chania",
-          "Kos",
-          "Santorini",
-          "Zakinthos",
-          "Mikonos",
-          "Istanbul",
-          "Istanbul",
-          "Antalya",
-          "Izmir",
-          "Ankara"
-        ],
-        "latitude": [
-          37.9354,
-          35.34,
-          40.523,
-          36.4041,
-          39.6067,
-          35.5335,
-          36.8,
-          36.3987,
-          37.753,
-          37.4342,
-          40.983,
-          40.9053,
-          36.9032,
-          38.2932,
-          40.1243
-        ],
-        "longitude": [
-          23.9437,
-          25.1753,
-          22.9767,
-          28.0898,
-          19.9133,
-          24.1499,
-          27.089,
-          25.4793,
-          20.885,
-          25.3484,
-          28.8104,
-          29.3172,
-          30.8008,
-          27.1516,
-          32.9918
-        ],
-        "passengers": [
-          24.13,
-          8.0,
-          6.67,
-          5.57,
-          3.36,
-          3.0,
-          2.67,
-          2.26,
-          1.8,
-          1.4,
-          67.98,
-          34.13,
-          31.7,
-          13.41,
-          16.74
-        ],
-        "country": [
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "GR",
-          "TR",
-          "TR",
-          "TR",
-          "TR",
-          "TR"
-        ]
+        "IATA": ["ATH", "HER", "SKG", "RHO", "CFU", "CHQ", "KGS", "JTR", "ZTH", "JMK", "ISL", "SAW", "AYT", "ADB", "ESB"],
+        "city": ["Athens", "Heraklion", "Thessaloniki", "Rhodes", "Corfu", "Chania", "Kos", "Santorini", "Zakinthos", "Mikonos", "Istanbul", "Istanbul", "Antalya", "Izmir", "Ankara"],
+        "latitude": [37.9354, 35.34, 40.523, 36.4041, 39.6067, 35.5335, 36.8, 36.3987, 37.753, 37.4342, 40.983, 40.9053, 36.9032, 38.2932, 40.1243],
+        "longitude": [23.9437, 25.1753, 22.9767, 28.0898, 19.9133, 24.1499, 27.089, 25.4793, 20.885, 25.3484, 28.8104, 29.3172, 30.8008, 27.1516, 32.9918],
+        "passengers": [24.13, 8.0, 6.67, 5.57, 3.36, 3.0, 2.67, 2.26, 1.8, 1.4, 67.98, 34.13, 31.7, 13.41, 16.74],
+        "country": ["GR", "GR", "GR", "GR", "GR", "GR", "GR", "GR", "GR", "GR", "TR", "TR", "TR", "TR", "TR"]
       },
       "mapping": {
         "x": "longitude",
@@ -1993,7 +1888,6 @@ class LiveMap {
           "Latitude|^y"
         ]
       },
-      "data_meta": {},
       "shape": 21,
       "alpha": 0.7,
       "color": "white"
@@ -2051,92 +1945,6 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-
-    private fun blankPoint(): MutableMap<String, Any> {
-        val spec = """{
-            "kind": "plot",
-            "layers": [
-            {
-            "geom": "point",
-            "data": {},
-            "mapping": {}
-            }
-            ]
-            }""".trimIndent()
-
-        return parsePlotSpec(spec)
-    }
-
-    private fun pieWithNullValuesInData(): MutableMap<String, Any> {
-        val spec = """
-            {
-              "kind": "plot",
-              "layers": [
-                {
-                  "geom": "livemap",
-                  "data": {
-                    "States": [
-                      "Alabama", "Alabama", "Alabama", 
-                      "Alaska", "Alaska", "Alaska",
-                      "Arizona", "Arizona", "Arizona",
-                      "Arkansas", "Arkansas", "Arkansas"
-                    ],
-                    "Item": [
-                      "State Debt", "Local Debt", "Gross State Product",
-                      "State Debt", "Local Debt", "Gross State Product",
-                      "State Debt", "Local Debt", "Gross State Product",
-                      "State Debt", "Local Debt", "Gross State Product"
-                    ],
-                    "Values": [
-                      10.7, 26.1, 228.0,
-                      5.9, 3.5, 55.7,
-                      34.9, 23.5, 355.7,
-                      13.3, 30.5, 361.1
-                    ]
-                  },
-                  "mapping": {
-                    "sym_y": "Values",
-                    "fill": "Item"
-                  },
-                  "map_data_meta": {
-                    "geodataframe": {
-                      "geometry": "geometry"
-                    }
-                  },
-                  "map": {
-                    "request": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
-                    "found name": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
-                    "geometry": [
-                      "{\"type\": \"Point\", \"coordinates\": [-86.7421099329499, 32.6446247845888]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-119.994112927034, 37.277335524559]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-152.012666774028, 63.0759818851948]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-111.665190827228, 34.1682100296021]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-116.666956541192, 38.5030842572451]}"
-                    ]
-                  },
-                  "map_join": [
-                    ["States"],
-                    ["request"]
-                  ],
-                  "display_mode": "pie",
-                  "tiles": {
-                    "kind": "vector_lets_plot",
-                    "url": "wss://tiles.datalore.jetbrains.com",
-                    "theme": "color",
-                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
-                  },
-                  "geocoding": {
-                    "url": "http://172.31.52.145:3025"
-                  },
-                  "map_join": ["States", "state"]
-                }
-              ]
-            }
-        """.trimIndent()
-
-        return parsePlotSpec(spec)
-    }
-
     private fun blankMap(): MutableMap<String, Any> {
         val spec = """{
   "kind": "plot",
@@ -2162,42 +1970,7 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-    private fun barWithNanValuesInData(): MutableMap<String, Any> {
-        val spec = """{
-  "kind": "plot",
-  "layers": [
-    {
-      "geom": "livemap",
-      "data": {
-        "x": [0, 0, 0, 10, 10, 10, 20, 20, 20],
-        "y": [0, 0, 0, 10, 10, 10, 20, 20, 20],
-        "z": [100, 200, 400, 144, null, 230, 123, 543, -231],
-        "c": ['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']
-      },
-      "mapping": {
-        "x": "x",
-        "y": "y",
-        "sym_y": "z",
-        "fill": "c"
-      },
-      "display_mode": "bar",
-      "tiles": {
-        "kind": "vector_lets_plot",
-        "url": "wss://tiles.datalore.jetbrains.com",
-        "url": "wss://tiles.datalore.jetbrains.com",
-        "theme": null,
-        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
-      },
-      "geocoding": {
-        "url": "http://localhost:3020"
-      }
-    }
-  ]
-}""".trimIndent()
-
-        return parsePlotSpec(spec)
-    }
-    private fun pieWithNanValuesInData(): MutableMap<String, Any> {
+    private fun pie(): MutableMap<String, Any> {
         val spec = """{
   "kind": "plot",
   "data": {
@@ -2212,16 +1985,11 @@ class LiveMap {
       "tiles": {
         "kind": "vector_lets_plot",
         "url": "wss://tiles.datalore.jetbrains.com",
-        "url": "wss://tiles.datalore.jetbrains.com",
-        "theme": null,
         "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
-      },
-      "geocoding": {
-        "url": "http://localhost:3020"
       }
     },
     {
-        "geom": "pie",
+      "geom": "pie",
       "mapping": {
         "x": "x",
         "y": "y",
@@ -2231,76 +1999,6 @@ class LiveMap {
     }
   ]
 }""".trimIndent()
-
-        return parsePlotSpec(spec)
-    }
-
-    private fun barWithNullValuesInData(): MutableMap<String, Any> {
-        val spec = """
-            {
-              "kind": "plot",
-              "layers": [
-                {
-                  "geom": "livemap",
-                  "data": {
-                    "States": [
-                      "Alabama", "Alabama", "Alabama",
-                      "Alaska", "Alaska", "Alaska",
-                      "Arizona", "Arizona", "Arizona",
-                      "Arkansas", "Arkansas", "Arkansas"
-                    ],
-                    "Item": [
-                      "State Debt", "Local Debt", "Gross State Product",
-                      "State Debt", "Local Debt", "Gross State Product",
-                      "State Debt", "Local Debt", "Gross State Product",
-                      "State Debt", "Local Debt", "Gross State Product"
-                    ],
-                    "Values": [
-                      10.7, 26.1, 228.0,
-                      5.9, 3.5, 55.7,
-                      34.9, 23.5, 355.7,
-                      13.3, 30.5, 361.1
-                    ]
-                  },
-                  "mapping": {
-                    "sym_y": "Values",
-                    "fill": "Item"
-                  },
-                  "map_data_meta": {
-                    "geodataframe": {
-                      "geometry": "geometry"
-                    }
-                  },
-                  "map": {
-                    "request": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
-                    "found name": ["Alabama", "California", "Alaska", "Arizona", "Nevada"],
-                    "geometry": [
-                      "{\"type\": \"Point\", \"coordinates\": [-86.7421099329499, 32.6446247845888]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-119.994112927034, 37.277335524559]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-152.012666774028, 63.0759818851948]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-111.665190827228, 34.1682100296021]}",
-                      "{\"type\": \"Point\", \"coordinates\": [-116.666956541192, 38.5030842572451]}"
-                    ]
-                  },
-                  "map_join": [
-                    ["States"],
-                    ["request"]
-                  ],
-                  "display_mode": "bar",
-                  "tiles": {
-                    "kind": "vector_lets_plot",
-                    "url": "wss://tiles.datalore.jetbrains.com",
-                    "theme": "color",
-                    "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
-                  },
-                  "geocoding": {
-                    "url": "http://172.31.52.145:3025"
-                  },
-                  "map_join": ["States", "state"]
-                }
-              ]
-            }
-        """.trimIndent()
 
         return parsePlotSpec(spec)
     }
@@ -2357,168 +2055,38 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-    private fun mapJoinBar(): MutableMap<String, Any> {
-        val spec = """{
-  "data": {
-    "State": ["Alabama", "Alabama", "Alabama", "Alaska", "Alaska", "Alaska", "Arizona", "Arizona", "Arizona"],
-    "Item": [ "State Debt", "Local Debt", "Gross State Product", "State Debt", "Local Debt", "Gross State Product", "State Debt", "Local Debt", "Gross State Product"],
-    "$ B": [ 10.7, 26.1, 228.0, 5.9, 3.5, 55.7, 13.3, 30.5, 361.1]
-  },
-  "kind": "plot",
-  "layers": [
-    {
-      "geom": "livemap",
-      "mapping": {
-        "sym_x": "Item",
-        "sym_y": "$ B",
-        "fill": "Item"
-      },
-      "map_data_meta": {
-        "geodataframe": {
-          "geometry": "geometry"
-        }
-      },
-      "display_mode": "pie",
-      "tiles": {
-        "kind": "raster_zxy",
-        "url": "https://[abc].tile.openstreetmap.org/{z}/{x}/{y}.png",
-        "attribution": "<a href=\"https://www.openstreetmap.org/copyright\">© OpenStreetMap contributors</a>"
-      },
-      "geocoding": {
-        "url": "https://geo2.datalore.jetbrains.com"
-      },
-      "map": {
-        "State": [ "Alabama", "Alaska", "Arizona"],
-        "Latitude": [ 32.806671, 61.370716, 33.729759],
-        "Longitude": [ -86.79113000000001, -152.404419, -111.431221],
-        "geometry": [
-          "{\"type\": \"Point\", \"coordinates\": [-86.79113000000001, 32.806671]}",
-          "{\"type\": \"Point\", \"coordinates\": [-152.404419, 61.370716]}",
-          "{\"type\": \"Point\", \"coordinates\": [-111.431221, 33.729759]}"
-        ]
-      },
-      "map_join": [["State"], ["State"]]
-    }
-  ]
-}""".trimIndent()
-
-        return parsePlotSpec(spec)
-    }
-
-
     private fun antiMeridian(): MutableMap<String, Any> {
         val spec = """{
-  "data": null,
-  "mapping": {
-    "x": null,
-    "y": null
-  },
-  "data_meta": {},
   "theme": {
-    "axis_title": null,
-    "axis_title_x": null,
-    "axis_title_y": null,
-    "axis_text": null,
-    "axis_text_x": null,
-    "axis_text_y": null,
-    "axis_ticks": null,
-    "axis_ticks_x": null,
-    "axis_ticks_y": null,
-    "axis_line": null,
-    "axis_line_x": null,
-    "axis_line_y": null,
-    "legend_position": "none",
-    "legend_justification": null,
-    "legend_direction": null,
-    "axis_tooltip": null,
-    "axis_tooltip_x": null,
-    "axis_tooltip_y": null
+    "legend_position": "none"
   },
   "kind": "plot",
-  "scales": [],
   "layers": [
     {
       "geom": "livemap",
-      "stat": null,
-      "data": null,
-      "mapping": {
-        "x": null,
-        "y": null
-      },
-      "position": null,
-      "show_legend": null,
-      "tooltips": null,
-      "data_meta": {},
-      "sampling": null,
-      "display_mode": null,
-      "location": null,
-      "zoom": null,
-      "projection": null,
-      "geodesic": null,
       "tiles": {
         "kind": "vector_lets_plot",
         "url": "wss://tiles.datalore.jetbrains.com",
         "theme": null
-      },
-      "geocoding": {}
+      }
     },
     {
       "geom": "rect",
-      "stat": null,
       "data": {
-        "request": [
-          "Russia",
-          "Russia",
-          "USA",
-          "USA"
-        ],
-        "lonmin": [
-          19.6389412879944,
-          -180.0,
-          144.618412256241,
-          -180.0
-        ],
-        "latmin": [
-          41.1850968003273,
-          41.1850968003273,
-          -14.3735490739346,
-          -14.3735490739346
-        ],
-        "lonmax": [
-          180.0,
-          -168.997978270054,
-          180.0,
-          -64.564847946167
-        ],
-        "latmax": [
-          81.8587204813957,
-          81.8587204813957,
-          71.3878083229065,
-          71.3878083229065
-        ],
-        "found name": [
-          "\u0420\u043e\u0441\u0441\u0438\u044f",
-          "\u0420\u043e\u0441\u0441\u0438\u044f",
-          "United States of America",
-          "United States of America"
-        ]
+        "request": ["Russia", "Russia", "USA", "USA"],
+        "lonmin": [19.6389412879944, -180.0, 144.618412256241, -180.0],
+        "latmin": [41.1850968003273, 41.1850968003273, -14.3735490739346, -14.3735490739346],
+        "lonmax": [180.0, -168.997978270054, 180.0, -64.564847946167],
+        "latmax": [81.8587204813957, 81.8587204813957, 71.3878083229065, 71.3878083229065],
+        "found name": ["\u0420\u043e\u0441\u0441\u0438\u044f", "\u0420\u043e\u0441\u0441\u0438\u044f", "United States of America", "United States of America"]
       },
       "mapping": {
-        "x": null,
-        "y": null,
         "xmin": "lonmin",
         "xmax": "lonmax",
         "ymin": "latmin",
         "ymax": "latmax",
         "fill": "found name"
       },
-      "position": null,
-      "show_legend": null,
-      "tooltips": null,
-      "data_meta": {},
-      "sampling": null,
-      "map": null,
-      "map_join": null,
       "alpha": 0.3
     }
   ]
@@ -2570,70 +2138,7 @@ class LiveMap {
         return parsePlotSpec(spec)
     }
 
-    fun symbol_point(): MutableMap<String, Any> {
-        val spec = """
-                {
-                  "data": {
-                    "request": ["Texas", "Nevada", "Iowa"],
-                    "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
-                    "lat": [31.1685702949762, 38.5030842572451, 41.9395130127668],
-                    "found name": ["Texas", "Nevada", "Iowa"]
-                  },
-                  "kind": "plot",
-                  "layers": [
-                    {
-                      "geom": "livemap",
-                      "mapping": {
-                        "x": "lon",
-                        "y": "lat"
-                      },
-                      "symbol": "point",
-                      "tiles": {
-                        "kind": "vector_lets_plot",
-                        "url": "wss://tiles.datalore.jetbrains.com",
-                        "theme": null
-                      },
-                      "size": 50
-                    }
-                  ]
-                }
-            """.trimIndent()
-        return parsePlotSpec(spec)
-    }
-
-    private fun geom_point(): MutableMap<String, Any> {
-        val spec = """{
-  "data": {
-    "request": ["Texas", "Nevada", "Iowa"],
-    "lon": [-99.6829525269137, -116.666956541192, -93.1514127397129],
-    "lat": [31.1685702949762, 38.5030842572451, 41.9395130127668],
-    "found name": ["Texas", "Nevada", "Iowa"]
-  },
-  "kind": "plot",
-  "layers": [
-    {
-      "geom": "livemap",
-      "tiles": {
-        "kind": "vector_lets_plot",
-        "url": "wss://tiles.datalore.jetbrains.com",
-        "theme": null
-      }
-    },
-    {
-      "geom": "point",
-      "mapping": {
-        "x": "lon",
-        "y": "lat"
-      },
-      "symbol": "point",
-      "size": 50
-    }
-  ]
-}"""
-        return parsePlotSpec(spec)
-    }
-
-    fun basic(): MutableMap<String, Any> {
+    fun osmTiles(): MutableMap<String, Any> {
         val spec = """
                 {
                     "kind": "plot", 
@@ -2736,14 +2241,8 @@ class LiveMap {
     fun facet(): MutableMap<String, Any> {
         val spec = """{
                 "data":{
-                    "lon":[
-                        -100.420313,
-                        -91.016016
-                    ],
-                    "lat":[
-                        34.835461,
-                        38.843142
-                    ]
+                    "lon":[-100.420313, -91.016016],
+                    "lat":[34.835461, 38.843142]
                 },
                 "facet":{
                     "name":"grid",
@@ -2824,20 +2323,6 @@ class LiveMap {
                         "geom": "livemap",
                         "zoom": 4,
                         "tiles": {"kind": "raster_zxy", "url": "https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"}
-                    }
-                ]
-            }"""
-        return parsePlotSpec(spec)
-    }
-
-    fun wrongRasterTileUrl(): MutableMap<String, Any> {
-        val spec = """{
-                "ggtitle": {"text": "Wrong tile url"}, 
-                "kind": "plot",
-                "layers": [
-                    {
-                        "geom": "livemap",
-                        "tiles": {"raster": "http://c.tile.stamen.com/tonerd/{x}/{y}.png"}
                     }
                 ]
             }"""
@@ -2935,6 +2420,55 @@ class LiveMap {
                     }
                 ]
             }"""
+        return parsePlotSpec(spec)
+    }
+
+    private fun minard(): MutableMap<String, Any> {
+        val spec = """
+            |{
+            |  "data": {
+            |    "Unnamed: 0": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0, 40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0, 50.0, 51.0],
+            |    "long": [ 24.0, 24.5, 25.5, 26.0, 27.0, 28.0, 28.5, 29.0, 30.0, 30.3, 32.0, 33.2, 34.4, 35.5, 36.0, 37.6, 37.7, 37.5, 37.0, 36.8, 35.4, 34.3, 33.3, 32.0, 30.4, 29.2, 28.5, 28.3, 27.5, 26.8, 26.4, 25.0, 24.4, 24.2, 24.1, 24.0, 24.5, 25.5, 26.6, 27.4, 28.7, 28.7, 29.2, 28.5, 28.3, 24.0, 24.5, 24.6, 24.6, 24.2, 24.1 ],
+            |    "lat": [ 54.9, 55.0, 54.5, 54.7, 54.8, 54.9, 55.0, 55.1, 55.2, 55.3, 54.8, 54.9, 55.5, 55.4, 55.5, 55.8, 55.7, 55.7, 55.0, 55.0, 55.3, 55.2, 54.8, 54.6, 54.4, 54.3, 54.2, 54.3, 54.5, 54.3, 54.4, 54.4, 54.4, 54.4, 54.4, 55.1, 55.2, 54.7, 55.7, 55.6, 55.5, 55.5, 54.2, 54.1, 54.2, 55.2, 55.3, 55.8, 55.8, 54.4, 54.4 ],
+            |    "survivors": [ 340000.0, 340000.0, 340000.0, 320000.0, 300000.0, 280000.0, 240000.0, 210000.0, 180000.0, 175000.0, 145000.0, 140000.0, 127100.0, 100000.0, 100000.0, 100000.0, 100000.0, 98000.0, 97000.0, 96000.0, 87000.0, 55000.0, 37000.0, 24000.0, 20000.0, 20000.0, 20000.0, 20000.0, 20000.0, 12000.0, 14000.0, 8000.0, 4000.0, 4000.0, 4000.0, 60000.0, 60000.0, 60000.0, 40000.0, 33000.0, 33000.0, 33000.0, 30000.0, 30000.0, 28000.0, 22000.0, 22000.0, 6000.0, 6000.0, 6000.0, 6000.0 ],
+            |    "direction": [ "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "A", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "R", "A", "A", "A", "A", "A", "A", "R", "R", "R", "R", "A", "A", "A", "R", "R", "R" ],
+            |    "group": [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0 ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [
+            |    {
+            |      "aesthetic": "size",
+            |      "range": [2.0, 10.0]
+            |    }
+            |  ],
+            |  "layers": [
+            |    {
+            |      "geom": "livemap",
+            |      "tiles": {
+            |        "kind": "vector_lets_plot",
+            |        "url": "ws://localhost:3112",
+            |        "theme": "color",
+            |        "attribution": "Map: <a href=\"https://github.com/JetBrains/lets-plot\">\u00a9 Lets-Plot</a>, map data: <a href=\"https://www.openstreetmap.org/copyright\">\u00a9 OpenStreetMap contributors</a>."
+            |      },
+            |      "geocoding": {
+            |        "url": "http://localhost:3012/map_data/geocoding"
+            |      }
+            |    },
+            |    {
+            |      "geom": "path",
+            |      "mapping": {
+            |        "x": "long",
+            |        "y": "lat",
+            |        "size": "survivors",
+            |        "group": "group",
+            |        "color": "direction"
+            |      },
+            |      "alpha": 0.4
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
         return parsePlotSpec(spec)
     }
 

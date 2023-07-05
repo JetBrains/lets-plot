@@ -15,13 +15,10 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.Geom
 import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.geom.util.ArrowSpec
-import jetbrains.datalore.plot.base.geom.util.GeomUtil
+import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_RECTANGLE
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.createPathGroups
-import jetbrains.datalore.plot.base.geom.util.PathData
-import jetbrains.datalore.plot.base.geom.util.PathPoint
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.math.abs
 import kotlin.math.min
@@ -44,6 +41,7 @@ internal class DataPointsConverter(
         val strokeWidth: Double,
         val holeSize: Double
     )
+
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
         val pieOptions = PieOptions(geom.strokeColor, geom.strokeWidth, geom.holeSize)
         val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics -> p.fill()!! }
@@ -92,9 +90,9 @@ internal class DataPointsConverter(
         fun pathToBuilder(p: DataPointAesthetics, points: List<Vec<LonLat>>, isClosed: Boolean) =
             DataPointLiveMapAesthetics(
                 p = p,
-                layerKind = when {
-                    isClosed -> MapLayerKind.POLYGON
-                    else -> MapLayerKind.PATH
+                layerKind = when (isClosed) {
+                    true -> MapLayerKind.POLYGON
+                    false -> MapLayerKind.PATH
                 }
             ).apply {
                 this.geometry = points
@@ -132,42 +130,28 @@ internal class DataPointsConverter(
                 setGeodesic(geom.geodesic)
             }
 
-            return process(
-                paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y),
-                isClosed = false
-            )
+            val paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y)
+            val variadicPathData = LinesHelper.createVariadicPathData(paths)
+            val visualPathData = LinesHelper.createVisualPath(variadicPathData)
+
+            return process(paths = visualPathData, isClosed = false)
         }
 
         fun polygon(): List<DataPointLiveMapAesthetics> {
-            return process(
-                paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y),
-                isClosed = true
-            )
+            val paths = createPathGroups(aesthetics.dataPoints(), TO_LOCATION_X_Y)
+            return process(paths = paths, isClosed = true)
         }
 
         fun rect(): List<DataPointLiveMapAesthetics> {
             val groupedData = GeomUtil.createGroups(aesthetics.dataPoints(), sorted = true)
-
-            return process(
-                groupedData.map { (_, dataPoints) ->
-                    val points = mutableListOf<PathPoint>()
-                    dataPoints.map { aes -> TO_RECTANGLE(aes).forEach { p -> points.add(PathPoint(aes, p)) } }
-                    PathData(points)
-                },
-                isClosed = true
-            )
+            val rectangles = groupedData.map { (_, groupData) ->
+                groupData.flatMap { aes -> TO_RECTANGLE(aes).map { PathPoint(aes, it) } }
+            }
+            return process(rectangles.map(::PathData), isClosed = true)
         }
 
         private fun process(paths: List<PathData>, isClosed: Boolean): List<DataPointLiveMapAesthetics> {
-            val mapObjects = ArrayList<DataPointLiveMapAesthetics>()
-            for (pathData in paths) {
-                pathToBuilder(
-                    pathData.aes,
-                    pathData.coordinates.toVecs(),
-                    isClosed
-                ).let(mapObjects::add)
-            }
-            return mapObjects
+            return paths.map { pathToBuilder(it.aes, it.coordinates.toVecs(), isClosed) }
         }
     }
 

@@ -15,7 +15,7 @@ object LiveMapBatik {
             PlotSpecsDemoWindowBatik(
                 "LiveMap (Batik)",
                 plotSpecList(),
-                maxCol = 2
+                maxCol = 4
             ).open()
         }
     }

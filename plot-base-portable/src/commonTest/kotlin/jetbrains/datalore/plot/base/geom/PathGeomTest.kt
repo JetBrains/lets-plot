@@ -42,8 +42,8 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -81,8 +81,8 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -120,8 +120,8 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -159,8 +159,8 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -201,8 +201,8 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -252,8 +252,8 @@ class PathGeomTest {
             .color(listOf(BLACK, WHITE, WHITE)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -299,8 +299,8 @@ class PathGeomTest {
         val aes = AestheticsBuilder(0)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         assertTrue(visualPath.isEmpty())
     }
@@ -314,8 +314,8 @@ class PathGeomTest {
             .color(listOf(BLACK)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -337,8 +337,8 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         visualPath[0].let {
             assertEquals(
@@ -363,8 +363,8 @@ class PathGeomTest {
             .color(listOf(BLACK, BLACK, BLACK)::get)
             .build()
 
-        val variadicPathData = PathGeom.createVariadicPathData(aes.dataPoints(), linesHelper)
-        val visualPath = PathGeom.createVisualPath(variadicPathData)
+        val variadicPathData = linesHelper.createVariadicPathData(aes.dataPoints())
+        val visualPath = LinesHelper.createVisualPath(variadicPathData)
 
         assertEquals(1, visualPath.size)
         assertEquals(
