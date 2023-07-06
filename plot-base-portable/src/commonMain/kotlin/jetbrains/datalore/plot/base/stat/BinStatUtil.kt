@@ -60,8 +60,9 @@ object BinStatUtil {
         val (binCount, binWidth, startX) = getBinningParameters(rangeX, xPosKind, xPos, binOptions)
 
         val statData = computeSummaryBins(xValues, yValues, aggFunctions, startX, binCount, binWidth)
-        check(statData[Stats.X]?.size == binCount)
-        { "Internal: stat data size=${statData[Stats.X]?.size} expected bin count=$binCount" }
+        check(statData[Stats.X]?.size == binCount) {
+            "Internal: stat data size=${statData[Stats.X]?.size} expected bin count=$binCount"
+        }
         return statData
     }
 
