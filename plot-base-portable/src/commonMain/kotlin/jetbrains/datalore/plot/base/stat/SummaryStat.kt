@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -16,7 +15,9 @@ class SummaryStat(
     private val yAggFunction: (List<Double>) -> Double,
     private val yMinAggFunction: (List<Double>) -> Double,
     private val yMaxAggFunction: (List<Double>) -> Double,
-    private val sortedQuantiles: List<Double>
+    private val lowerQuantile: Double,
+    private val middleQuantile: Double,
+    private val upperQuantile: Double
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -67,13 +68,13 @@ class SummaryStat(
         val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.mappedStatVariables()
             .associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
-            val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
+            val sortedBin = bin.sorted()
             statX.add(x)
             statY.add(yAggFunction(sortedBin))
             statYMin.add(yMinAggFunction(sortedBin))
             statYMax.add(yMaxAggFunction(sortedBin))
             for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = AggregateFunctions.byStat(statVar, sortedQuantiles)
+                val aggFunction = AggregateFunctions.byStat(statVar, lowerQuantile, middleQuantile, upperQuantile)
                 aggValues.add(aggFunction(sortedBin))
             }
         }

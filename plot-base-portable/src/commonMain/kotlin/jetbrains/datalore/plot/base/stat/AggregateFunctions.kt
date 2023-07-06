@@ -44,7 +44,12 @@ object AggregateFunctions {
         }
     }
 
-    fun byStat(statVar: DataFrame.Variable, sortedQuantiles: List<Double>): (List<Double>) -> Double {
+    fun byStat(
+        statVar: DataFrame.Variable,
+        lowerQuantile: Double,
+        middleQuantile: Double,
+        upperQuantile: Double
+    ): (List<Double>) -> Double {
         return when (statVar) {
             Stats.COUNT -> this::count
             Stats.SUM -> this::sum
@@ -52,9 +57,9 @@ object AggregateFunctions {
             Stats.MEDIAN -> this::median
             Stats.Y_MIN -> this::min
             Stats.Y_MAX -> this::max
-            Stats.LOWER_QUANTILE -> { values -> quantile(values, sortedQuantiles[0]) }
-            Stats.MIDDLE_QUANTILE -> { values -> quantile(values, sortedQuantiles[1]) }
-            Stats.UPPER_QUANTILE -> { values -> quantile(values, sortedQuantiles[2]) }
+            Stats.LOWER_QUANTILE -> { values -> quantile(values, lowerQuantile) }
+            Stats.MIDDLE_QUANTILE -> { values -> quantile(values, middleQuantile) }
+            Stats.UPPER_QUANTILE -> { values -> quantile(values, upperQuantile) }
             else -> throw IllegalStateException(
                 "Unsupported stat variable: '${statVar.name}'\n" +
                 "Use one of: ..count.., ..sum.., ..mean.., ..median.., ..ymin.., ..ymax.., ..lq.., ..mq.., ..uq.."

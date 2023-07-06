@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.base.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
@@ -62,7 +61,7 @@ object BinStatUtil {
 
         val statData = computeSummaryBins(xValues, yValues, aggFunctions, startX, binCount, binWidth)
         check(statData[Stats.X]?.size == binCount)
-            { "Internal: stat data size=${statData[Stats.X]?.size} expected bin count=$binCount" }
+        { "Internal: stat data size=${statData[Stats.X]?.size} expected bin count=$binCount" }
         return statData
     }
 
@@ -179,9 +178,7 @@ object BinStatUtil {
         val lowerX = startX + binWidth / 2
         for (i in 0 until binCount) {
             statX.add(lowerX + i * binWidth)
-            val sortedBin = (yValuesByBinIndex[i] ?: emptyList()).let { bin ->
-                Ordering.natural<Double>().sortedCopy(bin)
-            }
+            val sortedBin = (yValuesByBinIndex[i] ?: emptyList()).sorted()
             for ((statVar, aggValues) in summaryBins) {
                 val aggFunction = aggFunctions[statVar] ?: { Double.NaN }
                 aggValues.add(aggFunction(sortedBin))
