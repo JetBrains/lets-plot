@@ -47,6 +47,25 @@ object BinStatUtil {
         return CountAndWidth(binCount, binWidth)
     }
 
+    fun computeSummaryStatSeries(
+        xs: List<Double?>,
+        ys: List<Double?>,
+        aggFunctions: Map<DataFrame.Variable, (List<Double>) -> Double>,
+        rangeX: DoubleSpan,
+        xPosKind: BinStat.XPosKind,
+        xPos: Double,
+        binOptions: BinOptions
+    ): Map<DataFrame.Variable, List<Double>> {
+        val (xValues, yValues) = SeriesUtil.filterFinite(xs, ys)
+        val (binCount, binWidth, startX) = getBinningParameters(rangeX, xPosKind, xPos, binOptions)
+
+        val statData = computeSummaryBins(xValues, yValues, aggFunctions, startX, binCount, binWidth)
+        check(statData[Stats.X]?.size == binCount) {
+            "Internal: stat data size=${statData[Stats.X]?.size} expected bin count=$binCount"
+        }
+        return statData
+    }
+
     fun computeHistogramStatSeries(
         data: DataFrame,
         rangeX: DoubleSpan,
@@ -55,46 +74,7 @@ object BinStatUtil {
         xPos: Double,
         binOptions: BinOptions
     ): BinsData {
-        var startX: Double? = rangeX.lowerEnd
-        var spanX = rangeX.upperEnd - startX!!
-
-        // initial bin count/width
-        var b: CountAndWidth = binCountAndWidth(spanX, binOptions)
-
-        // adjusted bin count/width
-        // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
-        startX -= b.width * 0.7
-        spanX += b.width * 1.4
-        b = binCountAndWidth(spanX, binOptions)
-        val binCount = b.count
-        val binWidth = b.width
-
-        // optional horizontal adjustment (+/-0.5 bin width max)
-        if (xPosKind != BinStat.XPosKind.NONE) {
-            var minDelta = Double.MAX_VALUE
-            val x = xPos
-
-            for (i in 0 until binCount) {
-                val binLeft = startX + i * binWidth
-                val delta: Double
-                if (xPosKind == BinStat.XPosKind.CENTER) {
-                    delta = x - (binLeft + binWidth / 2)
-                } else {       // BOUNDARY
-                    if (i == 0) {
-                        minDelta = x - startX // init still
-                    }
-                    delta = x - (binLeft + binWidth)
-                }
-
-                if (abs(delta) < abs(minDelta)) {
-                    minDelta = delta
-                }
-            }
-
-            // max offset: +/-0.5 bin width
-            val offset = minDelta % (binWidth / 2)
-            startX += offset
-        }
+        val (binCount, binWidth, startX) = getBinningParameters(rangeX, xPosKind, xPos, binOptions)
 
         // density plot area should be == 1
         val normalBinWidth = rangeX.length / binCount
@@ -104,7 +84,6 @@ object BinStatUtil {
             1.0
 
         // compute bins
-
         val binsData = computeHistogramBins(
             valuesX,
             startX,
@@ -133,6 +112,81 @@ object BinStatUtil {
         }
 
         return computeDotdensityBins(valuesX, binWidth)
+    }
+
+    internal fun getBinningParameters(
+        rangeX: DoubleSpan,
+        xPosKind: BinStat.XPosKind,
+        xPos: Double,
+        binOptions: BinOptions
+    ): Triple<Int, Double, Double> {
+        var startX = rangeX.lowerEnd
+        var spanX = rangeX.upperEnd - startX
+
+        // initial bin count/width
+        val b: CountAndWidth = binCountAndWidth(spanX, binOptions)
+
+        // adjusted bin count/width
+        // extend the data range by 0.7 of binWidth on each ends (to allow limited horizontal adjustments)
+        startX -= b.width * 0.7
+        spanX += b.width * 1.4
+        val (binCount, binWidth) = binCountAndWidth(spanX, binOptions)
+
+        if (xPosKind == BinStat.XPosKind.NONE) {
+            return Triple(binCount, binWidth, startX)
+        }
+
+        // optional horizontal adjustment (+/-0.5 bin width max)
+        var minDelta = when (xPosKind) {
+            BinStat.XPosKind.CENTER -> Double.MAX_VALUE
+            else -> xPos - startX
+        }
+
+        for (i in 0 until binCount) {
+            val binLeft = startX + i * binWidth
+            val delta = when (xPosKind) {
+                BinStat.XPosKind.CENTER -> xPos - (binLeft + binWidth / 2)
+                else -> xPos - (binLeft + binWidth)
+            }
+            if (abs(delta) < abs(minDelta)) {
+                minDelta = delta
+            }
+        }
+
+        // max offset: +/-0.5 bin width
+        val offset = minDelta % (binWidth / 2)
+        startX += offset
+
+        return Triple(binCount, binWidth, startX)
+    }
+
+    private fun computeSummaryBins(
+        xValues: List<Double>,
+        yValues: List<Double>,
+        aggFunctions: Map<DataFrame.Variable, (List<Double>) -> Double>,
+        startX: Double,
+        binCount: Int,
+        binWidth: Double
+    ): Map<DataFrame.Variable, List<Double>> {
+        val yValuesByBinIndex = HashMap<Int, MutableList<Double>>()
+        for ((x, y) in xValues zip yValues) {
+            val binIndex = floor((x - startX) / binWidth).toInt()
+            yValuesByBinIndex.getOrPut(binIndex, { mutableListOf() }).add(y)
+        }
+
+        val statX = ArrayList<Double>()
+        val summaryBins: Map<DataFrame.Variable, MutableList<Double>> = aggFunctions.keys.associateWith { mutableListOf() }
+        val lowerX = startX + binWidth / 2
+        for (i in 0 until binCount) {
+            statX.add(lowerX + i * binWidth)
+            val sortedBin = (yValuesByBinIndex[i] ?: emptyList()).sorted()
+            for ((statVar, aggValues) in summaryBins) {
+                val aggFunction = aggFunctions[statVar] ?: { Double.NaN }
+                aggValues.add(aggFunction(sortedBin))
+            }
+        }
+
+        return mapOf(Stats.X to statX) + summaryBins
     }
 
     private fun computeHistogramBins(
@@ -240,7 +294,7 @@ object BinStatUtil {
         }
     }
 
-    class CountAndWidth(val count: Int, val width: Double)
+    data class CountAndWidth(val count: Int, val width: Double)
 
     class BinsData(
         internal val x: List<Double>,

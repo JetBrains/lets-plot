@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
@@ -16,7 +15,9 @@ class SummaryStat(
     private val yAggFunction: (List<Double>) -> Double,
     private val yMinAggFunction: (List<Double>) -> Double,
     private val yMaxAggFunction: (List<Double>) -> Double,
-    private val sortedQuantiles: List<Double>
+    private val lowerQuantile: Double,
+    private val middleQuantile: Double,
+    private val upperQuantile: Double
 ) : BaseStat(DEF_MAPPING) {
 
     override fun consumes(): List<Aes<*>> {
@@ -67,13 +68,13 @@ class SummaryStat(
         val statAggValues: Map<DataFrame.Variable, MutableList<Double>> = statCtx.mappedStatVariables()
             .associateWith { mutableListOf() }
         for ((x, bin) in binnedData) {
-            val sortedBin = Ordering.natural<Double>().sortedCopy(bin)
+            val sortedBin = bin.sorted()
             statX.add(x)
             statY.add(yAggFunction(sortedBin))
             statYMin.add(yMinAggFunction(sortedBin))
             statYMax.add(yMaxAggFunction(sortedBin))
             for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = aggFunctionByStat(statVar)
+                val aggFunction = AggregateFunctions.byStatVar(statVar, lowerQuantile, middleQuantile, upperQuantile)
                 aggValues.add(aggFunction(sortedBin))
             }
         }
@@ -86,26 +87,8 @@ class SummaryStat(
         ) + statAggValues
     }
 
-    private fun aggFunctionByStat(statVar: DataFrame.Variable): (List<Double>) -> Double {
-        return when (statVar) {
-            Stats.COUNT -> AggregateFunctions::count
-            Stats.SUM -> AggregateFunctions::sum
-            Stats.MEAN -> AggregateFunctions::mean
-            Stats.MEDIAN -> AggregateFunctions::median
-            Stats.Y_MIN -> AggregateFunctions::min
-            Stats.Y_MAX -> AggregateFunctions::max
-            Stats.LOWER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[0]) }
-            Stats.MIDDLE_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[1]) }
-            Stats.UPPER_QUANTILE -> { values -> AggregateFunctions.quantile(values, sortedQuantiles[2]) }
-            else -> throw IllegalStateException(
-                "Unsupported stat variable: '${statVar.name}'\n" +
-                "Use one of: ..count.., ..sum.., ..mean.., ..median.., ..ymin.., ..ymax.., ..lq.., ..mq.., ..uq.."
-            )
-        }
-    }
-
     companion object {
-        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
+        val DEF_QUANTILES = Triple(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

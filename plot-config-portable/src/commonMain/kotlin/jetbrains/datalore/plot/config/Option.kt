@@ -433,7 +433,6 @@ object Option {
             const val FUN = "fun"
             const val FUN_MIN = "fun_min"
             const val FUN_MAX = "fun_max"
-            const val FUN_MAP = "fun_map"
         }
     }
 
