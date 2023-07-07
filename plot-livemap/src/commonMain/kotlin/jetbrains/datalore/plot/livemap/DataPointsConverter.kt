@@ -36,21 +36,14 @@ internal class DataPointsConverter(
     private val mySinglePathFeatureConverter get() = SinglePathFeatureConverter(aesthetics)
     private val myMultiPathFeatureConverter get() = MultiPathFeatureConverter(aesthetics)
 
-    data class PieOptions(
-        val strokeColor: Color,
-        val strokeWidth: Double,
-        val holeSize: Double
-    )
-
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
-        val pieOptions = PieOptions(geom.strokeColor, geom.strokeWidth, geom.holeSize)
         val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics -> p.fill()!! }
         val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints, colorGetter)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {
                     point = Vec(it.aes.x()!!, it.aes.y()!!)
-                    setPieOptions(pieOptions)
+                    holeRatio = geom.holeSize
                 }
             }
     }
