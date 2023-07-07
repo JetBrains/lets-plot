@@ -29,7 +29,7 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper-batik')
-                implementation project(':vis-swing-common')
+                implementation project(':platf-awt')
                 implementation project(':vis-swing-batik')
                 implementation project(':vis-demo-common')
             }

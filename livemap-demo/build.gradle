@@ -106,6 +106,9 @@ kotlin {
         }
         jvmRawAwtMain {
             dependsOn allJvm
+            dependencies {
+                implementation project(':platf-awt')
+            }
         }
         jvmBrowserMain {
             dependsOn allJvm

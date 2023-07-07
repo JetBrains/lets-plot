@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.swing.jfx
 
 import javafx.application.Platform
-import jetbrains.datalore.vis.swing.ApplicationContext
+import org.jetbrains.letsPlot.platf.awt.plot.component.ApplicationContext
 import javax.swing.SwingUtilities
 
 class DefaultSwingContextJfx : ApplicationContext {

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.swing.batik
 
-import jetbrains.datalore.vis.swing.ApplicationContext
+import org.jetbrains.letsPlot.platf.awt.plot.component.ApplicationContext
 import javax.swing.SwingUtilities
 
 class DefaultSwingContextBatik : ApplicationContext {

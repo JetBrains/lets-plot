@@ -20,7 +20,7 @@ kotlin {
 
                 compileOnly project(':jvm-package:jvm-publish-common')
                 api project(':vis-svg-mapper-batik')
-                api project(':vis-swing-common')
+                api project(':platf-awt')
                 api project(':vis-swing-batik')
                 api project(':vis-demo-common')
                 api project(':vis-demo-common-batik')

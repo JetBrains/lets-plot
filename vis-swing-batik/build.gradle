@@ -23,7 +23,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation project(':vis-svg-mapper-batik')
-                implementation project(':vis-swing-common')
+                implementation project(':platf-awt')
             }
         }
     }

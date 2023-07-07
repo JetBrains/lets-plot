@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.swing.jfx
 
-import jetbrains.datalore.vis.swing.PlotPanel
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel
 
 open class DefaultPlotPanelJfx(
     processedSpec: MutableMap<String, Any>,

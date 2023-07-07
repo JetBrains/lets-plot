@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.swing.batik
 
-import jetbrains.datalore.vis.swing.PlotPanel
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel
 
 open class DefaultPlotPanelBatik(
     processedSpec: MutableMap<String, Any>,

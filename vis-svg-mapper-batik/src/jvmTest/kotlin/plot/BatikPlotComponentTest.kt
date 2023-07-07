@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback
+import org.jetbrains.letsPlot.platf.awt.plot.MonolithicAwt
 import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.test.Test

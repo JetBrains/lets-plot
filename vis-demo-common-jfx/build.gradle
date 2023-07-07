@@ -32,7 +32,7 @@ kotlin {
 
                 implementation project(':vis-canvas')
                 implementation project(':vis-svg-mapper-jfx')
-                implementation project(':vis-swing-common')
+                implementation project(':platf-awt')
                 implementation project(':vis-swing-jfx')
             }
         }

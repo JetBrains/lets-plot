@@ -24,7 +24,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation project(':vis-svg-mapper-jfx')
-                implementation project(':vis-swing-common')
+                implementation project(':platf-awt')
 
                 //  for javafx.application.Platform. TODO: Replace with runOnFxThread
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")

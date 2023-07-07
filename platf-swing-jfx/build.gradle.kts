@@ -12,9 +12,6 @@ val jfxPlatform = extra["jfx_platform_resolved"] as String
 
 kotlin {
     jvm()
-//    js {
-//        browser()
-//    }
 
     sourceSets {
         commonMain {

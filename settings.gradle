@@ -52,6 +52,5 @@ include 'commons',
         'jvm-package:jvm-publish-batik',
         'jvm-package:jvm-publish-gis',
         'test-common',
-        'vis-swing-common',
         'vis-swing-batik',
         'vis-swing-jfx'

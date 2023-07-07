@@ -12,6 +12,7 @@ import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import jetbrains.datalore.vis.swing.runOnFxThread
+import org.jetbrains.letsPlot.platf.awt.plot.MonolithicAwt
 import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.test.Ignore

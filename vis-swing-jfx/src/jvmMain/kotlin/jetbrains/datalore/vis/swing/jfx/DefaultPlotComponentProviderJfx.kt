@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.swing.jfx
 
 import jetbrains.datalore.base.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import jetbrains.datalore.vis.swing.PlotSpecComponentProvider
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotSpecComponentProvider
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import javax.swing.JComponent
 import javax.swing.JScrollPane

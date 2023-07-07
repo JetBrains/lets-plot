@@ -9,7 +9,7 @@ import jetbrains.datalore.base.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.swing.BatikMapperComponent
 import jetbrains.datalore.vis.swing.BatikMessageCallback
-import jetbrains.datalore.vis.swing.PlotSpecComponentProvider
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotSpecComponentProvider
 import javax.swing.JComponent
 import javax.swing.JScrollPane
 import javax.swing.ScrollPaneConstants

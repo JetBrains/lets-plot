@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
-import jetbrains.datalore.vis.swing.PlotComponentProvider
-import jetbrains.datalore.vis.swing.PlotPanel
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotComponentProvider
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel
 import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
 import jetbrains.datalore.vis.swing.jfx.DefaultSwingContextJfx
 import java.awt.Dimension

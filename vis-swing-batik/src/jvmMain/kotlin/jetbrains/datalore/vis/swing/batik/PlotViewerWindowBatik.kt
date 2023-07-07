@@ -6,10 +6,10 @@
 package jetbrains.datalore.vis.swing.batik
 
 import jetbrains.datalore.plot.MonolithicCommon
-import jetbrains.datalore.vis.swing.ApplicationContext
-import jetbrains.datalore.vis.swing.DefaultPlotContentPane
-import jetbrains.datalore.vis.swing.PlotPanel
-import jetbrains.datalore.vis.swing.PlotViewerWindowBase
+import org.jetbrains.letsPlot.platf.awt.plot.component.ApplicationContext
+import org.jetbrains.letsPlot.platf.awt.plot.component.DefaultPlotContentPane
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.platf.awt.plot.component.PlotViewerWindowBase
 import java.awt.Dimension
 import javax.swing.JComponent
 

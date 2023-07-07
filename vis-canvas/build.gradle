@@ -37,7 +37,7 @@ kotlin {
                 compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
 
-                implementation project(':platf-awt')
+//                implementation project(':platf-awt')
                 implementation project(':platf-swing-jfx')
             }
         }

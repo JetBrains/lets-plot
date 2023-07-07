@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotSvg
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.plot.PlotSvgExport
+import org.jetbrains.letsPlot.platf.awt.plot.PlotSvgExport
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
