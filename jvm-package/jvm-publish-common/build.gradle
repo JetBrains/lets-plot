@@ -15,7 +15,6 @@ kotlin {
 
                 api project(':commons')
                 api project(':base-portable')
-                api project(':base')
                 api project(':datamodel')
                 api project(':plot-base-portable')
                 api project(':plot-common-portable')

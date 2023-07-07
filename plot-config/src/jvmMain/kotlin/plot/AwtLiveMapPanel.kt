@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import org.jetbrains.letsPlot.base.platf.awt.AwtContainerDisposer
+import org.jetbrains.letsPlot.platf.awt.AwtContainerDisposer
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig

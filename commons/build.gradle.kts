@@ -9,7 +9,7 @@ plugins {
 
 
 val mockkVersion = extra["mockk_version"] as String
-//val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
 val hamcrestVersion = extra["hamcrest_version"] as String
 val mockitoVersion = extra["mockito_version"] as String
 val assertjVersion = extra["assertj_version"] as String
@@ -42,7 +42,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-//                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -60,7 +60,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-//                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 

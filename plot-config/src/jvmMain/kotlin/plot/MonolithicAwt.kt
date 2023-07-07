@@ -7,17 +7,17 @@ package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
+import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import mu.KotlinLogging
 import java.awt.Color
 import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.JComponent
 import javax.swing.JLabel
 
-private val _aLOG = KotlinLogging.logger {}
+private val LOG = PortableLogging.logger("MonolithicAwt")
 
 object MonolithicAwt {
     fun buildPlotFromRawSpecs(
@@ -142,7 +142,7 @@ object MonolithicAwt {
     private fun handleException(e: RuntimeException): JComponent {
         val failureInfo = FailureHandler.failureInfo(e)
         if (failureInfo.isInternalError) {
-            _aLOG.error(e) {}
+            LOG.error(e) { "Unexpected situation in 'MonolithicAwt'" }
         }
         return createErrorLabel(failureInfo.message)
     }

@@ -24,7 +24,6 @@ kotlin {
 
                 implementation project(':commons')
                 implementation project(':base-portable')
-                implementation project(':base')
                 implementation project(':datamodel')
             }
         }
@@ -37,7 +36,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-                implementation project(':awt')
+                implementation project(':platf-awt')
 
                 batikArtifacts.forEach {
                     api "$batikGroupId:$it:$batik_version"

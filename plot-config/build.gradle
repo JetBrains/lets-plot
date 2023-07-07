@@ -37,10 +37,9 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
+//                implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
 
-                implementation project(':awt')
-                implementation project(':base')
+                implementation project(':platf-awt')
                 compileOnly project(':vis-canvas')
                 compileOnly project(':plot-livemap')
             }
@@ -62,7 +61,7 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
-                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+//                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
             }
         }
         jsTest {

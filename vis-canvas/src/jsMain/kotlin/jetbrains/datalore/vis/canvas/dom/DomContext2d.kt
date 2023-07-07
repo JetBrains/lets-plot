@@ -10,10 +10,10 @@ import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 import jetbrains.datalore.vis.canvas.dom.DomCanvas.DomSnapshot
-import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssLineCap
-import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssLineJoin
-import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssTextAlign
-import org.jetbrains.letsPlot.base.intern.js.css.enumerables.CssTextBaseLine
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineCap
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineJoin
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextAlign
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextBaseLine
 import org.w3c.dom.*
 
 internal class DomContext2d(

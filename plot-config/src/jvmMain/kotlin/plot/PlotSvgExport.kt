@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import org.jetbrains.letsPlot.awt.util.RgbToDataUrl
+import org.jetbrains.letsPlot.platf.awt.util.RgbToDataUrl
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 
 object PlotSvgExport {

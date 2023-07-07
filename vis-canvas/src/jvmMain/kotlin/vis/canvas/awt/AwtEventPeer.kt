@@ -9,10 +9,10 @@ package jetbrains.datalore.vis.canvas.awt
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
-import org.jetbrains.letsPlot.base.platf.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.EventPeer
+import org.jetbrains.letsPlot.platf.awt.AwtEventUtil
 import java.awt.Component
 import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
@@ -76,7 +76,7 @@ class AwtEventPeer(component: Component, private val myTargetBounds: Rectangle) 
         return myTargetBounds.contains(Vector(event.x, event.y))
     }
 
-    private fun translate(event: AwtMouseEvent) : MouseEvent {
+    private fun translate(event: AwtMouseEvent): MouseEvent {
         return AwtEventUtil.translate(event, myTargetBounds.origin)
     }
 }

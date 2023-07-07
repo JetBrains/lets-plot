@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.component
 
 import jetbrains.datalore.plotDemo.model.component.AxisComponentDemo
-import org.jetbrains.letsPlot.datamodel.mapping.svg.util.SvgToW3c.generateDom
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.util.SvgToW3c.generateDom
 
 /**
  * Called from generated HTML

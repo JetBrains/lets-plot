@@ -6,7 +6,6 @@
 package jetbrains.datalore.plot
 
 import jetbrains.datalore.base.event.MouseEventSpec
-import org.jetbrains.letsPlot.base.platf.awt.AwtEventUtil
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.registration.Disposable
@@ -19,6 +18,7 @@ import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
+import org.jetbrains.letsPlot.platf.awt.AwtEventUtil
 import java.awt.Rectangle
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent

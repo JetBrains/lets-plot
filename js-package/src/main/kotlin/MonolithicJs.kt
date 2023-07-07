@@ -7,19 +7,19 @@
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import org.jetbrains.letsPlot.base.intern.jsObject.dynamicObjectToMap
+import jetbrains.datalore.base.logging.PortableLogging
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Error
 import jetbrains.datalore.plot.MonolithicCommon.PlotsBuildResult.Success
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.PlotConfig
-import mu.KotlinLogging
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLParagraphElement
 import org.w3c.dom.get
 
-private val LOG = KotlinLogging.logger {}
+private val LOG = PortableLogging.logger("MonolithicJs")
 
 // key for data attibute <body data-lets-plot-preferred-width='700'>
 private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
@@ -130,7 +130,7 @@ private fun handleException(e: RuntimeException, parentElement: HTMLElement) {
     val failureInfo = FailureHandler.failureInfo(e)
     showError(failureInfo.message, parentElement)
     if (failureInfo.isInternalError) {
-        LOG.error(e) {}
+        LOG.error(e) { "Unexpected situation in 'MonolithicJs'" }
     }
 }
 

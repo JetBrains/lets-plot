@@ -20,7 +20,6 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation project(':commons')
                 implementation project(':base-portable')
-                implementation project(':base')
                 implementation project(':vis-canvas')
                 implementation project(':gis')
             }

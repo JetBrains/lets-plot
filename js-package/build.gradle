@@ -1,4 +1,3 @@
-
 plugins {
     id "org.jetbrains.kotlin.js"
 }
@@ -7,8 +6,8 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
 
     implementation project(':commons')
+    implementation project(':platf-w3c')
     implementation project(':base-portable')
-    implementation project(':base')
     implementation project(':datamodel')
     implementation project(':vis-canvas')
     implementation project(':plot-base-portable')
@@ -19,9 +18,8 @@ dependencies {
     implementation project(':plot-config')
     implementation project(':gis')
     implementation project(':plot-livemap')
-    implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+//    implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
 }
-
 
 
 kotlin {

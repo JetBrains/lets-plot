@@ -18,8 +18,9 @@ rootProject.name = "lets-plot"
 
 include 'commons',
         'base-portable',
-        'base',
-        'awt',
+        'platf-w3c',
+        'platf-awt',
+        'platf-swing-jfx',
         'gis',
         'livemap',
         'livemap-demo',

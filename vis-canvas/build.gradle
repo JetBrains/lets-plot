@@ -20,7 +20,6 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation project(':commons')
                 implementation project(':base-portable')
-                implementation project(':base')
                 implementation project(':datamodel')
             }
         }
@@ -37,6 +36,9 @@ kotlin {
                 implementation kotlin('stdlib-jdk8')
                 compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+
+                implementation project(':platf-awt')
+                implementation project(':platf-swing-jfx')
             }
         }
         jvmTest {
@@ -48,6 +50,8 @@ kotlin {
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
+
+                implementation project(':platf-w3c')
             }
         }
         jsTest {

@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.swing
 
 import javafx.scene.Parent
-import org.jetbrains.letsPlot.base.platf.awt.AwtContainerDisposer
+import org.jetbrains.letsPlot.platf.awt.AwtContainerDisposer
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Disposable

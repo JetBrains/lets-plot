@@ -8,10 +8,10 @@ package jetbrains.datalore.vis.canvas.javaFx
 import javafx.scene.Node
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
-import org.jetbrains.letsPlot.base.platf.jfx.JfxEventUtil
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.EventPeer
+import org.jetbrains.letsPlot.platf.swing.jfx.JfxEventUtil
 import javafx.event.EventHandler as jfxHandler
 import javafx.scene.input.MouseEvent as JfxMouseEvent
 
@@ -23,7 +23,7 @@ class JavafxEventPeer(node: Node, private val myTargetBounds: Rectangle) :
         node.onMouseEntered = jfxHandler {
             if (!isHitOnTarget(it)) return@jfxHandler
 
-            dispatch(MouseEventSpec.MOUSE_ENTERED, JfxEventUtil.translate(it) )
+            dispatch(MouseEventSpec.MOUSE_ENTERED, JfxEventUtil.translate(it))
         }
 
         node.onMouseExited = jfxHandler {
@@ -71,7 +71,7 @@ class JavafxEventPeer(node: Node, private val myTargetBounds: Rectangle) :
         return myTargetBounds.contains(Vector(event.x.toInt(), event.y.toInt()))
     }
 
-    private fun translate(event: JfxMouseEvent) : MouseEvent {
+    private fun translate(event: JfxMouseEvent): MouseEvent {
         return JfxEventUtil.translate(event, myTargetBounds.origin)
     }
 }

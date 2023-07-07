@@ -17,7 +17,6 @@ kotlin {
 
                 implementation project(':commons')
                 implementation project(':base-portable')
-                implementation project(':base')
                 implementation project(':datamodel')
             }
         }
@@ -33,7 +32,7 @@ kotlin {
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
                 compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
                 compileOnly "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
-                implementation project(':awt')
+                implementation project(':platf-awt')
                 implementation project(':vis-canvas')
             }
         }

@@ -90,6 +90,8 @@ allprojects {
         }
     }
 
+    project.ext.jfx_platform_resolved = project.ext.jfx_platform()
+
     repositories {
         mavenCentral()
     }
