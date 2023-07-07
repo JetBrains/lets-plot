@@ -408,7 +408,9 @@ object GeomMeta {
                 Aes.EXPLODE,
                 Aes.SIZE,
                 Aes.FILL,
-                Aes.ALPHA
+                Aes.ALPHA,
+                Aes.COLOR,
+                Aes.STROKE
             )
 
             GeomKind.LOLLIPOP -> listOf(

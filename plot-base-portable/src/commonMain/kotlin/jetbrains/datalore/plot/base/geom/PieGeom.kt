@@ -32,8 +32,6 @@ import kotlin.math.*
 
 class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
-    var strokeWidth: Double = 0.0
-    var strokeColor: Color = Color.WHITE
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PieLegendKeyElementFactory()
@@ -85,8 +83,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             val fill = sector.p.fill()!!
             val fillAlpha = AestheticsUtil.alpha(fill, sector.p)
             fill().set(Colors.withOpacity(fill, fillAlpha))
-            width().set(strokeWidth)
-            color().set(strokeColor)
+            width().set(sector.p.stroke()!!)
+            color().set(sector.p.color()!!)
         }
     }
 
@@ -199,7 +197,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                     ).apply {
                         val fill = p.fill()!!
                         fillColor().set(fill)
-                        strokeColor().set(if (fill == Color.TRANSPARENT) Color.BLACK else strokeColor)
+                        strokeColor().set(if (fill == Color.TRANSPARENT) Color.BLACK else p.color()!!)
                         strokeWidth().set(1.5)
                     }
                 )

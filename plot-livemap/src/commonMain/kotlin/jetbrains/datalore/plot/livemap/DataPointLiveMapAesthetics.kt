@@ -27,7 +27,6 @@ import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
 import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
-import jetbrains.datalore.plot.livemap.DataPointsConverter.PieOptions
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.livemap.api.GeoObject
 import kotlin.math.ceil
@@ -151,8 +150,7 @@ internal class DataPointLiveMapAesthetics {
 
     val strokeColor
         get() = when (myLayerKind) {
-            POLYGON -> myP.color()!!
-            PIE -> myPieOptions?.strokeColor ?: Color.WHITE
+            POLYGON, PIE -> myP.color()!!
             else -> colorWithAlpha(myP.color()!!)
         }
 
@@ -168,7 +166,7 @@ internal class DataPointLiveMapAesthetics {
             POLYGON, PATH, H_LINE, V_LINE -> AestheticsUtil.strokeWidth(myP)
             POINT -> AestheticsUtil.pointStrokeWidth(myP)
             TEXT -> 0.0
-            PIE -> myPieOptions?.strokeWidth ?: 0.0
+            PIE -> myP.stroke()!!
         }
 
 
@@ -187,9 +185,7 @@ internal class DataPointLiveMapAesthetics {
     val labelSize: Double
         get() = myLabelOptions?.size ?: 0.0
 
-    private var myPieOptions: PieOptions? = null
-    val holeRatio: Double
-        get() = myPieOptions?.holeSize ?: 0.0
+    var holeRatio = 0.0 // pie hole size
 
     private fun colorWithAlpha(color: Color): Color {
         return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
@@ -210,11 +206,6 @@ internal class DataPointLiveMapAesthetics {
     fun setLabelOptions(labelOptions: LabelOptions?): DataPointLiveMapAesthetics {
         myLabelOptions = labelOptions
         return this
-    }
-
-    fun setPieOptions(pieOptions: PieOptions?): DataPointLiveMapAesthetics {
-       myPieOptions = pieOptions
-       return this
     }
 
     // Limit Lon Lat to -180, 180; -90, 90

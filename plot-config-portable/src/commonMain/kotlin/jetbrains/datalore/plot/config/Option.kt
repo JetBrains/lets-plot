@@ -290,8 +290,6 @@ object Option {
 
         object Pie {
             const val HOLE = "hole"
-            const val STROKE = "stroke"
-            const val STROKE_COLOR = "stroke_color"
         }
 
         object Lollipop {

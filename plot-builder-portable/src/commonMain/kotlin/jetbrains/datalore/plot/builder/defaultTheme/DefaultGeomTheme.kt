@@ -178,6 +178,7 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.PIE -> {
+                    color = Color.TRANSPARENT
                     size = 10.0
                 }
 

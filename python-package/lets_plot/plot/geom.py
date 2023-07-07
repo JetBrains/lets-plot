@@ -6057,7 +6057,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
 
 def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=None, sampling=None, tooltips=None, labels=None,
              map=None, map_join=None, use_crs=None,
-             hole=None, fill_by=None, stroke=None, stroke_color=None,
+             hole=None, fill_by=None,
              **other_args):
     """
     Draw pie chart.
@@ -6105,10 +6105,6 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Accept values between 0 and 1.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
-    stroke : float, default=0.0
-        Width of slice borders.
-    stroke_color : str, default='white'.
-        Color of slice borders.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6139,6 +6135,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
     - fill : fill color. String in the following formats: RGB/RGBA (e.g. "rgb(0, 0, 255)"); HEX (e.g. "#0000FF"); color name (e.g. "red").
     - alpha : transparency level of the pie. Accept values between 0 and 1.
     - weight : used by 'count2d' stat to compute weighted sum instead of simple count.
+    - stroke : width of slice borders.
+    - color : color of slice borders.
 
     |
 
@@ -6194,7 +6192,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         LetsPlot.setup_html()
         data = {'name': ['a', 'b', 'c', 'd', 'b'], 'value': [40, 90, 10, 50, 20]}
         ggplot(data) + geom_pie(aes(fill=as_discrete('name', order_by='..count..'), weight='value'), \\
-                                size=15, hole=0.2, stroke=1.0, \\
+                                size=15, hole=0.2, color='white', stroke=1.0, \\
                                 tooltips=layer_tooltips().format('@{..prop..}', '.0%') \\
                                                          .line('count|@{..count..} (@{..prop..})') \\
                                                          .line('total|@{..sum..}'))
