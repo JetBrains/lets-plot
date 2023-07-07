@@ -74,7 +74,7 @@ class SummaryStat(
             statYMin.add(yMinAggFunction(sortedBin))
             statYMax.add(yMaxAggFunction(sortedBin))
             for ((statVar, aggValues) in statAggValues) {
-                val aggFunction = AggregateFunctions.byStat(statVar, lowerQuantile, middleQuantile, upperQuantile)
+                val aggFunction = AggregateFunctions.byStatVar(statVar, lowerQuantile, middleQuantile, upperQuantile)
                 aggValues.add(aggFunction(sortedBin))
             }
         }
@@ -88,7 +88,7 @@ class SummaryStat(
     }
 
     companion object {
-        val DEF_QUANTILES = listOf(0.25, 0.5, 0.75)
+        val DEF_QUANTILES = Triple(0.25, 0.5, 0.75)
 
         private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
             Aes.X to Stats.X,

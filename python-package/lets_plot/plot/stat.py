@@ -1,7 +1,6 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 from .geom import _geom
-from .pos import position_dodge
 
 #
 # Stats - functions, drawing attention to the statistical transformation rather than the visual appearance.
@@ -30,7 +29,7 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='pointrange'
         The geometry to display the summary stat for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -157,7 +156,7 @@ def stat_summary(mapping=None, *, data=None, geom='pointrange',
                  mapping=mapping,
                  data=data,
                  stat='summary',
-                 position=position or position_dodge(.95),
+                 position=position,
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,
@@ -192,7 +191,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
         is inherited from the plot data as specified in the call to ggplot.
     geom : str, default='pointrange'
         The geometry to display the summary stat for this layer, as a string.
-    position : str or `FeatureSpec`, default='dodge'
+    position : str or `FeatureSpec`, default='identity'
         Position adjustment, either as a string ('identity', 'stack', 'dodge', ...),
         or the result of a call to a position adjustment function.
     show_legend : bool, default=True
@@ -305,7 +304,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
         g = np.random.choice(["A", "B"], size=n)
         ggplot({'x': x, 'y': y, 'g': g}, aes(x='x', y='y', fill='g')) + \\
             stat_summary_bin(aes(lower='..lq..', middle='..mq..', upper='..uq..'), \\
-                             geom='boxplot', bins=6, fatten=5)
+                             geom='boxplot', bins=6, fatten=5, position='dodge')
 
     |
 
@@ -330,7 +329,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom='pointrange',
                  mapping=mapping,
                  data=data,
                  stat='summarybin',
-                 position=position or position_dodge(.95),
+                 position=position,
                  show_legend=show_legend,
                  sampling=sampling,
                  tooltips=tooltips,

@@ -436,13 +436,6 @@ object Option {
             const val FUN_MIN = "fun_min"
             const val FUN_MAX = "fun_max"
         }
-
-        object SummaryBin {
-            const val QUANTILES = "quantiles"
-            const val FUN = "fun"
-            const val FUN_MIN = "fun_min"
-            const val FUN_MAX = "fun_max"
-        }
     }
 
     object Pos {

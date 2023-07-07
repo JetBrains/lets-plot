@@ -20,7 +20,6 @@ import jetbrains.datalore.plot.config.Option.Stat.YDensity
 import jetbrains.datalore.plot.config.Option.Stat.QQ
 import jetbrains.datalore.plot.config.Option.Stat.QQLine
 import jetbrains.datalore.plot.config.Option.Stat.Summary
-import jetbrains.datalore.plot.config.Option.Stat.SummaryBin
 
 object StatProto {
 
@@ -409,33 +408,15 @@ object StatProto {
     }
 
     private fun configureSummaryStat(options: OptionsAccessor): SummaryStat {
-        val (lq, mq, uq) = if (options.hasOwn(Summary.QUANTILES)) {
-            val quantiles = options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0)
-            require(quantiles.size == 3) { "Parameter 'quantiles' should contains 3 values" }
-            quantiles.sorted()
-        } else {
-            SummaryStat.DEF_QUANTILES
-        }
+        val (lq, mq, uq) = getSummaryQuantiles(options)
+        val (yAggFun, yMinFun, yMaxFun) = getSummaryAggFunctions(options)
 
-        val yAggFunction = getAggFunction(options, Summary.FUN, lq, mq, uq) ?: AggregateFunctions::mean
-        val yMinAggFunction = getAggFunction(options, Summary.FUN_MIN, lq, mq, uq) ?: AggregateFunctions::min
-        val yMaxAggFunction = getAggFunction(options, Summary.FUN_MAX, lq, mq, uq) ?: AggregateFunctions::max
-
-        return SummaryStat(yAggFunction, yMinAggFunction, yMaxAggFunction, lq, mq, uq)
+        return SummaryStat(yAggFun, yMinFun, yMaxFun, lq, mq, uq)
     }
 
     private fun configureSummaryBinStat(options: OptionsAccessor): SummaryBinStat {
-        val (lq, mq, uq) = if (options.hasOwn(SummaryBin.QUANTILES)) {
-            val quantiles = options.getBoundedDoubleList(SummaryBin.QUANTILES, 0.0, 1.0)
-            require(quantiles.size == 3) { "Parameter 'quantiles' should contains 3 values" }
-            quantiles.sorted()
-        } else {
-            SummaryStat.DEF_QUANTILES
-        }
-
-        val yAggFunction = getAggFunction(options, SummaryBin.FUN, lq, mq, uq) ?: AggregateFunctions::mean
-        val yMinAggFunction = getAggFunction(options, SummaryBin.FUN_MIN, lq, mq, uq) ?: AggregateFunctions::min
-        val yMaxAggFunction = getAggFunction(options, SummaryBin.FUN_MAX, lq, mq, uq) ?: AggregateFunctions::max
+        val (lq, mq, uq) = getSummaryQuantiles(options)
+        val (yAggFun, yMinFun, yMaxFun) = getSummaryAggFunctions(options)
 
         val boundary = options.getDouble(Bin.BOUNDARY)
         val center = options.getDouble(Bin.CENTER)
@@ -450,21 +431,22 @@ object StatProto {
             options.getDouble(Bin.BINWIDTH),
             xPosKind,
             xPos,
-            yAggFunction,
-            yMinAggFunction,
-            yMaxAggFunction,
-            lq,
-            mq,
-            uq
+            yAggFun, yMinFun, yMaxFun,
+            lq, mq, uq
+        )
+    }
+
+    private fun getSummaryAggFunctions(options: OptionsAccessor): Triple<(List<Double>) -> Double, (List<Double>) -> Double, (List<Double>) -> Double> {
+        return Triple(
+            getAggFunction(options, Summary.FUN) ?: AggregateFunctions::mean,
+            getAggFunction(options, Summary.FUN_MIN) ?: AggregateFunctions::min,
+            getAggFunction(options, Summary.FUN_MAX) ?: AggregateFunctions::max
         )
     }
 
     private fun getAggFunction(
         options: OptionsAccessor,
-        option: String,
-        lowerQuantile: Double,
-        middleQuantile: Double,
-        upperQuantile: Double
+        option: String
     ): ((List<Double>) -> Double)? {
         return options.getString(option)?.let {
             when (it.lowercase()) {
@@ -474,14 +456,25 @@ object StatProto {
                 "median" -> AggregateFunctions::median
                 "min" -> AggregateFunctions::min
                 "max" -> AggregateFunctions::max
-                "lq" -> { values -> AggregateFunctions.quantile(values, lowerQuantile) }
-                "mq" -> { values -> AggregateFunctions.quantile(values, middleQuantile) }
-                "uq" -> { values -> AggregateFunctions.quantile(values, upperQuantile) }
+                "lq" -> getSummaryQuantiles(options).let { (lq, _, _) -> { values -> AggregateFunctions.quantile(values, lq) } }
+                "mq" -> getSummaryQuantiles(options).let { (_, mq, _) -> { values -> AggregateFunctions.quantile(values, mq) } }
+                "uq" -> getSummaryQuantiles(options).let { (_, _, uq) -> { values -> AggregateFunctions.quantile(values, uq) } }
                 else -> throw IllegalArgumentException(
                     "Unsupported function name: '$it'\n" +
                     "Use one of: count, sum, mean, median, min, max, lq, mq, uq."
                 )
             }
+        }
+    }
+
+    private fun getSummaryQuantiles(options: OptionsAccessor): Triple<Double, Double, Double> {
+        return if (options.hasOwn(Summary.QUANTILES)) {
+            val quantiles = options.getBoundedDoubleList(Summary.QUANTILES, 0.0, 1.0)
+            require(quantiles.size == 3) { "Parameter 'quantiles' should contains 3 values" }
+            val (lq, mq, uq) = quantiles.sorted()
+            Triple(lq, mq, uq)
+        } else {
+            SummaryStat.DEF_QUANTILES
         }
     }
 }

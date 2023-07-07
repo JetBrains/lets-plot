@@ -44,7 +44,7 @@ object AggregateFunctions {
         }
     }
 
-    fun byStat(
+    fun byStatVar(
         statVar: DataFrame.Variable,
         lowerQuantile: Double,
         middleQuantile: Double,

@@ -46,7 +46,7 @@ class SummaryBinStat(
             Stats.Y_MAX to yMaxAggFunction,
         )
         val aesAggFunctions = statCtx.mappedStatVariables()
-            .associateWith { AggregateFunctions.byStat(it, lowerQuantile, middleQuantile, upperQuantile) }
+            .associateWith { AggregateFunctions.byStatVar(it, lowerQuantile, middleQuantile, upperQuantile) }
         val rangeX = statCtx.overallXRange() ?: return withEmptyStatValues()
 
         val statData = BinStatUtil.computeSummaryStatSeries(xs, ys, paramAggFunctions + aesAggFunctions, rangeX, xPosKind, xPos, binOptions)
