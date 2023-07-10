@@ -7,20 +7,21 @@ package org.jetbrains.letsPlot.datamodel.mapping.framework.composite
 
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.observable.children.ChildList
-import jetbrains.datalore.base.observable.children.SimpleComposite
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.intern.observable.children.ChildList
+import org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.datamodel.mapping.framework.composite.*
 
 internal open class TestComposite :
-        SimpleComposite<TestComposite?, TestComposite>(),
+        org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite<TestComposite?, TestComposite>(),
     NavComposite<TestComposite>,
     HasVisibility,
     HasFocusability, HasBounds {
 
 
-    private val myChildren = ChildList<TestComposite, TestComposite>(this)
+    private val myChildren =
+        org.jetbrains.letsPlot.commons.intern.observable.children.ChildList<TestComposite, TestComposite>(this)
     private val myVisible = ValueProperty(true)
     private val myFocusable = ValueProperty(true)
     override var bounds = Rectangle(Vector.ZERO, Vector.ZERO)

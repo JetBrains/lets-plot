@@ -6,9 +6,9 @@
 package jetbrains.livemap.canvascontrols
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.observable.property.Properties
-import jetbrains.datalore.base.observable.property.PropertyBinding
-import jetbrains.datalore.base.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.Properties
+import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyBinding
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl

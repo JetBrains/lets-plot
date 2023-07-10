@@ -12,7 +12,7 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager

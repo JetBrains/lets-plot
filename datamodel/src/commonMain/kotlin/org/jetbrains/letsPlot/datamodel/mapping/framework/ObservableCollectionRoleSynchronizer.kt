@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.collections.CollectionAdapter
-import jetbrains.datalore.base.observable.collections.CollectionItemEvent
-import jetbrains.datalore.base.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 import jetbrains.datalore.base.registration.Registration
 
 internal class ObservableCollectionRoleSynchronizer<SourceT, TargetT>(
@@ -42,15 +42,15 @@ internal class ObservableCollectionRoleSynchronizer<SourceT, TargetT>(
             myTarget.add(m.target)
         }
 
-        myCollectionRegistration = mySource.addListener(object : CollectionAdapter<SourceT>() {
-            override fun onItemAdded(event: CollectionItemEvent<out SourceT>) {
+        myCollectionRegistration = mySource.addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<SourceT>() {
+            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out SourceT>) {
                 val mapper = createMapper(event.newItem!!)
                 modifiableMappers.add(event.index, mapper)
                 myTarget.add(event.index, mapper.target)
                 processMapper(mapper)
             }
 
-            override fun onItemRemoved(event: CollectionItemEvent<out SourceT>) {
+            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out SourceT>) {
                 modifiableMappers.removeAt(event.index)
                 myTarget.removeAt(event.index)
             }

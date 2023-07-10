@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom.slim
 
-import jetbrains.datalore.base.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 internal open class DummySvgNode : SvgNode() {

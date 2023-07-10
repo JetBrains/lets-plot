@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.observable.children.ChildList
-import jetbrains.datalore.base.observable.children.SimpleComposite
-import jetbrains.datalore.base.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.children.ChildList
+import org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 
 
-abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
+abstract class SvgNode : org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite<SvgNode?, SvgNode>() {
     private var myContainer: SvgNodeContainer? = null
 
     private var myChildren: SvgChildList? = null
@@ -75,7 +75,7 @@ abstract class SvgNode : SimpleComposite<SvgNode?, SvgNode>() {
 
     private inner class SvgChildList internal constructor(parent: SvgNode) :
 
-            ChildList<SvgNode, SvgNode>(parent) {
+            org.jetbrains.letsPlot.commons.intern.observable.children.ChildList<SvgNode, SvgNode>(parent) {
 
         override fun beforeItemAdded(index: Int, item: SvgNode) {
             if (isAttached()) {

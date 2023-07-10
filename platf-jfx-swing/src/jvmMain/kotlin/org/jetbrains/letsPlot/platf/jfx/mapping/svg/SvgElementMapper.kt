@@ -10,7 +10,7 @@ import javafx.event.EventHandler
 import javafx.event.EventType
 import javafx.scene.Node
 import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
 import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext

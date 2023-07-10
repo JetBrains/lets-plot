@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.vis.canvas
 
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.ListenerCaller
-import jetbrains.datalore.base.observable.event.Listeners
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
+import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import kotlin.reflect.KClass

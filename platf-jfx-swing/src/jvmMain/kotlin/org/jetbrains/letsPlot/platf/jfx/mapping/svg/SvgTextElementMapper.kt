@@ -12,10 +12,10 @@ import javafx.scene.text.Font
 import javafx.scene.text.FontPosture
 import javafx.scene.text.FontWeight
 import javafx.scene.text.Text
-import jetbrains.datalore.base.observable.collections.ObservableCollection
-import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.observable.property.SimpleCollectionProperty
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCollection
+import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.SimpleCollectionProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle

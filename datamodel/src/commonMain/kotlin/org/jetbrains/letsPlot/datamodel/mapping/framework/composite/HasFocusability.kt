@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework.composite
 
-import jetbrains.datalore.base.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 
 interface HasFocusability {
     fun focusable(): Property<Boolean>

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
 import jetbrains.datalore.base.function.Function
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import jetbrains.datalore.base.registration.Registration
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil

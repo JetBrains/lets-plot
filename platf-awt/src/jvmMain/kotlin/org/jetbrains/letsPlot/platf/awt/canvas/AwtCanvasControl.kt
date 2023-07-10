@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.handler
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer

@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.event.ListenerCaller
-import jetbrains.datalore.base.observable.event.Listeners
+import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
+import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 import jetbrains.datalore.base.registration.Registration
 
 class MappingContext {

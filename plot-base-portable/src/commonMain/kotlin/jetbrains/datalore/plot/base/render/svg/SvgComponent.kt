@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.render.svg
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import jetbrains.datalore.base.registration.CompositeRegistration
 import jetbrains.datalore.base.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.*

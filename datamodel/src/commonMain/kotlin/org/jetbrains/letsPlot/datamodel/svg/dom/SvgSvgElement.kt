@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.datamodel.svg.dom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgContainer.Companion.CLIP_PATH
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgContainer.Companion.OPACITY
 

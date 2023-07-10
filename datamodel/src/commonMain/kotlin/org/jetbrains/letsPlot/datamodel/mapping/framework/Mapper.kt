@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
-import jetbrains.datalore.base.observable.collections.list.ObservableList
-import jetbrains.datalore.base.observable.collections.set.ObservableHashSet
-import jetbrains.datalore.base.observable.collections.set.ObservableSet
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.set.ObservableHashSet
+import org.jetbrains.letsPlot.commons.intern.observable.collections.set.ObservableSet
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import org.jetbrains.letsPlot.datamodel.mapping.framework.composite.HasParent
 

@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.datamodel.mapping.framework
 
 import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Value
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import kotlin.test.Test

@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
-import jetbrains.datalore.base.observable.collections.list.ObservableList
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 
 internal class Item {
 

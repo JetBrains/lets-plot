@@ -7,10 +7,10 @@ package org.jetbrains.letsPlot.datamodel.mapping.framework
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Runnable
-import jetbrains.datalore.base.observable.collections.list.ObservableList
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.event.EventSource
-import jetbrains.datalore.base.observable.property.*
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventSource
+import org.jetbrains.letsPlot.commons.intern.observable.property.*
 import jetbrains.datalore.base.registration.Disposable
 import jetbrains.datalore.base.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.transform.Transformer

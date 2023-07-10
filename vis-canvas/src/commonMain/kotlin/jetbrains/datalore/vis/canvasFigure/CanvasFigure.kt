@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.canvasFigure
 
 import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import jetbrains.datalore.base.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.vis.canvas.CanvasControl

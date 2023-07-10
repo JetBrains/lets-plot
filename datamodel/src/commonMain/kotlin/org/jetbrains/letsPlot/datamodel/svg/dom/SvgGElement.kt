@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.datamodel.svg.dom
 
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformable.Companion.TRANSFORM
 
 class SvgGElement : SvgGraphicsElement(), SvgTransformable,
