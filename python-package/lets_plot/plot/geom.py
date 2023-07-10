@@ -2939,7 +2939,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, tooltips=None,
                  orientation=None,
                  fatten=None,
-                 outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None, outlier_stroke=None,
+                 outlier_alpha=None, outlier_color=None, outlier_fill=None,
+                 outlier_shape=None, outlier_size=None, outlier_stroke=None,
                  varwidth=None,
                  whisker_width=None,
                  color_by=None, fill_by=None,
@@ -2973,6 +2974,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Possible values: 'x', 'y'.
     fatten : float, default=2.0
         A multiplicative factor applied to size of the middle bar.
+    outlier_alpha : float
+        Default transparency aesthetic for outliers.
     outlier_color : str
         Default color aesthetic for outliers.
     outlier_fill : str
@@ -3130,6 +3133,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                show_legend=False,
                                sampling=None,
                                orientation=orientation,
+                               alpha=outlier_alpha,
                                color=outlier_color,
                                fill=outlier_fill,
                                shape=outlier_shape,
