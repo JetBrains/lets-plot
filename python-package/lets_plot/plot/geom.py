@@ -3122,12 +3122,11 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
-        default_position = position_dodge(width=.95)
         boxplot_layer += _geom('point',
                                mapping=mapping,
                                data=data,
                                stat='boxplot_outlier',
-                               position=position or default_position,
+                               position=position,
                                show_legend=False,
                                sampling=None,
                                orientation=orientation,

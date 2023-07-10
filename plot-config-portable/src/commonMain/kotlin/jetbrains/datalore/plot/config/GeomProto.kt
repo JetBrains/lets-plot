@@ -135,9 +135,15 @@ class GeomProto(val geomKind: GeomKind) {
             }
 
             else -> {
-                // Some other geoms has stateless position adjustments defined in `defaults`
-                // Otherwise it's just `identity`
-                DEFAULTS[geomKind]?.get(Layer.POS) ?: PosProto.IDENTITY
+                when (StatKind.safeValueOf(layerOptions.getStringSafe(Layer.STAT))) {
+                    StatKind.BOXPLOT_OUTLIER -> mapOf(
+                        Meta.NAME to PosProto.DODGE,
+                        Pos.Dodge.WIDTH to 0.95
+                    )
+                    // Some other geoms has stateless position adjustments defined in `defaults`
+                    // Otherwise it's just `identity`
+                    else -> DEFAULTS[geomKind]?.get(Layer.POS) ?: PosProto.IDENTITY
+                }
             }
         }
 
