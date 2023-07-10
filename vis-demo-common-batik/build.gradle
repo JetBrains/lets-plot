@@ -28,9 +28,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
                 implementation project(':vis-canvas')
-                implementation project(':vis-svg-mapper-batik')
                 implementation project(':platf-awt')
-                implementation project(':vis-swing-batik')
+                implementation project(':platf-batik')
                 implementation project(':vis-demo-common')
             }
         }

@@ -12,8 +12,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
-import jetbrains.datalore.vis.canvas.javaFx.JavafxEventPeer
+import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasControl
+import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxEventPeer
 
 class BaseCanvasDemoJfx(val demoModel: (canvas: Canvas, createSnapshot: (String) -> Async<Canvas.Snapshot>) -> Unit) {
 

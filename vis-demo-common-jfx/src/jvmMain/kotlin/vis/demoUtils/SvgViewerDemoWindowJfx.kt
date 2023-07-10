@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.vis.demoUtils.swing.SvgViewerDemoWindowBase
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
-import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
+import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
 import java.awt.Color
 import javax.swing.BorderFactory
 import javax.swing.JComponent

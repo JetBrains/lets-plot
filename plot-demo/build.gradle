@@ -60,10 +60,9 @@ kotlin {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation project(':vis-svg-mapper-batik')
                 implementation project(':vis-demo-common-batik')
                 implementation project(':platf-awt')
-                implementation project(':vis-swing-batik')
+                implementation project(':platf-batik')
             }
         }
         jvmJfxMain {
@@ -71,10 +70,9 @@ kotlin {
             dependsOn jvmMain
             dependencies {
                 implementation project(':vis-canvas')
-                implementation project(':vis-svg-mapper-jfx')
                 implementation project(':vis-demo-common-jfx')
                 implementation project(':platf-awt')
-                implementation project(':vis-swing-jfx')
+                implementation project(':platf-jfx-swing')
 
                 compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
                 compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")

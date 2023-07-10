@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
-import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
+import org.jetbrains.letsPlot.platf.batik.plot.component.PlotViewerWindowBatik
 
 @Suppress("UNUSED_PARAMETER")
 fun main(args: Array<String>) {

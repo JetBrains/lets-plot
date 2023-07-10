@@ -39,7 +39,7 @@ kotlin {
         jvmBatikMain {
             dependsOn allJvm
             dependencies {
-                implementation project(":vis-svg-mapper-batik")
+                implementation project(":platf-batik")
                 implementation project(':vis-demo-common-batik')
             }
         }
@@ -47,7 +47,7 @@ kotlin {
             dependsOn allJvm
             dependencies {
                 implementation project(':vis-canvas') // needed for `svg transform` parsing
-                implementation project(":vis-svg-mapper-jfx")
+                implementation project(":platf-jfx-swing")
                 implementation project(':vis-demo-common-jfx')
             }
         }

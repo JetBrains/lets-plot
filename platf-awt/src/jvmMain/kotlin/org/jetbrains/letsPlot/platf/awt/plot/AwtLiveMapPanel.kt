@@ -23,7 +23,7 @@ import javax.swing.JComponent
 import javax.swing.JLayeredPane
 
 
-class AwtLiveMapPanel(
+internal class AwtLiveMapPanel(
     private val liveMapFigures: List<SomeFig>,
     private val plotOverlayComponent: JComponent,
     private val executor: (() -> Unit) -> Unit,

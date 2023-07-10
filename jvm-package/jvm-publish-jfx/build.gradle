@@ -19,9 +19,8 @@ kotlin {
                 compileOnly kotlin('stdlib-jdk8')
 
                 compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':vis-svg-mapper-jfx')
                 api project(':platf-awt')
-                api project(':vis-swing-jfx')
+                api project(':platf-jfx-swing')
                 api project(':vis-demo-common')
                 api project(':vis-demo-common-jfx')
             }

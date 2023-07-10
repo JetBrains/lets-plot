@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.FacetGridDemo
-import jetbrains.datalore.vis.swing.batik.PlotViewerWindowBatik
+import org.jetbrains.letsPlot.platf.batik.plot.component.PlotViewerWindowBatik
 
 fun main() {
     with(FacetGridDemo()) {

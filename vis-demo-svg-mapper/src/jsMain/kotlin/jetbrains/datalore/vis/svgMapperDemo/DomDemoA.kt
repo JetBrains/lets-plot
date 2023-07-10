@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.svgMapperDemo
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import jetbrains.datalore.vis.svgDemoModel.a.DemoModelA
-import org.jetbrains.letsPlot.platf.w3c.mapping.svg.util.SvgToW3c.generateDom
+import org.jetbrains.letsPlot.platf.w3c.mapping.util.SvgToW3c.generateDom
 
 fun svgElementsDemoA() {
     val svgGroup = DemoModelA.createModel()

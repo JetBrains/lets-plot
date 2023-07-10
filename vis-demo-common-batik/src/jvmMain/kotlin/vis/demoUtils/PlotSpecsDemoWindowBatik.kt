@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.vis.demoUtils.swing.PlotSpecsDemoWindowBase
-import jetbrains.datalore.vis.swing.batik.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.platf.batik.plot.component.DefaultPlotPanelBatik
 import java.awt.Color
 import java.awt.Component
 import java.awt.Dimension

@@ -7,7 +7,7 @@ package jetbrains.datalore.plotDemo.plotConfig
 
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.parsePlotSpec
-import jetbrains.datalore.vis.swing.batik.DefaultPlotPanelBatik
+import org.jetbrains.letsPlot.platf.batik.plot.component.DefaultPlotPanelBatik
 import java.awt.Dimension
 import java.awt.Rectangle
 import javax.swing.*

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.defaultViewer
 
 import jetbrains.datalore.plotDemo.model.plotConfig.Area
-import jetbrains.datalore.vis.swing.jfx.PlotViewerWindowJfx
+import org.jetbrains.letsPlot.platf.jfx.plot.component.PlotViewerWindowJfx
 
 object AreaViewerJfx {
     @JvmStatic

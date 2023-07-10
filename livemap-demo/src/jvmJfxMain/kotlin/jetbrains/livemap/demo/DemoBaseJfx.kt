@@ -12,8 +12,8 @@ import javafx.scene.Scene
 import jetbrains.datalore.base.geometry.DoubleVector
 import jetbrains.datalore.base.geometry.Rectangle
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.vis.canvas.javaFx.JavafxCanvasControl
-import jetbrains.datalore.vis.canvas.javaFx.JavafxEventPeer
+import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasControl
+import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxEventPeer
 import java.awt.BorderLayout
 import javax.swing.JFrame
 import javax.swing.WindowConstants

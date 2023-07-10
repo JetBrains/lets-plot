@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.*
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssCursor
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
 import org.jetbrains.letsPlot.base.platf.dom.DomEventMapper
-import org.jetbrains.letsPlot.platf.w3c.mapping.svg.mapper.SvgRootDocumentMapper
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.SvgRootDocumentMapper
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.w3c.dom.Element

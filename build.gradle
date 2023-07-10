@@ -32,17 +32,15 @@ def include_sources_letsPlotJvmCommon = [
 ]
 
 def include_sources_letsPlotJvmJfx = [
-        'vis-svg-mapper-jfx',
         'platf-awt',
-        'vis-swing-jfx',
+        'platf-jfx-swing',
         'vis-demo-common',
         'vis-demo-common-jfx',
 ]
 
 def include_sources_letsPlotJvmBatik = [
-        'vis-svg-mapper-batik',
         'platf-awt',
-        'vis-swing-batik',
+        'platf-batik',
         'vis-demo-common',
         'vis-demo-common-batik',
 ]

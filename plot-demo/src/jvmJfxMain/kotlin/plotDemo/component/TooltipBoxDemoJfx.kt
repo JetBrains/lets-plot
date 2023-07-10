@@ -8,7 +8,7 @@ package jetbrains.datalore.plotDemo.component
 import javafx.application.Platform.runLater
 import jetbrains.datalore.plotDemo.model.component.TooltipBoxDemo
 import jetbrains.datalore.vis.demoUtils.SvgViewerDemoWindowJfx
-import jetbrains.datalore.vis.swing.runOnFxThread
+import org.jetbrains.letsPlot.platf.jfx.util.runOnFxThread
 import java.awt.EventQueue.invokeLater
 
 fun main() {

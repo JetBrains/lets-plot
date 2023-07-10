@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.vis.demoUtils.swing.PlotObjectsDemoWindowBase
-import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
+import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
 import java.awt.Dimension
 import javax.swing.JComponent
 

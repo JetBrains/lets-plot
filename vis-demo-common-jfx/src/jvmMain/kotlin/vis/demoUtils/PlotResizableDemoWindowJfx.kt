@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.builder.assemble.PlotAssembler
 import jetbrains.datalore.vis.demoUtils.swing.PlotResizableDemoWindowBase
 import org.jetbrains.letsPlot.platf.awt.plot.component.PlotComponentProvider
 import org.jetbrains.letsPlot.platf.awt.plot.component.PlotPanel
-import jetbrains.datalore.vis.swing.SceneMapperJfxPanel
-import jetbrains.datalore.vis.swing.jfx.DefaultSwingContextJfx
+import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel
+import org.jetbrains.letsPlot.platf.jfx.plot.component.DefaultSwingContextJfx
 import java.awt.Dimension
 import javax.swing.JComponent
 
