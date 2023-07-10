@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.listMap
+package org.jetbrains.letsPlot.datamodel.svg.util
 
 /**
  * Memory efficient implementation of a map based on an array.
@@ -11,7 +11,7 @@ package jetbrains.datalore.base.listMap
  *
  * It works better than a HashMap and TreeMap on small sized collections.
  */
-class ListMap<K, V> {
+internal class ListMap<K, V> {
 
     companion object {
         private val EMPTY_ARRAY = arrayOfNulls<Any>(0)
