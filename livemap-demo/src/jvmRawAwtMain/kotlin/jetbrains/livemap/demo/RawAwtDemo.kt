@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtCanvasControl
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtEventPeer

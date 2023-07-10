@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.platf.jfx.mapping.svg.attr
 
 import javafx.scene.Node
 import javafx.scene.shape.Rectangle
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.platf.jfx.mapping.svg.unScaleTransforms
 

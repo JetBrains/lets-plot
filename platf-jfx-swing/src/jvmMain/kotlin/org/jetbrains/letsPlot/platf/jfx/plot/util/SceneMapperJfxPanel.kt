@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.platf.jfx.plot.util
 
 import javafx.scene.Parent
 import org.jetbrains.letsPlot.platf.awt.util.AwtContainerDisposer
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.DisposableRegistration

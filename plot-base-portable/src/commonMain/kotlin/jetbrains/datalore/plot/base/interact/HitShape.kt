@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.interact
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 open class HitShape private constructor(val kind: Kind, private val shape: Any) {
 

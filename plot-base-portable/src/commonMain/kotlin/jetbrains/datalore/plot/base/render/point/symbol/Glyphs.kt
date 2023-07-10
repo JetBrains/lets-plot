@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.render.point.symbol
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 object Glyphs {
     fun square(location: DoubleVector, width: Double): Glyph {

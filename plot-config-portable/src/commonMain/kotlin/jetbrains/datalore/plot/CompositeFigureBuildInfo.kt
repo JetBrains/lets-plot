@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.GeomLayer

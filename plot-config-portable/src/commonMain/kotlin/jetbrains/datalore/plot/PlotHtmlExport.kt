@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.PlotConfig
 import jetbrains.datalore.plot.config.PlotConfigClientSide

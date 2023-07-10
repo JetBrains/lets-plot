@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.datetime.*
 import jetbrains.datalore.base.datetime.tz.TimeZone
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory

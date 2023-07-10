@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.core.input
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.graphics.RenderBox
 import jetbrains.livemap.core.util.Geometries

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.Text
 
 class TextJustification(val x: Double, val y: Double) {

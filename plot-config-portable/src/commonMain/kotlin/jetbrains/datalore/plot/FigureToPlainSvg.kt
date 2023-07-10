@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement

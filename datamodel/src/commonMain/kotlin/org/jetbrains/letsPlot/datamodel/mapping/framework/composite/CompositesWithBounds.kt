@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework.composite
 
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.function.Function
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 class CompositesWithBounds(private val myThreshold: Int) {
 
@@ -105,7 +105,8 @@ class CompositesWithBounds(private val myThreshold: Int) {
         return bounds.distance(Vector(x, bounds.origin.y))
     }
 
-    private inner class NextUpperFocusable<ViewT> internal constructor(private val myInitial: ViewT) : Function<ViewT, ViewT?>
+    private inner class NextUpperFocusable<ViewT> internal constructor(private val myInitial: ViewT) :
+        Function<ViewT, ViewT?>
             where ViewT : NavComposite<ViewT>, ViewT : HasFocusability, ViewT : HasVisibility, ViewT : HasBounds {
 
         private val myFirstFocusableAbove: ViewT?
@@ -131,7 +132,8 @@ class CompositesWithBounds(private val myThreshold: Int) {
         }
     }
 
-    private inner class NextLowerFocusable<ViewT> internal constructor(private val myInitial: ViewT) : Function<ViewT, ViewT?>
+    private inner class NextLowerFocusable<ViewT> internal constructor(private val myInitial: ViewT) :
+        Function<ViewT, ViewT?>
             where ViewT : NavComposite<ViewT>, ViewT : HasFocusability, ViewT : HasVisibility, ViewT : HasBounds {
 
         private val myFirstFocusableBelow: ViewT?

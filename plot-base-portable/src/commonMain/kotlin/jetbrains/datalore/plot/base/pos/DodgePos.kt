@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.pos
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.common.data.SeriesUtil
 

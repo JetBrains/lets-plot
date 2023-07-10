@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale
 
 import jetbrains.datalore.base.assertion.assertEquals
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.test.Test
 
 class MappersTest {

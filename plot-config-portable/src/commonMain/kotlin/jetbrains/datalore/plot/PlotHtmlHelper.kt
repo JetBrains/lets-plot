@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.base.intern.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import jetbrains.datalore.base.random.RandomString.randomString

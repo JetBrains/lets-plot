@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.vis.canvas
 
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 abstract class ScaledCanvas protected constructor(
     context2d: Context2d,

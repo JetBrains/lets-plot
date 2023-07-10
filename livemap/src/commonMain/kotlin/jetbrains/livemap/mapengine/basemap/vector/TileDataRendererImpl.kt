@@ -6,8 +6,8 @@
 package jetbrains.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d

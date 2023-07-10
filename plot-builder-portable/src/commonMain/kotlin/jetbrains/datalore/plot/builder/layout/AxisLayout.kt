@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter

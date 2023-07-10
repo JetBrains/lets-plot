@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.w3c.dom.events.Event

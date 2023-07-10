@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable

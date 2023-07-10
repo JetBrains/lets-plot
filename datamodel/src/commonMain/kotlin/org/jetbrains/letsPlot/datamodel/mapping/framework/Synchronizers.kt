@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Runnable
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Runnable
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventSource

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.subPlots
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.FigureSvgRoot
 

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.data
 
-import jetbrains.datalore.base.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.Transform

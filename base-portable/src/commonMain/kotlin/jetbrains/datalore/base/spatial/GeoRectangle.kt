@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.typedGeometry.Rect
 
 class GeoRectangle(startLongitude: Double, minLatitude: Double, endLongitude: Double, maxLatitude: Double) {

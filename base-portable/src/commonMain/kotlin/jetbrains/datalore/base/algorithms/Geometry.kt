@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.base.algorithms
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.IntSpan
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.IntSpan
 import kotlin.math.abs
 
 fun <T> reduce(points: List<T>, dropDistance: Double, distance: (T, T) -> Double): List<T> {

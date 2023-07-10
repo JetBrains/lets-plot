@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.json
 
-import jetbrains.datalore.base.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
 
 
 class FluentObject : FluentValue {

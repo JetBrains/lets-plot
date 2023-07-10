@@ -5,8 +5,8 @@
 
 package jetbrains.livemap
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec

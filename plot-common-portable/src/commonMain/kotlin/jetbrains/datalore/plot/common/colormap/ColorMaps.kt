@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.colormap
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import kotlin.math.*
 

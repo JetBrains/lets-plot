@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.assertj.core.api.Condition
 
 object TestUtil {

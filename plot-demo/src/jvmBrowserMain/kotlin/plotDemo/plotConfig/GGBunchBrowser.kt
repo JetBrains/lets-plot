@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plotDemo.model.plotConfig.GGBunch
 
 object GGBunchBrowser {

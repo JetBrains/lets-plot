@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.layout.figure.composite
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.layout.figure.CompositeFigureLayout
 import jetbrains.datalore.plot.builder.layout.figure.composite.FigureGridLayoutUtil.colElements

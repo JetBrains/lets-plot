@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.function.Runnable
-import jetbrains.datalore.base.function.Value
+import org.jetbrains.letsPlot.commons.intern.function.Runnable
+import org.jetbrains.letsPlot.commons.intern.function.Value
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty

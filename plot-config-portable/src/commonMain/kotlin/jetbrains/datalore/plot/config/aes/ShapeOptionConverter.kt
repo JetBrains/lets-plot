@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config.aes
 
-import jetbrains.datalore.base.function.Function
+import org.jetbrains.letsPlot.commons.intern.function.Function
 import jetbrains.datalore.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.base.render.point.TinyPointShape

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.function.Runnable
+import org.jetbrains.letsPlot.commons.intern.function.Runnable
 import jetbrains.datalore.plot.builder.assemble.ColorBarOptions
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.assemble.LegendOptions

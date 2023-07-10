@@ -9,7 +9,7 @@ import javafx.scene.input.MouseButton
 import jetbrains.datalore.base.event.Button
 import jetbrains.datalore.base.event.KeyModifiers
 import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.math.roundToInt
 import javafx.scene.input.MouseEvent as JfxMouseEvent
 

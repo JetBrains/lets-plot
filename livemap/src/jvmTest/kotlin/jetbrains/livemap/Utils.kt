@@ -1,6 +1,6 @@
 package jetbrains.datalore.maps
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.QuadKey
 import jetbrains.datalore.base.typedGeometry.MultiPolygon
 import jetbrains.datalore.base.typedGeometry.Polygon

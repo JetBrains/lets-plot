@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 interface ContinuousTransform : Transform {
     override fun isInDomain(v: Any?): Boolean {

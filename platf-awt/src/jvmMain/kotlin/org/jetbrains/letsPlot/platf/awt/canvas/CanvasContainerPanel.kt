@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.awt.canvas
 
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import java.awt.Rectangle
 import javax.swing.JLayeredPane
 

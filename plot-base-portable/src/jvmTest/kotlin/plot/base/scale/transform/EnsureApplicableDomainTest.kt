@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import junit.framework.TestCase.failNotEquals

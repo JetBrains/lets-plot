@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.common.data
 
-import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.gcommon.collect.Ordering
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Iterables
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.min

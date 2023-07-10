@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.render
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement

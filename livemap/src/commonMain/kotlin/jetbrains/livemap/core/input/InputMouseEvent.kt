@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.input
 
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 class InputMouseEvent(val location: Vector) {
     var isStopped = false

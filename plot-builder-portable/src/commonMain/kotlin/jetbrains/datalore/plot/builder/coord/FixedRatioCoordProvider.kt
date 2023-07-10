@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.coord
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 /**
  * A fixed scale coordinate system forces a specified ratio between the physical representation of data units on the axes.

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory

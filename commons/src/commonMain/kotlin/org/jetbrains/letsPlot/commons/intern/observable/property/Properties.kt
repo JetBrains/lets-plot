@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.commons.intern.observable.property
 
-import jetbrains.datalore.base.function.Predicate
-import jetbrains.datalore.base.function.Runnable
-import jetbrains.datalore.base.function.Supplier
-import jetbrains.datalore.base.function.Value
+import org.jetbrains.letsPlot.commons.intern.function.Predicate
+import org.jetbrains.letsPlot.commons.intern.function.Runnable
+import org.jetbrains.letsPlot.commons.intern.function.Supplier
+import org.jetbrains.letsPlot.commons.intern.function.Value
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCollection

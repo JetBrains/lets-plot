@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.assertion.assertEquals
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.base.values.HSV

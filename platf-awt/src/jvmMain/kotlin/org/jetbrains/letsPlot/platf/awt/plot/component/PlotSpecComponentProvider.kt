@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.awt.plot.component
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.platf.awt.plot.MonolithicAwt
 import jetbrains.datalore.plot.PlotSizeHelper
 import jetbrains.datalore.plot.config.CompositeFigureConfig

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.assertion
 
-import jetbrains.datalore.base.gcommon.base.Throwables
+import org.jetbrains.letsPlot.commons.intern.gcommon.base.Throwables
 import kotlin.math.abs
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

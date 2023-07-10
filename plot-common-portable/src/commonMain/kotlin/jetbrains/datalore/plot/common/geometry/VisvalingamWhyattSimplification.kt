@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier.RankingStrategy
 import kotlin.math.abs
 

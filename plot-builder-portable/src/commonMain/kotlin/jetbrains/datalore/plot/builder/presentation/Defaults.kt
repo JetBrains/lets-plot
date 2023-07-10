@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis

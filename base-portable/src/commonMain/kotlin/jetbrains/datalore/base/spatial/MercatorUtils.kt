@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.math.toDegrees
 import jetbrains.datalore.base.math.toRadians
 import kotlin.math.*

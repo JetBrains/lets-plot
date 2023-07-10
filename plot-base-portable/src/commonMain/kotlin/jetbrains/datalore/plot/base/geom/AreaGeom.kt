@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.geom
 
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y

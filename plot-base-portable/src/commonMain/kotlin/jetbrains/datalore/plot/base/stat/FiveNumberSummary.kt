@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 
 /**
  * For a set of data, the minimum, first quartile, median, third quartile, and maximum.

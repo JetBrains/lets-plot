@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors

@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.common.geometry
 
-import jetbrains.datalore.base.gcommon.collect.Stack
-import jetbrains.datalore.base.geometry.DoubleSegment
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
+import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.common.geometry.PolylineSimplifier.RankingStrategy
 
 internal class DouglasPeuckerSimplification : RankingStrategy {

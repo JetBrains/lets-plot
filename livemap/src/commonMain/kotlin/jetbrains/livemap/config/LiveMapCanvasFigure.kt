@@ -6,7 +6,7 @@
 package jetbrains.livemap.config
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration

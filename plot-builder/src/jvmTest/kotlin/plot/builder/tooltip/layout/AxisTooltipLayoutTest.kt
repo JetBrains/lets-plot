@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip.layout
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
 import jetbrains.datalore.plot.builder.interact.TestUtil.point
 import jetbrains.datalore.plot.builder.interact.TestUtil.size

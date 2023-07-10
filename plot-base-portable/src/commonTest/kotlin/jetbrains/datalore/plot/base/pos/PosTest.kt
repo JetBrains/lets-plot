@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.pos
 
 import jetbrains.datalore.base.assertion.assertEquals
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.BogusContext
 import jetbrains.datalore.plot.base.PositionAdjustment

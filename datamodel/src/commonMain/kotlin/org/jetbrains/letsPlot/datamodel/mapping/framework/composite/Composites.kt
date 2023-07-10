@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework.composite
 
-import jetbrains.datalore.base.function.Functions
-import jetbrains.datalore.base.function.Predicate
+import org.jetbrains.letsPlot.commons.intern.function.Functions
+import org.jetbrains.letsPlot.commons.intern.function.Predicate
 import kotlin.math.min
 
 object Composites {
@@ -258,7 +258,8 @@ object Composites {
     }
 
     fun <HasParentT : HasParent<HasParentT>> getClosestAncestor(current: HasParentT,
-                                                                acceptSelf: Boolean, p: Predicate<HasParentT>): HasParentT? {
+                                                                acceptSelf: Boolean, p: Predicate<HasParentT>
+    ): HasParentT? {
         val ancestors = if (acceptSelf) ancestorsFrom(current) else ancestors(current)
         for (c in ancestors) {
             if (p.invoke(c)) {

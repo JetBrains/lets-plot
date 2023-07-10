@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble.facet
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.common.data.SeriesUtil

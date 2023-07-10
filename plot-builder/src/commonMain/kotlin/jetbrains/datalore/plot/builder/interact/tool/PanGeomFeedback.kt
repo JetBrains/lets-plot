@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.tool
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 
 class PanGeomFeedback(

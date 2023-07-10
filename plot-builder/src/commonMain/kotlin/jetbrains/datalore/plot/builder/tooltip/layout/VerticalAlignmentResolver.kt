@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip.layout
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.BOTTOM
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.VerticalAlignment.TOP

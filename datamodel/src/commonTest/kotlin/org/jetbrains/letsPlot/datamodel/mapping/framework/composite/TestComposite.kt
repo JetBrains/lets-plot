@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework.composite
 
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.children.ChildList
 import org.jetbrains.letsPlot.commons.intern.observable.children.SimpleComposite
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property

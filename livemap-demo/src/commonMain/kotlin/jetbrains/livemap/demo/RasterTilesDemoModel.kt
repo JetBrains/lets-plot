@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.mapengine.basemap.Tilesets
 

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 data class Rect<TypeT>(
     val origin: Vec<TypeT>,

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.layout.util.Insets
 
 internal object LayoutConstants {

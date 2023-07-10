@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.camera
 
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.minus
 import jetbrains.livemap.World

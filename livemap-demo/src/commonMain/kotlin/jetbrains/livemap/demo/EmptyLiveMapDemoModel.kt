@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.demo
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.livemap.api.LiveMapBuilder
 
 class EmptyLiveMapDemoModel(dimension: DoubleVector): DemoModelBase(dimension) {

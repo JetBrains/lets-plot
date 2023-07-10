@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config.aes
 
-import jetbrains.datalore.base.function.Function
+import org.jetbrains.letsPlot.commons.intern.function.Function
 
 internal class NumericOptionConverter : Function<Any?, Double?> {
     override fun apply(value: Any?): Double? {

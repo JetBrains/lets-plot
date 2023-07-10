@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.observable.property
 
-import jetbrains.datalore.base.function.Supplier
+import org.jetbrains.letsPlot.commons.intern.function.Supplier
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventSource
 
 /**

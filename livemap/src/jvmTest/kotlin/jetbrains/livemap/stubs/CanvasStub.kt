@@ -6,7 +6,7 @@
 package jetbrains.datalore.jetbrains.livemap.stubs
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import org.mockito.Mockito

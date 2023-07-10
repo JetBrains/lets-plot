@@ -6,8 +6,8 @@
 package jetbrains.livemap.demo
 
 import org.jetbrains.letsPlot.base.platf.dom.DomEventMapper
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
 import kotlinx.browser.document
 import org.w3c.dom.HTMLElement

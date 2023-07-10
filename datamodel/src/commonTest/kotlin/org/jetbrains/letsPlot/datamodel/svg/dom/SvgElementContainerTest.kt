@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.function.Value
+import org.jetbrains.letsPlot.commons.intern.function.Value
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.test.*

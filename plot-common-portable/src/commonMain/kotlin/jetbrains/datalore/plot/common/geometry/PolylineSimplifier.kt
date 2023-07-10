@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.geometry
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 class PolylineSimplifier private constructor(private val myPoints: List<DoubleVector>, strategy: RankingStrategy) {
     private val myWeights: List<Double>

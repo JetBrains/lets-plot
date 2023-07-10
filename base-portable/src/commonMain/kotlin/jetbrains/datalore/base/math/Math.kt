@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.base.math
 
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.math.*
 
 fun toRadians(degrees: Double): Double = degrees * PI / 180.0

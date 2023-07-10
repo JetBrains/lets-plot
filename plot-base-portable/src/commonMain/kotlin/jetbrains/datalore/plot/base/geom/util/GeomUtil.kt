@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.gcommon.collect.Ordering
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.common.data.SeriesUtil

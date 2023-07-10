@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.base.spatial.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.MercatorUtils
 import jetbrains.datalore.base.spatial.MercatorUtils.VALID_LATITUDE_RANGE
 import jetbrains.datalore.base.spatial.MercatorUtils.VALID_LONGITUDE_RANGE

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.util
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 object Geometries {
     operator fun DoubleVector.minus(doubleVector: DoubleVector): DoubleVector = subtract(doubleVector)

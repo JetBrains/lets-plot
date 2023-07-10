@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg.domUtil
 
-import jetbrains.datalore.base.function.Supplier
-import jetbrains.datalore.base.function.Value
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.function.Supplier
+import org.jetbrains.letsPlot.commons.intern.function.Value
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners

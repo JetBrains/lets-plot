@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.function.Value
+import org.jetbrains.letsPlot.commons.intern.function.Value
 import kotlin.test.*
 
 class MappingContextTest {

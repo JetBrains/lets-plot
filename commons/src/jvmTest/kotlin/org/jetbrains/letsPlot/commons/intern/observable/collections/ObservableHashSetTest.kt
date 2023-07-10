@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.observable.collections
 
-import jetbrains.datalore.base.function.Value
+import org.jetbrains.letsPlot.commons.intern.function.Value
 import org.jetbrains.letsPlot.commons.intern.observable.collections.set.ObservableHashSet
 import org.jetbrains.letsPlot.commons.intern.observable.collections.set.ObservableSet
 import org.mockito.Mockito

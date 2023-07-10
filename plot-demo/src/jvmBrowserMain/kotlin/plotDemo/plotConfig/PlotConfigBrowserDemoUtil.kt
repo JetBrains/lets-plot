@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.plotConfig
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.base.intern.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil

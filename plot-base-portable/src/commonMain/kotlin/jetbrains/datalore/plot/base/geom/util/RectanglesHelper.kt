@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import jetbrains.datalore.plot.base.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
