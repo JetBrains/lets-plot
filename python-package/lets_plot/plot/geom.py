@@ -6241,7 +6241,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  tooltips=tooltips,
                  labels=labels,
                  map=map, map_join=map_join, use_crs=use_crs,
-                 hole=hole, fill_by=fill_by, stroke=stroke, stroke_color=stroke_color,
+                 hole=hole, fill_by=fill_by,
                  **other_args)
 
 
