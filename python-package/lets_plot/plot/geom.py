@@ -3123,9 +3123,6 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           **other_args)
     if stat is None or stat == 'boxplot':
         default_position = position_dodge(width=.95)
-        box_color = other_args.get('color')
-        box_fill = other_args.get('fill')
-        box_size = other_args.get('size')
         boxplot_layer += _geom('point',
                                mapping=mapping,
                                data=data,
@@ -3134,10 +3131,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                show_legend=False,
                                sampling=None,
                                orientation=orientation,
-                               color=outlier_color or box_color,
-                               fill=outlier_fill or box_fill,
+                               color=outlier_color,
+                               fill=outlier_fill,
                                shape=outlier_shape,
-                               size=outlier_size or box_size,
+                               size=outlier_size,
                                stroke=outlier_stroke,
                                color_by=color_by, fill_by=fill_by)
     return boxplot_layer
