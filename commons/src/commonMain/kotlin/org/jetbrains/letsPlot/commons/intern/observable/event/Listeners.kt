@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.commons.intern.observable.event
 
 
 import jetbrains.datalore.base.registration.Registration
-import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 
 /**
  * Reusable container for listeners.
@@ -70,12 +69,7 @@ open class Listeners<ListenerT> {
 
                 if (isRemoved(l)) continue
 
-                try {
-                    h.call(l)
-                } catch (t: Throwable) {
-                    ThrowableHandlers.instance.handle(t)
-                }
-
+                h.call(l)
             }
         } finally {
             afterFire()

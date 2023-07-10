@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.set.Observab
 import org.jetbrains.letsPlot.commons.intern.observable.collections.set.ObservableSet
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import org.jetbrains.letsPlot.datamodel.mapping.framework.composite.HasParent
 
 /**
@@ -123,11 +122,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
             throw IllegalStateException("Mapper can't be reused because it was already detached")
         }
 
-        try {
-            onBeforeAttach(ctx)
-        } catch (t: Throwable) {
-            ThrowableHandlers.instance.handle(t)
-        }
+        onBeforeAttach(ctx)
 
         myState = State.ATTACHING_SYNCHRONIZERS
         mappingContext = ctx
@@ -159,12 +154,7 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
 
         myState = State.ATTACHED
 
-        try {
-            onAttach(ctx)
-        } catch (t: Throwable) {
-            ThrowableHandlers.instance.handle(t)
-        }
-
+        onAttach(ctx)
     }
 
     fun detach() {
@@ -172,20 +162,11 @@ protected constructor(val source: SourceT, val target: TargetT) : HasParent<Mapp
             throw IllegalStateException()
         }
 
-        try {
-            onDetach()
-        } catch (t: Throwable) {
-            ThrowableHandlers.instance.handle(t)
-        }
+        onDetach()
 
         for (part in myParts) {
             if (part is Synchronizer) {
-                try {
-                    part.detach()
-                } catch (t: Throwable) {
-                    ThrowableHandlers.instance.handle(t)
-                }
-
+                part.detach()
             }
             if (part is ChildContainer<*>) {
                 for (m in part) {

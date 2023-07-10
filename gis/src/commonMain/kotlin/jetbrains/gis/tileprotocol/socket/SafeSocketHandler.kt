@@ -5,16 +5,14 @@
 
 package jetbrains.gis.tileprotocol.socket
 
-import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandler
-
-class SafeSocketHandler(private val myHandler: SocketHandler, private val myThrowableHandler: ThrowableHandler) :
-    SocketHandler {
+class SafeSocketHandler(private val myHandler: SocketHandler) : SocketHandler {
 
     private fun safeRun(runnable: () -> Unit) {
         try {
             runnable()
         } catch (t: Throwable) {
-            myThrowableHandler.handle(t)
+            // ToDo: this makes little sense
+            throw t
         }
     }
 
