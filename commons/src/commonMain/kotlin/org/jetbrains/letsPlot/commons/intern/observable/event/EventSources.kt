@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.intern.observable.event
 
 import jetbrains.datalore.base.function.Predicate
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 object EventSources {
     /**

@@ -13,7 +13,7 @@ import javafx.scene.shape.Line
 import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.scene.text.Text
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.base.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode

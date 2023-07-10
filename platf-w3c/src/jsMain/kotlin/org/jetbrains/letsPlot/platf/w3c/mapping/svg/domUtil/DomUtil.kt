@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 import org.jetbrains.letsPlot.commons.intern.observable.property.*
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI

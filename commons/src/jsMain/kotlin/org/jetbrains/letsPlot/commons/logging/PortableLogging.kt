@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o. 
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.logging
+package org.jetbrains.letsPlot.commons.logging
 
 import mu.KotlinLogging
+import org.jetbrains.letsPlot.commons.logging.Logger
 import kotlin.reflect.KClass
 
 actual object PortableLogging {

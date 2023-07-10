@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.interact.tool
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 
 class PanGeomFeedback(
     private val onCompleted: ((Pair<DoubleVector, InteractionTarget>) -> Unit)

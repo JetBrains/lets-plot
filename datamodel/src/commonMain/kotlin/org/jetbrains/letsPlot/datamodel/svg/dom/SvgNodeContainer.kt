@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 
 class SvgNodeContainer(root: SvgSvgElement) {

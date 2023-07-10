@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 internal class SingleChildRoleSynchronizer<SourceT, TargetT>(
     mapper: Mapper<*, *>,

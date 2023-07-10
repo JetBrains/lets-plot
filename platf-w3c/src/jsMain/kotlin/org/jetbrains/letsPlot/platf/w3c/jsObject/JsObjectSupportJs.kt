@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.w3c.jsObject
 
-import jetbrains.datalore.base.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
 
 private val LOG = PortableLogging.logger("JsObjectSupportJs")
 

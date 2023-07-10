@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.intern.observable.collections
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventSource
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 interface ObservableCollection<ItemT> : MutableCollection<ItemT>, EventSource<org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>> {
 

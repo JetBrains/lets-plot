@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.observable.event
 
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 class SimpleEventSource<EventT> : EventSource<EventT> {
     private val myListeners = Listeners<EventHandler<EventT>>()

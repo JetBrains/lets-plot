@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.datamodel.mapping.framework
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 internal class ObservableCollectionRoleSynchronizer<SourceT, TargetT>(
     mapper: Mapper<*, *>,

@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.platf.batik.plot.util
 
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNodeContainerListener
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement

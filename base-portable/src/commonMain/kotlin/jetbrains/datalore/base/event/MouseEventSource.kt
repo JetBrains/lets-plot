@@ -6,7 +6,7 @@
 package jetbrains.datalore.base.event
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 interface MouseEventSource {
     fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration

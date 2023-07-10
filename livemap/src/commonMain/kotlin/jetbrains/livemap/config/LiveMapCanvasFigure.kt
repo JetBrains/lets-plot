@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import jetbrains.datalore.base.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.LiveMap

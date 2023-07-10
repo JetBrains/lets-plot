@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionIt
 import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCollection
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventSource
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlin.jvm.JvmOverloads
 
 object Properties {

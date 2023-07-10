@@ -9,8 +9,8 @@ import jetbrains.datalore.base.event.Event
 import jetbrains.datalore.base.gcommon.base.Throwables
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.logging.PortableLogging
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.commons.intern.observable.property
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventSource
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * Simplified version of [BaseDerivedProperty] which can depend on generic observable objects.

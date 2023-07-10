@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.intern.observable.event
 
 
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * Reusable container for listeners.

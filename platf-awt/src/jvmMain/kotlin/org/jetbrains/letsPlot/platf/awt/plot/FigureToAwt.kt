@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.platf.awt.plot
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.DisposingHub
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import jetbrains.datalore.plot.builder.FigureBuildInfo
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotContainer

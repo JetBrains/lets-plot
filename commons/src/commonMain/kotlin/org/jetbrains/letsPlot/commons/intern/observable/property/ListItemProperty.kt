@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.list.Observa
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * Property which represents a value in an observable list at particular index

@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.demoUtils
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.DisposingHub
+import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgComponent
 import jetbrains.datalore.plot.builder.PlotSvgRoot

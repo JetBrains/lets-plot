@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAd
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.transform.Transformation
 import org.jetbrains.letsPlot.datamodel.mapping.framework.transform.Transformer
 

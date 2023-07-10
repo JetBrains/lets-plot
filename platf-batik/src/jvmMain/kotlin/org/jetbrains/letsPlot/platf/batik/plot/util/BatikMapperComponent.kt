@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.platf.batik.plot.util
 
 import org.jetbrains.letsPlot.platf.awt.util.AwtContainerDisposer
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.DisposableRegistration
-import jetbrains.datalore.base.registration.DisposingHub
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.DisposableRegistration
+import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.apache.batik.gvt.event.GraphicsNodeChangeEvent
 import org.apache.batik.gvt.event.GraphicsNodeChangeListener

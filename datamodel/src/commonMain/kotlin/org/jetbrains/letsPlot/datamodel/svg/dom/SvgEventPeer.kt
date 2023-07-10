@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 

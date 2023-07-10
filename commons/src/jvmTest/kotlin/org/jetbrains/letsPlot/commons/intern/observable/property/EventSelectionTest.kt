@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.commons.intern.observable.property
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.mockito.Mockito
 import kotlin.test.BeforeTest
 import kotlin.test.Test

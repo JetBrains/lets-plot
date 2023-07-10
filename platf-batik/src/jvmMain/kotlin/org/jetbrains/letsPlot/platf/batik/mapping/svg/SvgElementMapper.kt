@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.platf.batik.mapping.svg
 
 import jetbrains.datalore.base.event.MouseEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
 import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers

@@ -9,7 +9,7 @@ import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Runnable
 import jetbrains.datalore.base.function.Supplier
 import jetbrains.datalore.base.function.Value
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 object Asyncs {
     fun isFinished(async: Async<*>): Boolean {

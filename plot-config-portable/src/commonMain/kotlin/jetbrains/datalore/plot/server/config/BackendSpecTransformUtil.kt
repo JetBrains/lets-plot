@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.base.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import jetbrains.datalore.plot.config.FailureHandler
 import jetbrains.datalore.plot.config.FigKind
 import jetbrains.datalore.plot.config.Option

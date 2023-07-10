@@ -3,8 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.base.registration
+package org.jetbrains.letsPlot.commons.registration
 
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

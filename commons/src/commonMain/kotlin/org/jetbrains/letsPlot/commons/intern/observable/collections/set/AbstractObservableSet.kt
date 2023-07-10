@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionLi
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 abstract class AbstractObservableSet<ItemT> : AbstractMutableSet<ItemT>(), ObservableSet<ItemT> {
     private var myListeners: Listeners<CollectionListener<in ItemT>>? = null

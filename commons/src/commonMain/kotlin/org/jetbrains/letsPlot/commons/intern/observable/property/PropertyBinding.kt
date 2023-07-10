@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.commons.intern.observable.property
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * One and two-way property binding support

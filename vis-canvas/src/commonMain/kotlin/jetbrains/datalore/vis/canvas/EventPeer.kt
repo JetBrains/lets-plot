@@ -8,8 +8,8 @@ package jetbrains.datalore.vis.canvas
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlin.reflect.KClass
 
 

@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions
 
 import jetbrains.datalore.base.function.Consumer
 import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener

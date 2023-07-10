@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.commons.intern.observable.property
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * A simple implementation of Read/Write property which stores the value in a field

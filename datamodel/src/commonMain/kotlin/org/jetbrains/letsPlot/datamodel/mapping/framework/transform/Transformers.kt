@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.commons.intern.observable.collections.list.Observa
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 object Transformers {
 

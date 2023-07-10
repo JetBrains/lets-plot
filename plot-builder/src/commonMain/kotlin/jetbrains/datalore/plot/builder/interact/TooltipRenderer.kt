@@ -9,8 +9,8 @@ import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.base.values.Color.Companion.WHITE
 import jetbrains.datalore.base.values.Colors

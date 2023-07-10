@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.platf.awt.canvas
 
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import java.awt.EventQueue
 import java.awt.event.ActionListener
 import javax.swing.Timer

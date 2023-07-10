@@ -11,7 +11,7 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl

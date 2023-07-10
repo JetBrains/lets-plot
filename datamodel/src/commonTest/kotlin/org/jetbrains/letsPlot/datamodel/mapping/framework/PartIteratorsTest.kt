@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
 import jetbrains.datalore.base.gcommon.collect.Iterables
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

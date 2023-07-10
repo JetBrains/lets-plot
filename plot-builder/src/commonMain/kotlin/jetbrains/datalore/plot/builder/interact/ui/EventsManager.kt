@@ -11,9 +11,9 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
 import jetbrains.datalore.base.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 
 typealias UiEventHandler = (UiControl?, MouseEvent) -> Unit

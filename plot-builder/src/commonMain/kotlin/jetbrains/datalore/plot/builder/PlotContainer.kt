@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.base.values.SomeFig
 import jetbrains.datalore.plot.FeatureSwitch
 import jetbrains.datalore.plot.builder.interact.Interactor

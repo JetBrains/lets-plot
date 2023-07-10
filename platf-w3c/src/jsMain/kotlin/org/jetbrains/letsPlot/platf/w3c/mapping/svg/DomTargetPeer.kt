@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil

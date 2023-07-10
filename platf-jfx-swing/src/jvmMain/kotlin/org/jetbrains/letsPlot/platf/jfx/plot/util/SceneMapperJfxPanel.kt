@@ -8,10 +8,10 @@ package org.jetbrains.letsPlot.platf.jfx.plot.util
 import javafx.scene.Parent
 import org.jetbrains.letsPlot.platf.awt.util.AwtContainerDisposer
 import jetbrains.datalore.base.geometry.Vector
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.DisposableRegistration
-import jetbrains.datalore.base.registration.DisposingHub
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.DisposableRegistration
+import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElementListener

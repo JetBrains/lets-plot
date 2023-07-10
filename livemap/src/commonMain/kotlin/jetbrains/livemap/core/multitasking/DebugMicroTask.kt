@@ -7,7 +7,7 @@ package jetbrains.livemap.core.multitasking
 
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.livemap.core.SystemTime
 import kotlin.math.max
 

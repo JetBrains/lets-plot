@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.batik.plot.component
 
-import jetbrains.datalore.base.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.platf.batik.plot.util.BatikMapperComponent
 import org.jetbrains.letsPlot.platf.batik.plot.util.BatikMessageCallback

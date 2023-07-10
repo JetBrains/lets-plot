@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.commons.intern.observable.property
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
 import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener
 import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCollection
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 abstract class SimpleCollectionProperty<ItemT, ValueT>
 protected constructor(

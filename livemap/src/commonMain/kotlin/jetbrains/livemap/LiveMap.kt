@@ -12,8 +12,8 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.datalore.base.typedGeometry.div
 import jetbrains.datalore.base.typedGeometry.plus

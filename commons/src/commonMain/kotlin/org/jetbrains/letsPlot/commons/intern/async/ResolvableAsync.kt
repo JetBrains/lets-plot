@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.commons.intern.async
 
 import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /// Default method implementation added due to this issue:
 /// https://youtrack.jetbrains.com/issue/KT-48132

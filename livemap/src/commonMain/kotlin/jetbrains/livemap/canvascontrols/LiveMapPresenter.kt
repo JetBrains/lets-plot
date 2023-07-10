@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.observable.property.Properties
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyBinding
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.scheduleAsync
 import jetbrains.livemap.LiveMap

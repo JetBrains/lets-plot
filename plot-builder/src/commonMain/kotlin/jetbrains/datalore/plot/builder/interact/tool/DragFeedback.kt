@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.tool
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 
 interface DragFeedback : ToolFeedback {
     fun start(ctx: InteractionContext): Disposable

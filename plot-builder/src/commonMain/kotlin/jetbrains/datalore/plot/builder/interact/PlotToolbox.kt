@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.interact
 
 import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.builder.interact.tool.DrawRectFeedback
 import jetbrains.datalore.plot.builder.interact.tool.PanGeomFeedback

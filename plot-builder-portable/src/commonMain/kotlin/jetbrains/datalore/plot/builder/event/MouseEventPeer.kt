@@ -11,8 +11,8 @@ import jetbrains.datalore.base.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
 import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 class MouseEventPeer : MouseEventSource {
     private val myEventHandlers = HashMap<MouseEventSpec, Listeners<EventHandler<MouseEvent>>>()

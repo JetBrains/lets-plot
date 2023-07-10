@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.render.svg
 import jetbrains.datalore.base.geometry.DoubleRectangle
 import jetbrains.datalore.base.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Companion.CLIP_BOUNDS_JFX
 

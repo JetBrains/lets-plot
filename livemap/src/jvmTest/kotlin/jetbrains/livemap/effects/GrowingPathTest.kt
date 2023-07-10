@@ -9,7 +9,7 @@ import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSource
 import jetbrains.datalore.base.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.LineString
 import jetbrains.datalore.base.typedGeometry.Vec
