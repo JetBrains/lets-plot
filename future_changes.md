@@ -35,8 +35,8 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
   `linewidth` aesthetic is used for line width, `size` - for mid-point size only.
 
-- [BREAKING] `geom_pie()` no longer supports parameters `stroke_color` and `stroke`. Use aesthetics `color` for color 
-  and `stroke` for width of slice borders.
+- [BREAKING] `geom_pie()` no longer supports parameter `stroke_color`. Use the `color` aesthetic for color 
+  of slice borders.
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 

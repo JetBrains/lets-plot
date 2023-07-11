@@ -6230,6 +6230,10 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
             scale_size(guide='none')
 
     """
+    if 'stroke_color' in other_args:
+        print("WARN: The parameter 'stroke_color' for pie is no longer supported. "
+              "Use 'color' for color of slice borders.")
+        other_args.pop('stroke_color')
 
     return _geom('pie',
                  mapping=mapping,
