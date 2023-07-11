@@ -7,16 +7,19 @@ package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.aes.GeomTheme
-import jetbrains.datalore.plot.builder.defaultTheme.DefaultGeomTheme.Companion.InheritedColors
+import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.*
 
 class DefaultTheme(
-    options: Map<String, Any>,
-    fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry()
+    private val themeSettings: Map<String, Any>,
+    fontFamilyRegistry: FontFamilyRegistry = DefaultFontFamilyRegistry(),
+    userOptions: Map<String, Any> = emptyMap()
 ) : Theme {
+    // User specific options are applied to the theme settings (combination of named theme and flavor options)
+    private val options = themeSettings.mergeWith(userOptions)
 
     private val axisX = DefaultAxisTheme("x", options, fontFamilyRegistry)
     private val axisY = DefaultAxisTheme("y", options, fontFamilyRegistry)
@@ -26,7 +29,6 @@ class DefaultTheme(
     private val plot = DefaultPlotTheme(options, fontFamilyRegistry)
     private val tooltips = DefaultTooltipsTheme(options, fontFamilyRegistry)
 
-    private val geomInheritedColors = InheritedColors(options, fontFamilyRegistry)
     private val geometries: MutableMap<GeomKind, GeomTheme> = HashMap()
 
     override fun horizontalAxis(flipAxis: Boolean): AxisTheme = if (flipAxis) axisY else axisX
@@ -44,7 +46,8 @@ class DefaultTheme(
     override fun tooltips(): TooltipsTheme = tooltips
 
     override fun geometries(geomKind: GeomKind): GeomTheme = geometries.getOrPut(geomKind) {
-        DefaultGeomTheme.forGeomKind(geomKind, geomInheritedColors)
+        // use settings from named theme and flavor options (without specified in theme())
+        DefaultGeomTheme.forGeomKind(geomKind, themeSettings)
     }
 
     companion object {

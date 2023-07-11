@@ -10,7 +10,6 @@ import jetbrains.datalore.plot.builder.defaultTheme.ThemeFlavor
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues
-import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.theme.Theme
 import jetbrains.datalore.plot.config.Option
@@ -36,17 +35,16 @@ class ThemeConfig constructor(
             LegendThemeConfig.convertValue(key, value)
         }
 
-        // User specific options will be applied to the combination of named theme and flavor options
-        val effectiveOptions = baselineValues.values.let {
+        val themeFlavorOptions = baselineValues.values.let {
             val flavorName = themeSettings.getString(Option.Theme.FLAVOR)
             if (flavorName != null) {
                 ThemeFlavor.forName(flavorName).updateColors(it)
             } else {
                 it
             }
-        }.mergeWith(userOptions)
+        }
 
-        theme = DefaultTheme(effectiveOptions, fontFamilyRegistry)
+        theme = DefaultTheme(themeFlavorOptions, fontFamilyRegistry, userOptions)
     }
 
     companion object {
