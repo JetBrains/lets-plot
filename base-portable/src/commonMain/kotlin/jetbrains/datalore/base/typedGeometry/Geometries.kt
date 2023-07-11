@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-import jetbrains.datalore.base.algorithms.isClockwise
+import jetbrains.datalore.base.typedGeometry.algorithms.isClockwise
 
 open class AbstractGeometryList<T>(
     private val myGeometry: List<T>

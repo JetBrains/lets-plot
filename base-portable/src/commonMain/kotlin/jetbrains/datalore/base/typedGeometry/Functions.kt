@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-import jetbrains.datalore.base.algorithms.isClockwise
-import jetbrains.datalore.base.algorithms.splitRings
+import jetbrains.datalore.base.typedGeometry.algorithms.isClockwise
+import jetbrains.datalore.base.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector

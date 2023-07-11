@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.typedGeometry
 
-import jetbrains.datalore.base.algorithms.AdaptiveResampler
+import jetbrains.datalore.base.typedGeometry.algorithms.AdaptiveResampler
 
 
 class VecResampler<InT, OutT>(

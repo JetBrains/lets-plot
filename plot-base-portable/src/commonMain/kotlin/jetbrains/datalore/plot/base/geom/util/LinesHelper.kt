@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.algorithms.reduce
-import jetbrains.datalore.base.algorithms.splitRings
+import jetbrains.datalore.base.typedGeometry.algorithms.reduce
+import jetbrains.datalore.base.typedGeometry.algorithms.splitRings
 import jetbrains.datalore.base.collections.splitBy
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
