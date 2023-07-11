@@ -127,7 +127,6 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.DOT_PLOT,
                 GeomKind.Y_DOT_PLOT -> {
                     color = inheritedColors.backgroundFill()
-                    fill = inheritedColors.lineColor()
                 }
 
                 GeomKind.POINT_RANGE -> {
@@ -180,8 +179,7 @@ internal class DefaultGeomTheme private constructor(
 
                 GeomKind.MAP -> {
                     color = inheritedColors.lineColor()
-                    fill = inheritedColors.lineColor()
-                    alpha = 0.0
+                    fill = Color.TRANSPARENT
                     size *= sizeMultiplier
                 }
 
@@ -194,6 +192,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.PIE -> {
                     color = Color.TRANSPARENT
                     size = 10.0
+                    lineWidth *= sizeMultiplier
                 }
 
                 GeomKind.RASTER,
