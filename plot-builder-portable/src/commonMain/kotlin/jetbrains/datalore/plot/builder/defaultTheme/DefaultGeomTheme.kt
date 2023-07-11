@@ -91,11 +91,12 @@ internal class DefaultGeomTheme private constructor(
                     color = inheritedColors.lineColor()
                 }
 
+                GeomKind.AREA_RIDGES,
                 GeomKind.AREA,
                 GeomKind.DENSITY,
                 GeomKind.RECT,
                 GeomKind.RIBBON,
-                GeomKind.AREA_RIDGES -> {
+                GeomKind.MAP -> {
                     color = inheritedColors.lineColor()
                     fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
                     size *= sizeMultiplier
@@ -172,12 +173,6 @@ internal class DefaultGeomTheme private constructor(
                     size *= sizeMultiplier
                 }
 
-                GeomKind.MAP -> {
-                    color = inheritedColors.lineColor()
-                    fill = Color.TRANSPARENT
-                    size *= sizeMultiplier
-                }
-
                 GeomKind.TEXT, GeomKind.LABEL -> {
                     color = inheritedColors.lineColor()
                     fill = inheritedColors.backgroundFill() // background for label
@@ -185,7 +180,7 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.PIE -> {
-                    color = Color.TRANSPARENT
+                    color = inheritedColors.backgroundFill()
                     size = 10.0
                     lineWidth *= sizeMultiplier
                 }
