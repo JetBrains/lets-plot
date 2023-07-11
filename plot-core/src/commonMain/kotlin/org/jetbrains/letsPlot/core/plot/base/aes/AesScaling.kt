@@ -12,7 +12,7 @@ object AesScaling {
 
     fun strokeWidth(p: DataPointAesthetics): Double {
         // aes Units -> px
-        return p.size()!! * 2.0
+        return p.size()!! * UNIT_SHAPE_SIZE
     }
 
     fun pointStrokeWidth(p: DataPointAesthetics): Double {
