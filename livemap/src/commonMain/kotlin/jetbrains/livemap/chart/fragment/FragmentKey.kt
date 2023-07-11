@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.chart.fragment
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.spatial.zoom
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.spatial.zoom
 
 
 data class FragmentKey(val regionId: String, val quadKey: QuadKey<LonLat>) {

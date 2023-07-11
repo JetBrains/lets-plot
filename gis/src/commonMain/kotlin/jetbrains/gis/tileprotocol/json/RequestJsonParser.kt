@@ -5,12 +5,12 @@
 
 package jetbrains.gis.tileprotocol.json
 
-import jetbrains.datalore.base.json.FluentArray
-import jetbrains.datalore.base.json.FluentObject
-import jetbrains.datalore.base.json.Obj
-import jetbrains.datalore.base.json.parseEnum
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.json.FluentArray
+import org.jetbrains.letsPlot.commons.intern.json.FluentObject
+import org.jetbrains.letsPlot.commons.intern.json.Obj
+import org.jetbrains.letsPlot.commons.intern.json.parseEnum
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.Request
 import jetbrains.gis.tileprotocol.Request.*
 import jetbrains.gis.tileprotocol.TileCoordinates

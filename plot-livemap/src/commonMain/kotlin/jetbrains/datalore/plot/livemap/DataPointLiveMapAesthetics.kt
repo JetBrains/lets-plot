@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.limitLat
-import jetbrains.datalore.base.spatial.normalizeLon
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.limitLat
+import org.jetbrains.letsPlot.commons.intern.spatial.normalizeLon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR

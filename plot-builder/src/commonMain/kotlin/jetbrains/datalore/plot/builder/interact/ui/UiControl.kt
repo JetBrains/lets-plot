@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.interact.ui
 
-import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.MouseEventSpec.*
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent

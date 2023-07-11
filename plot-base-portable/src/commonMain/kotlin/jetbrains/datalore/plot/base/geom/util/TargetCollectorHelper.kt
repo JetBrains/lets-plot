@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.typedGeometry.algorithms.reduce
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.reduce
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.GeomKind

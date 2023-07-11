@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.base.typedGeometry.algorithms.splitRings
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.typedGeometry.Untyped
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.createMultiPolygon
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
 import jetbrains.datalore.plot.base.geom.util.GeomUtil

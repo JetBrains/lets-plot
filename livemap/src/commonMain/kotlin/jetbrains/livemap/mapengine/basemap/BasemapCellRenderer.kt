@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapengine.basemap
 
-import jetbrains.datalore.base.spatial.projectRect
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.projectRect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
@@ -17,6 +17,7 @@ import jetbrains.livemap.mapengine.placement.ScreenDimensionComponent
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
 import jetbrains.livemap.mapengine.translate
 import jetbrains.livemap.mapengine.viewport.CellKey
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 class BasemapCellRenderer : Renderer {
     private lateinit var myCellRect: Rect<Client>

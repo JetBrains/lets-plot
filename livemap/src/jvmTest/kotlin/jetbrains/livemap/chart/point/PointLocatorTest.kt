@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart.point
 
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent

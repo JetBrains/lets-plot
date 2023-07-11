@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapengine.viewport
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager

@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.core
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLatPoint
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 
 /*
  Map projection, like mercator, WSG89, Albers and so on, configured to be used by LiveMap.

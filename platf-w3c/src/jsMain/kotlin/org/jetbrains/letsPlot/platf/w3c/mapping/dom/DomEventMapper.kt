@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.base.platf.dom
 
-import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration

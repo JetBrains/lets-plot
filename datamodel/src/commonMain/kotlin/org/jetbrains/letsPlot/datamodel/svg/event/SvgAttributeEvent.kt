@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.event
 
-import jetbrains.datalore.base.event.Event
+import org.jetbrains.letsPlot.commons.event.Event
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAttributeSpec
 
 class SvgAttributeEvent<ValueT>(

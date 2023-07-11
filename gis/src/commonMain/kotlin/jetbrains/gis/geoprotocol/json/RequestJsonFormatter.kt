@@ -5,9 +5,9 @@
 
 package jetbrains.gis.geoprotocol.json
 
-import jetbrains.datalore.base.json.*
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.json.*
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequest.*
@@ -20,6 +20,10 @@ import jetbrains.gis.geoprotocol.json.RequestKeys.MODE
 import jetbrains.gis.geoprotocol.json.RequestKeys.PROTOCOL_VERSION
 import jetbrains.gis.geoprotocol.json.RequestKeys.RESOLUTION
 import jetbrains.gis.geoprotocol.json.RequestKeys.VERSION
+import org.jetbrains.letsPlot.commons.intern.json.FluentObject
+import org.jetbrains.letsPlot.commons.intern.json.Obj
+import org.jetbrains.letsPlot.commons.intern.json.formatEnum
+import org.jetbrains.letsPlot.commons.intern.json.put
 
 object RequestJsonFormatter {
     private const val PARENT_KIND_ID = true

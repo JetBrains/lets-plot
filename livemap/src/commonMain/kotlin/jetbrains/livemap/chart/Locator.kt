@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.chart
 
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.RenderHelper

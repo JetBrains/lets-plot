@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.projections.identity
+import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.values.Color.Companion.BLACK
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import jetbrains.datalore.plot.base.BogusContext

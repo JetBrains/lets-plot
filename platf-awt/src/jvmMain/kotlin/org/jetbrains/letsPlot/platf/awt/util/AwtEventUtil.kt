@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.platf.awt.util
 
-import jetbrains.datalore.base.event.Button
-import jetbrains.datalore.base.event.KeyModifiers
-import jetbrains.datalore.base.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.Button
+import org.jetbrains.letsPlot.commons.event.KeyModifiers
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import java.awt.event.MouseEvent as AwtMouseEvent
 

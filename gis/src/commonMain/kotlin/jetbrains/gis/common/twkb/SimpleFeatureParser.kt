@@ -10,8 +10,9 @@ import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.intern.function.Functions
 import org.jetbrains.letsPlot.commons.intern.function.Functions.funcOf
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
-import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.SimpleFeature
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 internal class SimpleFeatureParser(
     private val myPrecision: Double,

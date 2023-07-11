@@ -8,9 +8,9 @@
 package jetbrains.datalore.jetbrains.livemap
 
 import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Untyped
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase.*
 import jetbrains.datalore.jetbrains.livemap.chart.fragments.FragmentSpec
 import jetbrains.datalore.jetbrains.livemap.tile.Mocks.ViewportGridSpec

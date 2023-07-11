@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.event.MouseEvent.Companion.noButton
-import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
+import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.noButton
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec.MOUSE_MOVED
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.test.Test
 

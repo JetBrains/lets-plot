@@ -5,11 +5,11 @@
 
 package jetbrains.livemap.chart.fragment
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Geometry
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.reinterpret
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.reinterpret
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.fragment.Utils.RegionsIndex
 import jetbrains.livemap.chart.fragment.Utils.entityName

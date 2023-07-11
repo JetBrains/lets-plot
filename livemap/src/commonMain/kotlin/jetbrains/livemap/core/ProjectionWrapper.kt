@@ -5,15 +5,16 @@
 
 package jetbrains.livemap.core
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.toDoubleVector
-import jetbrains.datalore.base.typedGeometry.toRect
-import jetbrains.datalore.base.typedGeometry.toVec
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLatPoint
+import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toRect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toVec
 
 internal class ProjectionWrapper(
-    private val projection: jetbrains.datalore.base.spatial.projections.Projection
+    private val projection: Projection
 ) : GeoProjection {
     override fun validRect(): Rect<LonLat> = projection.validDomain().toRect()
     override val cylindrical: Boolean = projection.cylindrical

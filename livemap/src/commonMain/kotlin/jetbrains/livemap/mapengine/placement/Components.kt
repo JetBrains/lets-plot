@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.placement
 
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.Client
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.core.ecs.EcsComponent

@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.config
 
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import jetbrains.livemap.World
 import jetbrains.livemap.core.GeoProjection
 

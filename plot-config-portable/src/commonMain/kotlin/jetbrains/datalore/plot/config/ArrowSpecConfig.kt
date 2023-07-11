@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.math.toRadians
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import jetbrains.datalore.plot.base.geom.util.ArrowSpec
 
 internal class ArrowSpecConfig private constructor(options: Map<String, Any>) : OptionsAccessor(options) {

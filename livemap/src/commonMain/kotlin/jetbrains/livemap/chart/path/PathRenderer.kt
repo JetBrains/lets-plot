@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.chart.path
 
-import jetbrains.datalore.base.typedGeometry.MultiLineString
-import jetbrains.datalore.base.typedGeometry.Scalar
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.World

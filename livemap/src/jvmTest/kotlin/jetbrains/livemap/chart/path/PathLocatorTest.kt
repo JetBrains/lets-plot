@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart.path
 
-import jetbrains.datalore.base.typedGeometry.Geometry
-import jetbrains.datalore.base.typedGeometry.LineString
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent

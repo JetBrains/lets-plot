@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.model
 
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.api.GeoObject
 
 object Cities {

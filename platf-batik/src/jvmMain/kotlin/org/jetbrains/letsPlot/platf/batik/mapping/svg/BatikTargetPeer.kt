@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.batik.mapping.svg
 
-import jetbrains.datalore.base.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement

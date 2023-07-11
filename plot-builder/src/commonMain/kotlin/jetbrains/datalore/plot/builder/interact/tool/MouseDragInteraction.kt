@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.tool
 
-import jetbrains.datalore.base.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable

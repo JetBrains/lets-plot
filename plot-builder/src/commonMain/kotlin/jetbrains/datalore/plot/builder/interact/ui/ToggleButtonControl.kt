@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.ui
 
-import jetbrains.datalore.base.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement

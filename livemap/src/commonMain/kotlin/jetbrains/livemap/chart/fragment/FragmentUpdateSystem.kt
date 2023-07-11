@@ -5,11 +5,11 @@
 
 package jetbrains.livemap.chart.fragment
 
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.spatial.computeRect
-import jetbrains.datalore.base.typedGeometry.intersects
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.intersects
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.addComponents

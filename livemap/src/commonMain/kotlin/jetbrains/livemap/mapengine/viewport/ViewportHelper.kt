@@ -6,14 +6,15 @@
 package jetbrains.livemap.mapengine.viewport
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator
-import jetbrains.datalore.base.spatial.calculateQuadKeys
-import jetbrains.datalore.base.spatial.union
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator
+import org.jetbrains.letsPlot.commons.intern.spatial.calculateQuadKeys
+import org.jetbrains.letsPlot.commons.intern.spatial.union
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.MapRuler
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.max
@@ -66,7 +67,7 @@ class ViewportHelper(
     }
 
     override fun calculateBoundingBox(xyRects: List<Rect<World>>): Rect<World> {
-        return GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
+        return org.jetbrains.letsPlot.commons.intern.spatial.GeoBoundingBoxCalculator(myMapRect, myLoopX, myLoopY).union(xyRects)
     }
 
     internal fun getOrigins(objRect: WorldRectangle, viewRect: WorldRectangle): List<WorldPoint> {

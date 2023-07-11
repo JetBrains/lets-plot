@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.geocoding
 
-import jetbrains.datalore.base.typedGeometry.GeometryType.*
-import jetbrains.datalore.base.typedGeometry.LineString
-import jetbrains.datalore.base.typedGeometry.Polygon
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.GeometryType.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementLocationComponent
 import jetbrains.livemap.chart.fragment.RegionBBoxComponent
@@ -40,8 +40,8 @@ class LocationCalculateSystem(
                     entity.contains<ChartElementLocationComponent>() -> {
                         with(entity.get<ChartElementLocationComponent>().geometry) {
                             when (type) {
-                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
-                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon<World>::bbox))
+                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString<World>::bbox))
                                 MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
                                 else -> error("Unsupported geometry: $type")
                             }
@@ -50,8 +50,8 @@ class LocationCalculateSystem(
                     entity.contains<WorldGeometryComponent>() -> {
                         with(entity.get<WorldGeometryComponent>().geometry) {
                             when (type) {
-                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(Polygon<World>::bbox))
-                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(LineString<World>::bbox))
+                                MULTI_POLYGON -> mapRuler.calculateBoundingBox(multiPolygon.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon<World>::bbox))
+                                MULTI_LINESTRING -> mapRuler.calculateBoundingBox(multiLineString.mapNotNull(org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString<World>::bbox))
                                 MULTI_POINT -> mapRuler.calculateBoundingBox(listOfNotNull(multiPoint.bbox))
                                 else -> error("Unsupported geometry: $type")
                             }

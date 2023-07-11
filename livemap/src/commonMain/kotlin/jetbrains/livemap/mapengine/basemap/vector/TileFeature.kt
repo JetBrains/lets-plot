@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.vector
 
-import jetbrains.datalore.base.typedGeometry.Geometry
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import jetbrains.gis.tileprotocol.mapConfig.TilePredicate
 import jetbrains.livemap.Client
 import jetbrains.livemap.mapengine.basemap.vector.TileFeature.FieldName.CLASS

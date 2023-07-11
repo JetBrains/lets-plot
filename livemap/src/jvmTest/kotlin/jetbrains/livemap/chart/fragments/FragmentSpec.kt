@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart.fragments
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.chart.fragment.FragmentKey
 import jetbrains.livemap.chart.fragment.Utils

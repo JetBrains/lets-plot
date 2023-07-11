@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine
 
-import jetbrains.datalore.base.spatial.LonLatPoint
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLatPoint
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.UnsafeTransform

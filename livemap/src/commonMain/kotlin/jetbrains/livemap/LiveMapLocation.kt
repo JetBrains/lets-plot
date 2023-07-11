@@ -6,12 +6,16 @@
 package jetbrains.livemap
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import jetbrains.datalore.base.spatial.FULL_LONGITUDE
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.FULL_LONGITUDE
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLatPoint
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.livemap.mapengine.MapProjection
 import jetbrains.livemap.mapengine.viewport.Viewport
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.scalarX
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.transform
 import kotlin.math.pow
 import kotlin.math.round
 

@@ -6,7 +6,7 @@
 package jetbrains.livemap.chart
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.typedGeometry.times
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.times
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager
 import jetbrains.livemap.core.ecs.onEachEntity

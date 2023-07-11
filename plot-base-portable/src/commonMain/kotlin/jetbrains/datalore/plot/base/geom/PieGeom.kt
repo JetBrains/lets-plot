@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.typedGeometry.algorithms.AdaptiveResampler
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler
 import jetbrains.datalore.base.collections.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector

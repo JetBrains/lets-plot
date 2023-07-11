@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.base.intern.jsObject
 
-import jetbrains.datalore.base.json.escape
+import org.jetbrains.letsPlot.commons.intern.json.escape
 
 object JsObjectSupportCommon {
     fun mapToJsObjectInitializer(map: Map<String, *>): String {

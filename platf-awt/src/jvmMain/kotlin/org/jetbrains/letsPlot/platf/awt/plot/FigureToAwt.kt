@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.awt.plot
 
-import jetbrains.datalore.base.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable

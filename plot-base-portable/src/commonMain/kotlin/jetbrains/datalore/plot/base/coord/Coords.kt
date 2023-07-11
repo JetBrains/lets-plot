@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.coord
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.base.spatial.projections.identity
+import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 object Coords {

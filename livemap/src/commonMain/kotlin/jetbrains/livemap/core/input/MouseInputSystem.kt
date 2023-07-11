@@ -7,10 +7,10 @@ package jetbrains.livemap.core.input
 
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute
-import jetbrains.datalore.base.event.Button
-import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.MouseEventSpec.*
+import org.jetbrains.letsPlot.commons.event.Button
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration

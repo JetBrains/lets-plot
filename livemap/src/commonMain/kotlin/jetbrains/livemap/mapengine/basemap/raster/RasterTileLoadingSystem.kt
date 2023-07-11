@@ -6,9 +6,9 @@
 package jetbrains.livemap.mapengine.basemap.raster
 
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.base.spatial.projectOrigin
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 import jetbrains.datalore.vis.canvas.Font
 import jetbrains.gis.tileprotocol.http.HttpTileTransport
 import jetbrains.livemap.config.TILE_PIXEL_SIZE

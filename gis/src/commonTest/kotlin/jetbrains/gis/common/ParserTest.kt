@@ -6,10 +6,11 @@
 package jetbrains.gis.common
 
 
-import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.SimpleFeature
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.gis.common.testUtils.HexParser.parseHex
 import jetbrains.gis.common.twkb.Twkb
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.coord
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.base.spatial.projections.Projection
-import jetbrains.datalore.base.spatial.projections.identity
+import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
+import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 
 internal class CartesianCoordProvider(
     xLim: DoubleSpan?,

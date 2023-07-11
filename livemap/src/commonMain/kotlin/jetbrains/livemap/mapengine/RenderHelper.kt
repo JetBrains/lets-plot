@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapengine
 
-import jetbrains.datalore.base.typedGeometry.Scalar
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.core.Transforms

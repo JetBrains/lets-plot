@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart
 
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.HoverObject
 import jetbrains.livemap.chart.Locator

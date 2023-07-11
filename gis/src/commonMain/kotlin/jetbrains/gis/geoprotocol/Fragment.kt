@@ -5,11 +5,11 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Polygon
-import jetbrains.datalore.base.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 
 
 class Fragment(

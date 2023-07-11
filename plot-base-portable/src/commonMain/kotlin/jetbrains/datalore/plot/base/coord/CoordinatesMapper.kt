@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.coord
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.projections.Projection
+import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.Mappers
 

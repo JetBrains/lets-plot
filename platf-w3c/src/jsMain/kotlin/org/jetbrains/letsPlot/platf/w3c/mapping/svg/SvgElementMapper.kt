@@ -110,10 +110,10 @@ internal class SvgElementMapper<SourceT : SvgElement, TargetT : SVGElement>(
         }
     }
 
-    private fun createMouseEvent(evt: MouseEvent): jetbrains.datalore.base.event.MouseEvent {
+    private fun createMouseEvent(evt: MouseEvent): org.jetbrains.letsPlot.commons.event.MouseEvent {
         evt.stopPropagation()
         val coords = myPeer.inverseScreenTransform(source, DoubleVector(evt.clientX.toDouble(), evt.clientY.toDouble()))
-        return jetbrains.datalore.base.event.MouseEvent(
+        return org.jetbrains.letsPlot.commons.event.MouseEvent(
             coords.x.toInt(),
             coords.y.toInt(),
             DomEventUtil.getButton(evt),

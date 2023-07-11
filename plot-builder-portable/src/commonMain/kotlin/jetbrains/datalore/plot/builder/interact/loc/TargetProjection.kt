@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.base.typedGeometry.algorithms.calculateArea
-import jetbrains.datalore.base.typedGeometry.algorithms.splitRings
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.calculateArea
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles.boundingBox
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector

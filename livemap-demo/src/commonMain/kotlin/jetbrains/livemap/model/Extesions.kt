@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.model
 
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import jetbrains.livemap.api.*
 
 fun PointEntityBuilder.coord(geoObj: GeoObject) {

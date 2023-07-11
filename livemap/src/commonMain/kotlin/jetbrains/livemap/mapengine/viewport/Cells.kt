@@ -5,11 +5,11 @@
 
 package jetbrains.livemap.mapengine.viewport
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.spatial.calculateQuadKeys
-import jetbrains.datalore.base.spatial.computeRect
-import jetbrains.datalore.base.typedGeometry.Transforms.transform
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.spatial.calculateQuadKeys
+import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.mapengine.MapProjection

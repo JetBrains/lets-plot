@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.math.areEqual
+import org.jetbrains.letsPlot.commons.intern.math.areEqual
 import org.jetbrains.letsPlot.commons.values.FontFace
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.spatial.*
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.spatial.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import jetbrains.datalore.plot.config.GeoConfig
 import jetbrains.gis.geoprotocol.MapRegion
 import jetbrains.livemap.api.MapLocation
@@ -128,12 +128,12 @@ object ConfigUtil {
         require(xCoords.size == yCoords.size) { "Longitude list count is not equal Latitude list count." }
 
         return BBOX_CALCULATOR.calculateBoundingBox(
-            makeSegments(
+            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
                 xCoords::get,
                 xCoords::get,
                 xCoords.size
             ),
-            makeSegments(
+            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
                 yCoords::get,
                 yCoords::get,
                 xCoords.size
@@ -152,12 +152,12 @@ object ConfigUtil {
         { "Counts of 'minLongitudes', 'minLatitudes', 'maxLongitudes', 'maxLatitudes' lists are not equal." }
 
         return BBOX_CALCULATOR.calculateBoundingBox(
-            makeSegments(
+            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(
                 minXCoords::get,
                 maxXCoords::get,
                 count
             ),
-            makeSegments(minYCoords::get, maxYCoords::get, count)
+            org.jetbrains.letsPlot.commons.intern.spatial.makeSegments(minYCoords::get, maxYCoords::get, count)
         )
     }
 

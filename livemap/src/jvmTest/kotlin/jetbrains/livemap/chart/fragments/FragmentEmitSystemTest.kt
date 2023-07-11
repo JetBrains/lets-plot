@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart.fragments
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import jetbrains.datalore.jetbrains.livemap.Mocks
 import jetbrains.datalore.jetbrains.livemap.chart.fragments.FragmentSpec.Companion.quads
 import jetbrains.datalore.maps.Utils

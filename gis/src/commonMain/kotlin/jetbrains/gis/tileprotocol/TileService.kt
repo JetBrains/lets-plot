@@ -5,10 +5,10 @@
 
 package jetbrains.gis.tileprotocol
 
-import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.base.json.JsonSupport.formatJson
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.formatJson
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.Request.ConfigureConnectionRequest
 import jetbrains.gis.tileprotocol.Request.GetBinaryGeometryRequest
 import jetbrains.gis.tileprotocol.TileService.SocketStatus.*

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.chart.path
 
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
@@ -15,6 +15,7 @@ import jetbrains.livemap.chart.Locator
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.WorldGeometryComponent
 import jetbrains.livemap.mapengine.RenderHelper
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.pow
 
 object PathLocator : Locator {

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.ecs
 
-import jetbrains.datalore.base.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import jetbrains.livemap.core.MetricsService
 import jetbrains.livemap.core.SystemTime
 

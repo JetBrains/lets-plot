@@ -1,11 +1,11 @@
 package jetbrains.datalore.maps
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Polygon
-import jetbrains.datalore.base.typedGeometry.Ring
-import jetbrains.datalore.base.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import jetbrains.gis.geoprotocol.Boundary
 import jetbrains.livemap.mapengine.viewport.CellKey
 import java.util.*

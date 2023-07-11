@@ -5,9 +5,9 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.Untyped
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 
 interface GeoResponse {
 

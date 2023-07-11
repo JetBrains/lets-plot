@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.geometry
 
-import jetbrains.datalore.base.typedGeometry.Geometry
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.EcsComponent
 

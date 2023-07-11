@@ -5,16 +5,16 @@
 
 package jetbrains.livemap.api
 
-import jetbrains.datalore.base.math.toRadians
-import jetbrains.datalore.base.spatial.Geodesic
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.spatial.wrapPath
-import jetbrains.datalore.base.typedGeometry.Geometry
-import jetbrains.datalore.base.typedGeometry.LineString
-import jetbrains.datalore.base.typedGeometry.MultiLineString
-import jetbrains.datalore.base.typedGeometry.Transforms.transform
-import jetbrains.datalore.base.typedGeometry.Transforms.transformPoints
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.intern.spatial.Geodesic
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.spatial.wrapPath
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Geometry
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transformPoints
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.event.Event
+import org.jetbrains.letsPlot.commons.event.Event
 import org.jetbrains.letsPlot.datamodel.svg.util.ListMap
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller

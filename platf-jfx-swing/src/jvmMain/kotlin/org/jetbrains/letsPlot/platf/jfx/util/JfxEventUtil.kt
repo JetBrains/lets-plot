@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.platf.jfx.util
 
 import javafx.scene.input.MouseButton
-import jetbrains.datalore.base.event.Button
-import jetbrains.datalore.base.event.KeyModifiers
-import jetbrains.datalore.base.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.Button
+import org.jetbrains.letsPlot.commons.event.KeyModifiers
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.math.roundToInt
 import javafx.scene.input.MouseEvent as JfxMouseEvent

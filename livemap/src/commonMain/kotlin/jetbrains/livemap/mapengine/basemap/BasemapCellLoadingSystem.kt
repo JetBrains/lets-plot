@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap
 
-import jetbrains.datalore.base.spatial.computeRect
+import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.api.mapEntity
 import jetbrains.livemap.core.ecs.AbstractSystem

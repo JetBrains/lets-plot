@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core
 
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 
 interface MapRuler<TypeT> {
     fun distanceX(x1: Double, x2: Double): Double

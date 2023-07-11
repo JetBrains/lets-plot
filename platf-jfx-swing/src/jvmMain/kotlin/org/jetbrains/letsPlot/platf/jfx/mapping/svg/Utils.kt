@@ -16,8 +16,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.layout.StackPane
 import javafx.scene.shape.*
 import javafx.scene.text.Text
-import jetbrains.datalore.base.event.Button
-import jetbrains.datalore.base.event.KeyModifiers
+import org.jetbrains.letsPlot.commons.event.Button
+import org.jetbrains.letsPlot.commons.event.KeyModifiers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.platf.jfx.mapping.svg.attr.*
 import org.jetbrains.letsPlot.platf.jfx.mapping.svg.attr.SvgAttrMapping

@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.chart.point
 
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.compareTo
-import jetbrains.datalore.base.typedGeometry.length
-import jetbrains.datalore.base.typedGeometry.minus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.compareTo
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.length
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.*
 import jetbrains.livemap.core.ecs.EcsEntity

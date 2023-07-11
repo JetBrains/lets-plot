@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.builder.interact.ui
 
-import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.event.MouseEventSource
-import jetbrains.datalore.base.event.MouseEventSpec
-import jetbrains.datalore.base.event.MouseEventSpec.*
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration

@@ -7,7 +7,7 @@ package jetbrains.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute
-import jetbrains.datalore.base.math.round
+import org.jetbrains.letsPlot.commons.intern.math.round
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.gis.tileprotocol.TileLayer
 import jetbrains.gis.tileprotocol.TileService

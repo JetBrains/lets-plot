@@ -6,9 +6,9 @@
 package jetbrains.livemap.geocoding
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transform
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequestBuilder.ExplicitRequestBuilder
 import jetbrains.gis.geoprotocol.GeocodingService
@@ -17,6 +17,7 @@ import jetbrains.livemap.World
 import jetbrains.livemap.WorldRectangle
 import jetbrains.livemap.core.MapRuler
 import jetbrains.livemap.mapengine.MapProjection
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import kotlin.math.min
 
 class MapLocationGeocoder(

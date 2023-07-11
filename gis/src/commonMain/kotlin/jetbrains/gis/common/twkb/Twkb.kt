@@ -5,8 +5,8 @@
 
 package jetbrains.gis.common.twkb
 
-import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.spatial.SimpleFeature
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 import jetbrains.gis.common.twkb.VarInt.decodeZigZag
 import kotlin.math.pow
 

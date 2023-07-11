@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.json.JsonSupport
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 
 @Suppress("UNCHECKED_CAST")
 fun parsePlotSpec(spec: String) = spec.replace("'", "\"").let { JsonSupport.parseJson(it) as MutableMap<String, Any> }

@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.json.JsonSupport
-import jetbrains.datalore.base.spatial.*
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
+import org.jetbrains.letsPlot.commons.intern.spatial.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
@@ -29,6 +29,7 @@ import jetbrains.datalore.plot.config.Option.Meta.GeoReference
 import jetbrains.datalore.plot.config.Option.Meta.GeoReference.GEOREFERENCE
 import jetbrains.datalore.plot.config.Option.Meta.MAP_DATA_META
 import jetbrains.datalore.plot.config.Option.PlotBase.DATA
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 class GeoConfig(
     geomKind: GeomKind,

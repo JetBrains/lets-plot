@@ -6,11 +6,11 @@
 package jetbrains.gis.geoprotocol
 
 import jetbrains.datalore.base.encoding.Base64
-import jetbrains.datalore.base.spatial.GeoJson
-import jetbrains.datalore.base.spatial.SimpleFeature
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Polygon
-import jetbrains.datalore.base.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoJson
+import org.jetbrains.letsPlot.commons.intern.spatial.SimpleFeature
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Polygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
 import jetbrains.gis.common.twkb.Twkb
 
 interface Boundary<TypeT> {

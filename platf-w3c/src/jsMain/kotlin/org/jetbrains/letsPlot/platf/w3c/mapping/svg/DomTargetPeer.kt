@@ -87,7 +87,7 @@ internal class DomTargetPeer : TargetPeer<Node> {
             override fun handleEvent(event: Event) {
                 event.stopPropagation()
                 val e = event as MouseEvent
-                val targetEvent = jetbrains.datalore.base.event.MouseEvent(
+                val targetEvent = org.jetbrains.letsPlot.commons.event.MouseEvent(
                     e.clientX,
                     e.clientY,
                     DomEventUtil.getButton(e),

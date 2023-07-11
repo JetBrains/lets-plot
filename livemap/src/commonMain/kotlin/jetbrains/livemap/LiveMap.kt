@@ -14,10 +14,10 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.div
-import jetbrains.datalore.base.typedGeometry.plus
-import jetbrains.datalore.base.typedGeometry.toDoubleVector
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler

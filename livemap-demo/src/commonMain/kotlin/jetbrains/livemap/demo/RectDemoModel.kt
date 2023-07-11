@@ -6,11 +6,11 @@
 package jetbrains.livemap.demo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.spatial.GeoRectangle
-import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.typedGeometry.createMultiPolygon
-import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.typedGeometry.plus
+import org.jetbrains.letsPlot.commons.intern.spatial.GeoRectangle
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLatPoint
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.layers

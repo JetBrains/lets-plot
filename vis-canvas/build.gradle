@@ -5,11 +5,11 @@
 
 plugins {
     id "org.jetbrains.kotlin.multiplatform"
-    id "org.jetbrains.gradle.plugin.idea-ext"
+//    id "org.jetbrains.gradle.plugin.idea-ext"
 }
 
 kotlin {
-    jvm()
+//    jvm()
     js {
         browser()
     }
@@ -19,34 +19,34 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':commons')
-                implementation project(':base-portable')
+//                implementation project(':base-portable')
                 implementation project(':datamodel')
             }
         }
-        commonTest {
-            dependencies {
-                implementation kotlin('test-common')
-                implementation kotlin('test-annotations-common')
-
-                implementation project(':test-common')
-            }
-        }
-        jvmMain {
-            dependencies {
-                implementation kotlin('stdlib-jdk8')
-//                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
-//                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
-
-//                implementation project(':platf-awt')
-//                implementation project(':platf-jfx-swing')
-            }
-        }
-        jvmTest {
-            dependencies {
-                implementation kotlin('test')
-                implementation kotlin('test-junit')
-            }
-        }
+//        commonTest {
+//            dependencies {
+//                implementation kotlin('test-common')
+//                implementation kotlin('test-annotations-common')
+//
+//                implementation project(':test-common')
+//            }
+//        }
+//        jvmMain {
+//            dependencies {
+//                implementation kotlin('stdlib-jdk8')
+////                compileOnly("org.openjfx:javafx-base:$jfx_version:${jfx_platform()}")
+////                compileOnly("org.openjfx:javafx-graphics:$jfx_version:${jfx_platform()}")
+//
+////                implementation project(':platf-awt')
+////                implementation project(':platf-jfx-swing')
+//            }
+//        }
+//        jvmTest {
+//            dependencies {
+//                implementation kotlin('test')
+//                implementation kotlin('test-junit')
+//            }
+//        }
         jsMain {
             dependencies {
                 implementation kotlin('stdlib-js')
@@ -62,15 +62,15 @@ kotlin {
     }
 }
 
-idea {
-    module {
-        settings {
-//            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
-//            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
-            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
-        }
-    }
-}
+//idea {
+//    module {
+//        settings {
+////            packagePrefix["src/commonMain/kotlin"] = "jetbrains.datalore"
+////            packagePrefix["src/commonTest/kotlin"] = "jetbrains.datalore"
+////            packagePrefix["src/jsMain/kotlin"] = "jetbrains.datalore"
+////            packagePrefix["src/jsTest/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jvmMain/kotlin"] = "jetbrains.datalore"
+//            packagePrefix["src/jvmTest/kotlin"] = "jetbrains.datalore"
+//        }
+//    }
+//}

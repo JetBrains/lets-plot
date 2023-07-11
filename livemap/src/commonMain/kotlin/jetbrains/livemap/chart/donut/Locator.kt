@@ -5,13 +5,16 @@
 
 package jetbrains.livemap.chart.donut
 
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.livemap.Client
 import jetbrains.livemap.chart.*
 import jetbrains.livemap.chart.Locator
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.RenderHelper
 import jetbrains.livemap.mapengine.placement.WorldOriginComponent
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.length
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.atan2

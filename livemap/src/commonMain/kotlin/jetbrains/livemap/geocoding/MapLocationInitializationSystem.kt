@@ -6,9 +6,9 @@
 package jetbrains.livemap.geocoding
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.center
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.center
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.config.DEFAULT_LOCATION

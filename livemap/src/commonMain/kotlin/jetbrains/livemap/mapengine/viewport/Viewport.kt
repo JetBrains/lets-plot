@@ -5,10 +5,10 @@
 
 package jetbrains.livemap.mapengine.viewport
 
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.div
-import jetbrains.datalore.base.typedGeometry.minus
-import jetbrains.datalore.base.typedGeometry.plus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import jetbrains.livemap.*
 import jetbrains.livemap.core.Transform
 import jetbrains.livemap.core.Transforms

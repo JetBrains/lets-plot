@@ -7,10 +7,10 @@ package jetbrains.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.typedGeometry.MultiLineString
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Ring
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.datalore.vis.canvas.*
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import jetbrains.livemap.Client

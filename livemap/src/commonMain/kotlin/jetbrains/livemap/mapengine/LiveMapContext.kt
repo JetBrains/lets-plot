@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.mapengine
 
-import jetbrains.datalore.base.event.MouseEventSource
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.EcsContext
 import jetbrains.livemap.core.layers.LayerManager

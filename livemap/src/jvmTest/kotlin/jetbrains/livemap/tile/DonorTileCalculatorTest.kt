@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.tile
 
-import jetbrains.datalore.base.spatial.projectRect
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.projectRect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
@@ -14,6 +14,7 @@ import jetbrains.livemap.mapengine.basemap.BasemapCellRenderer
 import jetbrains.livemap.mapengine.basemap.DonorTileCalculator
 import jetbrains.livemap.mapengine.basemap.Tile
 import jetbrains.livemap.mapengine.viewport.CellKey
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test

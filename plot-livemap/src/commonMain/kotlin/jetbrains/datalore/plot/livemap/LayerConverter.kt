@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.typedGeometry.createMultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import jetbrains.datalore.plot.base.Aes

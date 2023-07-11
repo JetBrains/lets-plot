@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.base.platf.dom
 
-import jetbrains.datalore.base.event.*
+import org.jetbrains.letsPlot.commons.event.*
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomMouseButtons
 import org.w3c.dom.events.KeyboardEvent
 import org.w3c.dom.events.MouseEvent

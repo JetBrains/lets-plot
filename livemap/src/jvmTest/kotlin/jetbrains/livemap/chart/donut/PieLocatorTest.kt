@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.jetbrains.livemap.chart.donut
 
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.plus
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.jetbrains.livemap.chart.SearchTestHelper
 import jetbrains.livemap.Client

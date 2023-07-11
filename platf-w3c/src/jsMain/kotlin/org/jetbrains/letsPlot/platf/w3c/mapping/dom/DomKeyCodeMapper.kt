@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.base.platf.dom
 
-import jetbrains.datalore.base.event.Key
+import org.jetbrains.letsPlot.commons.event.Key
 
 internal object DomKeyCodeMapper {
 

@@ -5,8 +5,8 @@
 
 package jetbrains.gis.tileprotocol
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 
 sealed class Request {
 

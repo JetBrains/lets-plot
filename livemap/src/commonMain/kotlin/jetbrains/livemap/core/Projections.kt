@@ -8,12 +8,12 @@ package jetbrains.livemap.core
 import kotlin.math.PI
 
 object Projections {
-    fun mercator(): GeoProjection = ProjectionWrapper(jetbrains.datalore.base.spatial.projections.mercator())
-    fun geographic(): GeoProjection = ProjectionWrapper(jetbrains.datalore.base.spatial.projections.mercator())
+    fun mercator(): GeoProjection = ProjectionWrapper(org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator())
+    fun geographic(): GeoProjection = ProjectionWrapper(org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator())
     fun azimuthalEqualArea(): GeoProjection =
-        ProjectionWrapper(jetbrains.datalore.base.spatial.projections.azimuthalEqualArea())
+        ProjectionWrapper(org.jetbrains.letsPlot.commons.intern.spatial.projections.azimuthalEqualArea())
     fun conicEqualArea(): GeoProjection =
-        ProjectionWrapper(jetbrains.datalore.base.spatial.projections.conicEqualArea(0.0, PI / 3))
+        ProjectionWrapper(org.jetbrains.letsPlot.commons.intern.spatial.projections.conicEqualArea(0.0, PI / 3))
 
 
 }

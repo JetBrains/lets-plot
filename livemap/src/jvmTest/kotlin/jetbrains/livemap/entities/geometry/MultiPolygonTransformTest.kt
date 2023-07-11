@@ -5,13 +5,14 @@
 
 package jetbrains.datalore.jetbrains.livemap.entities.geometry
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.typedGeometry.Transforms.transform
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Transforms.transform
 import jetbrains.livemap.World
 import jetbrains.livemap.config.createMapProjection
 import jetbrains.livemap.core.Projections
 import jetbrains.livemap.geometry.MicroTasks
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.junit.Test
 import kotlin.test.assertEquals
 

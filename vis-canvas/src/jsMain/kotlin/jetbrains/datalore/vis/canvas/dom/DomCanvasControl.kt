@@ -7,8 +7,8 @@ package jetbrains.datalore.vis.canvas.dom
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
-import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setPosition
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler

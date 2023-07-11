@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.jetbrains.livemap.api
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.LineString
-import jetbrains.datalore.base.typedGeometry.Rect
-import jetbrains.datalore.base.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import jetbrains.datalore.jetbrains.livemap.LiveMapTestBase
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.World
@@ -106,7 +106,7 @@ class PathWrappingTest : LiveMapTestBase() {
             // Check was the path resampled with mercator projection by total points count.
             // Pretty inaccurate method, but at least it works.
             // bbox can't be used for testing as mercators distortion is too low on straight lines.
-            assertThat(multiLineString.sumOf(LineString<World>::size))
+            assertThat(multiLineString.sumOf(org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString<World>::size))
                 .isEqualTo(89)
 
             assertThat(multiLineString[0].bbox)
@@ -149,7 +149,7 @@ class PathWrappingTest : LiveMapTestBase() {
         }
 
         with(getSingletonComponent<WorldGeometryComponent>().geometry) {
-            assertThat(multiLineString.map(LineString<World>::bbox))
+            assertThat(multiLineString.map(org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString<World>::bbox))
                 .containsExactly(
                     Rect.XYWH(0.0, 5.4495652533470364E-11, 75.52021333333334, 55.93957818233137),
                     Rect.XYWH(216.1786311111111, 3.9411088703014, 39.821368888888884, 91.73240084642218),

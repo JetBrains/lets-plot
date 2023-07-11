@@ -5,11 +5,12 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.base.spatial.LonLat
-import jetbrains.datalore.base.typedGeometry.*
+import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 
 internal object ConverterDataHelper {

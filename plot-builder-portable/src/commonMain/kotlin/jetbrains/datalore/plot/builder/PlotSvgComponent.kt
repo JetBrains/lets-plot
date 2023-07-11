@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.base.event.Event
+import org.jetbrains.letsPlot.commons.event.Event
 import org.jetbrains.letsPlot.commons.intern.gcommon.base.Throwables
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector

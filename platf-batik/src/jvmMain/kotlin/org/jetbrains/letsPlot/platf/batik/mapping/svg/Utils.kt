@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.platf.batik.mapping.svg
 
-import jetbrains.datalore.base.event.Button
-import jetbrains.datalore.base.event.KeyModifiers
+import org.jetbrains.letsPlot.commons.event.Button
+import org.jetbrains.letsPlot.commons.event.KeyModifiers
 import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent

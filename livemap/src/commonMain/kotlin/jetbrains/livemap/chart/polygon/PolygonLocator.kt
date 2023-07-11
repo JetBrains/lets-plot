@@ -5,9 +5,9 @@
 
 package jetbrains.livemap.chart.polygon
 
-import jetbrains.datalore.base.typedGeometry.MultiPolygon
-import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.typedGeometry.contains
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.intern.typedGeometry.contains
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.HoverObject
