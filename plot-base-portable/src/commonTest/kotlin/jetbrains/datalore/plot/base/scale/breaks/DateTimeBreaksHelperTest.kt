@@ -6,10 +6,11 @@
 package jetbrains.datalore.plot.base.scale.breaks
 
 import jetbrains.datalore.base.assertion.assertArrayEquals
-import jetbrains.datalore.base.datetime.*
-import jetbrains.datalore.base.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import jetbrains.datalore.plot.common.time.TimeUtil
 import jetbrains.datalore.plot.common.time.interval.TimeInterval
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -190,10 +191,12 @@ class DateTimeBreaksHelperTest {
     companion object {
         private val BASE_DATE = Date(1, Month.JANUARY, 2013)
         private val BASE_TIME = Time(7, 7, 7, 7)             // 07:07:07.007
-        private val BASE_INSTANT = TimeZone.UTC.toInstant(DateTime(
+        private val BASE_INSTANT = TimeZone.UTC.toInstant(
+            DateTime(
             BASE_DATE,
             BASE_TIME
-        ))
+        )
+        )
         private val MILLISECONDS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).milliseconds }
         private val SECONDS = { instant: Double -> TimeUtil.asDateTimeUTC(instant).seconds }
         private val MINUTES = { instant: Double -> TimeUtil.asDateTimeUTC(instant).minutes }

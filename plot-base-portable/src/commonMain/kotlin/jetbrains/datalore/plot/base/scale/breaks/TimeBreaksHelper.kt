@@ -5,18 +5,18 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.datetime.Duration
-import jetbrains.datalore.base.datetime.Duration.Companion.DAY
-import jetbrains.datalore.base.datetime.Duration.Companion.HOUR
-import jetbrains.datalore.base.datetime.Duration.Companion.MINUTE
-import jetbrains.datalore.base.datetime.Duration.Companion.SECOND
-import jetbrains.datalore.base.datetime.Duration.Companion.WEEK
-import jetbrains.datalore.base.datetime.Duration.Companion.hour
-import jetbrains.datalore.base.datetime.Duration.Companion.millis
-import jetbrains.datalore.base.datetime.Duration.Companion.minute
-import jetbrains.datalore.base.datetime.Duration.Companion.second
-import jetbrains.datalore.base.datetime.Duration.Companion.totalDays
-import jetbrains.datalore.base.stringFormat.StringFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.DAY
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.SECOND
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.WEEK
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.hour
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.millis
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.minute
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.second
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.totalDays
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 

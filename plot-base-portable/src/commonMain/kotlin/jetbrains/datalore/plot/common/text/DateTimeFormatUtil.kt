@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.common.text
 
-import jetbrains.datalore.base.dateFormat.DateTimeFormat
-import jetbrains.datalore.base.datetime.Instant
-import jetbrains.datalore.base.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.Instant
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 
 object DateTimeFormatUtil {
     fun formatDateUTC(instant: Number, pattern: String): String {

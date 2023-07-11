@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.stringFormat.StringFormat
-import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.DATETIME_FORMAT
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.DATETIME_FORMAT
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import jetbrains.datalore.plot.base.Aes

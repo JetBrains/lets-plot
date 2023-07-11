@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.pythonExtension.pngj
 
-import jetbrains.datalore.base.encoding.Base64
+import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.RGBEncoder
 
 class RGBEncoderNative : RGBEncoder {

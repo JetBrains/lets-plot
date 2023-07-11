@@ -5,7 +5,6 @@
 
 package jetbrains.gis.tileprotocol.binary
 
-import jetbrains.datalore.base.encoding.TextDecoder
 import jetbrains.gis.common.twkb.VarInt.readVarUInt
 import jetbrains.gis.tileprotocol.GeometryCollection
 import jetbrains.gis.tileprotocol.TileLayer
@@ -66,7 +65,7 @@ class ResponseTileDecoder(data: ByteArray) {
         val len: Int = readVarUInt(::readByte)
 
         return when {
-            len > 0 -> TextDecoder.decode(byteArrayStream.read(len))
+            len > 0 -> byteArrayStream.read(len).decodeToString()
             len == 0 -> ""
             else -> throw IllegalStateException()
         }

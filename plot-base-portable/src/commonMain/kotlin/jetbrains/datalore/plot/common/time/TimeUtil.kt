@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.common.time
 
-import jetbrains.datalore.base.datetime.Date
-import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.base.datetime.Instant
-import jetbrains.datalore.base.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Instant
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import kotlin.math.roundToLong
 
 object TimeUtil {

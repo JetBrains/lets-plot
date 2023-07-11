@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.common.time.interval
 
-import jetbrains.datalore.base.datetime.Date
-import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.base.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
 
 internal class MonthInterval(count: Int) : MeasuredInDays(count) {
 

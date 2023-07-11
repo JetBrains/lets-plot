@@ -26,17 +26,18 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-//                implementation(project(":base-portable"))
-//                implementation(project(":base"))
             }
         }
 
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(kotlin("test-annotations-common"))
+//                implementation(kotlin("test-common"))
+//                implementation(kotlin("test-annotations-common"))
 
 //                implementation("io.mockk:mockk-common:$mockkVersion")
+
+//                implementation( project(":test-common"))
             }
         }
 

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.log10

@@ -6,7 +6,7 @@
 @file:Suppress("unused")
 package jetbrains.datalore.plot.pythonExtension.pngj.chunks
 
-import jetbrains.datalore.base.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import jetbrains.datalore.plot.pythonExtension.pngj.PngjException
 
 

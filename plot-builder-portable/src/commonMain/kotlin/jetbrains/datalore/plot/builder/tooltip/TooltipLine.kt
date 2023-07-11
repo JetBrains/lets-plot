@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-import jetbrains.datalore.base.stringFormat.StringFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.MappedDataAccess

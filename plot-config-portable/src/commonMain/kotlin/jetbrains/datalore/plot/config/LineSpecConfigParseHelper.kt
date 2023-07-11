@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.stringFormat.StringFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec

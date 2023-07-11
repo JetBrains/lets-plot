@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.time.interval
 
-import jetbrains.datalore.base.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import kotlin.math.ceil
 
 internal class DurationInterval(private val myDuration: Duration, count: Int) : TimeInterval(count) {

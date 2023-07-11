@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-import jetbrains.datalore.base.stringFormat.StringFormat
+import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 
 data class LinesContentSpecification(
     val valueSources: List<ValueSource>,

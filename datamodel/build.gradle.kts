@@ -24,14 +24,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":commons"))
-                implementation(project(":base-portable"))
+//                implementation(project(":base-portable"))
             }
         }
 
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(kotlin("test-annotations-common"))
+//                implementation(kotlin("test-annotations-common"))
 
                 implementation("io.mockk:mockk-common:$mockkVersion")
             }

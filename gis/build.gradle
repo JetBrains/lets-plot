@@ -19,7 +19,7 @@ kotlin {
                 implementation kotlin('stdlib-common')
                 implementation "io.ktor:ktor-client-websockets:$ktor_version"
                 implementation project(':commons')
-                implementation project(':base-portable')
+//                implementation project(':base-portable')
             }
         }
         commonTest {
@@ -48,6 +48,7 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-js')
                 implementation "io.ktor:ktor-client-js:$ktor_version"
+                compileOnly "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
             }
         }
         jsTest {

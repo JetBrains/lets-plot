@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.time.interval
 
-import jetbrains.datalore.base.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import jetbrains.datalore.plot.common.data.DataType
 import jetbrains.datalore.plot.common.text.Formatter
 

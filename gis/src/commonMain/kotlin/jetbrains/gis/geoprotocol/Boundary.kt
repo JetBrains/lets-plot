@@ -5,7 +5,7 @@
 
 package jetbrains.gis.geoprotocol
 
-import jetbrains.datalore.base.encoding.Base64
+import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.intern.spatial.GeoJson
 import org.jetbrains.letsPlot.commons.intern.spatial.SimpleFeature
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import kotlin.math.min
 import kotlin.test.Test
 import kotlin.test.assertEquals

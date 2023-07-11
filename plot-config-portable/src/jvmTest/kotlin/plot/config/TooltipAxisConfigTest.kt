@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.datetime.Date
-import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.base.datetime.Duration
-import jetbrains.datalore.base.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec

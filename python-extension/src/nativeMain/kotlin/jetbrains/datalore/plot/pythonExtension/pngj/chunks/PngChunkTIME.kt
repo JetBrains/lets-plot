@@ -6,11 +6,11 @@
 @file:Suppress("unused")
 package jetbrains.datalore.plot.pythonExtension.pngj.chunks
 
-import jetbrains.datalore.base.dateFormat.DateTimeFormat
-import jetbrains.datalore.base.datetime.Date
-import jetbrains.datalore.base.datetime.DateTime
-import jetbrains.datalore.base.datetime.Month
-import jetbrains.datalore.base.datetime.Time
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
+import org.jetbrains.letsPlot.commons.intern.datetime.Date
+import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
+import org.jetbrains.letsPlot.commons.intern.datetime.Time
 import jetbrains.datalore.plot.pythonExtension.pngj.ImageInfo
 import jetbrains.datalore.plot.pythonExtension.pngj.PngHelperInternal
 import jetbrains.datalore.plot.pythonExtension.pngj.PngjException

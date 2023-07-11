@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.datetime.*
-import jetbrains.datalore.base.datetime.tz.TimeZone
+import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Scale
@@ -19,6 +19,7 @@ import jetbrains.datalore.plot.config.Option.Scale.FORMAT
 import jetbrains.datalore.plot.config.Option.Scale.LABELS
 import jetbrains.datalore.plot.config.Option.Scale.LIMITS
 import jetbrains.datalore.plot.config.TestUtil.buildGeomLayer
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals

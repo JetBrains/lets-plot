@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.text
 
-import jetbrains.datalore.base.numberFormat.NumberFormat
+import org.jetbrains.letsPlot.commons.formatting.number.NumberFormat
 import jetbrains.datalore.plot.common.data.DataType
 import jetbrains.datalore.plot.common.time.interval.TimeInterval
 
