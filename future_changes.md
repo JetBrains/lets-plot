@@ -40,6 +40,8 @@ See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/mas
 
 - Reduce the default `width`/`height` values for `geom_errorbar()`.
 
+- Change the default `position` value from `'identity'` to `'dodge'` for `geom_errorbar()`, `geom_pointrange()` and `geom_linerange()`. 
+
 
 ### Fixed
 
