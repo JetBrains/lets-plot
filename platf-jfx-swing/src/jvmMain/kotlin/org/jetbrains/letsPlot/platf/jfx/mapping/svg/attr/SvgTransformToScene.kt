@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.platf.jfx.mapping.svg.attr
 
 import javafx.scene.transform.*
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 import org.jetbrains.letsPlot.platf.jfx.mapping.svg.util.ParsingUtil
 import org.jetbrains.letsPlot.platf.jfx.mapping.svg.util.toRadians

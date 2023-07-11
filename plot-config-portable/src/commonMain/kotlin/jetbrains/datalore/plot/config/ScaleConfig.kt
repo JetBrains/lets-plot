@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.config
 
 import jetbrains.datalore.base.stringFormat.StringFormat
 import jetbrains.datalore.base.stringFormat.StringFormat.FormatType.DATETIME_FORMAT
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen

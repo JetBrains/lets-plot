@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.platf.awt.canvas
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.math.toDegrees
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.Font

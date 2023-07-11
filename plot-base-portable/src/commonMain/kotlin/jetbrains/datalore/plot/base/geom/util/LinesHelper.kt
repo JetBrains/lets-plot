@@ -10,7 +10,7 @@ import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.collections.splitBy
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Colors.withOpacity
+import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext

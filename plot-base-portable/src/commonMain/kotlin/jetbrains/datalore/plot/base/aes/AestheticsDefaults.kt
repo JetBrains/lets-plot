@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.aes
 
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.render.point.NamedShape

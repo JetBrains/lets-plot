@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.graphics
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 
 class Rectangle : RenderBox() {

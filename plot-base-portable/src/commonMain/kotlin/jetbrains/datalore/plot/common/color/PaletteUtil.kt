@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.common.color
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 object PaletteUtil {
     val NULL_COLOR = Color.LIGHT_GRAY

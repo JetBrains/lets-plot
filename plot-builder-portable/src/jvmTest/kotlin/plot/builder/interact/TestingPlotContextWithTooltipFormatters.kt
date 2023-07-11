@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.interact
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.Scale

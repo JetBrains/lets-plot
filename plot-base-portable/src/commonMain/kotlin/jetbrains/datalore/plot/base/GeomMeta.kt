@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.native.concurrent.ThreadLocal
 
 // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Font
+import org.jetbrains.letsPlot.commons.values.Font
 
 interface LabelSpec {
     val font: Font

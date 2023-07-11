@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.tooltip
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.HORIZONTAL
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox.Orientation.VERTICAL

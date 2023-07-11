@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap.vector.debug
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.datalore.vis.canvas.Font
 import jetbrains.livemap.Client

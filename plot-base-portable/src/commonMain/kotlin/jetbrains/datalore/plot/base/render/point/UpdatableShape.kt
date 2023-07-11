@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.render.point
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 interface UpdatableShape {
     fun update(fill: Color, fillAlpha: Double, stroke: Color, strokeAlpha: Double, strokeWidth: Double)

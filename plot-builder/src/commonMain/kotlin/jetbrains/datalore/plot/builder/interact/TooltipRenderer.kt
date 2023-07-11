@@ -11,10 +11,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.WHITE
-import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.base.values.Colors.mimicTransparency
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
+import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
 import jetbrains.datalore.plot.base.PlotContext
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*

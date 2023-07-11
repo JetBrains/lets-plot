@@ -7,7 +7,7 @@ package jetbrains.livemap
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.chart.fragment.CachedFragmentsComponent
 import jetbrains.livemap.chart.fragment.DownloadingFragmentsComponent
 import jetbrains.livemap.chart.fragment.FragmentKey

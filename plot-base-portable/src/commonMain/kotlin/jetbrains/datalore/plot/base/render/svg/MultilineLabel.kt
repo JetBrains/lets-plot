@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants

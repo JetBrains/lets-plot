@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.math.areEqual
-import jetbrains.datalore.base.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFace
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.GeomContext
 import jetbrains.datalore.plot.base.aes.AesScaling

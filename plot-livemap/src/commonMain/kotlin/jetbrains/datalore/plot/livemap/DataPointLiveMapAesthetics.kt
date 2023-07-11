@@ -12,7 +12,7 @@ import jetbrains.datalore.base.spatial.limitLat
 import jetbrains.datalore.base.spatial.normalizeLon
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.COLOR
 import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID

@@ -7,7 +7,7 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.IndexComponent
 import jetbrains.livemap.chart.LocatorComponent

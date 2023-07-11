@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom.slim
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 internal abstract class SlimBase protected constructor(val elementName: String) :
     SvgSlimShape {

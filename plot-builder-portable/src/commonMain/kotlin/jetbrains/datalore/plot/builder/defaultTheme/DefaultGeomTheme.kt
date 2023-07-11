@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS

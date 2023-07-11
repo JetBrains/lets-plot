@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.aes
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 interface GeomTheme {
     fun color(): Color

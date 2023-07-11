@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 interface SvgColor
 

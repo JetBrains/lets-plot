@@ -7,7 +7,7 @@ package jetbrains.datalore.vis.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
 interface Context2d {

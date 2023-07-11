@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors.solid
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors.solid
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.GeomKind.*
 import jetbrains.datalore.plot.base.aes.AestheticsUtil

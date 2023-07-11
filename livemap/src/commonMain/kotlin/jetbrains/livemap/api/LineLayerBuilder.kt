@@ -7,7 +7,7 @@ package jetbrains.livemap.api
 
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.*
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.WorldRectangle

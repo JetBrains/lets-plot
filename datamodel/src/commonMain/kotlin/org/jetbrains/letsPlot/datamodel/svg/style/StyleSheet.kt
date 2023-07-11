@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.style
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
 
 
 class StyleSheet constructor(

@@ -6,7 +6,7 @@
 package jetbrains.livemap.core.graphics
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import kotlin.math.PI
 

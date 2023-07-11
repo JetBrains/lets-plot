@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.aes
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors.solid
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors.solid
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape

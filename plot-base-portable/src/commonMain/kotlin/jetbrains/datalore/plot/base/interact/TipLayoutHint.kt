@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.interact
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 // `open` - for Mockito tests
 open class TipLayoutHint(

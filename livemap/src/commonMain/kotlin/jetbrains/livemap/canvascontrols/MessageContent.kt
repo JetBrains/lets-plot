@@ -6,7 +6,7 @@
 package jetbrains.livemap.canvascontrols
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.CanvasControlUtil.drawLater
 import kotlin.math.max

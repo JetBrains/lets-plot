@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.theme
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFamily
 
 data class ThemeTextStyle(
     val family: FontFamily,

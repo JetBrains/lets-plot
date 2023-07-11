@@ -14,8 +14,8 @@ import jetbrains.datalore.base.typedGeometry.Geometry
 import jetbrains.datalore.base.typedGeometry.LineString
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.explicitVec
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.World

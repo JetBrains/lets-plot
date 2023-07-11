@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.interact
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.builder.interact.tool.DrawRectFeedback
 import jetbrains.datalore.plot.builder.interact.tool.PanGeomFeedback
 import jetbrains.datalore.plot.builder.interact.ui.ToggleButtonControl

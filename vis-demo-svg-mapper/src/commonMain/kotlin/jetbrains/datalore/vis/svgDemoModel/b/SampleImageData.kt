@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.vis.svgDemoModel.b
 
-import jetbrains.datalore.base.values.Color.Companion.BLACK
-import jetbrains.datalore.base.values.Color.Companion.BLUE
-import jetbrains.datalore.base.values.Color.Companion.GREEN
-import jetbrains.datalore.base.values.Color.Companion.RED
+import org.jetbrains.letsPlot.commons.values.Color.Companion.BLACK
+import org.jetbrains.letsPlot.commons.values.Color.Companion.BLUE
+import org.jetbrains.letsPlot.commons.values.Color.Companion.GREEN
+import org.jetbrains.letsPlot.commons.values.Color.Companion.RED
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.toARGB
 
 internal object SampleImageData {

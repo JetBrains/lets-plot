@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Color.Companion.BLUE
-import jetbrains.datalore.base.values.Color.Companion.GREEN
-import jetbrains.datalore.base.values.Color.Companion.RED
-import jetbrains.datalore.base.values.Colors
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Color.Companion.BLUE
+import org.jetbrains.letsPlot.commons.values.Color.Companion.GREEN
+import org.jetbrains.letsPlot.commons.values.Color.Companion.RED
+import org.jetbrains.letsPlot.commons.values.Colors
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.data.DataFrameUtil

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme.values
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_LENGTH

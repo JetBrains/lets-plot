@@ -15,7 +15,7 @@ import jetbrains.datalore.base.typedGeometry.MultiLineString
 import jetbrains.datalore.base.typedGeometry.Transforms.transform
 import jetbrains.datalore.base.typedGeometry.Transforms.transformPoints
 import jetbrains.datalore.base.typedGeometry.Vec
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.World
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.ChartElementLocationComponent

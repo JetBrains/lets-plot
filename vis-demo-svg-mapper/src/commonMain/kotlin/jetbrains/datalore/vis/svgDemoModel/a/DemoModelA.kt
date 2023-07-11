@@ -6,9 +6,9 @@
 package jetbrains.datalore.vis.svgDemoModel.a
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_STROKE_DASHARRAY_ATTRIBUTE

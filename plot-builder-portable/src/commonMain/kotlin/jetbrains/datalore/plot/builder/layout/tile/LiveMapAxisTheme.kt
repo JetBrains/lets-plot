@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.layout.tile
 
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults

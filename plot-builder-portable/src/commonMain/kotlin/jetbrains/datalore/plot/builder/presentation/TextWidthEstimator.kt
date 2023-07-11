@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.base.values.Font
+import org.jetbrains.letsPlot.commons.values.Font
 
 // Clustering and coefficients calculation: https://github.com/ASmirnov-HORIS/text-width-estimation/blob/main/notebooks/prepare_model.ipynb
 object TextWidthEstimator {

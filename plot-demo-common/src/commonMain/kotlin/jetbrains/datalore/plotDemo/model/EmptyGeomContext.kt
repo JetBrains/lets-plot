@@ -7,7 +7,7 @@ package jetbrains.datalore.plotDemo.model
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Font
+import org.jetbrains.letsPlot.commons.values.Font
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.annotations.Annotations
 import jetbrains.datalore.plot.base.GeomContext

@@ -7,7 +7,7 @@ package jetbrains.datalore.jetbrains.livemap.chart.donut
 
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.plus
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.jetbrains.livemap.chart.SearchTestHelper
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint

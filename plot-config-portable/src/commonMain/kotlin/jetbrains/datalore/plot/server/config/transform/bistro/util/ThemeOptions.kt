@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro.util
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 
 

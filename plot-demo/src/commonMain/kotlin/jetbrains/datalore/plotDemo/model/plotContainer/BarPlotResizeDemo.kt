@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotContainer
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DiscreteTransform
 import jetbrains.datalore.plot.base.Scale

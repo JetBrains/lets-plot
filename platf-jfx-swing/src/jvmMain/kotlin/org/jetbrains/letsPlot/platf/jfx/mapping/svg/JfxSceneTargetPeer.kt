@@ -14,7 +14,7 @@ import javafx.scene.shape.Rectangle
 import javafx.scene.shape.SVGPath
 import javafx.scene.text.Text
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec

@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.layout.Margins
 import jetbrains.datalore.plot.builder.layout.TextJustification

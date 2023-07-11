@@ -11,7 +11,7 @@ import jetbrains.datalore.base.spatial.LonLatPoint
 import jetbrains.datalore.base.typedGeometry.createMultiPolygon
 import jetbrains.datalore.base.typedGeometry.explicitVec
 import jetbrains.datalore.base.typedGeometry.plus
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.layers
 import jetbrains.livemap.api.polygon

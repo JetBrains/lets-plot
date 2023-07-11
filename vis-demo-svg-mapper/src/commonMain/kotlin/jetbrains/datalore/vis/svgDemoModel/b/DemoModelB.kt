@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.svgDemoModel.b
 
 import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.chart
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.math.min
 
 fun changeAlphaWithMin(color: Color, newAlpha: Int?): Color {

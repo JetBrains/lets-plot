@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config.aes
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

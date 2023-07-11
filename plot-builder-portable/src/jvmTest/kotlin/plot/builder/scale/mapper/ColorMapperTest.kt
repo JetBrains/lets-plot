@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.builder.scale.mapper
 
 import jetbrains.datalore.base.assertion.assertEquals
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.Colors
-import jetbrains.datalore.base.values.HSV
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Colors
+import org.jetbrains.letsPlot.commons.values.HSV
 import kotlin.test.Test
 
 class ColorMapperTest {

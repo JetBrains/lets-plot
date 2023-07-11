@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.SomeFig
+import org.jetbrains.letsPlot.commons.values.SomeFig
 import jetbrains.datalore.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCssResource

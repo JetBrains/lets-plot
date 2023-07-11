@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.mockito
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import org.mockito.internal.stubbing.defaultanswers.ReturnsMoreEmptyValues
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer

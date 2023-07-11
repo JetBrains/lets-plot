@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.base.typedKey.TypedKey
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.point.PointShape
 

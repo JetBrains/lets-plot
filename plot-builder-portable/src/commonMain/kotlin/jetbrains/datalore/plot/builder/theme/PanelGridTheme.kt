@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.theme
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 interface PanelGridTheme {
     fun showMajor(): Boolean

@@ -5,6 +5,8 @@
 
 package jetbrains.datalore.plot.server.config.transform.bistro.corr
 
+import org.jetbrains.letsPlot.commons.values.Color
+
 object DataUtil {
 
     fun standardiseData(rawData: Map<*, *>): Map<String, List<Any?>> {
@@ -60,7 +62,7 @@ object DataUtil {
                     is String -> it
                     is Number -> toDouble(it)
                     is Char -> it.toString()
-                    is jetbrains.datalore.base.values.Color -> it.toHexColor()
+                    is Color -> it.toHexColor()
                     else -> throw IllegalArgumentException("Can't standardize the value \"$it\" of type ${it::class.simpleName} as a string, number or date-time.")
                 }
             }

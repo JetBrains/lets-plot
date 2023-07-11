@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.interact
 import org.jetbrains.letsPlot.commons.intern.function.Functions.identity
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.FontFace
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.base.interact.*

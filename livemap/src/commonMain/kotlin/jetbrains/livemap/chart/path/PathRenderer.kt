@@ -7,7 +7,7 @@ package jetbrains.livemap.chart.path
 
 import jetbrains.datalore.base.typedGeometry.MultiLineString
 import jetbrains.datalore.base.typedGeometry.Scalar
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint

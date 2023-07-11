@@ -6,7 +6,7 @@
 package jetbrains.livemap.makegeometrywidget
 
 import jetbrains.datalore.base.spatial.LonLatPoint
-import jetbrains.datalore.base.values.Color.Companion.parseHex
+import org.jetbrains.letsPlot.commons.values.Color.Companion.parseHex
 import jetbrains.livemap.api.FeatureEntityFactory
 import jetbrains.livemap.api.PathEntityBuilder
 import jetbrains.livemap.api.PointEntityBuilder

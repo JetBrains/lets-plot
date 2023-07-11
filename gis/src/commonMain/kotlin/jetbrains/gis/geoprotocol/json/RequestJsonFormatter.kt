@@ -8,7 +8,7 @@ package jetbrains.gis.geoprotocol.json
 import jetbrains.datalore.base.json.*
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.spatial.QuadKey
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import jetbrains.gis.geoprotocol.GeoRequest
 import jetbrains.gis.geoprotocol.GeoRequest.*
 import jetbrains.gis.geoprotocol.GeocodingMode

@@ -5,7 +5,7 @@
 
 package jetbrains.gis.tileprotocol.mapConfig
 
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 
 class Style {
     var type: String? = null

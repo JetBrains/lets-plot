@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.platf.jfx.mapping.svg
 
 import javafx.scene.Group
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgStyleElement
 

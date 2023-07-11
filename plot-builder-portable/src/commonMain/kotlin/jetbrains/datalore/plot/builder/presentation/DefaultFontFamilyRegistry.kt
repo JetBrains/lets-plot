@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.presentation
 
-import jetbrains.datalore.base.values.FontFamily
+import org.jetbrains.letsPlot.commons.values.FontFamily
 
 class DefaultFontFamilyRegistry constructor(
     private val defaultWidthFactor: Double = 1.0

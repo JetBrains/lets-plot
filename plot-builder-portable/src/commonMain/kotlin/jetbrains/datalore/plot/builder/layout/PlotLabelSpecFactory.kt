@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.values.Font
+import org.jetbrains.letsPlot.commons.values.Font
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plot.builder.theme.AxisTheme

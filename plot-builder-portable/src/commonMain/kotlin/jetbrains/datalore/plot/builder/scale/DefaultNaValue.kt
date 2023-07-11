@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.scale
 
 import jetbrains.datalore.base.typedKey.TypedKey
 import jetbrains.datalore.base.typedKey.TypedKeyHashMap
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.base.Aes.Companion.ANGLE

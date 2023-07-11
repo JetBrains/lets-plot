@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.values.Color
-import jetbrains.datalore.base.values.FontFace
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
 import jetbrains.datalore.plot.builder.presentation.Defaults.Plot.Axis
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 

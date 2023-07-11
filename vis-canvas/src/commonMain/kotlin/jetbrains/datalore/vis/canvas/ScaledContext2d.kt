@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import jetbrains.datalore.base.values.Color
+import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
 
 internal class ScaledContext2d(

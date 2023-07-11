@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.platf.awt.plot
 import org.jetbrains.letsPlot.platf.awt.util.AwtContainerDisposer
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.base.values.SomeFig
+import org.jetbrains.letsPlot.commons.values.SomeFig
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtCanvasControl

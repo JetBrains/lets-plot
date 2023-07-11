@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.coord
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.base.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 
 internal class MarginalLayerCoordProvider : CoordProviderBase(
     xLim = null,

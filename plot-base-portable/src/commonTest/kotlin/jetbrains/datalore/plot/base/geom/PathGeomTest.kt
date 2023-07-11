@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.geom
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.spatial.projections.identity
-import jetbrains.datalore.base.values.Color.Companion.BLACK
-import jetbrains.datalore.base.values.Color.Companion.WHITE
+import org.jetbrains.letsPlot.commons.values.Color.Companion.BLACK
+import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import jetbrains.datalore.plot.base.BogusContext
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics
