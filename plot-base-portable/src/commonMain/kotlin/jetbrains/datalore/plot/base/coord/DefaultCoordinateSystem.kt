@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.coord
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.CoordinateSystem
 
 internal class DefaultCoordinateSystem(

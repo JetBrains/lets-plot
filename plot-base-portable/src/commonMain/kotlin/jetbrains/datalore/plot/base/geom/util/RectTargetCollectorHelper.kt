@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom.util
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.interact.GeomTargetCollector

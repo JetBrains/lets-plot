@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * This 'element' is not a part of SVG specification.

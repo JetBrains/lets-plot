@@ -5,13 +5,8 @@
 
 package jetbrains.gis.tileprotocol
 
-import org.jetbrains.letsPlot.commons.intern.async.Async
-import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
-import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
-import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import jetbrains.datalore.base.json.JsonSupport
 import jetbrains.datalore.base.json.JsonSupport.formatJson
-import jetbrains.datalore.base.registration.throwableHandlers.ThrowableHandlers
 import jetbrains.datalore.base.spatial.LonLat
 import jetbrains.datalore.base.typedGeometry.Rect
 import jetbrains.gis.tileprotocol.Request.ConfigureConnectionRequest
@@ -24,6 +19,10 @@ import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.socket.SafeSocketHandler
 import jetbrains.gis.tileprotocol.socket.SocketBuilder
 import jetbrains.gis.tileprotocol.socket.SocketHandler
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
+import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
+import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 
 
 open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme) {
@@ -33,7 +32,7 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
         DARK
     }
 
-    private val mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler(), ThrowableHandlers.instance))
+    private val mySocket = socketBuilder.build(SafeSocketHandler(TileSocketHandler()))
     private val myMessageQueue = ThreadSafeMessageQueue<String>()
     private val pendingRequests = RequestMap()
     var mapConfig: MapConfig? = null
@@ -67,6 +66,7 @@ open class TileService(socketBuilder: SocketBuilder, private val myTheme: Theme)
                 myStatus = CONNECTING
                 mySocket.connect()
             }
+
             CONFIGURED -> mySocket.send(message)
             CONNECTING -> myMessageQueue.add(message)
             ERROR -> throw IllegalStateException("Socket error")

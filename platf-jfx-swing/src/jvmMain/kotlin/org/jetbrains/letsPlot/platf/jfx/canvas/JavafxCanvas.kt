@@ -10,7 +10,7 @@ import javafx.scene.canvas.Canvas
 import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.vis.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasUtil.asyncTakeSnapshotImage

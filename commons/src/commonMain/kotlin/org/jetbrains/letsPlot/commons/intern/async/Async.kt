@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 /**
  * Asynchronous computation

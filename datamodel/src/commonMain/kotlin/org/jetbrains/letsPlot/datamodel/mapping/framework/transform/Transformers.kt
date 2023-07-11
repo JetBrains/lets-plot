@@ -5,16 +5,16 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework.transform
 
-import jetbrains.datalore.base.observable.collections.CollectionAdapter
-import jetbrains.datalore.base.observable.collections.CollectionItemEvent
-import jetbrains.datalore.base.observable.collections.CollectionListener
-import jetbrains.datalore.base.observable.collections.ObservableCollection
-import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
-import jetbrains.datalore.base.observable.collections.list.ObservableList
-import jetbrains.datalore.base.observable.event.EventHandler
-import jetbrains.datalore.base.observable.property.PropertyChangeEvent
-import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener
+import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCollection
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
+import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 object Transformers {
 
@@ -242,8 +242,8 @@ object Transformers {
                         get() = to
 
                     init {
-                        myCollectionListener = object : CollectionAdapter<ItemT>() {
-                            override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
+                        myCollectionListener = object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ItemT>() {
+                            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
                                 val item = event.newItem!!
                                 watch(item, to)
 
@@ -252,7 +252,7 @@ object Transformers {
                                 to.add(insertIndex, item)
                             }
 
-                            override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
+                            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
                                 val item = event.oldItem
 
                                 val sortedIndex = to.indexOf(item)
@@ -302,11 +302,11 @@ object Transformers {
                                 }
                                 if (needMove) {
                                     myCollectionListener.onItemSet(
-                                        CollectionItemEvent(
+                                        org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent(
                                             item,
                                             item,
                                             -1,
-                                            CollectionItemEvent.EventType.SET
+                                            org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent.EventType.SET
                                         )
                                     )
                                 }
@@ -987,18 +987,18 @@ object Transformers {
                 to: ObservableList<ItemT>
             ): Transformation<ObservableList<ItemT>, ObservableList<ItemT>> {
 
-                val registration = from.addListener(object : CollectionAdapter<ItemT>() {
-                    override fun onItemAdded(event: CollectionItemEvent<out ItemT>) {
+                val registration = from.addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<ItemT>() {
+                    override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
                         @Suppress("UNCHECKED_CAST")
                         to.add(event.index, event.newItem as ItemT)
                     }
 
-                    override fun onItemSet(event: CollectionItemEvent<out ItemT>) {
+                    override fun onItemSet(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
                         @Suppress("UNCHECKED_CAST")
                         to.set(event.index, event.newItem as ItemT)
                     }
 
-                    override fun onItemRemoved(event: CollectionItemEvent<out ItemT>) {
+                    override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out ItemT>) {
                         to.removeAt(event.index)
                     }
                 })

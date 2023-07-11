@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip.layout
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.base.interact.TooltipAnchor.HorizontalAnchor.*
 import jetbrains.datalore.plot.base.interact.TooltipAnchor.VerticalAnchor.*

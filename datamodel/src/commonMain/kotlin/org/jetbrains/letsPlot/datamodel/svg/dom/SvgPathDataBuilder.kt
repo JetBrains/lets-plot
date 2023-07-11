@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData.Action
 
 import kotlin.jvm.JvmOverloads
@@ -166,7 +166,8 @@ class SvgPathDataBuilder @JvmOverloads constructor(private val myDefaultAbsolute
     }
 
     fun ellipticalArc(rx: Double, ry: Double, xAxisRotation: Double, largeArc: Boolean, sweep: Boolean,
-                      to: DoubleVector): SvgPathDataBuilder {
+                      to: DoubleVector
+    ): SvgPathDataBuilder {
         return ellipticalArc(rx, ry, xAxisRotation, largeArc, sweep, to.x, to.y)
     }
 

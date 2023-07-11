@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 
 object GeometryUtil {
     fun union(first: DoubleRectangle, optionalSecond: DoubleRectangle?): DoubleRectangle {

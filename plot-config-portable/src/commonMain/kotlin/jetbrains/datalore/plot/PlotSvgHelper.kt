@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 object PlotSvgHelper {
     fun fetchPlotSizeFromSvg(svg: String): DoubleVector {

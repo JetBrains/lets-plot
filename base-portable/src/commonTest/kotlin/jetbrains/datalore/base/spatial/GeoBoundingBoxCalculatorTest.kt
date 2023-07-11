@@ -6,9 +6,9 @@
 package jetbrains.datalore.base.spatial
 
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.GeoBoundingBoxCalculator.Companion.calculateLoopLimitRange
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.point
 import jetbrains.datalore.base.spatial.GeoRectangleTestHelper.rectangle

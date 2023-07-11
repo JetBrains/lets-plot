@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework.composite
 
-import jetbrains.datalore.base.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
 
 interface HasBounds {
     val bounds: Rectangle

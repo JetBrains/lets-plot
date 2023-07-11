@@ -11,9 +11,9 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.paint.Color.TRANSPARENT
 import javafx.scene.paint.Paint
-import jetbrains.datalore.base.registration.CompositeRegistration
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.platf.jfx.util.assertFxThread
 import org.jetbrains.letsPlot.platf.jfx.util.runOnFxThread
 import java.awt.Graphics

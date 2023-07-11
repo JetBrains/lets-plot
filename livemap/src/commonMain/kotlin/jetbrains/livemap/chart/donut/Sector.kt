@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.chart.donut
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.values.Color
 import jetbrains.livemap.chart.PieSpecComponent
 import kotlin.math.PI

@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.animation
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.livemap.core.animation.Animation.Direction
 import jetbrains.livemap.core.animation.Animation.Loop
 import jetbrains.livemap.core.animation.Animation.Loop.DISABLED

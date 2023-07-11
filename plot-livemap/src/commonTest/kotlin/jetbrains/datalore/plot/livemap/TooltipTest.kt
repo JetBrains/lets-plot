@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.livemap
 
 import jetbrains.datalore.base.event.MouseEvent.Companion.noButton
 import jetbrains.datalore.base.event.MouseEventSpec.MOUSE_MOVED
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import kotlin.test.Test
 
 class TooltipTest {

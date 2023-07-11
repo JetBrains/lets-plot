@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import jetbrains.datalore.base.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue

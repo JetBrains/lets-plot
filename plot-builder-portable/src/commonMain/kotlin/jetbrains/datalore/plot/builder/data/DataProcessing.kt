@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.base.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.DataFrame.Builder
 import jetbrains.datalore.plot.base.DataFrame.Variable

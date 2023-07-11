@@ -9,8 +9,8 @@ package org.jetbrains.letsPlot.platf.awt.canvas
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.vis.canvas.EventPeer
 import org.jetbrains.letsPlot.platf.awt.util.AwtEventUtil
 import java.awt.Component

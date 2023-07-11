@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.spatial
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.typedGeometry.*
 import kotlin.test.assertEquals
 

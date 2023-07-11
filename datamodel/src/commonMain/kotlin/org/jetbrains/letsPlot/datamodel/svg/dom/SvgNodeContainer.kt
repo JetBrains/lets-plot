@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.observable.event.ListenerCaller
-import jetbrains.datalore.base.observable.event.Listeners
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
+import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 
 class SvgNodeContainer(root: SvgSvgElement) {

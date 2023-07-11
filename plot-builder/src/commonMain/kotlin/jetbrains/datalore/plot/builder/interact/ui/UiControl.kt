@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.interact.ui
 import jetbrains.datalore.base.event.MouseEvent
 import jetbrains.datalore.base.event.MouseEventSpec
 import jetbrains.datalore.base.event.MouseEventSpec.*
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
@@ -34,7 +34,8 @@ abstract class UiControl {
             svgComponent.moveTo(value)
         }
 
-    val bbox: DoubleRectangle get() {
+    val bbox: DoubleRectangle
+        get() {
         var p = parent
         var absolutOrigin: DoubleVector = origin
         while (p != null) {

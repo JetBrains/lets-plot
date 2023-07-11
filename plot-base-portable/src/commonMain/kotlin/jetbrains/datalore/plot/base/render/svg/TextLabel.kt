@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.base.observable.property.Property
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.plot.base.render.svg.Text.toDY
 import jetbrains.datalore.plot.base.render.svg.Text.toTextAnchor

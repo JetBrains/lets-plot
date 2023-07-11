@@ -9,8 +9,8 @@ import javafx.application.Application
 import javafx.scene.Group
 import javafx.scene.Scene
 import javafx.stage.Stage
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasControl
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxEventPeer
 

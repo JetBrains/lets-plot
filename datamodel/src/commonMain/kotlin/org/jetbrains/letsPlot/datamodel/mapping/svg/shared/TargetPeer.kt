@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.svg.shared
 
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.batik.plot.util
 
-import jetbrains.datalore.base.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.apache.batik.gvt.GraphicsNode
 import java.awt.Component
 import java.awt.geom.AffineTransform

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.jfx.mapping.svg.util
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData.Action
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform

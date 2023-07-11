@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.base.spatial.projections
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 internal class IdentityProjection : Projection {
     override val nonlinear: Boolean = false

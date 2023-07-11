@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.jfx.plot.component
 
-import jetbrains.datalore.base.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 import org.jetbrains.letsPlot.platf.awt.plot.component.PlotSpecComponentProvider
 import org.jetbrains.letsPlot.platf.jfx.plot.util.SceneMapperJfxPanel

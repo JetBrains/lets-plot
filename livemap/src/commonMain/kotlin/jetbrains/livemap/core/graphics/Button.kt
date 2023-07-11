@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.graphics
 
-import jetbrains.datalore.base.geometry.DoubleVector.Companion.ZERO
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import jetbrains.datalore.base.values.Color
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.core.input.CursorStyle

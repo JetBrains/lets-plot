@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.awt.util
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import java.awt.Container
 
 class AwtContainerDisposer(

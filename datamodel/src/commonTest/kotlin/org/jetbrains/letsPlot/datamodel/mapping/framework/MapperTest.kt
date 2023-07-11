@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.collections.set.ObservableSet
+import org.jetbrains.letsPlot.commons.intern.observable.collections.set.ObservableSet
 import kotlin.js.JsName
 import kotlin.test.*
 

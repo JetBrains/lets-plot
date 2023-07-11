@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.canvas
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 interface Canvas {
     val context2d: Context2d

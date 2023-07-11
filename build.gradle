@@ -24,7 +24,6 @@ def include_sources_letsPlotJvmCommon = [
         'vis-canvas',
         'datamodel',
         'plot-base-portable',
-        'plot-common-portable',
         'plot-builder-portable',
         'plot-builder',
         'plot-config-portable',
@@ -241,7 +240,6 @@ subprojects {
             'base-portable',
             'plot-base-portable',
             'plot-builder-portable',
-            'plot-common-portable',
             'plot-config-portable',
             'test-common',
             'datamodel',
@@ -280,10 +278,9 @@ subprojects {
     // Configure publishing for projects which "Lets-Plot Kotlin API" depends on.
     if (name in [
             'commons',
-            'plot-base-portable',
             'base-portable',
             'datamodel',
-            'plot-common-portable',
+            'plot-base-portable',
             'plot-config-portable',
             'plot-builder-portable',
     ]) {

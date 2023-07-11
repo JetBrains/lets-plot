@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import jetbrains.datalore.base.algorithms.splitRings
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.typedGeometry.Untyped
 import jetbrains.datalore.base.typedGeometry.Vec
 import jetbrains.datalore.base.typedGeometry.createMultiPolygon

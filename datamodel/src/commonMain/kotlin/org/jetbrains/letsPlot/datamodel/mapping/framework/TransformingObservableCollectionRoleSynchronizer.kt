@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.collections.CollectionAdapter
-import jetbrains.datalore.base.observable.collections.CollectionItemEvent
-import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
-import jetbrains.datalore.base.observable.collections.list.ObservableList
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.mapping.framework.transform.Transformation
 import org.jetbrains.letsPlot.datamodel.mapping.framework.transform.Transformer
 
@@ -37,15 +37,15 @@ internal class TransformingObservableCollectionRoleSynchronizer<SourceT, MappedT
         for (m in modifiableMappers) {
             myTarget.add(m.target)
         }
-        myCollectionRegistration = sourceList.addListener(object : CollectionAdapter<MappedT>() {
-            override fun onItemAdded(event: CollectionItemEvent<out MappedT>) {
+        myCollectionRegistration = sourceList.addListener(object : org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionAdapter<MappedT>() {
+            override fun onItemAdded(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out MappedT>) {
                 val mapper = createMapper(event.newItem!!)
                 modifiableMappers.add(event.index, mapper)
                 myTarget.add(event.index, mapper.target)
                 processMapper(mapper)
             }
 
-            override fun onItemRemoved(event: CollectionItemEvent<out MappedT>) {
+            override fun onItemRemoved(event: org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent<out MappedT>) {
                 modifiableMappers.removeAt(event.index)
                 myTarget.removeAt(event.index)
             }

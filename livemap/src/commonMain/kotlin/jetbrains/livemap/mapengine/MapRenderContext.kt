@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.vis.canvas.CanvasProvider
 import jetbrains.datalore.vis.canvas.Context2d
 import jetbrains.livemap.ClientPoint

@@ -5,9 +5,9 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Value
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Value
+import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlin.test.Test
 
 class SimpleAsyncRegistrationsTest {

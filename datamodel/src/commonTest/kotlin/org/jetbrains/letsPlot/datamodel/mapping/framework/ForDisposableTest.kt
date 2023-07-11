@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

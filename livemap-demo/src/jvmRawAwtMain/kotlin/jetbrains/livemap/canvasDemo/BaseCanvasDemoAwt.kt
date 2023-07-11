@@ -6,8 +6,8 @@
 package jetbrains.livemap.canvasDemo
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import jetbrains.datalore.vis.canvas.Canvas
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtCanvasControl

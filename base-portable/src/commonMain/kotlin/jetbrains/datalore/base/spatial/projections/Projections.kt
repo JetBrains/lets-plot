@@ -10,7 +10,7 @@
 
 package jetbrains.datalore.base.spatial.projections
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import kotlin.math.PI
 
 fun mercator(): Projection = MercatorProjection()

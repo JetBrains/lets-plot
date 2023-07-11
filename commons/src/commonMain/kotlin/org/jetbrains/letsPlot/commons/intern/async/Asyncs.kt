@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Runnable
-import jetbrains.datalore.base.function.Supplier
-import jetbrains.datalore.base.function.Value
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Runnable
+import org.jetbrains.letsPlot.commons.intern.function.Supplier
+import org.jetbrains.letsPlot.commons.intern.function.Value
+import org.jetbrains.letsPlot.commons.registration.Registration
 
 object Asyncs {
     fun isFinished(async: Async<*>): Boolean {

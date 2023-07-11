@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.base.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling.SAFETY_SAMPLING
 import jetbrains.datalore.plot.builder.sampling.GroupAwareSampling
@@ -17,7 +17,8 @@ internal object PlotSampling {
 
     fun apply(data: DataFrame, samplings: List<Sampling>,
               groupMapper: (Int) -> Int,
-              samplingExpressionConsumer: Consumer<String>): DataFrame {
+              samplingExpressionConsumer: Consumer<String>
+    ): DataFrame {
 
         @Suppress("NAME_SHADOWING")
         var data = data

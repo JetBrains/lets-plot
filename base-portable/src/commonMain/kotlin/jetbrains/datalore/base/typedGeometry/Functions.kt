@@ -7,9 +7,9 @@ package jetbrains.datalore.base.typedGeometry
 
 import jetbrains.datalore.base.algorithms.isClockwise
 import jetbrains.datalore.base.algorithms.splitRings
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleRectangles
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 class Untyped
 

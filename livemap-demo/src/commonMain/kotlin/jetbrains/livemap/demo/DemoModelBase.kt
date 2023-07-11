@@ -6,8 +6,8 @@
 package jetbrains.livemap.demo
 
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
-import jetbrains.datalore.base.geometry.DoubleVector
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.LiveMapBuilder

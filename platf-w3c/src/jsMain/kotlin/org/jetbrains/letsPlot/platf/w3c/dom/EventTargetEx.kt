@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.w3c.dom
 
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventListener
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.w3c.dom.events.Event

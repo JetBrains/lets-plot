@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import jetbrains.datalore.base.gcommon.collect.TreeMap
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.TreeMap
 import org.jetbrains.letsPlot.commons.intern.concurrent.AtomicInteger
 import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
 import org.jetbrains.letsPlot.commons.intern.concurrent.execute

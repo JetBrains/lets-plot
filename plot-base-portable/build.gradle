@@ -19,9 +19,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':commons')
-                implementation project(':base-portable')
                 implementation project(':datamodel')
-                implementation project(':plot-common-portable')
+                implementation project(':base-portable')
             }
         }
         commonTest {

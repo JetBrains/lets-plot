@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg
 
-import jetbrains.datalore.base.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.w3c.dom.Node

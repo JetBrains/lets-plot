@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 interface BreaksGenerator {
     fun generateBreaks(domain: DoubleSpan, targetCount: Int): ScaleBreaks

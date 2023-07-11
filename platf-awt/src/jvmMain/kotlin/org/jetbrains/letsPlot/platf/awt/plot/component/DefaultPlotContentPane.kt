@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.awt.plot.component
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import java.awt.Color
 import java.awt.Component
 import javax.swing.BorderFactory

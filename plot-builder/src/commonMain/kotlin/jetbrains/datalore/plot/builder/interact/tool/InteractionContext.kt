@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.tool
 
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.interact.ui.EventsManager
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 

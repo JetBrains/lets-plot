@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.base.event
 
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 open class PointEvent(val x: Int, val y: Int) : Event() {
 

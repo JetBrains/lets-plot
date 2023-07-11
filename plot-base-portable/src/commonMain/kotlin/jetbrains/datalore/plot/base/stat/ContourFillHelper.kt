@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base.stat
 
-import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.stat.ContourStatUtil.removePathByEndpoints
 
 class ContourFillHelper(xRange: DoubleSpan, yRange: DoubleSpan) {
@@ -28,7 +28,7 @@ class ContourFillHelper(xRange: DoubleSpan, yRange: DoubleSpan) {
     }
 
     fun createPolygons(
-            pathByLevels: Map<Double, List<List<DoubleVector>>>, levels: List<Double>, fillLevels: List<Double>): Map<Double, List<DoubleVector>> {
+        pathByLevels: Map<Double, List<List<DoubleVector>>>, levels: List<Double>, fillLevels: List<Double>): Map<Double, List<DoubleVector>> {
 
         val result = HashMap<Double, List<DoubleVector>>()
 
@@ -68,7 +68,7 @@ class ContourFillHelper(xRange: DoubleSpan, yRange: DoubleSpan) {
     }
 
     private fun createClosedPolygonLevels(
-            openLevels: List<List<DoubleVector>>, outerMap: Map<DoubleVector, DoubleVector>, cornerPoints: List<DoubleVector>): MutableList<List<DoubleVector>> {
+        openLevels: List<List<DoubleVector>>, outerMap: Map<DoubleVector, DoubleVector>, cornerPoints: List<DoubleVector>): MutableList<List<DoubleVector>> {
         val result = ArrayList<List<DoubleVector>>()
 
         val donePath = HashSet<MutableList<DoubleVector>>()

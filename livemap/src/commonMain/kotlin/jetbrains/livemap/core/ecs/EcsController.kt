@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.core.ecs
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import jetbrains.livemap.core.MetricsService
 
 class EcsController(

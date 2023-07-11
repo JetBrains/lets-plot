@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.base
 
-import jetbrains.datalore.base.interval.DoubleSpan
-import jetbrains.datalore.base.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import jetbrains.datalore.plot.common.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.jfx.plot
 
-import jetbrains.datalore.base.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import jetbrains.datalore.plot.SimpleTestSpecs.simpleBunch
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePlot
 import jetbrains.datalore.plot.SimpleTestSpecs.simplePointLayer

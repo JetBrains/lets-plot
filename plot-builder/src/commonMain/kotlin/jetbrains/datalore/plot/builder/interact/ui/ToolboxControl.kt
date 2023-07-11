@@ -6,13 +6,14 @@
 package jetbrains.datalore.plot.builder.interact.ui
 
 import jetbrains.datalore.base.event.MouseEvent
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 class ToolboxControl(
     private val buttons: List<ToggleButtonControl>
 ) : UiControl() {
 
-    override val size : DoubleVector get() = DoubleVector(
+    override val size : DoubleVector
+        get() = DoubleVector(
         x = buttons.sumOf { it.size.x },
         y = buttons.maxOf { it.size.y }
     )

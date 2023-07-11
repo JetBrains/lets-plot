@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.base.function.Functions.identity
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.function.Functions.identity
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.values.FontFace
 import jetbrains.datalore.base.values.FontFamily
 import jetbrains.datalore.plot.base.Aes

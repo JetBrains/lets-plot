@@ -6,7 +6,7 @@
 package jetbrains.datalore.base.event
 
 import jetbrains.datalore.base.event.KeyModifiers.Companion.emptyModifiers
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 
 class MouseEvent(x: Int, y: Int, val button: Button, val modifiers: KeyModifiers) : PointEvent(x, y) {

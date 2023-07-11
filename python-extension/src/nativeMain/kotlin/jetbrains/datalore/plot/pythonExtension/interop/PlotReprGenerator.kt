@@ -6,6 +6,7 @@ import jetbrains.datalore.plot.PlotHtmlExport
 import jetbrains.datalore.plot.PlotHtmlHelper
 import jetbrains.datalore.plot.PlotSvgExportPortable
 import jetbrains.datalore.plot.pythonExtension.interop.TypeUtils.pyDictToMap
+import jetbrains.datalore.plot.pythonExtension.pngj.RGBEncoderNative
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.toKString
@@ -32,7 +33,7 @@ object PlotReprGenerator {
             val svg = PlotSvgExportPortable.buildSvgImageFromRawSpecs(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
                 plotSize = null,
-                UnsupportedRGBEncoder(),  // ToDo: SVG export is not working for 'geom_raster()'
+                rgbEncoder = RGBEncoderNative(),
                 useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
             )
             Py_BuildValue("s", svg)

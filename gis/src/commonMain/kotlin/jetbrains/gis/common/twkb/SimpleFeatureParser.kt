@@ -5,11 +5,11 @@
 
 package jetbrains.gis.common.twkb
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.function.Function
-import jetbrains.datalore.base.function.Functions
-import jetbrains.datalore.base.function.Functions.funcOf
-import jetbrains.datalore.base.gcommon.collect.Stack
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.intern.function.Function
+import org.jetbrains.letsPlot.commons.intern.function.Functions
+import org.jetbrains.letsPlot.commons.intern.function.Functions.funcOf
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Stack
 import jetbrains.datalore.base.spatial.SimpleFeature
 import jetbrains.datalore.base.typedGeometry.*
 

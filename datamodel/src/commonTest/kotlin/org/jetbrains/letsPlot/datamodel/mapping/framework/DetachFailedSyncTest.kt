@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.mapping.framework
 
-import jetbrains.datalore.base.observable.collections.list.ObservableArrayList
+import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers.forObservableRole
 import kotlin.test.BeforeTest
 import kotlin.test.Test

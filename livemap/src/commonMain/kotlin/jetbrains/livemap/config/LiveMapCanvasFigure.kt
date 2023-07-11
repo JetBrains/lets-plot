@@ -6,10 +6,10 @@
 package jetbrains.livemap.config
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.base.geometry.Rectangle
-import jetbrains.datalore.base.observable.property.ReadableProperty
-import jetbrains.datalore.base.observable.property.ValueProperty
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import jetbrains.livemap.LiveMap

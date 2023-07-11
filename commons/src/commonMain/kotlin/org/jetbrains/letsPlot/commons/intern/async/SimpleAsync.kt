@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.commons.intern.async
 
-import jetbrains.datalore.base.function.Consumer
-import jetbrains.datalore.base.observable.event.ListenerCaller
-import jetbrains.datalore.base.observable.event.Listeners
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.function.Consumer
+import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
+import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
 
 class SimpleAsync<ItemT> : ResolvableAsync<ItemT> {
     private var mySuccessItem: ItemT? = null

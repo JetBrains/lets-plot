@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.geom.util
 import jetbrains.datalore.base.algorithms.reduce
 import jetbrains.datalore.base.algorithms.splitRings
 import jetbrains.datalore.base.collections.splitBy
-import jetbrains.datalore.base.gcommon.collect.Ordering
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.base.values.Colors.withOpacity
 import jetbrains.datalore.plot.base.CoordinateSystem
 import jetbrains.datalore.plot.base.DataPointAesthetics

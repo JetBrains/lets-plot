@@ -6,7 +6,7 @@
 package jetbrains.datalore.vis.canvas
 
 import jetbrains.datalore.base.event.MouseEventSource
-import jetbrains.datalore.base.geometry.Vector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 
 interface CanvasControl : AnimationProvider, CanvasProvider, MouseEventSource, Dispatcher {
 

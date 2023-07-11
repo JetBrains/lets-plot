@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.layout
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 class TileLayoutInfo constructor(
     val offset: DoubleVector,  // A value to take in account when translating relative tile bounds to absolute ones.

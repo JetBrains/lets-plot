@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.gcommon.base.Throwables
+import org.jetbrains.letsPlot.commons.intern.gcommon.base.Throwables
 
 object FailureHandler {
     fun failureInfo(e: RuntimeException): FailureInfo {

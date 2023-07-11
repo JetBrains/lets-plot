@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.interval.DoubleSpan
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.base.spatial.projections.azimuthalEqualArea
 import jetbrains.datalore.base.spatial.projections.conicEqualArea
 import jetbrains.datalore.base.spatial.projections.identity

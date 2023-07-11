@@ -59,19 +59,19 @@ with open(os.path.join(root_dir, 'README.md'), encoding='utf-8') as f:
 if this_system == 'Darwin':
     stdcpp_lib = 'c++'
     # fix for "ImportError: dlopen(...) Symbol not found: _NSGenericException" on macOS
-    extra_link = ['-framework', 'Foundation']
+    extra_link = ['-framework', 'Foundation', '-lz']
 
 elif this_system == 'Windows':
     stdcpp_lib = 'stdc++'
     # fix python package build with Kotlin v1.7.20 (and later) on Windows.
-    extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread']
+    extra_link = ['-static-libgcc', '-static', '-lbcrypt', '-lpthread', '-lz']
     # fix for "cannot find -lmsvcr140: No such file or directory" compiler error on Windows.
     import distutils.cygwinccompiler
     distutils.cygwinccompiler.get_msvcr = lambda: []   
 
 elif this_system == 'Linux':
     stdcpp_lib = 'stdc++'
-    extra_link = []
+    extra_link = ['-lz']
     
 else:
     raise ValueError("Unsupported platform.")

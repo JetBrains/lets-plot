@@ -5,8 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import jetbrains.datalore.base.geometry.DoubleRectangle
-import jetbrains.datalore.base.observable.property.Property
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 
 abstract class SvgGraphicsElement : SvgStylableElement() {
 

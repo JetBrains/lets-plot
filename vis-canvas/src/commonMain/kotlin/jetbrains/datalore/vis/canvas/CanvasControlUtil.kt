@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.vis.canvas
 
-import jetbrains.datalore.base.registration.Disposable
-import jetbrains.datalore.base.registration.Registration
+import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
 
 object CanvasControlUtil {
