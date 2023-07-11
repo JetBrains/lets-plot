@@ -6,6 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import jetbrains.datalore.base.values.Color
+import jetbrains.datalore.base.values.Colors
 import jetbrains.datalore.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
@@ -95,15 +96,13 @@ internal class DefaultGeomTheme private constructor(
                     color = inheritedColors.lineColor()
                 }
 
-                GeomKind.AREA_RIDGES,
                 GeomKind.AREA,
                 GeomKind.DENSITY,
                 GeomKind.RECT,
                 GeomKind.RIBBON,
-                GeomKind.MAP -> {
+                GeomKind.AREA_RIDGES -> {
                     color = inheritedColors.lineColor()
-                    fill = inheritedColors.lineColor()
-                    alpha = 0.1
+                    fill = Colors.withOpacity(inheritedColors.lineColor(), 0.1)
                     size *= sizeMultiplier
                 }
 
@@ -128,7 +127,6 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.DOT_PLOT,
                 GeomKind.Y_DOT_PLOT -> {
                     color = inheritedColors.backgroundFill()
-                    fill = inheritedColors.lineColor()
                 }
 
                 GeomKind.POINT_RANGE -> {
@@ -151,24 +149,38 @@ internal class DefaultGeomTheme private constructor(
                     size *= sizeMultiplier
                 }
 
-                GeomKind.BAR,
+                GeomKind.BAR -> {
+                    color = Color.TRANSPARENT
+                    size *= sizeMultiplier
+                }
+
+                GeomKind.HISTOGRAM -> {
+                    color = inheritedColors.lineColor()
+                    fill = inheritedColors.lineColor()
+                }
+
                 GeomKind.POLYGON -> {
                     color = inheritedColors.backgroundFill()
                     size *= sizeMultiplier
                 }
 
-                GeomKind.HISTOGRAM,
                 GeomKind.TILE,
                 GeomKind.BIN_2D -> {
-                    color = inheritedColors.backgroundFill()
+                    color = Color.TRANSPARENT
                     fill = inheritedColors.lineColor()
-                    size = 0.0
+                    size *= sizeMultiplier
                 }
 
                 GeomKind.CONTOURF,
                 GeomKind.DENSITY2DF -> {
-                    color = inheritedColors.backgroundFill()
-                    size = 0.0
+                    color = Color.TRANSPARENT
+                    size *= sizeMultiplier
+                }
+
+                GeomKind.MAP -> {
+                    color = inheritedColors.lineColor()
+                    fill = Color.TRANSPARENT
+                    size *= sizeMultiplier
                 }
 
                 GeomKind.TEXT, GeomKind.LABEL -> {
@@ -180,6 +192,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.PIE -> {
                     color = Color.TRANSPARENT
                     size = 10.0
+                    lineWidth *= sizeMultiplier
                 }
 
                 GeomKind.RASTER,
