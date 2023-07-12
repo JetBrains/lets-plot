@@ -8,8 +8,8 @@ package jetbrains.livemap.api
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.FontStyle
-import jetbrains.datalore.vis.canvas.FontWeight
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.TextSpecComponent
 import jetbrains.livemap.chart.text.TextRenderer

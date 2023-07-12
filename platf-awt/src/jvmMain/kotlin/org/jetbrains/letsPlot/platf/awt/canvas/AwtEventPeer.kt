@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec.*
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.vis.canvas.EventPeer
+import org.jetbrains.letsPlot.core.canvas.EventPeer
 import org.jetbrains.letsPlot.platf.awt.util.AwtEventUtil
 import java.awt.Component
 import java.awt.event.MouseListener

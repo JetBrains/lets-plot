@@ -24,7 +24,7 @@ kotlin {
                 compileOnly kotlin('stdlib-jdk8')
 
                 compileOnly project(':jvm-package:jvm-publish-common')
-                api project(':vis-canvas')
+                api project(':canvas')
                 api project(':gis')
                 api project(':livemap')
                 api project(':plot-livemap')

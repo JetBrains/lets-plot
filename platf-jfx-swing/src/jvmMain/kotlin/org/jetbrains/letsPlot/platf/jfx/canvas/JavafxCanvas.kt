@@ -11,7 +11,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.WritableImage
 import javafx.scene.paint.Color
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.vis.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasUtil.asyncTakeSnapshotImage
 import kotlin.math.roundToInt
@@ -38,19 +38,19 @@ private constructor(
         nativeCanvas.height = size.y * pixelRatio
     }
 
-    override fun takeSnapshot(): Async<jetbrains.datalore.vis.canvas.Canvas.Snapshot> {
+    override fun takeSnapshot(): Async<org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot> {
         return asyncTakeSnapshotImage(nativeCanvas).map(
                 success = { image -> JavafxSnapshot(image) }
         )
     }
 
-    override fun immidiateSnapshot(): jetbrains.datalore.vis.canvas.Canvas.Snapshot {
+    override fun immidiateSnapshot(): org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot {
         val params = SnapshotParameters()
         params.fill = Color.TRANSPARENT
         return JavafxSnapshot(nativeCanvas.snapshot(params, null))
     }
 
-    internal class JavafxSnapshot(val image: Image) : jetbrains.datalore.vis.canvas.Canvas.Snapshot {
+    internal class JavafxSnapshot(val image: Image) : org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot {
         override fun copy() =
             JavafxSnapshot(
                 WritableImage(

@@ -16,8 +16,8 @@ import jetbrains.datalore.plot.base.geom.PieGeom
 import jetbrains.datalore.plot.base.geom.PointGeom
 import jetbrains.datalore.plot.base.geom.SegmentGeom
 import jetbrains.datalore.plot.builder.LayerRendererUtil.LayerRendererData
-import jetbrains.datalore.vis.canvas.FontStyle
-import jetbrains.datalore.vis.canvas.FontWeight
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 import jetbrains.livemap.api.*
 
 

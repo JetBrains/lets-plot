@@ -6,7 +6,7 @@
 package jetbrains.livemap.mapengine.basemap.vector
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
-import jetbrains.datalore.vis.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import jetbrains.livemap.core.multitasking.MicroTask
 import jetbrains.livemap.mapengine.basemap.BasemapLayerKind
 import jetbrains.livemap.mapengine.viewport.CellKey

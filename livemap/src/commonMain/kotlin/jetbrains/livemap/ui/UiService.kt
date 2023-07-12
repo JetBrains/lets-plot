@@ -7,7 +7,7 @@ package jetbrains.livemap.ui
 
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import jetbrains.datalore.vis.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.Font
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.animation.Animation
 import jetbrains.livemap.core.ecs.*

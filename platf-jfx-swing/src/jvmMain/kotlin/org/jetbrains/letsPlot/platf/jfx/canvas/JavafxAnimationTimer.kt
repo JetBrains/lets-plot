@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.jfx.canvas
 
-import jetbrains.datalore.vis.canvas.AnimationProvider
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider
 
 internal abstract class JavafxAnimationTimer : AnimationProvider.AnimationTimer {
     private val myAnimationTimer: javafx.animation.AnimationTimer

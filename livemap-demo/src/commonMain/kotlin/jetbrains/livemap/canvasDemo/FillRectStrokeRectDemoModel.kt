@@ -6,7 +6,7 @@
 package jetbrains.livemap.canvasDemo
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
 
 class FillRectStrokeRectDemoModel(canvas: Canvas) {
     init {

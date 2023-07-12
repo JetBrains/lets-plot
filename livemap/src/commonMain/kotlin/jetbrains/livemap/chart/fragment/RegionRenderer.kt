@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.chart.fragment
 
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.geometry.WorldGeometryComponent

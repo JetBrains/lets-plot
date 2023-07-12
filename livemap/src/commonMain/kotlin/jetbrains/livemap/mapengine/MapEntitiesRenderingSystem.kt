@@ -6,7 +6,7 @@
 package jetbrains.livemap.mapengine
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.unaryMinus
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsComponentManager

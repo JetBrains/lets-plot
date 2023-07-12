@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap
 
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.core.ecs.EcsComponent
 import jetbrains.livemap.core.ecs.EcsEntity
 import jetbrains.livemap.mapengine.RenderHelper

@@ -9,7 +9,7 @@ package jetbrains.datalore.jetbrains.livemap
 
 import jetbrains.datalore.jetbrains.livemap.core.ecs.ComponentManagerUtil
 import jetbrains.datalore.jetbrains.livemap.stubs.LayerManagerStub
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.api.FeatureLayerBuilder

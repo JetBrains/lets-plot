@@ -8,7 +8,7 @@ package jetbrains.livemap.canvasDemo
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.base.platf.dom.DomEventMapper
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.vis.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
 import jetbrains.livemap.demo.DemoBaseJs
 import kotlinx.browser.document

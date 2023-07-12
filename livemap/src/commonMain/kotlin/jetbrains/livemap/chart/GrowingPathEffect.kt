@@ -8,7 +8,7 @@ package jetbrains.livemap.chart
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.LineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.Client
 import jetbrains.livemap.World
 import jetbrains.livemap.core.ecs.*

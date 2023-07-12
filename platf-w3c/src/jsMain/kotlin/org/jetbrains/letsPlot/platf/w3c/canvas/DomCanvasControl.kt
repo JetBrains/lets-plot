@@ -13,11 +13,11 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setPosition
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvas.EventPeer
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.EventPeer
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.Companion.DEVICE_PIXEL_RATIO
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
 import org.w3c.dom.CanvasRenderingContext2D

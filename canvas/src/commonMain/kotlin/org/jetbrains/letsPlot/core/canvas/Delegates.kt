@@ -1,4 +1,9 @@
-package jetbrains.datalore.vis.canvas
+/*
+ * Copyright (c) 2023. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
@@ -9,8 +14,8 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 
 class Context2dDelegate : Context2d {
     override fun clearRect(rect: DoubleRectangle) { }

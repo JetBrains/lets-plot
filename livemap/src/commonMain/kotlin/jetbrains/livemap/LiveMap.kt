@@ -18,10 +18,10 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
-import jetbrains.datalore.vis.canvas.DeltaTime
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
+import org.jetbrains.letsPlot.core.canvas.DeltaTime
 import jetbrains.livemap.Diagnostics.LiveMapDiagnostics
 import jetbrains.livemap.api.FeatureLayerBuilder
 import jetbrains.livemap.chart.*

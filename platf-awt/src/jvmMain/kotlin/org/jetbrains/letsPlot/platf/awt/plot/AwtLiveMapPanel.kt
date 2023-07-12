@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtAnimationTimerPeer
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtCanvasControl
 import org.jetbrains.letsPlot.platf.awt.canvas.AwtEventPeer
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import java.awt.Color
 import java.awt.Cursor
 import java.awt.Rectangle

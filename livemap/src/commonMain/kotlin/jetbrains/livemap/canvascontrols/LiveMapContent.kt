@@ -6,7 +6,7 @@
 package jetbrains.livemap.canvascontrols
 
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import jetbrains.livemap.LiveMap
 
 class LiveMapContent(

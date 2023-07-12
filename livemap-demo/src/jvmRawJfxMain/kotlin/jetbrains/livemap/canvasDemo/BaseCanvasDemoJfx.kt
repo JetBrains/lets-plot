@@ -11,7 +11,7 @@ import javafx.stage.Stage
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.vis.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasControl
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxEventPeer
 

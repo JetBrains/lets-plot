@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvas.SingleCanvasControl
-import jetbrains.datalore.vis.canvas.drawImage
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.SingleCanvasControl
+import org.jetbrains.letsPlot.core.canvas.drawImage
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.layers.LayerKind.UI
 

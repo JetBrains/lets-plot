@@ -21,7 +21,7 @@ def include_sources_letsPlotJvmCommon = [
         'commons',
         'base-portable',
         'base',
-        'vis-canvas',
+        'canvas',
         'datamodel',
         'plot-base-portable',
         'plot-builder-portable',
@@ -45,7 +45,7 @@ def include_sources_letsPlotJvmBatik = [
 ]
 
 def include_sources_letsPlotGIS = [
-        'vis-canvas',
+        'canvas',
         'gis',
         'livemap',
         ':plot-livemap',

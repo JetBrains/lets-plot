@@ -8,7 +8,7 @@ package jetbrains.livemap.chart.path
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Scalar
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.World
 import jetbrains.livemap.WorldPoint
 import jetbrains.livemap.chart.ChartElementComponent

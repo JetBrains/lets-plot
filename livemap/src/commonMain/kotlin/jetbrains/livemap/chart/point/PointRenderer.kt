@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.chart.point
 
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.PointComponent
 import jetbrains.livemap.chart.changeAlphaWithMin

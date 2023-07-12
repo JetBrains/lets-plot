@@ -27,7 +27,7 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation kotlin('stdlib-jdk8')
-                implementation project(':vis-canvas')
+                implementation project(':canvas')
                 implementation project(':platf-awt')
                 implementation project(':platf-batik')
                 implementation project(':vis-demo-common')

@@ -6,8 +6,8 @@
 package jetbrains.livemap.mapengine.basemap.vector.debug
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Font
 import jetbrains.livemap.Client
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.core.ecs.EcsEntity

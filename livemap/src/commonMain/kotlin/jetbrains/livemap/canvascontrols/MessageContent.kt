@@ -7,8 +7,9 @@ package jetbrains.livemap.canvascontrols
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.*
-import jetbrains.datalore.vis.canvas.CanvasControlUtil.drawLater
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.drawLater
 import kotlin.math.max
 
 internal class MessageContent(private val message: String) : CanvasContent {

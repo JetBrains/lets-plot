@@ -7,8 +7,9 @@ package org.jetbrains.letsPlot.platf.w3c.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.*
-import jetbrains.datalore.vis.canvas.Canvas.Snapshot
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.DomSnapshot
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineCap
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineJoin

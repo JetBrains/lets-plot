@@ -17,7 +17,8 @@ import javafx.scene.text.TextAlignment
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
 
 typealias JfxFont = javafx.scene.text.Font
 typealias JfxFontWeight = javafx.scene.text.FontWeight
@@ -176,22 +177,22 @@ internal class JavafxContext2d(private val myContext2d: GraphicsContext) : Conte
         myContext2d.globalAlpha = alpha
     }
 
-    private fun jetbrains.datalore.vis.canvas.Font.toJavaFxFont(): JfxFont {
+    private fun org.jetbrains.letsPlot.core.canvas.Font.toJavaFxFont(): JfxFont {
         val weight: JfxFontWeight = when (fontWeight) {
-            FontWeight.NORMAL -> JfxFontWeight.NORMAL
-            FontWeight.BOLD -> JfxFontWeight.BOLD
+            org.jetbrains.letsPlot.core.canvas.FontWeight.NORMAL -> JfxFontWeight.NORMAL
+            org.jetbrains.letsPlot.core.canvas.FontWeight.BOLD -> JfxFontWeight.BOLD
         }
 
         val posture: FontPosture = when (fontStyle) {
-            FontStyle.NORMAL -> FontPosture.REGULAR
-            FontStyle.ITALIC -> FontPosture.ITALIC
+            org.jetbrains.letsPlot.core.canvas.FontStyle.NORMAL -> FontPosture.REGULAR
+            org.jetbrains.letsPlot.core.canvas.FontStyle.ITALIC -> FontPosture.ITALIC
         }
 
         // In Javafx FontPosture will not work, for fonts without italics
         return Font.font(fontFamily, weight, posture, fontSize)
     }
 
-    override fun setFont(f: jetbrains.datalore.vis.canvas.Font) {
+    override fun setFont(f: org.jetbrains.letsPlot.core.canvas.Font) {
         myContext2d.font = f.toJavaFxFont()
     }
 

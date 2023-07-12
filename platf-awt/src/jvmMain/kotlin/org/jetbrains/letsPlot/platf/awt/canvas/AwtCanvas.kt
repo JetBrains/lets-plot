@@ -8,8 +8,8 @@ package org.jetbrains.letsPlot.platf.awt.canvas
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR

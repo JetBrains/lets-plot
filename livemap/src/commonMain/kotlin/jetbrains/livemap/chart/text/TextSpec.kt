@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
-import jetbrains.datalore.vis.canvas.Font
-import jetbrains.datalore.vis.canvas.FontStyle
-import jetbrains.datalore.vis.canvas.FontWeight
-import jetbrains.datalore.vis.canvas.TextAlign
+import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.core.canvas.TextAlign
 import jetbrains.livemap.Client
 import jetbrains.livemap.core.graphics.TextMeasurer
 import kotlin.math.abs

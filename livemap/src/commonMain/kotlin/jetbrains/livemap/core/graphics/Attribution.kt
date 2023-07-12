@@ -8,7 +8,7 @@ package jetbrains.livemap.core.graphics
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.core.graphics.Attribution.AttributionParts.SimpleLink
 import jetbrains.livemap.core.graphics.Attribution.AttributionParts.SimpleText
 import jetbrains.livemap.core.openLink

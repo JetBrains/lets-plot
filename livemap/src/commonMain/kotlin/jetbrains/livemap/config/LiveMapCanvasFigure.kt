@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvasFigure.CanvasFigure
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvasFigure.CanvasFigure
 import jetbrains.livemap.LiveMap
 import jetbrains.livemap.canvascontrols.LiveMapPresenter
 

@@ -6,10 +6,10 @@
 package jetbrains.livemap.canvasDemo
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Font
-import jetbrains.datalore.vis.canvas.FontStyle
-import jetbrains.datalore.vis.canvas.FontWeight
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.FontStyle
+import org.jetbrains.letsPlot.core.canvas.FontWeight
 
 class TextStyleDemoModel(canvas: Canvas) {
 

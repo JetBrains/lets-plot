@@ -30,7 +30,7 @@ kotlin {
 
                 compileOnly("org.openjfx:javafx-swing:$jfx_version:${jfx_platform()}")
 
-                implementation project(':vis-canvas')
+                implementation project(':canvas')
                 implementation project(':platf-awt')
                 implementation project(':platf-jfx-swing')
             }

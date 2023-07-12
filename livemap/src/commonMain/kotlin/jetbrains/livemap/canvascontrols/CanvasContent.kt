@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.canvascontrols
 
-import jetbrains.datalore.vis.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
 
 internal interface CanvasContent {
     fun show(parentControl: CanvasControl)

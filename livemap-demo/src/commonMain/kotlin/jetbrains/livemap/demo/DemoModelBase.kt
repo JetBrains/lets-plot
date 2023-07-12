@@ -8,7 +8,7 @@ package jetbrains.livemap.demo
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
 import jetbrains.livemap.LiveMapLocation
 import jetbrains.livemap.api.LiveMapBuilder
 import jetbrains.livemap.api.Services

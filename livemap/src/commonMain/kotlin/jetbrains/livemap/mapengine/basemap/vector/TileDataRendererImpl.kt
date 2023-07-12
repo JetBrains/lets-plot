@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.gis.tileprotocol.mapConfig.MapConfig
 import jetbrains.gis.tileprotocol.mapConfig.Rule
 import jetbrains.livemap.core.multitasking.MicroTask

@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.canvas
+package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
 
 object CanvasControlUtil {
     fun drawLater(canvasControl: CanvasControl, renderer: () -> Unit) {

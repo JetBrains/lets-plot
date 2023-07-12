@@ -6,8 +6,8 @@
 package jetbrains.livemap.mapengine
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.vis.canvas.CanvasProvider
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.ClientPoint
 import jetbrains.livemap.core.graphics.RenderObject
 import jetbrains.livemap.mapengine.viewport.Viewport

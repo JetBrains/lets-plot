@@ -8,9 +8,10 @@ package jetbrains.livemap.canvascontrols
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.*
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.vis.canvas.CanvasControlUtil.setAnimationHandler
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.CanvasControlUtil.setAnimationHandler
 import kotlin.math.PI
 
 internal class SpinnerContent : CanvasContent {

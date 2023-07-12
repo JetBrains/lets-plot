@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.platf.w3c.canvas
 
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import kotlinx.browser.window
 
 internal abstract class DomAnimationTimer : AnimationTimer {

@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.chart.polygon
 
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.LineJoin
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.LineJoin
 import jetbrains.livemap.chart.ChartElementComponent
 import jetbrains.livemap.chart.changeAlphaWithMin
 import jetbrains.livemap.core.ecs.EcsEntity

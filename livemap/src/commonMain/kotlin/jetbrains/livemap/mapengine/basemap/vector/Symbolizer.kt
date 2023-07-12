@@ -11,9 +11,10 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiLineString
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.MultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Ring
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
-import jetbrains.datalore.vis.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
 import jetbrains.gis.tileprotocol.mapConfig.Style
 import jetbrains.livemap.Client
+import org.jetbrains.letsPlot.core.canvas.*
 import kotlin.math.round
 
 internal interface Symbolizer {

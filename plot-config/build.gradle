@@ -40,7 +40,7 @@ kotlin {
 //                implementation "io.github.microutils:kotlin-logging-jvm:$kotlinLogging_version"
 
                 implementation project(':platf-awt')
-                compileOnly project(':vis-canvas')
+                compileOnly project(':canvas')
                 compileOnly project(':plot-livemap')
             }
         }

@@ -12,10 +12,10 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.AnimationProvider
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvas.EventPeer
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.EventPeer
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.platf.jfx.canvas.JavafxCanvasUtil.imagePngBase64ToImage

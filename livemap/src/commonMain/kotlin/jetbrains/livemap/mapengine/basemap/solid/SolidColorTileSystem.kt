@@ -8,8 +8,8 @@ package jetbrains.livemap.mapengine.basemap.solid
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasProvider
 import jetbrains.livemap.config.TILE_PIXEL_SIZE
 import jetbrains.livemap.core.ecs.AbstractSystem
 import jetbrains.livemap.core.ecs.EcsComponentManager

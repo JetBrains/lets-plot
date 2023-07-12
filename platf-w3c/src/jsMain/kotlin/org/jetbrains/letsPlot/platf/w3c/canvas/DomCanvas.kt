@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setHeight
 import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.ScaledCanvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.ScaledCanvas
 import kotlinx.browser.document
 import kotlinx.browser.window
 import org.jetbrains.letsPlot.platf.w3c.dom.context2d

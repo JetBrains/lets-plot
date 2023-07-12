@@ -6,8 +6,8 @@
 package jetbrains.livemap.core.graphics
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.vis.canvas.Context2d
-import jetbrains.datalore.vis.canvas.Font
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Font
 
 class TextMeasurer(private val myContext2d: Context2d) {
     fun measure(label: String, font: Font): DoubleVector {

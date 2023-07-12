@@ -5,7 +5,7 @@
 
 package jetbrains.livemap.mapengine.basemap
 
-import jetbrains.datalore.vis.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Canvas
 import jetbrains.livemap.containers.LinkedList
 import jetbrains.livemap.mapengine.viewport.CellKey
 

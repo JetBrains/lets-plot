@@ -68,7 +68,7 @@ kotlin {
             dependsOn allJvm
             dependsOn jvmMain
             dependencies {
-                implementation project(':vis-canvas')
+                implementation project(':canvas')
                 implementation project(':vis-demo-common-jfx')
                 implementation project(':platf-awt')
                 implementation project(':platf-jfx-swing')

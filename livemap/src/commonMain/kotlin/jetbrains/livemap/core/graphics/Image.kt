@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.core.graphics
 
-import jetbrains.datalore.vis.canvas.Canvas.Snapshot
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
+import org.jetbrains.letsPlot.core.canvas.Context2d
 
 class Image : RenderBox() {
     var snapshot: Snapshot? by visualProp(null)

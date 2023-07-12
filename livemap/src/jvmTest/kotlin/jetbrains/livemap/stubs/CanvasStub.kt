@@ -7,8 +7,8 @@ package jetbrains.datalore.jetbrains.livemap.stubs
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.mockito.Mockito
 
 class CanvasStub: Canvas {

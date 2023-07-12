@@ -13,11 +13,11 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.event.handler
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationEventHandler
-import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvas.EventPeer
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.EventPeer
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream

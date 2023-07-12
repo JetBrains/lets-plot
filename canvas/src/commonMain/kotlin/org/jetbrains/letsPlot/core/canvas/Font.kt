@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.canvas
+package org.jetbrains.letsPlot.core.canvas
 
 data class Font(
     val fontStyle: FontStyle = FontStyle.NORMAL,

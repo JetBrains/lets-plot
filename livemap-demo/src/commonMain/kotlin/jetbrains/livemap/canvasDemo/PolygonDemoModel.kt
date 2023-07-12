@@ -6,8 +6,8 @@
 package jetbrains.livemap.canvasDemo
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.Context2d
 
 class PolygonDemoModel(canvas: Canvas) {
     private val size = 200.0

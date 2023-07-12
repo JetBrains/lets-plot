@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyBinding
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.vis.canvas.CanvasControl
-import jetbrains.datalore.vis.canvas.scheduleAsync
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.scheduleAsync
 import jetbrains.livemap.LiveMap
 
 class LiveMapPresenter : Disposable {

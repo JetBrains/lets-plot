@@ -7,7 +7,7 @@ package jetbrains.livemap.core.graphics
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import jetbrains.livemap.core.input.CursorStyle
 import jetbrains.livemap.core.input.InputMouseEvent
 

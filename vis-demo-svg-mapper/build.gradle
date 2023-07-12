@@ -46,7 +46,7 @@ kotlin {
         jvmJfxMain {
             dependsOn allJvm
             dependencies {
-                implementation project(':vis-canvas') // needed for `svg transform` parsing
+                implementation project(':canvas') // needed for `svg transform` parsing
                 implementation project(":platf-jfx-swing")
                 implementation project(':vis-demo-common-jfx')
             }

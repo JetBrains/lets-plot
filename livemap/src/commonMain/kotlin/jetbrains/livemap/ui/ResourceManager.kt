@@ -5,8 +5,8 @@
 
 package jetbrains.livemap.ui
 
-import jetbrains.datalore.vis.canvas.Canvas
-import jetbrains.datalore.vis.canvas.CanvasProvider
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasProvider
 
 class ResourceManager(private val canvasProvider: CanvasProvider) {
     private val snapshotMap: MutableMap<String, Canvas.Snapshot> = HashMap()

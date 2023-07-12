@@ -6,7 +6,8 @@
 package jetbrains.livemap.canvasDemo
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
+import org.jetbrains.letsPlot.core.canvas.*
 
 class SaveRestoreDemoModel(canvas: Canvas) {
     init {

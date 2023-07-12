@@ -6,7 +6,7 @@
 package jetbrains.livemap.core.graphics
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.vis.canvas.Context2d
+import org.jetbrains.letsPlot.core.canvas.Context2d
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

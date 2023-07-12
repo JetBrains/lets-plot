@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.canvas
+package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.vis.canvas.Canvas.Snapshot
+import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 
 internal class ScaledContext2d(
     private val ctx: Context2d,
