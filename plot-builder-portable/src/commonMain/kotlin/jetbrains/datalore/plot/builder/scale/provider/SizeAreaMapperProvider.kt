@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.provider
 
-import jetbrains.datalore.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 
 class SizeAreaMapperProvider(
     max: Double?,

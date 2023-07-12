@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -28,21 +28,21 @@ object TypedContinuousIdentityMappers {
         }
     }
 
-    private val MAP = HashMap<Aes<*>, ScaleMapper<*>>()
+    private val MAP = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>()
 
     init {
-        for (aes in Aes.numeric(Aes.values())) {
+        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.numeric(org.jetbrains.letsPlot.core.plot.base.Aes.values())) {
             MAP[aes] = Mappers.IDENTITY
         }
-        MAP[Aes.COLOR] = COLOR
-        MAP[Aes.FILL] = COLOR
+        MAP[org.jetbrains.letsPlot.core.plot.base.Aes.COLOR] = COLOR
+        MAP[org.jetbrains.letsPlot.core.plot.base.Aes.FILL] = COLOR
     }
 
-    fun contain(aes: Aes<*>): Boolean {
+    fun contain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
         return MAP.containsKey(aes)
     }
 
-    operator fun <T> get(aes: Aes<T>): ScaleMapper<T> {
+    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): ScaleMapper<T> {
         require(contain(aes)) { "No continuous identity mapper found for aes " + aes.name }
         val mapper = MAP[aes]!!
         // Safe cast because MAP was initiated in type-safe manner

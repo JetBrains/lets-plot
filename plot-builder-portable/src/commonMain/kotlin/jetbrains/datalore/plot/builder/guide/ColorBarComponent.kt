@@ -9,9 +9,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.render.svg.MultilineLabel
-import jetbrains.datalore.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
 import jetbrains.datalore.plot.builder.presentation.Style

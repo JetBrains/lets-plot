@@ -8,9 +8,9 @@ package jetbrains.datalore.plot.builder.coord
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.coord.CoordinatesMapper
-import jetbrains.datalore.plot.base.coord.Coords
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
+import org.jetbrains.letsPlot.core.plot.base.coord.Coords
 
 interface CoordProvider {
     val flipped: Boolean

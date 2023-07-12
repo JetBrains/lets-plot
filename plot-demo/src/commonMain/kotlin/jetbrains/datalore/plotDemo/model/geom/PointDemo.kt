@@ -7,14 +7,14 @@ package jetbrains.datalore.plotDemo.model.geom
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.array
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.coord.Coords
-import jetbrains.datalore.plot.base.geom.PointGeom
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.render.point.NamedShape
-import jetbrains.datalore.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.array
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
+import org.jetbrains.letsPlot.core.plot.base.coord.Coords
+import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class PointDemo : SimpleDemoBase() {

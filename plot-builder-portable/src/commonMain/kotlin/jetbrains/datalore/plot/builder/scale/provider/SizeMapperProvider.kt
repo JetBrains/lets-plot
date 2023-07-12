@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes.Companion.SIZE
-import jetbrains.datalore.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 
 class SizeMapperProvider(

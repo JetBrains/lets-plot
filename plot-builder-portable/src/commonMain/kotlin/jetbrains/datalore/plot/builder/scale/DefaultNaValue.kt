@@ -8,58 +8,58 @@ package jetbrains.datalore.plot.builder.scale
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
-import jetbrains.datalore.plot.base.Aes.Companion.ANGLE
-import jetbrains.datalore.plot.base.Aes.Companion.BINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.COLOR
-import jetbrains.datalore.plot.base.Aes.Companion.EXPLODE
-import jetbrains.datalore.plot.base.Aes.Companion.FAMILY
-import jetbrains.datalore.plot.base.Aes.Companion.FILL
-import jetbrains.datalore.plot.base.Aes.Companion.FLOW
-import jetbrains.datalore.plot.base.Aes.Companion.FONTFACE
-import jetbrains.datalore.plot.base.Aes.Companion.FRAME
-import jetbrains.datalore.plot.base.Aes.Companion.HEIGHT
-import jetbrains.datalore.plot.base.Aes.Companion.HJUST
-import jetbrains.datalore.plot.base.Aes.Companion.INTERCEPT
-import jetbrains.datalore.plot.base.Aes.Companion.LABEL
-import jetbrains.datalore.plot.base.Aes.Companion.LINEHEIGHT
-import jetbrains.datalore.plot.base.Aes.Companion.LINETYPE
-import jetbrains.datalore.plot.base.Aes.Companion.LOWER
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
-import jetbrains.datalore.plot.base.Aes.Companion.MIDDLE
-import jetbrains.datalore.plot.base.Aes.Companion.PAINT_A
-import jetbrains.datalore.plot.base.Aes.Companion.PAINT_B
-import jetbrains.datalore.plot.base.Aes.Companion.PAINT_C
-import jetbrains.datalore.plot.base.Aes.Companion.SAMPLE
-import jetbrains.datalore.plot.base.Aes.Companion.QUANTILE
-import jetbrains.datalore.plot.base.Aes.Companion.SHAPE
-import jetbrains.datalore.plot.base.Aes.Companion.SIZE
-import jetbrains.datalore.plot.base.Aes.Companion.STROKE
-import jetbrains.datalore.plot.base.Aes.Companion.LINEWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.SLICE
-import jetbrains.datalore.plot.base.Aes.Companion.SLOPE
-import jetbrains.datalore.plot.base.Aes.Companion.SPEED
-import jetbrains.datalore.plot.base.Aes.Companion.STACKSIZE
-import jetbrains.datalore.plot.base.Aes.Companion.UPPER
-import jetbrains.datalore.plot.base.Aes.Companion.VIOLINWIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.VJUST
-import jetbrains.datalore.plot.base.Aes.Companion.WEIGHT
-import jetbrains.datalore.plot.base.Aes.Companion.WIDTH
-import jetbrains.datalore.plot.base.Aes.Companion.X
-import jetbrains.datalore.plot.base.Aes.Companion.XEND
-import jetbrains.datalore.plot.base.Aes.Companion.XINTERCEPT
-import jetbrains.datalore.plot.base.Aes.Companion.XMAX
-import jetbrains.datalore.plot.base.Aes.Companion.XMIN
-import jetbrains.datalore.plot.base.Aes.Companion.Y
-import jetbrains.datalore.plot.base.Aes.Companion.YEND
-import jetbrains.datalore.plot.base.Aes.Companion.YINTERCEPT
-import jetbrains.datalore.plot.base.Aes.Companion.YMAX
-import jetbrains.datalore.plot.base.Aes.Companion.YMIN
-import jetbrains.datalore.plot.base.Aes.Companion.Z
-import jetbrains.datalore.plot.base.aes.AesScaling
-import jetbrains.datalore.plot.base.render.linetype.NamedLineType
-import jetbrains.datalore.plot.base.render.point.TinyPointShape
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.BINWIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FLOW
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LOWER
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MIDDLE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_A
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_B
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.PAINT_C
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SAMPLE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.QUANTILE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WEIGHT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.WIDTH
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.X
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XINTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMAX
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.XMIN
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Y
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YINTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMAX
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.YMIN
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.Z
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
 
 object DefaultNaValue {
     private val VALUE_MAP = TypedKeyHashMap()
@@ -118,11 +118,11 @@ object DefaultNaValue {
     /**
      * For test only (must be TRUE for any Aes)
      */
-    fun has(aes: Aes<*>): Boolean {
+    fun has(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
         return VALUE_MAP.containsKey(aes)
     }
 
-    operator fun <T> get(aes: Aes<T>): T {
+    operator fun <T> get(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
         return VALUE_MAP[aes]
     }
 

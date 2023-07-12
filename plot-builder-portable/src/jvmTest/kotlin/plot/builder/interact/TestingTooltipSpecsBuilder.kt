@@ -7,13 +7,13 @@ package jetbrains.datalore.plot.builder.interact
 
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.TestUtil.axisTheme
 import jetbrains.datalore.plot.builder.interact.mockito.ReturnsNotNullValuesAnswer
 import org.mockito.Mockito.*
@@ -62,9 +62,9 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
     companion object {
         private val DISPLAYABLE_AES_LIST =
-            toList(Aes.values())
+            toList(org.jetbrains.letsPlot.core.plot.base.Aes.values())
 
-        fun univariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
+        fun univariateFunctionBuilder(displayableAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
                 GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
@@ -72,7 +72,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
             )
         }
 
-        fun bivariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
+        fun bivariateFunctionBuilder(displayableAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
                 GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .bivariateFunction(false)
@@ -80,7 +80,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
             )
         }
 
-        fun areaFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
+        fun areaFunctionBuilder(displayableAesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
             return TestingTooltipSpecsBuilder(
                 GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .bivariateFunction(true)
@@ -88,8 +88,8 @@ internal class TestingTooltipSpecsBuilder private constructor(
             )
         }
 
-        private fun toList(aes: Iterable<Aes<*>>): List<Aes<*>> {
-            val target = ArrayList<Aes<*>>()
+        private fun toList(aes: Iterable<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+            val target = ArrayList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
             aes.forEach { target.add(it) }
 
             return target

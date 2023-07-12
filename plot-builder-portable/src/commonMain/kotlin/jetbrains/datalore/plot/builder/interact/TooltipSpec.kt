@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.interact
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor
 
 class TooltipSpec(
     val layoutHint: TipLayoutHint,

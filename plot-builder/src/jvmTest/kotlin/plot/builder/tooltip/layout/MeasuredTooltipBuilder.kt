@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.MeasuredTooltip

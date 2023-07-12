@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Scale
 import jetbrains.datalore.plot.builder.GeomLayer
 
 object TestingPlotContext {
@@ -19,7 +19,7 @@ object TestingPlotContext {
         )
     }
 
-    fun create(layers: List<GeomLayer>, scaleMap: Map<Aes<*>, Scale>): PlotContext {
+    fun create(layers: List<GeomLayer>, scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>): PlotContext {
         val layersByTile = listOf(layers) // 1 tile, 2 layers.
         return PlotAssemblerPlotContext(
             layersByTile = layersByTile,

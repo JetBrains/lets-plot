@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.theme
 
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 
 interface Theme {
     fun horizontalAxis(flipAxis: Boolean): AxisTheme

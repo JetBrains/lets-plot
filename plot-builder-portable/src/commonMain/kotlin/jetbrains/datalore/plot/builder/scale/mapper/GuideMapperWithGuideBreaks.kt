@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale.mapper
 
-import jetbrains.datalore.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.WithGuideBreaks
 

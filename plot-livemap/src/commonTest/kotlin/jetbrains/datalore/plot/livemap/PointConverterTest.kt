@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.livemap
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.geom.PointGeom
-import jetbrains.datalore.plot.base.render.point.NamedShape
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
+import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
+import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.GENERIC_POINTS
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher

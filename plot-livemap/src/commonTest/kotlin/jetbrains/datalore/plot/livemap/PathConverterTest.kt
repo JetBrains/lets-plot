@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.livemap
 
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.geom.PathGeom
-import jetbrains.datalore.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
+import org.jetbrains.letsPlot.core.plot.base.geom.PathGeom
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.GENERIC_POINTS
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.PATH

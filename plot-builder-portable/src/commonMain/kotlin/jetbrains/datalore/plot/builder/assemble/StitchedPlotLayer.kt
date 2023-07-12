@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
@@ -41,33 +41,33 @@ internal class StitchedPlotLayer constructor(
             return geomLayers[0].isLegendDisabled
         }
 
-    val colorByAes: Aes<Color>
+    val colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
         get() {
             check(geomLayers.isNotEmpty())
             return geomLayers[0].colorByAes
         }
 
-    val fillByAes: Aes<Color>
+    val fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
         get() {
             check(geomLayers.isNotEmpty())
             return geomLayers[0].fillByAes
         }
 
-    fun renderedAes(): List<Aes<*>> {
+    fun renderedAes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
         return if (geomLayers.isEmpty()) {
             emptyList()
         } else geomLayers[0].renderedAes()
     }
 
-    fun hasBinding(aes: Aes<*>): Boolean {
+    fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
         return geomLayers.isNotEmpty() && geomLayers[0].hasBinding(aes)
     }
 
-    fun hasConstant(aes: Aes<*>): Boolean {
+    fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
         return geomLayers.isNotEmpty() && geomLayers[0].hasConstant(aes)
     }
 
-    fun <T> getConstant(aes: Aes<T>): T {
+    fun <T> getConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
         check(geomLayers.isNotEmpty())
         return geomLayers[0].getConstant(aes)
     }

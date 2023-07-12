@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.sampling.method
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.calculateRingLimits

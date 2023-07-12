@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes.Companion.ALPHA
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 
 class AlphaMapperProvider(

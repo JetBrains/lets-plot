@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.frame
 
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.FrameOfReference
 import jetbrains.datalore.plot.builder.GeomLayer
 

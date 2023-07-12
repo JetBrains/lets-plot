@@ -8,16 +8,16 @@ package jetbrains.datalore.plot.builder.interact
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.HitShape
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.HitShape
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype.Companion.createTipLayoutHint
 
 class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
     private var myHintShape: HitShape = HitShape.point(DoubleVector.ZERO, 0.0)
-    private val myAesTipLayoutHints: MutableMap<Aes<*>, TipLayoutHint> = HashMap()
+    private val myAesTipLayoutHints: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint> = HashMap()
     private var myFill = Color.TRANSPARENT
 
     fun withPointHitShape(coord: DoubleVector, radius: Double): TestingGeomTargetBuilder {
@@ -41,7 +41,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
         return this
     }
 
-    fun withLayoutHint(aes: Aes<*>, layoutHint: TipLayoutHint): TestingGeomTargetBuilder {
+    fun withLayoutHint(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, layoutHint: TipLayoutHint): TestingGeomTargetBuilder {
         myAesTipLayoutHints[aes] = layoutHint
         return this
     }

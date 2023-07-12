@@ -7,16 +7,16 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.plot.base.interact.HitShape
-import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.horizontalTooltip
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.rotatedTooltip
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Companion.verticalTooltip
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector.TooltipParams
+import org.jetbrains.letsPlot.core.plot.base.interact.HitShape
+import org.jetbrains.letsPlot.core.plot.base.interact.HitShape.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.horizontalTooltip
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.rotatedTooltip
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.verticalTooltip
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.*
 
 class TargetPrototype(
     internal val hitShape: HitShape,

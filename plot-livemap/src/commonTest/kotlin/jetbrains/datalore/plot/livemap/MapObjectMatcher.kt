@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.geom.util.ArrowSpec
+import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
 import jetbrains.datalore.plot.livemap.MapLayerKind.*
 import jetbrains.gis.geoprotocol.Boundary
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*

@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 class LegendBreak(val label: String) {

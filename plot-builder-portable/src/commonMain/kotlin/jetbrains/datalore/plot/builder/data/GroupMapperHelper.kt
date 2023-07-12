@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 internal object GroupMapperHelper {
     val SINGLE_GROUP = { _: Int -> 0 }

@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.Stat
-import jetbrains.datalore.plot.base.stat.*
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.Stat
+import org.jetbrains.letsPlot.core.plot.base.stat.*
 import jetbrains.datalore.plot.config.Option.Stat.Bin
 import jetbrains.datalore.plot.config.Option.Stat.Bin2d
 import jetbrains.datalore.plot.config.Option.Stat.Boxplot

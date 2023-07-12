@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.sampling.method.SystematicSampling.Companion.computeStep
 
 internal class GroupSystematicSampling(sampleSize: Int) : GroupSamplingBase(sampleSize) {

@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.config.aes
 
 import org.jetbrains.letsPlot.commons.intern.function.Function
-import jetbrains.datalore.plot.base.render.linetype.LineType
-import jetbrains.datalore.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 
 internal class LineTypeOptionConverter : Function<Any?, LineType?> {
 

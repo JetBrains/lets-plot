@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 
 abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLocator) :
     GeomTargetLocator {
@@ -51,8 +51,8 @@ abstract class TransformedTargetLocator(private val targetLocator: GeomTargetLoc
         )
     }
 
-    private fun convertTipLayoutHints(tipLayoutHints: Map<Aes<*>, TipLayoutHint>): Map<Aes<*>, TipLayoutHint> {
-        val result = HashMap<Aes<*>, TipLayoutHint>()
+    private fun convertTipLayoutHints(tipLayoutHints: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint> {
+        val result = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, TipLayoutHint>()
         tipLayoutHints.forEach { (aes, hint) -> result[aes] = convertTipLayoutHint(hint) }
         return result
     }

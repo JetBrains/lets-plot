@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
 import org.assertj.core.api.Assertions.assertThat

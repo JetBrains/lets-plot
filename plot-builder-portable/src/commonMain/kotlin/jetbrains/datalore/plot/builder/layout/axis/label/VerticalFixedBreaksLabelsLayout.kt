@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout.axis.label
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 

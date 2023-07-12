@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
 import org.assertj.core.api.AbstractAssert
 import org.assertj.core.api.Assertions
 import org.junit.Ignore

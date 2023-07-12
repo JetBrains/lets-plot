@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.StatContext
-import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.StatContext
+import org.jetbrains.letsPlot.core.plot.base.Transform
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
@@ -39,7 +39,7 @@ internal object BackendDataProcUtil {
         data: DataFrame,
         layerConfig: LayerConfig,
         statCtx: StatContext,
-        transformByAes: Map<Aes<*>, Transform>,
+        transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
         facetVariables: List<DataFrame.Variable>,
         groupingContext: GroupingContext,
         messageHandler: (String) -> Unit

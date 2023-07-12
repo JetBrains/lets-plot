@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles.boundingBox
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpace
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.polygonContainsCoordinate
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import kotlin.math.max

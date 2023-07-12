@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.builder.tooltip.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
-import jetbrains.datalore.plot.base.interact.TooltipAnchor.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.interact.TooltipAnchor.VerticalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor.HorizontalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor.VerticalAnchor.*
 import kotlin.test.Test
 
 

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.assemble.facet
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.max

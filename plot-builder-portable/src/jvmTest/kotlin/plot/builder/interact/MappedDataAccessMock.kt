@@ -5,15 +5,15 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.interact.mockito.eq
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 class MappedDataAccessMock {
 
-    private val mappedAes = HashSet<Aes<*>>()
+    private val mappedAes = HashSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
     val mappedDataAccess: MappedDataAccess = mock(MappedDataAccess::class.java)
 
     fun <T> add(mapping: Mapping<T>): MappedDataAccessMock {
@@ -41,12 +41,12 @@ class MappedDataAccessMock {
         return this
     }
 
-    fun getMappedAes(): MutableSet<Aes<*>> {
+    fun getMappedAes(): MutableSet<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
         return mappedAes
     }
 
     class Mapping<T> internal constructor(
-        internal val aes: Aes<T>,
+        internal val aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>,
         internal val label: String,
         internal val value: String
     ) {
@@ -79,7 +79,7 @@ class MappedDataAccessMock {
             return this
         }
 
-        fun <T> mapping(aes: Aes<T>): Mapping<T> {
+        fun <T> mapping(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): Mapping<T> {
             return Mapping(aes, name, value)
         }
 

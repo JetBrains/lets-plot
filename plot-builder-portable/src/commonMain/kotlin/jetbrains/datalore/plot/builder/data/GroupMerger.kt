@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.OrderSpec
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.OrderSpec
 
 internal class GroupMerger(
     private val aggregateOperation: ((List<Double?>) -> Double?)?,

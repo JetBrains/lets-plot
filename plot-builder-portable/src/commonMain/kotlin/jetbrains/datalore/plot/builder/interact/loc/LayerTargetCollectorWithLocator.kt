@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.*
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.interact.*
 
 class LayerTargetCollectorWithLocator(
     private val geomKind: GeomKind,

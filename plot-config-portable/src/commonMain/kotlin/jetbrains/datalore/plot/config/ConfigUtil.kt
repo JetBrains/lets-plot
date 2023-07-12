@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
-import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
 import jetbrains.datalore.plot.config.Option.Meta
 
 object ConfigUtil {
@@ -157,14 +157,14 @@ object ConfigUtil {
     internal fun createAesMapping(
         data: DataFrame,
         mapping: Map<*, *>?,
-    ): Map<Aes<*>, DataFrame.Variable> {
+    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> {
         if (mapping == null) {
             return emptyMap()
         }
 
         val dfVariables = variables(data)
 
-        val result = HashMap<Aes<*>, DataFrame.Variable>()
+        val result = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>()
         val options = Option.Mapping.REAL_AES_OPTION_NAMES
         for (option in options) {
             val value = mapping[option]

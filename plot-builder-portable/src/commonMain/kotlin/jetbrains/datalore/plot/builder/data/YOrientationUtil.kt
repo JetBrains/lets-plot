@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import jetbrains.datalore.plot.builder.VarBinding
 
 object YOrientationUtil {
@@ -16,7 +16,7 @@ object YOrientationUtil {
         val positionalTransformVars = data.variables()
             .filter { it.isTransform }
             .associateBy { TransformVar.toAes(it) }
-            .filterKeys { Aes.isPositionalXY(it) }
+            .filterKeys { org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(it) }
             .values
 
 
@@ -40,7 +40,7 @@ object YOrientationUtil {
 
     fun flipVarBinding(bindings: List<VarBinding>): List<VarBinding> {
         return bindings.map {
-            if (Aes.isPositionalXY(it.aes)) {
+            if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(it.aes)) {
                 val flippedAes = YOrientationBaseUtil.flipAes(it.aes)
                 VarBinding(
                     it.variable,

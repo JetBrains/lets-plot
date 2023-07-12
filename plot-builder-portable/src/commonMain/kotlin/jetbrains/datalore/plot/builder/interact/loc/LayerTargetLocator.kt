@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.HitShape.Kind.*
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.CURSOR_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.HitShape.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.CURSOR_TOOLTIP
 import jetbrains.datalore.plot.builder.interact.MathUtil.ClosestPointChecker
 import kotlin.math.max
 

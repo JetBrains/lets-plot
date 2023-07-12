@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec

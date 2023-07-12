@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector.Companion.ZERO
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults
 import jetbrains.datalore.plot.builder.tooltip.TooltipBox

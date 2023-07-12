@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.layout.axis
 
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
 interface AxisBreaksProvider {
     val isFixedBreaks: Boolean

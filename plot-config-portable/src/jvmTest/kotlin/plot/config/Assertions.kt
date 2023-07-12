@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil
 import kotlin.test.assertEquals
@@ -59,7 +59,7 @@ fun PlotConfigClientSide.assertVariable(
 }
 
 fun PlotConfigClientSide.assertScale(
-    aes: Aes<*>,
+    aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
     isDiscrete: Boolean,
     name: String? = null,
     msg: () -> String = { "" }
@@ -77,7 +77,7 @@ fun PlotConfigClientSide.hasVariable(variable: DataFrame.Variable): PlotConfigCl
 }
 
 fun PlotConfigClientSide.assertBinding(
-    aes: Aes<*>,
+    aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
     varName: String
 ): PlotConfigClientSide {
     val layer = layerConfigs.single()
@@ -90,7 +90,7 @@ fun PlotConfigClientSide.assertBinding(
 }
 
 fun PlotConfigClientSide.assertNoBinding(
-    aes: Aes<*>
+    aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>
 ): PlotConfigClientSide {
     val layer = layerConfigs.single()
 

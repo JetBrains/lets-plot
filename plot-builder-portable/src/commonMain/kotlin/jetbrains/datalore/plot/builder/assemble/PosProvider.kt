@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.builder.assemble
 
-import jetbrains.datalore.plot.base.PositionAdjustment
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.pos.StackablePos
-import jetbrains.datalore.plot.base.pos.StackingMode
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.core.plot.base.pos.StackablePos
+import org.jetbrains.letsPlot.core.plot.base.pos.StackingMode
 import jetbrains.datalore.plot.builder.PosProviderContext
 import kotlin.jvm.JvmOverloads
 

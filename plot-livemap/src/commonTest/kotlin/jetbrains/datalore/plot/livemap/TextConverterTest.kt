@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.aes.AesInitValue
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.geom.TextGeom
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
+import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.AestheticsDataHelper
 import jetbrains.datalore.plot.livemap.ConverterDataHelper.createDefaultMatcher
 import jetbrains.datalore.plot.livemap.MapObjectMatcher.Companion.eq
@@ -39,7 +39,7 @@ class TextConverterTest {
 
     @Test
     fun whenFontFaceIsDefault_ShouldReturnEmptyString() {
-        aesData.builder().fontface(constant(AesInitValue[Aes.FONTFACE]))
+        aesData.builder().fontface(constant(AesInitValue[org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE]))
 
         matcher.fontface(eq(""))
 

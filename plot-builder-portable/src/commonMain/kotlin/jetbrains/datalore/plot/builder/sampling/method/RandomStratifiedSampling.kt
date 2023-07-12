@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.data.GroupUtil
-import jetbrains.datalore.plot.base.util.SamplingUtil
+import org.jetbrains.letsPlot.core.plot.base.util.SamplingUtil
 import jetbrains.datalore.plot.builder.sampling.GroupAwareSampling
 import kotlin.math.max
 import kotlin.math.round

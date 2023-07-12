@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.builder.scale.mapper
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 
 object GuideMappers {

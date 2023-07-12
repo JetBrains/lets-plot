@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import kotlin.math.abs
 

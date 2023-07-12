@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.scale.mapper
 
-import jetbrains.datalore.plot.base.render.linetype.LineType
-import jetbrains.datalore.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 
 object LineTypeMapper {
     val NA_VALUE: LineType = NamedLineType.SOLID

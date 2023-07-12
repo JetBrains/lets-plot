@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
@@ -106,8 +106,8 @@ object PlotConfigUtil {
         return layerConfigs.flatMap { it.varBindings }.filter { !(excludeStatVariables && it.variable.isStat) }
     }
 
-    private fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<Aes<*>, List<DataFrame.Variable>> {
-        val variablesByMappedAes: MutableMap<Aes<*>, MutableList<DataFrame.Variable>> = HashMap()
+    private fun associateAesWithMappedVariables(varBindings: List<VarBinding>): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, List<DataFrame.Variable>> {
+        val variablesByMappedAes: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, MutableList<DataFrame.Variable>> = HashMap()
         for (varBinding in varBindings) {
             val aes = varBinding.aes
             val variable = varBinding.variable
@@ -133,11 +133,11 @@ object PlotConfigUtil {
         return dataByVarBinding
     }
 
-    internal fun defaultScaleName(aes: Aes<*>, variablesByMappedAes: Map<Aes<*>, List<DataFrame.Variable>>): String {
+    internal fun defaultScaleName(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, variablesByMappedAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, List<DataFrame.Variable>>): String {
         return if (variablesByMappedAes.containsKey(aes)) {
             val variables = variablesByMappedAes.getValue(aes)
             val labels = variables.map(DataFrame.Variable::label).distinct()
-            if (labels.size > 1 && (aes == Aes.X || aes == Aes.Y)) {
+            if (labels.size > 1 && (aes == org.jetbrains.letsPlot.core.plot.base.Aes.X || aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y)) {
                 // Don't show multiple labels on X,Y axis.
                 aes.name
             } else {
@@ -169,13 +169,13 @@ object PlotConfigUtil {
 
     internal fun createScaleConfigs(scaleOptionsList: List<*>): List<ScaleConfig<Any>> {
         // merge options by 'aes'
-        val mergedOpts = HashMap<Aes<Any>, MutableMap<String, Any>>()
+        val mergedOpts = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<Any>, MutableMap<String, Any>>()
         for (opts in scaleOptionsList) {
             @Suppress("UNCHECKED_CAST")
             val optsMap = opts as Map<String, Any>
 
             @Suppress("UNCHECKED_CAST")
-            val aes = ScaleConfig.aesOrFail(optsMap) as Aes<Any>
+            val aes = ScaleConfig.aesOrFail(optsMap) as org.jetbrains.letsPlot.core.plot.base.Aes<Any>
             if (!mergedOpts.containsKey(aes)) {
                 mergedOpts[aes] = HashMap()
             }

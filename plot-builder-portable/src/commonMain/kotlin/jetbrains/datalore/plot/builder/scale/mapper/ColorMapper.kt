@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.HSV
-import jetbrains.datalore.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import kotlin.math.abs
 
 object ColorMapper {

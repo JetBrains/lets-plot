@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.Transform
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.Transform
+import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
 internal class BogusScale : Scale {
     override val name: String

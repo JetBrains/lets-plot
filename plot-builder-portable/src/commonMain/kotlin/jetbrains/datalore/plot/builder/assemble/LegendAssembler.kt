@@ -7,13 +7,13 @@ package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthetics
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
@@ -25,8 +25,8 @@ import kotlin.math.min
 
 class LegendAssembler(
     private val legendTitle: String,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptions>,
-    private val scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+    private val guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>,
+    private val scaleMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
     private val theme: LegendTheme
 ) {
 
@@ -34,14 +34,14 @@ class LegendAssembler(
 
     fun addLayer(
         keyFactory: LegendKeyElementFactory,
-        aesList: List<Aes<*>>,
-        constantByAes: Map<Aes<*>, Any>,
+        aesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        constantByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
 //        scaleByAes: Map<Aes<*>, Scale>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
-        colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>
+        colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
+        fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
     ) {
 
         legendLayers.add(
@@ -116,22 +116,22 @@ class LegendAssembler(
 
     private class LegendLayer(
         val keyElementFactory: LegendKeyElementFactory,
-        val aesList: List<Aes<*>>,
-        constantByAes: Map<Aes<*>, Any>,
+        val aesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        constantByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
 //        scaleMap: Map<Aes<*>, Scale>,
-        scaleMappers: Map<Aes<*>, ScaleMapper<*>>,
+        scaleMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
 //        transformedDomainByAes: Map<Aes<*>, DoubleSpan>
         ctx: PlotContext,
-        colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>
+        colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
+        fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
     ) {
 
         val keyAesthetics: Aesthetics
         val keyLabels: List<String>
 
         init {
-            val aesValuesByLabel = LinkedHashMap<String, MutableMap<Aes<*>, Any>>()
+            val aesValuesByLabel = LinkedHashMap<String, MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>>()
             for (aes in aesList) {
 //                var scale = scaleMap[aes]
                 var scale = ctx.getScale(aes)

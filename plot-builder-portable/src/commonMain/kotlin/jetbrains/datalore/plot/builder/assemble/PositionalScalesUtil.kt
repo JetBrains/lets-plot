@@ -7,13 +7,13 @@ package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.geom.PointDimensionsUtil
-import jetbrains.datalore.plot.base.geom.WithHeight
-import jetbrains.datalore.plot.base.geom.WithWidth
-import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.PointDimensionsUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.WithHeight
+import org.jetbrains.letsPlot.core.plot.base.geom.WithWidth
+import org.jetbrains.letsPlot.core.plot.base.geom.util.YOrientationAesthetics
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
@@ -53,14 +53,14 @@ internal object PositionalScalesUtil {
         val adjustedYDomains: List<DoubleSpan?> = facets.adjustVDomains(yDomains)
 
         val finalizedXDomains: List<DoubleSpan> = finalizeDomains(
-            Aes.X,
+            org.jetbrains.letsPlot.core.plot.base.Aes.X,
             xScaleProto,
             adjustedXDomains,
             layersByTile,
             facets.freeHScale
         )
         val finalizedYDomains: List<DoubleSpan> = finalizeDomains(
-            Aes.Y,
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y,
             yScaleProto,
             adjustedYDomains,
             layersByTile,
@@ -71,7 +71,7 @@ internal object PositionalScalesUtil {
     }
 
     private fun finalizeDomains(
-        aes: Aes<Double>,
+        aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
         scaleProto: Scale,
         domains: List<DoubleSpan?>,
         layersByTile: List<List<GeomLayer>>,
@@ -136,10 +136,10 @@ internal object PositionalScalesUtil {
 
     private fun positionalDryRunAesthetics(layer: GeomLayer): Aesthetics {
         val aesList = layer.renderedAes(considerOrientation = true).filter {
-            Aes.affectingScaleX(it) ||
-                    Aes.affectingScaleY(it) ||
-                    it == Aes.HEIGHT ||
-                    it == Aes.WIDTH
+            org.jetbrains.letsPlot.core.plot.base.Aes.affectingScaleX(it) ||
+                    org.jetbrains.letsPlot.core.plot.base.Aes.affectingScaleY(it) ||
+                    it == org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT ||
+                    it == org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH
         }
 
         val mappers = aesList.associateWith { Mappers.IDENTITY }
@@ -191,8 +191,8 @@ internal object PositionalScalesUtil {
     private fun computeLayerDryRunXYRangesAfterPosAdjustment(
         layer: GeomLayer, aes: Aesthetics, geomCtx: GeomContext
     ): Pair<DoubleSpan?, DoubleSpan?> {
-        val posAesX = Aes.affectingScaleX(layer.renderedAes())
-        val posAesY = Aes.affectingScaleY(layer.renderedAes())
+        val posAesX = org.jetbrains.letsPlot.core.plot.base.Aes.affectingScaleX(layer.renderedAes())
+        val posAesY = org.jetbrains.letsPlot.core.plot.base.Aes.affectingScaleY(layer.renderedAes())
 
         val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aes)
         if (pos.isIdentity) {
@@ -269,8 +269,8 @@ internal object PositionalScalesUtil {
     ): Pair<DoubleSpan?, DoubleSpan?> {
 
         val (widthAxis, heightAxis) = when (layer.isYOrientation) {
-            true -> Aes.Y to Aes.X
-            false -> Aes.X to Aes.Y
+            true -> org.jetbrains.letsPlot.core.plot.base.Aes.Y to org.jetbrains.letsPlot.core.plot.base.Aes.X
+            false -> org.jetbrains.letsPlot.core.plot.base.Aes.X to org.jetbrains.letsPlot.core.plot.base.Aes.Y
         }
 
         val geom = layer.geom
@@ -286,10 +286,10 @@ internal object PositionalScalesUtil {
                     }
                 }
 
-                Aes.WIDTH in renderedAes -> {
+                org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH in renderedAes -> {
                     val resolution = geomCtx.getResolution(widthAxis)
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        PointDimensionsUtil.dimensionSpan(p, widthAxis, Aes.WIDTH, resolution)
+                        PointDimensionsUtil.dimensionSpan(p, widthAxis, org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, resolution)
                     }
                 }
 
@@ -304,10 +304,10 @@ internal object PositionalScalesUtil {
                     }
                 }
 
-                Aes.HEIGHT in renderedAes -> {
+                org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT in renderedAes -> {
                     val resolution = geomCtx.getResolution(heightAxis)
                     computeLayerDryRunRangeAfterSizeExpand(aesthetics) { p ->
-                        PointDimensionsUtil.dimensionSpan(p, heightAxis, Aes.HEIGHT, resolution)
+                        PointDimensionsUtil.dimensionSpan(p, heightAxis, org.jetbrains.letsPlot.core.plot.base.Aes.HEIGHT, resolution)
                     }
                 }
 
@@ -315,7 +315,7 @@ internal object PositionalScalesUtil {
             }
         )
 
-        return Pair(xy.getValue(Aes.X), xy.getValue(Aes.Y))
+        return Pair(xy.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X), xy.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
     }
 
     private fun computeLayerDryRunRangeAfterSizeExpand(
@@ -351,7 +351,7 @@ internal object PositionalScalesUtil {
 
         internal fun expandRange(
             range: DoubleSpan?,
-            aes: Aes<Double>,
+            aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>,
             scale: Scale,
             layers: List<GeomLayer>
         ): DoubleSpan? {
@@ -386,7 +386,7 @@ internal object PositionalScalesUtil {
             return wasRange
         }
 
-        internal fun combineRanges(aesList: List<Aes<Double>>, aesthetics: Aesthetics): DoubleSpan? {
+        internal fun combineRanges(aesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<Double>>, aesthetics: Aesthetics): DoubleSpan? {
             var result: DoubleSpan? = null
             for (aes in aesList) {
                 val range = aesthetics.range(aes)

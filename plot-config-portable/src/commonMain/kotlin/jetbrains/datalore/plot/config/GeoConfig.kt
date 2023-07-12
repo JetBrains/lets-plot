@@ -8,13 +8,13 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport
 import org.jetbrains.letsPlot.commons.intern.spatial.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomKind.*
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.DataFrameUtil.findVariableOrFail
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
 import jetbrains.datalore.plot.config.ConfigUtil.createAesMapping
 import jetbrains.datalore.plot.config.ConfigUtil.join
 import jetbrains.datalore.plot.config.CoordinatesCollector.*
@@ -38,7 +38,7 @@ class GeoConfig(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<Aes<*>, Variable>
+    val mappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>
 
     init {
         if (layerOptions.has(MAP_DATA_META, GDF) || layerOptions.has(DATA_META, GDF)) {
@@ -71,7 +71,7 @@ class GeoConfig(
             if (!isMapPlot && combinedMappings.keys
                     .mapNotNull { it as? String }
                     .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
-                    .any(Aes.Companion::isPositional)
+                    .any(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositional)
             ) {
                 return false
             }
@@ -104,7 +104,7 @@ class GeoReferenceProcessor(
     mappingOptions: Map<*, *>
 ) { 
     val processedDataFrame: DataFrame
-    val processedMappings: Map<Aes<*>, Variable>
+    val processedMappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>
 
     init {
         val data: DataFrame
@@ -165,7 +165,7 @@ class GeoReferenceProcessor(
             .put(idVar, mapids)
             .build()
 
-        processedMappings = createAesMapping(processedDataFrame, mappingOptions + mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
+        processedMappings = createAesMapping(processedDataFrame, mappingOptions + mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.MAP_ID.name to GeoReference.Columns.ID))
     }
 }
 
@@ -176,7 +176,7 @@ class GeoDataFrameProcessor(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<Aes<*>, Variable>
+    val mappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Variable>
 
     init {
 
@@ -344,15 +344,15 @@ internal abstract class CoordinatesCollector(
     companion object {
 
         val POINT_COLUMNS = mapOf(
-            Aes.X.name to GeoConfig.POINT_X,
-            Aes.Y.name to GeoConfig.POINT_Y
+            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to GeoConfig.POINT_X,
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to GeoConfig.POINT_Y
         )
 
         val RECT_MAPPINGS = mapOf(
-            Aes.XMIN.name to GeoConfig.RECT_XMIN,
-            Aes.YMIN.name to GeoConfig.RECT_YMIN,
-            Aes.XMAX.name to GeoConfig.RECT_XMAX,
-            Aes.YMAX.name to GeoConfig.RECT_YMAX
+            org.jetbrains.letsPlot.core.plot.base.Aes.XMIN.name to GeoConfig.RECT_XMIN,
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN.name to GeoConfig.RECT_YMIN,
+            org.jetbrains.letsPlot.core.plot.base.Aes.XMAX.name to GeoConfig.RECT_XMAX,
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX.name to GeoConfig.RECT_YMAX
         )
 
         internal fun Map<String, MutableList<Any>>.append(p: Vec<LonLat>) {

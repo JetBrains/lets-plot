@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer
@@ -19,8 +19,8 @@ object SimpleTestSpecs {
         return mutableMapOf(
             Layer.GEOM to GeomName.POINT,
             PlotBase.MAPPING to mapOf(
-                Aes.X.name to List(50) { 1.0 },
-                Aes.Y.name to List(50) { 1.0 }
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to List(50) { 1.0 },
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to List(50) { 1.0 }
             )
         )
     }

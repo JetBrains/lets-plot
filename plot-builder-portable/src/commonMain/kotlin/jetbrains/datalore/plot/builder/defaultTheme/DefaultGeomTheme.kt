@@ -7,14 +7,14 @@ package jetbrains.datalore.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import jetbrains.datalore.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
-import jetbrains.datalore.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 
 internal class DefaultGeomTheme private constructor(

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.Option.GeomName
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Meta.KIND
@@ -35,7 +35,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(Aes.X, "x")
+            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x")
             .haveDataVector("x", inputVector)
     }
 
@@ -60,7 +60,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(Aes.X, "x1")
+            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x1")
             .haveDataVector("x1", inputVector)
     }
 
@@ -81,7 +81,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(Aes.X, "x")
+            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x")
             .haveDataVector("x", inputVector)
     }
 
@@ -106,7 +106,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(Aes.X, "x1")
+            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x1")
             .haveDataVector("x1", inputVector)
     }
 
@@ -129,7 +129,7 @@ class DataVectorsInAesMappingTest {
 
         val layers = ServerSideTestUtil.createLayerConfigsBeforeDataUpdate(plotOpts)
         SingleLayerAssert.assertThat(layers)
-            .haveBinding(Aes.X, "x")
+            .haveBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X, "x")
             .haveDataVector("x", expectedVector)
     }
 }

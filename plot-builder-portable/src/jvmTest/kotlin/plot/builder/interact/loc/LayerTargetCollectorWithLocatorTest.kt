@@ -8,12 +8,12 @@ package jetbrains.datalore.plot.builder.interact.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector.TooltipParams
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.interact.GeomInteraction
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import org.mockito.Mockito
@@ -109,7 +109,7 @@ class LayerTargetCollectorWithLocatorTest {
         }
 
         private fun createGeomInteractionBuilder(area: Boolean): GeomInteraction {
-            return GeomInteractionBuilder.DemoAndTest(Aes.values())
+            return GeomInteractionBuilder.DemoAndTest(org.jetbrains.letsPlot.core.plot.base.Aes.values())
                 .bivariateFunction(area)
                 .ignoreInvisibleTargets(true)
                 .build()

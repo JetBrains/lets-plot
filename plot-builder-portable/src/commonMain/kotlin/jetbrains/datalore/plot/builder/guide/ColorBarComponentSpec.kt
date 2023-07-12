@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.builder.guide
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 class ColorBarComponentSpec(

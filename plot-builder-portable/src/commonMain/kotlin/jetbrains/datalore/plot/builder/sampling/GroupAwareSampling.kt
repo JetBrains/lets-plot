@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.sampling
 
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 
 interface GroupAwareSampling : Sampling {
     fun isApplicable(population: DataFrame, groupMapper: (Int) -> Int): Boolean

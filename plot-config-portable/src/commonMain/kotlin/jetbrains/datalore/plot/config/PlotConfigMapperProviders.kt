@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 
@@ -14,12 +14,12 @@ internal object PlotConfigMapperProviders {
         layerConfigs: List<LayerConfig>,
         scaleConfigs: List<ScaleConfig<Any>>,
         excludeStatVariables: Boolean
-    ): Map<Aes<*>, MapperProvider<*>> {
+    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, MapperProvider<*>> {
 
         val setup = PlotConfigUtil.createPlotAesBindingSetup(layerConfigs, excludeStatVariables)
 
         // All aes used in bindings and x/y aes.
-        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
 
         val defaultProviders = aesSet.associateWith { DefaultMapperProvider[it] }
         val configuredProviders = scaleConfigs.map {

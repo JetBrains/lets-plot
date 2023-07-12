@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.base.scale.breaks.ScaleBreaksUtil
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.ScaleBreaksUtil
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF_NUM_BIN
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo

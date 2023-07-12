@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.HIDDEN
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.VISIBLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement

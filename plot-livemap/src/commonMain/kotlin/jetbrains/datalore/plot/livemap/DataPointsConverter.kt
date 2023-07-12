@@ -10,15 +10,15 @@ import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.Geom
-import jetbrains.datalore.plot.base.geom.*
-import jetbrains.datalore.plot.base.geom.util.*
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_RECTANGLE
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.createPathGroups
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.Geom
+import org.jetbrains.letsPlot.core.plot.base.geom.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.*
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathGroups
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.abs
 import kotlin.math.min
@@ -38,7 +38,7 @@ internal class DataPointsConverter(
 
     private fun pieConverter(geom: PieGeom): List<DataPointLiveMapAesthetics> {
         val colorGetter: (DataPointAesthetics) -> Color = { p: DataPointAesthetics -> p.fill()!! }
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y, org.jetbrains.letsPlot.core.plot.base.Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints, colorGetter)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {

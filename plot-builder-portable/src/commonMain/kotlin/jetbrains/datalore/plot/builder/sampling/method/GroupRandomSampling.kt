@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import kotlin.random.Random
 
 internal class GroupRandomSampling(sampleSize: Int, private val mySeed: Long?) : GroupSamplingBase(sampleSize) {

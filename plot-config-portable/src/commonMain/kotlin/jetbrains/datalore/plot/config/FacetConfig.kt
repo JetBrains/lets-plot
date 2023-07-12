@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_FORMATTER
 import jetbrains.datalore.plot.builder.assemble.PlotFacets.Companion.DEF_ORDER_DIR

@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
 interface ImmutableGeomContext : GeomContext {
@@ -23,7 +23,7 @@ interface ImmutableGeomContext : GeomContext {
 
         fun aesthetics(aesthetics: Aesthetics): Builder
 
-        fun aestheticMappers(aestheticMappers: Map<Aes<*>, ScaleMapper<*>>): Builder
+        fun aestheticMappers(aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>): Builder
 
         fun aesBounds(aesBounds: DoubleRectangle): Builder
 

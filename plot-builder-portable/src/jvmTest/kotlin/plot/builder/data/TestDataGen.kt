@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.data
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin

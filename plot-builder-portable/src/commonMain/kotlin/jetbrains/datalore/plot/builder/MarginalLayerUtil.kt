@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.builder
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.assemble.PositionalScalesUtil
 
@@ -72,22 +72,22 @@ object MarginalLayerUtil {
     }
 
     fun toMarginalScaleMap(
-        scaleMap: Map<Aes<*>, Scale>,
+        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
         margin: MarginSide,
         flipOrientation: Boolean
-    ): Map<Aes<*>, Scale> {
+    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale> {
 
-        fun isXAxis(aes: Aes<*>): Boolean {
+        fun isXAxis(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
             return when (flipOrientation) {
-                true -> Aes.isPositionalY(aes)
-                false -> Aes.isPositionalX(aes)
+                true -> org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes)
+                false -> org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes)
             }
         }
 
-        fun isYAxis(aes: Aes<*>): Boolean {
+        fun isYAxis(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
             return when (flipOrientation) {
-                true -> Aes.isPositionalX(aes)
-                false -> Aes.isPositionalY(aes)
+                true -> org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes)
+                false -> org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes)
             }
         }
 

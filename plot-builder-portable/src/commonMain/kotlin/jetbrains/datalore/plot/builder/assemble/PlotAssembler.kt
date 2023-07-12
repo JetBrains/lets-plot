@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.MarginalLayerUtil
@@ -29,8 +29,8 @@ import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotAssembler constructor(
     private val layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: Map<Aes<*>, Scale>,
-    private val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
+    private val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+    private val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
     private val facets: PlotFacets = PlotFacets.undefined(),
     private val coordProvider: CoordProvider,
     private val xAxisPosition: AxisPosition,
@@ -39,11 +39,11 @@ class PlotAssembler constructor(
     private val title: String? = null,
     private val subtitle: String? = null,
     private val caption: String? = null,
-    private val guideOptionsMap: Map<Aes<*>, GuideOptions> = HashMap(),
+    private val guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions> = HashMap(),
 ) {
 
-    private val scaleXProto: Scale = scaleMap.getValue(Aes.X)
-    private val scaleYProto: Scale = scaleMap.getValue(Aes.Y)
+    private val scaleXProto: Scale = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+    private val scaleYProto: Scale = scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
 
     val coreLayersByTile: List<List<GeomLayer>> = layersByTile.map { layers ->
         layers.filterNot { it.isMarginal }
@@ -168,8 +168,8 @@ class PlotAssembler constructor(
     companion object {
         fun demoAndTest(
             plotLayers: List<GeomLayer>,
-            scaleMap: Map<Aes<*>, Scale>,
-            scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
+            scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+            scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
             coordProvider: CoordProvider,
             theme: Theme,
             xAxisPosition: AxisPosition = AxisPosition.BOTTOM,

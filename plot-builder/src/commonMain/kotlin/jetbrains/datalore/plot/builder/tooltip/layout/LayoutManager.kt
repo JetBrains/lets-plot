@@ -8,9 +8,9 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
 import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition

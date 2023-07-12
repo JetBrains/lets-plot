@@ -7,13 +7,13 @@ package jetbrains.datalore.plot.builder
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 
@@ -28,9 +28,9 @@ interface GeomLayer {
 
     val posProvider: PosProvider
 
-    val scaleMap: Map<Aes<*>, Scale>
+    val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>
 
-    val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>
+    val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>
 
     val legendKeyElementFactory: LegendKeyElementFactory
 
@@ -52,25 +52,25 @@ interface GeomLayer {
 
     val fontFamilyRegistry: FontFamilyRegistry
 
-    val colorByAes: Aes<Color>
+    val colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
 
-    val fillByAes: Aes<Color>
+    val fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
 
-    fun renderedAes(considerOrientation: Boolean = false): List<Aes<*>>
+    fun renderedAes(considerOrientation: Boolean = false): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
 
-    fun hasBinding(aes: Aes<*>): Boolean
+    fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
 
-    fun <T> getBinding(aes: Aes<T>): VarBinding
+    fun <T> getBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): VarBinding
 
-    fun hasConstant(aes: Aes<*>): Boolean
+    fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
 
-    fun <T> getConstant(aes: Aes<T>): T
+    fun <T> getConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T
 
-    fun <T> getDefault(aes: Aes<T>): T
+    fun <T> getDefault(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T
 
-    fun preferableNullDomain(aes: Aes<*>): DoubleSpan
+    fun preferableNullDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan
 
-    fun rangeIncludesZero(aes: Aes<*>): Boolean
+    fun rangeIncludesZero(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider)
 

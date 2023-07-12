@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.GeomKind.*
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupResult
 import jetbrains.datalore.plot.builder.interact.MathUtil
 import kotlin.math.abs
 

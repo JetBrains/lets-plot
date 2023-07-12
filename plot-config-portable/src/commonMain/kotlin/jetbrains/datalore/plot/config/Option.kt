@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
 object Option {
@@ -268,10 +268,10 @@ object Option {
             // Parameters in GeomImage.
             // It's "rendered" aesthetics at the same time but "geom image" doesn't use aes to actually render image.
             // The constants are used to compute limits on x/y-axis and the image bbox.
-            val XMIN = Aes.XMIN.name
-            val XMAX = Aes.XMAX.name
-            val YMIN = Aes.YMIN.name
-            val YMAX = Aes.YMAX.name
+            val XMIN = org.jetbrains.letsPlot.core.plot.base.Aes.XMIN.name
+            val XMAX = org.jetbrains.letsPlot.core.plot.base.Aes.XMAX.name
+            val YMIN = org.jetbrains.letsPlot.core.plot.base.Aes.YMIN.name
+            val YMAX = org.jetbrains.letsPlot.core.plot.base.Aes.YMAX.name
         }
 
         object Text {
@@ -589,24 +589,24 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
-        private val AES_BY_OPTION = HashMap<String, Aes<*>>()
+        private val AES_BY_OPTION = HashMap<String, org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
         init {
-            Aes.values().forEach { aes ->
+            org.jetbrains.letsPlot.core.plot.base.Aes.values().forEach { aes ->
                 AES_BY_OPTION[toOption(aes)] = aes
             }
             // aliases
-            AES_BY_OPTION["colour"] = Aes.COLOR
-            AES_BY_OPTION["col"] = Aes.COLOR
+            AES_BY_OPTION["colour"] = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
+            AES_BY_OPTION["col"] = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
         }
 
-        fun toAes(option: String): Aes<*> {
+        fun toAes(option: String): org.jetbrains.letsPlot.core.plot.base.Aes<*> {
             require(AES_BY_OPTION.containsKey(option)) { "Not an aesthetic: '$option'" }
             return AES_BY_OPTION[option]!!
         }
 
-        fun toOption(aes: Aes<*>): String {
+        fun toOption(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): String {
             return aes.name.lowercase()
         }
     }

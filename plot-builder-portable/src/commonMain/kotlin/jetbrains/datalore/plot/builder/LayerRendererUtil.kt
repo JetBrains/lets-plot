@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.geom.util.YOrientationAesthetics
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.geom.util.YOrientationAesthetics
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 
 object LayerRendererUtil {
 
@@ -43,7 +43,7 @@ object LayerRendererUtil {
             }
         }
 
-        val mappedAes: Set<Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
+        val mappedAes: Set<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = layer.renderedAes().filter(layer::hasBinding).toSet()
         val pos = PlotUtil.createPositionAdjustment(layer.posProvider, aestheticsAfterOrientation)
         return LayerRendererData(
             geom = layer.geom,
@@ -61,10 +61,10 @@ object LayerRendererUtil {
         val geom: Geom,
         val geomKind: GeomKind,
         val aesthetics: Aesthetics,
-        val aestheticMappers: Map<Aes<*>, ScaleMapper<*>>,
+        val aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
         val pos: PositionAdjustment,
         val contextualMapping: ContextualMapping,
-        val mappedAes: Set<Aes<*>>,
+        val mappedAes: Set<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
         val annotations: Annotations?
     )
 }

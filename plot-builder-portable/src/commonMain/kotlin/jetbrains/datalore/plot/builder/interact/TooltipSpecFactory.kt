@@ -7,12 +7,12 @@ package jetbrains.datalore.plot.builder.interact
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_RADIUS
 import jetbrains.datalore.plot.builder.theme.AxisTheme
 
@@ -79,9 +79,9 @@ class TooltipSpecFactory(
         private fun axisTooltipSpec(): List<TooltipSpec> {
             val tooltipSpecs = ArrayList<TooltipSpec>()
             val axis = mapOf(
-                Aes.X to axisDataPoints().filter { Aes.X == it.aes }.map(DataPoint::value)
+                org.jetbrains.letsPlot.core.plot.base.Aes.X to axisDataPoints().filter { org.jetbrains.letsPlot.core.plot.base.Aes.X == it.aes }.map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue),
-                Aes.Y to axisDataPoints().filter { Aes.Y == it.aes }.map(DataPoint::value)
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y to axisDataPoints().filter { org.jetbrains.letsPlot.core.plot.base.Aes.Y == it.aes }.map(DataPoint::value)
                     .map(TooltipSpec.Line.Companion::withValue)
             )
             axis.forEach { (aes, lines) ->
@@ -141,16 +141,16 @@ class TooltipSpecFactory(
             }
         }
 
-        private fun createHintForAxis(aes: Aes<*>, flippedAxis: Boolean): TipLayoutHint {
+        private fun createHintForAxis(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, flippedAxis: Boolean): TipLayoutHint {
             val axis = aes.let {
                 when {
-                    flippedAxis && it == Aes.X -> Aes.Y
-                    flippedAxis && it == Aes.Y -> Aes.X
+                    flippedAxis && it == org.jetbrains.letsPlot.core.plot.base.Aes.X -> org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                    flippedAxis && it == org.jetbrains.letsPlot.core.plot.base.Aes.Y -> org.jetbrains.letsPlot.core.plot.base.Aes.X
                     else -> it
                 }
             }
             return when (axis) {
-                Aes.X -> {
+                org.jetbrains.letsPlot.core.plot.base.Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
                         coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
                         axisRadius = AXIS_RADIUS,
@@ -158,7 +158,7 @@ class TooltipSpecFactory(
                     )
                 }
 
-                Aes.Y -> {
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
                         coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
                         axisRadius = AXIS_RADIUS,

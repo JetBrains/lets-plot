@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.tool.DragFeedback
 import jetbrains.datalore.plot.builder.interact.tool.InteractionContext

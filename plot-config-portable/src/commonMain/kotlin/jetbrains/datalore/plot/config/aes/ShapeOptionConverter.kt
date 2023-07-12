@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config.aes
 
 import org.jetbrains.letsPlot.commons.intern.function.Function
-import jetbrains.datalore.plot.base.render.point.NamedShape
-import jetbrains.datalore.plot.base.render.point.PointShape
-import jetbrains.datalore.plot.base.render.point.TinyPointShape
+import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
+import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
+import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
 
 internal class ShapeOptionConverter : Function<Any?, PointShape?> {
 

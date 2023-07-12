@@ -10,11 +10,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.*
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector.TooltipParams
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.interact.*
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector.TooltipParams
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.loc.TargetPrototype
@@ -73,15 +73,15 @@ object TestUtil {
         emptyList()
     )
 
-    internal fun <T> continuous(aes: Aes<T>): Mapping<T> {
+    internal fun <T> continuous(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): Mapping<T> {
         return mappedData(aes, true)
     }
 
-    internal fun <T> discrete(aes: Aes<T>): Mapping<T> {
+    internal fun <T> discrete(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): Mapping<T> {
         return mappedData(aes, false)
     }
 
-    private fun <T> mappedData(aes: Aes<T>, isContinuous: Boolean): Mapping<T> {
+    private fun <T> mappedData(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, isContinuous: Boolean): Mapping<T> {
         return variable().name(VARIABLE_NAME).value(VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
     }
 

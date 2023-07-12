@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.aes.GeomTheme
-import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.scale.DefaultMapperProvider
@@ -50,25 +50,25 @@ class GeomLayerBuilderTest {
         val stat = Stats.bin()
         val posProvider = PosProvider.barStack()
 
-        val scaleProvider = ScaleProviderHelper.createDefault(Aes.FILL)
+        val scaleProvider = ScaleProviderHelper.createDefault(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)
         val scaleFill = scaleProvider.createScale(
             "cat",
             DiscreteTransform(data.distinctValues(cat), emptyList())
         )
-        val scaleByAes = mapOf<Aes<*>, Scale>(
-            Aes.X to Scales.DemoAndTest.continuousDomain("x", Aes.X),
-            Aes.Y to Scales.DemoAndTest.continuousDomain("y", Aes.Y),
-            Aes.FILL to scaleFill
+        val scaleByAes = mapOf<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>(
+            org.jetbrains.letsPlot.core.plot.base.Aes.X to Scales.DemoAndTest.continuousDomain("x", org.jetbrains.letsPlot.core.plot.base.Aes.X),
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Scales.DemoAndTest.continuousDomain("y", org.jetbrains.letsPlot.core.plot.base.Aes.Y),
+            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to scaleFill
         )
 
-        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
+        val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>> = mapOf(
 //            Aes.FILL to scaleProvider.mapperProvider.createDiscreteMapper(scaleFill.transform as DiscreteTransform)
-            Aes.FILL to DefaultMapperProvider[Aes.FILL].createDiscreteMapper(scaleFill.transform as DiscreteTransform)
+            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to DefaultMapperProvider[org.jetbrains.letsPlot.core.plot.base.Aes.FILL].createDiscreteMapper(scaleFill.transform as DiscreteTransform)
         )
 
         val bindings = ArrayList<VarBinding>()
-        bindings.add(VarBinding(X, Aes.X))
-        bindings.add(VarBinding(cat, Aes.FILL))
+        bindings.add(VarBinding(X, org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        bindings.add(VarBinding(cat, org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
 
         val histogramLayer = GeomLayerBuilder.demoAndTest(geomProvider, stat, posProvider)
 //            .stat(stat)
@@ -87,21 +87,21 @@ class GeomLayerBuilderTest {
             .build(data, scaleByAes, scaleMappersNP)
 
 
-        assertTrue(histogramLayer.hasBinding(Aes.X))
+        assertTrue(histogramLayer.hasBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X))
         // GeomLayerBuilder is no more responsible for creating 'stst' bindings
         // ToDo: this should be a plot test
 //        assertTrue(histogramLayer.hasBinding(Aes.Y))
-        assertTrue(histogramLayer.hasBinding(Aes.FILL))
+        assertTrue(histogramLayer.hasBinding(org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
 
         val layerData = histogramLayer.dataFrame
 
-        checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.X), 60)
+        checkBoundDataSize(layerData, histogramLayer.getBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X), 60)
 //        checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.Y), 60)
-        checkBoundDataSize(layerData, histogramLayer.getBinding(Aes.FILL), 60)
+        checkBoundDataSize(layerData, histogramLayer.getBinding(org.jetbrains.letsPlot.core.plot.base.Aes.FILL), 60)
 
-        checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.X))
+        checkNotOriginalVar(layerData, histogramLayer.getBinding(org.jetbrains.letsPlot.core.plot.base.Aes.X))
 //        checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.Y))
-        checkNotOriginalVar(layerData, histogramLayer.getBinding(Aes.FILL))
+        checkNotOriginalVar(layerData, histogramLayer.getBinding(org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
     }
 
 }

@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 
 class SvgLayerRenderer(
     private val aesthetics: Aesthetics,

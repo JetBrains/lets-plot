@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.builder.layout.axis
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.AxisLayoutInfo
 import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.tooltip
 
-import jetbrains.datalore.plot.base.interact.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor
 
 class TooltipSpecification(
     val valueSources: List<ValueSource>,

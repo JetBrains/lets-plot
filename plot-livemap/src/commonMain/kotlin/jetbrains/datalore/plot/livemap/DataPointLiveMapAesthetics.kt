@@ -13,17 +13,17 @@ import org.jetbrains.letsPlot.commons.intern.spatial.normalizeLon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aes.Companion.COLOR
-import jetbrains.datalore.plot.base.Aes.Companion.MAP_ID
-import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.base.aes.AesInitValue
-import jetbrains.datalore.plot.base.aes.AesScaling
-import jetbrains.datalore.plot.base.aes.AestheticsUtil
-import jetbrains.datalore.plot.base.geom.util.ArrowSpec
-import jetbrains.datalore.plot.base.geom.util.TextUtil
-import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.MAP_ID
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
+import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.ArrowSpec
+import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 import jetbrains.datalore.plot.livemap.DataPointsConverter.LabelOptions
 import jetbrains.datalore.plot.livemap.DataPointsConverter.MultiDataPointHelper.MultiDataPoint
@@ -107,7 +107,7 @@ internal class DataPointLiveMapAesthetics {
 
     val fontface
         get() = when (val fontface = myP.fontface()) {
-            AesInitValue[Aes.FONTFACE] -> ""
+            AesInitValue[org.jetbrains.letsPlot.core.plot.base.Aes.FONTFACE] -> ""
             else -> fontface
         }
 

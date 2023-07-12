@@ -15,9 +15,9 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.*
 import jetbrains.datalore.plot.builder.event.MouseEventPeer
 import jetbrains.datalore.plot.builder.interact.loc.LocatedTargetsPicker
 import jetbrains.datalore.plot.builder.interact.loc.TransformedTargetLocator

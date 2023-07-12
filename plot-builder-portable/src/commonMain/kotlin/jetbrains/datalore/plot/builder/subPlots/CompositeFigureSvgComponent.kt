@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.subPlots
 
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.FigureSvgRoot
 
 class CompositeFigureSvgComponent(

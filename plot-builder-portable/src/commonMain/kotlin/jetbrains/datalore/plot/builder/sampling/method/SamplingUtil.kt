@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.builder.sampling.method
 
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.calculateArea
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList

@@ -6,16 +6,16 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.scale.ScaleUtil
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 
 internal object TooltipFormatting {
-    fun createFormatter(aes: Aes<*>, ctx: PlotContext): (Any?) -> String {
+    fun createFormatter(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, ctx: PlotContext): (Any?) -> String {
         // expect only X,Y or not positional
-        check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {
+        check(!org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) || aes == org.jetbrains.letsPlot.core.plot.base.Aes.X || aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y) {
             "Positional aesthetic should be either X or Y but was $aes"
         }
 

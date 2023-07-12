@@ -8,11 +8,11 @@ package jetbrains.datalore.plotDemo.model
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Font
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 
@@ -24,7 +24,7 @@ class EmptyGeomContext : GeomContext {
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
     override val annotations: Annotations? = null
 
-    override fun getResolution(aes: Aes<Double>): Double {
+    override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
@@ -36,7 +36,7 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
-    override fun isMappedAes(aes: Aes<*>): Boolean = false
+    override fun isMappedAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = false
     override fun estimateTextSize(
         text: String,
         family: String,

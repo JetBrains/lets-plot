@@ -22,7 +22,7 @@ def include_sources_letsPlotJvmCommon = [
         'base',
         'canvas',
         'datamodel',
-        'plot-base-portable',
+        'plot-core',
         'plot-builder-portable',
         'plot-builder',
         'plot-config-portable',
@@ -236,7 +236,7 @@ subprojects {
     // Configure Kotlin targets.
     if (name in [
             'commons',
-            'plot-base-portable',
+            'plot-core',
             'plot-builder-portable',
             'plot-config-portable',
             'test-common',
@@ -277,7 +277,7 @@ subprojects {
     if (name in [
             'commons',
             'datamodel',
-            'plot-base-portable',
+            'plot-core',
             'plot-config-portable',
             'plot-builder-portable',
     ]) {

@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.LAYER
 import jetbrains.datalore.plot.config.AsDiscreteTest.Storage.PLOT
@@ -83,7 +83,7 @@ class SeriesAnnotationTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true, isDiscrete = false, name = "date")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDateTime = true, isDiscrete = false, name = "date")
             .assertDateTimeVariable(varName = "date", isDateTime = true)
     }
 
@@ -94,7 +94,7 @@ class SeriesAnnotationTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true, isDiscrete = false, name = "date")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDateTime = true, isDiscrete = false, name = "date")
             .assertDateTimeVariable(varName = "date", isDateTime = true)
     }
 
@@ -105,7 +105,7 @@ class SeriesAnnotationTest {
             mappingStorage = LAYER
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true, isDiscrete = false, name = "date")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDateTime = true, isDiscrete = false, name = "date")
             .assertDateTimeVariable(varName = "date", isDateTime = true)
     }
 
@@ -116,7 +116,7 @@ class SeriesAnnotationTest {
             mappingStorage = PLOT
         )
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true, isDiscrete = false, name = "date")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDateTime = true, isDiscrete = false, name = "date")
             .assertDateTimeVariable(varName = "date", isDateTime = true)
     }
 
@@ -129,7 +129,7 @@ class SeriesAnnotationTest {
                 scales = """{"aesthetic": "x", "reverse": true}"""
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = false, isDateTime = false, name = "date")
+                .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDiscrete = false, isDateTime = false, name = "date")
                 .assertDateTimeVariable(varName = "date", isDateTime = true)
         }
         run {
@@ -139,7 +139,7 @@ class SeriesAnnotationTest {
                 scales = """{"aesthetic": "x", "discrete": true}"""
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false, name = "date")
+                .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDiscrete = true, isDateTime = false, name = "date")
                 .assertDateTimeVariable(varName = "date", isDateTime = true)
         }
     }
@@ -154,7 +154,7 @@ class SeriesAnnotationTest {
                 dataMetaAnnotations
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+                .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDiscrete = true, isDateTime = false)
         }
         run {
             val spec = makePlotSpec(
@@ -163,7 +163,7 @@ class SeriesAnnotationTest {
                 dataMetaAnnotations
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+                .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDiscrete = true, isDateTime = false)
         }
         run {
             val spec = makePlotSpec(
@@ -172,7 +172,7 @@ class SeriesAnnotationTest {
                 dataMetaAnnotations
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+                .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDiscrete = true, isDateTime = false)
         }
         run {
             val spec = makePlotSpec(
@@ -181,7 +181,7 @@ class SeriesAnnotationTest {
                 dataMetaAnnotations
             )
             transformToClientPlotConfig(spec)
-                .assertDateTimeScale(Aes.X, isDiscrete = true, isDateTime = false)
+                .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDiscrete = true, isDateTime = false)
         }
     }
 
@@ -217,7 +217,7 @@ class SeriesAnnotationTest {
             }""".trimIndent()
 
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true, isDiscrete = false, name = "x")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDateTime = true, isDiscrete = false, name = "x")
     }
 
     @Test
@@ -253,8 +253,8 @@ class SeriesAnnotationTest {
             }""".trimIndent()
 
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.X, isDateTime = true, isDiscrete = false, name = "x")
-            .assertDateTimeScale(Aes.Y, isDateTime = false, isDiscrete = false, name = "foo")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.X, isDateTime = true, isDiscrete = false, name = "x")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.Y, isDateTime = false, isDiscrete = false, name = "foo")
     }
 
     @Test
@@ -286,12 +286,12 @@ class SeriesAnnotationTest {
             """.trimIndent()
 
         transformToClientPlotConfig(spec)
-            .assertDateTimeScale(Aes.Y, isDateTime = true, isDiscrete = false, name = "date")
+            .assertDateTimeScale(org.jetbrains.letsPlot.core.plot.base.Aes.Y, isDateTime = true, isDiscrete = false, name = "date")
             .assertDateTimeVariable(varName = "date", isDateTime = true)
     }
 
     private fun PlotConfigClientSide.assertDateTimeScale(
-        aes: Aes<*>,
+        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
         isDateTime: Boolean,
         isDiscrete: Boolean,
         name: String? = null

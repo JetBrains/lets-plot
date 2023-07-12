@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
@@ -22,14 +22,14 @@ internal object PlotConfigScaleMappers {
      */
     internal fun createMappers(
         layerConfigs: List<LayerConfig>,
-        transformByAes: Map<Aes<*>, Transform>,
-        mapperProviderByAes: Map<Aes<*>, MapperProvider<*>>,
-    ): Map<Aes<*>, ScaleMapper<*>> {
+        transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
+        mapperProviderByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, MapperProvider<*>>,
+    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>> {
         // X,Y scale - always.
-        check(transformByAes.containsKey(Aes.X))
-        check(transformByAes.containsKey(Aes.Y))
-        check(mapperProviderByAes.containsKey(Aes.X))
-        check(mapperProviderByAes.containsKey(Aes.Y))
+        check(transformByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        check(transformByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
+        check(mapperProviderByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        check(mapperProviderByAes.containsKey(org.jetbrains.letsPlot.core.plot.base.Aes.Y))
 
         val setup = PlotConfigUtil.createPlotAesBindingSetup(
             layerConfigs,
@@ -37,7 +37,7 @@ internal object PlotConfigScaleMappers {
         )
 
         // All aes used in bindings and x/y aes.
-        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(Aes.X, Aes.Y)
+        val aesSet = setup.mappedAesWithoutStatPositional() + setOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
         val dataByVarBinding = setup.dataByVarBindingWithoutStatPositional()
 
         val variablesByMappedAes = setup.variablesByMappedAes
@@ -48,15 +48,15 @@ internal object PlotConfigScaleMappers {
         // Effective domains for X, Y axis are computed later.
         //      See: PlotAssemblerUtil.computePlotDryRunXYRanges()
 
-        val continuousDomainByAes = HashMap<Aes<*>, DoubleSpan>()
-        transformByAes.getValue(Aes.X).let {
+        val continuousDomainByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DoubleSpan>()
+        transformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X).let {
             if (it is ContinuousTransform) {
-                continuousDomainByAes[Aes.X] = it.createApplicableDomain()
+                continuousDomainByAes[org.jetbrains.letsPlot.core.plot.base.Aes.X] = it.createApplicableDomain()
             }
         }
-        transformByAes.getValue(Aes.Y).let {
+        transformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y).let {
             if (it is ContinuousTransform) {
-                continuousDomainByAes[Aes.Y] = it.createApplicableDomain()
+                continuousDomainByAes[org.jetbrains.letsPlot.core.plot.base.Aes.Y] = it.createApplicableDomain()
             }
         }
 
@@ -67,7 +67,7 @@ internal object PlotConfigScaleMappers {
             val transform = transformByAes.getValue(aes)
 
             if (transform is ContinuousTransform) {
-                val domain = if (Aes.isPositionalXY(aes)) {
+                val domain = if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes)) {
                     transform.createApplicableDomain()
                 } else {
                     val domainRaw = SeriesUtil.span(
@@ -80,7 +80,7 @@ internal object PlotConfigScaleMappers {
         }
 
         // Create mappers for all aes.
-        val mappers = HashMap<Aes<*>, ScaleMapper<*>>()
+        val mappers = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>()
         for (aes in aesSet) {
             val defaultName = PlotConfigUtil.defaultScaleName(aes, variablesByMappedAes)
             val mapperProvider = mapperProviderByAes.getValue(aes)

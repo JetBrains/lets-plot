@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 
 abstract class DiscreteOnlyMapperProvider<T> : MapperProvider<T> {
     override fun createContinuousMapper(domain: DoubleSpan, trans: ContinuousTransform): GuideMapper<T> {

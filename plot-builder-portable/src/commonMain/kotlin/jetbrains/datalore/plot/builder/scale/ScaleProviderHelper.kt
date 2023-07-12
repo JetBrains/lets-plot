@@ -5,15 +5,15 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.scale.transform.DateTimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.DateTimeBreaksGen
 
 object ScaleProviderHelper {
-    fun <T> createDefault(aes: Aes<T>): ScaleProvider {
+    fun <T> createDefault(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): ScaleProvider {
         return ScaleProviderBuilder(aes).build()
     }
 
-    fun <T> createDateTimeScaleProvider(aes: Aes<T>, name: String): ScaleProvider {
+    fun <T> createDateTimeScaleProvider(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, name: String): ScaleProvider {
         return ScaleProviderBuilder(aes)
             .name(name)
             .breaksGenerator(DateTimeBreaksGen())

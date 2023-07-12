@@ -6,14 +6,14 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec.DataPoint
 
 class MappingField(
-    val aes: Aes<*>,
+    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
     override val isSide: Boolean = false,
     override val isAxis: Boolean = false,
     private val format: String? = null,
@@ -48,7 +48,7 @@ class MappingField(
                 myFormatter?.format(it)
             } ?: run {
                 val tooltipAes = when {
-                    Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, myDataAccess.isYOrientation)
+                    org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.toAxisAes(aes, myDataAccess.isYOrientation)
                     else -> aes
                 }
                 ctx.getTooltipFormatter(tooltipAes) {

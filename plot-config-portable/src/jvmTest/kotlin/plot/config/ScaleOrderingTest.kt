@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotUtil
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
@@ -67,11 +67,11 @@ class ScaleOrderingTest {
         assertScaleOrdering(
             geomLayer,
             expectedScaleBreaks = mapOf(
-                Aes.X to listOf("B", "C", "A"),
-                Aes.FILL to listOf("4", "2", "3", "1")
+                org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "C", "A"),
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("4", "2", "3", "1"),  // B
                     listOf("4", "2"),            // C
                     listOf("2", "3", "1")        // A
@@ -89,11 +89,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("A", "B", "C"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("A", "B", "C"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("2", "3", "1"),       // A
                         listOf("4", "2", "3", "1"),  // B
                         listOf("4", "2")             // C
@@ -108,11 +108,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "B", "A"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "B", "A"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2"),            // C
                         listOf("4", "2", "3", "1"),  // B
                         listOf("2", "3", "1"),       // A
@@ -131,11 +131,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.FILL to listOf("1", "2", "3", "4"),
-                    Aes.X to listOf("A", "B", "C")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("1", "2", "3", "4"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("A", "B", "C")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("1", "2", "3"),       // A
                         listOf("1", "2", "3", "4"),  // B
                         listOf("2", "4"),            // C
@@ -150,11 +150,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.FILL to listOf("4", "3", "2", "1"),
-                    Aes.X to listOf("B", "C", "A")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "3", "2", "1"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "C", "A")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "3", "2", "1"), // B
                         listOf("4", "2"),           // C
                         listOf("3", "2", "1")       // A
@@ -173,11 +173,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "A", "B"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "A", "B"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2"),           // C
                         listOf("2", "3", "1"),      // A
                         listOf("4", "2", "3", "1")  // B
@@ -192,11 +192,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("B", "A", "C"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "A", "C"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2", "3", "1"),  // B
                         listOf("2", "3", "1"),       // A
                         listOf("4", "2")             // C
@@ -216,11 +216,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "B", "A"),
-                    Aes.FILL to listOf("1", "2", "3", "4")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "B", "A"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("1", "2", "3", "4")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("2", "4"),           // C
                         listOf("1", "2", "3", "4"), // B
                         listOf("1", "2", "3")       // A
@@ -236,11 +236,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "B", "A"),
-                    Aes.FILL to listOf("4", "3", "2", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "B", "A"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "3", "2", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2"),            // C
                         listOf("4", "3", "2", "1"),  // B
                         listOf("3", "2", "1")        // A
@@ -260,11 +260,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "A", "B"),
-                    Aes.FILL to listOf("1", "2", "3", "4")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "A", "B"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("1", "2", "3", "4")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("2", "4"),            // C
                         listOf("1", "2", "3"),       // A
                         listOf("1", "2", "3", "4")   // B
@@ -280,11 +280,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("B", "A", "C"),
-                    Aes.FILL to listOf("4", "3", "2", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "A", "C"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "3", "2", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "3", "2", "1"), // B
                         listOf("3", "2", "1"),      // A
                         listOf("4", "2")            // C
@@ -301,17 +301,17 @@ class ScaleOrderingTest {
         assertScaleOrdering(
             geomLayer,
             expectedScaleBreaks = mapOf(
-                Aes.COLOR to listOf("0", "1", "2"),
-                Aes.FILL to listOf("1", "2", "3", "4"),
-                Aes.X to listOf("A", "C", "B")
+                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf("0", "1", "2"),
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("1", "2", "3", "4"),
+                org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("A", "C", "B")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("2", "1", "2", "3"),             // A
                     listOf("2", "4"),                       // C
                     listOf("2", "3", "1", "3", "4", "3"),   // B
                 ),
-                Aes.COLOR to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf(
                     listOf("0", "1", "1", "2"),              // A
                     listOf("0", "2"),                        // C
                     listOf("0", "0", "1", "1", "1", "2"),    // B
@@ -330,11 +330,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("B", "C"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "C"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2", "3", "1"), // B
                         listOf("4", "2")            // C
                     )
@@ -348,11 +348,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "B"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "B"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2"),            // C
                         listOf("4", "2", "3", "1")   // B
                     )
@@ -367,11 +367,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "B"),
-                    Aes.FILL to listOf("1", "2", "3", "4")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "B"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("1", "2", "3", "4")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("2", "4"),            // C
                         listOf("1", "2", "3", "4")   // B
                     )
@@ -385,11 +385,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("C", "A"),
-                    Aes.FILL to listOf("4", "2", "3", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("C", "A"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "2", "3", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "2"),       // C
                         listOf("2", "3", "1")   // A
                     )
@@ -417,11 +417,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("B", "C"),
-                    Aes.FILL to listOf("4", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "C"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "1"),   // B
                         listOf("4")         // C
                     )
@@ -435,11 +435,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("A", "B"),
-                    Aes.FILL to listOf("4", "1")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("A", "B"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "1")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("1"),       // A
                         listOf("4", "1")   // B
                     )
@@ -458,11 +458,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("B", "C", "A"),
-                    Aes.FILL to listOf("4", "3")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("B", "C", "A"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "3")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("4", "3"),   // B
                         listOf("4"),        // C
                         listOf("3")         // A
@@ -477,11 +477,11 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.X to listOf("A", "B", "C"),
-                    Aes.FILL to listOf("4", "3")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.X to listOf("A", "B", "C"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("4", "3")
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                         listOf("3"),        // A
                         listOf("4", "3"),   // B
                         listOf("4")         // C
@@ -503,9 +503,9 @@ class ScaleOrderingTest {
         val expectedOrder = listOf("3", "2", "1")
         assertScaleOrdering(
             geomLayer,
-            expectedScaleBreaks = mapOf(Aes.FILL to expectedOrder),
+            expectedScaleBreaks = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.FILL to expectedOrder),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(expectedOrder)
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(expectedOrder)
             )
         )
     }
@@ -521,8 +521,8 @@ class ScaleOrderingTest {
         val geomLayer = getSingleGeomLayer(spec)
         assertScaleOrdering(
             geomLayer,
-            expectedScaleBreaks = mapOf(Aes.FILL to null),
-            expectedOrderInBar = mapOf(Aes.FILL to null)
+            expectedScaleBreaks = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.FILL to null),
+            expectedOrderInBar = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.FILL to null)
         )
     }
 
@@ -539,9 +539,9 @@ class ScaleOrderingTest {
             val geomLayer = getSingleGeomLayer(spec)
             assertScaleOrdering(
                 geomLayer,
-                expectedScaleBreaks = mapOf(Aes.FILL to listOf("1", "2", "3")),
+                expectedScaleBreaks = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("1", "2", "3")),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(listOf("1", "2", "3", null))
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(listOf("1", "2", "3", null))
                 )
             )
         }
@@ -552,9 +552,9 @@ class ScaleOrderingTest {
             val geomLayer = getSingleGeomLayer(spec)
             assertScaleOrdering(
                 geomLayer,
-                expectedScaleBreaks = mapOf(Aes.FILL to listOf("3", "2", "1")),
+                expectedScaleBreaks = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("3", "2", "1")),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(listOf("3", "2", "1", null))
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(listOf("3", "2", "1", null))
                 )
             )
         }
@@ -575,13 +575,13 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.COLOR to listOf("1", "2"),
-                    Aes.FILL to listOf("v")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf("1", "2"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("v")
 
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.COLOR to listOf(listOf("1", "2", null)),
-                    Aes.FILL to listOf(listOf(null, null, "v"))
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf(listOf("1", "2", null)),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(listOf(null, null, "v"))
                 )
             )
         }
@@ -593,13 +593,13 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.COLOR to listOf("2", "1"),
-                    Aes.FILL to listOf("v")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf("2", "1"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("v")
 
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.COLOR to listOf(listOf("2", "1", null)),
-                    Aes.FILL to listOf(listOf(null, null, "v"))
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf(listOf("2", "1", null)),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(listOf(null, null, "v"))
                 )
             )
         }
@@ -611,13 +611,13 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.COLOR to listOf("1", "2"),
-                    Aes.FILL to listOf("v")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf("1", "2"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("v")
 
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(listOf("v", null, null)),
-                    Aes.COLOR to listOf(listOf(null, "1", "2"))
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(listOf("v", null, null)),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf(listOf(null, "1", "2"))
                 )
             )
         }
@@ -629,13 +629,13 @@ class ScaleOrderingTest {
             assertScaleOrdering(
                 geomLayer,
                 expectedScaleBreaks = mapOf(
-                    Aes.COLOR to listOf("2", "1"),
-                    Aes.FILL to listOf("v")
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf("2", "1"),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("v")
 
                 ),
                 expectedOrderInBar = mapOf(
-                    Aes.FILL to listOf(listOf("v", null, null)),
-                    Aes.COLOR to listOf(listOf(null, "2", "1"))
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(listOf("v", null, null)),
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR to listOf(listOf(null, "2", "1"))
                 )
             )
         }
@@ -647,8 +647,8 @@ class ScaleOrderingTest {
     fun `x='x', fill='x' - default`() {
         val mapping = """{ "x": "x", "fill": "x" }"""
         val geomLayer = getSingleGeomLayer(makePlotSpec(annotations = "", mapping = mapping))
-        assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.X, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf("B", "A", "C"))
     }
 
     @Test
@@ -658,8 +658,8 @@ class ScaleOrderingTest {
         val orderingSettings = makeOrderingSettings("x", null, 1)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
-        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf("B", "A", "C"))
     }
 
     @Test
@@ -670,8 +670,8 @@ class ScaleOrderingTest {
                 makeOrderingSettings("fill", null, null)
 
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
-        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf("B", "A", "C"))
      }
 
     @Test
@@ -681,8 +681,8 @@ class ScaleOrderingTest {
         val orderingSettings = makeOrderingSettings("x", "..count..", order = null) + "," +
                 makeOrderingSettings("fill", orderBy = null, order = 1)
         val geomLayer = getSingleGeomLayer(makePlotSpec(orderingSettings, mapping = mapping))
-        assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.X, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf("A", "B", "C"))
     }
 
 
@@ -704,8 +704,8 @@ class ScaleOrderingTest {
               ]
             }""".trimIndent()
         val geomLayer = getSingleGeomLayer(spec)
-        assertScaleBreaks(geomLayer, Aes.X, listOf("A", "B", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.X, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf("B", "A", "C"))
     }
 
     @Test
@@ -724,14 +724,14 @@ class ScaleOrderingTest {
               ]
             }""".trimIndent()
         val geomLayer = getSingleGeomLayer(spec)
-        assertScaleBreaks(geomLayer, Aes.X, listOf("B", "A", "C"))
-        assertScaleBreaks(geomLayer, Aes.FILL, listOf("A", "B", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.X, listOf("B", "A", "C"))
+        assertScaleBreaks(geomLayer, org.jetbrains.letsPlot.core.plot.base.Aes.FILL, listOf("A", "B", "C"))
     }
 
     companion object {
         private fun assertScaleBreaks(
             layer: GeomLayer,
-            aes: Aes<*>,
+            aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
             expectedScaleBreaks: List<Any>?
         ) {
             val scale = layer.scaleMap[aes]
@@ -769,8 +769,8 @@ class ScaleOrderingTest {
 
         internal fun assertScaleOrdering(
             geomLayer: GeomLayer,
-            expectedScaleBreaks: Map<Aes<*>, List<String>?>,
-            expectedOrderInBar: Map<Aes<*>, List<List<*>>?>
+            expectedScaleBreaks: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, List<String>?>,
+            expectedOrderInBar: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, List<List<*>>?>
         ) {
             expectedScaleBreaks.forEach { (aes, breaks) ->
                 assertScaleBreaks(geomLayer, aes, breaks)
@@ -785,7 +785,7 @@ class ScaleOrderingTest {
                     val breakColors = breaks.zip(legendColors).associate { it.second to it.first }
                     val actual: Map<Int, List<Any?>> =
                         getBarColumnValues(geomLayer, breakColors) { p: DataPointAesthetics ->
-                            if (aes == Aes.FILL) p.fill() else p.color()
+                            if (aes == org.jetbrains.letsPlot.core.plot.base.Aes.FILL) p.fill() else p.color()
                         }
                     assertEquals(expected.size, actual.size)
                     for (i in expected.indices) {

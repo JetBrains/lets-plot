@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.Scale
 import jetbrains.datalore.plot.builder.FrameOfReference
 import jetbrains.datalore.plot.builder.FrameOfReferenceProvider
 import jetbrains.datalore.plot.builder.MarginSide

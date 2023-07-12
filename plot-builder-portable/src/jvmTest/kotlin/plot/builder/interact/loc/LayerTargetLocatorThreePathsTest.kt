@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpace
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertEncodedObjects
 import jetbrains.datalore.plot.builder.interact.TestUtil.createLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil.horizontalPathTarget

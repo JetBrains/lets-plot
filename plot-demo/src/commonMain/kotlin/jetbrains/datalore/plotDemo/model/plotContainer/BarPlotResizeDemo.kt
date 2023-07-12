@@ -6,14 +6,14 @@
 package jetbrains.datalore.plotDemo.model.plotContainer
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.GeomLayerBuilder
 import jetbrains.datalore.plot.builder.assemble.PlotAssembler
@@ -42,14 +42,14 @@ class BarPlotResizeDemo private constructor(
             colors, Color.GRAY
         )
 
-        val scaleByAes = mapOf<Aes<*>, Scale>(
-            Aes.X to xScale,
-            Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", Aes.Y),
-            Aes.FILL to fillScale
+        val scaleByAes = mapOf<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>(
+            org.jetbrains.letsPlot.core.plot.base.Aes.X to xScale,
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y to Scales.DemoAndTest.continuousDomain("sin, cos, line", org.jetbrains.letsPlot.core.plot.base.Aes.Y),
+            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to fillScale
         )
 
-        val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
-            Aes.FILL to fillMapper
+        val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>> = mapOf(
+            org.jetbrains.letsPlot.core.plot.base.Aes.FILL to fillMapper
         )
 
         val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, PosProvider.dodge())
@@ -57,22 +57,22 @@ class BarPlotResizeDemo private constructor(
 //            .geom(GeomProvider.bar())
 //            .pos(PosProvider.dodge())
             .groupingVar(varCat)
-            .addBinding(VarBinding(varX, Aes.X))
+            .addBinding(VarBinding(varX, org.jetbrains.letsPlot.core.plot.base.Aes.X))
             .addBinding(
                 VarBinding(
                     varY,
-                    Aes.Y
+                    org.jetbrains.letsPlot.core.plot.base.Aes.Y
                 )
             )
-            .addBinding(VarBinding(varCat, Aes.FILL))
-            .addConstantAes(Aes.WIDTH, 0.9)
+            .addBinding(VarBinding(varCat, org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
+            .addConstantAes(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
         val geomInteraction = GeomInteractionBuilder.DemoAndTest(
             listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.FILL
+                org.jetbrains.letsPlot.core.plot.base.Aes.X,
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y,
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL
             )
         )
             .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
@@ -100,7 +100,7 @@ class BarPlotResizeDemo private constructor(
         fun continuousX(): BarPlotResizeDemo {
             return BarPlotResizeDemo(
                 SinCosLineData({ v -> v.toDouble() }, 6),
-                Scales.DemoAndTest.continuousDomain(" ", Aes.X)
+                Scales.DemoAndTest.continuousDomain(" ", org.jetbrains.letsPlot.core.plot.base.Aes.X)
             )
         }
 

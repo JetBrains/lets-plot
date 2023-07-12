@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.junit.Test
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
@@ -31,7 +31,7 @@ internal class ScaleProviderBuilderTest {
                 labelFormatter(domain, targetCount)
         }
 
-        val builder = ScaleProviderBuilder(Aes.X).breaksGenerator(bg)
+        val builder = ScaleProviderBuilder(org.jetbrains.letsPlot.core.plot.base.Aes.X).breaksGenerator(bg)
 
         val scaleProvider = builder.build()
         // continuous scale

@@ -5,24 +5,24 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.VarBinding
 
 internal class PointDataAccess(
     private val data: DataFrame,
-    private val bindings: Map<Aes<*>, VarBinding>,
-    private val scaleMap: Map<Aes<*>, Scale>,
+    private val bindings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, VarBinding>,
+    private val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
     override val isYOrientation: Boolean
 ) : MappedDataAccess {
 
-    private val myFormatters = HashMap<Aes<*>, (Any?) -> String>()
+    private val myFormatters = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Any?) -> String>()
 
-    override fun isMapped(aes: Aes<*>) = bindings.containsKey(aes)
+    override fun isMapped(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>) = bindings.containsKey(aes)
 
-    override fun getOriginalValue(aes: Aes<*>, index: Int): Any? {
+    override fun getOriginalValue(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, index: Int): Any? {
         require(isMapped(aes)) { "Not mapped: $aes" }
 
         val binding = bindings.getValue(aes)
@@ -33,5 +33,5 @@ internal class PointDataAccess(
             .let { value -> scale.transform.applyInverse(value) }
     }
 
-    override fun getMappedDataLabel(aes: Aes<*>): String = scaleMap.getValue(aes).name
+    override fun getMappedDataLabel(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): String = scaleMap.getValue(aes).name
 }

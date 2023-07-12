@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.sampling.method
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Variable
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.builder.data.generateData
 import kotlin.random.Random
 

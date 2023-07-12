@@ -7,12 +7,12 @@ package jetbrains.datalore.plotDemo.model.component
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
-import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
-import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 

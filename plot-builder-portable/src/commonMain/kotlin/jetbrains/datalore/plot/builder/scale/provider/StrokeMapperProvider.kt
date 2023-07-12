@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.scale.DefaultNaValue
 
 class StrokeMapperProvider(
@@ -18,7 +18,7 @@ class StrokeMapperProvider(
 
         val DEFAULT = StrokeMapperProvider(
             DEF_RANGE,
-            DefaultNaValue[Aes.STROKE]
+            DefaultNaValue[org.jetbrains.letsPlot.core.plot.base.Aes.STROKE]
         )
     }
 }

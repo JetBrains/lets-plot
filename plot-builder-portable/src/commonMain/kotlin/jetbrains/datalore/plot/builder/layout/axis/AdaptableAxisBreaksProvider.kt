@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.layout.axis
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 
 internal class AdaptableAxisBreaksProvider(
     private val domainAfterTransform: DoubleSpan,

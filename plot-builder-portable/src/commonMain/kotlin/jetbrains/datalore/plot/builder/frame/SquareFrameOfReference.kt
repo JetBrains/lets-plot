@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.builder.frame
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.*
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 import jetbrains.datalore.plot.builder.guide.AxisComponent

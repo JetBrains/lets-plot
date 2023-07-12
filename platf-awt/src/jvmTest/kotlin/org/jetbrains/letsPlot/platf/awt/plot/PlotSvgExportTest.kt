@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.platf.awt.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.SvgUID
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgUID
 import jetbrains.datalore.plot.testing.EXPECTED_BUNCH_SVG
 import jetbrains.datalore.plot.testing.EXPECTED_SINGLE_PLOT_SVG
 import jetbrains.datalore.plot.testing.rawSpec_GGBunch

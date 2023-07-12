@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.config.DataMetaUtil
 import jetbrains.datalore.plot.config.LayerConfig
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS
@@ -25,19 +25,19 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
         myLayer = layers[0]
     }
 
-    fun haveBinding(key: Aes<*>, value: String): SingleLayerAssert {
+    fun haveBinding(key: org.jetbrains.letsPlot.core.plot.base.Aes<*>, value: String): SingleLayerAssert {
         haveBindings(mapOf(key to value))
         return this
     }
 
-    private fun haveBindings(expectedBindings: Map<Aes<*>, String>): SingleLayerAssert {
+    private fun haveBindings(expectedBindings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, String>): SingleLayerAssert {
         for (aes in expectedBindings.keys) {
             assertBinding(aes, expectedBindings[aes]!!)
         }
         return this
     }
 
-    private fun assertBinding(aes: Aes<*>, varName: String) {
+    private fun assertBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, varName: String) {
         val varBindings = myLayer.varBindings
         for (varBinding in varBindings) {
             if (varBinding.aes == aes) {
@@ -116,7 +116,7 @@ class SingleLayerAssert private constructor(layers: List<LayerConfig>) :
     }
 
     fun hasDataMetaAesOrderOption(aes: String): SingleLayerAssert {
-        val commonMappings = Aes.values().associate {
+        val commonMappings = org.jetbrains.letsPlot.core.plot.base.Aes.values().associate {
             it.name to "${it.name} dummy var"
         }
 

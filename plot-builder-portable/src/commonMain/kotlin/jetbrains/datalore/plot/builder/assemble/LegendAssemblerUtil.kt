@@ -6,22 +6,22 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
 import jetbrains.datalore.plot.builder.guide.LegendDirection
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.theme.LegendTheme
 
 internal object LegendAssemblerUtil {
     fun <T> mapToAesthetics(
-        valuesByAes: Map<Aes<T>, List<T>>, constantByAes: Map<Aes<T>, T>, aestheticsDefaults: AestheticsDefaults
+        valuesByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<T>, List<T>>, constantByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<T>, T>, aestheticsDefaults: AestheticsDefaults
     ): Aesthetics {
         val builder = AestheticsBuilder(0)
-        for (aes in Aes.values()) {
+        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
             @Suppress("UNCHECKED_CAST")
-            builder.constantAes(aes as Aes<Any>, aestheticsDefaults.defaultValue(aes))
+            builder.constantAes(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Any>, aestheticsDefaults.defaultValue(aes))
         }
         for (aes in valuesByAes.keys) {
             val values = valuesByAes.getValue(aes)
@@ -36,26 +36,26 @@ internal object LegendAssemblerUtil {
 
 
     fun mapToAesthetics(
-        valueByAesIterable: Collection<Map<Aes<*>, Any>>,
-        constantByAes: Map<Aes<*>, Any>,
+        valueByAesIterable: Collection<Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>>,
+        constantByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
         aestheticsDefaults: AestheticsDefaults,
-        colorByAes: Aes<Color>,
-        fillByAes: Aes<Color>
+        colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
+        fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>
     ): Aesthetics {
-        val dataPoints = ArrayList<Map<Aes<*>, Any>>()
+        val dataPoints = ArrayList<Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>>()
         for (valueByAes in valueByAesIterable) {
-            val dataPoint = HashMap<Aes<*>, Any>()
-            for (aes in Aes.values()) {
+            val dataPoint = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>()
+            for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
                 dataPoint[aes] = aestheticsDefaults.defaultValueInLegend(aes)!!
             }
 
             // Derive some aesthetics from constants
             for (constantAes in constantByAes.keys) {
                 when (constantAes) {
-                    Aes.SHAPE,
-                    Aes.COLOR,
-                    Aes.FILL,
-                    Aes.PAINT_A, Aes.PAINT_B, Aes.PAINT_C -> dataPoint[constantAes] = constantByAes[constantAes]!!
+                    org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL,
+                    org.jetbrains.letsPlot.core.plot.base.Aes.PAINT_A, org.jetbrains.letsPlot.core.plot.base.Aes.PAINT_B, org.jetbrains.letsPlot.core.plot.base.Aes.PAINT_C -> dataPoint[constantAes] = constantByAes[constantAes]!!
                 }
             }
 
@@ -67,9 +67,9 @@ internal object LegendAssemblerUtil {
         }
 
         val builder = AestheticsBuilder(dataPoints.size)
-        for (aes in Aes.values()) {
+        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
             @Suppress("UNCHECKED_CAST")
-            builder.aes(aes as Aes<Any>) { index -> dataPoints[index][aes]!! }
+            builder.aes(aes as org.jetbrains.letsPlot.core.plot.base.Aes<Any>) { index -> dataPoints[index][aes]!! }
         }
 
         builder

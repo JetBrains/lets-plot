@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.PlotContext
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.interact.TooltipLineSpec
-import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 
 class TooltipLine(

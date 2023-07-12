@@ -6,12 +6,12 @@
 package jetbrains.datalore.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.scale.BreaksGenerator
-import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.scale.BreaksGenerator
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 
-class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
+class ScaleProviderBuilder<T> constructor(private val aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>) {
 
     private var _mapperProvider: MapperProvider<T>? = null
     private var myName: String? = null
@@ -28,8 +28,8 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
     private var myDiscreteDomainReverse = false
 
     var axisPosition: AxisPosition = when (aes) {
-        Aes.X -> AxisPosition.BOTTOM  //
-        Aes.Y -> AxisPosition.LEFT
+        org.jetbrains.letsPlot.core.plot.base.Aes.X -> AxisPosition.BOTTOM  //
+        org.jetbrains.letsPlot.core.plot.base.Aes.Y -> AxisPosition.LEFT
         else -> AxisPosition.BOTTOM  // Doesn't matter - not used for aes other than x,y.
     }
 
@@ -133,7 +133,7 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
         private val myMultiplicativeExpand: Double? = b.myMultiplicativeExpand
         private val myAdditiveExpand: Double? = b.myAdditiveExpand
         private val myBreaksGenerator: BreaksGenerator? = b.myBreaksGenerator
-        private val myAes: Aes<T> = b.aes
+        private val myAes: org.jetbrains.letsPlot.core.plot.base.Aes<T> = b.aes
 
         override val discreteDomain: Boolean = b.myDiscreteDomain
         override val discreteDomainReverse: Boolean = b.myDiscreteDomainReverse
@@ -143,12 +143,12 @@ class ScaleProviderBuilder<T> constructor(private val aes: Aes<T>) {
 
         override val continuousTransform: ContinuousTransform = b.myContinuousTransform
         override val axisPosition: AxisPosition = when (b.aes) {
-            Aes.X -> {
+            org.jetbrains.letsPlot.core.plot.base.Aes.X -> {
                 require(b.axisPosition.isHorizontal) { "Illegal X-axis position: ${b.axisPosition}" }
                 b.axisPosition
             }
 
-            Aes.Y -> {
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y -> {
                 require(b.axisPosition.isVertical) { "Illegal Y-axis position: ${b.axisPosition}" }
                 b.axisPosition
             }

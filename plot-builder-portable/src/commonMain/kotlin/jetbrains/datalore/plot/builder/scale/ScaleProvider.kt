@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
+import org.jetbrains.letsPlot.core.plot.base.Scale
 
 interface ScaleProvider {
     val discreteDomain: Boolean

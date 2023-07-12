@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.builder.sampling.method
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.DataFrame.Builder
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.geom.util.GeomUtil.rectToGeometry
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Builder
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.rectToGeometry
 import jetbrains.datalore.plot.builder.data.RingAssertion.Companion.assertThatRing
 import jetbrains.datalore.plot.builder.data.createCircle
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.splitRings

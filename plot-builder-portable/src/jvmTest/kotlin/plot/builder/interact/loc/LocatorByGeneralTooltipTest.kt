@@ -7,12 +7,12 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.*
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock
 import jetbrains.datalore.plot.builder.interact.TestUtil
@@ -29,7 +29,7 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) } // it will be in the general tooltip
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) } // it will be in the general tooltip
                 ),
                 targetPrototypes = listOf(FIRST_TARGET)
             ),
@@ -69,14 +69,14 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                 ),
                 targetPrototypes = listOf(FIRST_TARGET)
             ),
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping
-                    (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    (MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                 ),
                 targetPrototypes = listOf(SECOND_TARGET)
             )
@@ -91,14 +91,14 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                 ),
                 targetPrototypes = listOf(FIRST_TARGET)
             ),
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X)) },
                     axisTooltips = true
                 ),
                 targetPrototypes = listOf(SECOND_TARGET)
@@ -115,7 +115,7 @@ class LocatorByGeneralTooltipTest {
                 createLocator(
                     lookupSpec = lookupSpec,
                     contextualMapping = createContextualMapping
-                        (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.XINTERCEPT)) }
+                        (MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.XINTERCEPT)) }
                     ),
                     targetPrototypes = listOf(FIRST_TARGET),
                     geomKind = GeomKind.V_LINE
@@ -123,7 +123,7 @@ class LocatorByGeneralTooltipTest {
                 createLocator(
                     lookupSpec = lookupSpec,
                     contextualMapping = createContextualMapping(
-                        MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                        MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                     ),
                     targetPrototypes = listOf(SECOND_TARGET)
                 )
@@ -136,14 +136,14 @@ class LocatorByGeneralTooltipTest {
                 createLocator(
                     lookupSpec = lookupSpec,
                     contextualMapping = createContextualMapping(
-                        MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                        MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                     ),
                     targetPrototypes = listOf(FIRST_TARGET)
                 ),
                 createLocator(
                     lookupSpec = lookupSpec,
                     contextualMapping = createContextualMapping
-                        (MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.YINTERCEPT)) }
+                        (MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.YINTERCEPT)) }
                     ),
                     targetPrototypes = listOf(SECOND_TARGET),
                     geomKind = GeomKind.H_LINE
@@ -176,8 +176,8 @@ class LocatorByGeneralTooltipTest {
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also {
-                        it.add(TestUtil.continuous(Aes.X))
-                        it.add(TestUtil.continuous(Aes.FILL))
+                        it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+                        it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
                     },
                     axisTooltips = true
                 ),
@@ -187,7 +187,7 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X)) },
                     axisTooltips = true
                 ),
                 targetPrototypes = listOf(target2)
@@ -197,8 +197,8 @@ class LocatorByGeneralTooltipTest {
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
                     MappedDataAccessMock().also {
-                        it.add(TestUtil.continuous(Aes.X))
-                        it.add(TestUtil.continuous(Aes.FILL))
+                        it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+                        it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
                     },
                     axisTooltips = true
                 ),
@@ -229,7 +229,7 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                 ),
                 targetPrototypes = listOf(target1)
             ),
@@ -237,7 +237,7 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.X)) },
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X)) },
                     axisTooltips = true
                 ),
                 targetPrototypes = listOf(target2)
@@ -246,7 +246,7 @@ class LocatorByGeneralTooltipTest {
             createLocator(
                 lookupSpec = lookupSpec,
                 contextualMapping = createContextualMapping(
-                    MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }
+                    MappedDataAccessMock().also { it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }
                 ),
                 targetPrototypes = listOf(target3)
             )
@@ -274,12 +274,14 @@ class LocatorByGeneralTooltipTest {
             val targets = listOf(
                 createLocator(
                     lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
-                    contextualMapping = createContextualMapping(MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }),
+                    contextualMapping = createContextualMapping(MappedDataAccessMock().also { it.add(TestUtil.continuous(
+                        org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }),
                     targetPrototypes = listOf(target1)
                 ),
                 createLocator(
                     lookupSpec = lookupSpec,
-                    contextualMapping = createContextualMapping(MappedDataAccessMock().also { it.add(TestUtil.continuous(Aes.FILL)) }),
+                    contextualMapping = createContextualMapping(MappedDataAccessMock().also { it.add(TestUtil.continuous(
+                        org.jetbrains.letsPlot.core.plot.base.Aes.FILL)) }),
                     targetPrototypes = listOf(target2)
                 )
             )
@@ -305,8 +307,8 @@ class LocatorByGeneralTooltipTest {
                     lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
                     contextualMapping = createContextualMapping(
                         MappedDataAccessMock().also {
-                            it.add(TestUtil.continuous(Aes.X))
-                            it.add(TestUtil.continuous(Aes.FILL))
+                            it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+                            it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.FILL))
                         },
                         axisTooltips = true
                     ),
@@ -317,7 +319,7 @@ class LocatorByGeneralTooltipTest {
                     lookupSpec = lookupSpec,
                     contextualMapping = createContextualMapping(
                         MappedDataAccessMock().also {
-                            it.add(TestUtil.continuous(Aes.X))
+                            it.add(TestUtil.continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X))
                         },
                         axisTooltips = true
                     ),
@@ -334,8 +336,8 @@ class LocatorByGeneralTooltipTest {
         axisTooltips: Boolean = false
     ): ContextualMapping {
         val contextualMappingProvider = GeomInteractionBuilder.DemoAndTest(
-            supportedAes = Aes.values(),
-            axisAes = if (axisTooltips) listOf(Aes.X) else emptyList()
+            supportedAes = org.jetbrains.letsPlot.core.plot.base.Aes.values(),
+            axisAes = if (axisTooltips) listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X) else emptyList()
         )
             .bivariateFunction(true)
             .build()

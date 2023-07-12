@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpace
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilderUtil.createTooltipLines
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
@@ -15,9 +15,9 @@ import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
 class GeomInteractionBuilder constructor(
     val locatorLookupSpace: LookupSpace,
     val locatorLookupStrategy: LookupStrategy,
-    private val tooltipAes: List<Aes<*>>,
-    private val tooltipAxisAes: List<Aes<*>>,
-    private val sideTooltipAes: List<Aes<*>>,
+    private val tooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+    private val tooltipAxisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+    private val sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
 ) {
 
     private var myUserTooltipSpec: TooltipSpecification = TooltipSpecification.defaultTooltip()
@@ -25,7 +25,7 @@ class GeomInteractionBuilder constructor(
     var ignoreInvisibleTargets: Boolean = false
         private set
 
-    var tooltipConstants: Map<Aes<*>, Any>? = null
+    var tooltipConstants: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>? = null
         private set
 
     var isCrosshairEnabled: Boolean = false
@@ -47,7 +47,7 @@ class GeomInteractionBuilder constructor(
         get() = myUserTooltipSpec.tooltipTitle
 
 
-    fun tooltipConstants(v: Map<Aes<*>, Any>): GeomInteractionBuilder {
+    fun tooltipConstants(v: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>): GeomInteractionBuilder {
         tooltipConstants = v
         return this
     }
@@ -73,8 +73,8 @@ class GeomInteractionBuilder constructor(
 
 
     class DemoAndTest(
-        private val supportedAes: List<Aes<*>>,
-        private val axisAes: List<Aes<*>>? = null,
+        private val supportedAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        private val axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>? = null,
     ) {
         fun xUnivariateFunction(lookupStrategy: LookupStrategy): GeomInteractionBuilder {
             return createBuilder(GeomTooltipSetup.xUnivariateFunction(lookupStrategy))

@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 
 object AxisUtil {

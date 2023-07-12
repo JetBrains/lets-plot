@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
 
 class GeomTooltipSetup private constructor(
     val locatorLookupSpace: GeomTargetLocator.LookupSpace,
     val locatorLookupStrategy: GeomTargetLocator.LookupStrategy,
-    val axisAesFromFunctionKind: List<Aes<*>>,// = emptyList()
+    val axisAesFromFunctionKind: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,// = emptyList()
     val axisTooltipVisibilityFromFunctionKind: Boolean, // = false
     val axisTooltipEnabled: Boolean,// = true
 ) {
@@ -30,9 +30,9 @@ class GeomTooltipSetup private constructor(
         const val AREA_GEOM = true
         const val NON_AREA_GEOM = false
 
-        private val AES_X = listOf(Aes.X)
-        private val AES_Y = listOf(Aes.Y)
-        private val AES_XY = listOf(Aes.X, Aes.Y)
+        private val AES_X = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X)
+        private val AES_Y = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
+        private val AES_XY = listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
 
         fun xUnivariateFunction(
             lookupStrategy: GeomTargetLocator.LookupStrategy,

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact.loc
 
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
 import jetbrains.datalore.plot.builder.interact.TestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals

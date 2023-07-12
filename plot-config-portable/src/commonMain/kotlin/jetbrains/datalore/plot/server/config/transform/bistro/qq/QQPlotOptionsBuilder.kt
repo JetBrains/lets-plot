@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.server.config.transform.bistro.qq
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import jetbrains.datalore.plot.config.Option
 import jetbrains.datalore.plot.config.aes.LineTypeOptionConverter
 import jetbrains.datalore.plot.config.aes.ShapeOptionConverter
@@ -65,19 +65,19 @@ class QQPlotOptionsBuilder(
             )
             scaleOptions = listOf(
                 scale {
-                    aes = Aes.X
-                    name = scaleNames[Aes.X]
+                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.X
+                    name = scaleNames[org.jetbrains.letsPlot.core.plot.base.Aes.X]
                 },
                 scale {
-                    aes = Aes.Y
-                    name = scaleNames[Aes.Y]
+                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.Y
+                    name = scaleNames[org.jetbrains.letsPlot.core.plot.base.Aes.Y]
                 },
                 scale {
-                    aes = Aes.COLOR
+                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
                     isDiscrete = true
                 },
                 scale {
-                    aes = Aes.FILL
+                    aes = org.jetbrains.letsPlot.core.plot.base.Aes.FILL
                     isDiscrete = true
                 },
             )
@@ -122,11 +122,11 @@ class QQPlotOptionsBuilder(
         x: String?,
         y: String?,
         distribution: String?
-    ): Map<Aes<*>, String> {
+    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, String> {
         val distributionName: String = distribution ?: DEF_DISTRIBUTION
         return mapOf(
-            Aes.X to if (sample != null) "\"$distributionName\" distribution quantiles" else "$x quantiles",
-            Aes.Y to if (sample != null) "$sample quantiles" else "$y quantiles",
+            org.jetbrains.letsPlot.core.plot.base.Aes.X to if (sample != null) "\"$distributionName\" distribution quantiles" else "$x quantiles",
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y to if (sample != null) "$sample quantiles" else "$y quantiles",
         )
     }
 

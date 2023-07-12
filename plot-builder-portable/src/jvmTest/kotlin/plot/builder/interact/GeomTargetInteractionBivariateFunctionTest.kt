@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertNoTooltips
 import jetbrains.datalore.plot.builder.interact.TestUtil.assertText
 import jetbrains.datalore.plot.builder.interact.TestUtil.continuous
@@ -24,7 +24,7 @@ class GeomTargetInteractionBivariateFunctionTest {
 
     @Test
     fun whenXIsContinuous_ShouldAddTooltipText() {
-        val mapping = continuous(Aes.X)
+        val mapping = continuous(org.jetbrains.letsPlot.core.plot.base.Aes.X)
         val targetTooltipSpec = createBuilder()
                 .variable(mapping)
                 .build()
@@ -34,7 +34,7 @@ class GeomTargetInteractionBivariateFunctionTest {
 
     @Test
     fun whenXDiscrete_ShouldAddTooltipText() {
-        val mapping = discrete(Aes.X)
+        val mapping = discrete(org.jetbrains.letsPlot.core.plot.base.Aes.X)
         val targetTooltipSpec = createBuilder()
             .variable(mapping)
             .build()
@@ -44,7 +44,7 @@ class GeomTargetInteractionBivariateFunctionTest {
 
     @Test
     fun whenYIsContinuous_ShouldAddTooltipText() {
-        val mapping = continuous(Aes.Y)
+        val mapping = continuous(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
         val targetTooltipSpec = createBuilder()
                 .variable(mapping)
                 .build()
@@ -54,7 +54,7 @@ class GeomTargetInteractionBivariateFunctionTest {
 
     @Test
     fun whenYIsDiscrete_ShouldAddTooltipText() {
-        val mapping = discrete(Aes.Y)
+        val mapping = discrete(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
         val targetTooltipSpec = createBuilder()
             .variable(mapping)
             .build()
@@ -64,7 +64,7 @@ class GeomTargetInteractionBivariateFunctionTest {
 
     @Test
     fun whenWidthIsContinuous_ShouldAddTooltipText() {
-        val mapping = continuous(Aes.WIDTH)
+        val mapping = continuous(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
         val targetTooltipSpec = createBuilder()
                 .variable(mapping)
                 .build()
@@ -74,7 +74,7 @@ class GeomTargetInteractionBivariateFunctionTest {
 
     @Test
     fun whenWidthIsDiscrete_ShouldAddTooltipText() {
-        val mapping = discrete(Aes.WIDTH)
+        val mapping = discrete(org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH)
         val targetTooltipSpec = createBuilder()
                 .variable(mapping)
                 .build()

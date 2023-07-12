@@ -8,23 +8,23 @@ package jetbrains.datalore.plotDemo.model.stat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
-import jetbrains.datalore.plot.base.coord.Coords
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.geom.BarGeom
-import jetbrains.datalore.plot.base.geom.PointGeom
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.render.point.NamedShape
-import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.scale.transform.Transforms
-import jetbrains.datalore.plot.base.stat.SimpleStatContext
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
+import org.jetbrains.letsPlot.core.plot.base.coord.Coords
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.BarGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.SvgLayerRenderer
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
@@ -83,8 +83,8 @@ open class BinDemo : SimpleDemoBase() {
                 .build()
 
             // transform must happen before stat
-            data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
-            data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
+            data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
+            data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
 
             // stat uses transform vars
             val binCount = 10

@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import jetbrains.datalore.plot.builder.assemble.geom.DefaultSampling
 import jetbrains.datalore.plot.builder.assemble.geom.GeomProvider
 import jetbrains.datalore.plot.builder.coord.CoordProvider

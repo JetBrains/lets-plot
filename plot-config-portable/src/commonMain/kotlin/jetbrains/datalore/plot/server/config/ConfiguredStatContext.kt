@@ -6,14 +6,14 @@
 package jetbrains.datalore.plot.server.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 internal class ConfiguredStatContext(
     private val dataFrames: List<DataFrame>,
-    private val transformByAes: Map<Aes<*>, Transform>,
+    private val transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
     private val mappedStatVariables: List<DataFrame.Variable>
 ) : StatContext {
 
@@ -28,18 +28,18 @@ internal class ConfiguredStatContext(
     }
 
     override fun overallXRange(): DoubleSpan? {
-        return overallRange(Aes.X)
+        return overallRange(org.jetbrains.letsPlot.core.plot.base.Aes.X)
     }
 
     override fun overallYRange(): DoubleSpan? {
-        return overallRange(Aes.Y)
+        return overallRange(org.jetbrains.letsPlot.core.plot.base.Aes.Y)
     }
 
     override fun mappedStatVariables(): List<DataFrame.Variable> {
         return mappedStatVariables
     }
 
-    private fun overallRange(aes: Aes<*>): DoubleSpan? {
+    private fun overallRange(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan? {
         val transformVar = DataFrameUtil.transformVarFor(aes)
 
         val undefinedLimits = Pair(Double.NaN, Double.NaN)

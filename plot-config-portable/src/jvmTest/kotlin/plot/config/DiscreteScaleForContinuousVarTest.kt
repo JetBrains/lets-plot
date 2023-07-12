@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.config.TestUtil.assertClientWontFail
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plot.server.config.ServerSideTestUtil.backendSpecTransform
@@ -54,7 +54,7 @@ class DiscreteScaleForContinuousVarTest {
         assertEquals(1, plotConfigClientSide.layerConfigs.size.toLong())
 
 //        val scale = plotConfigClientSide.scaleMap[Aes.FILL]
-        val mapper = plotConfigClientSide.mappersByAesNP.getValue(Aes.FILL)
+        val mapper = plotConfigClientSide.mappersByAesNP.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.FILL)
 
         // this is discrete scale so input value for mapper is index
         // ..count.. [0] = 2   (two lunched)

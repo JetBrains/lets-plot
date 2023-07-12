@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,10 +49,10 @@ class GroupsOrderWithFacetsTest {
         ScaleOrderingTest.assertScaleOrdering(
             layersByTile[0].single(),
             expectedScaleBreaks = mapOf(
-                Aes.FILL to listOf("B", "C", "A", "D")
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("B", "C", "A", "D")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("B", "C", "A"),
                     listOf("B", "A")
                 )
@@ -62,10 +62,10 @@ class GroupsOrderWithFacetsTest {
         ScaleOrderingTest.assertScaleOrdering(
             layersByTile[1].single(),
             expectedScaleBreaks = mapOf(
-                Aes.FILL to listOf("B", "C", "A", "D")
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("B", "C", "A", "D")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("B", "A", "D"),
                     listOf("B", "A")
                 )
@@ -114,10 +114,10 @@ class GroupsOrderWithFacetsTest {
         ScaleOrderingTest.assertScaleOrdering(
             layersByTile[0].single(),
             expectedScaleBreaks = mapOf(
-                Aes.FILL to listOf("A", "B", "C", "D")
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("A", "B", "C", "D")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("A", "B", "C"),
                     listOf("A", "B")
                 )
@@ -127,10 +127,10 @@ class GroupsOrderWithFacetsTest {
         ScaleOrderingTest.assertScaleOrdering(
             layersByTile[1].single(),
             expectedScaleBreaks = mapOf(
-                Aes.FILL to listOf("A", "B", "C", "D")
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("A", "B", "C", "D")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("A", "B", "D"),
                     listOf("A", "B")
                 )
@@ -174,10 +174,10 @@ class GroupsOrderWithFacetsTest {
         ScaleOrderingTest.assertScaleOrdering(
             layersByTile[0].single(),
             expectedScaleBreaks = mapOf(
-                Aes.FILL to listOf("B", "A", "C")
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("B", "A", "C")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("B", "A", null),
                     listOf("A", null)
                 )
@@ -187,10 +187,10 @@ class GroupsOrderWithFacetsTest {
         ScaleOrderingTest.assertScaleOrdering(
             layersByTile[1].single(),
             expectedScaleBreaks = mapOf(
-                Aes.FILL to listOf("B", "A", "C")
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf("B", "A", "C")
             ),
             expectedOrderInBar = mapOf(
-                Aes.FILL to listOf(
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL to listOf(
                     listOf("A", "C", null),
                     listOf("B", "A")
                 )

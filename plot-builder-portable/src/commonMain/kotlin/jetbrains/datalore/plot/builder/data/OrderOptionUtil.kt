@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.data
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil
 
@@ -104,7 +104,7 @@ object OrderOptionUtil {
         }
 
         val variable =
-            if (varBindings.find { it.variable.name == orderOption.variableName && it.aes == Aes.X } != null &&
+            if (varBindings.find { it.variable.name == orderOption.variableName && it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.X } != null &&
                 SamplingUtil.xVar(variables) != null
             ) {
                 // Apply ordering to the X variable which is used for sampling

@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 

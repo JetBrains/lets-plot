@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 
 /**
  * `isContinuous` is TRUE if both, domain and range are continuous.

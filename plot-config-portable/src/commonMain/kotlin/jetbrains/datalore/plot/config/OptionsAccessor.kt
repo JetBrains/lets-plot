@@ -7,8 +7,8 @@ package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.render.point.PointShape
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.render.point.PointShape
 import jetbrains.datalore.plot.config.aes.AesOptionConversion
 import kotlin.jvm.JvmOverloads
 
@@ -242,14 +242,14 @@ open class OptionsAccessor(
     }
 
     fun getColor(option: String): Color? {
-        return getValue(Aes.COLOR, option)
+        return getValue(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, option)
     }
 
     fun getShape(option: String): PointShape? {
-        return getValue(Aes.SHAPE, option)
+        return getValue(org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE, option)
     }
 
-    protected fun <T> getValue(aes: Aes<T>, option: String): T? {
+    protected fun <T> getValue(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, option: String): T? {
         val v = get(option) ?: return null
         return AesOptionConversion.apply(aes, v)
     }

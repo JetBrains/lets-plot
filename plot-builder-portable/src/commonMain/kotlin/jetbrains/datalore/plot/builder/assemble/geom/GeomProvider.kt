@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.builder.assemble.geom
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Geom
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.base.aes.GeomTheme
-import jetbrains.datalore.plot.base.geom.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Geom
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.geom.*
 
 class GeomProvider internal constructor(
     val geomKind: GeomKind,
@@ -23,8 +23,8 @@ class GeomProvider internal constructor(
     }
 
     abstract class Context {
-        abstract fun hasBinding(aes: Aes<*>): Boolean
-        abstract fun hasConstant(aes: Aes<*>): Boolean
+        abstract fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
+        abstract fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean
     }
 
     companion object {

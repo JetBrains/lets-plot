@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import jetbrains.datalore.plot.builder.VarBinding
@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.tooltip.ValueSource
 
 open class LineSpecConfigParser(
     opts: Map<String, Any>,
-    private val constantsMap: Map<Aes<*>, Any>,
+    private val constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
     private val groupingVarName: String?,
     private val varBindings: List<VarBinding>,
 ) : OptionsAccessor(opts) {
@@ -130,8 +130,8 @@ open class LineSpecConfigParser(
 
                 if (field.startsWith(AES_NAME_PREFIX)) {
                     val positionals = when (field.removePrefix(AES_NAME_PREFIX)) {
-                        "X" -> Aes.values().filter(Aes.Companion::isPositionalX)
-                        "Y" -> Aes.values().filter(Aes.Companion::isPositionalY)
+                        "X" -> org.jetbrains.letsPlot.core.plot.base.Aes.values().filter(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalX)
+                        "Y" -> org.jetbrains.letsPlot.core.plot.base.Aes.values().filter(org.jetbrains.letsPlot.core.plot.base.Aes.Companion::isPositionalY)
                         else -> {
                             // it is aes name
                             val aesField = aesField(field.removePrefix(AES_NAME_PREFIX))

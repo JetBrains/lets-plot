@@ -6,10 +6,10 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.DataFrameUtil.variables
-import jetbrains.datalore.plot.base.util.afterOrientation
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
@@ -66,9 +66,9 @@ class LayerConfig constructor(
         .map(Option.Mapping::toAes)
 
     // Color aesthetics
-    val colorByAes: Aes<Color> = getPaintAes(Aes.COLOR, explicitConstantAes)
-    val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
-    val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
+    val colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = getPaintAes(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, explicitConstantAes)
+    val fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = getPaintAes(org.jetbrains.letsPlot.core.plot.base.Aes.FILL, explicitConstantAes)
+    val renderedAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
     val isLegendDisabled: Boolean
         get() = when (hasOwn(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
@@ -126,7 +126,7 @@ class LayerConfig constructor(
     val explicitGroupingVarName: String?
 
     val varBindings: List<VarBinding>
-    val constantsMap: Map<Aes<*>, Any>
+    val constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>
 
     val tooltips: TooltipSpecification
     val annotations: AnnotationSpecification
@@ -154,7 +154,7 @@ class LayerConfig constructor(
             ownDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(getMap(DATA_META))
         )
 
-        val consumedAesSet: Set<Aes<*>> = renderedAes.toSet().let {
+        val consumedAesSet: Set<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = renderedAes.toSet().let {
             when (clientSide) {
                 true -> it
                 false -> it + stat.consumes()
@@ -173,7 +173,7 @@ class LayerConfig constructor(
             }
         }
 
-        val (aesMappings: Map<Aes<*>, DataFrame.Variable>,
+        val (aesMappings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>,
             rawCombinedData: DataFrame) = layerMappingsAndCombinedData(
             layerOptions = layerOptions,
             geomKind = geomProto.geomKind,
@@ -284,7 +284,7 @@ class LayerConfig constructor(
         return explicitGroupingVarName != null && explicitGroupingVarName == varName
     }
 
-    fun getVariableForAes(aes: Aes<*>): DataFrame.Variable? {
+    fun getVariableForAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DataFrame.Variable? {
         return varBindings.find { it.aes == aes }?.variable
     }
 
@@ -311,22 +311,22 @@ class LayerConfig constructor(
 
     // Decided that color/fill_by only affects mappings, constants always use original aes color/fill.
     // And the constant cancels mappings => the constant cancels color/fill_by.
-    private fun getPaintAes(aes: Aes<Color>, explicitConstantAes: List<Aes<*>>): Aes<Color> {
+    private fun getPaintAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>, explicitConstantAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>): org.jetbrains.letsPlot.core.plot.base.Aes<Color> {
 
         return when (aes) {
             in explicitConstantAes -> aes
             else -> {
                 val optionName = when (aes) {
-                    Aes.COLOR -> Option.Layer.COLOR_BY
-                    Aes.FILL -> Option.Layer.FILL_BY
+                    org.jetbrains.letsPlot.core.plot.base.Aes.COLOR -> Option.Layer.COLOR_BY
+                    org.jetbrains.letsPlot.core.plot.base.Aes.FILL -> Option.Layer.FILL_BY
                     else -> aes.name
                 }
 
-                val colorBy: Aes<Color>? = getString(optionName)?.let { aesName ->
+                val colorBy: org.jetbrains.letsPlot.core.plot.base.Aes<Color>? = getString(optionName)?.let { aesName ->
                     val aesByName = Option.Mapping.toAes(aesName)
-                    require(Aes.isColor(aesByName)) { "'$optionName' should be an aesthetic related to color" }
+                    require(org.jetbrains.letsPlot.core.plot.base.Aes.isColor(aesByName)) { "'$optionName' should be an aesthetic related to color" }
                     @Suppress("UNCHECKED_CAST")
-                    aesByName as Aes<Color>
+                    aesByName as org.jetbrains.letsPlot.core.plot.base.Aes<Color>
                 }
 
                 when (colorBy) {
@@ -371,7 +371,7 @@ class LayerConfig constructor(
         private fun initTooltipsSpec(
             tooltipOptions: Any,  // An options map or just string "none"
             varBindings: List<VarBinding>,
-            constantsMap: Map<Aes<*>, Any>,
+            constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
             explicitGroupingVarName: String?
         ): TooltipSpecification {
             return when (tooltipOptions) {

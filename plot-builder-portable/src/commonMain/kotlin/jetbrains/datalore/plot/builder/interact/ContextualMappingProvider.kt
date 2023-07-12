@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
 
 interface ContextualMappingProvider {
     fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping

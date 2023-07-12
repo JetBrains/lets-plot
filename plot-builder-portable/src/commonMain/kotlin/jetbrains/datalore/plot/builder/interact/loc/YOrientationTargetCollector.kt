@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
-import jetbrains.datalore.plot.base.util.YOrientationBaseUtil.flipAesKeys
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil.flipAesKeys
 
 internal class YOrientationTargetCollector(
     private val targetCollector: GeomTargetCollector

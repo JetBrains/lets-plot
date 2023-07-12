@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.*
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.tooltip.MappingField
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification.TooltipProperties
@@ -49,9 +49,9 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
     companion object {
         // For tests
         fun createTestContextualMapping(
-            aesListForTooltip: List<Aes<*>>,
-            axisAes: List<Aes<*>>,
-            sideTooltipAes: List<Aes<*>>,
+            aesListForTooltip: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+            axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+            sideTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
             userDefinedValueSources: List<ValueSource>? = null

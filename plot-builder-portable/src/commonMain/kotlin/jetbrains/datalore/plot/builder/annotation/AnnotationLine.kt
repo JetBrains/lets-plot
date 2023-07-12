@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import jetbrains.datalore.plot.base.annotations.AnnotationLineSpec
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.annotations.AnnotationLineSpec
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
 import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import jetbrains.datalore.plot.builder.tooltip.MappingField

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plotDemo.model.util
 
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import jetbrains.datalore.plot.builder.assemble.GeomContextBuilder
 
 object DemoUtil {

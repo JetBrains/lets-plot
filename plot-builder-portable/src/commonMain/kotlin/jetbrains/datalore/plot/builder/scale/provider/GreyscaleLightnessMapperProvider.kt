@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.builder.scale.provider
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.HSV
-import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.base.DiscreteTransform
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 
 class GreyscaleLightnessMapperProvider(

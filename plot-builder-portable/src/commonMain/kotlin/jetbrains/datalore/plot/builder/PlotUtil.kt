@@ -6,11 +6,11 @@
 package jetbrains.datalore.plot.builder
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.listMapper
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.listMapper
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import jetbrains.datalore.plot.builder.assemble.PosProvider
 import kotlin.math.sign
 
@@ -32,19 +32,19 @@ object PlotUtil {
         layer: GeomLayer,
         xAesMapper: ScaleMapper<Double>,
         yAesMapper: ScaleMapper<Double>,
-    ): Map<Aes<*>, ScaleMapper<*>> {
+    ): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>> {
 
         val yOrientation = layer.isYOrientation
-        val mappers = HashMap<Aes<*>, ScaleMapper<*>>()
-        val renderedAes = layer.renderedAes() + listOf(Aes.X, Aes.Y)
+        val mappers = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>()
+        val renderedAes = layer.renderedAes() + listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X, org.jetbrains.letsPlot.core.plot.base.Aes.Y)
         for (aes in renderedAes) {
             var mapper: ScaleMapper<*>? = when {
-                aes == Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
+                aes == org.jetbrains.letsPlot.core.plot.base.Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
                 // positional aes share their mappers
-                aes == Aes.X -> xAesMapper
-                aes == Aes.Y -> yAesMapper
-                Aes.isPositionalX(aes) -> if (yOrientation) yAesMapper else xAesMapper
-                Aes.isPositionalY(aes) -> if (yOrientation) xAesMapper else yAesMapper
+                aes == org.jetbrains.letsPlot.core.plot.base.Aes.X -> xAesMapper
+                aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y -> yAesMapper
+                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalX(aes) -> if (yOrientation) yAesMapper else xAesMapper
+                org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalY(aes) -> if (yOrientation) xAesMapper else yAesMapper
                 layer.hasBinding(aes) -> layer.scaleMappersNP.getValue(aes)
                 else -> null  // rendered but has no binding - just ignore.
             }
@@ -58,8 +58,8 @@ object PlotUtil {
 
     internal fun createLayerAesthetics(
         layer: GeomLayer,
-        aesList: List<Aes<*>>,
-        mapperByAes: Map<Aes<*>, ScaleMapper<*>>,
+        aesList: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>,
+        mapperByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
     ): Aesthetics {
 
         val aesBuilder = AestheticsBuilder()
@@ -69,7 +69,7 @@ object PlotUtil {
 
         var hasPositionalConstants = false
         for (aes in aesList) {
-            if (Aes.isPositional(aes) && layer.hasConstant(aes)) {
+            if (org.jetbrains.letsPlot.core.plot.base.Aes.isPositional(aes) && layer.hasConstant(aes)) {
                 hasPositionalConstants = true
                 break
             }
@@ -79,10 +79,10 @@ object PlotUtil {
         var dataPointCount: Int? = null
         for (aes in aesList) {
             @Suppress("UNCHECKED_CAST", "NAME_SHADOWING")
-            val aes = aes as Aes<Any>
+            val aes = aes as org.jetbrains.letsPlot.core.plot.base.Aes<Any>
 
             val mapperOption = when {
-                Aes.isPositional(aes) -> Mappers.IDENTITY
+                org.jetbrains.letsPlot.core.plot.base.Aes.isPositional(aes) -> Mappers.IDENTITY
                 else -> mapperByAes[aes]
             }
 
@@ -138,7 +138,7 @@ object PlotUtil {
     }
 
     private fun constantToAesValue(
-        aes: Aes<*>,
+        aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
         v: Any?,
         continuousTransform: ContinuousTransform?,
         mapperOption: ScaleMapper<*>?
@@ -232,10 +232,10 @@ object PlotUtil {
         }
     }
 
-    private fun scale(aes: Aes<*>, layer: GeomLayer): Scale? {
+    private fun scale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, layer: GeomLayer): Scale? {
         @Suppress("NAME_SHADOWING")
         val aes = when {
-            Aes.isPositionalXY(aes) -> Aes.toAxisAes(aes, layer.isYOrientation)
+            org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) -> org.jetbrains.letsPlot.core.plot.base.Aes.toAxisAes(aes, layer.isYOrientation)
             else -> aes
         }
         return if (layer.scaleMap.containsKey(aes)) {

@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.DataFrame.Variable
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import jetbrains.datalore.plot.builder.data.DataProcessing
@@ -260,7 +260,7 @@ open class PlotConfigServerSide(
             layerDataMeta: Map<String, Any>,
             stat: Stat,
             varBindings: List<VarBinding>,
-            transformByAes: Map<Aes<*>, Transform>,
+            transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>,
             orderOptions: List<OrderOption>,
             yOrientation: Boolean,
         ): Map<String, Any> {
@@ -271,7 +271,7 @@ open class PlotConfigServerSide(
 
             @Suppress("UNCHECKED_CAST")
             val discreteTransformByAes = transformByAes
-                .filterValues { it is DiscreteTransform } as Map<Aes<*>, DiscreteTransform>
+                .filterValues { it is DiscreteTransform } as Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DiscreteTransform>
 
             val statDefaultMappings = stat.getDefaultVariableMappings(yOrientation)
             val explicitMappings = varBindings

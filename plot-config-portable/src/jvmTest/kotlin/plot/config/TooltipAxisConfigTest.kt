@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.TooltipLineSpec
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.commons.time.TimeUtil
@@ -27,8 +27,8 @@ import kotlin.test.fail
 class TooltipAxisConfigTest {
     private val myData = mapOf("v" to listOf(0.34447))
     private val myMapping = mapOf(
-        Aes.X.name to "v",
-        Aes.Y.name to "v"
+        org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "v",
+        org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "v"
     )
 
     // ggplot(data) + geom_point(aes('v','v'), tooltips = layer_tooltips().line('^y').format(...)) + scale_y_*(format=...)
@@ -42,7 +42,7 @@ class TooltipAxisConfigTest {
         useTooltipFormatForVarName: Boolean = false
     ): GeomLayer {
         val scales = listOfNotNull(
-            Scale.AES to Aes.Y.name,
+            Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
             scaleFormat?.let { format -> Scale.FORMAT to format },
             additionalScaleOption
         ).toMap()
@@ -252,8 +252,8 @@ class TooltipAxisConfigTest {
         }.map { TimeUtil.asInstantUTC(it).toDouble() }
         val dtData = mapOf("date" to instants, "v" to listOf(0, 1, 2))
         val dtMapping = mapOf(
-            Aes.X.name to "v",
-            Aes.Y.name to "date"
+            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "v",
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "date"
         )
         val closedRange = DoubleSpan(instants.first(), instants.last())
 
@@ -313,7 +313,7 @@ class TooltipAxisConfigTest {
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             val yAxisTooltip = dataPoints
                 .filter(TooltipLineSpec.DataPoint::isAxis)
-                .filter { it.aes == Aes.Y }
+                .filter { it.aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y }
                 .map(TooltipLineSpec.DataPoint::value)
                 .firstOrNull()
             areEqual(expected, yAxisTooltip, "axis tooltip", method)
@@ -321,7 +321,7 @@ class TooltipAxisConfigTest {
 
         private fun getYTick(geomLayer: GeomLayer, closedRange: DoubleSpan = DoubleSpan(0.3, 0.4)): String {
             return ScaleConfigLabelsTest.getScaleLabels(
-                geomLayer.scaleMap.getValue(Aes.Y),
+                geomLayer.scaleMap.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y),
                 targetCount = 1,
                 closedRange
             ).first()

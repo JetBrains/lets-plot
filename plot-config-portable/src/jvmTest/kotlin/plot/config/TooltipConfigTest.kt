@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
 import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
@@ -44,10 +44,10 @@ class TooltipConfigTest {
         "model name" to listOf("dodge")
     )
     private val mapping = mapOf(
-        Aes.X.name to "displ",
-        Aes.Y.name to "hwy",
-        Aes.COLOR.name to "cty",
-        Aes.SHAPE.name to "class"
+        org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "displ",
+        org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "hwy",
+        org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name to "cty",
+        org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE.name to "class"
     )
 
     @Test
@@ -148,9 +148,9 @@ class TooltipConfigTest {
     @Test
     fun changeFormatForTheAes() {
         val mappingWithColor = mapOf(
-            Aes.X.name to "displ",
-            Aes.Y.name to "hwy",
-            Aes.COLOR.name to "year"
+            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "displ",
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "hwy",
+            org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name to "year"
         )
 
         // default
@@ -256,17 +256,17 @@ class TooltipConfigTest {
             geom = "boxplot",
             data = boxPlotData,
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y"
             ),
             tooltips = null
         )
         val expectedLines = mapOf(
-            Aes.YMAX to "11.5",
-            Aes.UPPER to "8.7",
-            Aes.MIDDLE to "6.9",
-            Aes.LOWER to "6.1",
-            Aes.YMIN to "4.2"
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to "11.5",
+            org.jetbrains.letsPlot.core.plot.base.Aes.UPPER to "8.7",
+            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE to "6.9",
+            org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "6.1",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "4.2"
         )
         val lines = getSideTooltips(geomLayer)
 
@@ -296,8 +296,8 @@ class TooltipConfigTest {
             geom = "boxplot",
             data = boxPlotData,
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y"
             ),
             tooltips = tooltipConfig
         )
@@ -305,9 +305,9 @@ class TooltipConfigTest {
         // upper, lower will be in the general tooltip and will be removed from side tooltips;
         // side tooltips - without label
         val expectedLines = mapOf(
-            Aes.YMAX to "11.5",
-            Aes.MIDDLE to "6.850",
-            Aes.YMIN to "4.2"
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to "11.5",
+            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE to "6.850",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "4.2"
         )
         val generalExpectedLine = "lower/upper: 6.1, 8.7"
 
@@ -327,8 +327,8 @@ class TooltipConfigTest {
             geom = "boxplot",
             data = boxPlotData,
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y"
             ),
             tooltips = mapOf(DISABLE_SPLITTING to true)
         )
@@ -352,8 +352,8 @@ class TooltipConfigTest {
             geom = "boxplot",
             data = boxPlotData,
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y"
             ),
             tooltips = mapOf(
                 LINES to listOf("tooltip line"),
@@ -393,7 +393,7 @@ class TooltipConfigTest {
         val geomTextLayer = buildGeomLayer(
             geom = "text",
             data = mapOf("label" to listOf("my text")),
-            mapping = mapOf(Aes.LABEL.name to "label"),
+            mapping = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "label"),
             tooltips = null
         )
         assertTooltipStrings(
@@ -407,7 +407,7 @@ class TooltipConfigTest {
         val geomTextLayer = buildGeomLayer(
             geom = "text",
             data = mapOf("label" to listOf("my text")),
-            mapping = mapOf(Aes.LABEL.name to "label"),
+            mapping = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "label"),
             tooltips = mapOf(
                 LINES to listOf("^label")
             )
@@ -428,9 +428,9 @@ class TooltipConfigTest {
                 "label" to listOf("my text")
             ),
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y",
-                Aes.LABEL.name to "label"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y",
+                org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "label"
             ),
             tooltips = null
         )
@@ -452,9 +452,9 @@ class TooltipConfigTest {
                 "label" to listOf("my text")
             ),
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y",
-                Aes.LABEL.name to "label"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y",
+                org.jetbrains.letsPlot.core.plot.base.Aes.LABEL.name to "label"
             ),
             tooltips = mapOf(
                 LINES to listOf("^label")
@@ -557,8 +557,8 @@ class TooltipConfigTest {
                 "id" to listOf("a")
             ),
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y",
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y",
                 "group" to "id"
             ),
             tooltips = mapOf(
@@ -765,10 +765,10 @@ class TooltipConfigTest {
     @Test
     fun `variable mapped to two aes will choose aes formatting - specified or first`() {
         val curMapping = mapOf(
-            Aes.X.name to "displ",
-            Aes.Y.name to "hwy",
-            Aes.COLOR.name to "cty",
-            Aes.SHAPE.name to "cty"
+            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "displ",
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "hwy",
+            org.jetbrains.letsPlot.core.plot.base.Aes.COLOR.name to "cty",
+            org.jetbrains.letsPlot.core.plot.base.Aes.SHAPE.name to "cty"
         )
 
         run {
@@ -859,8 +859,8 @@ class TooltipConfigTest {
                 "value" to listOf(1)
             ),
             mapping = mapOf(
-                Aes.FILL.name to "name",
-                Aes.WEIGHT.name to "value",
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to "name",
+                org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT.name to "value",
             ),
             tooltips = mapOf(
                 LINES to listOf("@value")
@@ -881,8 +881,8 @@ class TooltipConfigTest {
                 "value" to listOf(1)
             ),
             mapping = mapOf(
-                Aes.FILL.name to "name",
-                Aes.WEIGHT.name to "value",
+                org.jetbrains.letsPlot.core.plot.base.Aes.FILL.name to "name",
+                org.jetbrains.letsPlot.core.plot.base.Aes.WEIGHT.name to "value",
             ),
             tooltips = mapOf(
                 LINES to listOf("^weight")
@@ -902,8 +902,8 @@ class TooltipConfigTest {
                 "y" to listOf(0.0)
             ),
             mapping = mapOf(
-                Aes.X.name to "x",
-                Aes.Y.name to "y",
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "y",
             ),
             tooltips = mapOf(
                 LINES to listOf("^x"),
@@ -1016,17 +1016,17 @@ class TooltipConfigTest {
                 "coeff" to listOf(0.119, 0.289, 0.387, 0.491, 0.588, 0.694, 0.791, 0.888, 0.994, 0.0191, 0.988, 0.994)
             ),
             mapping = mapOf(
-                Aes.X.name to "alphabet",
-                Aes.Y.name to "coeff"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "alphabet",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "coeff"
             )
         )
 
         val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.84",
-            Aes.MIDDLE to "0.54",
-            Aes.LOWER to "0.20",
-            Aes.YMIN to "0.02",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to "0.99",
+            org.jetbrains.letsPlot.core.plot.base.Aes.UPPER to "0.84",
+            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE to "0.54",
+            org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.20",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
@@ -1046,18 +1046,18 @@ class TooltipConfigTest {
                 "coeff" to listOf(0.119, 0.289, 0.387, 0.491, 0.588, 0.694, 0.791, 0.888, 0.994, 0.0191, 0.988, 0.994)
             ),
             mapping = mapOf(
-                Aes.X.name to "coeff",
-                Aes.Y.name to "alphabet",
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "coeff",
+                org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "alphabet",
             ),
             orientationY = true
         )
 
         val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.84",
-            Aes.MIDDLE to "0.54",
-            Aes.LOWER to "0.20",
-            Aes.YMIN to "0.02",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to "0.99",
+            org.jetbrains.letsPlot.core.plot.base.Aes.UPPER to "0.84",
+            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE to "0.54",
+            org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.20",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
@@ -1077,17 +1077,17 @@ class TooltipConfigTest {
                 "coeff" to listOf(0.119, 0.289, 0.387, 0.491, 0.588, 0.694, 0.791, 0.888, 0.994, 0.0191, 0.988, 0.994)
             ),
             mapping = mapOf(
-                Aes.X.name to "coeff"
+                org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "coeff"
             ),
             orientationY = true
         )
 
         val expected = mapOf(
-            Aes.YMAX to "0.99",
-            Aes.UPPER to "0.94",
-            Aes.MIDDLE to "0.64",
-            Aes.LOWER to "0.34",
-            Aes.YMIN to "0.02",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMAX to "0.99",
+            org.jetbrains.letsPlot.core.plot.base.Aes.UPPER to "0.94",
+            org.jetbrains.letsPlot.core.plot.base.Aes.MIDDLE to "0.64",
+            org.jetbrains.letsPlot.core.plot.base.Aes.LOWER to "0.34",
+            org.jetbrains.letsPlot.core.plot.base.Aes.YMIN to "0.02",
         )
         val ctx = TestingPlotContext.create(geomLayer)
         geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
@@ -1117,7 +1117,7 @@ class TooltipConfigTest {
             return dataPoints.filter(DataPoint::isAxis)
         }
 
-        private fun getSideTooltips(geomLayer: GeomLayer): Map<Aes<*>, String> {
+        private fun getSideTooltips(geomLayer: GeomLayer): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, String> {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
             return dataPoints.filter { it.isSide && !it.isAxis }.associateBy({ it.aes!! }, { it.value })

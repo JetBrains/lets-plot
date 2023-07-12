@@ -5,9 +5,9 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.assemble.GuideOptions
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 import jetbrains.datalore.plot.builder.coord.CoordProviders
@@ -31,10 +31,10 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
     internal val fontFamilyRegistry: FontFamilyRegistry
     internal val theme: Theme
     internal val coordProvider: CoordProvider
-    internal val guideOptionsMap: Map<Aes<*>, GuideOptions>
+    internal val guideOptionsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, GuideOptions>
 
-    val scaleMap: Map<Aes<*>, Scale>
-    val mappersByAesNP: Map<Aes<*>, ScaleMapper<*>>
+    val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>
+    val mappersByAesNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>
 
     internal val xAxisPosition: AxisPosition
     internal val yAxisPosition: AxisPosition
@@ -58,7 +58,7 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         )
 
         // Use only Non-positional mappers.
-        mappersByAesNP = mappersByAes.filterKeys { !Aes.isPositional(it) }
+        mappersByAesNP = mappersByAes.filterKeys { !org.jetbrains.letsPlot.core.plot.base.Aes.isPositional(it) }
 
         val preferredCoordProvider: CoordProvider? = layerConfigs.firstNotNullOfOrNull {
             it.geomProto.preferredCoordinateSystem(it)
@@ -67,16 +67,16 @@ class PlotConfigClientSide private constructor(opts: Map<String, Any>) :
         val defaultCoordProvider = preferredCoordProvider ?: CoordProviders.cartesian()
         val coordProvider = CoordConfig.create(
             get(COORD),
-            transformByAes.getValue(Aes.X),
-            transformByAes.getValue(Aes.Y),
+            transformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X),
+            transformByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y),
             defaultCoordProvider
         )
 
         this.coordProvider = coordProvider
         guideOptionsMap = createGuideOptionsMap(this.scaleConfigs) + createGuideOptionsMap(getMap(GUIDES))
 
-        xAxisPosition = scaleProviderByAes.getValue(Aes.X).axisPosition
-        yAxisPosition = scaleProviderByAes.getValue(Aes.Y).axisPosition
+        xAxisPosition = scaleProviderByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.X).axisPosition
+        yAxisPosition = scaleProviderByAes.getValue(org.jetbrains.letsPlot.core.plot.base.Aes.Y).axisPosition
     }
 
     companion object {

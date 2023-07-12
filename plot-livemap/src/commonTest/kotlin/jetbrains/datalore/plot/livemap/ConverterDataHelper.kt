@@ -7,9 +7,9 @@ package jetbrains.datalore.plot.livemap
 
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.list
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.*
 
 

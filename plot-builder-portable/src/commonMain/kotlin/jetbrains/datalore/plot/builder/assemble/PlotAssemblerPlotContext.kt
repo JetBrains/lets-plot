@@ -7,40 +7,40 @@ package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.plot.base.scale.ScaleUtil
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 internal class PlotAssemblerPlotContext(
     layersByTile: List<List<GeomLayer>>,
-    private val scaleMap: Map<Aes<*>, Scale>
+    private val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>
 ) : PlotContext {
 
     private val stitchedPlotLayers: List<StitchedPlotLayer> = createStitchedLayers(layersByTile)
-    private val transformedDomainByAes: MutableMap<Aes<*>, DoubleSpan> = HashMap()
-    private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
+    private val transformedDomainByAes: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DoubleSpan> = HashMap()
+    private val tooltipFormatters: MutableMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, (Any?) -> String> = HashMap()
 
     override val layers: List<PlotContext.Layer> = stitchedPlotLayers.map(::ContextPlotLayer)
 
-    override fun hasScale(aes: Aes<*>) = scaleMap.containsKey(aes)
+    override fun hasScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>) = scaleMap.containsKey(aes)
 
-    override fun getScale(aes: Aes<*>): Scale {
+    override fun getScale(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Scale {
         checkPositionalAes(aes)
         return scaleMap.getValue(aes)
     }
 
-    override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {
+    override fun overallTransformedDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan {
         checkPositionalAes(aes)
         return transformedDomainByAes.getOrPut(aes) {
             computeOverallTransformedDomain(aes, stitchedPlotLayers, scaleMap)
         }
     }
 
-    override fun getTooltipFormatter(aes: Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String {
+    override fun getTooltipFormatter(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, defaultValue: () -> (Any?) -> String): (Any?) -> String {
         checkPositionalAes(aes)
         return tooltipFormatters.getOrPut(aes, defaultValue)
     }
@@ -71,16 +71,16 @@ internal class PlotAssemblerPlotContext(
         }
 
         fun computeOverallTransformedDomain(
-            aes: Aes<*>,
+            aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>,
             stitchedLayers: List<StitchedPlotLayer>,
-            scaleMap: Map<Aes<*>, Scale>
+            scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>
         ): DoubleSpan {
             checkPositionalAes(aes)
 
-            fun isMatching(v: DataFrame.Variable, aes: Aes<*>, isYOrientation: Boolean): Boolean {
+            fun isMatching(v: DataFrame.Variable, aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>, isYOrientation: Boolean): Boolean {
                 val varAes = TransformVar.toAes(v)
                 return when {
-                    Aes.isPositionalXY(varAes) -> Aes.toAxisAes(
+                    org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(varAes) -> org.jetbrains.letsPlot.core.plot.base.Aes.toAxisAes(
                         varAes,
                         isYOrientation
                     ) == aes // collecting pos variables
@@ -136,9 +136,9 @@ internal class PlotAssemblerPlotContext(
             return SeriesUtil.ensureApplicableRange(newRange)
         }
 
-        fun checkPositionalAes(aes: Aes<*>) {
+        fun checkPositionalAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>) {
             // expect only X,Y or not positional
-            check(!Aes.isPositionalXY(aes) || aes == Aes.X || aes == Aes.Y) {
+            check(!org.jetbrains.letsPlot.core.plot.base.Aes.isPositionalXY(aes) || aes == org.jetbrains.letsPlot.core.plot.base.Aes.X || aes == org.jetbrains.letsPlot.core.plot.base.Aes.Y) {
                 "Positional aesthetic should be either X or Y but was $aes"
             }
         }
@@ -150,15 +150,15 @@ internal class PlotAssemblerPlotContext(
         override val isLegendDisabled: Boolean get() = stitchedPlotLayer.isLegendDisabled
         override val aestheticsDefaults: AestheticsDefaults get() = stitchedPlotLayer.aestheticsDefaults
         override val legendKeyElementFactory: LegendKeyElementFactory get() = stitchedPlotLayer.legendKeyElementFactory
-        override val colorByAes: Aes<Color> get() = stitchedPlotLayer.colorByAes
-        override val fillByAes: Aes<Color> get() = stitchedPlotLayer.fillByAes
+        override val colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> get() = stitchedPlotLayer.colorByAes
+        override val fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> get() = stitchedPlotLayer.fillByAes
 
-        override fun renderedAes(): List<Aes<*>> = stitchedPlotLayer.renderedAes()
+        override fun renderedAes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = stitchedPlotLayer.renderedAes()
 
-        override fun hasBinding(aes: Aes<*>): Boolean = stitchedPlotLayer.hasBinding(aes)
+        override fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = stitchedPlotLayer.hasBinding(aes)
 
-        override fun hasConstant(aes: Aes<*>): Boolean = stitchedPlotLayer.hasConstant(aes)
+        override fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = stitchedPlotLayer.hasConstant(aes)
 
-        override fun <T> getConstant(aes: Aes<T>): T = stitchedPlotLayer.getConstant(aes)
+        override fun <T> getConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T = stitchedPlotLayer.getConstant(aes)
     }
 }

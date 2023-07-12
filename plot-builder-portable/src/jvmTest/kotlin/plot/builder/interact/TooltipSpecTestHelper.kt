@@ -7,10 +7,10 @@ package jetbrains.datalore.plot.builder.interact
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Mapping
 import jetbrains.datalore.plot.builder.interact.TestUtil.axisTheme
 import jetbrains.datalore.plot.builder.interact.TestUtil.coord
@@ -23,8 +23,8 @@ open class TooltipSpecTestHelper {
     internal lateinit var geomTargetBuilder: TestingGeomTargetBuilder
         private set
     private var axisTooltipEnabled: Boolean = false
-    private lateinit var nonTooltipAes: List<Aes<*>>
-    private lateinit var axisAes: List<Aes<*>>
+    private lateinit var nonTooltipAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
+    private lateinit var axisAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>>
 
     private val plotContext = TestingPlotContextWithTooltipFormatters()
 
@@ -35,8 +35,8 @@ open class TooltipSpecTestHelper {
 
         setAxisTooltipEnabled(false)
 
-        nonTooltipAes = ArrayList<Aes<*>>(listOf(Aes.X))
-        axisAes = ArrayList<Aes<*>>(listOf(Aes.X))
+        nonTooltipAes = ArrayList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>(listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X))
+        axisAes = ArrayList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>(listOf(org.jetbrains.letsPlot.core.plot.base.Aes.X))
     }
 
     internal fun <T> addMappedData(mapping: Mapping<T>): Mapping<T> {
@@ -86,7 +86,7 @@ open class TooltipSpecTestHelper {
     }
 
     internal fun createTooltipSpecs(geomTarget: GeomTarget) {
-        val tipAes = ArrayList<Aes<*>>()
+        val tipAes = ArrayList<org.jetbrains.letsPlot.core.plot.base.Aes<*>>()
         for (aes in mappedDataAccessMock.getMappedAes()) {
             if (nonTooltipAes.contains(aes)) {
                 continue
@@ -143,6 +143,6 @@ open class TooltipSpecTestHelper {
         internal val CURSOR_COORD = DoubleVector(1.0, 2.0)
         internal const val OBJECT_RADIUS = 6.0
         internal const val DEFAULT_OBJECT_RADIUS = 0.0
-        internal val AES_WIDTH = Aes.WIDTH
+        internal val AES_WIDTH = org.jetbrains.letsPlot.core.plot.base.Aes.WIDTH
     }
 }

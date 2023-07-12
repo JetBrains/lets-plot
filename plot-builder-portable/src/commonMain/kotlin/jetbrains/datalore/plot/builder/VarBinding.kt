@@ -5,12 +5,12 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 
 class VarBinding(
     val variable: DataFrame.Variable,
-    val aes: Aes<*>
+    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>
 ) {
     override fun toString() = "VarBinding{variable=${variable}, aes=${aes}"
 

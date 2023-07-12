@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI
 import kotlin.math.cos

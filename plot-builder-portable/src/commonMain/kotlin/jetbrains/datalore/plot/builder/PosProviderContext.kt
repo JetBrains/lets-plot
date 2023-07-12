@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder
 
-import jetbrains.datalore.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 
 interface PosProviderContext {
     val aesthetics: Aesthetics

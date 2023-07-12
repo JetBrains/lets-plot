@@ -9,23 +9,23 @@ import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.base.Scale
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.base.aes.AestheticsBuilder.Companion.constant
-import jetbrains.datalore.plot.base.coord.Coords
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.geom.PointGeom
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.render.point.NamedShape
-import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.scale.Mappers
-import jetbrains.datalore.plot.base.scale.Scales
-import jetbrains.datalore.plot.base.scale.breaks.QuantizeScale
-import jetbrains.datalore.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
+import org.jetbrains.letsPlot.core.plot.base.coord.Coords
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.geom.PointGeom
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
+import org.jetbrains.letsPlot.core.plot.base.scale.Scales
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.QuantizeScale
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.AxisUtil
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
@@ -89,8 +89,8 @@ open class ScatterDemo : SimpleDemoBase() {
         val coord = Coords.DemoAndTest.create(domainX, domainY, demoInnerSize)
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
-        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
 
@@ -256,7 +256,7 @@ open class ScatterDemo : SimpleDemoBase() {
 //                .labels(labels)
 //                .build()
 
-            val scaleColor = Scales.DemoAndTest.continuousDomain("C", Aes.COLOR).with()
+            val scaleColor = Scales.DemoAndTest.continuousDomain("C", org.jetbrains.letsPlot.core.plot.base.Aes.COLOR).with()
 //                .mapper(mapperColor)
                 .breaks(breaks)
                 .labels(labels)
@@ -266,9 +266,9 @@ open class ScatterDemo : SimpleDemoBase() {
         }
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
-        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
-        data = DataFrameUtil.applyTransform(data, varC, Aes.COLOR, scaleColor.transform)
+        data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varC, org.jetbrains.letsPlot.core.plot.base.Aes.COLOR, scaleColor.transform)
 
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)
@@ -397,8 +397,8 @@ open class ScatterDemo : SimpleDemoBase() {
 
 
         // transform and stat always in this order
-        data = DataFrameUtil.applyTransform(data, varA, Aes.X, scaleX.transform)
-        data = DataFrameUtil.applyTransform(data, varB, Aes.Y, scaleY.transform)
+        data = DataFrameUtil.applyTransform(data, varA, org.jetbrains.letsPlot.core.plot.base.Aes.X, scaleX.transform)
+        data = DataFrameUtil.applyTransform(data, varB, org.jetbrains.letsPlot.core.plot.base.Aes.Y, scaleY.transform)
 
         val aesX = data.getNumeric(TransformVar.X)
         val aesY = data.getNumeric(TransformVar.Y)

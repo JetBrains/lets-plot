@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.tooltip.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.TestUtil.size
 import jetbrains.datalore.plot.builder.interact.TooltipSpec
 import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition

@@ -8,13 +8,13 @@ package jetbrains.datalore.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Font
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.Aesthetics
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.GeomContext
-import jetbrains.datalore.plot.base.ScaleMapper
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.interact.NullGeomTargetCollector
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var flipped: Boolean = false
     private var aesthetics: Aesthetics? = null
-    private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
+    private var aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>? = null
     private var aesBounds: DoubleRectangle? = null
     private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
     private var fontFamilyRegistry: FontFamilyRegistry? = null
@@ -49,7 +49,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
-    override fun aestheticMappers(aestheticMappers: Map<Aes<*>, ScaleMapper<*>>): ImmutableGeomContext.Builder {
+    override fun aestheticMappers(aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>): ImmutableGeomContext.Builder {
         this.aestheticMappers = aestheticMappers
         return this
     }
@@ -90,7 +90,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         private val fontFamilyRegistry: FontFamilyRegistry? = b.fontFamilyRegistry
 
-        override fun getResolution(aes: Aes<Double>): Double {
+        override fun getResolution(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Double>): Double {
             var resolution = 0.0
             if (aesthetics != null) {
                 resolution = aesthetics.resolution(aes, 0.0)
@@ -102,7 +102,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return resolution
         }
 
-        override fun isMappedAes(aes: Aes<*>): Boolean {
+        override fun isMappedAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
             return aestheticMappers?.containsKey(aes) ?: false
         }
 

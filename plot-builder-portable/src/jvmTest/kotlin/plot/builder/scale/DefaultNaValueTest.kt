@@ -5,14 +5,14 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class DefaultNaValueTest {
     @Test
     fun everyAesHasNaValue() {
-        for (aes in Aes.values()) {
+        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
             assertTrue(DefaultNaValue.has(aes), "Aes " + aes.name + " has n/a value")
         }
     }

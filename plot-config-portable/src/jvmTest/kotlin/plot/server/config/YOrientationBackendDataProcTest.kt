@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.server.config
 
-import jetbrains.datalore.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.config.DataMetaUtil
 import jetbrains.datalore.plot.config.Option.Meta.DATA_META

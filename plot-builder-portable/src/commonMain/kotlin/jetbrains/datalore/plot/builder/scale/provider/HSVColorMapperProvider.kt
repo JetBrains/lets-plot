@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.scale.provider
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.HSV
-import jetbrains.datalore.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers

@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,10 +18,10 @@ class TransformLog10DataTest {
         val geomLayer = TestUtil.buildGeomLayer(
             geom = Option.GeomName.HISTOGRAM,
             data = mapOf("x" to List(n) { 0.0 }),
-            mapping = mapOf(Aes.X.name to "x"),
+            mapping = mapOf(org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "x"),
             scales = listOf(
                 mapOf(
-                    Option.Scale.AES to Aes.Y.name,
+                    Option.Scale.AES to org.jetbrains.letsPlot.core.plot.base.Aes.Y.name,
                     Option.Scale.CONTINUOUS_TRANSFORM to Option.TransformName.LOG10
                 )
             )

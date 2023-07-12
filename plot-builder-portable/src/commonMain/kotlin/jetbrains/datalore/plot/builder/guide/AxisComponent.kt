@@ -8,11 +8,11 @@ package jetbrains.datalore.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
-import jetbrains.datalore.plot.base.render.svg.Text
-import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor.*
-import jetbrains.datalore.plot.base.render.svg.TextLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.Style

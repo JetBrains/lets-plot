@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import jetbrains.datalore.plot.base.CoordinateSystem
-import jetbrains.datalore.plot.base.interact.GeomTargetCollector
-import jetbrains.datalore.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.frame.SquareFrameOfReference
 
 object DemoAndTest {

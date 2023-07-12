@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_AREA_PADDING
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE

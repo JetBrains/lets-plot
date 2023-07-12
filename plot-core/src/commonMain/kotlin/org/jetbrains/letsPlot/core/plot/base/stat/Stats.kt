@@ -1,0 +1,371 @@
+/*
+ * Copyright (c) 2023. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.base.stat
+
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable.Source.STAT
+import org.jetbrains.letsPlot.core.plot.base.Stat
+import org.jetbrains.letsPlot.core.plot.base.StatContext
+
+object Stats {
+    // stat variables can be referenced by name ..name.. (p 54)
+    val X = DataFrame.Variable("..x..", STAT, "x")
+    val Y = DataFrame.Variable("..y..", STAT, "y")
+    val COUNT = DataFrame.Variable("..count..", STAT, "count")
+    val DENSITY = DataFrame.Variable("..density..", STAT, "density")
+    val Y_MIN = DataFrame.Variable("..ymin..", STAT, "y min")
+    val Y_MAX = DataFrame.Variable("..ymax..", STAT, "y max")
+    val SAMPLE = DataFrame.Variable("..sample..", STAT, "sample")
+    val THEORETICAL = DataFrame.Variable("..theoretical..", STAT, "theoretical")
+    val SE = DataFrame.Variable("..se..", STAT, "standard error")
+    val LEVEL = DataFrame.Variable("..level..", STAT, "level")
+    val MEAN = DataFrame.Variable("..mean..", STAT, "mean")
+    val MEDIAN = DataFrame.Variable("..median..", STAT, "median")
+    val QUANTILE = DataFrame.Variable("..quantile..", STAT, "quantile")
+    val LOWER_QUANTILE = DataFrame.Variable("..lq..", STAT, "lower quantile")
+    val MIDDLE_QUANTILE = DataFrame.Variable("..mq..", STAT, "middle quantile")
+    val UPPER_QUANTILE = DataFrame.Variable("..uq..", STAT, "upper quantile")
+    val LOWER = DataFrame.Variable("..lower..", STAT, "lower")
+    val MIDDLE = DataFrame.Variable("..middle..", STAT, "middle")
+    val UPPER = DataFrame.Variable("..upper..", STAT, "upper")
+    val WIDTH = DataFrame.Variable("..width..", STAT, "width")
+    val HEIGHT = DataFrame.Variable("..height..", STAT, "height")
+    val BIN_WIDTH = DataFrame.Variable("..binwidth..", STAT, "binwidth")
+    val VIOLIN_WIDTH = DataFrame.Variable("..violinwidth..", STAT, "violinwidth")
+    val SUM = DataFrame.Variable("..sum..", STAT, "sum")
+    val PROP = DataFrame.Variable("..prop..", STAT, "prop")
+    val PROPPCT = DataFrame.Variable("..proppct..", STAT, "proppct")
+
+    val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
+
+    val GROUP = DataFrame.Variable("..group..", STAT, "group")
+
+    val IDENTITY: Stat = IdentityStat()
+
+    private val VARS: Map<String, DataFrame.Variable> = run {
+        val variableList = listOf(
+            X,
+            Y,
+            COUNT,
+            DENSITY,
+            Y_MIN,
+            Y_MAX,
+            SAMPLE,
+            THEORETICAL,
+            SE,
+            LEVEL,
+            MEAN,
+            MEDIAN,
+            QUANTILE,
+            LOWER_QUANTILE,
+            MIDDLE_QUANTILE,
+            UPPER_QUANTILE,
+            LOWER,
+            MIDDLE,
+            UPPER,
+            WIDTH,
+            HEIGHT,
+            BIN_WIDTH,
+            VIOLIN_WIDTH,
+            SUM,
+            PROP,
+            PROPPCT,
+            SCALED,
+            GROUP,
+        )
+
+        val result = HashMap<String, DataFrame.Variable>()
+        for (variable in variableList) {
+            result[variable.name] = variable
+        }
+        result
+    }
+
+    val EMPTY_STATS_DATAFRAME = VARS.values
+        .fold(DataFrame.Builder()) { acc, variable -> acc.put(variable, emptyList<Any>()) }
+        .build()
+
+    fun isStatVar(varName: String): Boolean {
+        return VARS.containsKey(varName)
+    }
+
+    fun statVar(varName: String): DataFrame.Variable {
+        require(VARS.containsKey(varName)) { "Unknown stat variable $varName" }
+        return VARS[varName]!!
+    }
+
+    fun defaultMapping(stat: Stat): Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable> {
+        val map = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, DataFrame.Variable>()
+        for (aes in org.jetbrains.letsPlot.core.plot.base.Aes.values()) {
+            if (stat.hasDefaultMapping(aes)) {
+                val variable = stat.getDefaultMapping(aes)
+                map[aes] = variable
+            }
+        }
+        return map
+    }
+
+    fun count(): Stat {
+        return CountStat()
+    }
+
+    fun count2d(): Stat {
+        return Count2dStat()
+    }
+
+    fun bin(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null
+    ): BinStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (boundary != null) {
+            xPosKind = BinStat.XPosKind.BOUNDARY
+            xPosValue = boundary
+        } else if (center != null) {
+            xPosKind = BinStat.XPosKind.CENTER
+            xPosValue = center
+        }
+
+        return BinStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue
+        )
+    }
+
+    fun dotplot(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null,
+        method: DotplotStat.Method = DotplotStat.DEF_METHOD
+    ): DotplotStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (method != DotplotStat.Method.DOTDENSITY) {
+            if (boundary != null) {
+                xPosKind = BinStat.XPosKind.BOUNDARY
+                xPosValue = boundary
+            } else if (center != null) {
+                xPosKind = BinStat.XPosKind.CENTER
+                xPosValue = center
+            }
+        }
+
+        return DotplotStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue,
+            method = method
+        )
+    }
+
+    fun ydotplot(
+        binCount: Int = BinStat.DEF_BIN_COUNT,
+        binWidth: Double? = null,
+        center: Double? = null,
+        boundary: Double? = null,
+        method: DotplotStat.Method = DotplotStat.DEF_METHOD
+    ): YDotplotStat {
+        var xPosKind = BinStat.XPosKind.NONE
+        var xPosValue = 0.0
+        if (method != DotplotStat.Method.DOTDENSITY) {
+            if (boundary != null) {
+                xPosKind = BinStat.XPosKind.BOUNDARY
+                xPosValue = boundary
+            } else if (center != null) {
+                xPosKind = BinStat.XPosKind.CENTER
+                xPosValue = center
+            }
+        }
+
+        return YDotplotStat(
+            binCount = binCount,
+            binWidth = binWidth,
+            xPosKind = xPosKind,
+            xPos = xPosValue,
+            method = method
+        )
+    }
+
+    fun smooth(
+        smootherPointCount: Int = SmoothStat.DEF_EVAL_POINT_COUNT,
+        smoothingMethod: SmoothStat.Method = SmoothStat.DEF_SMOOTHING_METHOD,
+        confidenceLevel: Double = SmoothStat.DEF_CONFIDENCE_LEVEL,
+        displayConfidenceInterval: Boolean = SmoothStat.DEF_DISPLAY_CONFIDENCE_INTERVAL,
+        span: Double = SmoothStat.DEF_SPAN,
+        polynomialDegree: Int = SmoothStat.DEF_DEG,
+        loessCriticalSize: Int = SmoothStat.DEF_LOESS_CRITICAL_SIZE,
+        samplingSeed: Long = SmoothStat.DEF_SAMPLING_SEED
+    ): SmoothStat {
+        return SmoothStat(
+            smootherPointCount = smootherPointCount,
+            smoothingMethod = smoothingMethod,
+            confidenceLevel = confidenceLevel,
+            displayConfidenceInterval = displayConfidenceInterval,
+            span = span,
+            polynomialDegree = polynomialDegree,
+            loessCriticalSize = loessCriticalSize,
+            samplingSeed = samplingSeed
+        )
+    }
+
+    fun contour(
+        binCount: Int = ContourStat.DEF_BIN_COUNT,
+        binWidth: Double? = null
+    ): ContourStat {
+        return ContourStat(
+            binCount = binCount,
+            binWidth = binWidth
+        )
+    }
+
+    fun contourf(
+        binCount: Int = ContourStat.DEF_BIN_COUNT,
+        binWidth: Double? = null
+    ): ContourfStat {
+        return ContourfStat(
+            binCount = binCount,
+            binWidth = binWidth
+        )
+    }
+
+    fun boxplot(
+        whiskerIQRRatio: Double = BoxplotStat.DEF_WHISKER_IQR_RATIO,
+        computeWidth: Boolean = BoxplotStat.DEF_COMPUTE_WIDTH
+    ): BoxplotStat {
+        return BoxplotStat(whiskerIQRRatio, computeWidth)
+    }
+
+    fun boxplotOutlier(
+        whiskerIQRRatio: Double = BoxplotStat.DEF_WHISKER_IQR_RATIO
+    ): BoxplotOutlierStat {
+        return BoxplotOutlierStat(whiskerIQRRatio)
+    }
+
+    fun density(
+        trim: Boolean = DensityStat.DEF_TRIM,
+        bandWidth: Double? = null,
+        bandWidthMethod: DensityStat.BandWidthMethod = DensityStat.DEF_BW,
+        adjust: Double = DensityStat.DEF_ADJUST,
+        kernel: DensityStat.Kernel = DensityStat.DEF_KERNEL,
+        n: Int = DensityStat.DEF_N,
+        fullScanMax: Int = DensityStat.DEF_FULL_SCAN_MAX,
+        quantiles: List<Double> = DensityStat.DEF_QUANTILES
+    ): DensityStat {
+        return DensityStat(
+            trim = trim,
+            bandWidth = bandWidth,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            n = n,
+            fullScanMax = fullScanMax,
+            quantiles = quantiles
+        )
+    }
+
+    fun density2d(
+        bandWidthX: Double? = null,
+        bandWidthY: Double? = null,
+        bandWidthMethod: DensityStat.BandWidthMethod = AbstractDensity2dStat.DEF_BW,  // Used is `bandWidth` is not set.
+        adjust: Double = AbstractDensity2dStat.DEF_ADJUST,
+        kernel: DensityStat.Kernel = AbstractDensity2dStat.DEF_KERNEL,
+        nX: Int = AbstractDensity2dStat.DEF_N,
+        nY: Int = AbstractDensity2dStat.DEF_N,
+        isContour: Boolean = AbstractDensity2dStat.DEF_CONTOUR,
+        binCount: Int = AbstractDensity2dStat.DEF_BIN_COUNT,
+        binWidth: Double = AbstractDensity2dStat.DEF_BIN_WIDTH
+    ): AbstractDensity2dStat {
+        return Density2dStat(
+            bandWidthX = bandWidthX,
+            bandWidthY = bandWidthY,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            nX = nX,
+            nY = nY,
+            isContour = isContour,
+            binCount = binCount,
+            binWidth = binWidth
+        )
+    }
+
+    fun density2df(
+        bandWidthX: Double? = null,
+        bandWidthY: Double? = null,
+        bandWidthMethod: DensityStat.BandWidthMethod,  // Used is `bandWidth` is not set.
+        adjust: Double = AbstractDensity2dStat.DEF_ADJUST,
+        kernel: DensityStat.Kernel = AbstractDensity2dStat.DEF_KERNEL,
+        nX: Int = AbstractDensity2dStat.DEF_N,
+        nY: Int = AbstractDensity2dStat.DEF_N,
+        isContour: Boolean = AbstractDensity2dStat.DEF_CONTOUR,
+        binCount: Int = AbstractDensity2dStat.DEF_BIN_COUNT,
+        binWidth: Double = AbstractDensity2dStat.DEF_BIN_WIDTH
+    ): AbstractDensity2dStat {
+        return Density2dfStat(
+            bandWidthX = bandWidthX,
+            bandWidthY = bandWidthY,
+            bandWidthMethod = bandWidthMethod,
+            adjust = adjust,
+            kernel = kernel,
+            nX = nX,
+            nY = nY,
+            isContour = isContour,
+            binCount = binCount,
+            binWidth = binWidth
+        )
+    }
+
+    fun qq(
+        distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
+        distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS
+    ): QQStat {
+        return QQStat(
+            distribution = distribution,
+            distributionParameters = distributionParameters
+        )
+    }
+
+    fun qq2(): QQ2Stat {
+        return QQ2Stat()
+    }
+
+    fun qqline(
+        distribution: QQStat.Distribution = QQStat.DEF_DISTRIBUTION,
+        distributionParameters: List<Double> = QQStat.DEF_DISTRIBUTION_PARAMETERS,
+        lineQuantiles: Pair<Double, Double> = QQLineStat.DEF_LINE_QUANTILES
+    ): QQLineStat {
+        return QQLineStat(
+            distribution = distribution,
+            distributionParameters = distributionParameters,
+            lineQuantiles = lineQuantiles
+        )
+    }
+
+    fun qq2line(
+        lineQuantiles: Pair<Double, Double> = QQLineStat.DEF_LINE_QUANTILES
+    ): QQ2LineStat {
+        return QQ2LineStat(lineQuantiles = lineQuantiles)
+    }
+
+    private class IdentityStat() : BaseStat(emptyMap()) {
+
+        override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
+            return withEmptyStatValues()
+        }
+
+        override fun consumes(): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
+            return emptyList()
+        }
+    }
+}

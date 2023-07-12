@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import jetbrains.datalore.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import jetbrains.datalore.plot.builder.layout.TextJustification
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
 import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification

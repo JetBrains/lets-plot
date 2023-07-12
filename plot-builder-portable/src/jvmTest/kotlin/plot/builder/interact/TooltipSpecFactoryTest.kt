@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.interact
 
-import jetbrains.datalore.plot.base.Aes
-import jetbrains.datalore.plot.base.interact.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
 import jetbrains.datalore.plot.builder.interact.MappedDataAccessMock.Companion.variable
 import jetbrains.datalore.plot.builder.tooltip.MappingField
 import kotlin.test.BeforeTest
@@ -27,7 +27,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
     @Test
     fun shouldNotDuplicateAesFromHintsToBigTooltip() {
         val widthMapping = addMappedData(variable().name("type").value("sedan").mapping(AES_WIDTH))
-        val colorMapping = addMappedData(variable().name("cyl").value("4").mapping(Aes.COLOR))
+        val colorMapping = addMappedData(variable().name("cyl").value("4").mapping(org.jetbrains.letsPlot.core.plot.base.Aes.COLOR))
 
         createTooltipSpecs(geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(

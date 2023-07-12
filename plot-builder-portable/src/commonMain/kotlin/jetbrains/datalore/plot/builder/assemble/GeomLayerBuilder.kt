@@ -8,24 +8,24 @@ package jetbrains.datalore.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.base.aes.GeomTheme
-import jetbrains.datalore.plot.base.annotations.Annotations
-import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.base.geom.GeomBase
-import jetbrains.datalore.plot.base.geom.LiveMapGeom
-import jetbrains.datalore.plot.base.geom.LiveMapProvider
-import jetbrains.datalore.plot.base.interact.ContextualMapping
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpec
-import jetbrains.datalore.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.base.pos.PositionAdjustments
-import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
-import jetbrains.datalore.plot.base.stat.SimpleStatContext
-import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.base.util.YOrientationBaseUtil
-import jetbrains.datalore.plot.base.util.afterOrientation
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
+import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
+import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
+import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
+import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
+import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
+import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.MarginSide
 import jetbrains.datalore.plot.builder.VarBinding
@@ -53,9 +53,9 @@ class GeomLayerBuilder(
     private val myConstantByAes = TypedKeyHashMap()
     private var myGroupingVarName: String? = null
     private var myPathIdVarName: String? = null
-    private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
+    private val myScaleProviderByAes = HashMap<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleProvider>()
 
-    private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
+    private var myDataPreprocessor: ((DataFrame, Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform>) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
     private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
 
@@ -66,8 +66,8 @@ class GeomLayerBuilder(
     private var marginalSide: MarginSide = MarginSide.LEFT
     private var marginalSize: Double = Double.NaN
 
-    private var colorByAes: Aes<Color> = Aes.COLOR
-    private var fillByAes: Aes<Color> = Aes.FILL
+    private var colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = org.jetbrains.letsPlot.core.plot.base.Aes.COLOR
+    private var fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color> = org.jetbrains.letsPlot.core.plot.base.Aes.FILL
 
     private var myAnnotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)? = null
 
@@ -93,12 +93,12 @@ class GeomLayerBuilder(
         return this
     }
 
-    fun <T> addConstantAes(aes: Aes<T>, v: T): GeomLayerBuilder {
+    fun <T> addConstantAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, v: T): GeomLayerBuilder {
         myConstantByAes.put(aes, v)
         return this
     }
 
-    fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider): GeomLayerBuilder {
+    fun <T> addScaleProvider(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>, scaleProvider: ScaleProvider): GeomLayerBuilder {
         myScaleProviderByAes[aes] = scaleProvider
         return this
     }
@@ -145,12 +145,12 @@ class GeomLayerBuilder(
         return this
     }
 
-    fun colorByAes(aes: Aes<Color>): GeomLayerBuilder {
+    fun colorByAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>): GeomLayerBuilder {
         colorByAes = aes
         return this
     }
 
-    fun fillByAes(aes: Aes<Color>): GeomLayerBuilder {
+    fun fillByAes(aes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>): GeomLayerBuilder {
         fillByAes = aes
         return this
     }
@@ -162,10 +162,10 @@ class GeomLayerBuilder(
 
     fun build(
         data: DataFrame,
-        scaleMap: Map<Aes<*>, Scale>,
-        scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
+        scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+        scaleMapppersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
     ): GeomLayer {
-        val transformByAes: Map<Aes<*>, Transform> = scaleMap.keys.associateWith {
+        val transformByAes: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Transform> = scaleMap.keys.associateWith {
             scaleMap.getValue(it).transform
         }
 
@@ -257,10 +257,10 @@ class GeomLayerBuilder(
         geomTheme: GeomTheme,
         override val posProvider: PosProvider,
         override val group: (Int) -> Int,
-        private val varBindings: Map<Aes<*>, VarBinding>,
+        private val varBindings: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, VarBinding>,
         private val constantByAes: TypedKeyHashMap,
-        override val scaleMap: Map<Aes<*>, Scale>,
-        override val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
+        override val scaleMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Scale>,
+        override val scaleMappersNP: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider,
         override val isLegendDisabled: Boolean,
@@ -269,21 +269,21 @@ class GeomLayerBuilder(
         override val marginalSide: MarginSide,
         override val marginalSize: Double,
         override val fontFamilyRegistry: FontFamilyRegistry,
-        override val colorByAes: Aes<Color>,
-        override val fillByAes: Aes<Color>,
+        override val colorByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
+        override val fillByAes: org.jetbrains.letsPlot.core.plot.base.Aes<Color>,
         private val annotationsProvider: ((MappedDataAccess, DataFrame) -> Annotations?)?
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
             object : GeomProvider.Context() {
-                override fun hasBinding(aes: Aes<*>): Boolean = varBindings.containsKey(aes)
-                override fun hasConstant(aes: Aes<*>): Boolean = constantByAes.containsKey(aes)
+                override fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = varBindings.containsKey(aes)
+                override fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean = constantByAes.containsKey(aes)
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
         override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme)
 
-        private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
+        private val myRenderedAes: List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,
             colorByAes, fillByAes,
             exclude = geom.wontRender
@@ -296,7 +296,7 @@ class GeomLayerBuilder(
             get() = geom is LiveMapGeom
 
 
-        override fun renderedAes(considerOrientation: Boolean): List<Aes<*>> {
+        override fun renderedAes(considerOrientation: Boolean): List<org.jetbrains.letsPlot.core.plot.base.Aes<*>> {
             return if (considerOrientation && isYOrientation) {
                 myRenderedAes.map { YOrientationBaseUtil.flipAes(it) }
             } else {
@@ -304,34 +304,34 @@ class GeomLayerBuilder(
             }
         }
 
-        override fun hasBinding(aes: Aes<*>): Boolean {
+        override fun hasBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
             return varBindings.containsKey(aes)
         }
 
-        override fun <T> getBinding(aes: Aes<T>): VarBinding {
+        override fun <T> getBinding(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): VarBinding {
             return varBindings[aes]!!
         }
 
-        override fun hasConstant(aes: Aes<*>): Boolean {
+        override fun hasConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
             return constantByAes.containsKey(aes)
         }
 
-        override fun <T> getConstant(aes: Aes<T>): T {
+        override fun <T> getConstant(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
             require(hasConstant(aes)) { "Constant value is not defined for aes $aes" }
             return constantByAes[aes]
         }
 
-        override fun <T> getDefault(aes: Aes<T>): T {
+        override fun <T> getDefault(aes: org.jetbrains.letsPlot.core.plot.base.Aes<T>): T {
             return aestheticsDefaults.defaultValue(aes)
         }
 
-        override fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
+        override fun preferableNullDomain(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): DoubleSpan {
             @Suppress("NAME_SHADOWING")
             val aes = aes.afterOrientation(isYOrientation)
             return (geom as GeomBase).preferableNullDomain(aes)
         }
 
-        override fun rangeIncludesZero(aes: Aes<*>): Boolean {
+        override fun rangeIncludesZero(aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>): Boolean {
             @Suppress("NAME_SHADOWING")
             val aes = aes.afterOrientation(isYOrientation)
             return geom.rangeIncludesZero(aes)

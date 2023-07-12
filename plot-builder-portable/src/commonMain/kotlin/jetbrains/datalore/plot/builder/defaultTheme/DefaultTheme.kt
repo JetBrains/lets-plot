@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import jetbrains.datalore.plot.base.GeomKind
-import jetbrains.datalore.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry

@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.Projection
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
-import jetbrains.datalore.plot.base.coord.CoordinatesMapper
+import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
 
 internal abstract class CoordProviderBase(
     private val xLim: DoubleSpan?,

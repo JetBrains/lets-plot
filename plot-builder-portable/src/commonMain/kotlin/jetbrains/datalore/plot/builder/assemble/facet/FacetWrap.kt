@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.assemble.facet
 
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
 import kotlin.math.ceil
 import kotlin.math.max

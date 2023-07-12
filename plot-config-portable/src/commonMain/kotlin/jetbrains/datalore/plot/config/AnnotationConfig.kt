@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.annotation.AnnotationLine
 import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.annotation.AnnotationSpecification
 class AnnotationConfig(
     opts: Map<String, Any>,
     varBindings: List<VarBinding>,
-    constantsMap: Map<Aes<*>, Any>,
+    constantsMap: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, Any>,
     groupingVarName: String?
 ) : LineSpecConfigParser(opts, constantsMap, groupingVarName, varBindings) {
 

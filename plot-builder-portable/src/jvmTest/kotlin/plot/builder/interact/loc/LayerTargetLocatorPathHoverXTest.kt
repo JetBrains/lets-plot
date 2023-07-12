@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.builder.interact.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.base.interact.GeomTarget
-import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupStrategy
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupStrategy
 import jetbrains.datalore.plot.builder.interact.TestUtil.HitIndex
 import jetbrains.datalore.plot.builder.interact.TestUtil.PathPoint
 import org.assertj.core.api.Assertions.assertThat

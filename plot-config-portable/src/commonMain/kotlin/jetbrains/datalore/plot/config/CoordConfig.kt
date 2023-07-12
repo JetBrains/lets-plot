@@ -6,8 +6,8 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.base.Transform
+import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
+import org.jetbrains.letsPlot.core.plot.base.Transform
 import jetbrains.datalore.plot.builder.coord.CoordProvider
 
 class CoordConfig private constructor(

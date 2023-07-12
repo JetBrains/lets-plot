@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotContainer
 
-import jetbrains.datalore.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import kotlin.math.cos
 import kotlin.math.sin
 
