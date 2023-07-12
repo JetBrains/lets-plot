@@ -135,7 +135,7 @@ class GeomProto(val geomKind: GeomKind) {
             }
 
             else -> {
-                // Some stats don't have their own geometries, but have own positioning
+                // Layer also can be set via stat_xxx function
                 when (StatKind.safeValueOf(layerOptions.getStringSafe(Layer.STAT))) {
                     StatKind.BOXPLOT_OUTLIER -> mapOf(
                         Meta.NAME to PosProto.DODGE,
