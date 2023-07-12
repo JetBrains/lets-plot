@@ -135,12 +135,13 @@ class GeomProto(val geomKind: GeomKind) {
             }
 
             else -> {
+                // Some stats don't have their own geometries, but have own positioning
                 when (StatKind.safeValueOf(layerOptions.getStringSafe(Layer.STAT))) {
                     StatKind.BOXPLOT_OUTLIER -> mapOf(
                         Meta.NAME to PosProto.DODGE,
                         Pos.Dodge.WIDTH to 0.95
                     )
-                    // Some other geoms has stateless position adjustments defined in `defaults`
+                    // Some other geoms have stateless position adjustments defined in `defaults`
                     // Otherwise it's just `identity`
                     else -> DEFAULTS[geomKind]?.get(Layer.POS) ?: PosProto.IDENTITY
                 }
