@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.interact.TooltipLineSpec
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
-import jetbrains.datalore.plot.common.time.TimeUtil
+import org.jetbrains.letsPlot.core.commons.time.TimeUtil
 import jetbrains.datalore.plot.config.Option.LinesSpec.FORMATS
 import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FIELD
 import jetbrains.datalore.plot.config.Option.LinesSpec.Format.FORMAT

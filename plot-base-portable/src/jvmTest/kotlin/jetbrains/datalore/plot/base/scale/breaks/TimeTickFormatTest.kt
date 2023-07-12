@@ -10,8 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
 import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
-import jetbrains.datalore.plot.common.text.DateTimeFormatUtil
-import jetbrains.datalore.plot.common.time.interval.TimeInterval
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

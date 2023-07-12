@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.*
 
 class LinearBreaksHelper(

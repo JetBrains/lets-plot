@@ -13,13 +13,13 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
-import jetbrains.datalore.plot.common.color.ColorPalette
-import jetbrains.datalore.plot.common.color.ColorPalette.Qualitative.Set2
-import jetbrains.datalore.plot.common.color.ColorPalette.Qualitative.Set3
-import jetbrains.datalore.plot.common.color.ColorPalette.Type.*
-import jetbrains.datalore.plot.common.color.ColorScheme
-import jetbrains.datalore.plot.common.color.PaletteUtil
-import jetbrains.datalore.plot.common.color.PaletteUtil.colorSchemeByIndex
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Qualitative.Set2
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Qualitative.Set3
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Type.*
+import org.jetbrains.letsPlot.core.commons.color.ColorScheme
+import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
+import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.colorSchemeByIndex
 
 
 /**

@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.*
 
 object DensityStatUtil {

@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.plot.common.time.TimeUtil
-import jetbrains.datalore.plot.common.time.interval.NiceTimeInterval
-import jetbrains.datalore.plot.common.time.interval.TimeInterval
-import jetbrains.datalore.plot.common.time.interval.YearInterval
+import org.jetbrains.letsPlot.core.commons.time.TimeUtil
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
+import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
 import kotlin.math.round
 
 class DateTimeBreaksHelper(
@@ -19,7 +19,7 @@ class DateTimeBreaksHelper(
 ) : BreaksHelperBase(rangeStart, rangeEnd, count) {
 
     override val breaks: List<Double>
-    val formatter: (Any) -> String
+    val formatter: (Number) -> String
 
     init {
 

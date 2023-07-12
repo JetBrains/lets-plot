@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
 import jetbrains.datalore.plot.builder.assemble.facet.FacetGrid
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 abstract class PlotFacets {
 

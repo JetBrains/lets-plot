@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.abs
 import kotlin.math.min
 

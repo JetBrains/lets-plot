@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.scale.breaks
 import jetbrains.datalore.base.assertion.assertArrayEquals
 import org.jetbrains.letsPlot.commons.intern.datetime.*
 import org.jetbrains.letsPlot.commons.intern.datetime.tz.TimeZone
-import jetbrains.datalore.plot.common.time.TimeUtil
-import jetbrains.datalore.plot.common.time.interval.TimeInterval
+import org.jetbrains.letsPlot.core.commons.time.TimeUtil
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

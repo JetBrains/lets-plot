@@ -5,17 +5,17 @@
 
 package jetbrains.datalore.plot.base.scale.breaks
 
-import jetbrains.datalore.plot.common.text.Formatter
-import jetbrains.datalore.plot.common.time.interval.NiceTimeInterval
-import jetbrains.datalore.plot.common.time.interval.TimeInterval
-import jetbrains.datalore.plot.common.time.interval.YearInterval
+import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormatUtil.formatterDateUTC
+import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
+import org.jetbrains.letsPlot.core.commons.time.interval.YearInterval
 
 internal class TimeScaleTickFormatterFactory(
     private val minInterval: TimeInterval?
 ) {
 
-    fun getFormatter(step: Double): (Any) -> String {
-        return Formatter.time(formatPattern(step))
+    fun getFormatter(step: Double): (Number) -> String {
+        return formatterDateUTC(formatPattern(step))
     }
 
     private fun formatPattern(step: Double): String {

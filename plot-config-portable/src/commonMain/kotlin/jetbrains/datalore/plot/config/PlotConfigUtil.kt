@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.ContinuousTransform
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.assemble.PlotFacets
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import jetbrains.datalore.plot.config.PlotConfig.Companion.PLOT_COMPUTATION_MESSAGES
 
 object PlotConfigUtil {

@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.base.geom.util.*
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.TO_RECTANGLE
 import jetbrains.datalore.plot.base.geom.util.GeomUtil.createPathGroups
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.abs
 import kotlin.math.min
 

@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 class DataFrame private constructor(builder: Builder) {

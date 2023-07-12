@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.math3.BlockRealMatrix
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 class Density2dStat constructor(
     bandWidthX: Double?,

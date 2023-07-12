@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.stat.regression.LinearRegression
 import jetbrains.datalore.plot.base.stat.regression.LocalPolynomialRegression
 import jetbrains.datalore.plot.base.stat.regression.PolynomialRegression
 import jetbrains.datalore.plot.base.util.SamplingUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.random.Random
 
 

@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.DataFrame.Variable
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.common.util.MutableDouble
-import jetbrains.datalore.plot.common.util.MutableInteger
+import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
+import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.method.VertexSampling.DoubleVectorComponentsList
 import kotlin.math.min
 import kotlin.math.roundToInt

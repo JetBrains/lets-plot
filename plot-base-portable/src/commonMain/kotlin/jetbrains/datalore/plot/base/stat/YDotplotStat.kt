@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil.isFinite
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isFinite
 
 class YDotplotStat(
     binCount: Int,

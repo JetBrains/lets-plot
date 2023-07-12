@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.server.config.transform.bistro.corr
 
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.DataFrameUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil.filterFinite
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.filterFinite
 import kotlin.math.absoluteValue
 
 internal object CorrUtil {

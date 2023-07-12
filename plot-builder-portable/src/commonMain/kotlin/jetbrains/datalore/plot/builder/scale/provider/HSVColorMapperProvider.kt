@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ColorMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.data.SeriesUtil.ensureApplicableRange
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
 import kotlin.math.abs
 
 abstract class HSVColorMapperProvider(naValue: Color) : MapperProviderBase<Color>(naValue) {

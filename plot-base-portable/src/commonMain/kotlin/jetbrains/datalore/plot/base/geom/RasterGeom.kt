@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.render.svg.Text.HorizontalAnchor
 import jetbrains.datalore.plot.base.render.svg.Text.VerticalAnchor
 import jetbrains.datalore.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx.Bitmap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils

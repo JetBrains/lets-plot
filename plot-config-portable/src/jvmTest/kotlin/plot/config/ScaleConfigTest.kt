@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.base.scale.transform.Transforms
 import jetbrains.datalore.plot.builder.scale.MapperProvider
 import jetbrains.datalore.plot.builder.scale.mapper.LineTypeMapper
 import jetbrains.datalore.plot.builder.scale.mapper.ShapeMapper
-import jetbrains.datalore.plot.common.color.ColorPalette
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import jetbrains.datalore.plot.config.Option.Mapping.toOption
 import jetbrains.datalore.plot.parsePlotSpec
 import kotlin.test.Test

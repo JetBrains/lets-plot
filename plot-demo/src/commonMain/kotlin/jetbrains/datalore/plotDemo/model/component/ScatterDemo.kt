@@ -31,9 +31,9 @@ import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesRClassic
 import jetbrains.datalore.plot.builder.guide.AxisComponent
 import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.common.color.ColorPalette
-import jetbrains.datalore.plot.common.color.ColorScheme
-import jetbrains.datalore.plot.common.color.PaletteUtil.schemeColors
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette
+import org.jetbrains.letsPlot.core.commons.color.ColorScheme
+import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.schemeColors
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 open class ScatterDemo : SimpleDemoBase() {

@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.stat.regression
 
 import jetbrains.datalore.plot.base.stat.math3.Percentile
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.random.Random
 
 internal object RegressionUtil {

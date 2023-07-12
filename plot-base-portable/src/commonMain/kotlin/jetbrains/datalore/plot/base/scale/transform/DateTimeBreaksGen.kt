@@ -5,10 +5,10 @@
 
 package jetbrains.datalore.plot.base.scale.transform
 
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.scale.BreaksGenerator
 import jetbrains.datalore.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.base.scale.breaks.DateTimeBreaksHelper
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 
 class DateTimeBreaksGen(
     private val labelFormatter: ((Any) -> String)? = null
@@ -40,6 +40,7 @@ class DateTimeBreaksGen(
     }
 
     override fun defaultFormatter(domain: DoubleSpan, targetCount: Int): (Any) -> String {
-        return breaksHelper(domain, targetCount).formatter
+        val numFormatter = breaksHelper(domain, targetCount).formatter
+        return { v: Any -> numFormatter(v as Number) }
     }
 }

@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base
 
 import jetbrains.datalore.plot.base.DataFrame.OrderSpec
 import jetbrains.datalore.plot.base.stat.Stats
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import java.lang.Double.NaN
 import kotlin.test.Test
 import kotlin.test.assertEquals

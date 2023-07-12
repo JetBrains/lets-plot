@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.geom.util.QuantilesHelper
 import jetbrains.datalore.plot.base.geom.util.TargetCollectorHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
 import jetbrains.datalore.plot.base.stat.DensityRidgesStat
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 class AreaRidgesGeom : GeomBase(), WithHeight {

@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.PlotUtil
-import jetbrains.datalore.plot.common.color.ColorPalette
+import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import jetbrains.datalore.plot.config.TestUtil.getSingleGeomLayer
 import kotlin.test.Test
 import kotlin.test.assertEquals

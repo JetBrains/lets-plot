@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace
 import jetbrains.datalore.plot.base.interact.GeomTargetLocator.LookupSpace.*
 import jetbrains.datalore.plot.builder.interact.MathUtil.polygonContainsCoordinate
-import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import kotlin.math.max
 import kotlin.math.min
 

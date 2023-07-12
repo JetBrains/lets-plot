@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.geom.util.RectTargetCollectorHelper
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.interact.TipLayoutHint.Kind.CURSOR_TOOLTIP
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 class RectGeom : GeomBase() {
 

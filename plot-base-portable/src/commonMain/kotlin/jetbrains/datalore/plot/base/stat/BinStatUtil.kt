@@ -8,8 +8,8 @@ package jetbrains.datalore.plot.base.stat
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.data.TransformVar
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.util.MutableDouble
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
 import kotlin.math.*
 
 object BinStatUtil {

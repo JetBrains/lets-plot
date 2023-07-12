@@ -14,7 +14,7 @@ import jetbrains.datalore.plot.base.geom.util.GeomUtil.extendWidth
 import jetbrains.datalore.plot.base.geom.util.HintColorUtil
 import jetbrains.datalore.plot.base.geom.util.RectanglesHelper
 import jetbrains.datalore.plot.base.render.SvgRoot
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 open class BarGeom : GeomBase() {
 

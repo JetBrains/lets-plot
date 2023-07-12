@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.BogusContext
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.base.aes.AestheticsBuilder
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 open class PosTest {
     private val doubleComparisonPrecision = 1e-9

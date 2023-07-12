@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.math.log10
 import kotlin.math.max
 import kotlin.math.pow

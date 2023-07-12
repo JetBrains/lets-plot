@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.scale.MapperUtil
 import jetbrains.datalore.plot.builder.scale.GuideMapper
 import jetbrains.datalore.plot.builder.scale.mapper.GuideMappers
-import jetbrains.datalore.plot.common.colormap.ColorMaps
-import jetbrains.datalore.plot.common.colormap.ColorMaps.VIRIDIS
+import org.jetbrains.letsPlot.core.commons.colormap.ColorMaps
+import org.jetbrains.letsPlot.core.commons.colormap.ColorMaps.VIRIDIS
 
 
 /**

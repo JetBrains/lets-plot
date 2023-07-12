@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.geom
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.DataPointAesthetics
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 object PointDimensionsUtil {
     fun dimensionSpan(

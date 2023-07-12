@@ -8,14 +8,14 @@ package jetbrains.datalore.plot.builder.sampling.method
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.isClosed
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.DataFrame
-import jetbrains.datalore.plot.common.util.MutableInteger
+import org.jetbrains.letsPlot.core.commons.mutables.MutableInteger
 import jetbrains.datalore.plot.builder.sampling.PointSampling
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.calculateRingLimits
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingIndex
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.getRingLimit
 import jetbrains.datalore.plot.builder.sampling.method.SamplingUtil.splitRings
-import jetbrains.datalore.plot.common.data.SeriesUtil
-import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 
 internal abstract class VertexSampling(sampleSize: Int) : SamplingBase(sampleSize),
     PointSampling {

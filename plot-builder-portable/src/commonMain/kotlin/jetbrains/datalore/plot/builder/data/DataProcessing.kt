@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.data.GroupMapperHelper.SINGLE_GROUP
 import jetbrains.datalore.plot.builder.data.GroupMapperHelper.createGroupMapperByGroupSizes
 import jetbrains.datalore.plot.builder.data.GroupUtil.indicesByGroup
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 object DataProcessing {
 

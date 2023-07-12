@@ -19,7 +19,7 @@ import jetbrains.datalore.plot.base.aes.AesScaling
 import jetbrains.datalore.plot.base.aes.AestheticsUtil
 import jetbrains.datalore.plot.base.geom.StepGeom
 import jetbrains.datalore.plot.base.render.svg.LinePath
-import jetbrains.datalore.plot.common.geometry.PolylineSimplifier
+import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import kotlin.math.abs
 
 open class LinesHelper(pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) :

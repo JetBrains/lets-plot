@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.base.pos
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 internal abstract class BaseDodgePos(
     aesthetics: Aesthetics,

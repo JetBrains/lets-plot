@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.scale.transform
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import junit.framework.TestCase.failNotEquals
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

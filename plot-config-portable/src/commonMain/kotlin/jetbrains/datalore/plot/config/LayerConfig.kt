@@ -18,7 +18,7 @@ import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
 import jetbrains.datalore.plot.builder.sampling.Sampling
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import jetbrains.datalore.plot.config.DataConfigUtil.combinedDiscreteMapping
 import jetbrains.datalore.plot.config.DataConfigUtil.layerMappingsAndCombinedData
 import jetbrains.datalore.plot.config.Option.Geom.Choropleth.GEO_POSITIONS

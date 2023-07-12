@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.*
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
 open class QuantilesHelper(

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.render.LegendKeyElementFactory
 import jetbrains.datalore.plot.base.scale.ScaleUtil
 import jetbrains.datalore.plot.builder.GeomLayer
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 internal class PlotAssemblerPlotContext(
     layersByTile: List<List<GeomLayer>>,

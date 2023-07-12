@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.base.scale.transform
 
 import jetbrains.datalore.plot.base.ContinuousTransform
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 abstract class FunTransform(
     private val transformFun: (Double) -> Double,

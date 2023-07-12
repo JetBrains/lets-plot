@@ -45,7 +45,7 @@ import jetbrains.datalore.plot.base.DataPointAesthetics
 import jetbrains.datalore.plot.base.ScaleMapper
 import jetbrains.datalore.plot.base.render.linetype.LineType
 import jetbrains.datalore.plot.base.render.point.PointShape
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import kotlin.jvm.JvmOverloads
 
 class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: Int = 0) {

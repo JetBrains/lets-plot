@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.base.DataFrame
 import jetbrains.datalore.plot.base.StatContext
 import jetbrains.datalore.plot.base.data.TransformVar
 import jetbrains.datalore.plot.base.stat.DensityStat.BandWidthMethod.NRD0
-import jetbrains.datalore.plot.common.data.SeriesUtil
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 /**
  * Computes kernel density estimate for 'n' values evenly distributed throughout the range of the input series.
