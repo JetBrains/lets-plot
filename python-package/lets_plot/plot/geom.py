@@ -5,7 +5,6 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
-from .pos import position_dodge
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
 #
@@ -2939,7 +2938,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
 def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_legend=None, tooltips=None,
                  orientation=None,
                  fatten=None,
-                 outlier_color=None, outlier_fill=None, outlier_shape=None, outlier_size=None, outlier_stroke=None,
+                 outlier_alpha=None, outlier_color=None, outlier_fill=None,
+                 outlier_shape=None, outlier_size=None, outlier_stroke=None,
                  varwidth=None,
                  whisker_width=None,
                  color_by=None, fill_by=None,
@@ -2973,6 +2973,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Possible values: 'x', 'y'.
     fatten : float, default=2.0
         A multiplicative factor applied to size of the middle bar.
+    outlier_alpha : float
+        Default transparency aesthetic for outliers.
     outlier_color : str
         Default color aesthetic for outliers.
     outlier_fill : str
@@ -3122,22 +3124,25 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
-        default_position = position_dodge(width=.95)
+        box_alpha = other_args.get('alpha')
         box_color = other_args.get('color')
         box_fill = other_args.get('fill')
         box_size = other_args.get('size')
+        size = outlier_size or box_size
+        outlier_fatten = 4
         boxplot_layer += _geom('point',
                                mapping=mapping,
                                data=data,
                                stat='boxplot_outlier',
-                               position=position or default_position,
+                               position=position,
                                show_legend=False,
                                sampling=None,
                                orientation=orientation,
+                               alpha=outlier_alpha or box_alpha,
                                color=outlier_color or box_color,
                                fill=outlier_fill or box_fill,
                                shape=outlier_shape,
-                               size=outlier_size or box_size,
+                               size=None if size is None else outlier_fatten * size,
                                stroke=outlier_stroke,
                                color_by=color_by, fill_by=fill_by)
     return boxplot_layer
