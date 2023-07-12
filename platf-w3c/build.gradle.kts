@@ -17,6 +17,7 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
+                implementation(project(":vis-canvas"))
                 implementation(project(":base-portable"))
             }
         }

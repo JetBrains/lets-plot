@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.canvas.dom
+package org.jetbrains.letsPlot.platf.w3c.canvas
 
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
@@ -18,7 +18,7 @@ import jetbrains.datalore.vis.canvas.AnimationProvider.AnimationTimer
 import jetbrains.datalore.vis.canvas.Canvas
 import jetbrains.datalore.vis.canvas.CanvasControl
 import jetbrains.datalore.vis.canvas.EventPeer
-import jetbrains.datalore.vis.canvas.dom.DomCanvas.Companion.DEVICE_PIXEL_RATIO
+import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.Companion.DEVICE_PIXEL_RATIO
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLElement

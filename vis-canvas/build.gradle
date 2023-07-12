@@ -47,18 +47,19 @@ kotlin {
 //                implementation kotlin('test-junit')
 //            }
 //        }
-        jsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-
-                implementation project(':platf-w3c')
-            }
-        }
-        jsTest {
-            dependencies {
-                implementation kotlin('test-js')
-            }
-        }
+//        jsMain {
+//            dependencies {
+//                implementation kotlin('stdlib-js')
+//
+////                implementation project(':platf-w3c')
+//                implementation "io.github.microutils:kotlin-logging-js:$kotlinLogging_version"
+//            }
+//        }
+//        jsTest {
+//            dependencies {
+//                implementation kotlin('test-js')
+//            }
+//        }
     }
 }
 

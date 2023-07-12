@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package jetbrains.datalore.vis.canvas.dom
+package org.jetbrains.letsPlot.platf.w3c.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.vis.canvas.*
 import jetbrains.datalore.vis.canvas.Canvas.Snapshot
-import jetbrains.datalore.vis.canvas.dom.DomCanvas.DomSnapshot
+import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.DomSnapshot
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineCap
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineJoin
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextAlign

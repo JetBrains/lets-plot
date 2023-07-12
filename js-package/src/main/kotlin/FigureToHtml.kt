@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.PlotSvgRoot
 import jetbrains.datalore.plot.builder.subPlots.CompositeFigureSvgRoot
 import jetbrains.datalore.plot.livemap.CursorServiceConfig
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil
-import jetbrains.datalore.vis.canvas.dom.DomCanvasControl
+import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasControl
 import jetbrains.datalore.vis.canvasFigure.CanvasFigure
 import kotlinx.browser.document
 import kotlinx.browser.window
