@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
+import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.plot.parsePlotSpec
 
 open class Bin2d {

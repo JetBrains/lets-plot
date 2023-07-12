@@ -6,9 +6,9 @@
 package jetbrains.datalore.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.base.intern.jsObject.JsObjectSupportCommon
+import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import jetbrains.datalore.base.random.RandomString.randomString
+import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
 import jetbrains.datalore.plot.config.PlotConfigUtil
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.geom
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
+import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan

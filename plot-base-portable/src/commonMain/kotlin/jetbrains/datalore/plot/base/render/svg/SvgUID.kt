@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.render.svg
 
-import jetbrains.datalore.base.random.RandomString.randomString
+import org.jetbrains.letsPlot.commons.intern.random.RandomString.randomString
 import kotlin.native.concurrent.ThreadLocal
 
 // In Kotlin Native objects a frozen by default. Annotate with `ThreadLocal` to unfreeze.

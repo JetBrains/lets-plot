@@ -19,7 +19,6 @@ kotlin {
                 implementation kotlin('stdlib-common')
 
                 implementation project(':commons')
-                implementation project(':base-portable')
                 implementation project(':plot-image-export')
                 implementation project(':plot-demo-common')
                 implementation project(':vis-demo-common')

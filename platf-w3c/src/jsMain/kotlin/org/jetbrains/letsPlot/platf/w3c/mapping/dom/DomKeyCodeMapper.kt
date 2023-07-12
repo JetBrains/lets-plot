@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.base.platf.dom
+package org.jetbrains.letsPlot.core.platf.dom
 
 import org.jetbrains.letsPlot.commons.event.Key
 

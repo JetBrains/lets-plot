@@ -19,7 +19,6 @@ project.ext.letsPlotTaskGroup = 'lets-plot'
 
 def include_sources_letsPlotJvmCommon = [
         'commons',
-        'base-portable',
         'base',
         'canvas',
         'datamodel',
@@ -237,7 +236,6 @@ subprojects {
     // Configure Kotlin targets.
     if (name in [
             'commons',
-            'base-portable',
             'plot-base-portable',
             'plot-builder-portable',
             'plot-config-portable',
@@ -278,7 +276,6 @@ subprojects {
     // Configure publishing for projects which "Lets-Plot Kotlin API" depends on.
     if (name in [
             'commons',
-            'base-portable',
             'datamodel',
             'plot-base-portable',
             'plot-config-portable',

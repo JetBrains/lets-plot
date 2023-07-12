@@ -18,7 +18,7 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
-                implementation(project(":base-portable"))
+//                implementation(project(":base-portable"))
                 implementation(project(":plot-livemap"))
                 implementation(project(":canvas"))
                 implementation(project(":plot-base-portable"))

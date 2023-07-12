@@ -7,7 +7,6 @@ dependencies {
 
     implementation project(':commons')
     implementation project(':platf-w3c')
-    implementation project(':base-portable')
     implementation project(':datamodel')
     implementation project(':canvas')
     implementation project(':plot-base-portable')

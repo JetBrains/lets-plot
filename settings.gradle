@@ -17,7 +17,6 @@ pluginManagement {
 rootProject.name = "lets-plot"
 
 include 'commons',
-        'base-portable',
         'platf-w3c',
         'platf-awt',
         'platf-batik',

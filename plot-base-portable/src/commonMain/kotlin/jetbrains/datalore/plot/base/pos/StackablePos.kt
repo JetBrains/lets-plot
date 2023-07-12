@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.base.pos
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
+import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 import jetbrains.datalore.plot.base.Aesthetics
 import jetbrains.datalore.plot.base.PositionAdjustment
 import jetbrains.datalore.plot.common.data.SeriesUtil

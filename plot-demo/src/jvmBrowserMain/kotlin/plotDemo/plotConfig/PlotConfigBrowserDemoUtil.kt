@@ -6,7 +6,7 @@
 package jetbrains.datalore.plotDemo.plotConfig
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.base.intern.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
+import org.jetbrains.letsPlot.core.commons.jsObject.JsObjectSupportCommon.mapToJsObjectInitializer
 import jetbrains.datalore.plot.server.config.BackendSpecTransformUtil
 import jetbrains.datalore.vis.demoUtils.browser.BrowserDemoUtil
 import kotlinx.html.*

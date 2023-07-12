@@ -7,7 +7,7 @@ package jetbrains.datalore.plot;
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.base.random.RandomGaussian
+import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import jetbrains.datalore.plot.base.*
 import jetbrains.datalore.plot.base.interact.NullGeomTargetCollector

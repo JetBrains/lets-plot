@@ -3,7 +3,7 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.base.platf.dom
+package org.jetbrains.letsPlot.core.platf.dom
 
 import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.platf.w3c.dom.on
-import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil.getButton
-import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil.getModifiers
+import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getButton
+import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil.getModifiers
 import org.w3c.dom.Element
 
 typealias DomMouseEvent = org.w3c.dom.events.MouseEvent

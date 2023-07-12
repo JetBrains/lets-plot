@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.registration.Registration
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
-import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
+import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil
 import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.TargetPeer
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domUtil.DomUtil
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement

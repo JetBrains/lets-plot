@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import jetbrains.datalore.base.enums.EnumInfoFactory
+import org.jetbrains.letsPlot.core.commons.enums.EnumInfoFactory
 
 fun Map<*, *>.read(vararg query: String): Any? {
     return read(query.dropLast(1), query.last())

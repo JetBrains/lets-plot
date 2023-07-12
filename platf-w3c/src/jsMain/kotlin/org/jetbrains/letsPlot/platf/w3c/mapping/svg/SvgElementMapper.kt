@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
-import org.jetbrains.letsPlot.base.platf.dom.DomEventUtil
+import org.jetbrains.letsPlot.core.platf.dom.DomEventUtil
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizer
 import org.jetbrains.letsPlot.datamodel.mapping.framework.SynchronizerContext
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers

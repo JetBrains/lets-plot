@@ -5,8 +5,8 @@
 
 package jetbrains.datalore.plot.builder.scale
 
-import jetbrains.datalore.base.typedKey.TypedKey
-import jetbrains.datalore.base.typedKey.TypedKeyHashMap
+import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
+import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import org.jetbrains.letsPlot.commons.values.Color
 import jetbrains.datalore.plot.base.Aes
 import jetbrains.datalore.plot.base.Aes.Companion.ALPHA

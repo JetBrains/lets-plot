@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plotDemo.model.plotConfig
 
-import jetbrains.datalore.base.random.RandomGaussian.Companion.normal
+import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian.Companion.normal
 import jetbrains.datalore.plot.parsePlotSpec
 import jetbrains.datalore.plotDemo.data.Iris
 import jetbrains.datalore.plotDemo.model.util.DemoUtil
