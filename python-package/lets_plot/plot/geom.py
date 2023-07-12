@@ -5,7 +5,6 @@
 from lets_plot.geo_data_internals.utils import is_geocoder
 
 from .core import FeatureSpec, LayerSpec
-from .pos import position_dodge
 from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta
 
 #
