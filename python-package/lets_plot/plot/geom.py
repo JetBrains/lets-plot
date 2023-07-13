@@ -3128,8 +3128,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         box_color = other_args.get('color')
         box_fill = other_args.get('fill')
         box_size = other_args.get('size')
-        size = outlier_size or box_size
         outlier_fatten = 4
+        size = box_size if outlier_size is None else outlier_size
+        if size is not None:
+            size *= outlier_fatten
         boxplot_layer += _geom('point',
                                mapping=mapping,
                                data=data,
@@ -3142,7 +3144,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                color=outlier_color or box_color,
                                fill=outlier_fill or box_fill,
                                shape=outlier_shape,
-                               size=None if size is None else outlier_fatten * size,
+                               size=size,
                                stroke=outlier_stroke,
                                color_by=color_by, fill_by=fill_by)
     return boxplot_layer
