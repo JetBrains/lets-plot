@@ -3124,8 +3124,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
-        def outlier_param(name, value):
-            return other_args.get(name) if value is None else value
+        outlier_param = lambda name, value: value if value is not None else other_args.get(name)
         outlier_fatten = 4
         size = outlier_param('size', outlier_size)
         if size is not None:
