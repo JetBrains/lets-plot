@@ -47,8 +47,8 @@ class PathConverterTest {
         aesData!!.builder().lineType(constant(NamedLineType.DASHED))
 
         matcher!!
-            .strokeWidth(eq(1.0))
-            .lineDash(vectorEq(listOf(4.3, 4.3)))
+            .strokeWidth(eq(1.1))
+            .lineDash(vectorEq(listOf(4.73, 4.73)))
 
         assertMapObject()
     }
@@ -60,8 +60,8 @@ class PathConverterTest {
             .size(constant(2.0))
 
         matcher!!
-            .strokeWidth(eq(4.0))
-            .lineDash(vectorEq(listOf(17.2, 17.2)))
+            .strokeWidth(eq(4.4))
+            .lineDash(vectorEq(listOf(18.92, 18.92)))
 
         assertMapObject()
     }
