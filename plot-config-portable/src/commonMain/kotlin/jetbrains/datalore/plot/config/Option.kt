@@ -290,6 +290,9 @@ object Option {
 
         object Pie {
             const val HOLE = "hole"
+            const val BORDER_WIDTH = "border_width"
+            const val BORDER_COLOR = "border_color"
+            const val ARC_STROKE_SIDE = "arc_stroke_side"
         }
 
         object Lollipop {

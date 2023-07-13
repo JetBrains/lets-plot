@@ -180,7 +180,7 @@ internal class DefaultGeomTheme private constructor(
                 }
 
                 GeomKind.PIE -> {
-                    color = inheritedColors.backgroundFill()
+                    color = Color.TRANSPARENT
                     size = 10.0
                     lineWidth *= sizeMultiplier
                 }

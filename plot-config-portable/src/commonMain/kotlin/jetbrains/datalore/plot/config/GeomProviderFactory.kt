@@ -292,6 +292,9 @@ internal object GeomProviderFactory {
             GeomKind.PIE -> GeomProvider.pie {
                 val geom = PieGeom()
                 layerConfig.getDouble(Option.Geom.Pie.HOLE)?.let { geom.holeSize = it }
+                layerConfig.getDouble(Option.Geom.Pie.BORDER_WIDTH)?.let { geom.borderWidth = it }
+                layerConfig.getColor(Option.Geom.Pie.BORDER_COLOR)?.let { geom.borderColor = it }
+                layerConfig.getString(Option.Geom.Pie.ARC_STROKE_SIDE)?.let { geom.setStrokeSide(it) }
                 geom
             }
 
