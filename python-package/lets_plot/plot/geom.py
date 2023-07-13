@@ -3124,13 +3124,10 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
-        box_color = other_args.get('color')
-        box_fill = other_args.get('fill')
-        box_shape = other_args.get('shape')
-        box_stroke = other_args.get('stroke')
-        box_size = other_args.get('size')
+        def outlier_param(name, value):
+            return other_args.get(name) if value is None else value
         outlier_fatten = 4
-        size = box_size if outlier_size is None else outlier_size
+        size = outlier_param('size', outlier_size)
         if size is not None:
             size *= outlier_fatten
         boxplot_layer += _geom('point',
@@ -3142,11 +3139,11 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                sampling=None,
                                orientation=orientation,
                                alpha=outlier_alpha,
-                               color=outlier_color or box_color,
-                               fill=outlier_fill or box_fill,
-                               shape=outlier_shape or box_shape,
+                               color=outlier_param('color', outlier_color),
+                               fill=outlier_param('fill', outlier_fill),
+                               shape=outlier_param('shape', outlier_shape),
                                size=size,
-                               stroke=outlier_stroke or box_stroke,
+                               stroke=outlier_param('stroke', outlier_stroke),
                                color_by=color_by, fill_by=fill_by)
     return boxplot_layer
 
