@@ -3124,7 +3124,6 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           color_by=color_by, fill_by=fill_by,
                           **other_args)
     if stat is None or stat == 'boxplot':
-        box_alpha = other_args.get('alpha')
         box_color = other_args.get('color')
         box_fill = other_args.get('fill')
         box_size = other_args.get('size')
@@ -3140,7 +3139,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                show_legend=False,
                                sampling=None,
                                orientation=orientation,
-                               alpha=outlier_alpha or box_alpha,
+                               alpha=outlier_alpha,
                                color=outlier_color or box_color,
                                fill=outlier_fill or box_fill,
                                shape=outlier_shape,
