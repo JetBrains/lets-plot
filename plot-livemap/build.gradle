@@ -26,8 +26,8 @@ kotlin {
             dependencies {
                 implementation kotlin('stdlib-common')
                 implementation project(':commons')
-                implementation project(':plot-core')
-                implementation project(':plot-builder-portable')
+                implementation project(':plot-base')
+                implementation project(':plot-builder')
                 implementation project(':plot-config-portable')
                 implementation project(':canvas')
                 implementation project(':gis')

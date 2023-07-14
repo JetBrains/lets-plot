@@ -20,8 +20,8 @@ kotlin {
                 implementation(project(":datamodel"))
                 implementation(project(":plot-livemap"))
                 implementation(project(":canvas"))
-                implementation(project(":plot-core"))
-                implementation(project(":plot-builder-portable"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-builder"))
                 implementation(project(":plot-config-portable"))
             }
         }

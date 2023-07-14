@@ -22,8 +22,8 @@ def include_sources_letsPlotJvmCommon = [
         'base',
         'canvas',
         'datamodel',
-        'plot-core',
-        'plot-builder-portable',
+        'plot-base',
+        'plot-builder',
         'plot-config-portable',
         'plot-config',
 ]
@@ -235,8 +235,8 @@ subprojects {
     // Configure Kotlin targets.
     if (name in [
             'commons',
-            'plot-core',
-            'plot-builder-portable',
+            'plot-base',
+            'plot-builder',
             'plot-config-portable',
             'test-common',
             'datamodel',
@@ -276,9 +276,9 @@ subprojects {
     if (name in [
             'commons',
             'datamodel',
-            'plot-core',
+            'plot-base',
             'plot-config-portable',
-            'plot-builder-portable',
+            'plot-builder',
     ]) {
         apply plugin: "maven-publish"
         apply plugin: "signing"

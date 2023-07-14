@@ -15,8 +15,8 @@ kotlin {
 
                 api project(':commons')
                 api project(':datamodel')
-                api project(':plot-core')
-                api project(':plot-builder-portable')
+                api project(':plot-base')
+                api project(':plot-builder')
                 api project(':plot-config-portable')
                 api project(':plot-config')
             }
