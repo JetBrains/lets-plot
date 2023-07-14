@@ -11,13 +11,13 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
-import jetbrains.datalore.plot.builder.guide.LegendDirection
-import jetbrains.datalore.plot.builder.guide.LegendJustification
-import jetbrains.datalore.plot.builder.guide.LegendPosition
-import jetbrains.datalore.plot.builder.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 internal class DefaultLegendTheme(
     options: Map<String, Any>,

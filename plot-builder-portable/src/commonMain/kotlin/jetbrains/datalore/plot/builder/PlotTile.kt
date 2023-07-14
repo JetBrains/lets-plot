@@ -10,13 +10,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.interact.NullGeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import jetbrains.datalore.plot.builder.MarginalLayerUtil.marginalLayersByMargin
-import jetbrains.datalore.plot.builder.interact.loc.LayerTargetCollectorWithLocator
+import jetbrains.datalore.plot.builder.tooltip.loc.LayerTargetCollectorWithLocator
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_H_PADDING
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_TAB_HEIGHT
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.FACET_V_PADDING
@@ -24,8 +24,8 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetC
 import jetbrains.datalore.plot.builder.layout.FacetedPlotLayout.Companion.facetColLabelSize
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.theme.FacetsTheme
-import jetbrains.datalore.plot.builder.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class PlotTile(

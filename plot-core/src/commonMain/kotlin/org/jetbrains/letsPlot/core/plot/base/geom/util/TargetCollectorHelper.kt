@@ -9,11 +9,11 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.reduce
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector.TooltipParams
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
 class TargetCollectorHelper(
     geomKind: GeomKind,

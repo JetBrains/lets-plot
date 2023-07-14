@@ -5,41 +5,44 @@
 
 package jetbrains.datalore.plot.builder
 
+import jetbrains.datalore.plot.builder.coord.CoordProvider
+import jetbrains.datalore.plot.builder.guide.Orientation
+import jetbrains.datalore.plot.builder.layout.LegendBoxesLayout
+import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
+import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
+import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
+import jetbrains.datalore.plot.builder.presentation.Defaults
+import jetbrains.datalore.plot.builder.presentation.LabelSpec
+import jetbrains.datalore.plot.builder.presentation.Style
+import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
+import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.commons.event.Event
-import org.jetbrains.letsPlot.commons.intern.gcommon.base.Throwables
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.gcommon.base.Throwables
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.SomeFig
-import jetbrains.datalore.plot.FeatureSwitch.PLOT_DEBUG_DRAWING
+import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
-import jetbrains.datalore.plot.builder.coord.CoordProvider
-import jetbrains.datalore.plot.builder.event.MouseEventPeer
-import jetbrains.datalore.plot.builder.guide.Orientation
-import jetbrains.datalore.plot.builder.interact.PlotInteractor
-import jetbrains.datalore.plot.builder.layout.*
-import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
-import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
-import jetbrains.datalore.plot.builder.layout.figure.plot.PlotFigureLayoutInfo
-import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.builder.tooltip.HorizontalAxisTooltipPosition
-import jetbrains.datalore.plot.builder.tooltip.VerticalAxisTooltipPosition
-import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventHandler
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 class PlotSvgComponent constructor(
     private val title: String?,
@@ -60,7 +63,7 @@ class PlotSvgComponent constructor(
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
-    var interactor: PlotInteractor? = null
+    internal var interactor: PlotInteractor? = null
         set(value) {
             check(field == null) { "interactor can be initialize only once." }
             check(!isBuilt) { "Can't change interactor after plot has already been built." }

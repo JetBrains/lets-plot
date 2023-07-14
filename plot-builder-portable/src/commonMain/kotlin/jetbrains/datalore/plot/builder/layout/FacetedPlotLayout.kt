@@ -16,7 +16,7 @@ import jetbrains.datalore.plot.builder.layout.facet.FixedScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.facet.FreeScalesTilesLayouter
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.scale.AxisPosition
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 
 internal class FacetedPlotLayout(
     private val facets: PlotFacets,

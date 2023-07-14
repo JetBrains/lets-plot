@@ -18,7 +18,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil.legendBlockLeftTopD
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapAxisTheme
 import jetbrains.datalore.plot.builder.layout.tile.LiveMapTileLayoutProvider
 import jetbrains.datalore.plot.builder.scale.AxisPosition
-import jetbrains.datalore.plot.builder.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import kotlin.math.max
 
 internal class PlotFigureLayouter constructor(

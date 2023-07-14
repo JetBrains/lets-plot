@@ -8,10 +8,10 @@ package jetbrains.datalore.plot.builder.layout
 import org.jetbrains.letsPlot.commons.values.Font
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.builder.theme.PlotTheme
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 object PlotLabelSpecFactory {
     const val DISTANCE_TO_LABEL_IN_CHARS = "_"

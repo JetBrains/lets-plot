@@ -6,13 +6,12 @@
 package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsDefaults
-import jetbrains.datalore.plot.builder.guide.LegendDirection
-import jetbrains.datalore.plot.builder.guide.LegendPosition
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
 internal object LegendAssemblerUtil {
     fun <T> mapToAesthetics(

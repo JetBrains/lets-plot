@@ -21,7 +21,6 @@ kotlin {
                 implementation(project(":plot-livemap"))
                 implementation(project(":canvas"))
                 implementation(project(":plot-core"))
-                implementation(project(":plot-builder"))
                 implementation(project(":plot-builder-portable"))
                 implementation(project(":plot-config-portable"))
             }

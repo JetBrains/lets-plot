@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProvider
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 
 internal abstract class AxisLabelsLayout protected constructor(
     val orientation: Orientation,

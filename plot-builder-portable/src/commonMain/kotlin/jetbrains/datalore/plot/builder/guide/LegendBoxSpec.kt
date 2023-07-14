@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.guide
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
 abstract class LegendBoxSpec(
     val title: String,

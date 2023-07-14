@@ -6,14 +6,13 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.tooltip.ConstantField
-import jetbrains.datalore.plot.builder.tooltip.DataFrameField
-import jetbrains.datalore.plot.builder.tooltip.MappingField
-import jetbrains.datalore.plot.builder.tooltip.ValueSource
+import jetbrains.datalore.plot.builder.tooltip.data.ConstantField
+import jetbrains.datalore.plot.builder.tooltip.data.DataFrameField
+import jetbrains.datalore.plot.builder.tooltip.data.MappingField
+import jetbrains.datalore.plot.builder.tooltip.data.ValueSource
 
 open class LineSpecConfigParser(
     opts: Map<String, Any>,

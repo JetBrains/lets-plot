@@ -21,10 +21,10 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
-import jetbrains.datalore.plot.builder.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 internal class DefaultAxisTheme(
     override val axis: String,

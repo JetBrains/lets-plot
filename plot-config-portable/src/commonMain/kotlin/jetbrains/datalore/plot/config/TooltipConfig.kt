@@ -5,8 +5,7 @@
 
 package jetbrains.datalore.plot.config
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.interact.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import jetbrains.datalore.plot.builder.VarBinding
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.builder.tooltip.TooltipSpecification

@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.annotation
 
-import jetbrains.datalore.plot.builder.tooltip.ValueSource
+import jetbrains.datalore.plot.builder.tooltip.data.ValueSource
 
 class AnnotationSpecification(
     val valueSources: List<ValueSource>,

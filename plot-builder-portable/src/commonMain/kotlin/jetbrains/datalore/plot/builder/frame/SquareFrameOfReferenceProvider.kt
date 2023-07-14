@@ -20,8 +20,8 @@ import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.tile.InsideOutTileLayout
 import jetbrains.datalore.plot.builder.layout.tile.TopDownTileLayout
 import jetbrains.datalore.plot.builder.scale.AxisPosition
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import kotlin.math.max
 
 internal class SquareFrameOfReferenceProvider(

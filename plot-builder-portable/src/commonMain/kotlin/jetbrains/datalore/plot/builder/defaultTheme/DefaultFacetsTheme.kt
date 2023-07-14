@@ -12,8 +12,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.FACET_STR
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.FacetsTheme
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 internal class DefaultFacetsTheme(
     options: Map<String, Any>,

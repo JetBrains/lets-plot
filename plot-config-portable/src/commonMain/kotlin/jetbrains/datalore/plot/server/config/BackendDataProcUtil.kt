@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.server.config
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.Transform
@@ -14,7 +13,7 @@ import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.OrderOptionUtil
 import jetbrains.datalore.plot.builder.data.StatInput
-import jetbrains.datalore.plot.builder.tooltip.DataFrameField
+import jetbrains.datalore.plot.builder.tooltip.data.DataFrameField
 import jetbrains.datalore.plot.config.LayerConfig
 
 internal object BackendDataProcUtil {

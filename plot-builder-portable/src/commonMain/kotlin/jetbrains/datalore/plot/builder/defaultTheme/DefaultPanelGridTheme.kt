@@ -6,7 +6,7 @@
 package jetbrains.datalore.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
-import jetbrains.datalore.plot.builder.theme.PanelGridTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID

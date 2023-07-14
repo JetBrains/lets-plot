@@ -13,8 +13,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_R
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
-import jetbrains.datalore.plot.builder.theme.TooltipsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 
 internal class DefaultTooltipsTheme(
     options: Map<String, Any>,

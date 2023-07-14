@@ -13,7 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
 abstract class ColorBarComponentLayout(
     title: String,

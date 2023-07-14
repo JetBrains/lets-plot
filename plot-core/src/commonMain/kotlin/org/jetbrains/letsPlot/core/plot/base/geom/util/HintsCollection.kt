@@ -7,15 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection.HintConfigFactory.HintConfig
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.cursorTooltip
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.horizontalTooltip
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.rotatedTooltip
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Companion.verticalTooltip
-import org.jetbrains.letsPlot.core.plot.base.interact.TipLayoutHint.Kind
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.cursorTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.horizontalTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.rotatedTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.verticalTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 
 
 class HintsCollection(private val myPoint: DataPointAesthetics, private val myHelper: GeomHelper) {

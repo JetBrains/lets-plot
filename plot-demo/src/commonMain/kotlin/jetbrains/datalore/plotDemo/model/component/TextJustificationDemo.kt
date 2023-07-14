@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
-import jetbrains.datalore.plot.builder.layout.TextJustification
-import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.TextRotation
-import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import jetbrains.datalore.plot.builder.presentation.PlotLabelSpec
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase

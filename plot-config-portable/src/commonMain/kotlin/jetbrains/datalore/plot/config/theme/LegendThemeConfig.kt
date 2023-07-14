@@ -5,11 +5,11 @@
 
 package jetbrains.datalore.plot.config.theme
 
-import jetbrains.datalore.plot.builder.guide.LegendDirection
-import jetbrains.datalore.plot.builder.guide.LegendDirection.HORIZONTAL
-import jetbrains.datalore.plot.builder.guide.LegendDirection.VERTICAL
-import jetbrains.datalore.plot.builder.guide.LegendJustification
-import jetbrains.datalore.plot.builder.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection.VERTICAL
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_DIRECTION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_JUSTIFICATION
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LEGEND_POSITION

@@ -11,7 +11,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_X
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.LINE
-import jetbrains.datalore.plot.builder.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

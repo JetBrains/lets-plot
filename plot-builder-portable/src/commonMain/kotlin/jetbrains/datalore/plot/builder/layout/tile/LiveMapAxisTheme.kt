@@ -8,11 +8,11 @@ package jetbrains.datalore.plot.builder.layout.tile
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import jetbrains.datalore.plot.builder.layout.Margins
-import jetbrains.datalore.plot.builder.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.Defaults
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 internal class LiveMapAxisTheme : AxisTheme {
     override val axis: String

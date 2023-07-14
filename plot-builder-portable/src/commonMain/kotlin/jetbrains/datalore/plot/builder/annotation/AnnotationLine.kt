@@ -12,11 +12,11 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.annotations.AnnotationLineSpec
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
-import jetbrains.datalore.plot.builder.tooltip.MappingField
-import jetbrains.datalore.plot.builder.tooltip.ValueSource
+import jetbrains.datalore.plot.builder.tooltip.data.MappingField
+import jetbrains.datalore.plot.builder.tooltip.data.ValueSource
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 class AnnotationLine(

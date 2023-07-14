@@ -8,11 +8,11 @@ package jetbrains.datalore.plotDemo.model.component
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import jetbrains.datalore.plot.builder.interact.TooltipSpec
+import jetbrains.datalore.plot.builder.tooltip.spec.TooltipSpec
 import jetbrains.datalore.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_LABEL
 import jetbrains.datalore.plot.builder.presentation.Style.TOOLTIP_TITLE
-import jetbrains.datalore.plot.builder.tooltip.TooltipBox
+import jetbrains.datalore.plot.builder.tooltip.component.TooltipBox
 import jetbrains.datalore.plotDemo.model.SimpleDemoBase
 
 class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {

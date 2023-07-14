@@ -15,7 +15,7 @@ import jetbrains.datalore.plot.builder.layout.axis.label.AxisLabelsLayout
 import jetbrains.datalore.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Axis
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 
 internal abstract class AxisLayouter(
     val orientation: Orientation,

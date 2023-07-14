@@ -7,7 +7,7 @@ package jetbrains.datalore.plot.builder.layout
 
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 
 internal object PlotAxisLayoutUtil {
 

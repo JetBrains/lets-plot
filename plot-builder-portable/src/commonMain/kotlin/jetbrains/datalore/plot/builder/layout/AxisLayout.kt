@@ -10,7 +10,7 @@ import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.axis.AxisBreaksProviderFactory
 import jetbrains.datalore.plot.builder.layout.axis.AxisLayouter
 import jetbrains.datalore.plot.builder.layout.util.Insets
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 
 internal class AxisLayout(
     private val breaksProviderFactory: AxisBreaksProviderFactory,

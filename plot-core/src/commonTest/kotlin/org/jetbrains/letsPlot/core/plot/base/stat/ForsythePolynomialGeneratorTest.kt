@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
-import org.jetbrains.letsPlot.core.plot.base.interact.HitShape
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.ForsythePolynomialGenerator
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialFunction
 import kotlin.math.abs

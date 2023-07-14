@@ -8,7 +8,9 @@ package jetbrains.datalore.plot.builder.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import jetbrains.datalore.plot.builder.guide.LegendArrangement
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
 internal object LegendBoxesLayoutUtil {
     fun arrangeLegendBoxes(
@@ -57,8 +59,8 @@ internal object LegendBoxesLayoutUtil {
     fun overlayLegendOrigin(
         plotBounds: DoubleRectangle,
         legendSize: DoubleVector,
-        legendPosition: jetbrains.datalore.plot.builder.guide.LegendPosition,
-        legendJustification: jetbrains.datalore.plot.builder.guide.LegendJustification
+        legendPosition: LegendPosition,
+        legendJustification: LegendJustification
     ): DoubleVector {
         val plotSize = plotBounds.dimension
 

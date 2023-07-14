@@ -12,10 +12,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
-import jetbrains.datalore.plot.builder.layout.TextJustification
-import jetbrains.datalore.plot.builder.layout.TextJustification.Companion.applyJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import jetbrains.datalore.plot.builder.presentation.Style
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement

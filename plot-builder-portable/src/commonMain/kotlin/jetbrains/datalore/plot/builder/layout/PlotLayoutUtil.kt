@@ -8,7 +8,7 @@ package jetbrains.datalore.plot.builder.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
-import jetbrains.datalore.plot.builder.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_AREA_PADDING
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_MARGIN
@@ -16,10 +16,11 @@ import jetbrains.datalore.plot.builder.layout.LayoutConstants.LIVE_MAP_PLOT_PADD
 import jetbrains.datalore.plot.builder.layout.util.Insets
 import jetbrains.datalore.plot.builder.presentation.LabelSpec
 import jetbrains.datalore.plot.builder.scale.AxisPosition
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.LegendTheme
-import jetbrains.datalore.plot.builder.theme.PlotTheme
-import jetbrains.datalore.plot.builder.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import kotlin.math.max
 
 internal object PlotLayoutUtil {

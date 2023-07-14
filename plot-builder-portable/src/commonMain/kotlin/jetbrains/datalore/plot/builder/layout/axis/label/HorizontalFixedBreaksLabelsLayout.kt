@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.layout.LayoutConstants.H_AXIS_LABELS_EXPAND
 import jetbrains.datalore.plot.builder.layout.util.Insets
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import kotlin.math.max
 
 internal class HorizontalFixedBreaksLabelsLayout(

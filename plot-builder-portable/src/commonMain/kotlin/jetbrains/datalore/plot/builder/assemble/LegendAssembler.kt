@@ -7,7 +7,6 @@ package jetbrains.datalore.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
@@ -18,7 +17,9 @@ import jetbrains.datalore.plot.builder.assemble.LegendAssemblerUtil.mapToAesthet
 import jetbrains.datalore.plot.builder.guide.*
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.presentation.Defaults.Common.Legend
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.FeatureSwitch
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.min
@@ -164,7 +165,7 @@ class LegendAssembler(
     }
 
     companion object {
-        private const val DEBUG_DRAWING = jetbrains.datalore.plot.FeatureSwitch.LEGEND_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
 
         fun wrap(text: String, lengthLimit: Int, countLimit: Int = -1): String {
             if (text.length <= lengthLimit || text.contains("\n")) {

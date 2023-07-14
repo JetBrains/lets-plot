@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.commons.registration.Registration
 import jetbrains.datalore.plot.MonolithicCommon
 import jetbrains.datalore.plot.builder.PlotContainer
 import jetbrains.datalore.plot.builder.PlotSvgRoot
-import jetbrains.datalore.plot.builder.event.MouseEventPeer
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import jetbrains.datalore.plot.livemap.LiveMapProviderUtil.injectLiveMapProvider
 import jetbrains.datalore.plot.parsePlotSpec
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider

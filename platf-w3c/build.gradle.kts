@@ -7,6 +7,8 @@ plugins {
     kotlin("multiplatform")
 }
 
+val kotlinLoggingVersion = extra["kotlinLogging_version"] as String
+
 kotlin {
     js() {
         browser {}
@@ -18,7 +20,8 @@ kotlin {
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
                 implementation(project(":canvas"))
-//                implementation(project(":base-portable"))
+
+                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 

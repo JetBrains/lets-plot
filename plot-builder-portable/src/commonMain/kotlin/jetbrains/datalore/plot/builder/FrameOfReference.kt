@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder
 
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 
 interface FrameOfReference {

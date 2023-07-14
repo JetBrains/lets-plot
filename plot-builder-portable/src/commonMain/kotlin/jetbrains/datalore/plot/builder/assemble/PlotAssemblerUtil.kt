@@ -16,9 +16,9 @@ import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.fitsColo
 import jetbrains.datalore.plot.builder.assemble.PlotGuidesAssemblerUtil.mappedRenderedAesToCreateGuides
 import jetbrains.datalore.plot.builder.layout.*
 import jetbrains.datalore.plot.builder.scale.AxisPosition
-import jetbrains.datalore.plot.builder.theme.AxisTheme
-import jetbrains.datalore.plot.builder.theme.FacetsTheme
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
 internal object PlotAssemblerUtil {
 

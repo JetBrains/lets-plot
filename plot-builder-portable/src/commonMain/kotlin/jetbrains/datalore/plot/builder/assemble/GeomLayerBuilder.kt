@@ -17,9 +17,9 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.geom.GeomBase
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
-import org.jetbrains.letsPlot.core.plot.base.interact.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator.LookupSpec
-import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
@@ -36,11 +36,11 @@ import jetbrains.datalore.plot.builder.assemble.geom.PointDataAccess
 import jetbrains.datalore.plot.builder.data.DataProcessing
 import jetbrains.datalore.plot.builder.data.GroupingContext
 import jetbrains.datalore.plot.builder.data.StatInput
-import jetbrains.datalore.plot.builder.interact.ContextualMappingProvider
+import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
 import jetbrains.datalore.plot.builder.scale.ScaleProvider
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 class GeomLayerBuilder(
     private val geomProvider: GeomProvider,

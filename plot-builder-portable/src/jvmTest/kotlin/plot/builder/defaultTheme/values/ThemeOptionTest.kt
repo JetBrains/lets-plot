@@ -17,7 +17,7 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.e
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import kotlin.test.Test
 
 internal class ThemeOptionTest {

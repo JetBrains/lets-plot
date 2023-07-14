@@ -17,7 +17,9 @@ import jetbrains.datalore.plot.builder.guide.ColorBarComponentSpec.Companion.DEF
 import jetbrains.datalore.plot.builder.layout.LegendBoxInfo
 import jetbrains.datalore.plot.builder.layout.PlotLabelSpecFactory
 import jetbrains.datalore.plot.builder.layout.PlotLayoutUtil
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
+import org.jetbrains.letsPlot.core.FeatureSwitch
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import kotlin.math.max
 
 class ColorBarAssembler(
@@ -64,7 +66,7 @@ class ColorBarAssembler(
     }
 
     companion object {
-        private const val DEBUG_DRAWING = jetbrains.datalore.plot.FeatureSwitch.LEGEND_DEBUG_DRAWING
+        private const val DEBUG_DRAWING = FeatureSwitch.LEGEND_DEBUG_DRAWING
 
         fun createColorBarSpec(
             title: String,

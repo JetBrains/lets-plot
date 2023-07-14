@@ -11,8 +11,8 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKG
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.PANEL_BORDER_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.RECT
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.PanelGridTheme
-import jetbrains.datalore.plot.builder.theme.PanelTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 
 internal class DefaultPanelTheme(
     options: Map<String, Any>,

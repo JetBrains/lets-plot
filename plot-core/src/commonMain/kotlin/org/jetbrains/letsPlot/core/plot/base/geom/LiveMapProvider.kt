@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.SomeFig
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 
 interface LiveMapProvider {
     fun createLiveMap(bounds: DoubleRectangle): LiveMapData

@@ -13,7 +13,7 @@ import jetbrains.datalore.plot.builder.layout.FacetedPlotLayoutUtil
 import jetbrains.datalore.plot.builder.layout.PlotAxisLayoutUtil
 import jetbrains.datalore.plot.builder.layout.TileLayoutInfo
 import jetbrains.datalore.plot.builder.layout.TileLayoutProvider
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import kotlin.math.abs
 
 internal object FreeScalesTilesLayouter {

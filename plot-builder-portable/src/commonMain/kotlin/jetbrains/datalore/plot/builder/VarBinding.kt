@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 
 class VarBinding(
     val variable: DataFrame.Variable,
-    val aes: org.jetbrains.letsPlot.core.plot.base.Aes<*>
+    val aes: Aes<*>
 ) {
     override fun toString() = "VarBinding{variable=${variable}, aes=${aes}"
 

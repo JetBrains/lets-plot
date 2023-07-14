@@ -5,13 +5,13 @@
 
 package jetbrains.datalore.plot.builder.defaultTheme
 
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeValuesLPMinimal2
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.*
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.aes.GeomTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.*
 
 class DefaultTheme(
     private val themeSettings: Map<String, Any>,

@@ -6,13 +6,13 @@
 package jetbrains.datalore.plot.config
 
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.interact.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import jetbrains.datalore.plot.builder.VarBinding
-import jetbrains.datalore.plot.builder.interact.GeomInteraction
-import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
-import jetbrains.datalore.plot.builder.interact.GeomTooltipSetup
-import jetbrains.datalore.plot.builder.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.conf.GeomInteraction
+import jetbrains.datalore.plot.builder.tooltip.conf.GeomInteractionBuilder
+import jetbrains.datalore.plot.builder.tooltip.conf.GeomTooltipSetup
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 
 object GeomInteractionUtil {
     internal fun configGeomTargets(

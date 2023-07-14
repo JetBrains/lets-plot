@@ -5,11 +5,10 @@
 
 package jetbrains.datalore.plot.config
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.GeomLayer
 import jetbrains.datalore.plot.builder.assemble.TestingPlotContext
-import jetbrains.datalore.plot.builder.interact.TooltipSpec.Line
+import jetbrains.datalore.plot.builder.tooltip.spec.TooltipSpec.Line
 import jetbrains.datalore.plot.config.Option.Layer.DISABLE_SPLITTING
 import jetbrains.datalore.plot.config.Option.Layer.GEOM
 import jetbrains.datalore.plot.config.Option.Layer.TOOLTIPS

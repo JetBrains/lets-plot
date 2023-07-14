@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import jetbrains.datalore.plot.builder.guide.Orientation
 import jetbrains.datalore.plot.builder.guide.Orientation.BOTTOM
 import jetbrains.datalore.plot.builder.guide.Orientation.TOP
-import jetbrains.datalore.plot.builder.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin

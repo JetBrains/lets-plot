@@ -5,7 +5,7 @@
 
 package jetbrains.datalore.plot.builder.guide
 
-import jetbrains.datalore.plot.builder.theme.LegendTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
 class LegendComponentSpec(
     title: String,

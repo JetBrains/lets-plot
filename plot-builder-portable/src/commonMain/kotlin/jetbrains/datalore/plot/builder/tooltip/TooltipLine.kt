@@ -8,10 +8,11 @@ package jetbrains.datalore.plot.builder.tooltip
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
-import org.jetbrains.letsPlot.core.plot.base.interact.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec
-import org.jetbrains.letsPlot.core.plot.base.interact.TooltipLineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipLineSpec.DataPoint
 import jetbrains.datalore.plot.builder.tooltip.LinesContentSpecification.Companion.LineSpec
+import jetbrains.datalore.plot.builder.tooltip.data.ValueSource
 
 class TooltipLine(
     label: String?,

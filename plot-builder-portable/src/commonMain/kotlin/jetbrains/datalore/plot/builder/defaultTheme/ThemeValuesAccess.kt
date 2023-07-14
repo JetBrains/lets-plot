@@ -10,10 +10,10 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.Elem
-import jetbrains.datalore.plot.builder.layout.Margins
-import jetbrains.datalore.plot.builder.layout.TextJustification
+import org.jetbrains.letsPlot.core.plot.base.layout.Margins
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import jetbrains.datalore.plot.builder.presentation.FontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 
 internal open class ThemeValuesAccess(
     private val values: Map<String, Any>,

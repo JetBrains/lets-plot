@@ -24,7 +24,6 @@ def include_sources_letsPlotJvmCommon = [
         'datamodel',
         'plot-core',
         'plot-builder-portable',
-        'plot-builder',
         'plot-config-portable',
         'plot-config',
 ]

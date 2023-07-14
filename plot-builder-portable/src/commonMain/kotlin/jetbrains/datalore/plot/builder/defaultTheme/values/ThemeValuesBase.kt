@@ -30,9 +30,9 @@ import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
-import jetbrains.datalore.plot.builder.guide.LegendDirection
-import jetbrains.datalore.plot.builder.guide.LegendJustification
-import jetbrains.datalore.plot.builder.guide.LegendPosition
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import jetbrains.datalore.plot.builder.presentation.Defaults
 
 open class ThemeValuesBase : ThemeValues(VALUES) {

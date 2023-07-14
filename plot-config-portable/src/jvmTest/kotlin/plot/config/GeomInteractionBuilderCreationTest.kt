@@ -5,15 +5,14 @@
 
 package jetbrains.datalore
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import jetbrains.datalore.plot.builder.defaultTheme.DefaultTheme
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import jetbrains.datalore.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
-import jetbrains.datalore.plot.builder.interact.GeomInteractionBuilder
+import jetbrains.datalore.plot.builder.tooltip.conf.GeomInteractionBuilder
 import jetbrains.datalore.plot.builder.presentation.DefaultFontFamilyRegistry
-import jetbrains.datalore.plot.builder.theme.Theme
-import jetbrains.datalore.plot.builder.tooltip.MappingField
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import jetbrains.datalore.plot.builder.tooltip.data.MappingField
 import jetbrains.datalore.plot.builder.tooltip.TooltipLine
 import jetbrains.datalore.plot.config.GeomInteractionUtil
 import jetbrains.datalore.plot.config.Option
