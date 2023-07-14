@@ -81,10 +81,14 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 val pieSectors = computeSectors(pieCenter, dataPoints)
 
                 root.appendNodes(pieSectors.map(::buildSvgSector))
-                root.appendNodes(pieSectors.map(::buildSvgArcs))
-
+                root.appendNodes(
+                    pieSectors.mapNotNull { if (it.p.stroke()!! > 0.0) buildSvgArcs(it) else null }
+                )
                 if (spacerWidth > 0) {
-                    root.appendNodes(pieSectors.map(::buildSvgSpacers))
+                    root.appendNodes(
+                        // not draw spacer lines for exploded sectors
+                        pieSectors.mapNotNull { if (it.p.explode() == 0.0) buildSvgSpacerLines(it) else null }
+                    )
                 }
 
                 pieSectors.forEach { buildHint(it, ctx.targetCollector) }
@@ -153,7 +157,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun buildSvgSpacers(sector: Sector): LinePath {
+    private fun buildSvgSpacerLines(sector: Sector): LinePath {
         return LinePath(
             SvgPathDataBuilder().apply {
                 moveTo(sector.innerArcStart(includeStroke = true))
