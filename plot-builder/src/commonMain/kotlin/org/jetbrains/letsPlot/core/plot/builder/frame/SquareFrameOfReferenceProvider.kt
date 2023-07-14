@@ -141,6 +141,7 @@ internal class SquareFrameOfReferenceProvider(
     override fun createMarginalFrames(
         tileLayoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
+        plotBackground: Color,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference> {
         if (domainByMargin.isEmpty()) {
@@ -204,6 +205,7 @@ internal class SquareFrameOfReferenceProvider(
                 boundsByMargin.getValue(side),
                 adjustedDomain = adjustedDomain,
                 coord,
+                plotBackground,
                 debugDrawing,
             )
         }

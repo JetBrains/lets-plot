@@ -23,8 +23,8 @@ import org.jetbrains.letsPlot.commons.values.Color
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor, plotBackground: Color): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, plotBackground)
+    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
     }
 
     fun defaultOptions(): Map<String, Any> {

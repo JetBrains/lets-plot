@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
@@ -14,6 +15,7 @@ interface GeomContext {
     val flipped: Boolean
     val targetCollector: GeomTargetCollector
     val annotations: Annotations?
+    val plotBackground: Color
 
     // ToDo: Just positional resolution along x or y-axis. Also, its now equal to "data resolution". No need to compute it in 'Aesthetics'.
     fun getResolution(aes: Aes<Double>): Double

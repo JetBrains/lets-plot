@@ -19,6 +19,7 @@ internal class MarginalFrameOfReference(
     private val geomBounds: DoubleRectangle,
     private val adjustedDomain: DoubleRectangle,
     private val coord: CoordinateSystem,
+    private val plotBackground: Color,
     private val isDebugDrawing: Boolean,
 ) : FrameOfReference {
     override fun drawBeforeGeomLayer(parent: SvgComponent) {}
@@ -40,7 +41,8 @@ internal class MarginalFrameOfReference(
             xyAesBounds = adjustedDomain,
             coord,
             flippedAxis = false,
-            targetCollector
+            targetCollector,
+            plotBackground
         )
 
         layerComponent.moveTo(geomBounds.origin)

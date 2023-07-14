@@ -175,7 +175,8 @@ internal class SquareFrameOfReference(
             xyAesBounds = adjustedDomain,  // positional aesthetics are the same as positional data.
             coord,
             flipAxis,
-            targetCollector
+            targetCollector,
+            theme.plot().backgroundFill()
         )
 
         val geomBounds = layoutInfo.geomInnerBounds
@@ -270,7 +271,8 @@ internal class SquareFrameOfReference(
             xyAesBounds: DoubleRectangle,
             coord: CoordinateSystem,
             flippedAxis: Boolean,
-            targetCollector: GeomTargetCollector
+            targetCollector: GeomTargetCollector,
+            plotBackground: Color
         ): SvgComponent {
             val rendererData = LayerRendererUtil.createLayerRendererData(layer)
 
@@ -309,6 +311,7 @@ internal class SquareFrameOfReference(
                 .geomTargetCollector(targetCollector)
                 .fontFamilyRegistry(layer.fontFamilyRegistry)
                 .annotations(rendererData.annotations)
+                .plotBackground(plotBackground)
                 .build()
 
             val pos = rendererData.pos

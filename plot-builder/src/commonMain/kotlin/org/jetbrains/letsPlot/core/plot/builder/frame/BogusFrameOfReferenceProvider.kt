@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutProvider
+import org.jetbrains.letsPlot.commons.values.Color
 
 internal class BogusFrameOfReferenceProvider : FrameOfReferenceProvider {
     override val hAxisLabel: String? = null
@@ -33,6 +34,7 @@ internal class BogusFrameOfReferenceProvider : FrameOfReferenceProvider {
     override fun createMarginalFrames(
         tileLayoutInfo: TileLayoutInfo,
         coordProvider: CoordProvider,
+        plotBackground: Color,
         debugDrawing: Boolean
     ): Map<MarginSide, FrameOfReference> {
         return emptyMap()

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.annotations.Annotations
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.presentation.FontFamilyRegistry
+import org.jetbrains.letsPlot.commons.values.Color
 
 interface ImmutableGeomContext : GeomContext {
 
@@ -22,7 +23,7 @@ interface ImmutableGeomContext : GeomContext {
 
         fun aesthetics(aesthetics: Aesthetics): Builder
 
-        fun aestheticMappers(aestheticMappers: Map<org.jetbrains.letsPlot.core.plot.base.Aes<*>, ScaleMapper<*>>): Builder
+        fun aestheticMappers(aestheticMappers: Map<Aes<*>, ScaleMapper<*>>): Builder
 
         fun aesBounds(aesBounds: DoubleRectangle): Builder
 
@@ -31,6 +32,8 @@ interface ImmutableGeomContext : GeomContext {
         fun fontFamilyRegistry(v: FontFamilyRegistry): Builder
 
         fun annotations(annotations: Annotations?): Builder
+
+        fun plotBackground(color: Color): Builder
 
         fun build(): ImmutableGeomContext
     }

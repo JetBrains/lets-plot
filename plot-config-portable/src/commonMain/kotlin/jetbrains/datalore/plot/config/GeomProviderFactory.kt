@@ -48,7 +48,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }
 
-    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor, plotBackground: Color): GeomProvider {
+    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor): GeomProvider {
         return when (geomKind) {
             GeomKind.DENSITY -> GeomProvider.density {
                 val geom = DensityGeom()
@@ -293,11 +293,7 @@ internal object GeomProviderFactory {
                 val geom = PieGeom()
                 layerConfig.getDouble(Option.Geom.Pie.HOLE)?.let { geom.holeSize = it }
                 layerConfig.getDouble(Option.Geom.Pie.SPACER_WIDTH)?.let { geom.spacerWidth = it }
-                geom.spacerColor = if (layerConfig.has(Option.Geom.Pie.SPACER_COLOR)) {
-                    layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)!!
-                } else {
-                    plotBackground
-                }
+                layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)?.let { geom.spacerColor = it }
                 layerConfig.getString(Option.Geom.Pie.STROKE_SIDE)?.let { geom.setStrokeSide(it) }
                 geom
             }
