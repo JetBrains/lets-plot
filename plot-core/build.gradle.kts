@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -24,15 +24,13 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(":commons"))
+                implementation(project(":datamodel"))
             }
         }
-
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-//                implementation(kotlin("test-annotations-common"))
-
-                implementation("io.mockk:mockk-common:$mockkVersion")
+                implementation(project(":test-common"))
             }
         }
 
@@ -44,25 +42,16 @@ kotlin {
 
         jvmTest {
             dependencies {
-//                implementation kotlin('test')
-                implementation(kotlin("test-junit"))
                 implementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
                 implementation("org.mockito:mockito-core:$mockitoVersion")
                 implementation("org.assertj:assertj-core:$assertjVersion")
-                implementation("io.mockk:mockk:$mockkVersion")
             }
         }
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
-            }
-        }
-
-        named("jsTest") {
-            dependencies {
-                implementation(kotlin("test-js"))
+                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }
