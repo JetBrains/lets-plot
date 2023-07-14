@@ -19,11 +19,12 @@ import jetbrains.datalore.plot.config.Option.Geom
 import jetbrains.datalore.plot.config.Option.Layer
 import jetbrains.datalore.plot.config.Option.Meta
 import jetbrains.datalore.plot.config.Option.Pos
+import org.jetbrains.letsPlot.commons.values.Color
 
 class GeomProto(val geomKind: GeomKind) {
 
-    fun geomProvider(layerConfig: OptionsAccessor): GeomProvider {
-        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig)
+    fun geomProvider(layerConfig: OptionsAccessor, plotBackground: Color): GeomProvider {
+        return GeomProviderFactory.createGeomProvider(geomKind, layerConfig, plotBackground)
     }
 
     fun defaultOptions(): Map<String, Any> {

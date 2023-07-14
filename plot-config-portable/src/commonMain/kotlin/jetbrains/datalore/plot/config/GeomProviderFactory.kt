@@ -8,11 +8,11 @@ package jetbrains.datalore.plot.config
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
+import org.jetbrains.letsPlot.commons.values.Color
 
 internal object GeomProviderFactory {
     private val PROVIDER = HashMap<GeomKind, GeomProvider>()
@@ -48,7 +48,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.LIVE_MAP] = GeomProvider.livemap()
     }
 
-    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor): GeomProvider {
+    fun createGeomProvider(geomKind: GeomKind, layerConfig: OptionsAccessor, plotBackground: Color): GeomProvider {
         return when (geomKind) {
             GeomKind.DENSITY -> GeomProvider.density {
                 val geom = DensityGeom()
@@ -293,7 +293,11 @@ internal object GeomProviderFactory {
                 val geom = PieGeom()
                 layerConfig.getDouble(Option.Geom.Pie.HOLE)?.let { geom.holeSize = it }
                 layerConfig.getDouble(Option.Geom.Pie.SPACER_WIDTH)?.let { geom.spacerWidth = it }
-                layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)?.let { geom.spacerColor = it }
+                geom.spacerColor = if (layerConfig.has(Option.Geom.Pie.SPACER_COLOR)) {
+                    layerConfig.getColor(Option.Geom.Pie.SPACER_COLOR)!!
+                } else {
+                    plotBackground
+                }
                 layerConfig.getString(Option.Geom.Pie.STROKE_SIDE)?.let { geom.setStrokeSide(it) }
                 geom
             }
