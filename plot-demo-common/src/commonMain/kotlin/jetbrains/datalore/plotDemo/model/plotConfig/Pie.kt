@@ -15,6 +15,7 @@ class Pie {
             pie(hole = 0.2),
             pie(hole = 0.5, withOrdering = true),
             withExplodes(),
+            withStrokeAndSpacerLines()
         )
     }
 
@@ -116,12 +117,55 @@ class Pie {
                 "                  'size': 15, " +
                // "                  'hole': 0.2," +
                 "                  'stroke': 1.0," +
-                "                  'stroke_color': 'black'" +
+                "                  'color': 'black'," +
+              //  "                  'stroke_side': 'outer'," +
+                "                  'spacer_width': 1.0," +
+                "                  'spacer_color': 'black'" +
                 "               }" +
                 "             ]" +
                 "}"
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = length
+        return plotSpec
+    }
+
+    private fun withStrokeAndSpacerLines(): MutableMap<String, Any> {
+        val spec = "{" +
+                "   'kind': 'plot', " +
+                "   'theme': { 'line': 'blank', 'axis': 'blank', 'flavor': 'solarized_light' }," +
+                "   'mapping': { " +
+                "       'fill': 'name'," +
+                "       'slice': 'value'," +
+                "       'color': 'color'," +
+                "       'stroke': 'stroke' " +
+                "    }," +
+                "   'layers': [" +
+                "               {" +
+                "                  'geom': 'pie'," +
+                "                  'stat': 'identity'," +
+                "                  'size': 20," +
+                "                  'hole': 0.0," +
+                "                  'spacer_width': 2.0," +
+                "                  'stroke_side': 'both'" +
+                "               }" +
+                "             ]," +
+                "   'scales': [" +
+                "               {" +
+                "                  'aesthetic': 'color'," +
+                "                  'discrete': true," +
+                "                  'scale_mapper_kind': 'color_brewer', " +
+                "                  'palette': 'Dark2'" +
+                "               }" +
+                "           ]" +
+                "}"
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] =  mapOf(
+            "name" to ('A'..'C').toList(),
+            "value" to listOf(50, 30, 60),
+            "stroke" to listOf(6, 8, 10),
+            "color" to ('a'..'c').toList(),
+        )
         return plotSpec
     }
 }
