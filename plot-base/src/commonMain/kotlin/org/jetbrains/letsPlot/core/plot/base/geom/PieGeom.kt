@@ -225,12 +225,26 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         var currentAngle = -PI / 2.0
         currentAngle -= angle(dataPoints.first())
 
+        // Make a hole size = 'stroke width' if initially hole=0.0 and need an inner stroke
+        val toHoleRadius: (Double) -> Double = if (holeSize == 0.0 &&
+            myStrokeSide.hasInner &&
+            dataPoints.any { it.color()!! != Color.TRANSPARENT } // has visible stroke
+        ) {
+            val maxStroke = dataPoints.maxOf { it.stroke()!! }
+            run {
+                { _: Double -> maxStroke }
+            }
+        } else {
+            { radius: Double -> radius * holeSize }
+        }
+
         return dataPoints.map { p ->
             Sector(
                 p = p,
                 pieCenter = pieCenter,
                 startAngle = currentAngle,
-                endAngle = currentAngle + angle(p)
+                endAngle = currentAngle + angle(p),
+                toHoleRadius = toHoleRadius
             ).also { sector -> currentAngle = sector.endAngle }
         }
     }
@@ -239,11 +253,12 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         val pieCenter: DoubleVector,
         val p: DataPointAesthetics,
         val startAngle: Double,
-        val endAngle: Double
+        val endAngle: Double,
+        toHoleRadius: (Double) -> Double
     ) {
         val angle = endAngle - startAngle
         val radius: Double = AesScaling.pieDiameter(p) / 2
-        val holeRadius = radius * holeSize
+        val holeRadius = toHoleRadius(radius)
         val direction = startAngle + angle / 2
         private val explode = p.explode()?.let { radius * it } ?: 0.0
         val position = pieCenter.add(DoubleVector(explode * cos(direction), explode * sin(direction)))
