@@ -5,7 +5,6 @@
 
 package jetbrains.datalore.plot.config
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND
 
@@ -290,9 +289,9 @@ object Option {
 
         object Pie {
             const val HOLE = "hole"
-            const val BORDER_WIDTH = "border_width"
-            const val BORDER_COLOR = "border_color"
-            const val ARC_STROKE_SIDE = "arc_stroke_side"
+            const val SPACER_WIDTH = "spacer_width"
+            const val SPACER_COLOR = "spacer_color"
+            const val STROKE_SIDE = "stroke_side"
         }
 
         object Lollipop {

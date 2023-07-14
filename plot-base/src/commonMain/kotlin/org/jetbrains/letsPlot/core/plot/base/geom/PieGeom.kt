@@ -32,16 +32,16 @@ import kotlin.math.*
 
 class PieGeom : GeomBase(), WithWidth, WithHeight {
     var holeSize: Double = 0.0
-    var borderWidth: Double = 1.5
-    var borderColor: Color = Color.WHITE
-    private var myStrokeSide: PieStrokeSide = PieStrokeSide.BOTH
+    var spacerWidth: Double = 1.5
+    var spacerColor: Color = Color.WHITE
+    private var myStrokeSide: StrokeSide = StrokeSide.BOTH
 
     fun setStrokeSide(side: String) {
-        myStrokeSide = PieStrokeSide.fromString(side)
+        myStrokeSide = StrokeSide.fromString(side)
     }
 
-    private enum class PieStrokeSide {
-        OUTER, INNER, BOTH, NONE;
+    private enum class StrokeSide {
+        OUTER, INNER, BOTH;
 
         val hasOuter: Boolean
             get() = this == OUTER || this == BOTH
@@ -50,15 +50,13 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             get() = this == INNER || this == BOTH
 
         companion object {
-            fun fromString(str: String): PieStrokeSide {
+            fun fromString(str: String): StrokeSide {
                 return when (str) {
                     "outer" -> OUTER
                     "inner" -> INNER
                     "both" -> BOTH
-                    "none" -> NONE
                     else -> throw IllegalArgumentException(
-                        "Arc pie stroke side '$str' is not allowed," +
-                                " only accept 'outer', 'inner', 'both', 'none'"
+                        "Arc pie stroke side '$str' is not allowed, only accept 'outer', 'inner', 'both'"
                     )
                 }
             }
@@ -83,11 +81,10 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 val pieSectors = computeSectors(pieCenter, dataPoints)
 
                 root.appendNodes(pieSectors.map(::buildSvgSector))
-                if (myStrokeSide != PieStrokeSide.NONE) {
-                    root.appendNodes(pieSectors.map(::buildSvgArcs))
-                }
-                if (borderWidth > 0) {
-                    root.appendNodes(pieSectors.map(::buildSvgBorders))
+                root.appendNodes(pieSectors.map(::buildSvgArcs))
+
+                if (spacerWidth > 0) {
+                    root.appendNodes(pieSectors.map(::buildSvgSpacers))
                 }
 
                 pieSectors.forEach { buildHint(it, ctx.targetCollector) }
@@ -156,7 +153,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         }
     }
 
-    private fun buildSvgBorders(sector: Sector): LinePath {
+    private fun buildSvgSpacers(sector: Sector): LinePath {
         return LinePath(
             SvgPathDataBuilder().apply {
                 moveTo(sector.innerArcStart(includeStroke = true))
@@ -166,8 +163,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 lineTo(sector.outerArcEnd(includeStroke = true))
             }
         ).apply {
-            width().set(borderWidth)
-            color().set(borderColor)
+            width().set(spacerWidth)
+            color().set(spacerColor)
         }
     }
 
